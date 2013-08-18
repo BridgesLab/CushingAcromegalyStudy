@@ -1,0 +1,116 @@
+DESeq Analysis of Cushing and Acromegaly Patient Samples
+==========================================================
+
+The counts tables were generated previously using the **counts_table.Rmd** script.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
+
+```{r loading-data, echo=FALSE, message=FALSE}
+#required packages
+library(DESeq ,quietly=TRUE) #for deseq analysis
+library(knitcitations) #for generation of citations
+write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
+bib <- read.bibtex("references.bib") #loads the bib file
+
+
+transcript.counts <- read.csv("../data/raw/transcript_counts_table.csv", row.names="X")
+#set the conditions
+mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+```
+
+```{r cds-construction, echo=FALSE, message=FALSE}
+#this command matches the mappings to the transcript headers, and extracts the conditions
+conditions <- mapping[match(names(transcript.counts),mapping$samplename),]$group
+cds = newCountDataSet( transcript.counts, conditions )
+```
+
+These data were analysed in two ways by DESeq `r citep(bib[["DESeq"]])`.  The first way was to analyse normally.  The second way was to remove the lowest 40% of transcripts.  The removal of low-expressing, low-reliability transcripts allowed for a smaller penalty for multiple comparasons.
+
+
+Full Analysis
+--------------
+
+```{r deseq-analysis, echo=FALSE, message=FALSE}
+cds <- estimateSizeFactors(cds)
+cds <- estimateDispersions(cds)
+
+write.csv(counts( cds, normalized=TRUE ),'../data/processed/Normalized Counts Table.csv')
+
+acromegaly.results = nbinomTest( cds, "Control", "Acromegaly" )
+write.csv(acromegaly.results, "../data/processed/acromegaly_deseq_results.csv")
+
+cushing.results = nbinomTest( cds, "Control", "Cushing's" )
+write.csv(cushing.results, "../data/processed/cushing_deseq_results.csv")
+```
+
+Expression Filtered Analysis
+-------------------------------
+This analysis removes the lowest 40% expressing transcripts.
+
+```{r data-table, results='asis'}
+library(xtable)
+print(xtable(as.data.frame(summary(mapping$group))), type='html')
+```
+
+```{r deseq-analysis-filtered, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+#first calculate rowsums
+rs = rowSums ( counts ( cds ))
+#filtered out the lowest 40% of expressors
+theta = 0.4
+use = (rs > quantile(rs, probs=theta))
+cdsFilt = cds[ use, ]
+cdsFilt <- estimateSizeFactors(cdsFilt)
+
+par(mfrow=c(1,2))
+barplot(sizeFactors(cds), las=2, main="Total Size Factors", ylab="Size Factor", cex.names=0.7)
+barplot(sizeFactors(cdsFilt), las=2, main="Filtered Size Factors", ylab="Size Factor", cex.names=0.7)
+
+cdsFilt <- estimateDispersions( cdsFilt )
+par(mfrow=c(1,2))
+plotDispEsts(cds, main="Total Dispersion Estimates")
+plotDispEsts(cdsFilt, main="Filtered Dispersion Estimates")
+
+acromegaly.results.filtered = nbinomTest( cdsFilt, "Control", "Acromegaly" )
+par(mfrow=c(1,2))
+plotMA(acromegaly.results, main="Total Acromegaly Results")
+plotMA(acromegaly.results.filtered, main="Filtered Acromegaly Results")
+write.csv(acromegaly.results.filtered, "../data/processed/acromegaly_deseq_results_filtered.csv")
+
+cushing.results.filtered = nbinomTest( cdsFilt, "Control", "Cushing's" )
+par(mfrow=c(1,2))
+plotMA(cushing.results, main="Total Cushing Results")
+plotMA(cushing.results.filtered, main="Filtered Cushing Results")
+write.csv(cushing.results.filtered, "../data/processed/cushing_deseq_results_filtered.csv")
+```
+
+Summary Analysis
+-------------------
+The following tables show the tested number of transcripts and d the number of FDR adjusted significantly different transcripts.
+
+```{r filtering results, echo=TRUE}
+#For Acromegaly, unfiltered
+table(acromegaly.results$padj < 0.05)
+#Filtered Acromegaly Data
+table(acromegaly.results.filtered$padj < 0.05)
+#For Cushing's, unfiltered
+table(cushing.results$padj < 0.05)
+#Filtered Data
+table(cushing.results.filtered$padj < 0.05)
+```
+
+Bibiography
+------------
+```{r bibliography, echo=FALSE, results='asis'}
+bibliography("html") 
+```
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```
+
