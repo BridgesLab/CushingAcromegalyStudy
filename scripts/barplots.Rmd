@@ -1,0 +1,165 @@
+Barplot Analysis of Acromegaly Results
+=======================================
+
+Used Analysed DESeq results.
+
+```{r file-input, echo=FALSE}
+working_directory <- '/Users/davebridges/Dropbox/endo 2013/analysis/code/raw_code'
+setwd(working_directory)
+filename <- "../../data/Normalized Counts Table.csv"
+normalized.data <- read.csv(filename, row.names='X')
+mapping <- read.csv("../../data/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+```
+
+The data used is present in **`r working_directory`** using the file **`r filename`**.  This file was most recently processed on ```r date()```.
+
+Normalization of Expression
+--------------------------------
+```{r normalization, echo=FALSE}
+genes.of.interest <- c("IGF1", "IGFBP3", "CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "MAPKAPK3", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1")
+library(biomaRt)
+ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+gene.data <- getBM(attributes=c('ensembl_transcript_id', 'hgnc_symbol'),
+                   filters = 'hgnc_symbol', values = genes.of.interest, mart = ensembl)
+```
+
+We examined the following genes: ```r genes.of.interest[order(genes.of.interest)]```, generating a total of **```r length(genes.of.interest)```** barplots.
+
+```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+library(reshape2)
+normalized.data$Transcript <- rownames(normalized.data)
+#melt the data, so that each transcript/sample has one value
+normalized.melted.data <- melt(normalized.data[gene.data$ensembl_transcript_id,], variable.name="samplename", id.vars="Transcript")
+#annotate that data frame with the gene name
+normalized.melted.data.full <- merge(normalized.melted.data, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+#annotate the data frame with the sample identification
+normalized.melted.data.annotated <- merge(normalized.melted.data.full, 
+                                          mapping)
+normalized.melted.data.annotated <- subset(normalized.melted.data.annotated, group != "Cushing's")
+library(plyr)
+summary <- ddply(normalized.melted.data.annotated, .(Transcript, group),
+                  summarise,
+                  mean=mean(value),
+                  se=sd(value)/sqrt(length(value)),
+                  number=length(value))
+summary <- merge(summary, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+
+for (gene in genes.of.interest) {
+  pdf(sprintf('../../figures/%s-barplot.pdf', gene))
+  summary.gene <- dcast(subset(summary, hgnc_symbol==gene),
+                  group~Transcript, 
+                  value.var="mean")
+  max <- max(subset(summary, hgnc_symbol==gene)$mean + subset(summary, hgnc_symbol==gene)$se)
+#  if(ncol(summary.gene) > 2){
+#      if(which.max(colMeans(summary.gene)) == 1) {
+#        max.transcript<- 2
+#      } else {
+#        max.transcript <- which.max(colMeans(summary.gene))+1
+#      }
+#        
+#    } else {
+#      max.transcript <- 2
+#      }
+  
+  max.transcript <- which.max(summary.gene[1,2:ncol(summary.gene)])+1
+  plot <- barplot(summary.gene[,max.transcript],
+                ylim=c(0,max),
+                ylab = "Reads Per Million Reads",
+                las=1,cex.axis=1,cex.names=1,
+                main=gene)
+  axis(1, at = c(0.75,1.9), labels = summary.gene$group, tick=FALSE)
+  superpose.eb(plot, 
+               summary.gene[,max.transcript], 
+               dcast(subset(summary, hgnc_symbol==gene), group~Transcript, value.var="se")[,max.transcript])
+  dev.off()
+}
+
+
+```
+
+```{r lipase-barplots, echo=FALSE}
+#missing lipb, fix showing acro/control
+lipases <- c("LIPE", "PNPLA2", "MGLL", "LPL", "LIPC", "PNLIP","LIPA", "LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
+lipase.data <- getBM(attributes=c('ensembl_transcript_id', 'hgnc_symbol'),
+                   filters = 'hgnc_symbol', values = lipases, mart = ensembl)
+lipase.length <- getBM(attributes=c('ensembl_transcript_id','cds_length'),
+                   filters = 'hgnc_symbol', values = lipases, mart = ensembl)
+merged.lipase.data <- merge(lipase.data, lipase.length)
+#melt the data, so that each transcript/sample has one value
+normalized.melted.lipase.data <- melt(as.data.frame(normalized.data[merged.lipase.data$ensembl_transcript_id,]), variable.name="samplename", id.vars="Transcript")
+#annotate that data frame with the gene name
+normalized.melted.lipase.data.full <- merge(normalized.melted.lipase.data, merged.lipase.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+#annotate the data frame with the sample identification
+normalized.melted.lipase.data.annotated <- merge(normalized.melted.lipase.data.full, 
+                                          mapping)
+normalized.melted.lipase.data.annotated <- subset(normalized.melted.lipase.data.annotated, group != "Cushing's")
+
+#normalized value by length
+normalized.melted.lipase.data.annotated$rpkm <- normalized.melted.lipase.data.annotated$value/normalized.melted.lipase.data.annotated$cds_length*1000
+#removed transcripts with unknown length
+normalized.melted.lipase.data.annotated <- normalized.melted.lipase.data.annotated[!(is.na(normalized.melted.lipase.data.annotated$rpkm)),]
+
+lipase.summary <- ddply(normalized.melted.lipase.data.annotated, .(Transcript, group),
+                  summarise,
+                  mean=mean(rpkm),
+                  se=sd(rpkm)/sqrt(length(rpkm)),
+                  number=length(rpkm))
+lipase.summary <- merge(lipase.summary, lipase.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+for (gene in lipases) {
+  pdf(sprintf('../../figures/lipase-%s-barplot.pdf', gene))
+  summary.gene <- dcast(subset(lipase.summary, hgnc_symbol==gene),
+                  group~Transcript, 
+                  value.var="mean")
+  max <- max(subset(lipase.summary, hgnc_symbol==gene)$mean + subset(lipase.summary, hgnc_symbol==gene)$se)
+  max.transcript <- which.max(summary.gene[1,2:ncol(summary.gene)])+1
+  plot <- barplot(summary.gene[,max.transcript],
+                ylim=c(0,max),
+                ylab = "mRNA Expression (RPKM)",
+                las=1,cex.axis=1,cex.names=1,
+                main=gene)
+  axis(1, at = c(0.75,1.9), labels = summary.gene$group, tick=FALSE)
+  superpose.eb(plot, 
+               summary.gene[,max.transcript], 
+               dcast(subset(lipase.summary, hgnc_symbol==gene), group~Transcript, value.var="se")[,max.transcript])
+  dev.off()
+}
+
+
+```
+
+Summarized Lipases
+---------------------
+```{r summarised-lipases, echo=F}
+max.lipase.expressors <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='mean')
+max.lipase.expressors.se <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='se')
+ordered.max.lipase.expressors <- max.lipase.expressors[with(max.lipase.expressors, order(-Control)), ]
+ordered.max.lipase.expressors.se <- max.lipase.expressors.se[with(max.lipase.expressors, order(-Control)), ]
+
+pdf('../../figures/all-lipases.pdf')
+plot <- barplot(as.matrix(t(ordered.max.lipase.expressors[,2:3])), beside=T,
+        names.arg=ordered.max.lipase.expressors$hgnc_symbol, las=2,
+        ylab="mRNA Expression (RPKM)",
+        ylim=c(0,17000),
+        main="Lipase Gene Expression in Human WAT")
+superpose.eb(plot, as.matrix(t(ordered.max.lipase.expressors[,2:3])), as.matrix(t(ordered.max.lipase.expressors.se[,2:3])))
+legend("topright", c("Control", "Acromegaly"), fill=grey.colors(2), bty="n")
+dev.off()
+```
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```
