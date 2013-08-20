@@ -1,0 +1,266 @@
+Analysis of Clinical Data for Acromegaly Patients
+=============================================================
+
+This file was last compiled on ```r date()```.
+
+Statistics
+-------------
+
+```{r data entry, echo=FALSE}
+data <- read.csv('../data/raw/patient_table.csv')
+#removed cushing data
+acromegaly.data <- subset(data, diagnosis %in% c("acromegaly", "non secreting adenoma"), drop=TRUE)
+#reset non secreting adenoma to 
+levels(acromegaly.data$diagnosis)[3] <- "Control"
+levels(acromegaly.data$diagnosis)[1] <- "Acromegaly"
+acromegaly.data$diagnosis <- relevel(acromegaly.data$diagnosis, ref = "Control")
+#set qualitative variables to logicals
+acromegaly.data$diabetes.diagnosis <- acromegaly.data$diabetes == "y"
+acromegaly.data$HTN.diagnosis <- acromegaly.data$HTN == "y"
+acromegaly.data$smoking.diagnosis <- acromegaly.data$smoking == "y"
+```
+
+This analysis included `r as.numeric(summary(acromegaly.data$diagnosis)[1])` controls and `r as.numeric(summary(acromegaly.data$diagnosis)[2])` acromegaly patients.
+
+```{r analysis, echo=FALSE}
+require(reshape2, quietly=T)
+require(plyr, quietly=T)
+
+melted.data.all <- melt(acromegaly.data, id.vars=c("id", "initials", "diagnosis"), na.rm=T, variable.name="measurement")
+melted.data <- subset(melted.data.all, !(measurement %in% c("HTN","diabetes","smoking","HTN.diagnosis","diabetes.diagnosis","smoking.diagnosis")))
+melted.data$value <- as.numeric(melted.data$value)
+melted.data <- droplevels(melted.data)
+se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
+
+#for glucose homeostatic measurements
+glucose.data.vars <- c("insulin", "glucose", "HOMA.IR")
+glucose.data <- subset(melted.data, measurement %in% glucose.data.vars)
+glucose.o1 <- ddply(glucose.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+glucose.o2 <- ddply(glucose.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+glucose.o1.mc <- dcast(melt(glucose.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+glucose.summary.table <- merge(glucose.o1.mc, glucose.o2)
+glucose.summary.table$padj <- p.adjust(glucose.summary.table$pval, method="BH")
+
+#for clinical measurements
+clinical.data.vars <- c("height", "weight", "age", "BMI", "abdominal.circumference")
+clinical.data <- subset(melted.data, measurement %in% clinical.data.vars)
+clinical.o1 <- ddply(clinical.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+clinical.o2 <- ddply(clinical.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+clinical.o1.mc <- dcast(melt(clinical.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+clinical.summary.table <- merge(clinical.o1.mc, clinical.o2)
+clinical.summary.table$padj <- p.adjust(clinical.summary.table$pval, method="BH")
+write.csv(clinical.summary.table, "../data/processed/clinical summary table.csv")
+
+#for lipidomics data
+lipid.data.vars <- c("Cer.C14", "Cer.C16", "Cer.C18", "Cer.C18.1", "Cer.C20", "Cer.C24", "Glu.Cer.C16", "Glu.Cer.C18", "Glu.Cer.C18.1")
+lipid.data <- subset(melted.data, measurement %in% lipid.data.vars)
+lipid.o1 <- ddply(lipid.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+lipid.o2 <- ddply(lipid.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+lipid.o1.mc <- dcast(melt(lipid.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+lipid.summary.table <- merge(lipid.o1.mc, lipid.o2)
+lipid.summary.table$padj <- p.adjust(lipid.summary.table$pval, method="BH")
+
+#for lipolysis measurements
+lipolysis.data.vars <- c("glycerol.no.tx","glycerol.insulin.2.nM","glycerol.iso.30.nM","glycerol.ins.iso","glycerol.ins.ctrl","glycerol.iso.ctrl","glycerol.ins.iso.iso","glycerol.ins.effect", "glycerol.iso.effect")
+lipolysis.data <- subset(melted.data, measurement %in% lipolysis.data.vars)
+lipolysis.o1 <- ddply(lipolysis.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+lipolysis.o2 <- ddply(lipolysis.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+lipolysis.o1.mc <- dcast(melt(lipolysis.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+lipolysis.summary.table <- merge(lipolysis.o1.mc, lipolysis.o2)
+lipolysis.summary.table$padj <- p.adjust(lipolysis.summary.table$pval, method="BH")
+
+#for all measurements
+all.o1 <- ddply(melted.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+all.o2 <- ddply(melted.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+all.o1.mc <- dcast(melt(all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+all.summary.table <- merge(all.o1.mc, all.o2)
+all.summary.table$padj <- p.adjust(all.summary.table$pval, method="BH")
+```
+
+```{r table, results='asis', echo=FALSE} 
+library(xtable) 
+print(xtable(glucose.summary.table), type='html') 
+print(xtable(clinical.summary.table), type='html') 
+print(xtable(lipid.summary.table), type='html') 
+print(xtable(lipolysis.summary.table), type='html') 
+print(xtable(all.summary.table), type='html') 
+``` 
+
+Graphs
+------
+
+## Barplots
+```{r barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+pdf("../figures/HOMA Barplot.pdf")
+#HOMA Score
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[2], Acromegaly_mean[2]),
+             names.arg=c("Control", "Acromegaly"),
+             main="HOMA Score",las=1,
+             ylim=c(0,11)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[2], Acromegaly_mean[2]), cbind(Control_se[2], Acromegaly_se[2])))
+dev.off()
+
+#Glucose
+pdf("../figures/Glucose Barplot.pdf")
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[1], Acromegaly_mean[1]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Fasting Blood Glucose",
+             ylab="Glucose (mg/dL)",las=1,
+             ylim=c(0,115)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[1], Acromegaly_mean[1]), cbind(Control_se[1], Acromegaly_se[1])))
+dev.off()
+
+#Insulin
+pdf("../figures/Insulin Barplot.pdf")
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[3], Acromegaly_mean[3]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Fasting Insulin",
+             ylab="Serum Insulin (pg/mL)",
+             las=1,
+             ylim=c(0,35)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[3], Acromegaly_mean[3]), cbind(Control_se[3], Acromegaly_se[3])))
+dev.off()
+
+#Lipolysis-Basal
+pdf("../figures/Basal Lipolysis Barplot.pdf")
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(Control_mean[7], Acromegaly_mean[7]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Basal Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,18)))
+with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[7], Acromegaly_mean[7]), cbind(Control_se[7], Acromegaly_se[7])))
+dev.off()
+
+#Lipolysis-Isoproterenol
+pdf("../figures/Isoproterenol Stimulated Lipolysis Barplot.pdf")
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(Control_mean[5], Acromegaly_mean[5]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Isoproternol Stimulated Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,30)))
+with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[5], Acromegaly_mean[5]), cbind(Control_se[5], Acromegaly_se[5])))
+dev.off()
+
+#clinical variables
+pdf('../figures/Clinical Barplots.pdf')
+par(mfrow=c(1,3))
+#Age
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[18], Acromegaly_mean[18]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Age",
+             ylab="Years",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,70)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[18], Acromegaly_mean[18]), cbind(Control_se[18], Acromegaly_se[18])))
+
+#height
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[28], Acromegaly_mean[28]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Height",
+             ylab="Height (cm)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,185)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[28], Acromegaly_mean[28]), cbind(Control_se[28], Acromegaly_se[28])))
+
+#tumor diameter
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[30], Acromegaly_mean[30]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Largest Tumor Diameter",
+             ylab="Diameter (mm)",
+             las=1,
+                          col=grey.colors(2)[2],
+             ylim=c(0,2.2)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[30], Acromegaly_mean[30]), cbind(Control_se[30], Acromegaly_se[30])))
+dev.off()
+
+#weight (kg), BMI (kg/m2), abdominal circumference (cm),
+#weight variables
+pdf('../figures/Weight Barplots.pdf')
+par(mfrow=c(1,3))
+#weight
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[31], Acromegaly_mean[31]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Weight",
+             ylab="Weight (kg)",
+             las=1,
+             col=grey.colors(2)[2],
+             ylim=c(0,115)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[31], Acromegaly_mean[31]), cbind(Control_se[31], Acromegaly_se[31])))
+
+#BMI
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[3], Acromegaly_mean[3]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Body Mass Index",
+             ylab="BMI (kg/cm2)",
+             las=1, col=grey.colors(2)[2],
+             ylim=c(0,35)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[3], Acromegaly_mean[3]), cbind(Control_se[3], Acromegaly_se[3])))
+
+#abdominal circuference
+plot <- with(all.summary.table, 
+     barplot(cbind(Control_mean[17], Acromegaly_mean[17]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Admdominal Circumference",
+             ylab="Circumference (cm)",
+             las=1, col=grey.colors(2)[2],
+             ylim=c(0,115)))
+with(all.summary.table, superpose.eb(plot, cbind(Control_mean[17], Acromegaly_mean[17]), cbind(Control_se[17], Acromegaly_se[17])))
+dev.off()
+```
+
+Correlation with BMI
+-----------------------
+
+```{r bmi-correction, echo=FALSE}
+bmi.lm <- lm(log(HOMA.IR)~BMI, data=acromegaly.data)
+bmi.diagnosis.lm <- lm(log(HOMA.IR)~BMI+diagnosis, data=acromegaly.data)
+bmi.diagnosis.interaction.lm <- lm(log(HOMA.IR)~BMI*diagnosis, data=acromegaly.data)
+```
+
+The BMI significantly correlated with the natural logarithm of the BMI (p=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$p.value`, r=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate`)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=`r anova(bmi.diagnosis.lm, bmi.diagnosis.interaction.lm)[2,6]`).
+
+```{r anova-table, results='asis', echo=FALSE} 
+print(xtable(bmi.diagnosis.lm), type='html') 
+print(xtable(exp(confint(bmi.diagnosis.lm))), type='html')
+``` 
+
+The results of this linear model are a significant main effect of both BMI (p=`r summary(bmi.diagnosis.lm)$coefficients[2,4]`) and the diagnosis (p=`r summary(bmi.diagnosis.lm)$coefficients[3,4]`) with a r-squared value of `r summary(bmi.diagnosis.lm)$r.squared`.  This corresponds to an effect size of `r exp(as.numeric(coef(bmi.diagnosis.lm)[3]))`.
+
+### Model Plot
+
+```{r correlation-plot}
+pdf('../figures/BMI-HOMA Correlation.pdf')
+with(acromegaly.data, plot(BMI, log(HOMA.IR),
+                           pch=19,las=1,
+    col=diagnosis, ylab='Log HOMA-IR Score', xlab="BMI (mg/kg2)"))
+legend("topleft", levels(acromegaly.data$diagnosis)[1:2], pch=19, bty="n", col=palette()[1:2], lty=1)
+with(acromegaly.data[acromegaly.data$diagnosis == "Control",], abline(lm(log(HOMA.IR)~BMI), col=palette()[1]))
+with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly",], abline(lm(log(HOMA.IR)~BMI), col=palette()[2]))
+dev.off()
+```
+### Model Diagnostics
+```{r, model-diagnostic-plots, echo=FALSE}
+par(mfrow=c(2,2))
+plot(bmi.diagnosis.lm)
+```
+Session Information
+-------------------
+```{r session-info}
+sessionInfo()
+```
