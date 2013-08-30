@@ -233,7 +233,7 @@ bmi.diagnosis.lm <- lm(log(HOMA.IR)~BMI+diagnosis, data=acromegaly.data)
 bmi.diagnosis.interaction.lm <- lm(log(HOMA.IR)~BMI*diagnosis, data=acromegaly.data)
 ```
 
-The BMI significantly correlated with the natural logarithm of the BMI (p=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$p.value`, r=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate`)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=`r anova(bmi.diagnosis.lm, bmi.diagnosis.interaction.lm)[2,6]`).
+The BMI significantly correlated with the natural logarithm of the BMI (p=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$p.value`, r=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate`, R2=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate^2`)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=`r anova(bmi.diagnosis.lm, bmi.diagnosis.interaction.lm)[2,6]`).
 
 ```{r anova-table, results='asis', echo=FALSE} 
 print(xtable(bmi.diagnosis.lm), type='html') 
