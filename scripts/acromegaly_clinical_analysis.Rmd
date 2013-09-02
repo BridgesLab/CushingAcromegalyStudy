@@ -259,6 +259,144 @@ dev.off()
 par(mfrow=c(2,2))
 plot(bmi.diagnosis.lm)
 ```
+
+Separation out of Outlier Data
+--------------------------------
+
+One subject was identified as an outlier based on the heatmap.  This was sample 12100, subject #1.
+
+```{r outlier-data, echo=FALSE}
+#for all measurements
+outlier.all.o1 <- ddply(melted.data[melted.data$id!='1',], .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+outlier.all.o2 <- ddply(melted.data[melted.data$id!='1',], .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+outlier.all.o1.mc <- dcast(melt(outlier.all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
+outlier.all.summary.table <- merge(outlier.all.o1.mc, all.o2)
+outlier.all.summary.table$padj <- p.adjust(outlier.all.summary.table$pval, method="BH")
+outlier.all.summary.table <- merge(
+  outlier.all.summary.table,
+  melted.data[melted.data$id=='1',c('measurement','value')],
+  all=F
+)
+```
+
+```{r outlier-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+
+pdf("../figures/HOMA Barplot - Outlier.pdf")
+#HOMA Score
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='HOMA.IR',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly", "Outlier"),
+             main="HOMA Score",las=1,
+             ylim=c(0,12)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='HOMA.IR',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+
+#Glucose
+pdf("../figures/Glucose Barplot - Outlier.pdf")
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glucose',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly", "Outlier"),
+             main="Fasting Blood Glucose",las=1,
+             ylab="Glucose (mg/dL)",
+             ylim=c(0,115)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glucose',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+
+#Insulin
+pdf("../figures/Insulin Barplot - Outlier.pdf")
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='insulin',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly", "Outlier"),
+             main="Fasting Insulin",
+             ylab="Serum Insulin (pg/mL)",
+             las=1,
+             ylim=c(0,38)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='insulin',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+
+#Lipolysis-Basal
+pdf("../figures/Basal Lipolysis Barplot - Outlier.pdf")
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glycerol.no.tx',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly", "Outlier"),
+             main="Basal Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,18)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glycerol.no.tx',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+
+#Lipolysis-Isoproterenol
+pdf("../figures/Isoproterenol Stimulated Lipolysis Barplot - Outlier.pdf")
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glycerol.iso.30.nM',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly", "Outlier"),
+             main="Isoproternol Stimulated Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,32)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glycerol.iso.30.nM',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+
+#clinical variables
+pdf('../figures/Clinical Barplots - Outlier.pdf')
+par(mfrow=c(1,2))
+#Age
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='age',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly","Outlier"),
+             main="Age",
+             ylab="Years",
+             las=2,
+             ylim=c(0,70)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='age',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+
+#height
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='height',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly","Outlier"),
+             main="Height",
+             ylab="Height (cm)",
+             las=2,
+             ylim=c(0,190)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='height',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+
+#weight (kg), BMI (kg/m2), abdominal circumference (cm),
+#weight variables
+pdf('../figures/Weight Barplots - Outlier.pdf')
+par(mfrow=c(1,3))
+#weight
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='weight',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly","Outlier"),
+             main="Weight",
+             ylab="Weight (kg)",
+             las=2,
+             ylim=c(0,120)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='weight',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+
+#BMI
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='BMI',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly","Outlier"),
+             main="Body Mass Index",
+             ylab="BMI (kg/cm2)",
+             las=2,
+             ylim=c(0,35)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='BMI',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean, value), cbind(Control_se, Acromegaly_se,0)))
+
+#abdominal circuference
+plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='abdominal.circumference',], 
+     barplot(cbind(Control_mean, Acromegaly_mean,value),
+             names.arg=c("Control", "Acromegaly","Outlier"),
+             main="Admdominal Circumference",
+             ylab="Circumference (cm)",
+             las=2,
+             ylim=c(0,115)))
+with(outlier.all.summary.table[outlier.all.summary.table$measurement=='abdominal.circumference',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
+dev.off()
+```
+
 Session Information
 -------------------
 ```{r session-info}

@@ -5,6 +5,10 @@ Statistics
 ----------
 
 ```{r data-entry, echo=FALSE}
+#for references
+require(knitcitations)
+bib <- read.bibtex("references.bib") #loads the bib file
+
 #load in the previously processed and annoted acromegaly analysis results
 analysis.file <- "../data/processed/Annotated DESeq Results - Acromegaly.csv"
 analysis.data <- read.csv(analysis.file)
@@ -21,12 +25,38 @@ diff.transcripts <- droplevels(subset(analysis.data, padj <= 0.05))
 ```
 This file was most recently processed on ```r date()```.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
 
+Data Clustering
+----------------
+The following is a cluster analysis of the scaled transcript counts.  This was done with bootstrap resampling of the normalized, scaled transcript counts using the **pvclust** package`r citep(bib['pvclust'])`). 
+
+```{r clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+#scaled the data
+scaled.sample.transcript.counts <- scale(transcript.counts)
+
+#cluster number determination (see http://www.statmethods.net/advstats/cluster.html)
+wss <- (nrow(scaled.sample.transcript.counts)-1)*sum(apply(scaled.sample.transcript.counts,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(scaled.sample.transcript.counts, 
+     centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares",
+     main="Cluster Number Determination (3)")
+
+library(pvclust)
+fit <- pvclust(scaled.sample.transcript.counts, method.hclust="ward",
+   method.dist="euclidean")
+plot(fit) # dendogram with p values
+# add rectangles around groups highly supported by the data
+pvrect(fit, alpha=.95)
+```
+
 
 Differentially Expressed Genes
 ----------------------------------
 
-```{r de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-mapping.filtered <- subset(mapping, samplename != 'sample12128')
+To test the grouping of differentially expressed transcripts, we only examined genes with significantly different transcripts based on DESeq analysis.
+
+```{r de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
+mapping.filtered <- mapping #subset(mapping, samplename != 'sample12128')
 #removed cushings samples
 filtered.transcript.counts <- droplevels(transcript.counts[,subset(mapping.filtered, group != "Cushing's")$samplename])
 
@@ -58,6 +88,12 @@ pdf('../figures/differential-expressor-heatmap.pdf')
 heatmap.colors <- brewer.pal(11, "BrBG")
 heatmap.2(log(as.matrix(diff.exprs.ordered.genes)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
 dev.off()
+```
+
+References
+-----------
+```{r bibliography, echo=FALSE, results='asis'}
+bibliography()
 ```
 
 Session Information
