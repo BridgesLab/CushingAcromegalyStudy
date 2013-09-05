@@ -267,14 +267,15 @@ One subject was identified as an outlier based on the heatmap.  This was sample 
 
 ```{r outlier-data, echo=FALSE}
 #for all measurements
-outlier.all.o1 <- ddply(melted.data[melted.data$id!='1',], .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-outlier.all.o2 <- ddply(melted.data[melted.data$id!='1',], .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+outlier_subject <- '1'
+outlier.all.o1 <- ddply(melted.data[melted.data$id!=outlier_subject,], .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+outlier.all.o2 <- ddply(melted.data[melted.data$id!=outlier_subject,], .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 outlier.all.o1.mc <- dcast(melt(outlier.all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
 outlier.all.summary.table <- merge(outlier.all.o1.mc, all.o2)
 outlier.all.summary.table$padj <- p.adjust(outlier.all.summary.table$pval, method="BH")
 outlier.all.summary.table <- merge(
   outlier.all.summary.table,
-  melted.data[melted.data$id=='1',c('measurement','value')],
+  melted.data[melted.data$id==outlier_subject,c('measurement','value')],
   all=F
 )
 ```
