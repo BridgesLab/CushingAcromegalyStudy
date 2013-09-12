@@ -267,7 +267,7 @@ One subject was identified as an outlier based on the heatmap.  This was sample 
 
 ```{r outlier-data, echo=FALSE}
 #for all measurements
-outlier_subject <- '1'
+outlier_subject <- '29'
 outlier.all.o1 <- ddply(melted.data[melted.data$id!=outlier_subject,], .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
 outlier.all.o2 <- ddply(melted.data[melted.data$id!=outlier_subject,], .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 outlier.all.o1.mc <- dcast(melt(outlier.all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
@@ -299,7 +299,7 @@ plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='g
              names.arg=c("Control", "Acromegaly", "Outlier"),
              main="Fasting Blood Glucose",las=1,
              ylab="Glucose (mg/dL)",
-             ylim=c(0,115)))
+             ylim=c(0,135)))
 with(outlier.all.summary.table[outlier.all.summary.table$measurement=='glucose',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
 dev.off()
 
@@ -383,7 +383,7 @@ plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='B
              main="Body Mass Index",
              ylab="BMI (kg/cm2)",
              las=2,
-             ylim=c(0,35)))
+             ylim=c(0,45)))
 with(outlier.all.summary.table[outlier.all.summary.table$measurement=='BMI',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean, value), cbind(Control_se, Acromegaly_se,0)))
 
 #abdominal circuference
