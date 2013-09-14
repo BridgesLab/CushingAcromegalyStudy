@@ -1,0 +1,187 @@
+DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
+===============================================================================
+
+```{r exclusion, echo=FALSE}
+remove_patient <- 29
+```
+
+The counts tables were generated previously using the **counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
+
+```{r loading-data, echo=FALSE, message=FALSE}
+#required packages
+library(DESeq ,quietly=TRUE) #for deseq analysis
+library(knitcitations) #for generation of citations
+write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
+bib <- read.bibtex("references.bib") #loads the bib file
+
+
+transcript.counts <- read.csv("../data/raw/transcript_counts_table.csv", row.names="X")
+#set the conditions
+mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == 29,]$samplename]
+```
+
+```{r cds-construction, echo=FALSE, message=FALSE}
+#this command matches the mappings to the transcript headers, and extracts the conditions
+conditions <- mapping[match(names(filtered.transcript.counts),filtered.mapping$samplename),]$group
+cds = newCountDataSet( filtered.transcript.counts, conditions )
+```
+
+These data were analysed in two ways by DESeq `r citep(bib[["DESeq"]])`.  The first way was to analyse normally.  The second way was to remove the lowest 40% of transcripts.  The removal of low-expressing, low-reliability transcripts allowed for a smaller penalty for multiple comparasons.
+
+
+Full Analysis
+--------------
+
+```{r deseq-analysis, echo=FALSE, message=FALSE}
+cds <- estimateSizeFactors(cds)
+cds <- estimateDispersions(cds)
+
+write.csv(counts( cds, normalized=TRUE ),'../data/processed/Normalized Counts Table No Outlier.csv')
+
+acromegaly.results = nbinomTest( cds, "Control", "Acromegaly" )
+write.csv(acromegaly.results, "../data/processed/acromegaly_deseq_results_no_outlier.csv")
+
+cushing.results = nbinomTest( cds, "Control", "Cushing's" )
+write.csv(cushing.results, "../data/processed/cushing_deseq_results_no_outlier.csv")
+```
+
+Expression Filtered Analysis
+-------------------------------
+This analysis removes the lowest 40% expressing transcripts.
+
+```{r data-table, results='asis'}
+library(xtable)
+print(xtable(as.data.frame(summary(filtered.mapping$group))), type='html')
+```
+
+```{r deseq-analysis-filtered, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+#first calculate rowsums
+rs = rowSums ( counts ( cds ))
+#filtered out the lowest 40% of expressors
+theta = 0.4
+use = (rs > quantile(rs, probs=theta))
+cdsFilt = cds[ use, ]
+cdsFilt <- estimateSizeFactors(cdsFilt)
+
+par(mfrow=c(1,2))
+barplot(sizeFactors(cds), las=2, main="Total Size Factors", ylab="Size Factor", cex.names=0.7)
+barplot(sizeFactors(cdsFilt), las=2, main="Filtered Size Factors", ylab="Size Factor", cex.names=0.7)
+
+cdsFilt <- estimateDispersions( cdsFilt )
+par(mfrow=c(1,2))
+plotDispEsts(cds, main="Total Dispersion Estimates")
+plotDispEsts(cdsFilt, main="Filtered Dispersion Estimates")
+
+acromegaly.results.filtered = nbinomTest( cdsFilt, "Control", "Acromegaly" )
+par(mfrow=c(1,2))
+plotMA(acromegaly.results, main="Total Acromegaly Results")
+plotMA(acromegaly.results.filtered, main="Filtered Acromegaly Results")
+write.csv(acromegaly.results.filtered, "../data/processed/acromegaly_deseq_results_filtered_no_outlier.csv")
+
+cushing.results.filtered = nbinomTest( cdsFilt, "Control", "Cushing's" )
+par(mfrow=c(1,2))
+plotMA(cushing.results, main="Total Cushing Results")
+plotMA(cushing.results.filtered, main="Filtered Cushing Results")
+write.csv(cushing.results.filtered, "../data/processed/cushing_deseq_results_filtered_no_outlier.csv")
+```
+
+Summary Analysis
+-------------------
+The following tables show the tested number of transcripts and d the number of FDR adjusted significantly different transcripts.
+
+```{r filtering results, echo=TRUE}
+#For Acromegaly, unfiltered
+table(acromegaly.results$padj < 0.05)
+#Filtered Acromegaly Data
+table(acromegaly.results.filtered$padj < 0.05)
+#For Cushing's, unfiltered
+table(cushing.results$padj < 0.05)
+#Filtered Data
+table(cushing.results.filtered$padj < 0.05)
+```
+
+Annotation
+-------------
+
+The annotated data is for just the filtered results, missing 
+
+```{r annotation, echo=FALSE, message=FALSE}
+#required packages
+library(knitcitations, quietly=TRUE) #for generation of citations
+library(biomaRt,quietly=TRUE)
+write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
+bib <- read.bibtex("references.bib") #loads the bib file
+#download gene name annotation data for results sets.
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('ensembl_transcript_id', 'ensembl_gene_id','external_gene_id'), 
+    values = 'ensembl_transcript_id',
+    mart=ensembl)
+#merge results files with transcript info files.
+annotated.cushing.results <- merge(cushing.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.acromegaly.results <- merge(acromegaly.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+#write annotated results files.
+write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results without Outlier - Cushing.csv")
+write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv")
+```
+
+The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
+
+Differentially Expressed Genes
+--------------------------------
+```{r differentially-expressed, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+acromegaly.diff.transcripts <- subset(annotated.acromegaly.results, padj <= 0.05) 
+with(acromegaly.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Acromegaly Patients"))
+acromegaly.up.transcripts <- subset(acromegaly.diff.transcripts, foldChange > 1)
+acromegaly.up.genes <- unique(acromegaly.up.transcripts$external_gene_id)
+write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes without Outlier.txt")
+
+acromegaly.down.transcripts <- subset(acromegaly.diff.transcripts, foldChange < 1)
+acromegaly.down.genes <- unique(acromegaly.down.transcripts$external_gene_id)
+write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes without Outlier.txt")
+
+cushing.diff.transcripts <- subset(annotated.cushing.results , padj <= 0.05) 
+with(cushing.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Cushing's Patients without Outlier"))
+cushing.up.transcripts <- subset(cushing.diff.transcripts, foldChange > 1)
+cushing.up.genes <- unique(cushing.up.transcripts$external_gene_id)
+write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated Genes without Outlier.txt")
+
+cushing.down.transcripts <- subset(cushing.diff.transcripts, foldChange < 1)
+cushing.down.genes <- unique(cushing.down.transcripts$external_gene_id)
+write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes without Outlier.txt")
+```
+
+### Acromegaly
+
+There were **`r dim(acromegaly.diff.transcripts)[1]`** differentially expressed transcripts from the acromegaly patients, with **`r table(acromegaly.diff.transcripts$log2FoldChange > 0)[1]`** transcripts downregulated and **`r table(acromegaly.diff.transcripts$log2FoldChange > 0)[2]`** transcripts upregulated.
+
+This corresponds to **`r length(acromegaly.up.genes)`** upregulated genes and **`r length(acromegaly.down.genes)`** downregulated genes.
+
+### Cushing's Disease
+
+There were **`r dim(cushing.diff.transcripts)[1]`** differentially expressed transcripts from the acromegaly patients, with **`r table(cushing.diff.transcripts$log2FoldChange > 0)[1]`** transcripts downregulated and **`r table(cushing.diff.transcripts$log2FoldChange > 0)[2]`** transcripts upregulated.
+
+This corresponds to **`r length(cushing.up.genes)`** upregulated genes and **`r length(cushing.down.genes)`** downregulated genes.
+
+
+Bibiography
+------------
+```{r bibliography, echo=FALSE, results='asis'}
+bibliography("html") 
+```
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```
+
