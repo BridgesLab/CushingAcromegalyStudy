@@ -2,7 +2,7 @@ GOSeq of DESeq Data for Acromegaly and Cushing's Patients
 =============================================================
 
 
-This analysis removes the lowest 40% expressed transcripts, and also removes the data from patient 29.  This script was most recently run on Tue Sep 17 08:47:26 2013.
+This analysis removes the lowest 40% expressed transcripts, and also removes the data from patient 29.  This script was most recently run on Tue Sep 17 09:41:09 2013.
 
 
 
@@ -35,7 +35,7 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
 
 ### Cushing Significant Processes
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 17 08:48:50 2013 -->
+<!-- Tue Sep 17 09:42:34 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Biological Processes Enriched in Cushing Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
@@ -86,7 +86,7 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
   <TR> <TD align="right"> 26852 </TD> <TD> GO:1901698 </TD> <TD align="right"> 11 </TD> <TD align="right"> 497 </TD> <TD align="right"> 0.00912 </TD> <TD> response to nitrogen compound </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 17 08:48:50 2013 -->
+<!-- Tue Sep 17 09:42:34 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Molecular Functions Enriched in Cushing Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
@@ -97,7 +97,7 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
   <TR> <TD align="right"> 9723 </TD> <TD> GO:0032393 </TD> <TD align="right"> 7 </TD> <TD align="right"> 59 </TD> <TD align="right"> 0.00002 </TD> <TD> MHC class I receptor activity </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 17 08:48:50 2013 -->
+<!-- Tue Sep 17 09:42:34 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> KEGG Pathways Enriched in Cushing Patientes </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> path_name </TH>  </TR>
@@ -116,7 +116,7 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
 
 ### Acromegaly Significant Processes
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 17 08:48:50 2013 -->
+<!-- Tue Sep 17 09:42:34 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Biological Processes Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
@@ -135,7 +135,7 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
   <TR> <TD align="right"> 19110 </TD> <TD> GO:0050673 </TD> <TD align="right"> 10 </TD> <TD align="right"> 182 </TD> <TD align="right"> 0.01160 </TD> <TD> epithelial cell proliferation </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 17 08:48:50 2013 -->
+<!-- Tue Sep 17 09:42:34 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Molecular Functions Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>

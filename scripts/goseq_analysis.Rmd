@@ -2,7 +2,7 @@ GOSeq of DESeq Data for Acromegaly and Cushing's Patients
 =============================================================
 
 
-This analysis removes the lowest 40% expressed transcripts.  This script was most recently run on `r date()`.
+This analysis removes the lowest 40% expressed transcripts, and also removes the data from patient 29.  This script was most recently run on `r date()`.
 
 
 ```{r goseq-setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -11,9 +11,9 @@ library(goseq, quietly=TRUE)
 library(GO.db, quietly=TRUE)
 library(KEGG.db, quietly=TRUE)
 write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
-bib <- read.bibtex("references.bib") #loads the bib file
-acromegaly.data <- read.csv('../data/processed//Annotated DESeq Results - Acromegaly.csv', row.names='id')
-cushing.data <- read.csv('../data/processed/Annotated DESeq Results - Cushing.csv', row.names='id')
+bib <- read.bibtex("../references.bib") #loads the bib file
+acromegaly.data <- read.csv('../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv', row.names='id')
+cushing.data <- read.csv('../data/processed/Annotated DESeq Results without Outlier - Cushing.csv', row.names='id')
 
 acromegaly.genes=as.integer(acromegaly.data$padj<.05)
 names(acromegaly.genes) = acromegaly.data$ensembl_gene_id
@@ -31,7 +31,7 @@ analysed.genes.cushing <- ordered.cushing.genes[unique(names(ordered.cushing.gen
 ```
 
 To analyse these, we used the goseq package `r citep(bib[[c("goseq")]])`, using the wallenius approximation to determine
-significantly enriched GO `r citep("10.1038/75556")` or KEGG `r citep("10.1093/nar/gkr988")` terms.  Results were annotated using `r citep(bib[[c("GO.db")]])` and `r citep(bib[[c("KEGG.db")]])`
+significantly enriched GO `r citep("10.1038/75556")` or KEGG `r citep("10.1093/nar/gkr988")` terms.  
 
 This analysis included the `r table(cushing.data$padj<.05)[2]` significant cushing transcripts (`r length(unique(cushing.data[cushing.data$padj<.05,]$external_gene_id))` genes) and the `r table(acromegaly.data$padj<.05)[2]` significant acromegaly transcripts (`r length(unique(acromegaly.data[acromegaly.data$padj<.05,]$external_gene_id))` genes).
 
@@ -88,12 +88,15 @@ For acromegaly, we found `r dim(annotated.GO.acromegaly.mf.unique[annotated.GO.a
 ### Cushing Significant Processes
 ```{r data-table-cushing, ,echo=FALSE, results='asis'}
 library(xtable)
-print(xtable(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,]), type='html')
+print(xtable(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Cushing Patients"), type='html')
+print(xtable(annotated.GO.cushing.mf.unique[annotated.GO.cushing.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Cushing Patients"), type='html')
+print(xtable(annotated.GO.cushing.kegg.unique[annotated.GO.cushing.kegg.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="KEGG Pathways Enriched in Cushing Patientes"), type='html')
 ```
 
 ### Acromegaly Significant Processes
 ```{r data-table-acromegaly, ,echo=FALSE, results='asis'}
-print(xtable(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,]), type='html')
+print(xtable(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Acromegaly Patients"), type='html')
+print(xtable(annotated.GO.acromegaly.mf.unique[annotated.GO.acromegaly.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Acromegaly Patients"), type='html')
 ```
 
 Bibiography
