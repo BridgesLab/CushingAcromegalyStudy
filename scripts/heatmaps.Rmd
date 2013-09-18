@@ -10,7 +10,7 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/Annotated DESeq Results - Acromegaly.csv"
+analysis.file <- "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv"
 analysis.data <- read.csv(analysis.file)
 transcripts.file <- "../data/processed/Normalized Counts Table.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
@@ -19,6 +19,9 @@ mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == 29,]$samplename]
 
 #subset out differentially expressed transcripts
 diff.transcripts <- droplevels(subset(analysis.data, padj <= 0.05))
@@ -29,9 +32,9 @@ Data Clustering
 ----------------
 The following is a cluster analysis of the scaled transcript counts.  This was done with bootstrap resampling of the normalized, scaled transcript counts using the **pvclust** package`r citep(bib['pvclust'])`). 
 
-```{r clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+```{clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
 #scaled the data
-scaled.sample.transcript.counts <- scale(transcript.counts)
+scaled.sample.transcript.counts <- scale(filtered.transcript.counts)
 
 #cluster number determination (see http://www.statmethods.net/advstats/cluster.html)
 wss <- (nrow(scaled.sample.transcript.counts)-1)*sum(apply(scaled.sample.transcript.counts,2,var))
@@ -56,13 +59,11 @@ Differentially Expressed Genes
 To test the grouping of differentially expressed transcripts, we only examined genes with significantly different transcripts based on DESeq analysis.
 
 ```{r de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
-mapping.filtered <- mapping #subset(mapping, samplename != 'sample12128')
-#removed cushings samples
-filtered.transcript.counts <- droplevels(transcript.counts[,subset(mapping.filtered, group != "Cushing's")$samplename])
 
 #subset for differenially expressed transcripts
 differential.transcripts <- diff.transcripts$id
 diff.exprs <- filtered.transcript.counts[as.character(differential.transcripts),]
+
 #reordered based on fold change
 ordered.transcripts <- diff.transcripts[order(diff.transcripts$foldChange),]
 diff.exprs.ordered <- diff.exprs[as.character(ordered.transcripts$id),]
@@ -76,17 +77,20 @@ library(RColorBrewer,quietly=TRUE)
 bars <- brewer.pal(2, "Set1")
 color.map <- function(x) { if (x=="Acromegaly") bars[1] else bars[2] }
 
-mapping.acromegaly <- subset(mapping.filtered, group != "Cushing's")
+mapping.acromegaly <- subset(filtered.mapping, group != "Cushing's")
 diagnosis.colors <- sapply(mapping.acromegaly[order(match(mapping.acromegaly$samplename,colnames(diff.exprs))),]$group, FUN=color.map)
 
-plot(as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.ordered)))))))
+#remove cushing samples
+diff.exprs.acromegaly <- diff.exprs.ordered.genes[,colnames(diff.exprs.ordered.genes) %in% mapping.acromegaly$samplename]
+
+plot(as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.acromegaly)))))))
 heatmap.colors <- brewer.pal(11, "BrBG")
-heatmap.2(log(as.matrix(diff.exprs.ordered.genes)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
+heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
 
 #write it out to a final figure as well
 pdf('../figures/differential-expressor-heatmap.pdf')
 heatmap.colors <- brewer.pal(11, "BrBG")
-heatmap.2(log(as.matrix(diff.exprs.ordered.genes)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
+heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
 dev.off()
 ```
 

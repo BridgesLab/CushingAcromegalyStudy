@@ -15,35 +15,31 @@ Statistics
 ## cite
 ```
 
-This file was most recently processed on ``Wed Sep  4 11:58:34 2013``.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
+This file was most recently processed on ``Wed Sep 18 08:05:46 2013``.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
 
 Data Clustering
 ----------------
 The following is a cluster analysis of the scaled transcript counts.  This was done with bootstrap resampling of the normalized, scaled transcript counts using the **pvclust** package(<a href="http://CRAN.R-project.org/package=pvclust">Suzuki & Shimodaira, 2011</a>)). 
 
+```{clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+#scaled the data
+scaled.sample.transcript.counts <- scale(filtered.transcript.counts)
 
+#cluster number determination (see http://www.statmethods.net/advstats/cluster.html)
+wss <- (nrow(scaled.sample.transcript.counts)-1)*sum(apply(scaled.sample.transcript.counts,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(scaled.sample.transcript.counts, 
+     centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares",
+     main="Cluster Number Determination (3)")
+
+library(pvclust)
+fit <- pvclust(scaled.sample.transcript.counts, method.hclust="ward",
+   method.dist="euclidean")
+plot(fit) # dendogram with p values
+# add rectangles around groups highly supported by the data
+pvrect(fit, alpha=.95)
 ```
-## Warning: did not converge in 10 iterations Warning: did not converge in 10
-## iterations Warning: did not converge in 10 iterations
-```
-
-![plot of chunk clustering](figure/clustering1.png) 
-
-```
-## Bootstrap (r = 0.5)... Done.
-## Bootstrap (r = 0.6)... Done.
-## Bootstrap (r = 0.7)... Done.
-## Bootstrap (r = 0.8)... Done.
-## Bootstrap (r = 0.9)... Done.
-## Bootstrap (r = 1.0)... Done.
-## Bootstrap (r = 1.1)... Done.
-## Bootstrap (r = 1.2)... Done.
-## Bootstrap (r = 1.3)... Done.
-## Bootstrap (r = 1.4)... Done.
-```
-
-![plot of chunk clustering](figure/clustering2.png) 
-
 
 
 Differentially Expressed Genes
@@ -112,8 +108,8 @@ sessionInfo()
 ## other attached packages:
 ##  [1] RColorBrewer_1.0-5  gplots_2.11.3       MASS_7.3-28        
 ##  [4] KernSmooth_2.23-10  caTools_1.14        gdata_2.13.2       
-##  [7] gtools_3.0.0        pvclust_1.2-2       knitcitations_0.5-0
-## [10] bibtex_0.3-6        knitr_1.4          
+##  [7] gtools_3.0.0        knitcitations_0.5-0 bibtex_0.3-6       
+## [10] knitr_1.4          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-5   digest_0.6.3   evaluate_0.4.7 formatR_0.9   
