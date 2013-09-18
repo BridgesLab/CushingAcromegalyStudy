@@ -4,17 +4,18 @@ Barplot Analysis of Acromegaly Results
 Used Analysed DESeq results.
 
 ```{r file-input, echo=FALSE}
-working_directory <- '/Users/davebridges/Dropbox/endo 2013/analysis/code/raw_code'
-setwd(working_directory)
-filename <- "../../data/Normalized Counts Table.csv"
+filename <- "../data/processed/Normalized Counts Table.csv"
 normalized.data <- read.csv(filename, row.names='X')
-mapping <- read.csv("../../data/patient_sample_mapping.csv")
+mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+filtered.normalized.data <- normalized.data[,colnames(normalized.data ) != mapping[mapping$patient.. == 29,]$samplename]
 ```
 
-The data used is present in **`r working_directory`** using the file **`r filename`**.  This file was most recently processed on ```r date()```.
+The data used is in the file **`r filename`**.  This file was most recently processed on ```r date()```.
 
 Normalization of Expression
 --------------------------------
@@ -30,11 +31,11 @@ We examined the following genes: ```r genes.of.interest[order(genes.of.interest)
 
 ```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
 library(reshape2)
-normalized.data$Transcript <- rownames(normalized.data)
+filtered.normalized.data$Transcript <- rownames(filtered.normalized.data)
 #melt the data, so that each transcript/sample has one value
-normalized.melted.data <- melt(normalized.data[gene.data$ensembl_transcript_id,], variable.name="samplename", id.vars="Transcript")
+filtered.normalized.melted.data <- melt(filtered.normalized.data[gene.data$ensembl_transcript_id,], variable.name="samplename", id.vars="Transcript")
 #annotate that data frame with the gene name
-normalized.melted.data.full <- merge(normalized.melted.data, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+normalized.melted.data.full <- merge(filtered.normalized.melted.data, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
 #annotate the data frame with the sample identification
 normalized.melted.data.annotated <- merge(normalized.melted.data.full, 
                                           mapping)
@@ -52,7 +53,7 @@ length = length, ...)
 
 
 for (gene in genes.of.interest) {
-  pdf(sprintf('../../figures/%s-barplot.pdf', gene))
+  pdf(sprintf('../figures/%s-barplot.pdf', gene))
   summary.gene <- dcast(subset(summary, hgnc_symbol==gene),
                   group~Transcript, 
                   value.var="mean")
@@ -93,7 +94,7 @@ lipase.length <- getBM(attributes=c('ensembl_transcript_id','cds_length'),
                    filters = 'hgnc_symbol', values = lipases, mart = ensembl)
 merged.lipase.data <- merge(lipase.data, lipase.length)
 #melt the data, so that each transcript/sample has one value
-normalized.melted.lipase.data <- melt(as.data.frame(normalized.data[merged.lipase.data$ensembl_transcript_id,]), variable.name="samplename", id.vars="Transcript")
+normalized.melted.lipase.data <- melt(as.data.frame(filtered.normalized.data[merged.lipase.data$ensembl_transcript_id,]), variable.name="samplename", id.vars="Transcript")
 #annotate that data frame with the gene name
 normalized.melted.lipase.data.full <- merge(normalized.melted.lipase.data, merged.lipase.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
 #annotate the data frame with the sample identification
@@ -117,7 +118,7 @@ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
 
 for (gene in lipases) {
-  pdf(sprintf('../../figures/lipase-%s-barplot.pdf', gene))
+  pdf(sprintf('../figures/lipase-%s-barplot.pdf', gene))
   summary.gene <- dcast(subset(lipase.summary, hgnc_symbol==gene),
                   group~Transcript, 
                   value.var="mean")
@@ -146,7 +147,7 @@ max.lipase.expressors.se <- dcast(lipase.summary, hgnc_symbol~group, function(x)
 ordered.max.lipase.expressors <- max.lipase.expressors[with(max.lipase.expressors, order(-Control)), ]
 ordered.max.lipase.expressors.se <- max.lipase.expressors.se[with(max.lipase.expressors, order(-Control)), ]
 
-pdf('../../figures/all-lipases.pdf')
+pdf('../figures/all-lipases.pdf')
 plot <- barplot(as.matrix(t(ordered.max.lipase.expressors[,2:3])), beside=T,
         names.arg=ordered.max.lipase.expressors$hgnc_symbol, las=2,
         ylab="mRNA Expression (RPKM)",
