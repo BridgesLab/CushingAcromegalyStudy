@@ -81,7 +81,7 @@ all.summary.table$padj <- p.adjust(all.summary.table$pval, method="BH")
 
 ```{r table, results='asis', echo=FALSE} 
 library(xtable) 
-print(xtable(glucose.summary.table), type='html') 
+print(xtable(glucose.summary.table, type='html') 
 print(xtable(clinical.summary.table), type='html') 
 print(xtable(lipid.summary.table), type='html') 
 print(xtable(lipolysis.summary.table), type='html') 
@@ -152,6 +152,21 @@ plot <- with(lipolysis.summary.table,
              las=1,
              ylim=c(0,30)))
 with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[5], Acromegaly_mean[5]), cbind(Control_se[5], Acromegaly_se[5])))
+dev.off()
+
+pdf("../figures/Combined Lipolysis Barplot.pdf")
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(rbind(Control_mean[7], Acromegaly_mean[7]),rbind(Control_mean[5], Acromegaly_mean[5])),
+             names.arg=c("Basal","Isoproterenol"), 
+             main="Lipolysis",
+             beside=T,
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,30)))
+with(lipolysis.summary.table, superpose.eb(plot, 
+    cbind(rbind(Control_mean[7], Acromegaly_mean[7]),rbind(Control_mean[5], Acromegaly_mean[5])),
+    cbind(rbind(Control_se[7], Acromegaly_se[7]),rbind(Control_se[5], Acromegaly_se[5]))))
+legend("topleft", c("Control", "Acromegaly"), fill=grey.colors(2), bty="n")
 dev.off()
 
 #clinical variables
