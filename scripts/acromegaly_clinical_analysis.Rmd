@@ -20,7 +20,7 @@ acromegaly.data$HTN.diagnosis <- acromegaly.data$HTN == "y"
 acromegaly.data$smoking.diagnosis <- acromegaly.data$smoking == "y"
 ```
 
-This analysis included `r as.numeric(summary(acromegaly.data$diagnosis)[1])` controls and `r as.numeric(summary(acromegaly.data$diagnosis)[2])` acromegaly patients.
+This analysis included `r as.numeric(summary(acromegaly.data$diagnosis)[1])-1` controls and `r as.numeric(summary(acromegaly.data$diagnosis)[2])` acromegaly patients.
 
 ```{r analysis, echo=FALSE}
 require(reshape2, quietly=T)
@@ -29,12 +29,14 @@ require(plyr, quietly=T)
 melted.data.all <- melt(acromegaly.data, id.vars=c("id", "initials", "diagnosis"), na.rm=T, variable.name="measurement")
 melted.data <- subset(melted.data.all, !(measurement %in% c("HTN","diabetes","smoking","HTN.diagnosis","diabetes.diagnosis","smoking.diagnosis")))
 melted.data$value <- as.numeric(melted.data$value)
-melted.data <- droplevels(melted.data)
+#removed outlier subject 29
+melted.data.used <- subset(melted.data, id!='29')
+melted.data.used <- droplevels(melted.data.used)
 se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
 
 #for glucose homeostatic measurements
 glucose.data.vars <- c("insulin", "glucose", "HOMA.IR")
-glucose.data <- subset(melted.data, measurement %in% glucose.data.vars)
+glucose.data <- subset(melted.data.used, measurement %in% glucose.data.vars)
 glucose.o1 <- ddply(glucose.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
 glucose.o2 <- ddply(glucose.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 glucose.o1.mc <- dcast(melt(glucose.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
@@ -43,7 +45,7 @@ glucose.summary.table$padj <- p.adjust(glucose.summary.table$pval, method="BH")
 
 #for clinical measurements
 clinical.data.vars <- c("height", "weight", "age", "BMI", "abdominal.circumference")
-clinical.data <- subset(melted.data, measurement %in% clinical.data.vars)
+clinical.data <- subset(melted.data.used, measurement %in% clinical.data.vars)
 clinical.o1 <- ddply(clinical.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
 clinical.o2 <- ddply(clinical.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 clinical.o1.mc <- dcast(melt(clinical.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
@@ -53,7 +55,7 @@ write.csv(clinical.summary.table, "../data/processed/clinical summary table.csv"
 
 #for lipidomics data
 lipid.data.vars <- c("Cer.C14", "Cer.C16", "Cer.C18", "Cer.C18.1", "Cer.C20", "Cer.C24", "Glu.Cer.C16", "Glu.Cer.C18", "Glu.Cer.C18.1")
-lipid.data <- subset(melted.data, measurement %in% lipid.data.vars)
+lipid.data <- subset(melted.data.used, measurement %in% lipid.data.vars)
 lipid.o1 <- ddply(lipid.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
 lipid.o2 <- ddply(lipid.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 lipid.o1.mc <- dcast(melt(lipid.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
@@ -62,7 +64,7 @@ lipid.summary.table$padj <- p.adjust(lipid.summary.table$pval, method="BH")
 
 #for lipolysis measurements
 lipolysis.data.vars <- c("glycerol.no.tx","glycerol.insulin.2.nM","glycerol.iso.30.nM","glycerol.ins.iso","glycerol.ins.ctrl","glycerol.iso.ctrl","glycerol.ins.iso.iso","glycerol.ins.effect", "glycerol.iso.effect")
-lipolysis.data <- subset(melted.data, measurement %in% lipolysis.data.vars)
+lipolysis.data <- subset(melted.data.used, measurement %in% lipolysis.data.vars)
 lipolysis.o1 <- ddply(lipolysis.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
 lipolysis.o2 <- ddply(lipolysis.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 lipolysis.o1.mc <- dcast(melt(lipolysis.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
@@ -70,8 +72,8 @@ lipolysis.summary.table <- merge(lipolysis.o1.mc, lipolysis.o2)
 lipolysis.summary.table$padj <- p.adjust(lipolysis.summary.table$pval, method="BH")
 
 #for all measurements
-all.o1 <- ddply(melted.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-all.o2 <- ddply(melted.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+all.o1 <- ddply(melted.data.used, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
+all.o2 <- ddply(melted.data.used, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
 all.o1.mc <- dcast(melt(all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
 all.summary.table <- merge(all.o1.mc, all.o2)
 all.summary.table$padj <- p.adjust(all.summary.table$pval, method="BH")
@@ -263,7 +265,7 @@ plot(bmi.diagnosis.lm)
 Separation out of Outlier Data
 --------------------------------
 
-One subject was identified as an outlier based on the heatmap.  This was sample 12100, subject #1.
+One subject was identified as an outlier based on the heatmap.  This was sample 12100, subject #29.
 
 ```{r outlier-data, echo=FALSE}
 #for all measurements
