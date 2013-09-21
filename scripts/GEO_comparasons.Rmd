@@ -9,7 +9,7 @@ This analysis removed the lowest 40% expressed transcripts.  This script was mos
 #for references
 library(devtools)
 require(knitcitations)
-acromegaly.data <- read.csv('../data/processed/Annotated DESeq Results - Acromegaly.csv', row.names='id')
+acromegaly.data <- read.csv('../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv', row.names='id')
 ```
 
 Huo et al Dataset

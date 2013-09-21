@@ -2,7 +2,7 @@ Comparason of Data from our Study with GEO Deposited Data
 =============================================================
 
 
-This analysis removed the lowest 40% expressed transcripts.  This script was most recently run on Sun Sep  1 11:21:13 2013.  
+This analysis removed the lowest 40% expressed transcripts.  This script was most recently run on Sat Sep 21 08:40:31 2013.  
 
 
 
@@ -18,16 +18,16 @@ The authors in <a href="http://dx.doi.org/10.1074/jbc.M508492200">Huo (2006)</a>
 
 ### Upregulated Genes
 
-Of the 158 significantly upregulated genes on the chip, 56 had identifiable human homologs, of which there were 75 probes.  These genes were on average **upregulated** to 1.313 of their original control levels.  The p-value that these genes are upregulated is 0.0013.  Of these 75 mouse genes that had probes, 43 were upregulated.  Specifically, these genes were GGCT, ABHD5, ESR1, ORC2, PPP3R1, GAB1, MYEF2, IGFBP3, TCF7L2, SIDT2, WDR92, SERPINI1, CYB5A, MAPRE2, PTGER3, IGF1, GPM6B, CAPN6, AK4, UGP2, SOCS2, CCNG1, PLD1, CISH, GNAI1, PLAGL1, FMO1, STAT4, BMP5, SCP2, EPHX2
+Of the 124 significantly upregulated genes on the chip, 45 had identifiable human homologs, of which there were 62 probes.  These genes were on average **upregulated** to 1.199 of their original control levels.  The p-value that these genes are upregulated is 0.0364.  Of these 62 mouse genes that had probes, 32 were upregulated.  Specifically, these genes were ABHD5, ESR1, ORC2, MYEF2, IGFBP3, TCF7L2, SIDT2, SERPINI1, CYB5A, PTGER3, IGF1, CAPN6, AK4, UGP2, CCNG1, GNAI1, PLAGL1, FMO1, STAT4, BMP5, SCP2, EPHX2
 
 ### Downregulated Genes
 
-Of the 44 significantly downregulated genes, 13 had identifiable human homologs on that array chip, of which there were 15 probes.  These genes were on average **downregulated** to 0.9006 of their original control levels.  The p-value that these genes are downregulated is 0.1945.  Of these 15 mouse genes that had probes, 6 were downregulated.  Specifically, these genes were TUBA4A, RDH5, CDKN2B, FOS, GAS6, RASA3.
+Of the 33 significantly downregulated genes, 10 had identifiable human homologs on that array chip, of which there were 12 probes.  These genes were on average **downregulated** to 0.9147 of their original control levels.  The p-value that these genes are downregulated is 0.1414.  Of these 12 mouse genes that had probes, 4 were downregulated.  Specifically, these genes were TUBA4A, RDH5, CDKN2B, RASA3.
 
 ### Enrichment Testing
-We found 202 significantly different genes in the acromegaly study.  Our re-analysis of the growth hormone study found 560 differentially expressed genes.  That corresponds to 6.0929% of the genes are different.  Out of those genes, 419 map to human homologs.  Out of the transcripts mapped to those genes, 86 out of 2372 (or 3.6256%)` were significantly different in the acromegaly data, so there was no enrichment.
+We found 157 significantly different genes in the acromegaly study.  Our re-analysis of the growth hormone study found 560 differentially expressed genes.  That corresponds to 6.0929% of the genes are different.  Out of those genes, 432 map to human homologs.  Out of the transcripts mapped to those genes, 62 out of 2394 (or 2.5898%)` were significantly different in the acromegaly data, so there was no enrichment.
 
-Done the other way, we found 202 significantly different acromegaly genes out of a total of 20848 genes tested (or 0.9689%).  Out of these 202 genes, 69 have mouse homologs, and 88 probes in this dataset.  From these probes, 18 were significant (or 19.2247%).  Therefore the genes from the acromegaly dataset are enriched in the growth hormone treated dataset (p=1.95 &times; 10<sup>-7</sup>).  The genes which were significant in both datasets were Cish, Pld1, Fmo1, Phldb2, Igsf10, Ccng1, Wisp2, Ggct, Igfbp3, Igf1, Scd2, Scp2, Ptger3, Capn6, Socs2
+Done the other way, we found 157 significantly different acromegaly genes out of a total of 20841 genes tested (or 0.7533%).  Out of these 157 genes, 55 have mouse homologs, and 72 probes in this dataset.  From these probes, 12 were significant (or 15.4384%).  Therefore the genes from the acromegaly dataset are enriched in the growth hormone treated dataset (p=1.6104 &times; 10<sup>-4</sup>).  The genes which were significant in both datasets were Fmo1, Phldb2, Igsf10, Ccng1, Igfbp3, Igf1, Scd2, Scp2, Ptger3, Capn6
 
 References
 -----------
