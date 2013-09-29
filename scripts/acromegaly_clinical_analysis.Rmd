@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ```r date()```.
+This file was last compiled on ```r date()```.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -81,11 +81,11 @@ all.summary.table$padj <- p.adjust(all.summary.table$pval, method="BH")
 
 ```{r table, results='asis', echo=FALSE} 
 library(xtable) 
-print(xtable(glucose.summary.table, type='html') 
-print(xtable(clinical.summary.table), type='html') 
-print(xtable(lipid.summary.table), type='html') 
-print(xtable(lipolysis.summary.table), type='html') 
-print(xtable(all.summary.table), type='html') 
+print(xtable(glucose.summary.table, digits=c(rep(1,6),5,5)), type='html') 
+print(xtable(clinical.summary.table, digits=c(rep(1,6),5,5)), type='html') 
+print(xtable(lipid.summary.table, digits=c(rep(1,6),5,5)), type='html') 
+print(xtable(lipolysis.summary.table, digits=c(rep(1,6),5,5)), type='html') 
+print(xtable(all.summary.table, digits=c(rep(1,6),5,5)), type='html') 
 ``` 
 
 Graphs
@@ -245,19 +245,19 @@ Correlation with BMI
 -----------------------
 
 ```{r bmi-correction, echo=FALSE}
-bmi.lm <- lm(log(HOMA.IR)~BMI, data=acromegaly.data)
-bmi.diagnosis.lm <- lm(log(HOMA.IR)~BMI+diagnosis, data=acromegaly.data)
-bmi.diagnosis.interaction.lm <- lm(log(HOMA.IR)~BMI*diagnosis, data=acromegaly.data)
+bmi.lm <- lm(log(HOMA.IR)~BMI, data=acromegaly.data[acromegaly.data$id!='29',])
+bmi.diagnosis.lm <- lm(log(HOMA.IR)~BMI+diagnosis, data=acromegaly.data[acromegaly.data$id!='29',])
+bmi.diagnosis.interaction.lm <- lm(log(HOMA.IR)~BMI*diagnosis, data=acromegaly.data[acromegaly.data$id!='29',])
 ```
 
-The BMI significantly correlated with the natural logarithm of the BMI (p=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$p.value`, r=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate`, R2=`r with(acromegaly.data, cor.test(log(HOMA.IR), BMI))$estimate^2`)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=`r anova(bmi.diagnosis.lm, bmi.diagnosis.interaction.lm)[2,6]`).
+The BMI significantly correlated with the natural logarithm of the BMI (p=`r with(acromegaly.data[acromegaly.data$id!='29',], cor.test(log(HOMA.IR), BMI))$p.value`, r=`r with(acromegaly.data[acromegaly.data$id!='29',], cor.test(log(HOMA.IR), BMI))$estimate`, R2=`r with(acromegaly.data[acromegaly.data$id!='29',], cor.test(log(HOMA.IR), BMI))$estimate^2`)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=`r anova(bmi.diagnosis.lm, bmi.diagnosis.interaction.lm)[2,6]`).
 
 ```{r anova-table, results='asis', echo=FALSE} 
 print(xtable(bmi.diagnosis.lm), type='html') 
 print(xtable(exp(confint(bmi.diagnosis.lm))), type='html')
 ``` 
 
-The results of this linear model are a significant main effect of both BMI (p=`r summary(bmi.diagnosis.lm)$coefficients[2,4]`) and the diagnosis (p=`r summary(bmi.diagnosis.lm)$coefficients[3,4]`) with a r-squared value of `r summary(bmi.diagnosis.lm)$r.squared`.  This corresponds to an effect size of `r exp(as.numeric(coef(bmi.diagnosis.lm)[3]))`.
+The results of this linear model are a significant main effect of both BMI (p=`r summary(bmi.diagnosis.lm)$coefficients[2,4]`) and the diagnosis (p=`r summary(bmi.diagnosis.lm)$coefficients[3,4]`) with a r-squared value of `r summary(bmi.diagnosis.lm)$adj.r.squared`.  This corresponds to an effect size of `r exp(as.numeric(coef(bmi.diagnosis.lm)[3]))`.
 
 ### Model Plot
 
@@ -267,8 +267,8 @@ with(acromegaly.data, plot(BMI, log(HOMA.IR),
                            pch=19,las=1,
     col=diagnosis, ylab='Log HOMA-IR Score', xlab="BMI (mg/kg2)"))
 legend("topleft", levels(acromegaly.data$diagnosis)[1:2], pch=19, bty="n", col=palette()[1:2], lty=1)
-with(acromegaly.data[acromegaly.data$diagnosis == "Control",], abline(lm(log(HOMA.IR)~BMI), col=palette()[1]))
-with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly",], abline(lm(log(HOMA.IR)~BMI), col=palette()[2]))
+with(acromegaly.data[acromegaly.data$diagnosis == "Control"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[1]))
+with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[2]))
 dev.off()
 ```
 ### Model Diagnostics
