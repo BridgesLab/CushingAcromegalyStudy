@@ -46,36 +46,42 @@ GO.wall.cushing.mf <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("GO:MF"))
 GO.wall.cushing.mf$padj <- p.adjust(GO.wall.cushing.mf$over_represented_pvalue, method="BH")
 annotated.GO.cushing.mf <- merge(GO.wall.cushing.mf, go.mapping, by.x='category', by.y=2, all.x=T)
 annotated.GO.cushing.mf.unique <- annotated.GO.cushing.mf[!(duplicated(annotated.GO.cushing.mf$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.cushing.mf.unique <- annotated.GO.cushing.mf.unique[order(annotated.GO.cushing.mf.unique$padj),]
 write.csv(annotated.GO.cushing.mf.unique, '../data/processed/Cushing GO Analysis - MF.csv')
 
 GO.wall.cushing.bp <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("GO:BP"))
 GO.wall.cushing.bp$padj <- p.adjust(GO.wall.cushing.bp$over_represented_pvalue, method="BH")
 annotated.GO.cushing.bp <- merge(GO.wall.cushing.bp, go.mapping, by.x='category', by.y=2, all.x=T)
 annotated.GO.cushing.bp.unique <- annotated.GO.cushing.bp[!(duplicated(annotated.GO.cushing.bp$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.cushing.bp.unique <- annotated.GO.cushing.bp.unique[order(annotated.GO.cushing.bp.unique$padj),]
 write.csv(annotated.GO.cushing.bp.unique, '../data/processed/Cushing GO Analysis - BP.csv')
 
 GO.wall.cushing.kegg <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("KEGG"))
 GO.wall.cushing.kegg$padj <- p.adjust(GO.wall.cushing.kegg$over_represented_pvalue, method="BH")
 annotated.GO.cushing.kegg <- merge(GO.wall.cushing.kegg, kegg.mapping, by.x='category', by.y='path_id', all.x=T)
 annotated.GO.cushing.kegg.unique <- annotated.GO.cushing.kegg[!(duplicated(annotated.GO.cushing.kegg$category)),c('category','numDEInCat','numInCat','padj','path_name')]
+annotated.GO.cushing.kegg.unique <- annotated.GO.cushing.kegg.unique[order(annotated.GO.cushing.kegg.unique$padj),]
 write.csv(annotated.GO.cushing.kegg.unique, '../data/processed/Cushing GO Analysis - KEGG.csv')
 
 GO.wall.acromegaly.mf <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("GO:MF"))
 GO.wall.acromegaly.mf$padj <- p.adjust(GO.wall.acromegaly.mf$over_represented_pvalue, method="BH")
 annotated.GO.acromegaly.mf <- merge(GO.wall.acromegaly.mf, go.mapping, by.x='category', by.y=2, all.x=T)
 annotated.GO.acromegaly.mf.unique <- annotated.GO.acromegaly.mf[!(duplicated(annotated.GO.acromegaly.mf$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.acromegaly.mf.unique <- annotated.GO.acromegaly.mf.unique[order(annotated.GO.acromegaly.mf.unique$padj),]
 write.csv(annotated.GO.acromegaly.mf.unique, '../data/processed/Acromegaly GO Analysis - MF.csv')
 
 GO.wall.acromegaly.bp <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("GO:BP"))
 GO.wall.acromegaly.bp$padj <- p.adjust(GO.wall.acromegaly.bp$over_represented_pvalue, method="BH")
 annotated.GO.acromegaly.bp <- merge(GO.wall.acromegaly.bp, go.mapping, by.x='category', by.y=2, all.x=T)
 annotated.GO.acromegaly.bp.unique <- annotated.GO.acromegaly.bp[!(duplicated(annotated.GO.acromegaly.bp$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.acromegaly.bp.unique <- annotated.GO.acromegaly.bp.unique[order(annotated.GO.acromegaly.bp.unique$padj),]
 write.csv(annotated.GO.acromegaly.bp.unique, '../data/processed/Acromegaly GO Analysis - BP.csv')
 
 GO.wall.acromegaly.kegg <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("KEGG"))
 GO.wall.acromegaly.kegg$padj <- p.adjust(GO.wall.acromegaly.kegg$over_represented_pvalue, method="BH")
 annotated.GO.acromegaly.kegg <- merge(GO.wall.acromegaly.kegg, kegg.mapping, by.x='category', by.y='path_id', all.x=T)
 annotated.GO.acromegaly.kegg.unique <- annotated.GO.acromegaly.kegg[!(duplicated(annotated.GO.acromegaly.kegg$category)),c('category','numDEInCat','numInCat','padj','path_name')]
+annotated.GO.acromegaly.kegg.unique <- annotated.GO.acromegaly.kegg.unique[order(annotated.GO.acromegaly.kegg.unique$padj),]
 write.csv(annotated.GO.acromegaly.kegg.unique, '../data/processed/Acromegaly GO Analysis - KEGG.csv')
 ```
 
