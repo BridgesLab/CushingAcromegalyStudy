@@ -22,9 +22,8 @@ Script Files
 ---------------
 Script files are saved in **scripts** folder and were analysed in this order
 
-1. deseq-analysis.Rmd
-2. deseq-annotation.Rmd
-3. deseq_analysis_outlier.Rmd
+1. counts_table_filtering.Rmd
+2. deseq_analysis_outlier.Rmd
 3. goseq-analysis.Rmd
 4. heatmaps.Rmd 
 5. barplots.Rmd

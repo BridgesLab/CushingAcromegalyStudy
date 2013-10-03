@@ -1,0 +1,43 @@
+Counts Table Filtering
+========================================================
+
+Rather than looking at all transcripts, since we are ignoring all but the most abundant one,  we should filter the counts table to only include the highest expressing gene product.  This should be done prior to running DESeq.
+
+```{r data-entry, echo=FALSE}
+raw_counts_filename <- "../data/raw/transcript_counts_table.csv"
+raw_counts <- read.csv(raw_counts_filename, row.names="X")
+processed_filename <- "../data/processed/filtered_transcript_counts_table.csv"
+```
+
+This starts with the file **`r raw_counts_filename`** and then ends up with **`r processed_filename`**.  We first have to annotate the transcripts with the correct gene name.
+
+```{r annotation, echo=FALSE}
+library(biomaRt,quietly=TRUE)
+#get transcript info matching transcript id to external (HNGC) id
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('ensembl_transcript_id','external_gene_id'), 
+    values = rownames(raw_counts),
+    mart=ensembl)
+annotated_raw_counts <- merge(transcriptInfo, raw_counts, by.x="ensembl_transcript_id", by.y="row.names")
+annotated_raw_counts$Sum <- rowMeans(annotated_raw_counts[,3:26])
+```
+
+```{r filtering}
+#this script is modified from a stackoverflow answer http://stackoverflow.com/a/10094437/145318
+maxRows <- by(annotated_raw_counts, annotated_raw_counts$external_gene_id, 
+              function(X) X[which.max(X$Sum),])
+filtered_raw_counts <- do.call("rbind", maxRows)
+#restructured data to remove extra rows.
+filtered_raw_counts_data <- filtered_raw_counts[3:26]
+rownames(filtered_raw_counts_data) <- filtered_raw_counts$ensembl_transcript_id
+write.csv(filtered_raw_counts_data, file=processed_filename)
+```
+We start with `r dim(raw_counts)[1]` transcripts and finishes with `r dim(filtered_raw_counts)[1]` so we are reducing the number of genes being assayed by `r dim(filtered_raw_counts)[1]/dim(raw_counts)[1]*100`%.
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```
