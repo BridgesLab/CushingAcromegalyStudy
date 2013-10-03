@@ -4,8 +4,8 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 
-The counts tables were generated previously using the **counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sat Sep 14 10:59:55 2013``.
+The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **29**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Thu Oct  3 11:24:55 2013``.
 
 
 ```
@@ -36,7 +36,7 @@ print(xtable(as.data.frame(summary(filtered.mapping$group))), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 14 11:07:58 2013 -->
+<!-- Thu Oct  3 11:26:47 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> summary(filtered.mapping$group) </TH>  </TR>
   <TR> <TD align="right"> Control </TD> <TD align="right">  11 </TD> </TR>
@@ -60,8 +60,8 @@ table(acromegaly.results$padj < 0.05)
 
 ```
 ## 
-##  FALSE   TRUE 
-## 185793    473
+## FALSE  TRUE 
+## 40242   103
 ```
 
 ```r
@@ -71,8 +71,8 @@ table(acromegaly.results.filtered$padj < 0.05)
 
 ```
 ## 
-##  FALSE   TRUE 
-## 122730    540
+## FALSE  TRUE 
+## 31802   117
 ```
 
 ```r
@@ -82,8 +82,8 @@ table(cushing.results$padj < 0.05)
 
 ```
 ## 
-##  FALSE   TRUE 
-## 185316    170
+## FALSE  TRUE 
+## 39928    16
 ```
 
 ```r
@@ -93,19 +93,23 @@ table(cushing.results.filtered$padj < 0.05)
 
 ```
 ## 
-##  FALSE   TRUE 
-## 122911    359
+## FALSE  TRUE 
+## 31895    24
 ```
 
 
 Annotation
 -------------
 
-The annotated data is for just the filtered results, missing 
+The annotated data is for just the filtered results 
 
 
 ```
 ## Warning: no date field in DESCRIPTION file of package 'BiocGenerics'
+```
+
+```
+## Error: object 'annotated.cushing.results.unfiltered' not found
 ```
 
 
@@ -118,15 +122,15 @@ Differentially Expressed Genes
 
 ### Acromegaly
 
-There were **535** differentially expressed transcripts from the acromegaly patients, with **95** transcripts downregulated and **440** transcripts upregulated.
+There were **117** differentially expressed transcripts from the acromegaly patients, with **28** transcripts downregulated and **89** transcripts upregulated.
 
-This corresponds to **124** upregulated genes and **33** downregulated genes.
+This corresponds to **89** upregulated genes and **28** downregulated genes.
 
 ### Cushing's Disease
 
-There were **343** differentially expressed transcripts from the acromegaly patients, with **166** transcripts downregulated and **177** transcripts upregulated.
+There were **24** differentially expressed transcripts from the acromegaly patients, with **6** transcripts downregulated and **18** transcripts upregulated.
 
-This corresponds to **58** upregulated genes and **20** downregulated genes.
+This corresponds to **18** upregulated genes and **6** downregulated genes.
 
 
 Bibiography

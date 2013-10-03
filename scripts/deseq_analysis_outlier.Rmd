@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 remove_patient <- 29
 ```
 
-The counts tables were generated previously using the **counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
 This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
 
 ```{r loading-data, echo=FALSE, message=FALSE}
@@ -16,7 +16,7 @@ write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", 
 bib <- read.bibtex("references.bib") #loads the bib file
 
 
-transcript.counts <- read.csv("../data/raw/transcript_counts_table.csv", row.names="X")
+transcript.counts <- read.csv("../data/processed/filtered_transcript_counts_table.csv", row.names="X")
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
@@ -110,7 +110,7 @@ table(cushing.results.filtered$padj < 0.05)
 Annotation
 -------------
 
-The annotated data is for just the filtered results, missing 
+The annotated data is for just the filtered results 
 
 ```{r annotation, echo=FALSE, message=FALSE}
 #required packages
@@ -127,9 +127,13 @@ transcriptInfo <- getBM(
 #merge results files with transcript info files.
 annotated.cushing.results <- merge(cushing.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
 annotated.acromegaly.results <- merge(acromegaly.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.cushing.results.unfilterd <- merge(cushing.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.acromegaly.results.unfiltered <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
 #write annotated results files.
 write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results without Outlier - Cushing.csv")
 write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv")
+write.csv(annotated.cushing.results.unfiltered, "../data/processed/Annotated DESeq Results without Outlier and Unfiltered - Cushing.csv")
+write.csv(annotated.acromegaly.results.unfiltered, "../data/processed/Annotated DESeq Results without Outlier and Unfiltered - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
