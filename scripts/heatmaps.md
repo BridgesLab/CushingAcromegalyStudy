@@ -15,7 +15,7 @@ Statistics
 ## cite
 ```
 
-This file was most recently processed on ``Wed Sep 18 08:05:46 2013``.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
+This file was most recently processed on ``Mon Oct  7 09:30:28 2013``.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
 
 Data Clustering
 ----------------
