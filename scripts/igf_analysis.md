@@ -1,7 +1,7 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun Sep  1 11:01:19 2013``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Mon Oct  7 09:48:33 2013``.
 
 
 ```
@@ -44,10 +44,10 @@ For IGF1, the higest expressed transcript is ENST00000456098
 
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Sep  1 11:06:07 2013 -->
+<!-- Mon Oct  7 09:51:59 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Row.names </TH> <TH> rsq </TH> <TH> pval </TH> <TH> estimate </TH> <TH> padj </TH> <TH> hgnc_symbol </TH>  </TR>
-  <TR> <TD align="right"> 67 </TD> <TD> ENST00000456098 </TD> <TD align="right"> 0.512 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 2.099 </TD> <TD align="right"> 0.789 </TD> <TD> IGF1 </TD> </TR>
+  <TR> <TD align="right"> 67 </TD> <TD> ENST00000456098 </TD> <TD align="right"> 0.512 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 2.099 </TD> <TD align="right"> 0.800 </TD> <TD> IGF1 </TD> </TR>
    </TABLE>
 
 

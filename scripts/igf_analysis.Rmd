@@ -58,7 +58,7 @@ for (n in seq(1,dim(fit$fitted.values)[2])) {
 summary.data$padj <- p.adjust(summary.data$pval, method="BH")
 annotated.igf.summary <- merge(summary.data, gene.data, by.x='row.names', by.y='ensembl_transcript_id')
 annotated.igf.summary <- annotated.igf.summary[with(annotated.igf.summary, order(pval)), ]
-write.csv(annotated.igf.summary, '../figures/IGF1 Correlations.csv')
+write.csv(annotated.igf.summary, '../data/processed/IGF1 Correlations.csv')
 ```
 
 For IGF1, the higest expressed transcript is `r rownames(igf.transcipt.counts['ENST00000456098',])`
