@@ -28,7 +28,7 @@ transcript.counts <- read.csv(transcripts.file, row.names="X")
 filtered.transcript.counts <- transcript.counts[,igf_sample_mapping$samplename]
 ```
 
-We normalized the expression data, removed the lowest 40% expressing transcripts and calculated the correlation between IGF levels and transcript levels for the IGF patients only.
+We normalized the expression data, and calculated the correlation between IGF levels and transcript levels for the IGF patients only.
 
 Correlation of IGF levels with IGF Related Transcripts
 --------------------------------------------------------

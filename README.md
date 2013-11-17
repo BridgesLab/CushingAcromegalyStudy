@@ -51,7 +51,9 @@ This script analyses the clinical characteristics of the groups, generating the 
 
 This script compares our significant genes to another similar dataset.  This set treated adipocytes with growth hormone in vitro and did microarrays after 48h of treatment.
 
-8. igf_analysis.Rmd
+### igf_analysis.Rmd
+
+This takes measured IGF-1 levels from acromegaly patients and compares it to *IGF1*  expression from WAT explants.
 
 Figures
 -----------

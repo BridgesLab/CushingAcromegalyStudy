@@ -1,7 +1,7 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Mon Oct  7 09:48:33 2013``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun Nov 17 11:55:00 2013``.
 
 
 ```
@@ -9,7 +9,7 @@ These data compare the IGF levels with transcriptional changes.  This file was l
 ```
 
 
-We normalized the expression data, removed the lowest 40% expressing transcripts and calculated the correlation between IGF levels and transcript levels for the IGF patients only.
+We normalized the expression data, and calculated the correlation between IGF levels and transcript levels for the IGF patients only.
 
 Correlation of IGF levels with IGF Related Transcripts
 --------------------------------------------------------
@@ -43,11 +43,11 @@ For IGF1, the higest expressed transcript is ENST00000456098
 ```
 
 
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Oct  7 09:51:59 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:56:18 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Row.names </TH> <TH> rsq </TH> <TH> pval </TH> <TH> estimate </TH> <TH> padj </TH> <TH> hgnc_symbol </TH>  </TR>
-  <TR> <TD align="right"> 67 </TD> <TD> ENST00000456098 </TD> <TD align="right"> 0.512 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 2.099 </TD> <TD align="right"> 0.800 </TD> <TD> IGF1 </TD> </TR>
+  <TR> <TD align="right"> 27 </TD> <TD> ENST00000456098 </TD> <TD align="right"> 0.505 </TD> <TD align="right"> 0.044 </TD> <TD align="right"> 2.045 </TD> <TD align="right"> 0.700 </TD> <TD> IGF1 </TD> </TR>
    </TABLE>
 
 
@@ -60,7 +60,7 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
@@ -70,11 +70,11 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] xtable_1.7-1   plyr_1.8       reshape2_1.2.2 biomaRt_2.16.0
-## [5] knitr_1.4     
+## [1] xtable_1.7-1   plyr_1.8       reshape2_1.2.2 biomaRt_2.18.0
+## [5] knitr_1.5     
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.7 formatR_0.9    RCurl_1.95-4.1
-## [5] stringr_0.6.2  tools_3.0.1    XML_3.95-0.2
+## [1] evaluate_0.5.1 formatR_0.10   RCurl_1.95-4.1 stringr_0.6.2 
+## [5] tools_3.0.2    XML_3.95-0.2
 ```
 
