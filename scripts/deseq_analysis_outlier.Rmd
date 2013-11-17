@@ -33,8 +33,7 @@ conditions <- mapping[match(names(filtered.transcript.counts),filtered.mapping$s
 cds = newCountDataSet( filtered.transcript.counts, conditions )
 ```
 
-These data were analysed in two ways by DESeq `r citep(bib[["DESeq"]])`.  The first way was to analyse normally.  The second way was to remove the lowest 40% of transcripts.  The removal of low-expressing, low-reliability transcripts allowed for a smaller penalty for multiple comparasons.
-
+These data were analysed in  by DESeq `r citep(bib[["DESeq"]])`. We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
 
 Full Analysis
 --------------
@@ -52,65 +51,12 @@ cushing.results = nbinomTest( cds, "Control", "Cushing's" )
 write.csv(cushing.results, "../data/processed/cushing_deseq_results_no_outlier.csv")
 ```
 
-Expression Filtered Analysis
--------------------------------
-This analysis removes the lowest 40% expressing transcripts.
 
-```{r data-table, results='asis'}
-library(xtable)
-print(xtable(as.data.frame(summary(filtered.mapping$group))), type='html')
-```
-
-```{r deseq-analysis-filtered, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-#first calculate rowsums
-rs = rowSums ( counts ( cds ))
-#filtered out the lowest 40% of expressors
-theta = 0.4
-use = (rs > quantile(rs, probs=theta))
-cdsFilt = cds[ use, ]
-cdsFilt <- estimateSizeFactors(cdsFilt)
-
-par(mfrow=c(1,2))
-barplot(sizeFactors(cds), las=2, main="Total Size Factors", ylab="Size Factor", cex.names=0.7)
-barplot(sizeFactors(cdsFilt), las=2, main="Filtered Size Factors", ylab="Size Factor", cex.names=0.7)
-
-cdsFilt <- estimateDispersions( cdsFilt )
-par(mfrow=c(1,2))
-plotDispEsts(cds, main="Total Dispersion Estimates")
-plotDispEsts(cdsFilt, main="Filtered Dispersion Estimates")
-
-acromegaly.results.filtered = nbinomTest( cdsFilt, "Control", "Acromegaly" )
-par(mfrow=c(1,2))
-plotMA(acromegaly.results, main="Total Acromegaly Results")
-plotMA(acromegaly.results.filtered, main="Filtered Acromegaly Results")
-write.csv(acromegaly.results.filtered, "../data/processed/acromegaly_deseq_results_filtered_no_outlier.csv")
-
-cushing.results.filtered = nbinomTest( cdsFilt, "Control", "Cushing's" )
-par(mfrow=c(1,2))
-plotMA(cushing.results, main="Total Cushing Results")
-plotMA(cushing.results.filtered, main="Filtered Cushing Results")
-write.csv(cushing.results.filtered, "../data/processed/cushing_deseq_results_filtered_no_outlier.csv")
-```
-
-Summary Analysis
--------------------
-The following tables show the tested number of transcripts and d the number of FDR adjusted significantly different transcripts.
-
-```{r filtering results, echo=TRUE}
-#For Acromegaly, unfiltered
-table(acromegaly.results$padj < 0.05)
-#Filtered Acromegaly Data
-table(acromegaly.results.filtered$padj < 0.05)
-#For Cushing's, unfiltered
-table(cushing.results$padj < 0.05)
-#Filtered Data
-table(cushing.results.filtered$padj < 0.05)
-```
 
 Annotation
 -------------
 
-The annotated data is for just the filtered results 
+This step annotates the data tables with the official gene symbols.
 
 ```{r annotation, echo=FALSE, message=FALSE}
 #required packages
@@ -125,15 +71,12 @@ transcriptInfo <- getBM(
     values = 'ensembl_transcript_id',
     mart=ensembl)
 #merge results files with transcript info files.
-annotated.cushing.results <- merge(cushing.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
-annotated.acromegaly.results <- merge(acromegaly.results.filtered, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
-annotated.cushing.results.unfilterd <- merge(cushing.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
-annotated.acromegaly.results.unfiltered <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+
 #write annotated results files.
 write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results without Outlier - Cushing.csv")
 write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv")
-write.csv(annotated.cushing.results.unfiltered, "../data/processed/Annotated DESeq Results without Outlier and Unfiltered - Cushing.csv")
-write.csv(annotated.acromegaly.results.unfiltered, "../data/processed/Annotated DESeq Results without Outlier and Unfiltered - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
@@ -188,4 +131,3 @@ For the R session, the package versions were:
 ```{r}
 sessionInfo()
 ```
-

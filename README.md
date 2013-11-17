@@ -28,7 +28,7 @@ This file filters the counts table to show only the most abundant transcript.  I
 
 ### deseq_analysis_outlier.Rmd
 
-This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.
+This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files **data/processed/filtered_transcript_counts_table.csv.** and **data/raw/patient_sample_mapping.csv** and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.
 
 3. goseq-analysis.Rmd
 4. heatmaps.Rmd 
