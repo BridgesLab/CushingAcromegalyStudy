@@ -3,7 +3,7 @@ Barplot Analysis of Acromegaly Results
 
 Used Analysed DESeq results.
 
-```{r file-input, echo=FALSE}
+```{r file-input, echo=FALSE, warning=FALSE}
 filename <- "../data/processed/Normalized Counts Table.csv"
 normalized.data <- read.csv(filename, row.names='X')
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
@@ -19,7 +19,7 @@ The data used is in the file **`r filename`**.  This file was most recently proc
 
 Normalization of Expression
 --------------------------------
-```{r normalization, echo=FALSE}
+```{r normalization, echo=FALSE, warning=FALSE}
 genes.of.interest <- c("IGF1", "IGFBP3", "CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "MAPKAPK3", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6")
 library(biomaRt)
 ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
@@ -29,7 +29,7 @@ gene.data <- getBM(attributes=c('ensembl_transcript_id', 'hgnc_symbol'),
 
 We examined the following genes: ```r genes.of.interest[order(genes.of.interest)]```, generating a total of **```r length(genes.of.interest)```** barplots.
 
-```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
 library(reshape2)
 filtered.normalized.data$Transcript <- rownames(filtered.normalized.data)
 #melt the data, so that each transcript/sample has one value
@@ -85,7 +85,7 @@ for (gene in genes.of.interest) {
 
 ```
 
-```{r lipase-barplots, echo=FALSE}
+```{r lipase-barplots, echo=FALSE, warning=FALSE}
 #missing lipb, fix showing acro/control
 lipases <- c("LIPE", "PNPLA2", "MGLL", "LPL", "LIPC", "PNLIP","LIPA", "LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
 lipase.data <- getBM(attributes=c('ensembl_transcript_id', 'hgnc_symbol'),
@@ -141,7 +141,7 @@ for (gene in lipases) {
 
 Summarized Lipases
 ---------------------
-```{r summarised-lipases, echo=F}
+```{r summarised-lipases, echo=F, warning=FALSE}
 max.lipase.expressors <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='mean')
 max.lipase.expressors.se <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='se')
 ordered.max.lipase.expressors <- max.lipase.expressors[with(max.lipase.expressors, order(-Control)), ]

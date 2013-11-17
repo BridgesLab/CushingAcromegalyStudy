@@ -38,7 +38,10 @@ This script searches KEGG and GO for enriched categories and pathways.  This gen
 
 This generates the heatmap used in Figure 2.
 
-5. barplots.Rmd
+## barplots.Rmd
+
+This script generates all the barplots used in Figures 3, 4 and Supplementary Figures 1 and 2.
+
 6. acromegaly_clinical_analysis.Rmd
 7. GEO_comparasons.Rmd
 8. igf_analysis.Rmd
