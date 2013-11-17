@@ -6,40 +6,17 @@ Statistics
 
 
 ```
-## Loading required package: knitcitations Loading required package: bibtex
+## Loading required package: knitcitations
+## Loading required package: bibtex
 ## 
 ## Attaching package: 'knitcitations'
 ## 
 ## The following object is masked from 'package:utils':
 ## 
-## cite
+##     cite
 ```
 
-This file was most recently processed on ``Mon Oct  7 09:30:28 2013``.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
-
-Data Clustering
-----------------
-The following is a cluster analysis of the scaled transcript counts.  This was done with bootstrap resampling of the normalized, scaled transcript counts using the **pvclust** package(<a href="http://CRAN.R-project.org/package=pvclust">Suzuki & Shimodaira, 2011</a>)). 
-
-```{clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-#scaled the data
-scaled.sample.transcript.counts <- scale(filtered.transcript.counts)
-
-#cluster number determination (see http://www.statmethods.net/advstats/cluster.html)
-wss <- (nrow(scaled.sample.transcript.counts)-1)*sum(apply(scaled.sample.transcript.counts,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(scaled.sample.transcript.counts, 
-     centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
-  ylab="Within groups sum of squares",
-     main="Cluster Number Determination (3)")
-
-library(pvclust)
-fit <- pvclust(scaled.sample.transcript.counts, method.hclust="ward",
-   method.dist="euclidean")
-plot(fit) # dendogram with p values
-# add rectangles around groups highly supported by the data
-pvrect(fit, alpha=.95)
-```
+This file was most recently processed on ``Sun Nov 17 10:44:56 2013``.  This uses the DESeq normalized data.
 
 
 Differentially Expressed Genes
@@ -49,42 +26,33 @@ To test the grouping of differentially expressed transcripts, we only examined g
 
 
 ```
-## gdata: read.xls support for 'XLS' (Excel 97-2004) files ENABLED.
-## 
-## gdata: read.xls support for 'XLSX' (Excel 2007+) files ENABLED.
-## 
-## Attaching package: 'gdata'
-## 
-## The following object is masked from 'package:stats':
-## 
-## nobs
-## 
-## The following object is masked from 'package:utils':
-## 
-## object.size
-## 
-## KernSmooth 2.23 loaded Copyright M. P. Wand 1997-2009
+## KernSmooth 2.23 loaded
+## Copyright M. P. Wand 1997-2009
 ## 
 ## Attaching package: 'gplots'
 ## 
 ## The following object is masked from 'package:stats':
 ## 
-## lowess
+##     lowess
 ```
 
-![plot of chunk de-heatmap](figure/de-heatmap1.png) ![plot of chunk de-heatmap](figure/de-heatmap2.png) 
+![plot of chunk de-heatmap](figure/de-heatmap1.png) 
 
 ```
-## pdf 
-##   2
+## Error: cannot open file '../figures/differential-expressor-heatmap.pdf'
+```
+
+![plot of chunk de-heatmap](figure/de-heatmap2.png) 
+
+```
+## null device 
+##           1
 ```
 
 
 References
 -----------
 
-- Ryota Suzuki, Hidetoshi Shimodaira,   (2011) pvclust: Hierarchical Clustering with P-Values via Multiscale Bootstrap
-Resampling.  [http://CRAN.R-project.org/package=pvclust](http://CRAN.R-project.org/package=pvclust)
 
 
 Session Information
@@ -95,25 +63,24 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] RColorBrewer_1.0-5  gplots_2.11.3       MASS_7.3-28        
-##  [4] KernSmooth_2.23-10  caTools_1.14        gdata_2.13.2       
-##  [7] gtools_3.0.0        knitcitations_0.5-0 bibtex_0.3-6       
-## [10] knitr_1.4          
+## [1] RColorBrewer_1.0-5  gplots_2.12.1       knitcitations_0.5-0
+## [4] bibtex_0.3-6        knitr_1.5          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-5   digest_0.6.3   evaluate_0.4.7 formatR_0.9   
-##  [5] httr_0.2       RCurl_1.95-4.1 stringr_0.6.2  tools_3.0.1   
-##  [9] XML_3.95-0.2   xtable_1.7-1
+##  [1] bitops_1.0-6       caTools_1.16       digest_0.6.3      
+##  [4] evaluate_0.5.1     formatR_0.10       gdata_2.13.2      
+##  [7] gtools_3.1.1       httr_0.2           KernSmooth_2.23-10
+## [10] RCurl_1.95-4.1     stringr_0.6.2      tools_3.0.2       
+## [13] XML_3.95-0.2       xtable_1.7-1
 ```
 

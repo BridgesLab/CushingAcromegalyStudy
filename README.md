@@ -34,7 +34,10 @@ This file performs the DESeq analysis both including and removing the one outlie
 
 This script searches KEGG and GO for enriched categories and pathways.  This generates a variety of Gene Ontology Analysis files and the data for Table 2.
 
-4. heatmaps.Rmd 
+### heatmaps.Rmd 
+
+This generates the heatmap used in Figure 2.
+
 5. barplots.Rmd
 6. acromegaly_clinical_analysis.Rmd
 7. GEO_comparasons.Rmd

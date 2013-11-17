@@ -10,7 +10,7 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv"
+analysis.file <- "../data/processed/Annotated DESeq Results - Acromegaly.csv"
 analysis.data <- read.csv(analysis.file)
 transcripts.file <- "../data/processed/Normalized Counts Table.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
@@ -26,31 +26,7 @@ filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != 
 #subset out differentially expressed transcripts
 diff.transcripts <- droplevels(subset(analysis.data, padj <= 0.05))
 ```
-This file was most recently processed on ```r date()```.  This uses the genes which were subsetted (only the highest 40\%).  Also, this uses the DESeq normalized data.
-
-Data Clustering
-----------------
-The following is a cluster analysis of the scaled transcript counts.  This was done with bootstrap resampling of the normalized, scaled transcript counts using the **pvclust** package`r citep(bib['pvclust'])`). 
-
-```{clustering, echo=FALSE, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-#scaled the data
-scaled.sample.transcript.counts <- scale(filtered.transcript.counts)
-
-#cluster number determination (see http://www.statmethods.net/advstats/cluster.html)
-wss <- (nrow(scaled.sample.transcript.counts)-1)*sum(apply(scaled.sample.transcript.counts,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(scaled.sample.transcript.counts, 
-     centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
-  ylab="Within groups sum of squares",
-     main="Cluster Number Determination (3)")
-
-library(pvclust)
-fit <- pvclust(scaled.sample.transcript.counts, method.hclust="ward",
-   method.dist="euclidean")
-plot(fit) # dendogram with p values
-# add rectangles around groups highly supported by the data
-pvrect(fit, alpha=.95)
-```
+This file was most recently processed on ```r date()```.  This uses the DESeq normalized data.
 
 
 Differentially Expressed Genes
