@@ -1,7 +1,7 @@
 GOSeq of DESeq Data for Acromegaly and Cushing's Patients
 =============================================================
 
-This script was most recently run on Sun Nov 17 09:38:42 2013.  This script searches KEGG and GO for enriched categories and pathways.
+This script was most recently run on Sun Nov 17 16:49:18 2013.  This script searches KEGG and GO for enriched categories and pathways.
 
 
 
@@ -9,6 +9,8 @@ This script was most recently run on Sun Nov 17 09:38:42 2013.  This script sear
 
 To analyse these, we used the goseq package (<a href="">Young et al. 2010</a>), using the wallenius approximation to determine
 significantly enriched GO (<a href="http://dx.doi.org/10.1038/75556">Botstein et al. 2000</a>) or KEGG (<a href="http://dx.doi.org/10.1093/nar/gkr988">Kanehisa et al. 2011</a>) terms.  
+
+This analysis uses the GO database updated with the datestamp 20130907 downloaded from ftp://ftp.geneontology.org/pub/go/godatabase/archive/latest-lite/.  The KEGG database was downloaded from ftp://ftp.genome.jp/pub/kegg/genomes with a datestamp of 2011-Mar15.
 
 This analysis included the 16 significant cushing transcripts (17 genes) and the 103 significant acromegaly transcripts (104 genes).  We did not separate upregulated genes from downregulated genes in this analysis.
 
@@ -27,7 +29,7 @@ For cushing, we found 0 significantly different GO terms for molecular function,
 For acromegaly, we found 1 significantly different GO terms for molecular function, 85 significantly different GO terms for biological processes and 2 significantly different KEGG pathways.
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Nov 17 09:40:52 2013 -->
+<!-- Sun Nov 17 16:51:22 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Biological Processes Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
@@ -118,14 +120,14 @@ For acromegaly, we found 1 significantly different GO terms for molecular functi
   <TR> <TD align="right"> 16301 </TD> <TD> GO:0044710 </TD> <TD align="right"> 21 </TD> <TD align="right"> 3095 </TD> <TD align="right"> 0.04865 </TD> <TD> single-organism metabolic process </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Nov 17 09:40:52 2013 -->
+<!-- Sun Nov 17 16:51:22 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Molecular Functions Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
   <TR> <TD align="right"> 6330 </TD> <TD> GO:0005102 </TD> <TD align="right"> 14 </TD> <TD align="right"> 1130 </TD> <TD align="right"> 0.02658 </TD> <TD> receptor binding </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Nov 17 09:40:52 2013 -->
+<!-- Sun Nov 17 16:51:22 2013 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> KEGG Pathways Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> path_name </TH>  </TR>

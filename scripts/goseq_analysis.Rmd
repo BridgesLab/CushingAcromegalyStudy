@@ -32,6 +32,8 @@ analysed.genes.cushing <- ordered.cushing.genes[unique(names(ordered.cushing.gen
 To analyse these, we used the goseq package `r citep(bib[[c("goseq")]])`, using the wallenius approximation to determine
 significantly enriched GO `r citep("10.1038/75556")` or KEGG `r citep("10.1093/nar/gkr988")` terms.  
 
+This analysis uses the GO database updated with the datestamp `r GO_dbInfo()[GO_dbInfo()$name=='GOSOURCEDATE',]$value` downloaded from `r GO_dbInfo()[GO_dbInfo()$name=='GOSOURCEURL',]$value`.  The KEGG database was downloaded from `r KEGG_dbInfo()[KEGG_dbInfo()$name=='KEGGSOURCEURL',]$value` with a datestamp of `r KEGG_dbInfo()[KEGG_dbInfo()$name=='KEGGSOURCEDATE',]$value`.
+
 This analysis included the `r table(cushing.data$padj<.05)[2]` significant cushing transcripts (`r length(unique(cushing.data[cushing.data$padj<.05,]$external_gene_id))` genes) and the `r table(acromegaly.data$padj<.05)[2]` significant acromegaly transcripts (`r length(unique(acromegaly.data[acromegaly.data$padj<.05,]$external_gene_id))` genes).  We did not separate upregulated genes from downregulated genes in this analysis.
 
 ```{r goseq-analysis, dev=c('png','pdf'), echo=FALSE, fig.show='asis', message=FALSE}
