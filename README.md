@@ -22,8 +22,14 @@ Script Files
 ---------------
 Script files are saved in **scripts** folder and were analysed in this order
 
-1. counts_table_filtering.Rmd
-2. deseq_analysis_outlier.Rmd
+### counts_table_filtering.Rmd
+
+This file filters the counts table to show only the most abundant transcript.  It starts with the file **data/raw/transcript_counts_table.csv** and then ends up with **data/processed/filtered_transcript_counts_table.csv.**
+
+### deseq_analysis_outlier.Rmd
+
+This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.
+
 3. goseq-analysis.Rmd
 4. heatmaps.Rmd 
 5. barplots.Rmd

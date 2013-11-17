@@ -35,7 +35,7 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
@@ -45,10 +45,10 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] biomaRt_2.16.0 knitr_1.4     
+## [1] biomaRt_2.18.0 knitr_1.5     
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.7 formatR_0.9    RCurl_1.95-4.1
-## [5] stringr_0.6.2  tools_3.0.1    XML_3.95-0.2
+## [1] evaluate_0.5.1 formatR_0.9    RCurl_1.95-4.1 stringr_0.6.2 
+## [5] tools_3.0.2    XML_3.95-0.2
 ```
 
