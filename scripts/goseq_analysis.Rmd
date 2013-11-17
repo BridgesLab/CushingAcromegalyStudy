@@ -1,8 +1,7 @@
 GOSeq of DESeq Data for Acromegaly and Cushing's Patients
 =============================================================
 
-
-This analysis removes the lowest 40% expressed transcripts, and also removes the data from patient 29.  This script was most recently run on `r date()`.
+This script was most recently run on `r date()`.  This script searches KEGG and GO for enriched categories and pathways.
 
 
 ```{r goseq-setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -33,7 +32,7 @@ analysed.genes.cushing <- ordered.cushing.genes[unique(names(ordered.cushing.gen
 To analyse these, we used the goseq package `r citep(bib[[c("goseq")]])`, using the wallenius approximation to determine
 significantly enriched GO `r citep("10.1038/75556")` or KEGG `r citep("10.1093/nar/gkr988")` terms.  
 
-This analysis included the `r table(cushing.data$padj<.05)[2]` significant cushing transcripts (`r length(unique(cushing.data[cushing.data$padj<.05,]$external_gene_id))` genes) and the `r table(acromegaly.data$padj<.05)[2]` significant acromegaly transcripts (`r length(unique(acromegaly.data[acromegaly.data$padj<.05,]$external_gene_id))` genes).
+This analysis included the `r table(cushing.data$padj<.05)[2]` significant cushing transcripts (`r length(unique(cushing.data[cushing.data$padj<.05,]$external_gene_id))` genes) and the `r table(acromegaly.data$padj<.05)[2]` significant acromegaly transcripts (`r length(unique(acromegaly.data[acromegaly.data$padj<.05,]$external_gene_id))` genes).  We did not separate upregulated genes from downregulated genes in this analysis.
 
 ```{r goseq-analysis, dev=c('png','pdf'), echo=FALSE, fig.show='asis', message=FALSE}
 pwf.cushing <- nullp(analysed.genes.cushing,"hg19","ensGene")
@@ -87,22 +86,22 @@ write.csv(annotated.GO.acromegaly.kegg.unique, '../data/processed/Acromegaly GO 
 
 Significantly different terms and pathways
 ----------------------------------------------
+
+### Cushing Significant Processes
+
 For cushing, we found `r dim(annotated.GO.cushing.mf.unique[annotated.GO.cushing.mf.unique$padj<0.05,])[1]` significantly different GO terms for molecular function, `r dim(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,])[1]` significantly different GO terms for biological processes and `r dim(annotated.GO.cushing.kegg.unique[annotated.GO.cushing.kegg.unique$padj<0.05,])[1]` significantly different KEGG pathways.
+
+### Acromegaly Significant Processes
 
 For acromegaly, we found `r dim(annotated.GO.acromegaly.mf.unique[annotated.GO.acromegaly.mf.unique$padj<0.05,])[1]` significantly different GO terms for molecular function, `r dim(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,])[1]` significantly different GO terms for biological processes and `r dim(annotated.GO.acromegaly.kegg.unique[annotated.GO.acromegaly.kegg.unique$padj<0.05,])[1]` significantly different KEGG pathways.
 
-### Cushing Significant Processes
-```{r data-table-cushing, ,echo=FALSE, results='asis'}
-library(xtable)
-print(xtable(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Cushing Patients"), type='html')
-print(xtable(annotated.GO.cushing.mf.unique[annotated.GO.cushing.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Cushing Patients"), type='html')
-print(xtable(annotated.GO.cushing.kegg.unique[annotated.GO.cushing.kegg.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="KEGG Pathways Enriched in Cushing Patientes"), type='html')
-```
-
-### Acromegaly Significant Processes
 ```{r data-table-acromegaly, ,echo=FALSE, results='asis'}
+library(xtable)
 print(xtable(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Acromegaly Patients"), type='html')
+
 print(xtable(annotated.GO.acromegaly.mf.unique[annotated.GO.acromegaly.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Acromegaly Patients"), type='html')
+
+print(xtable(annotated.GO.acromegaly.kegg.unique[annotated.GO.acromegaly.kegg.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="KEGG Pathways Enriched in Acromegaly Patients"), type='html')
 ```
 
 Bibiography

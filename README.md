@@ -32,8 +32,7 @@ This file performs the DESeq analysis both including and removing the one outlie
 
 ### goseq-analysis.Rmd
 
-This script searches KEGG and GO for enriched categories and pathways.
-
+This script searches KEGG and GO for enriched categories and pathways.  This generates a variety of Gene Ontology Analysis files and the data for Table 2.
 
 4. heatmaps.Rmd 
 5. barplots.Rmd
