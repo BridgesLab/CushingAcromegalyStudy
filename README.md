@@ -42,8 +42,15 @@ This generates the heatmap used in Figure 2.
 
 This script generates all the barplots used in Figures 3, 4 and Supplementary Figures 1 and 2.
 
-6. acromegaly_clinical_analysis.Rmd
-7. GEO_comparasons.Rmd
+### acromegaly_clinical_analysis.Rmd
+
+This script analyses the clinical characteristics of the groups, generating the table for Table 1 and Figure 1.
+
+
+### GEO_comparasons.Rmd
+
+This script compares our significant genes to another similar dataset.  This set treated adipocytes with growth hormone in vitro and did microarrays after 48h of treatment.
+
 8. igf_analysis.Rmd
 
 Figures

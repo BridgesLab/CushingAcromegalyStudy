@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ``Sat Sep 21 09:48:28 2013``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Sun Nov 17 11:00:34 2013``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -14,16 +14,16 @@ This analysis included 11 controls and 9 acromegaly patients.
 
 
 
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:29 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> glucose </TD> <TD align="right"> 92.5 </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 107.0 </TD> <TD align="right"> 5.4 </TD> <TD align="right"> 0.02861 </TD> <TD align="right"> 0.08584 </TD> </TR>
   <TR> <TD align="right"> 2 </TD> <TD> HOMA.IR </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 7.6 </TD> <TD align="right"> 3.1 </TD> <TD align="right"> 0.11378 </TD> <TD align="right"> 0.11378 </TD> </TR>
   <TR> <TD align="right"> 3 </TD> <TD> insulin </TD> <TD align="right"> 8.7 </TD> <TD align="right"> 0.9 </TD> <TD align="right"> 25.7 </TD> <TD align="right"> 8.7 </TD> <TD align="right"> 0.09415 </TD> <TD align="right"> 0.11378 </TD> </TR>
    </TABLE>
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:29 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> abdominal.circumference </TD> <TD align="right"> 100.7 </TD> <TD align="right"> 4.6 </TD> <TD align="right"> 104.9 </TD> <TD align="right"> 6.3 </TD> <TD align="right"> 0.59404 </TD> <TD align="right"> 0.70007 </TD> </TR>
@@ -32,8 +32,8 @@ This analysis included 11 controls and 9 acromegaly patients.
   <TR> <TD align="right"> 4 </TD> <TD> height </TD> <TD align="right"> 170.0 </TD> <TD align="right"> 2.4 </TD> <TD align="right"> 180.1 </TD> <TD align="right"> 4.0 </TD> <TD align="right"> 0.04815 </TD> <TD align="right"> 0.12038 </TD> </TR>
   <TR> <TD align="right"> 5 </TD> <TD> weight </TD> <TD align="right"> 89.4 </TD> <TD align="right"> 6.7 </TD> <TD align="right"> 103.9 </TD> <TD align="right"> 9.3 </TD> <TD align="right"> 0.22344 </TD> <TD align="right"> 0.37239 </TD> </TR>
    </TABLE>
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:29 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> Cer.C14 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.13219 </TD> <TD align="right"> 0.39657 </TD> </TR>
@@ -46,8 +46,8 @@ This analysis included 11 controls and 9 acromegaly patients.
   <TR> <TD align="right"> 8 </TD> <TD> Glu.Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.92964 </TD> <TD align="right"> 0.92964 </TD> </TR>
   <TR> <TD align="right"> 9 </TD> <TD> Glu.Cer.C18.1 </TD> <TD align="right"> 0.2 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.2 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.34161 </TD> <TD align="right"> 0.76863 </TD> </TR>
    </TABLE>
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:29 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> glycerol.ins.ctrl </TD> <TD align="right"> 1.1 </TD> <TD align="right"> 0.1 </TD> <TD align="right"> 1.1 </TD> <TD align="right"> 0.1 </TD> <TD align="right"> 0.65346 </TD> <TD align="right"> 0.76238 </TD> </TR>
@@ -58,8 +58,8 @@ This analysis included 11 controls and 9 acromegaly patients.
   <TR> <TD align="right"> 6 </TD> <TD> glycerol.iso.ctrl </TD> <TD align="right"> 1.5 </TD> <TD align="right"> 0.1 </TD> <TD align="right"> 1.6 </TD> <TD align="right"> 0.5 </TD> <TD align="right"> 0.82624 </TD> <TD align="right"> 0.82624 </TD> </TR>
   <TR> <TD align="right"> 7 </TD> <TD> glycerol.no.tx </TD> <TD align="right"> 4.9 </TD> <TD align="right"> 0.8 </TD> <TD align="right"> 13.1 </TD> <TD align="right"> 4.2 </TD> <TD align="right"> 0.10735 </TD> <TD align="right"> 0.24910 </TD> </TR>
    </TABLE>
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:29 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> abdominal.circumference </TD> <TD align="right"> 100.7 </TD> <TD align="right"> 4.6 </TD> <TD align="right"> 104.9 </TD> <TD align="right"> 6.3 </TD> <TD align="right"> 0.59404 </TD> <TD align="right"> 0.81030 </TD> </TR>
@@ -150,16 +150,16 @@ Correlation with BMI
 
 The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215, r=0.5372, R2=0.2886)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.6167).
 
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:32 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.2268 </TD> <TD align="right"> 0.6719 </TD> <TD align="right"> -1.83 </TD> <TD align="right"> 0.0879 </TD> </TR>
   <TR> <TD align="right"> BMI </TD> <TD align="right"> 0.0602 </TD> <TD align="right"> 0.0210 </TD> <TD align="right"> 2.86 </TD> <TD align="right"> 0.0118 </TD> </TR>
   <TR> <TD align="right"> diagnosisAcromegaly </TD> <TD align="right"> 0.9085 </TD> <TD align="right"> 0.2529 </TD> <TD align="right"> 3.59 </TD> <TD align="right"> 0.0027 </TD> </TR>
    </TABLE>
-<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sat Sep 21 09:48:32 2013 -->
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Sun Nov 17 11:00:35 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.07 </TD> <TD align="right"> 1.23 </TD> </TR>
@@ -259,7 +259,7 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
@@ -269,10 +269,9 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] xtable_1.7-1   plyr_1.8       reshape2_1.2.2 knitr_1.4     
+## [1] xtable_1.7-1   plyr_1.8       reshape2_1.2.2 knitr_1.5     
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.7 formatR_0.9    stringr_0.6.2 
-## [5] tools_3.0.1
+## [1] evaluate_0.5.1 formatR_0.10   stringr_0.6.2  tools_3.0.2
 ```
 
