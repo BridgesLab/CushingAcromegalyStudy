@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Nov 17 08:49:53 2013``.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Nov 17 09:16:49 2013``.
 
 
 ```

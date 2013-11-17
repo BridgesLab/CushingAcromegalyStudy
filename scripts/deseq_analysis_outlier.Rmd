@@ -42,13 +42,13 @@ Full Analysis
 cds <- estimateSizeFactors(cds)
 cds <- estimateDispersions(cds)
 
-write.csv(counts( cds, normalized=TRUE ),'../data/processed/Normalized Counts Table No Outlier.csv')
+write.csv(counts( cds, normalized=TRUE ),'../data/processed/Normalized Counts Table.csv')
 
 acromegaly.results = nbinomTest( cds, "Control", "Acromegaly" )
-write.csv(acromegaly.results, "../data/processed/acromegaly_deseq_results_no_outlier.csv")
+write.csv(acromegaly.results, "../data/processed/acromegaly_deseq_results.csv")
 
 cushing.results = nbinomTest( cds, "Control", "Cushing's" )
-write.csv(cushing.results, "../data/processed/cushing_deseq_results_no_outlier.csv")
+write.csv(cushing.results, "../data/processed/cushing_deseq_results.csv")
 ```
 
 
@@ -75,8 +75,8 @@ annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x="id", b
 annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
 
 #write annotated results files.
-write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results without Outlier - Cushing.csv")
-write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv")
+write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results - Cushing.csv")
+write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
@@ -88,21 +88,21 @@ acromegaly.diff.transcripts <- subset(annotated.acromegaly.results, padj <= 0.05
 with(acromegaly.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Acromegaly Patients"))
 acromegaly.up.transcripts <- subset(acromegaly.diff.transcripts, foldChange > 1)
 acromegaly.up.genes <- unique(acromegaly.up.transcripts$external_gene_id)
-write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes without Outlier.txt")
+write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes.txt")
 
 acromegaly.down.transcripts <- subset(acromegaly.diff.transcripts, foldChange < 1)
 acromegaly.down.genes <- unique(acromegaly.down.transcripts$external_gene_id)
-write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes without Outlier.txt")
+write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes.txt")
 
 cushing.diff.transcripts <- subset(annotated.cushing.results , padj <= 0.05) 
-with(cushing.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Cushing's Patients without Outlier"))
+with(cushing.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Cushing's Patients"))
 cushing.up.transcripts <- subset(cushing.diff.transcripts, foldChange > 1)
 cushing.up.genes <- unique(cushing.up.transcripts$external_gene_id)
-write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated Genes without Outlier.txt")
+write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated genes.txt")
 
 cushing.down.transcripts <- subset(cushing.diff.transcripts, foldChange < 1)
 cushing.down.genes <- unique(cushing.down.transcripts$external_gene_id)
-write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes without Outlier.txt")
+write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes.txt")
 ```
 
 ### Acromegaly
