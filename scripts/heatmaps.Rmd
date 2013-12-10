@@ -9,18 +9,28 @@ Statistics
 require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
-#load in the previously processed and annoted acromegaly analysis results
+###load in the previously processed and annoted acromegaly analysis results###
+#put the file path into the analysis.file variable
 analysis.file <- "../data/processed/Annotated DESeq Results - Acromegaly.csv"
+#read the csv file into the analysis.data
 analysis.data <- read.csv(analysis.file)
+#put the Normalized Counts Table.csv path to transcript.file
 transcripts.file <- "../data/processed/Normalized Counts Table.csv"
+#read the csv file to transcript.counts and indicate that the table of column containing the row names is "X"???
 transcript.counts <- read.csv(transcripts.file, row.names="X")
-#set the conditions
-mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+####set the conditions#####
+#read the Patient_sample_mapping.csv to mapping
+mapping <- read.csv("~/Quynh/NextGenSeq/CushingAcromegalyStudy/data/raw/patient_sample_mapping.csv")
+#converting mapping$sample to characters and concatenate "sample" to the mapping$sample values without space
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
+#reorder the level of mapping$group such that the reference "non-functioning" is first and the others are moved down
 mapping$group <- relevel(mapping$group, ref="non-functioning")
+#combine "Control" "Acromegaly" and "Cushing's" into a vector and assign this vector as levels of mapping$group
 levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
 
+#filter out the patient 29 
 filtered.mapping <- mapping[mapping$patient.. != 29,]
+#remove the transcript profiles of patient 29.
 filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == 29,]$samplename]
 
 #subset out differentially expressed transcripts
@@ -48,19 +58,30 @@ diff.exprs.ordered.genes <- diff.exprs.ordered[!(duplicated(ordered.transcripts$
 rownames(diff.exprs.ordered.genes) <- as.character(ordered.transcripts[!(duplicated(ordered.transcripts$external_gene_id, incomparables=F)),]$external_gene_id)
 
 
-library(gplots,quietly=TRUE)
-library(RColorBrewer,quietly=TRUE)
-bars <- brewer.pal(2, "Set1")
-color.map <- function(x) { if (x=="Acromegaly") bars[1] else bars[2] }
+library(gplots,quietly=TRUE) # load library gplots when quietly=TRUE, no message confirming package loading or no errors/warnings are printed.
+library(RColorBrewer,quietly=TRUE) #load libray RColorBrewer 
+bars <- brewer.pal(2, "Set1") #make the color palette from ColorBrewer avalaible as R palettes
+color.map <- function(x) { if (x=="Acromegaly") bars[1] else bars[2] }#if x is Acromegaly, then return palette color 1 else 2.
 
+#create a subset that does not contain Cushing's samples
 mapping.acromegaly <- subset(filtered.mapping, group != "Cushing's")
+#find the first occurence of the mapping.acromegaly$samplename in the column names of diff.exprs, then sort by these returned occurences and get the "group"" value (i.e. acromegaly, control, or cushing's) for each of these occurence in order.  Sapply returns a vector of color palette to each of the elements in the list that contains the "group" values.  
 diagnosis.colors <- sapply(mapping.acromegaly[order(match(mapping.acromegaly$samplename,colnames(diff.exprs))),]$group, FUN=color.map)
 
 #remove cushing samples
+#only the genes in the diff.exprs that have the column names matched with the samplename in the mapping.acromegaly will be selected.
 diff.exprs.acromegaly <- diff.exprs.ordered.genes[,colnames(diff.exprs.ordered.genes) %in% mapping.acromegaly$samplename]
 
+#1.convert the diff.exprs.acromegaly to matrix
+#2.center the matrix
+#3.transpose the matrix
+#4.compute and return the distance matrix using the euclidean measure (by default)
+#5.perform hierarchical cluster analysis
+#6. plot the dendrogram of the hclust output
 plot(as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.acromegaly)))))))
+#create 11 different colors in the palette using the diverging palette named "BrBG".  The diverging palette put equal emphasis on mid-range critical values and extremes at both ends of the data range.
 heatmap.colors <- brewer.pal(11, "BrBG")
+#create a heatmap of log expression, the values are centered and scaled in the row direction, the color names for a horizontal side bar is the diagnosis.colors, color for the image is heatmap.colors, margins is a vector of 6 rows and 6 cols for column and row names, respectively.
 heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
 
 #write it out to a final figure as well
