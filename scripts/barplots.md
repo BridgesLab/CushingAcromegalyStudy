@@ -6,14 +6,14 @@ Used Analysed DESeq results.
 
 
 
-The data used is in the file **../data/processed/Normalized Counts Table.csv**.  This file was most recently processed on ``Sun Nov 17 10:58:05 2013``.
+The data used is in the file **../data/processed/Normalized Counts Table.csv**.  This file was most recently processed on ``Thu Dec  5 13:25:49 2013``.
 
 Normalization of Expression
 --------------------------------
 
 
 
-We examined the following genes: ``ABHD5, ACVR1C, ADRB3, AKT1, AKT2, AKT3, APOL4, AVPR1A, BAG4, CAPN6, CCNE1, CCNG1, CDKN2B, CDKN2B-AS1, CISH, CYB5A, FADS2, GFPT1, HSD11B1, IGF1, IGFBP3, INSR, IRS1, IRS2, IRS4, LEPR, LIPE, LPL, MAP3K5, MAPK13, MAPKAPK3, MAPKAPK3, MATN2, MFAP4, MGLL, MMD, MMRN2, MVP, NAP1L1, NR3C1, NRIP1, ORC2, PDGFD, PGM3, PGRMC1, PIK3R1, PNPLA2, PTGER3, PTPN3, PTPN4, PYGM, RARB, SCD, SCDP1, SCP2, SLC2A4, SOCS2, TCF7L2, TSHR``, generating a total of **``59``** barplots.
+We examined the following genes: ``ABHD5, ACVR1C, ADRB3, AKT1, AKT2, AKT3, APOL4, AVPR1A, BAG4, CAPN6, CCNE1, CCNG1, CDKN2B, CDKN2B-AS1, CISH, CYB5A, FADS2, G0S2, GFPT1, HSD11B1, IGF1, IGFBP3, INSR, IRS1, IRS2, IRS4, LEPR, LIPE, LPL, MAP3K5, MAPK13, MAPKAPK3, MAPKAPK3, MATN2, MFAP4, MGLL, MMD, MMRN2, MVP, NAP1L1, NR3C1, NRIP1, ORC2, PDGFD, PGM3, PGRMC1, PIK3R1, PNPLA2, PTGER3, PTPN3, PTPN4, PYGM, RARB, SCD, SCDP1, SCP2, SLC2A4, SOCS2, TCF7L2, TSHR``, generating a total of **``60``** barplots.
 
 
 
