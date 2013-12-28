@@ -29,3 +29,4 @@ Note that cufflinks was run, but not used in this analysis.  The alignment files
 Counts Table Generation
 -------------------------
 
+This was done using the script **counts_table.Rmd**.  This generated a counts table using Rsamtools and genomic ranges.  It includes a non-redundant counts table for every transcript in Ensembl GRCh37.69.  It is later filtered to only show the most abundant transcript.  This script was run externally and the resulting counts table was placed in **transcript_counts_table.csv** and **exon_counts_table.csv**.
