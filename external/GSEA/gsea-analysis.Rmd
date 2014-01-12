@@ -1,0 +1,12 @@
+Test GSEA Analysis of Acromegaly
+========================================================
+
+```{r data-entry}
+deseq_analysis_file <- '../data/processed/Annotated DESeq Results without Outlier - Acromegaly.csv'
+deseq_analysis <- read.csv(deseq_analysis_file, row.names='X')
+ordered_deseq_analysis <- deseq_analysis[order(deseq_analysis$pval), ]
+ranked_list_format <- ordered_deseq_analysis[,c('external_gene_id','pval')]
+write.csv(ranked_list_format, "../data/processed/Acromegaly_Ranked_Gene_List.rnk")
+
+```
+var(c(5.3, 0.3, 2.8))
