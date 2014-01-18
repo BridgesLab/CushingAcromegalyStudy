@@ -4,15 +4,11 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 
-The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Thu Jan 16 04:04:04 2014``.
+The counts tables were generated previously using HTseq and a shell script.  It removes the outlier data point from the analysis, which was patient **29**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Fri Jan 17 11:46:27 2014``.
 
 
 ```
-## Warning: package 'DESeq' was built under R version 3.0.2
-## Warning: package 'BiocGenerics' was built under R version 3.0.2
-## Warning: package 'Biobase' was built under R version 3.0.2
-## Warning: package 'knitcitations' was built under R version 3.0.2
 ## Warning: no date field in DESCRIPTION file of package 'BiocGenerics'
 ```
 
@@ -20,7 +16,7 @@ This script requires a transcript counts table.  There is also a sample mapping 
 
 
 
-These data were analysed in  by DESeq (<a href="http://dx.doi.org/10.1186/gb-2010-11-10-r106">Anders & Huber, 2010</a>). We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
+These data were analysed in  by DESeq (<a href="http://dx.doi.org/10.1186/gb-2010-11-10-r106">Anders & Huber, 2010</a>). We did not remove lower expressing genes because we pre-filtered the data to examine only one transcript per gene.  
 
 Full Analysis
 --------------
@@ -37,7 +33,6 @@ This step annotates the data tables with the official gene symbols.
 
 
 ```
-## Warning: package 'biomaRt' was built under R version 3.0.2
 ## Warning: no date field in DESCRIPTION file of package 'BiocGenerics'
 ```
 
@@ -51,15 +46,11 @@ Differentially Expressed Genes
 
 ### Acromegaly
 
-There were **62** differentially expressed transcripts from the acromegaly patients, with **10** transcripts downregulated and **52** transcripts upregulated.
-
-This corresponds to **52** upregulated genes and **10** downregulated genes.
+There were **62** differentially expressed genes from the acromegaly patients, with **10** genes downregulated and **52** genes upregulated.
 
 ### Cushing's Disease
 
-There were **77** differentially expressed transcripts from the acromegaly patients, with **31** transcripts downregulated and **46** transcripts upregulated.
-
-This corresponds to **8** upregulated genes and **3** downregulated genes.
+There were **11** differentially expressed genes from the acromegaly patients, with **3** genes downregulated and **8** genes upregulated.
 
 
 Bibiography
@@ -80,7 +71,7 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
@@ -99,10 +90,10 @@ sessionInfo()
 ## loaded via a namespace (and not attached):
 ##  [1] annotate_1.40.0      AnnotationDbi_1.24.0 DBI_0.2-7           
 ##  [4] digest_0.6.4         evaluate_0.5.1       formatR_0.10        
-##  [7] genefilter_1.44.0    geneplotter_1.40.0   grid_3.0.1          
+##  [7] genefilter_1.44.0    geneplotter_1.40.0   grid_3.0.2          
 ## [10] httr_0.2             IRanges_1.20.6       RColorBrewer_1.0-5  
-## [13] RCurl_1.95-4.1       RSQLite_0.11.4       splines_3.0.1       
-## [16] stats4_3.0.1         stringr_0.6.2        survival_2.37-4     
-## [19] tools_3.0.1          XML_3.95-0.2         xtable_1.7-1
+## [13] RCurl_1.95-4.1       RSQLite_0.11.4       splines_3.0.2       
+## [16] stats4_3.0.2         stringr_0.6.2        survival_2.37-4     
+## [19] tools_3.0.2          XML_3.95-0.2         xtable_1.7-1
 ```
 

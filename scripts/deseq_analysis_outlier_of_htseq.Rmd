@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 remove_patient <- 29
 ```
 
-The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+The counts tables were generated previously using HTseq and a shell script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
 This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
 
 ```{r loading-data, echo=FALSE, message=FALSE}
@@ -39,7 +39,7 @@ conditions <- mapping[match(names(filtered.transcript.counts),filtered.mapping$s
 cds = newCountDataSet( filtered.transcript.counts, conditions )
 ```
 
-These data were analysed in  by DESeq `r citep(bib[["DESeq"]])`. We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
+These data were analysed in  by DESeq `r citep(bib[["DESeq"]])`. We did not remove lower expressing genes because we pre-filtered the data to examine only one transcript per gene.  
 
 Full Analysis
 --------------
@@ -74,19 +74,16 @@ bib <- read.bibtex("references.bib") #loads the bib file
 #download gene name annotation data for results sets.
 ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
 transcriptInfo <- getBM(
-    attributes=c('ensembl_transcript_id', 'ensembl_gene_id','external_gene_id'), 
+    attributes=c('external_gene_id', 'ensembl_gene_id'), 
     values = 'ensembl_gene_id',
     mart=ensembl)
 #merge results files with transcript info files.
 annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x="id", by.y="ensembl_gene_id")
 annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_gene_id")
 
-unique.annot.cushing.results <- ddply(annotated.cushing.results, "id", function(x) head(x,1))
-unique.annot.acromegaly.results <- ddply(annotated.acromegaly.results, "id", function(x) head(x,1))
-
 #write annotated results files.
-write.csv(unique.annot.cushing.results, "../data/processed/htseq_Annotated DESeq Results - Cushing.csv")
-write.csv(unique.annot.acromegaly.results, "../data/processed/htseq_Annotated DESeq Results - Acromegaly.csv")
+write.csv(annotated.cushing.results, "../data/processed/htseq_Annotated DESeq Results - Cushing.csv")
+write.csv(annotated.acromegaly.results, "../data/processed/htseq_Annotated DESeq Results - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
@@ -94,38 +91,30 @@ The data was annotated from Ensembl data, using the biomaRt package `r citep(bib
 Differentially Expressed Genes
 --------------------------------
 ```{r differentially-expressed, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-acromegaly.diff.transcripts <- subset(unique.annot.acromegaly.results, padj <= 0.05) 
-with(acromegaly.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Acromegaly Patients Using htseq counts", xlim=range(0:10), ylim=range(0:1)))
-acromegaly.up.transcripts <- subset(acromegaly.diff.transcripts, foldChange > 1)
-acromegaly.up.genes <- unique(acromegaly.up.transcripts$external_gene_id)
+acromegaly.diff.genes <- subset(annotated.acromegaly.results, padj <= 0.05) 
+with(acromegaly.diff.genes, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Genes in Acromegaly Patients Using htseq counts", xlim=range(0:10), ylim=range(0:1)))
+acromegaly.up.genes <- subset(acromegaly.diff.genes, foldChange > 1)
 write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes_htseq.txt")
 
-acromegaly.down.transcripts <- subset(acromegaly.diff.transcripts, foldChange < 1)
-acromegaly.down.genes <- unique(acromegaly.down.transcripts$external_gene_id)
+acromegaly.down.genes <- subset(acromegaly.diff.genes, foldChange < 1)
 write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes_htseq.txt")
 
-cushing.diff.transcripts <- subset(annotated.cushing.results , padj <= 0.05) 
-with(cushing.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Cushing's Patients using htseq counts"))
-cushing.up.transcripts <- subset(cushing.diff.transcripts, foldChange > 1)
-cushing.up.genes <- unique(cushing.up.transcripts$external_gene_id)
+cushing.diff.genes <- subset(annotated.cushing.results , padj <= 0.05) 
+with(cushing.diff.genes, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Genes in Cushing's Patients using htseq counts"))
+cushing.up.genes <- subset(cushing.diff.genes, foldChange > 1)
 write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated genes_htseq.txt")
 
-cushing.down.transcripts <- subset(cushing.diff.transcripts, foldChange < 1)
-cushing.down.genes <- unique(cushing.down.transcripts$external_gene_id)
+cushing.down.genes <- subset(cushing.diff.genes, foldChange < 1)
 write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes_htseq.txt")
 ```
 
 ### Acromegaly
 
-There were **`r dim(acromegaly.diff.transcripts)[1]`** differentially expressed transcripts from the acromegaly patients, with **`r table(acromegaly.diff.transcripts$log2FoldChange > 0)[1]`** transcripts downregulated and **`r table(acromegaly.diff.transcripts$log2FoldChange > 0)[2]`** transcripts upregulated.
-
-This corresponds to **`r length(acromegaly.up.genes)`** upregulated genes and **`r length(acromegaly.down.genes)`** downregulated genes.
+There were **`r dim(acromegaly.diff.genes)[1]`** differentially expressed genes from the acromegaly patients, with **`r table(acromegaly.diff.genes$log2FoldChange > 0)[1]`** genes downregulated and **`r table(acromegaly.diff.genes$log2FoldChange > 0)[2]`** genes upregulated.
 
 ### Cushing's Disease
 
-There were **`r dim(cushing.diff.transcripts)[1]`** differentially expressed transcripts from the acromegaly patients, with **`r table(cushing.diff.transcripts$log2FoldChange > 0)[1]`** transcripts downregulated and **`r table(cushing.diff.transcripts$log2FoldChange > 0)[2]`** transcripts upregulated.
-
-This corresponds to **`r length(cushing.up.genes)`** upregulated genes and **`r length(cushing.down.genes)`** downregulated genes.
+There were **`r dim(cushing.diff.genes)[1]`** differentially expressed genes from the acromegaly patients, with **`r table(cushing.diff.genes$log2FoldChange > 0)[1]`** genes downregulated and **`r table(cushing.diff.genes$log2FoldChange > 0)[2]`** genes upregulated.
 
 
 Bibiography
