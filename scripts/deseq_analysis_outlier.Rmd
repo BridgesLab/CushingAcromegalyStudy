@@ -8,9 +8,9 @@ remove_patient <- 29
 The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
 This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
 
-```{r loading-data, echo=FALSE, message=FALSE}
+```{r loading-data, echo=FALSE, message=FALSE, warning=FALSE}
 #required packages
-library(DESeq ,quietly=TRUE) #for deseq analysis
+library(DESeq2 ,quietly=TRUE) #for deseq analysis
 library(knitcitations) #for generation of citations
 write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
 bib <- read.bibtex("references.bib") #loads the bib file
@@ -23,32 +23,42 @@ mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
 
-filtered.mapping <- mapping[mapping$patient.. != 29,]
-filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == 29,]$samplename]
+filtered.mapping <- mapping[mapping$patient.. != remove_patient,]
+filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == remove_patient,]$samplename]
 ```
 
 ```{r cds-construction, echo=FALSE, message=FALSE}
-#this command matches the mappings to the transcript headers, and extracts the conditions
-conditions <- mapping[match(names(filtered.transcript.counts),filtered.mapping$samplename),]$group
-cds = newCountDataSet( filtered.transcript.counts, conditions )
+#this command removes the cushings samples
+acromegaly.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Cushing's",])
+cds.acromegaly = DESeqDataSetFromMatrix( countData=filtered.transcript.counts[,acromegaly.mapping$samplename], 
+                                  colData=acromegaly.mapping,
+                                  design=~group )
+
+#this command removes the acromegaly samples
+cushing.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Acromegaly"&filtered.mapping$samplename %in% colnames(filtered.transcript.counts),])
+cds.cushing = DESeqDataSetFromMatrix( 
+  countData=filtered.transcript.counts[,cushing.mapping$samplename], 
+  colData=cushing.mapping,
+  design=~group )
 ```
 
-These data were analysed in  by DESeq `r citep(bib[["DESeq"]])`. We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
+These data were analysed in  by DESeq2 `r citep(bib[["DESeq2"]])`. We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
 
 Full Analysis
 --------------
 
 ```{r deseq-analysis, echo=FALSE, message=FALSE}
-cds <- estimateSizeFactors(cds)
-cds <- estimateDispersions(cds)
+acromegaly.cds <- DESeq(cds.acromegaly)
+cushing.cds <- DESeq(cds.cushing)
 
-write.csv(counts( cds, normalized=TRUE ),'../data/processed/Normalized Counts Table.csv')
+plotMA(acromegaly.cds,ylim=c(-2,2),main="DESeq2 Analysis of Acromegaly Samples")
+plotMA(cushing.cds,ylim=c(-2,2),main="DESeq2 Analysis of Cushing Samples")
 
-acromegaly.results = nbinomTest( cds, "Control", "Acromegaly" )
-write.csv(acromegaly.results, "../data/processed/acromegaly_deseq_results.csv")
+acromegaly.results <- results(acromegaly.cds)
+cushing.results <- results(cushing.cds)
 
-cushing.results = nbinomTest( cds, "Control", "Cushing's" )
-write.csv(cushing.results, "../data/processed/cushing_deseq_results.csv")
+write.csv(acromegaly.results, "../data/processed/acromegaly_deseq2_results.csv")
+write.csv(cushing.results, "../data/processed/cushing_deseq2_results.csv")
 ```
 
 
@@ -71,12 +81,12 @@ transcriptInfo <- getBM(
     values = 'ensembl_transcript_id',
     mart=ensembl)
 #merge results files with transcript info files.
-annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
-annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x="id", by.y="ensembl_transcript_id")
+annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x=0, by.y="ensembl_transcript_id")
+annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x=0, by.y="ensembl_transcript_id")
 
 #write annotated results files.
-write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq Results - Cushing.csv")
-write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq Results - Acromegaly.csv")
+write.csv(annotated.cushing.results, "../data/processed/Annotated DESeq2 Results - Cushing.csv")
+write.csv(annotated.acromegaly.results, "../data/processed/Annotated DESeq2 Results - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
@@ -84,23 +94,23 @@ The data was annotated from Ensembl data, using the biomaRt package `r citep(bib
 Differentially Expressed Genes
 --------------------------------
 ```{r differentially-expressed, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-acromegaly.diff.transcripts <- subset(annotated.acromegaly.results, padj <= 0.05) 
+acromegaly.diff.transcripts <- subset(as.data.frame(annotated.acromegaly.results), padj <= 0.05) 
 with(acromegaly.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Acromegaly Patients"))
-acromegaly.up.transcripts <- subset(acromegaly.diff.transcripts, foldChange > 1)
+acromegaly.up.transcripts <- subset(acromegaly.diff.transcripts, log2FoldChange > 0)
 acromegaly.up.genes <- unique(acromegaly.up.transcripts$external_gene_id)
 write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes.txt")
 
-acromegaly.down.transcripts <- subset(acromegaly.diff.transcripts, foldChange < 1)
+acromegaly.down.transcripts <- subset(acromegaly.diff.transcripts, log2FoldChange < 0)
 acromegaly.down.genes <- unique(acromegaly.down.transcripts$external_gene_id)
 write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes.txt")
 
-cushing.diff.transcripts <- subset(annotated.cushing.results , padj <= 0.05) 
+cushing.diff.transcripts <- subset(as.data.frame(annotated.cushing.results) , padj <= 0.05) 
 with(cushing.diff.transcripts, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Transcripts in Cushing's Patients"))
-cushing.up.transcripts <- subset(cushing.diff.transcripts, foldChange > 1)
+cushing.up.transcripts <- subset(cushing.diff.transcripts, log2FoldChange > 0)
 cushing.up.genes <- unique(cushing.up.transcripts$external_gene_id)
 write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated genes.txt")
 
-cushing.down.transcripts <- subset(cushing.diff.transcripts, foldChange < 1)
+cushing.down.transcripts <- subset(cushing.diff.transcripts, log2FoldChange < 0)
 cushing.down.genes <- unique(cushing.down.transcripts$external_gene_id)
 write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes.txt")
 ```

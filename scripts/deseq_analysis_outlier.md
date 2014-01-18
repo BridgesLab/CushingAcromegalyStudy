@@ -5,23 +5,20 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 The counts tables were generated previously using the **filtered_counts_table.Rmd** script.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Nov 17 09:16:49 2013``.
-
-
-```
-## Warning: no date field in DESCRIPTION file of package 'BiocGenerics'
-```
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sat Jan 18 09:37:01 2014``.
 
 
 
 
 
-These data were analysed in  by DESeq (<a href="http://dx.doi.org/10.1186/gb-2010-11-10-r106">Anders & Huber, 2010</a>). We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
+
+
+These data were analysed in  by DESeq2 (<a href="http://dx.doi.org/10.1186/gb-2010-11-10-r106">Anders & Huber, 2010</a>). We did not remove lower expressing transcripts because we pre-filtered the data to examine only one transcript per gene.  
 
 Full Analysis
 --------------
 
-
+![plot of chunk deseq-analysis](figure/deseq-analysis1.png) ![plot of chunk deseq-analysis](figure/deseq-analysis2.png) 
 
 
 
@@ -33,6 +30,9 @@ This step annotates the data tables with the official gene symbols.
 
 
 ```
+## Warning: no date field in DESCRIPTION file of package 'GenomicRanges'
+## Warning: no date field in DESCRIPTION file of package 'XVector'
+## Warning: no date field in DESCRIPTION file of package 'IRanges'
 ## Warning: no date field in DESCRIPTION file of package 'BiocGenerics'
 ```
 
@@ -46,15 +46,15 @@ Differentially Expressed Genes
 
 ### Acromegaly
 
-There were **103** differentially expressed transcripts from the acromegaly patients, with **25** transcripts downregulated and **78** transcripts upregulated.
+There were **753** differentially expressed transcripts from the acromegaly patients, with **277** transcripts downregulated and **476** transcripts upregulated.
 
-This corresponds to **78** upregulated genes and **25** downregulated genes.
+This corresponds to **476** upregulated genes and **277** downregulated genes.
 
 ### Cushing's Disease
 
-There were **16** differentially expressed transcripts from the acromegaly patients, with **3** transcripts downregulated and **13** transcripts upregulated.
+There were **749** differentially expressed transcripts from the acromegaly patients, with **271** transcripts downregulated and **478** transcripts upregulated.
 
-This corresponds to **13** upregulated genes and **3** downregulated genes.
+This corresponds to **478** upregulated genes and **271** downregulated genes.
 
 
 Bibiography
@@ -86,17 +86,21 @@ sessionInfo()
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] biomaRt_2.18.0      knitcitations_0.5-0 bibtex_0.3-6       
-## [4] DESeq_1.14.0        lattice_0.20-24     locfit_1.5-9.1     
-## [7] Biobase_2.22.0      BiocGenerics_0.8.0  knitr_1.5          
+##  [1] biomaRt_2.18.0          knitcitations_0.5-0    
+##  [3] bibtex_0.3-6            DESeq2_1.2.8           
+##  [5] RcppArmadillo_0.3.930.1 Rcpp_0.10.6            
+##  [7] GenomicRanges_1.14.4    XVector_0.2.0          
+##  [9] IRanges_1.20.6          BiocGenerics_0.8.0     
+## [11] knitr_1.5              
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] annotate_1.40.0      AnnotationDbi_1.24.0 DBI_0.2-7           
-##  [4] digest_0.6.3         evaluate_0.5.1       formatR_0.10        
-##  [7] genefilter_1.44.0    geneplotter_1.40.0   grid_3.0.2          
-## [10] httr_0.2             IRanges_1.20.5       RColorBrewer_1.0-5  
-## [13] RCurl_1.95-4.1       RSQLite_0.11.4       splines_3.0.2       
-## [16] stats4_3.0.2         stringr_0.6.2        survival_2.37-4     
-## [19] tools_3.0.2          XML_3.95-0.2         xtable_1.7-1
+##  [1] annotate_1.40.0      AnnotationDbi_1.24.0 Biobase_2.22.0      
+##  [4] DBI_0.2-7            digest_0.6.4         evaluate_0.5.1      
+##  [7] formatR_0.10         genefilter_1.44.0    grid_3.0.2          
+## [10] httr_0.2             lattice_0.20-24      locfit_1.5-9.1      
+## [13] RColorBrewer_1.0-5   RCurl_1.95-4.1       RSQLite_0.11.4      
+## [16] splines_3.0.2        stats4_3.0.2         stringr_0.6.2       
+## [19] survival_2.37-4      tools_3.0.2          XML_3.95-0.2        
+## [22] xtable_1.7-1
 ```
 
