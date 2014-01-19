@@ -23,7 +23,7 @@ mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
 
 igf_sample_mapping <- merge(igf_data, mapping, by.x='X', by.y='patient..')
-transcripts.file <- "../data/processed/Normalized Counts Table.csv"
+transcripts.file <- "../data/processed/Normalized_htseq_Counts_Table.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 filtered.transcript.counts <- transcript.counts[,igf_sample_mapping$samplename]
 ```
@@ -37,14 +37,14 @@ Correlation of IGF levels with IGF Related Transcripts
 library(biomaRt)
 ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl")
 #get gene names for transcripts
-gene.data <- getBM(attributes=c('ensembl_transcript_id', 'hgnc_symbol'),
-                   filters = 'ensembl_transcript_id', values = rownames(filtered.transcript.counts), mart = ensembl)
+gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
+                   filters = 'ensembl_gene_id', values = rownames(filtered.transcript.counts), mart = ensembl)
 igf.related.transcripts <- gene.data[grep('IGF',gene.data$hgnc_symbol),]
-igf.transcipt.counts <- filtered.transcript.counts[igf.related.transcripts$ensembl_transcript_id,]
+igf.transcript.counts <- filtered.transcript.counts[igf.related.transcripts$ensembl_gene_id,]
 
-ordered.igf.transcript.counts <- igf.transcipt.counts[order(-rowMeans(igf.transcipt.counts)),]
+ordered.igf.transcript.counts <- igf.transcript.counts[order(-rowMeans(igf.transcript.counts)),]
 
-fit <- lm(t(as.matrix(igf.transcipt.counts)) ~ igf_sample_mapping$igf1) 
+fit <- lm(t(as.matrix(igf.transcript.counts)) ~ igf_sample_mapping$igf1) 
 summary.data <- data.frame(row.names=colnames(fit$fitted.values),
                            rsq = rep(NA, length(colnames(fit$fitted.values))),
                            pval = rep(NA, length(colnames(fit$fitted.values))),
@@ -56,45 +56,45 @@ for (n in seq(1,dim(fit$fitted.values)[2])) {
    summary.data[colnames(fit$coef)[n],]$estimate <- summary(fit)[[n]]$coefficients[2,1] 
 }
 summary.data$padj <- p.adjust(summary.data$pval, method="BH")
-annotated.igf.summary <- merge(summary.data, gene.data, by.x='row.names', by.y='ensembl_transcript_id')
+annotated.igf.summary <- merge(summary.data, gene.data, by.x=0, by.y='ensembl_gene_id')
 annotated.igf.summary <- annotated.igf.summary[with(annotated.igf.summary, order(pval)), ]
 write.csv(annotated.igf.summary, '../data/processed/IGF1 Correlations.csv')
 ```
 
-For IGF1, the higest expressed transcript is `r rownames(igf.transcipt.counts['ENST00000456098',])`
 
 ```{r, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
 pdf('../figures/IGF1 Correlation.pdf')
 plot(igf_sample_mapping$igf1,
-     t(igf.transcipt.counts['ENST00000456098',]),
+     t(igf.transcript.counts['ENSG00000017427',]),
      pch=19, ylab="IGF1 Expression (Arbitrary Units)",
      xlab="IGF Levels (pg/mL)",las=1,
-     xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(0,max(t(igf.transcipt.counts['ENST00000456098',]))))
-abline(lm(t(igf.transcipt.counts['ENST00000456098',])~igf_sample_mapping$igf1))
+     xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(0,max(t(igf.transcript.counts['ENSG00000017427',]))))
+abline(lm(t(igf.transcript.counts['ENSG00000017427',])~igf_sample_mapping$igf1))
 dev.off()
 ```
 
 ## Barplots
 
 ```{r, barplots, echo=FALSE}
-all.igf.transcript.counts <- transcript.counts[igf.related.transcripts$ensembl_transcript_id,]
+all.igf.transcript.counts <- transcript.counts[transcript.counts$X %in% igf.related.transcripts$ensembl_gene_id,]
 library(reshape2)
-all.igf.transcript.counts$Transcript <- rownames(all.igf.transcript.counts)
+all.igf.transcript.counts$Gene <- rownames(all.igf.transcript.counts)
 #melt the data, so that each transcript/sample has one value
-igf.data.melted <- melt(all.igf.transcript.counts, variable.name="samplename", id.vars="Transcript")
+igf.data.melted <- melt(all.igf.transcript.counts, variable.name="samplename", id.vars="Gene")
+igf.data.melted$value <- as.numeric(igf.data.melted$value)
 #annotate that data frame with the gene name
-igf.data.melted.full <- merge(igf.data.melted, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+igf.data.melted.full <- merge(igf.data.melted, gene.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
 #annotate the data frame with the sample identification
 igf.melted.data.annotated <- merge(igf.data.melted.full, 
                                           mapping)
 igf.melted.data.annotated <- droplevels(subset(igf.melted.data.annotated, group != "Cushing's"))
 library(plyr)
-summary <- ddply(igf.melted.data.annotated, .(Transcript, group),
+summary <- ddply(igf.melted.data.annotated, .(Gene, group),
                   summarise,
                   mean=mean(value),
                   se=sd(value)/sqrt(length(value)),
                   number=length(value))
-summary <- merge(summary, gene.data, by.x="Transcript", by.y="ensembl_transcript_id", all.x=T)
+summary <- merge(summary, gene.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
 summary$hgnc_symbol <- as.factor(summary$hgnc_symbol)
 
 superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
@@ -104,7 +104,7 @@ length = length, ...)
 for (gene in levels(summary$hgnc_symbol)) {
   #pdf(sprintf('../figures/igf-%s-barplot.pdf', gene))
   summary.gene <- dcast(subset(summary, hgnc_symbol==gene),
-                  group~Transcript, 
+                  group~Gene, 
                   value.var="mean")
   max <- max(subset(summary, hgnc_symbol==gene)$mean + subset(summary, hgnc_symbol==gene)$se)
   max.transcript <- which.max(summary.gene[1,2:ncol(summary.gene)])+1
@@ -116,14 +116,14 @@ for (gene in levels(summary$hgnc_symbol)) {
   axis(1, at = c(0.75,1.9), labels = summary.gene$group, tick=FALSE)
   superpose.eb(plot, 
                summary.gene[,max.transcript], 
-               dcast(subset(summary, hgnc_symbol==gene), group~Transcript, value.var="se")[,max.transcript])
+               dcast(subset(summary, hgnc_symbol==gene), group~Gene, value.var="se")[,max.transcript])
   dev.off()
 }
 ```
 
 ```{r table, results='asis', echo=FALSE} 
 library(xtable)
-print(xtable(annotated.igf.summary[annotated.igf.summary=='ENST00000456098',], digits=3), type='html')
+print(xtable(annotated.igf.summary, digits=3), type='html')
 ``` 
 
 
