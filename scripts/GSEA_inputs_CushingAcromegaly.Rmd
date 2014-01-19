@@ -1,0 +1,96 @@
+Title Making input files for GSEA
+========================================================
+
+Making the input file
+
+```{r Read data}
+remove_patient <- 29
+exp_filename <- "../data/raw/htseq_gene_counts.txt"
+sample_mapping_filename <- "../data/raw/patient_sample_mapping.csv"
+deseq2.Cushing <- "../data/processed/Annotated DESeq2 Results - Cushing.csv"
+deseq2.Acromegaly <- "../data/processed/Annotated DESeq2 Results - Acromegaly.csv"
+exp_file <- read.table(exp_filename, header=TRUE)
+deseq2.Cushing.results <- read.csv(deseq2.Cushing, row.names="X")
+deseq2.Acromegaly.results <- read.csv(deseq2.Acromegaly, row.names="X")
+
+mapping <- read.csv(sample_mapping_filename)
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+#remove outlier patient
+filtered.mapping <- mapping[mapping$patient.. != remove_patient,]
+
+#Get the colum names of the htseq_counts match with the sample.mapping file
+colnames(exp_file) <- tolower(colnames(exp_file))
+colnames(exp_file) <- gsub("_", "", colnames(exp_file))
+
+#this command removes the cushings samples
+acromegaly.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Cushing's",])
+#this command removes the acromegaly samples
+cushing.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Acromegaly"&filtered.mapping$samplename %in% colnames(exp_file),])
+
+#get the gene symbols
+exp_Acromegaly_geneName <- merge(exp_file, deseq2.Acromegaly.results, by.x="genes", by.y="ensembl_gene_id")
+exp_Cushing_geneName <- merge(exp_file, deseq2.Cushing.results, by.x="genes", by.y="ensembl_gene_id")
+
+#make the expression file for GSEA with first column is gene symbols and other columns are htseq counts
+acromegaly.mapping <- acromegaly.mapping[order(acromegaly.mapping$group),]#order the samples by control vs acromegaly
+exp_Acro <- exp_Acromegaly_geneName[,acromegaly.mapping$samplename] 
+rownames(exp_Acro) <- exp_Acromegaly_geneName$external_gene_id
+write.table(exp_Acro, file="../data/processed/GSEA_Acromegaly_input_htseq_DEseq2.txt", sep="\t")
+
+cushing.mapping <- cushing.mapping[order(cushing.mapping$group),]#order the samples by control vs acromegaly
+exp_Cushing <- exp_Cushing_geneName[,cushing.mapping$samplename] 
+rownames(exp_Cushing) <- exp_Cushing_geneName$external_gene_id
+write.table(exp_Cushing, file="../data/processed/GSEA_Cushing_input_htseq_DEseq2.txt", sep="\t")
+```
+Making phenotype files
+
+```{r making the pheno type file}
+#making phenotype data file for acromegaly
+num.acromegaly.samples <- nrow(acromegaly.mapping)
+total.num.classes <- 2
+class1.name <- "Control"
+class2.name <- "Acromegaly"
+acromegaly.pheno <- matrix ("", nrow=3, ncol=num.acromegaly.samples)
+acromegaly.pheno[1,1] <- num.acromegaly.samples
+acromegaly.pheno[1,2] <- total.num.classes
+acromegaly.pheno[1,3] <- 1 #this is always 1
+acromegaly.pheno[2,1] <- '#' #this is always #
+acromegaly.pheno[2,2] <- class1.name
+acromegaly.pheno[2,3] <- class2.name
+acromegaly.pheno[3,1:nrow(acromegaly.mapping)] <- acromegaly.mapping[,3]
+acromegaly.pheno.noHeader <- acromegaly.pheno[2:3,2:num.acromegaly.samples]
+colnames(acromegaly.pheno.noHeader) <- acromegaly.pheno[1,1:(num.acromegaly.samples-1)]
+rownames(acromegaly.pheno.noHeader) <- acromegaly.pheno[2:3,1]
+
+write.table(acromegaly.pheno.noHeader, file="../data/processed/GSEA_pheno_acromegaly.cls", sep="\t", quote=FALSE)
+
+#making phenotype data file for cushing
+num.cushing.samples <- nrow(cushing.mapping)
+total.num.classes <- 2
+class1.name <- "Control"
+class2.name <- "Cushing"
+cushing.pheno <- matrix ("", nrow=3, ncol=num.cushing.samples)
+cushing.pheno[1,1] <- num.cushing.samples
+cushing.pheno[1,2] <- total.num.classes
+cushing.pheno[1,3] <- 1 #this is always 1
+cushing.pheno[2,1] <- '#' #this is always #
+cushing.pheno[2,2] <- class1.name
+cushing.pheno[2,3] <- class2.name
+cushing.pheno[3,1:nrow(cushing.mapping)] <- cushing.mapping[,3]
+cushing.pheno.noHeader <- cushing.pheno[2:3,2:num.cushing.samples]
+colnames(cushing.pheno.noHeader) <- cushing.pheno[1,1:(num.cushing.samples-1)]
+rownames(cushing.pheno.noHeader) <- cushing.pheno[2:3,1]
+
+write.table(cushing.pheno.noHeader, file="../data/processed/GSEA_pheno_cushing.cls", sep="\t", quote=FALSE)
+```
+
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```
+
