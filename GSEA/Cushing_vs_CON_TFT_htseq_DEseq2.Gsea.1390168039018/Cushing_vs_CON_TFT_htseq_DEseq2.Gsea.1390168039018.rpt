@@ -1,0 +1,31 @@
+producer_class	xtools.gsea.Gsea
+producer_timestamp	1390168039018
+param	collapse	false
+param	cls	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/data/processed/GSEA_pheno_cushing.cls#Cushing_versus_Control
+param	plot_top_x	20
+param	norm	meandiv
+param	save_rnd_lists	false
+param	median	false
+param	num	100
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.tft.v4.0.symbols.gmt
+param	gui	false
+param	metric	tTest
+param	rpt_label	Cushing_vs_CON_TFT_htseq_DEseq2
+param	help	false
+param	order	descending
+param	out	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/GSEA
+param	permute	phenotype
+param	rnd_type	no_balance
+param	set_min	15
+param	include_only_symbols	true
+param	sort	real
+param	rnd_seed	149
+param	nperm	1000
+param	zip_report	false
+param	set_max	500
+param	res	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/data/processed/GSEA_Cushing_input_htseq_DEseq2.txt
+
+file	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/GSEA/Cushing_vs_CON_TFT_htseq_DEseq2.Gsea.1390168039018/index.html
