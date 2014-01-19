@@ -10,9 +10,9 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/Annotated DESeq Results - Acromegaly.csv"
-analysis.data <- read.csv(analysis.file)
-transcripts.file <- "../data/processed/Normalized Counts Table.csv"
+analysis.file <- "../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv"
+analysis.data <- read.csv(analysis.file, row.names='Row.names')
+transcripts.file <- "../data/processed/Normalized_htseq_Counts_Table.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
@@ -37,12 +37,12 @@ To test the grouping of differentially expressed transcripts, we only examined g
 ```{r de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
 
 #subset for differenially expressed transcripts
-differential.transcripts <- diff.transcripts$id
-diff.exprs <- filtered.transcript.counts[as.character(differential.transcripts),]
+differential.transcripts <- rownames(diff.transcripts)
+diff.exprs <- filtered.transcript.counts[differential.transcripts %in% rownames(filtered.transcript.counts),]
 
 #reordered based on fold change
-ordered.transcripts <- diff.transcripts[order(diff.transcripts$foldChange),]
-diff.exprs.ordered <- diff.exprs[as.character(ordered.transcripts$id),]
+ordered.transcripts <- diff.transcripts[order(diff.transcripts$log2FoldChange),]
+diff.exprs.ordered <- diff.exprs[rownames(ordered.transcripts),]
 #show only unique genes
 diff.exprs.ordered.genes <- diff.exprs.ordered[!(duplicated(ordered.transcripts$external_gene_id, incomparables=F)),]
 rownames(diff.exprs.ordered.genes) <- as.character(ordered.transcripts[!(duplicated(ordered.transcripts$external_gene_id, incomparables=F)),]$external_gene_id)
