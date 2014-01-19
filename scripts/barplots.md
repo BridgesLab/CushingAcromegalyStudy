@@ -6,7 +6,7 @@ Used Analysed DESeq results.
 
 
 
-The data used is in the file **../data/processed/Normalized Counts Table.csv**.  This file was most recently processed on ``Thu Dec  5 13:25:49 2013``.
+The data used is in the file **../data/processed/Normalized_htseq_Counts_Table.csv**.  This file was most recently processed on ``Sun Jan 19 10:32:30 2014``.
 
 Normalization of Expression
 --------------------------------
