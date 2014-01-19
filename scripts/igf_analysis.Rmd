@@ -51,7 +51,7 @@ summary.data <- data.frame(row.names=colnames(fit$fitted.values),
                            estimate = rep(NA, length(colnames(fit$fitted.values)))
                            )
 for (n in seq(1,dim(fit$fitted.values)[2])) {
-   summary.data[colnames(fit$coef)[n],]$rsq <- summary(fit)[[n]]$adj.r.squared
+   summary.data[colnames(fit$coef)[n],]$rsq <- summary(fit)[[n]]$r.squared
    summary.data[colnames(fit$coef)[n],]$pval <- summary(fit)[[n]]$coefficients[2,4]
    summary.data[colnames(fit$coef)[n],]$estimate <- summary(fit)[[n]]$coefficients[2,1] 
 }

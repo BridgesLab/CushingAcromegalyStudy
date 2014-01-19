@@ -1,7 +1,7 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun Jan 19 11:23:24 2014``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun Jan 19 11:33:38 2014``.
 
 
 ```
@@ -31,31 +31,31 @@ Correlation of IGF levels with IGF Related Transcripts
 
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 11:24:13 2014 -->
+<!-- Sun Jan 19 11:35:38 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Row.names </TH> <TH> rsq </TH> <TH> pval </TH> <TH> estimate </TH> <TH> padj </TH> <TH> hgnc_symbol </TH>  </TR>
-  <TR> <TD align="right"> 1 </TD> <TD> ENSG00000017427 </TD> <TD align="right"> 0.510 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 1.973 </TD> <TD align="right"> 0.621 </TD> <TD> IGF1 </TD> </TR>
-  <TR> <TD align="right"> 29 </TD> <TD> ENSG00000253869 </TD> <TD align="right"> 0.407 </TD> <TD align="right"> 0.073 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.621 </TD> <TD> PIGFP1 </TD> </TR>
-  <TR> <TD align="right"> 15 </TD> <TD> ENSG00000151665 </TD> <TD align="right"> 0.322 </TD> <TD align="right"> 0.107 </TD> <TD align="right"> -0.079 </TD> <TD align="right"> 0.621 </TD> <TD> PIGF </TD> </TR>
-  <TR> <TD align="right"> 13 </TD> <TD> ENSG00000146674 </TD> <TD align="right"> 0.309 </TD> <TD align="right"> 0.113 </TD> <TD align="right"> 1.558 </TD> <TD align="right"> 0.621 </TD> <TD> IGFBP3 </TD> </TR>
-  <TR> <TD align="right"> 7 </TD> <TD> ENSG00000126246 </TD> <TD align="right"> 0.237 </TD> <TD align="right"> 0.151 </TD> <TD align="right"> -0.003 </TD> <TD align="right"> 0.665 </TD> <TD> IGFLR1 </TD> </TR>
-  <TR> <TD align="right"> 17 </TD> <TD> ENSG00000163395 </TD> <TD align="right"> 0.085 </TD> <TD align="right"> 0.267 </TD> <TD align="right"> -0.023 </TD> <TD align="right"> 0.706 </TD> <TD> IGFN1 </TD> </TR>
-  <TR> <TD align="right"> 6 </TD> <TD> ENSG00000115461 </TD> <TD align="right"> 0.057 </TD> <TD align="right"> 0.296 </TD> <TD align="right"> 2.694 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBP5 </TD> </TR>
-  <TR> <TD align="right"> 4 </TD> <TD> ENSG00000099869 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 0.311 </TD> <TD align="right"> 0.002 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2-AS </TD> </TR>
-  <TR> <TD align="right"> 3 </TD> <TD> ENSG00000099769 </TD> <TD align="right"> -0.019 </TD> <TD align="right"> 0.389 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGFALS </TD> </TR>
-  <TR> <TD align="right"> 11 </TD> <TD> ENSG00000140443 </TD> <TD align="right"> -0.020 </TD> <TD align="right"> 0.391 </TD> <TD align="right"> -0.043 </TD> <TD align="right"> 0.706 </TD> <TD> IGF1R </TD> </TR>
-  <TR> <TD align="right"> 19 </TD> <TD> ENSG00000165197 </TD> <TD align="right"> -0.039 </TD> <TD align="right"> 0.419 </TD> <TD align="right"> -0.030 </TD> <TD align="right"> 0.706 </TD> <TD> FIGF </TD> </TR>
-  <TR> <TD align="right"> 5 </TD> <TD> ENSG00000115457 </TD> <TD align="right"> -0.041 </TD> <TD align="right"> 0.422 </TD> <TD align="right"> -0.031 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBP2 </TD> </TR>
-  <TR> <TD align="right"> 16 </TD> <TD> ENSG00000159217 </TD> <TD align="right"> -0.057 </TD> <TD align="right"> 0.448 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2BP1 </TD> </TR>
-  <TR> <TD align="right"> 9 </TD> <TD> ENSG00000136231 </TD> <TD align="right"> -0.075 </TD> <TD align="right"> 0.480 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2BP3 </TD> </TR>
-  <TR> <TD align="right"> 10 </TD> <TD> ENSG00000137142 </TD> <TD align="right"> -0.076 </TD> <TD align="right"> 0.481 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBPL1 </TD> </TR>
-  <TR> <TD align="right"> 18 </TD> <TD> ENSG00000163453 </TD> <TD align="right"> -0.101 </TD> <TD align="right"> 0.532 </TD> <TD align="right"> -0.141 </TD> <TD align="right"> 0.732 </TD> <TD> IGFBP7 </TD> </TR>
-  <TR> <TD align="right"> 24 </TD> <TD> ENSG00000197081 </TD> <TD align="right"> -0.121 </TD> <TD align="right"> 0.578 </TD> <TD align="right"> -0.099 </TD> <TD align="right"> 0.747 </TD> <TD> IGF2R </TD> </TR>
-  <TR> <TD align="right"> 2 </TD> <TD> ENSG00000073792 </TD> <TD align="right"> -0.158 </TD> <TD align="right"> 0.687 </TD> <TD align="right"> 0.009 </TD> <TD align="right"> 0.808 </TD> <TD> IGF2BP2 </TD> </TR>
-  <TR> <TD align="right"> 21 </TD> <TD> ENSG00000167779 </TD> <TD align="right"> -0.161 </TD> <TD align="right"> 0.698 </TD> <TD align="right"> -0.068 </TD> <TD align="right"> 0.808 </TD> <TD> IGFBP6 </TD> </TR>
-  <TR> <TD align="right"> 12 </TD> <TD> ENSG00000141753 </TD> <TD align="right"> -0.192 </TD> <TD align="right"> 0.858 </TD> <TD align="right"> 0.094 </TD> <TD align="right"> 0.938 </TD> <TD> IGFBP4 </TD> </TR>
-  <TR> <TD align="right"> 26 </TD> <TD> ENSG00000204869 </TD> <TD align="right"> -0.195 </TD> <TD align="right"> 0.895 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.938 </TD> <TD> IGFL4 </TD> </TR>
-  <TR> <TD align="right"> 20 </TD> <TD> ENSG00000167244 </TD> <TD align="right"> -0.200 </TD> <TD align="right"> 0.985 </TD> <TD align="right"> 0.007 </TD> <TD align="right"> 0.985 </TD> <TD> IGF2 </TD> </TR>
+  <TR> <TD align="right"> 1 </TD> <TD> ENSG00000017427 </TD> <TD align="right"> 0.591 </TD> <TD align="right"> 0.043 </TD> <TD align="right"> 1.973 </TD> <TD align="right"> 0.621 </TD> <TD> IGF1 </TD> </TR>
+  <TR> <TD align="right"> 29 </TD> <TD> ENSG00000253869 </TD> <TD align="right"> 0.506 </TD> <TD align="right"> 0.073 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.621 </TD> <TD> PIGFP1 </TD> </TR>
+  <TR> <TD align="right"> 15 </TD> <TD> ENSG00000151665 </TD> <TD align="right"> 0.435 </TD> <TD align="right"> 0.107 </TD> <TD align="right"> -0.079 </TD> <TD align="right"> 0.621 </TD> <TD> PIGF </TD> </TR>
+  <TR> <TD align="right"> 13 </TD> <TD> ENSG00000146674 </TD> <TD align="right"> 0.424 </TD> <TD align="right"> 0.113 </TD> <TD align="right"> 1.558 </TD> <TD align="right"> 0.621 </TD> <TD> IGFBP3 </TD> </TR>
+  <TR> <TD align="right"> 7 </TD> <TD> ENSG00000126246 </TD> <TD align="right"> 0.364 </TD> <TD align="right"> 0.151 </TD> <TD align="right"> -0.003 </TD> <TD align="right"> 0.665 </TD> <TD> IGFLR1 </TD> </TR>
+  <TR> <TD align="right"> 17 </TD> <TD> ENSG00000163395 </TD> <TD align="right"> 0.237 </TD> <TD align="right"> 0.267 </TD> <TD align="right"> -0.023 </TD> <TD align="right"> 0.706 </TD> <TD> IGFN1 </TD> </TR>
+  <TR> <TD align="right"> 6 </TD> <TD> ENSG00000115461 </TD> <TD align="right"> 0.214 </TD> <TD align="right"> 0.296 </TD> <TD align="right"> 2.694 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBP5 </TD> </TR>
+  <TR> <TD align="right"> 4 </TD> <TD> ENSG00000099869 </TD> <TD align="right"> 0.202 </TD> <TD align="right"> 0.311 </TD> <TD align="right"> 0.002 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2-AS </TD> </TR>
+  <TR> <TD align="right"> 3 </TD> <TD> ENSG00000099769 </TD> <TD align="right"> 0.151 </TD> <TD align="right"> 0.389 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGFALS </TD> </TR>
+  <TR> <TD align="right"> 11 </TD> <TD> ENSG00000140443 </TD> <TD align="right"> 0.150 </TD> <TD align="right"> 0.391 </TD> <TD align="right"> -0.043 </TD> <TD align="right"> 0.706 </TD> <TD> IGF1R </TD> </TR>
+  <TR> <TD align="right"> 19 </TD> <TD> ENSG00000165197 </TD> <TD align="right"> 0.134 </TD> <TD align="right"> 0.419 </TD> <TD align="right"> -0.030 </TD> <TD align="right"> 0.706 </TD> <TD> FIGF </TD> </TR>
+  <TR> <TD align="right"> 5 </TD> <TD> ENSG00000115457 </TD> <TD align="right"> 0.133 </TD> <TD align="right"> 0.422 </TD> <TD align="right"> -0.031 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBP2 </TD> </TR>
+  <TR> <TD align="right"> 16 </TD> <TD> ENSG00000159217 </TD> <TD align="right"> 0.119 </TD> <TD align="right"> 0.448 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2BP1 </TD> </TR>
+  <TR> <TD align="right"> 9 </TD> <TD> ENSG00000136231 </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.480 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGF2BP3 </TD> </TR>
+  <TR> <TD align="right"> 10 </TD> <TD> ENSG00000137142 </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.481 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.706 </TD> <TD> IGFBPL1 </TD> </TR>
+  <TR> <TD align="right"> 18 </TD> <TD> ENSG00000163453 </TD> <TD align="right"> 0.083 </TD> <TD align="right"> 0.532 </TD> <TD align="right"> -0.141 </TD> <TD align="right"> 0.732 </TD> <TD> IGFBP7 </TD> </TR>
+  <TR> <TD align="right"> 24 </TD> <TD> ENSG00000197081 </TD> <TD align="right"> 0.066 </TD> <TD align="right"> 0.578 </TD> <TD align="right"> -0.099 </TD> <TD align="right"> 0.747 </TD> <TD> IGF2R </TD> </TR>
+  <TR> <TD align="right"> 2 </TD> <TD> ENSG00000073792 </TD> <TD align="right"> 0.035 </TD> <TD align="right"> 0.687 </TD> <TD align="right"> 0.009 </TD> <TD align="right"> 0.808 </TD> <TD> IGF2BP2 </TD> </TR>
+  <TR> <TD align="right"> 21 </TD> <TD> ENSG00000167779 </TD> <TD align="right"> 0.033 </TD> <TD align="right"> 0.698 </TD> <TD align="right"> -0.068 </TD> <TD align="right"> 0.808 </TD> <TD> IGFBP6 </TD> </TR>
+  <TR> <TD align="right"> 12 </TD> <TD> ENSG00000141753 </TD> <TD align="right"> 0.007 </TD> <TD align="right"> 0.858 </TD> <TD align="right"> 0.094 </TD> <TD align="right"> 0.938 </TD> <TD> IGFBP4 </TD> </TR>
+  <TR> <TD align="right"> 26 </TD> <TD> ENSG00000204869 </TD> <TD align="right"> 0.004 </TD> <TD align="right"> 0.895 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.938 </TD> <TD> IGFL4 </TD> </TR>
+  <TR> <TD align="right"> 20 </TD> <TD> ENSG00000167244 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.985 </TD> <TD align="right"> 0.007 </TD> <TD align="right"> 0.985 </TD> <TD> IGF2 </TD> </TR>
   <TR> <TD align="right"> 8 </TD> <TD> ENSG00000129965 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> INS-IGF2 </TD> </TR>
   <TR> <TD align="right"> 14 </TD> <TD> ENSG00000146678 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFBP1 </TD> </TR>
   <TR> <TD align="right"> 22 </TD> <TD> ENSG00000188293 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFL1 </TD> </TR>
