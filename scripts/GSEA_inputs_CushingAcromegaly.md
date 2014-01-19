@@ -44,13 +44,13 @@ acromegaly.mapping <- acromegaly.mapping[order(acromegaly.mapping$group), ]  #or
 exp_Acro <- exp_Acromegaly_geneName[, acromegaly.mapping$samplename]
 rownames(exp_Acro) <- exp_Acromegaly_geneName$external_gene_id
 write.table(exp_Acro, file = "../data/processed/GSEA_Acromegaly_input_htseq_DEseq2.txt", 
-    sep = "\t")
+    sep = "\t", col.names = NA)
 
 cushing.mapping <- cushing.mapping[order(cushing.mapping$group), ]  #order the samples by control vs acromegaly
 exp_Cushing <- exp_Cushing_geneName[, cushing.mapping$samplename]
 rownames(exp_Cushing) <- exp_Cushing_geneName$external_gene_id
 write.table(exp_Cushing, file = "../data/processed/GSEA_Cushing_input_htseq_DEseq2.txt", 
-    sep = "\t")
+    sep = "\t", col.names = NA)
 ```
 
 Making phenotype files
