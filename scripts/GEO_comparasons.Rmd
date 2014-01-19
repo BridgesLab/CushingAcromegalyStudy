@@ -9,7 +9,7 @@ This script was most recently run on `r date()`.
 #for references
 library(devtools)
 require(knitcitations)
-acromegaly.data <- read.csv('../data/processed/Annotated DESeq Results - Acromegaly.csv', row.names='id')
+acromegaly.data <- read.csv('../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv', row.names='Row.names')
 ```
 
 Huo et al Dataset
@@ -97,7 +97,7 @@ mouse_data <- read.csv('../data/processed/GSE2120-analysis.csv', row.names='X')
 sig_mouse_genes <- mouse_data[mouse_data$p.value < 0.05,]
 human_homologs <- unique(human_mouse_conversion_table[human_mouse_conversion_table$entrezgene %in% sig_mouse_genes$genes.ENTREZ_GENE_ID,]$hsapiens_homolog_ensembl_gene)
 
-sig_up_genes <- droplevels(unique(subset(acromegaly.data, foldChange>1&padj<0.05)$ensembl_gene_id))
+sig_up_genes <- rownames(subset(acromegaly.data, log2FoldChange>0&padj<0.05))
 mouse_up_homologs <- human_mouse_conversion_table[human_mouse_conversion_table$hsapiens_homolog_ensembl_gene %in% sig_up_genes,]
 mouse_up_homolog_data <- mouse_data[unique(mouse_up_homologs$affy_mg_u74av2),]
 
@@ -105,7 +105,7 @@ coupregulated_homologs <- droplevels(mouse_up_homolog_data[mouse_up_homolog_data
 human_coupregulated_homologs <- unique(human_mouse_conversion_table[human_mouse_conversion_table$entrezgene %in% coupregulated_homologs,]$hsapiens_homolog_ensembl_gene)
 
 
-sig_down_genes <- droplevels(unique(subset(acromegaly.data, foldChange<1&padj<0.05)$ensembl_gene_id))
+sig_down_genes <- rownames(subset(acromegaly.data, log2FoldChange<0&padj<0.05))
 mouse_down_homologs <- human_mouse_conversion_table[human_mouse_conversion_table$hsapiens_homolog_ensembl_gene %in% sig_down_genes,]
 mouse_down_homolog_data <- mouse_data[unique(mouse_down_homologs$affy_mg_u74av2),]
 
@@ -118,20 +118,20 @@ mouse_homologs <- human_mouse_conversion_table[human_mouse_conversion_table$hsap
 
 ### Upregulated Genes
 
-Of the `r length(sig_up_genes)` significantly upregulated genes on the chip, `r length(unique(mouse_up_homologs$ensembl_gene_id))` had identifiable human homologs, of which there were `r length(unique(mouse_up_homologs$affy_mg_u74av2))` probes.  These genes were on average **upregulated** to `r 2^mean(mouse_up_homolog_data$coefficients, na.rm=T)` of their original control levels.  The p-value that these genes are upregulated is `r round(t.test(mouse_up_homolog_data$coefficients, mu=0, alternative="greater")$p.value,5)`.  Of these `r length(unique(mouse_up_homologs$affy_mg_u74av2))` mouse genes that had probes, `r table(mouse_up_homolog_data$coefficients >0)[2]` were upregulated.  Specifically, these genes were `r as.character(unique(droplevels(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_coupregulated_homologs,]$external_gene_id)))`
+Of the `r length(sig_up_genes)` significantly upregulated genes on the chip, `r length(unique(mouse_up_homologs$ensembl_gene_id))` had identifiable human homologs, of which there were `r length(unique(mouse_up_homologs$affy_mg_u74av2))` probes.  These genes were on average **upregulated** to `r 2^mean(mouse_up_homolog_data$coefficients, na.rm=T)` of their original control levels.  The p-value that these genes are upregulated is `r round(t.test(mouse_up_homolog_data$coefficients, mu=0, alternative="greater")$p.value,5)`.  Of these `r length(unique(mouse_up_homologs$affy_mg_u74av2))` mouse genes that had probes, `r table(mouse_up_homolog_data$coefficients >0)[2]` were upregulated.  Specifically, these genes were `r as.character(unique(droplevels(acromegaly.data[rownames(acromegaly.data) %in% human_coupregulated_homologs,]$external_gene_id)))`
 
 ### Downregulated Genes
 
-Of the `r length(sig_down_genes)` significantly downregulated genes, `r length(unique(mouse_down_homologs$ensembl_gene_id))` had identifiable human homologs on that array chip, of which there were `r length(unique(mouse_down_homologs$affy_mg_u74av2))` probes.  These genes were on average **downregulated** to `r 2^mean(mouse_down_homolog_data$coefficients, na.rm=T)` of their original control levels.  The p-value that these genes are downregulated is `r round(t.test(mouse_down_homolog_data$coefficients, mu=0, alternative="less")$p.value,5)`.  Of these `r length(unique(mouse_down_homologs$affy_mg_u74av2))` mouse genes that had probes, `r table(mouse_down_homolog_data$coefficients >0)[2]` were downregulated.  Specifically, these genes were `r as.character(unique(droplevels(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_codownregulated_homologs,]$external_gene_id)))`.
+Of the `r length(sig_down_genes)` significantly downregulated genes, `r length(unique(mouse_down_homologs$ensembl_gene_id))` had identifiable human homologs on that array chip, of which there were `r length(unique(mouse_down_homologs$affy_mg_u74av2))` probes.  These genes were on average **downregulated** to `r 2^mean(mouse_down_homolog_data$coefficients, na.rm=T)` of their original control levels.  The p-value that these genes are downregulated is `r round(t.test(mouse_down_homolog_data$coefficients, mu=0, alternative="less")$p.value,5)`.  Of these `r length(unique(mouse_down_homologs$affy_mg_u74av2))` mouse genes that had probes, `r table(mouse_down_homolog_data$coefficients >0)[2]` were downregulated.  Specifically, these genes were `r as.character(unique(droplevels(acromegaly.data[rownames(acromegaly.data) %in% human_codownregulated_homologs,]$external_gene_id)))`.
 
 ### Enrichment Testing
-We found `r length(sig_down_genes)+length(sig_up_genes)` significantly different genes in the acromegaly study.  Our re-analysis of the growth hormone study found `r length(unique(sig_mouse_genes$genes.ENTREZ_GENE_ID))` differentially expressed genes.  That corresponds to `r length(unique(sig_mouse_genes$genes.ENTREZ_GENE_ID))/length(unique(mouse_data$genes.ENTREZ_GENE_ID))*100`% of the genes are different.  Out of those genes, `r length(human_homologs)` map to human homologs.  Out of the transcripts mapped to those genes, `r table(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_homologs,]$padj<0.05)[2]` out of `r  dim(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_homologs,])[1]` (or `r 100*table(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_homologs,]$padj<0.05)[2]/dim(acromegaly.data[acromegaly.data$ensembl_gene_id %in% human_homologs,])[1]`%)` were significantly different in the acromegaly data, so there was no enrichment.
+We found `r length(sig_down_genes)+length(sig_up_genes)` significantly different genes in the acromegaly study.  Our re-analysis of the growth hormone study found `r length(unique(sig_mouse_genes$genes.ENTREZ_GENE_ID))` differentially expressed genes.  That corresponds to `r length(unique(sig_mouse_genes$genes.ENTREZ_GENE_ID))/length(unique(mouse_data$genes.ENTREZ_GENE_ID))*100`% of the genes are different.  Out of those genes, `r length(human_homologs)` map to human homologs.  Out of the transcripts mapped to those genes, `r table(acromegaly.data[rownames(acromegaly.data) %in% human_homologs,]$padj<0.05)[2]` out of `r  dim(acromegaly.data[rownames(acromegaly.data) %in% human_homologs,])[1]` (or `r 100*table(acromegaly.data[rownames(acromegaly.data) %in% human_homologs,]$padj<0.05)[2]/dim(acromegaly.data[rownames(acromegaly.data) %in% human_homologs,])[1]`%)` were significantly different in the acromegaly data, so there was no enrichment.
 
-Done the other way, we found `r length(sig_down_genes)+length(sig_up_genes)` significantly different acromegaly genes out of a total of `r length(unique(acromegaly.data$ensembl_gene_id))` genes tested (or `r 100*(length(sig_down_genes)+length(sig_up_genes))/length(unique(acromegaly.data$ensembl_gene_id))`%).  Out of these `r length(sig_down_genes)+length(sig_up_genes)` genes, `r length(unique(mouse_homologs$ensembl_gene_id))` have mouse homologs, and `r length(unique(mouse_homologs$affy_mg_u74av2))-1` probes in this dataset.  From these probes, `r table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05)[2]` were significant (or `r 100*table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05)[2]/length(unique(mouse_homologs$affy_mg_u74av2))-1`%).  Therefore the genes from the acromegaly dataset are enriched in the growth hormone treated dataset (p=`r round(fisher.test(rbind(table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05),table(mouse_data$p.value<0.05)))$p.value,9)`).  The genes which were significant in both datasets were `r unique(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2)&mouse_data$p.value<0.05,]$genes.Gene.Symbol)`
+Done the other way, we found `r length(sig_down_genes)+length(sig_up_genes)` significantly different acromegaly genes out of a total of `r length(unique(rownames(acromegaly.data)))` genes tested (or `r 100*(length(sig_down_genes)+length(sig_up_genes))/length(unique(rownames(acromegaly.data)))`%).  Out of these `r length(sig_down_genes)+length(sig_up_genes)` genes, `r length(unique(mouse_homologs$ensembl_gene_id))` have mouse homologs, and `r length(unique(mouse_homologs$affy_mg_u74av2))-1` probes in this dataset.  From these probes, `r table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05)[2]` were significant (or `r 100*table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05)[2]/length(unique(mouse_homologs$affy_mg_u74av2))-1`%).  Therefore the genes from the acromegaly dataset are enriched in the growth hormone treated dataset (p=`r round(fisher.test(rbind(table(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2),]$p.value<0.05),table(mouse_data$p.value<0.05)))$p.value,9)`).  The genes which were significant in both datasets were `r unique(mouse_data[mouse_data$genes.ID %in% unique(mouse_homologs$affy_mg_u74av2)&mouse_data$p.value<0.05,]$genes.Gene.Symbol)`
 
 References
 -----------
-```{r bibliography}
+```{r bibliography, results='asis'}
 bibliography()
 ```
 
