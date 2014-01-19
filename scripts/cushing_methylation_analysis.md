@@ -1,12 +1,16 @@
 Analysis of Methylation Data from Cushing's Study
 =============================================================
 
-This file was last compiled on ``Sun Jan 19 07:59:55 2014``.
+This file was last compiled on ``Sun Jan 19 08:30:53 2014``.
 
 
+```
+## Loading required package: rJava
+## Loading required package: xlsxjars
+```
 
 
-The methylation is in ../data/raw/Cushings GC Analysis.csv wherea se we used ../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv for the relative expression.  There was 
+The methylation is in ../data/raw/Summary Table of Cushings Relative Control Methylation Jan 6 2013.xlsx wherea se we used ../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv for the relative expression.
 
 Statics
 ---------
@@ -15,7 +19,7 @@ Tested the predictive value on the delta-beta value on the fold change.
 
 
 ```r
-lm.fit.tss1500 <- lm(log2FoldChange ~ Cushings.Delta.Beta, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
+lm.fit.tss1500 <- lm(2^log2FoldChange ~ Delta.Beta.Cushings, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
     "TSS1500", ])
 summary(lm.fit.tss1500)
 ```
@@ -23,22 +27,24 @@ summary(lm.fit.tss1500)
 ```
 ## 
 ## Call:
-## lm(formula = log2FoldChange ~ Cushings.Delta.Beta, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
+## lm(formula = 2^log2FoldChange ~ Delta.Beta.Cushings, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
 ##     "TSS1500", ])
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -0.7058 -0.1737 -0.0168  0.1156  0.6646 
+## -0.5002 -0.1033 -0.0349  0.0940  0.7027 
 ## 
 ## Coefficients:
-##                     Estimate Std. Error t value Pr(>|t|)
-## (Intercept)           0.0709     0.0473    1.50     0.14
-## Cushings.Delta.Beta  -0.1692     0.1668   -1.01     0.32
+##                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)          1.05e+00   3.12e-02   33.56   <2e-16 ***
+## Delta.Beta.Cushings -4.07e-05   3.32e-05   -1.23     0.22    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.304 on 40 degrees of freedom
-##   (41 observations deleted due to missingness)
-## Multiple R-squared:  0.0251,	Adjusted R-squared:  0.000719 
-## F-statistic: 1.03 on 1 and 40 DF,  p-value: 0.316
+## Residual standard error: 0.205 on 119 degrees of freedom
+##   (53 observations deleted due to missingness)
+## Multiple R-squared:  0.0125,	Adjusted R-squared:  0.00417 
+## F-statistic:  1.5 on 1 and 119 DF,  p-value: 0.223
 ```
 
 ```r
@@ -49,7 +55,7 @@ plot(lm.fit.tss1500)
 ![plot of chunk statistics](figure/statistics1.png) 
 
 ```r
-lm.fit.tss200 <- lm(log2FoldChange ~ Cushings.Delta.Beta, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
+lm.fit.tss200 <- lm(2^log2FoldChange ~ Delta.Beta.Cushings, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
     "TSS200", ])
 summary(lm.fit.tss200)
 ```
@@ -57,22 +63,24 @@ summary(lm.fit.tss200)
 ```
 ## 
 ## Call:
-## lm(formula = log2FoldChange ~ Cushings.Delta.Beta, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
+## lm(formula = 2^log2FoldChange ~ Delta.Beta.Cushings, data = combined.data[combined.data$UCSC_REFGENE_GROUP == 
 ##     "TSS200", ])
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -0.7845 -0.1172  0.0696  0.1963  0.5675 
+## -0.4881 -0.1419 -0.0344  0.1044  2.3416 
 ## 
 ## Coefficients:
-##                     Estimate Std. Error t value Pr(>|t|)
-## (Intercept)          -0.0604     0.0588   -1.03     0.32
-## Cushings.Delta.Beta   0.2523     0.2108    1.20     0.24
+##                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)          1.09e+00   9.18e-02   11.91   <2e-16 ***
+## Delta.Beta.Cushings -9.29e-05   1.02e-04   -0.91     0.37    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.284 on 22 degrees of freedom
-##   (22 observations deleted due to missingness)
-## Multiple R-squared:  0.0611,	Adjusted R-squared:  0.0185 
-## F-statistic: 1.43 on 1 and 22 DF,  p-value: 0.244
+## Residual standard error: 0.393 on 54 degrees of freedom
+##   (26 observations deleted due to missingness)
+## Multiple R-squared:  0.0152,	Adjusted R-squared:  -0.00306 
+## F-statistic: 0.832 on 1 and 54 DF,  p-value: 0.366
 ```
 
 ```r
@@ -91,13 +99,13 @@ To test this, we asked whether the genes with a significantly different methylat
 ```
 ## 
 ## FALSE  TRUE 
-##   875   125
+##   678   322
 ```
 
 ```
 ## 
-## FALSE  TRUE 
-##   790   210
+## FALSE 
+##  1000
 ```
 
 
@@ -124,7 +132,7 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.5
+## [1] xlsx_0.5.5     xlsxjars_0.5.0 rJava_0.9-6    knitr_1.5     
 ## 
 ## loaded via a namespace (and not attached):
 ## [1] evaluate_0.5.1 formatR_0.10   stringr_0.6.2  tools_3.0.2
