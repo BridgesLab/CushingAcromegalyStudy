@@ -6,7 +6,7 @@ This file was last compiled on ```r date()```.
 ```{r data entry, echo=FALSE}
 methylation.data.file <- '../data/raw/Cushings GC Analysis.csv'
 methylation.data <- read.csv(methylation.data.file)
-expression.data.file <- '../data/processed/Annotated DESeq Results - Cushing.csv'
+expression.data.file <- '../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv'
 expression.data <- read.csv(expression.data.file)
 combined.data <- merge(expression.data, methylation.data,
                        by.x='external_gene_id',
@@ -14,7 +14,7 @@ combined.data <- merge(expression.data, methylation.data,
                        all.y=T, all.x=F)
 ```
 
-The methylation is in `r methylation.data.file` wherea se we used `r expression.data.file` for the relative expression.
+The methylation is in `r methylation.data.file` wherea se we used `r expression.data.file` for the relative expression.  There was 
 
 Statics
 ---------
@@ -22,11 +22,11 @@ Statics
 Tested the predictive value on the delta-beta value on the fold change.
 
 ```{r statistics}
-lm.fit.tss1500 <- lm(foldChange~Cushings.Delta.Beta, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
+lm.fit.tss1500 <- lm(log2FoldChange~Cushings.Delta.Beta, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
 summary(lm.fit.tss1500)
 par(mfrow=c(2,2))
 plot(lm.fit.tss1500)
-lm.fit.tss200 <- lm(foldChange~Cushings.Delta.Beta, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',])
+lm.fit.tss200 <- lm(log2FoldChange~Cushings.Delta.Beta, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',])
 summary(lm.fit.tss200)
 plot(lm.fit.tss200)
 ```
@@ -67,7 +67,7 @@ Figures
 ----------
 
 ```{r figures, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-with(combined.data, plot(Cushings.Delta.Beta,foldChange
+with(combined.data, plot(Cushings.Delta.Beta,log2FoldChange
                          , pch=19, cex=0.1,
                          col=UCSC_REFGENE_GROUP,
                          main="All Methylation Sites"))
@@ -75,13 +75,13 @@ legend("topleft", levels(combined.data$UCSC_REFGENE_GROUP), pch=19, cex=1, bty="
        col=palette()[1:6])
 
 with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',], 
-     plot(Cushings.Delta.Beta,foldChange,
+     plot(Cushings.Delta.Beta,log2FoldChange,
                          pch=19, cex=0.1,
                          main="Only TSS200"))
 abline(lm.fit.tss200)
 
 with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',], 
-     plot(Cushings.Delta.Beta,foldChange,
+     plot(Cushings.Delta.Beta,log2FoldChange,
                        pch=19, cex=0.1,
                          main="Only TSS1500"))
 abline(lm.fit.tss1500)
