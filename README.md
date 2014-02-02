@@ -57,7 +57,7 @@ This takes measured IGF-1 levels from acromegaly patients and compares it to *IG
 
 GSEA Analysis
 ---------------
-For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0 of GSEA.  The standard settings were sorting ascending by t-test, with 1000 permutations of the phenotype.  
+For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by t-test, with 1000 permutations of the phenotype.  
 
 Figures
 -----------
