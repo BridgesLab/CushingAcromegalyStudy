@@ -31,21 +31,31 @@ acromegaly.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Cus
 cushing.mapping <- droplevels(filtered.mapping[filtered.mapping$group != "Acromegaly"&filtered.mapping$samplename %in% colnames(exp_file),])
 
 #get the gene symbols
-exp_Acromegaly_geneName <- merge(exp_file, deseq2.Acromegaly.results, by.x="genes", by.y="external_gene_id")
-exp_Cushing_geneName <- merge(exp_file, deseq2.Cushing.results, by.x="genes", by.y="external_gene_id")
+exp_Acromegaly_geneName <- merge(exp_file, deseq2.Acromegaly.results, by.x="genes", by.y="Row.names")
+exp_Cushing_geneName <- merge(exp_file, deseq2.Cushing.results, by.x="genes", by.y="Row.names")
 
 #make the expression file for GSEA with first column is gene symbols and other columns are htseq counts
 acromegaly.mapping <- acromegaly.mapping[order(acromegaly.mapping$group),]#order the samples by control vs acromegaly
-exp_Acro <- exp_Acromegaly_geneName[,acromegaly.mapping$samplename] 
-rownames(exp_Acro) <- exp_Acromegaly_geneName$external_gene_id
+#ordered samples by pvalue
+exp_Acro <- exp_Acromegaly_geneName[order(exp_Acromegaly_geneName$pvalue),acromegaly.mapping$samplename] 
+#added a name and description field
+exp_Acro$NAME <- exp_Acromegaly_geneName[order(exp_Acromegaly_geneName$pvalue),]$external_gene_id 
+exp_Acro$DESCRIPTION <- exp_Acromegaly_geneName[order(exp_Acromegaly_geneName$pvalue),]$genes
+#reordered according to format specifications
+exp_Acro <- exp_Acro[,c('NAME','DESCRIPTION',acromegaly.mapping$samplename)]
 acromegaly_data_file <- "../data/processed/GSEA_Acromegaly_input_htseq_DEseq2.txt"
-write.table(exp_Acro, file=acromegaly_data_file, sep="\t")
+write.table(exp_Acro, file=acromegaly_data_file, sep="\t", row.names=FALSE, quote=FALSE)
 
 cushing.mapping <- cushing.mapping[order(cushing.mapping$group),]#order the samples by control vs acromegaly
-exp_Cushing <- exp_Cushing_geneName[,cushing.mapping$samplename] 
-rownames(exp_Cushing) <- exp_Cushing_geneName$external_gene_id
+#ordered samples by pvalue
+exp_Cushing <- exp_Cushing_geneName[order(exp_Cushing_geneName$pvalue),acromegaly.mapping$samplename] 
+#added a name and description field
+exp_Cushing$NAME <- exp_Cushing_geneName[order(exp_Cushing_geneName$pvalue),]$external_gene_id 
+exp_Cushing$DESCRIPTION <- exp_Cushing_geneName[order(exp_Cushing_geneName$pvalue),]$genes
+#reordered according to format specifications
+exp_Cushing <- exp_Cushing[,c('NAME','DESCRIPTION',acromegaly.mapping$samplename)]
 cushing_data_file <- "../data/processed/GSEA_Cushing_input_htseq_DEseq2.txt"
-write.table(exp_Cushing, file=cushing_data_file, sep="\t")
+write.table(exp_Cushing, file=cushing_data_file, sep="\t", row.names=FALSE, quote=FALSE)
 ```
 
 This script takes the input files `r deseq2.Cushing`, `r deseq2.Acromegaly` with the mapping file `r sample_mapping_filename`.  This script was most recently run on `r date()`.  It writes out two data files `r cushing_data_file`

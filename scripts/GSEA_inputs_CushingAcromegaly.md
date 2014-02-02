@@ -7,7 +7,7 @@ Making the input file
 
 
 
-This script takes the input files ../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv, ../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv with the mapping file ../data/raw/patient_sample_mapping.csv.  This script was most recently run on Sun Feb  2 09:32:07 2014.  It writes out two data files ../data/processed/GSEA_Cushing_input_htseq_DEseq2.txt
+This script takes the input files ../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv, ../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv with the mapping file ../data/raw/patient_sample_mapping.csv.  This script was most recently run on Sun Feb  2 10:07:19 2014.  It writes out two data files ../data/processed/GSEA_Cushing_input_htseq_DEseq2.txt
 
 Making phenotype files
 -----------------------
