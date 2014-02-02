@@ -55,6 +55,10 @@ This script compares our significant genes to another similar dataset.  This set
 
 This takes measured IGF-1 levels from acromegaly patients and compares it to *IGF1*  expression from WAT explants.
 
+GSEA Analysis
+---------------
+For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.
+
 Figures
 -----------
 The figures generated for the manuscript, via the running of these scripts are in the **figures** directory.  These figures are modified for final publication in the **manuscript** folder using Adobe Illustrator CS6.
