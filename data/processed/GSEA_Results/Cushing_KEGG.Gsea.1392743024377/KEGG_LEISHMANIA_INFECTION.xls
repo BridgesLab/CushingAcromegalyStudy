@@ -1,0 +1,73 @@
+NAME	PROBE	DESCRIPTION<br>(from dataset)	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAPK13	ENSG00000156711	MAPK13	mitogen-activated protein kinase 13	220	2.6402604579925537	0.033949234	No	
+row_1	TGFB3	ENSG00000119699	TGFB3	transforming growth factor, beta 3	686	1.9132030010223389	0.052831735	No	
+row_2	MAPK14	ENSG00000112062	MAPK14	mitogen-activated protein kinase 14	1591	1.448813796043396	0.056804415	No	
+row_3	NOS2	ENSG00000007171	null	null	1891	1.3208590745925903	0.07025299	No	
+row_4	STAT1	ENSG00000115415	STAT1	signal transducer and activator of transcription 1, 91kDa	2338	1.1949399709701538	0.0791355	No	
+row_5	TLR4	ENSG00000136869	TLR4	toll-like receptor 4	3399	0.9751638770103455	0.073360294	No	
+row_6	HLA-DRB5	ENSG00000198502	HLA-DRB5	major histocompatibility complex, class II, DR beta 5	5194	0.7991472482681274	0.051312864	No	
+row_7	NCF1	ENSG00000261919	NCF1	neutrophil cytosolic factor 1, (chronic granulomatous disease, autosomal 1)	5516	0.7710996270179749	0.05642365	No	
+row_8	IFNG	ENSG00000111537	IFNG	interferon, gamma	8392	0.4504426121711731	0.009121248	No	
+row_9	NFKBIA	ENSG00000100906	NFKBIA	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, alpha	9181	0.3601410984992981	-4.3139065E-4	No	
+row_10	JAK1	ENSG00000162434	JAK1	Janus kinase 1 (a protein tyrosine kinase)	9508	0.319393515586853	-0.0019266189	No	
+row_11	ELK1	ENSG00000126767	ELK1	ELK1, member of ETS oncogene family	10413	0.20222388207912445	-0.0159266	No	
+row_12	MARCKSL1	ENSG00000175130	MARCKSL1	MARCKS-like 1	10750	0.15837499499320984	-0.019930424	No	
+row_13	TGFB2	ENSG00000092969	TGFB2	transforming growth factor, beta 2	10792	0.15557581186294556	-0.018454604	No	
+row_14	IFNGR2	ENSG00000159128	IFNGR2	interferon gamma receptor 2 (interferon gamma transducer 1)	12916	0.0	-0.058179915	No	
+row_15	IL1A	ENSG00000115008	IL1A	interleukin 1, alpha	14618	0.0	-0.09000881	No	
+row_16	TNF	ENSG00000232810	TNF	tumor necrosis factor (TNF superfamily, member 2)	26942	0.0	-0.32059523	No	
+row_17	HLA-DPA1	ENSG00000231389	HLA-DPA1	major histocompatibility complex, class II, DP alpha 1	30205	0.0	-0.38163337	No	
+row_18	HLA-DPB1	ENSG00000230708	HLA-DPB1	major histocompatibility complex, class II, DP beta 1	30213	0.0	-0.38176435	No	
+row_19	HLA-DQA2	ENSG00000237541	HLA-DQA2	major histocompatibility complex, class II, DQ alpha 2	30378	0.0	-0.38483313	No	
+row_20	HLA-DQA1	ENSG00000228284	HLA-DQA1	major histocompatibility complex, class II, DQ alpha 1	30379	0.0	-0.38483313	No	
+row_21	HLA-DRB1	ENSG00000229074	HLA-DRB1	major histocompatibility complex, class II, DR beta 1	30572	0.0	-0.3884258	No	
+row_22	HLA-DRB3	ENSG00000231679	HLA-DRB3	major histocompatibility complex, class II, DR beta 3	30573	0.0	-0.3884258	No	
+row_23	HLA-DRB4	ENSG00000227357	HLA-DRB4	major histocompatibility complex, class II, DR beta 4	30576	0.0	-0.38846323	No	
+row_24	FCGR1A	ENSG00000150337	FCGR1A	Fc fragment of IgG, high affinity Ia, receptor (CD64)	32569	0.0	-0.42573726	No	
+row_25	HLA-DRA	ENSG00000204287	HLA-DRA	major histocompatibility complex, class II, DR alpha	33159	0.0	-0.43675858	No	
+row_26	HLA-DOA	ENSG00000204252	HLA-DOA	major histocompatibility complex, class II, DO alpha	33164	0.0	-0.4368334	No	
+row_27	HLA-DOB	ENSG00000241386	HLA-DOB	major histocompatibility complex, class II, DO beta	33165	0.0	-0.4368334	No	
+row_28	HLA-DMB	ENSG00000242574	HLA-DMB	major histocompatibility complex, class II, DM beta	33227	0.0	-0.43797484	No	
+row_29	HLA-DMA	ENSG00000204257	HLA-DMA	major histocompatibility complex, class II, DM alpha	33228	0.0	-0.43797484	No	
+row_30	TRAF6	ENSG00000175104	TRAF6	TNF receptor-associated factor 6	35154	-0.16814664006233215	-0.47157094	No	
+row_31	IL1B	ENSG00000125538	IL1B	interleukin 1, beta	36936	-0.31189393997192383	-0.50040007	No	
+row_32	MAP3K7	ENSG00000135341	MAP3K7	mitogen-activated protein kinase kinase kinase 7	36941	-0.3124872148036957	-0.49596965	No	
+row_33	FCGR3B	ENSG00000162747	FCGR3B	Fc fragment of IgG, low affinity IIIb, receptor (CD16b)	37023	-0.3217226564884186	-0.4928469	No	
+row_34	JAK2	ENSG00000096968	JAK2	Janus kinase 2 (a protein tyrosine kinase)	38008	-0.42575603723526	-0.50512105	No	
+row_35	MAPK1	ENSG00000100030	MAPK1	mitogen-activated protein kinase 1	38308	-0.45417216420173645	-0.5041679	No	
+row_36	MAPK11	ENSG00000185386	MAPK11	mitogen-activated protein kinase 11	38376	-0.4629858434200287	-0.4987465	No	
+row_37	IFNGR1	ENSG00000027697	IFNGR1	interferon gamma receptor 1	38811	-0.5058548450469971	-0.49957433	No	
+row_38	C3	ENSG00000125730	C3	complement component 3	39769	-0.6070366501808167	-0.5087297	No	
+row_39	ITGA4	ENSG00000115232	ITGA4	integrin, alpha 4 (antigen CD49D, alpha 4 subunit of VLA-4 receptor)	40094	-0.6418087482452393	-0.50553906	No	
+row_40	TLR2	ENSG00000137462	TLR2	toll-like receptor 2	40421	-0.6710222959518433	-0.5019647	No	
+row_41	TAB1	ENSG00000100324	null	null	40620	-0.6918478012084961	-0.49569497	No	
+row_42	IL10	ENSG00000136634	IL10	interleukin 10	43671	-0.771953284740448	-0.5416366	No	
+row_43	TAB2	ENSG00000055208	null	null	44481	-0.8793715238571167	-0.5440962	No	
+row_44	NFKB1	ENSG00000109320	NFKB1	nuclear factor of kappa light polypeptide gene enhancer in B-cells 1 (p105)	45054	-0.9244608283042908	-0.541471	No	
+row_45	IL4	ENSG00000113520	IL4	interleukin 4	47182	-1.2021175622940063	-0.5639397	Yes	
+row_46	IL12B	ENSG00000113302	IL12B	interleukin 12B (natural killer cell stimulatory factor 2, cytotoxic lymphocyte maturation factor 2, p40)	47696	-1.2021175622940063	-0.55620736	Yes	
+row_47	PRKCB	ENSG00000166501	null	null	48417	-1.2780433893203735	-0.5512538	Yes	
+row_48	RELA	ENSG00000173039	RELA	v-rel reticuloendotheliosis viral oncogene homolog A, nuclear factor of kappa light polypeptide gene enhancer in B-cells 3, p65 (avian)	48453	-1.2847490310668945	-0.5333859	Yes	
+row_49	HLA-DQB1	ENSG00000179344	HLA-DQB1	major histocompatibility complex, class II, DQ beta 1	48951	-1.3688279390335083	-0.5229507	Yes	
+row_50	TGFB1	ENSG00000105329	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	49092	-1.3887228965759277	-0.5055485	Yes	
+row_51	MAPK12	ENSG00000188130	MAPK12	mitogen-activated protein kinase 12	49220	-1.4145019054412842	-0.48753136	Yes	
+row_52	FCGR3A	ENSG00000203747	FCGR3A	Fc fragment of IgG, low affinity IIIa, receptor (CD16a)	49380	-1.4476573467254639	-0.469635	Yes	
+row_53	IRAK4	ENSG00000198001	IRAK4	interleukin-1 receptor-associated kinase 4	49453	-1.462427020072937	-0.4498978	Yes	
+row_54	MYD88	ENSG00000172936	MYD88	myeloid differentiation primary response gene (88)	49532	-1.478530764579773	-0.43004066	Yes	
+row_55	NFKBIB	ENSG00000104825	NFKBIB	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, beta	49828	-1.5304481983184814	-0.41349548	Yes	
+row_56	PTGS2	ENSG00000073756	PTGS2	prostaglandin-endoperoxide synthase 2 (prostaglandin G/H synthase and cyclooxygenase)	50038	-1.5759563446044922	-0.394685	Yes	
+row_57	NCF2	ENSG00000116701	NCF2	neutrophil cytosolic factor 2 (65kDa, chronic granulomatous disease, autosomal 2)	50755	-1.6627172231674194	-0.38411054	Yes	
+row_58	ITGB1	ENSG00000150093	ITGB1	integrin, beta 1 (fibronectin receptor, beta polypeptide, antigen CD29 includes MDF2, MSK12)	50756	-1.6632604598999023	-0.36013055	Yes	
+row_59	CR1	ENSG00000203710	CR1	complement component (3b/4b) receptor 1 (Knops blood group)	50850	-1.6861252784729004	-0.3375611	Yes	
+row_60	IRAK1	ENSG00000184216	IRAK1	interleukin-1 receptor-associated kinase 1	50907	-1.6993434429168701	-0.31410876	Yes	
+row_61	NCF4	ENSG00000100365	NCF4	neutrophil cytosolic factor 4, 40kDa	51246	-1.7878917455673218	-0.29465652	Yes	
+row_62	MAPK3	ENSG00000102882	MAPK3	mitogen-activated protein kinase 3	51456	-1.8517793416976929	-0.27186936	Yes	
+row_63	IL12A	ENSG00000168811	IL12A	interleukin 12A (natural killer cell stimulatory factor 1, cytotoxic lymphocyte maturation factor 1, p35)	51584	-1.8968756198883057	-0.24689764	Yes	
+row_64	FCGR2C	ENSG00000244682	FCGR2C	Fc fragment of IgG, low affinity IIb, receptor for (CD32)	51730	-1.9551160335540771	-0.22142304	Yes	
+row_65	ITGB2	ENSG00000160255	ITGB2	integrin, beta 2 (complement component 3 receptor 3 and 4 subunit)	52346	-2.148902416229248	-0.20194913	Yes	
+row_66	CYBA	ENSG00000051523	CYBA	cytochrome b-245, alpha polypeptide	52547	-2.2681477069854736	-0.17299059	Yes	
+row_67	JUN	ENSG00000177606	JUN	jun oncogene	52692	-2.382537841796875	-0.14133495	Yes	
+row_68	ITGAM	ENSG00000169896	ITGAM	integrin, alpha M (complement component 3 receptor 3 subunit)	52873	-2.5058512687683105	-0.10857509	Yes	
+row_69	FOS	ENSG00000170345	FOS	v-fos FBJ murine osteosarcoma viral oncogene homolog	52936	-2.5294008255004883	-0.07326769	Yes	
+row_70	PTPN6	ENSG00000111679	PTPN6	protein tyrosine phosphatase, non-receptor type 6	53010	-2.611111640930176	-0.036988065	Yes	
+row_71	FCGR2A	ENSG00000143226	FCGR2A	Fc fragment of IgG, low affinity IIa, receptor (CD32)	53354	-3.217015504837036	0.0029749502	Yes	
