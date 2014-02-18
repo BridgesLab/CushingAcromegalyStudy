@@ -56,7 +56,8 @@ This script compares our significant genes to another similar dataset.  This set
 This takes measured IGF-1 levels from acromegaly patients and compares it to *IGF1*  expression from WAT explants.
 
 GSEA Analysis
----------------
+----------------------
+
 For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by t-test, with 1000 permutations of the phenotype.  The input files located in data/processed were:
 
 * GSEA_pheno_acromegaly.txt
@@ -68,11 +69,13 @@ The expression dataset was selected from either acromegaly or cushing.  The gene
 
 * For KEGG gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.kegg.v4.0.symbols.gmt
 * For GO annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.all.v4.0.symbols.gmt
+* For GO-BP annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.bp.v4.0.symbols.gmt
+* For GO-MF annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.mf.v4.0.symbols.gmt
 * For transcription factors gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.tft.v4.0.symbols.gmt
 * For miRNA gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.mir.v4.0.symbols.gmt
 * For REACTOME gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.reactome.v4.0.symbols.gmt
 
-WIth the default 1000 permutations, based on phenotype (Cushing versus Control or Acromegaly versus Control), and setting collapse dataset to gene symbols to be false.  The permutation type was based on phenotype.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets <15 or >500 members.
+WIth the default 1000 permutations, based on phenotype (Cushing versus Control or Acromegaly versus Control), and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets <15 or >500 members.
 The chip platform was gseaftp.broadinstitute.org://pub/gsea/annotations/GENE_SYMBOL.chip.  The metric for ranking genes was tTest.
 
 Figures

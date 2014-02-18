@@ -1,0 +1,39 @@
+NAME	PROBE	DESCRIPTION<br>(from dataset)	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	LPCAT4	ENSG00000176454	null	null	286	2.6971871852874756	0.05208049	No	
+row_1	ELOVL7	ENSG00000164181	ELOVL7	ELOVL family member 7, elongation of long chain fatty acids (yeast)	629	2.3072166442871094	0.09481051	No	
+row_2	GK	ENSG00000198814	GK	glycerol kinase	3130	1.4866342544555664	0.079714075	No	
+row_3	LPCAT1	ENSG00000153395	null	null	3132	1.4863699674606323	0.11134326	No	
+row_4	AGPAT3	ENSG00000160216	AGPAT3	1-acylglycerol-3-phosphate O-acyltransferase 3	3539	1.4045743942260742	0.13365735	No	
+row_5	ACSL5	ENSG00000197142	ACSL5	acyl-CoA synthetase long-chain family member 5	5748	1.139053225517273	0.1166206	No	
+row_6	AGPAT6	ENSG00000158669	AGPAT6	1-acylglycerol-3-phosphate O-acyltransferase 6 (lysophosphatidic acid acyltransferase, zeta)	7200	0.9372482895851135	0.10944289	No	
+row_7	LCLAT1	ENSG00000172954	null	null	7260	0.9326999187469482	0.1281987	No	
+row_8	LPIN3	ENSG00000132793	LPIN3	lipin 3	7540	0.9117861390113831	0.14239521	No	
+row_9	AGPAT4	ENSG00000026652	AGPAT4	1-acylglycerol-3-phosphate O-acyltransferase 4 (lysophosphatidic acid acyltransferase, delta)	11682	0.6608170866966248	0.07902876	No	
+row_10	GPAM	ENSG00000119927	GPAM	glycerol-3-phosphate acyltransferase, mitochondrial	11743	0.6547262072563171	0.09184724	No	
+row_11	ACSL6	ENSG00000164398	ACSL6	acyl-CoA synthetase long-chain family member 6	12050	0.6426094174385071	0.09980753	No	
+row_12	ELOVL2	ENSG00000197977	ELOVL2	elongation of very long chain fatty acids (FEN1/Elo2, SUR4/Elo3, yeast)-like 2	12266	0.6132933497428894	0.108845316	No	
+row_13	AGPAT5	ENSG00000155189	AGPAT5	1-acylglycerol-3-phosphate O-acyltransferase 5 (lysophosphatidic acid acyltransferase, epsilon)	13044	0.5372112393379211	0.10575377	No	
+row_14	GPD1	ENSG00000167588	GPD1	glycerol-3-phosphate dehydrogenase 1 (soluble)	16995	0.15487772226333618	0.035186525	No	
+row_15	ELOVL1	ENSG00000066322	ELOVL1	elongation of very long chain fatty acids (FEN1/Elo2, SUR4/Elo3, yeast)-like 1	17330	0.11493191123008728	0.031387873	No	
+row_16	ACLY	ENSG00000131473	ACLY	ATP citrate lyase	31742	0.0	-0.23809749	No	
+row_17	AGPAT1	ENSG00000204310	AGPAT1	1-acylglycerol-3-phosphate O-acyltransferase 1 (lysophosphatidic acid acyltransferase, alpha)	37093	0.0	-0.33814237	No	
+row_18	LPIN2	ENSG00000101577	LPIN2	lipin 2	44489	-0.4961981773376465	-0.46586362	No	
+row_19	TECR	ENSG00000099797	null	null	44527	-0.5032796263694763	-0.45583966	No	
+row_20	DGAT2	ENSG00000062282	DGAT2	diacylglycerol O-acyltransferase homolog 2 (mouse)	44822	-0.5472634434700012	-0.44968507	No	
+row_21	ACSL4	ENSG00000068366	ACSL4	acyl-CoA synthetase long-chain family member 4	45304	-0.6169963479042053	-0.44554263	No	
+row_22	DGAT1	ENSG00000261698	DGAT1	diacylglycerol O-acyltransferase homolog 1 (mouse)	45546	-0.6374405026435852	-0.43647692	No	
+row_23	GPAT2	ENSG00000186281	null	null	45754	-0.6616906523704529	-0.42625904	No	
+row_24	ELOVL4	ENSG00000118402	ELOVL4	elongation of very long chain fatty acids (FEN1/Elo2, SUR4/Elo3, yeast)-like 4	46827	-0.8367764949798584	-0.42848873	No	
+row_25	ELOVL6	ENSG00000170522	ELOVL6	ELOVL family member 6, elongation of long chain fatty acids (FEN1/Elo2, SUR4/Elo3-like, yeast)	50626	-1.270270586013794	-0.47246456	Yes	
+row_26	ACSL1	ENSG00000151726	ACSL1	acyl-CoA synthetase long-chain family member 1	51884	-1.58128023147583	-0.4623017	Yes	
+row_27	GPD1L	ENSG00000152642	GPD1L	glycerol-3-phosphate dehydrogenase 1-like	51973	-1.6197975873947144	-0.42945847	Yes	
+row_28	ACACA	ENSG00000132142	ACACA	acetyl-Coenzyme A carboxylase alpha	52279	-1.7576022148132324	-0.397739	Yes	
+row_29	ELOVL3	ENSG00000119915	ELOVL3	elongation of very long chain fatty acids (FEN1/Elo2, SUR4/Elo3, yeast)-like 3	52308	-1.7744866609573364	-0.3604801	Yes	
+row_30	HSD17B12	ENSG00000149084	HSD17B12	hydroxysteroid (17-beta) dehydrogenase 12	52418	-1.8492134809494019	-0.32314482	Yes	
+row_31	SLC25A1	ENSG00000100075	SLC25A1	solute carrier family 25 (mitochondrial carrier; citrate transporter), member 1	52464	-1.8722522258758545	-0.2841222	Yes	
+row_32	ACSL3	ENSG00000123983	ACSL3	acyl-CoA synthetase long-chain family member 3	52859	-2.167212963104248	-0.24534556	Yes	
+row_33	FASN	ENSG00000169710	FASN	fatty acid synthase	52930	-2.2492494583129883	-0.19876339	Yes	
+row_34	LPIN1	ENSG00000134324	LPIN1	lipin 1	52941	-2.2647454738616943	-0.15072928	Yes	
+row_35	AGPAT9	ENSG00000138678	null	null	53063	-2.4360005855560303	-0.1011245	Yes	
+row_36	AGPAT2	ENSG00000169692	AGPAT2	1-acylglycerol-3-phosphate O-acyltransferase 2 (lysophosphatidic acid acyltransferase, beta)	53150	-2.5683670043945312	-0.04804686	Yes	
+row_37	ELOVL5	ENSG00000012660	ELOVL5	ELOVL family member 5, elongation of long chain fatty acids (FEN1/Elo2, SUR4/Elo3-like, yeast)	53154	-2.574493169784546	0.0067133135	Yes	

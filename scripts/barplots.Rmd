@@ -21,7 +21,7 @@ The data used is in the file **`r filename`**.  This file was most recently proc
 Normalization of Expression
 --------------------------------
 ```{r normalization, echo=FALSE, warning=FALSE}
-genes.of.interest <- c("IGF1", "IGFBP3", "CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "MAPKAPK3", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2")
+genes.of.interest <- c("IGF1", "IGFBP3", "CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "MAPKAPK3", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA")
 library(biomaRt)
 #
 ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
