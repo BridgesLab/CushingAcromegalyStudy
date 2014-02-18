@@ -1,0 +1,42 @@
+NAME	PROBE	DESCRIPTION<br>(from dataset)	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	PDP1	ENSG00000164951	null	null	2896	1.547336459159851	-0.0067459634	No	
+row_1	SLC16A3	ENSG00000141526	SLC16A3	solute carrier family 16, member 3 (monocarboxylic acid transporter 4)	5813	1.1283252239227295	-0.026704945	No	
+row_2	SLC16A1	ENSG00000155380	SLC16A1	solute carrier family 16, member 1 (monocarboxylic acid transporter 1)	10899	0.7537440061569214	-0.09870406	No	
+row_3	PDK3	ENSG00000067992	PDK3	pyruvate dehydrogenase kinase, isozyme 3	12610	0.5763482451438904	-0.11302283	No	
+row_4	IDH3B	ENSG00000101365	IDH3B	isocitrate dehydrogenase 3 (NAD+) beta	13951	0.4316171109676361	-0.12485695	No	
+row_5	LDHB	ENSG00000111716	LDHB	lactate dehydrogenase B	14520	0.3649651110172272	-0.124296166	No	
+row_6	IDH3G	ENSG00000067829	IDH3G	isocitrate dehydrogenase 3 (NAD+) gamma	15243	0.2873454689979553	-0.1289937	No	
+row_7	PDK4	ENSG00000004799	PDK4	pyruvate dehydrogenase kinase, isozyme 4	16732	0.17739862203598022	-0.15138513	No	
+row_8	IDH3A	ENSG00000166411	IDH3A	isocitrate dehydrogenase 3 (NAD+) alpha	16930	0.1628650575876236	-0.15007886	No	
+row_9	SUCLG1	ENSG00000163541	SUCLG1	succinate-CoA ligase, GDP-forming, alpha subunit	17140	0.1384762078523636	-0.1497443	No	
+row_10	MDH2	ENSG00000146701	MDH2	malate dehydrogenase 2, NAD (mitochondrial)	18481	0.0	-0.17480367	No	
+row_11	DLAT	ENSG00000150768	DLAT	dihydrolipoamide S-acetyltransferase (E2 component of pyruvate dehydrogenase complex)	21367	0.0	-0.22875613	No	
+row_12	SUCLA2P1	ENSG00000224936	null	null	36318	0.0	-0.5083365	No	
+row_13	D2HGDH	ENSG00000180902	D2HGDH	D-2-hydroxyglutarate dehydrogenase	40363	-0.12130559980869293	-0.5802465	No	
+row_14	PDHX	ENSG00000110435	PDHX	pyruvate dehydrogenase complex, component X	40646	-0.15739819407463074	-0.5806973	No	
+row_15	BSG	ENSG00000172270	BSG	basigin (Ok blood group)	41030	-0.19897736608982086	-0.5817629	No	
+row_16	ADHFE1	ENSG00000147576	ADHFE1	alcohol dehydrogenase, iron containing, 1	41486	-0.25198477506637573	-0.58255076	No	
+row_17	ACO2	ENSG00000100412	ACO2	aconitase 2, mitochondrial	41768	-0.2868364453315735	-0.57901675	No	
+row_18	SDHD	ENSG00000204370	SDHD	succinate dehydrogenase complex, subunit D, integral membrane protein	42470	-0.3067860007286072	-0.5827259	No	
+row_19	NNT	ENSG00000112992	NNT	nicotinamide nucleotide transhydrogenase	42969	-0.334374338388443	-0.58179337	No	
+row_20	LDHA	ENSG00000134333	LDHA	lactate dehydrogenase A	44579	-0.5106445550918579	-0.5962366	Yes	
+row_21	SDHA	ENSG00000073578	SDHA	succinate dehydrogenase complex, subunit A, flavoprotein (Fp)	44654	-0.522489070892334	-0.58161074	Yes	
+row_22	PDPR	ENSG00000090857	PDPR	-	44669	-0.524368405342102	-0.5658053	Yes	
+row_23	SDHC	ENSG00000143252	SDHC	succinate dehydrogenase complex, subunit C, integral membrane protein, 15kDa	44856	-0.5513701438903809	-0.5523891	Yes	
+row_24	PDHB	ENSG00000168291	PDHB	pyruvate dehydrogenase (lipoamide) beta	46222	-0.7376786470413208	-0.55531263	Yes	
+row_25	IDH1	ENSG00000138413	IDH1	isocitrate dehydrogenase 1 (NADP+), soluble	46903	-0.8473902940750122	-0.5420643	Yes	
+row_26	OGDH	ENSG00000105953	OGDH	oxoglutarate (alpha-ketoglutarate) dehydrogenase (lipoamide)	47083	-0.8814399838447571	-0.5184034	Yes	
+row_27	FH	ENSG00000091483	FH	fumarate hydratase	47163	-0.8937026262283325	-0.4924967	Yes	
+row_28	PDP2	ENSG00000172840	PDP2	-	49081	-0.9557149410247803	-0.49906233	Yes	
+row_29	SDHB	ENSG00000117118	SDHB	succinate dehydrogenase complex, subunit B, iron sulfur (Ip)	49537	-1.0319889783859253	-0.47594994	Yes	
+row_30	PDK2	ENSG00000005882	PDK2	pyruvate dehydrogenase kinase, isozyme 2	49582	-1.0436711311340332	-0.4447935	Yes	
+row_31	DLST	ENSG00000119689	DLST	dihydrolipoamide S-succinyltransferase (E2 component of 2-oxo-glutarate complex)	49952	-1.1009886264801025	-0.41795856	Yes	
+row_32	SUCLG2	ENSG00000172340	SUCLG2	succinate-CoA ligase, GDP-forming, beta subunit	50125	-1.1465492248535156	-0.38604352	Yes	
+row_33	PDK1	ENSG00000152256	PDK1	pyruvate dehydrogenase kinase, isozyme 1	50312	-1.20051908493042	-0.3527366	Yes	
+row_34	PDHA1	ENSG00000131828	PDHA1	pyruvate dehydrogenase (lipoamide) alpha 1	50747	-1.3033503293991089	-0.32091665	Yes	
+row_35	CS	ENSG00000062485	CS	citrate synthase	51180	-1.4341274499893188	-0.28505215	Yes	
+row_36	SLC16A8	ENSG00000100156	SLC16A8	solute carrier family 16, member 8 (monocarboxylic acid transporter 3)	51886	-1.5821173191070557	-0.24975844	Yes	
+row_37	SUCLA2	ENSG00000136143	SUCLA2	succinate-CoA ligase, ADP-forming, beta subunit	52414	-1.8461480140686035	-0.20304573	Yes	
+row_38	L2HGDH	ENSG00000087299	L2HGDH	L-2-hydroxyglutarate dehydrogenase	52488	-1.8834502696990967	-0.14669977	Yes	
+row_39	DLD	ENSG00000091140	DLD	dihydrolipoamide dehydrogenase	52598	-1.9661246538162231	-0.08849381	Yes	
+row_40	IDH2	ENSG00000182054	IDH2	isocitrate dehydrogenase 2 (NADP+), mitochondrial	53406	-3.445906639099121	0.0020010942	Yes	

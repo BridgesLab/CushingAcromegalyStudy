@@ -1,0 +1,35 @@
+NAME	PROBE	DESCRIPTION<br>(from dataset)	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	ALDH2	ENSG00000111275	ALDH2	aldehyde dehydrogenase 2 family (mitochondrial)	509	2.605766534805298	0.07796272	No	
+row_1	ALDH5A1	ENSG00000112294	ALDH5A1	aldehyde dehydrogenase 5 family, member A1 (succinate-semialdehyde dehydrogenase)	4589	1.3651912212371826	0.047523152	No	
+row_2	ACSM5	ENSG00000183549	null	null	4642	1.3571395874023438	0.09211246	No	
+row_3	ACSM4	ENSG00000215009	null	null	5534	1.2306363582611084	0.11676671	No	
+row_4	OXCT2	ENSG00000198754	OXCT2	3-oxoacid CoA transferase 2	9634	0.8003267049789429	0.06698965	No	
+row_5	ALDH3A2	ENSG00000072210	ALDH3A2	aldehyde dehydrogenase 3 family, member A2	10096	0.7405970692634583	0.08323279	No	
+row_6	ACSM1	ENSG00000166743	ACSM1	acyl-CoA synthetase medium-chain family member 1	13117	0.6685973405838013	0.049209107	No	
+row_7	ALDH1B1	ENSG00000137124	ALDH1B1	aldehyde dehydrogenase 1 family, member B1	13413	0.6424055099487305	0.06525974	No	
+row_8	GAD1	ENSG00000128683	GAD1	glutamate decarboxylase 1 (brain, 67kDa)	15045	0.4721793830394745	0.050614275	No	
+row_9	BDH2	ENSG00000164039	BDH2	3-hydroxybutyrate dehydrogenase, type 2	15270	0.45117270946502686	0.061572477	No	
+row_10	ACSM3	ENSG00000005187	ACSM3	acyl-CoA synthetase medium-chain family member 3	19313	0.06191660463809967	-0.011928522	No	
+row_11	PDHA2	ENSG00000163114	PDHA2	pyruvate dehydrogenase (lipoamide) alpha 2	23678	0.0	-0.09352912	No	
+row_12	GAD2	ENSG00000136750	GAD2	glutamate decarboxylase 2 (pancreatic islets and brain, 65kDa)	31481	0.0	-0.23941542	No	
+row_13	HMGCS2	ENSG00000134240	HMGCS2	3-hydroxy-3-methylglutaryl-Coenzyme A synthase 2 (mitochondrial)	41412	-0.0672672763466835	-0.422834	No	
+row_14	BDH1	ENSG00000161267	BDH1	3-hydroxybutyrate dehydrogenase, type 1	43122	-0.2047678530216217	-0.44791546	No	
+row_15	HADH	ENSG00000138796	HADH	hydroxyacyl-Coenzyme A dehydrogenase	43696	-0.2838316261768341	-0.449101	Yes	
+row_16	HMGCL	ENSG00000117305	HMGCL	3-hydroxymethyl-3-methylglutaryl-Coenzyme A lyase (hydroxymethylglutaricaciduria)	44228	-0.3462717533111572	-0.44740498	Yes	
+row_17	ABAT	ENSG00000183044	ABAT	4-aminobutyrate aminotransferase	44850	-0.423078715801239	-0.44481328	Yes	
+row_18	ACADS	ENSG00000122971	ACADS	acyl-Coenzyme A dehydrogenase, C-2 to C-3 short chain	44920	-0.43283480405807495	-0.43157244	Yes	
+row_19	PDHB	ENSG00000168291	PDHB	pyruvate dehydrogenase (lipoamide) beta	45147	-0.4519122242927551	-0.42062682	Yes	
+row_20	ALDH7A1	ENSG00000164904	ALDH7A1	aldehyde dehydrogenase 7 family, member A1	45409	-0.4901356101036072	-0.4090524	Yes	
+row_21	ACAT1	ENSG00000075239	ACAT1	acetyl-Coenzyme A acetyltransferase 1 (acetoacetyl Coenzyme A thiolase)	46773	-0.5743891000747681	-0.41525528	Yes	
+row_22	ACSM2A	ENSG00000183747	null	null	48783	-0.902062714099884	-0.42253685	Yes	
+row_23	ECHS1	ENSG00000127884	ECHS1	enoyl Coenzyme A hydratase, short chain, 1, mitochondrial	50527	-1.0582245588302612	-0.41960195	Yes	
+row_24	HMGCS1	ENSG00000112972	HMGCS1	3-hydroxy-3-methylglutaryl-Coenzyme A synthase 1 (soluble)	50786	-1.1304340362548828	-0.38647547	Yes	
+row_25	PDHA1	ENSG00000131828	PDHA1	pyruvate dehydrogenase (lipoamide) alpha 1	50828	-1.14421546459198	-0.34882873	Yes	
+row_26	HADHA	ENSG00000084754	HADHA	hydroxyacyl-Coenzyme A dehydrogenase/3-ketoacyl-Coenzyme A thiolase/enoyl-Coenzyme A hydratase (trifunctional protein), alpha subunit	51304	-1.2286970615386963	-0.31646097	Yes	
+row_27	AKR1B10	ENSG00000198074	AKR1B10	aldo-keto reductase family 1, member B10 (aldose reductase)	51562	-1.2987788915634155	-0.27766415	Yes	
+row_28	ALDH9A1	ENSG00000143149	ALDH9A1	aldehyde dehydrogenase 9 family, member A1	51697	-1.3498728275299072	-0.23485209	Yes	
+row_29	L2HGDH	ENSG00000087299	L2HGDH	L-2-hydroxyglutarate dehydrogenase	51775	-1.3783828020095825	-0.19001709	Yes	
+row_30	OXCT1	ENSG00000083720	OXCT1	3-oxoacid CoA transferase 1	51939	-1.4564085006713867	-0.14417069	Yes	
+row_31	EHHADH	ENSG00000113790	EHHADH	enoyl-Coenzyme A, hydratase/3-hydroxyacyl Coenzyme A dehydrogenase	52146	-1.5344641208648682	-0.096507855	Yes	
+row_32	AACS	ENSG00000081760	AACS	acetoacetyl-CoA synthetase	52676	-1.8007144927978516	-0.045946166	Yes	
+row_33	ACAT2	ENSG00000120437	ACAT2	acetyl-Coenzyme A acetyltransferase 2 (acetoacetyl Coenzyme A thiolase)	52725	-1.834226131439209	0.014734591	Yes	
