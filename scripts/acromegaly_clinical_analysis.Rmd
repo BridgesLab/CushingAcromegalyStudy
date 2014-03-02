@@ -6,7 +6,7 @@ This file was last compiled on ```r date()```.  Unless otherwise noted this anal
 Statistics
 -------------
 
-```{r data entry, echo=FALSE}
+```{r data entry, echo=FALSE, message=FALSE}
 data <- read.csv('../data/raw/patient_table.csv')
 #removed cushing data
 acromegaly.data <- subset(data, diagnosis %in% c("acromegaly", "non secreting adenoma"), drop=TRUE)
@@ -18,11 +18,6 @@ acromegaly.data$diagnosis <- relevel(acromegaly.data$diagnosis, ref = "Control")
 acromegaly.data$diabetes.diagnosis <- acromegaly.data$diabetes == "y"
 acromegaly.data$HTN.diagnosis <- acromegaly.data$HTN == "y"
 acromegaly.data$smoking.diagnosis <- acromegaly.data$smoking == "y"
-```
-
-This analysis included `r as.numeric(summary(acromegaly.data$diagnosis)[1])-1` controls and `r as.numeric(summary(acromegaly.data$diagnosis)[2])` acromegaly patients.
-
-```{r analysis, echo=FALSE}
 require(reshape2, quietly=T)
 require(plyr, quietly=T)
 
@@ -34,65 +29,90 @@ melted.data.used <- subset(melted.data, id!='29')
 melted.data.used <- droplevels(melted.data.used)
 se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
 
+#for bibliography
+library(bibtex)
+library(knitcitations)
+bib <- read.bib(file = "clinical-tests.bib")
+```
+
+This analysis included `r as.numeric(summary(acromegaly.data$diagnosis)[1])-1` controls and `r as.numeric(summary(acromegaly.data$diagnosis)[2])` acromegaly patients. 
+
+```{r, preliminary-analysis, echo=FALSE}
+test.summary.table <- data.frame(row.names=levels(melted.data.used$measurement),
+                                 shapiro.control = rep(NA, length(levels(melted.data.used$measurement))),
+                                 shapiro.acromegaly = rep(NA, length(levels(melted.data.used$measurement))),
+                                 levene.test = rep(NA, length(levels(melted.data.used$measurement))))
+
+library(car) #for leveneTest
+
+#forloop for all these tests
+for (param in levels(melted.data.used$measurement)) {
+  test.summary.table[param,'shapiro.control'] <- 
+    with(subset(melted.data.used, measurement==param&diagnosis=='Control'), shapiro.test(value))$p.value
+  test.summary.table[param,'shapiro.acromegaly'] <- 
+    with(subset(melted.data.used, measurement==param&diagnosis=='Acromegaly'), shapiro.test(value))$p.value
+  test.summary.table[param,'levene.test'] <- 
+    leveneTest(value~diagnosis, data=subset(melted.data.used, measurement==param))$`Pr(>F)`[1]
+}
+test.summary.table$test <- ifelse(test.summary.table$shapiro.control<0.05|test.summary.table$shapiro.acromegaly<0.05, 
+                                  "Wilcoxon Test", 
+                                  ifelse(test.summary.table$levene.test<0.05, "Welch's T-Test", "Student's T-Test"))
+
+write.csv(../data/processed/"Clinical Test Parameters.csv")
+```
+
+First we checked whether the data was normally distributed using a Shapiro-Wilk test.  If a Shapiro-Wilk Normality test had a p-value <0.05 for a measurement in either the control or the acromegaly cases, we did a Wilcoxon test. This was appropriate for `r rownames(test.summary.table[test.summary.table$test == 'Wilcoxon Test',])`.
+
+We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package `r citet(bib[["car"]])`.  A Welch's t-test for unequal variance was appropriate for `r rownames(test.summary.table[test.summary.table$test == "Welch's T-Test",])` based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
+
+
+```{r analysis, echo=FALSE}
 #for glucose homeostatic measurements
 glucose.data.vars <- c("insulin", "glucose", "HOMA.IR")
-glucose.data <- subset(melted.data.used, measurement %in% glucose.data.vars)
-glucose.o1 <- ddply(glucose.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-glucose.o2 <- ddply(glucose.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
-glucose.o1.mc <- dcast(melt(glucose.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
-glucose.summary.table <- merge(glucose.o1.mc, glucose.o2)
-glucose.summary.table$padj <- p.adjust(glucose.summary.table$pval, method="BH")
-
 #for clinical measurements
 clinical.data.vars <- c("height", "weight", "age", "BMI", "abdominal.circumference")
-clinical.data <- subset(melted.data.used, measurement %in% clinical.data.vars)
-clinical.o1 <- ddply(clinical.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-clinical.o2 <- ddply(clinical.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
-clinical.o1.mc <- dcast(melt(clinical.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
-clinical.summary.table <- merge(clinical.o1.mc, clinical.o2)
-clinical.summary.table$padj <- p.adjust(clinical.summary.table$pval, method="BH")
-write.csv(clinical.summary.table, "../data/processed/clinical summary table.csv")
 
 #for lipidomics data
 lipid.data.vars <- c("Cer.C14", "Cer.C16", "Cer.C18", "Cer.C18.1", "Cer.C20", "Cer.C24", "Glu.Cer.C16", "Glu.Cer.C18", "Glu.Cer.C18.1")
-lipid.data <- subset(melted.data.used, measurement %in% lipid.data.vars)
-lipid.o1 <- ddply(lipid.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-lipid.o2 <- ddply(lipid.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
-lipid.o1.mc <- dcast(melt(lipid.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
-lipid.summary.table <- merge(lipid.o1.mc, lipid.o2)
-lipid.summary.table$padj <- p.adjust(lipid.summary.table$pval, method="BH")
 
 #for lipolysis measurements
 lipolysis.data.vars <- c("glycerol.no.tx","glycerol.insulin.2.nM","glycerol.iso.30.nM","glycerol.ins.iso","glycerol.ins.ctrl","glycerol.iso.ctrl","glycerol.ins.iso.iso","glycerol.ins.effect", "glycerol.iso.effect")
-lipolysis.data <- subset(melted.data.used, measurement %in% lipolysis.data.vars)
-lipolysis.o1 <- ddply(lipolysis.data, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-lipolysis.o2 <- ddply(lipolysis.data, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
-lipolysis.o1.mc <- dcast(melt(lipolysis.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
-lipolysis.summary.table <- merge(lipolysis.o1.mc, lipolysis.o2)
-lipolysis.summary.table$padj <- p.adjust(lipolysis.summary.table$pval, method="BH")
 
 #for all measurements
 all.o1 <- ddply(melted.data.used, .(diagnosis, measurement), summarise, mean = mean(value), se=se(value))
-all.o2 <- ddply(melted.data.used, .(measurement), summarise, pval=t.test(value ~ diagnosis)$p.value)
+
+#these are the measurements that should have a Wilcoxon test
+all.o2.wilcoxon <- ddply(melted.data.used[melted.data.used$measurement %in% rownames(test.summary.table[test.summary.table$test == 'Wilcoxon Test',]),]
+                , .(measurement), summarise, pval=wilcox.test(value ~ diagnosis)$p.value)
+
+#these are the measurements that should have a Welch's t-test
+all.o2.welch <- ddply(melted.data.used[melted.data.used$measurement %in% rownames(test.summary.table[test.summary.table$test == "Welch's T-Test",]),]
+                , .(measurement), summarise, pval=t.test(value ~ diagnosis, var.equal=F)$p.value)
+
+#these are the measurements that should have a Student's t-test
+all.o2.student <- ddply(melted.data.used[melted.data.used$measurement %in% rownames(test.summary.table[test.summary.table$test == "Student's T-Test",]),]
+                , .(measurement), summarise, pval=t.test(value ~ diagnosis, var.equal=T)$p.value)
+
+all.o2 <- rbind(all.o2.wilcoxon,all.o2.welch, all.o2.student)
+
 all.o1.mc <- dcast(melt(all.o1, c("diagnosis", "measurement")), measurement ~ diagnosis + variable)
 all.summary.table <- merge(all.o1.mc, all.o2)
 all.summary.table$padj <- p.adjust(all.summary.table$pval, method="BH")
+
+glucose.summary.table <- all.summary.table[all.summary.table$measurement %in% glucose.data.vars,]
+lipolysis.summary.table <- all.summary.table[all.summary.table$measurement %in% lipolysis.data.vars,]
 ```
 
 ```{r table, results='asis', echo=FALSE} 
 library(xtable) 
-print(xtable(glucose.summary.table, digits=c(rep(1,6),5,5)), type='html') 
-print(xtable(clinical.summary.table, digits=c(rep(1,6),5,5)), type='html') 
-print(xtable(lipid.summary.table, digits=c(rep(1,6),5,5)), type='html') 
-print(xtable(lipolysis.summary.table, digits=c(rep(1,6),5,5)), type='html') 
-print(xtable(all.summary.table, digits=c(rep(1,6),5,5)), type='html') 
+print(xtable(all.summary.table[order(all.summary.table$pval),], digits=c(rep(1,6),5,5)), type='html') 
 ``` 
 
 Graphs
 ------
 
 ## Barplots
-```{r barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+```{r barplots, echo=FALSE, warning=FALSE, message=FALSE}
 superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
@@ -107,6 +127,13 @@ plot <- with(glucose.summary.table,
 with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[2], Acromegaly_mean[2]), cbind(Control_se[2], Acromegaly_se[2])))
 dev.off()
 
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[2], Acromegaly_mean[2]),
+             names.arg=c("Control", "Acromegaly"),
+             main="HOMA Score",las=1,
+             ylim=c(0,11)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[2], Acromegaly_mean[2]), cbind(Control_se[2], Acromegaly_se[2])))
+
 #Glucose
 pdf("../figures/Glucose Barplot.pdf")
 plot <- with(glucose.summary.table, 
@@ -118,7 +145,24 @@ plot <- with(glucose.summary.table,
 with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[1], Acromegaly_mean[1]), cbind(Control_se[1], Acromegaly_se[1])))
 dev.off()
 
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[1], Acromegaly_mean[1]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Fasting Blood Glucose",
+             ylab="Glucose (mg/dL)",las=1,
+             ylim=c(0,115)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[1], Acromegaly_mean[1]), cbind(Control_se[1], Acromegaly_se[1])))
+
 #Insulin
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[3], Acromegaly_mean[3]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Fasting Insulin",
+             ylab="Serum Insulin (pg/mL)",
+             las=1,
+             ylim=c(0,35)))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[3], Acromegaly_mean[3]), cbind(Control_se[3], Acromegaly_se[3])))
+
 pdf("../figures/Insulin Barplot.pdf")
 plot <- with(glucose.summary.table, 
      barplot(cbind(Control_mean[3], Acromegaly_mean[3]),
@@ -142,6 +186,15 @@ plot <- with(lipolysis.summary.table,
 with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[7], Acromegaly_mean[7]), cbind(Control_se[7], Acromegaly_se[7])))
 dev.off()
 
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(Control_mean[7], Acromegaly_mean[7]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Basal Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,18)))
+with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[7], Acromegaly_mean[7]), cbind(Control_se[7], Acromegaly_se[7])))
+
 #Lipolysis-Isoproterenol
 pdf("../figures/Isoproterenol Stimulated Lipolysis Barplot.pdf")
 plot <- with(lipolysis.summary.table, 
@@ -153,6 +206,15 @@ plot <- with(lipolysis.summary.table,
              ylim=c(0,30)))
 with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[5], Acromegaly_mean[5]), cbind(Control_se[5], Acromegaly_se[5])))
 dev.off()
+
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(Control_mean[5], Acromegaly_mean[5]),
+             names.arg=c("Control", "Acromegaly"),
+             main="Isoproternol Stimulated Lipolysis",
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,30)))
+with(lipolysis.summary.table, superpose.eb(plot, cbind(Control_mean[5], Acromegaly_mean[5]), cbind(Control_se[5], Acromegaly_se[5])))
 
 pdf("../figures/Combined Lipolysis Barplot.pdf")
 plot <- with(lipolysis.summary.table, 
@@ -169,76 +231,155 @@ with(lipolysis.summary.table, superpose.eb(plot,
 legend("topleft", c("Control", "Acromegaly"), fill=grey.colors(2), bty="n")
 dev.off()
 
+plot <- with(lipolysis.summary.table, 
+     barplot(cbind(rbind(Control_mean[7], Acromegaly_mean[7]),rbind(Control_mean[5], Acromegaly_mean[5])),
+             names.arg=c("Basal","Isoproterenol"), 
+             main="Lipolysis",
+             beside=T,
+             ylab="Glycerol Release",
+             las=1,
+             ylim=c(0,30)))
+with(lipolysis.summary.table, superpose.eb(plot, 
+    cbind(rbind(Control_mean[7], Acromegaly_mean[7]),rbind(Control_mean[5], Acromegaly_mean[5])),
+    cbind(rbind(Control_se[7], Acromegaly_se[7]),rbind(Control_se[5], Acromegaly_se[5]))))
+legend("topleft", c("Control", "Acromegaly"), fill=grey.colors(2), bty="n")
+
 #clinical variables
 pdf('../figures/Clinical Barplots.pdf')
 par(mfrow=c(1,3))
 #Age
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[18], Acromegaly_mean[18]),
+plot <- with(all.summary.table[all.summary.table$measurement=='age',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Age",
              ylab="Years",
              las=1,             col=grey.colors(2)[2],
              ylim=c(0,70)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[18], Acromegaly_mean[18]), cbind(Control_se[18], Acromegaly_se[18])))
+with(all.summary.table[all.summary.table$measurement=='age',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 
 #height
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[28], Acromegaly_mean[28]),
+plot <- with(all.summary.table[all.summary.table$measurement=='height',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Height",
              ylab="Height (cm)",
              las=1,             col=grey.colors(2)[2],
              ylim=c(0,185)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[28], Acromegaly_mean[28]), cbind(Control_se[28], Acromegaly_se[28])))
+with(all.summary.table[all.summary.table$measurement=='height',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 
 #tumor diameter
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[30], Acromegaly_mean[30]),
+plot <- with(all.summary.table[all.summary.table$measurement=='largest.diameter.of.tumor',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Largest Tumor Diameter",
              ylab="Diameter (mm)",
-             las=1,
-                          col=grey.colors(2)[2],
+             las=1,             col=grey.colors(2)[2],
              ylim=c(0,2.2)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[30], Acromegaly_mean[30]), cbind(Control_se[30], Acromegaly_se[30])))
+with(all.summary.table[all.summary.table$measurement=='largest.diameter.of.tumor',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 dev.off()
+
+par(mfrow=c(1,3))
+#Age
+plot <- with(all.summary.table[all.summary.table$measurement=='age',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Age",
+             ylab="Years",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,70)))
+with(all.summary.table[all.summary.table$measurement=='age',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
+#height
+plot <- with(all.summary.table[all.summary.table$measurement=='height',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Height",
+             ylab="Height (cm)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,185)))
+with(all.summary.table[all.summary.table$measurement=='height',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
+#tumor diameter
+plot <- with(all.summary.table[all.summary.table$measurement=='largest.diameter.of.tumor',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Largest Tumor Diameter",
+             ylab="Diameter (mm)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,2.2)))
+with(all.summary.table[all.summary.table$measurement=='largest.diameter.of.tumor',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 
 #weight (kg), BMI (kg/m2), abdominal circumference (cm),
 #weight variables
 pdf('../figures/Weight Barplots.pdf')
 par(mfrow=c(1,3))
 #weight
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[31], Acromegaly_mean[31]),
+plot <- with(all.summary.table[all.summary.table$measurement=='weight',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Weight",
              ylab="Weight (kg)",
-             las=1,
-             col=grey.colors(2)[2],
+             las=1,             col=grey.colors(2)[2],
              ylim=c(0,115)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[31], Acromegaly_mean[31]), cbind(Control_se[31], Acromegaly_se[31])))
+with(all.summary.table[all.summary.table$measurement=='weight',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
 
 #BMI
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[3], Acromegaly_mean[3]),
+plot <- with(all.summary.table[all.summary.table$measurement=='BMI',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Body Mass Index",
              ylab="BMI (kg/cm2)",
-             las=1, col=grey.colors(2)[2],
+             las=1,             col=grey.colors(2)[2],
              ylim=c(0,35)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[3], Acromegaly_mean[3]), cbind(Control_se[3], Acromegaly_se[3])))
+with(all.summary.table[all.summary.table$measurement=='BMI',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
 
 #abdominal circuference
-plot <- with(all.summary.table, 
-     barplot(cbind(Control_mean[17], Acromegaly_mean[17]),
+
+plot <- with(all.summary.table[all.summary.table$measurement=='abdominal.circumference',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
              names.arg=c("Control", "Acromegaly"),
              main="Admdominal Circumference",
              ylab="Circumference (cm)",
-             las=1, col=grey.colors(2)[2],
+             las=1,             col=grey.colors(2)[2],
              ylim=c(0,115)))
-with(all.summary.table, superpose.eb(plot, cbind(Control_mean[17], Acromegaly_mean[17]), cbind(Control_se[17], Acromegaly_se[17])))
+with(all.summary.table[all.summary.table$measurement=='abdominal.circumference',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 dev.off()
+
+par(mfrow=c(1,3))
+#weight
+plot <- with(all.summary.table[all.summary.table$measurement=='weight',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Weight",
+             ylab="Weight (kg)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,115)))
+with(all.summary.table[all.summary.table$measurement=='weight',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
+
+#BMI
+plot <- with(all.summary.table[all.summary.table$measurement=='BMI',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Body Mass Index",
+             ylab="BMI (kg/cm2)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,35)))
+with(all.summary.table[all.summary.table$measurement=='BMI',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
+
+
+#abdominal circuference
+
+plot <- with(all.summary.table[all.summary.table$measurement=='abdominal.circumference',], 
+     barplot(cbind(Control_mean, Acromegaly_mean),
+             names.arg=c("Control", "Acromegaly"),
+             main="Admdominal Circumference",
+             ylab="Circumference (cm)",
+             las=1,             col=grey.colors(2)[2],
+             ylim=c(0,115)))
+with(all.summary.table[all.summary.table$measurement=='abdominal.circumference',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean), cbind(Control_se, Acromegaly_se)))
 ```
 
 Correlation with BMI
@@ -413,6 +554,13 @@ plot <- with(outlier.all.summary.table[outlier.all.summary.table$measurement=='a
              ylim=c(0,115)))
 with(outlier.all.summary.table[outlier.all.summary.table$measurement=='abdominal.circumference',], superpose.eb(plot, cbind(Control_mean, Acromegaly_mean,value), cbind(Control_se, Acromegaly_se,0)))
 dev.off()
+```
+
+References
+-----------
+```{r, results='asis', echo=FALSE, message=FALSE}
+write.bibtex(c(car=citation("car"), base=citation("stats")), file = "clinical-tests.bib")
+bibliography("html")
 ```
 
 Session Information
