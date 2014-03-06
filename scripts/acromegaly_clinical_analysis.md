@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ``Sun Mar  2 08:48:08 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Mar  5 19:13:40 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -29,7 +29,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Mar  2 08:48:10 2014 -->
+<!-- Wed Mar  5 19:13:41 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 28 </TD> <TD> HOMA.IR </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 7.6 </TD> <TD align="right"> 3.1 </TD> <TD align="right"> 0.00137 </TD> <TD align="right"> 0.04251 </TD> </TR>
@@ -135,7 +135,7 @@ Correlation with BMI
 The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215, r=0.5372, R2=0.2886)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.6167).
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Mar  2 08:48:10 2014 -->
+<!-- Wed Mar  5 19:13:42 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.2268 </TD> <TD align="right"> 0.6719 </TD> <TD align="right"> -1.83 </TD> <TD align="right"> 0.0879 </TD> </TR>
@@ -143,7 +143,7 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215
   <TR> <TD align="right"> diagnosisAcromegaly </TD> <TD align="right"> 0.9085 </TD> <TD align="right"> 0.2529 </TD> <TD align="right"> 3.59 </TD> <TD align="right"> 0.0027 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Mar  2 08:48:10 2014 -->
+<!-- Wed Mar  5 19:13:42 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.07 </TD> <TD align="right"> 1.23 </TD> </TR>
@@ -235,10 +235,42 @@ One subject was identified as an outlier based on the heatmap.  This was sample 
 ```
 
 
+Ceramides
+----------
+
+We tested whether ceramides were elevated in acromegaly patients.
+
+
+```
+## pdf 
+##   2
+```
+
+![plot of chunk ceramides-barplots](figure/ceramides-barplots.png) 
+
+
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Wed Mar  5 19:13:42 2014 -->
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
+  <TR> <TD align="right"> 13 </TD> <TD> Cer.C24 </TD> <TD align="right"> 4.3 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 6.7 </TD> <TD align="right"> 1.0 </TD> <TD align="right"> 0.03814 </TD> <TD align="right"> 0.25603 </TD> </TR>
+  <TR> <TD align="right"> 8 </TD> <TD> Cer.C16 </TD> <TD align="right"> 3.4 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 4.4 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.06926 </TD> <TD align="right"> 0.25603 </TD> </TR>
+  <TR> <TD align="right"> 7 </TD> <TD> Cer.C14 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.08534 </TD> <TD align="right"> 0.25603 </TD> </TR>
+  <TR> <TD align="right"> 16 </TD> <TD> Glu.Cer.C16 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 0.1 </TD> <TD align="right"> 0.21091 </TD> <TD align="right"> 0.47455 </TD> </TR>
+  <TR> <TD align="right"> 18 </TD> <TD> Glu.Cer.C18.1 </TD> <TD align="right"> 0.2 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.2 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.32498 </TD> <TD align="right"> 0.58496 </TD> </TR>
+  <TR> <TD align="right"> 10 </TD> <TD> Cer.C18.1 </TD> <TD align="right"> 0.7 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.7 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.51421 </TD> <TD align="right"> 0.77132 </TD> </TR>
+  <TR> <TD align="right"> 9 </TD> <TD> Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.83600 </TD> <TD align="right"> 1.00000 </TD> </TR>
+  <TR> <TD align="right"> 17 </TD> <TD> Glu.Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.91900 </TD> <TD align="right"> 1.00000 </TD> </TR>
+  <TR> <TD align="right"> 11 </TD> <TD> Cer.C20 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 1.00000 </TD> <TD align="right"> 1.00000 </TD> </TR>
+   </TABLE>
+
+
 References
 -----------
 
 - John Fox, Sanford Weisberg,   (2011) An {R} Companion to Applied Regression.  <a href="http://socserv.socsci.mcmaster.ca/jfox/Books/Companion">http://socserv.socsci.mcmaster.ca/jfox/Books/Companion</a>
+
+
 
 
 Session Information

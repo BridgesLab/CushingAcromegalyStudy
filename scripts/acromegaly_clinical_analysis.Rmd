@@ -556,12 +556,53 @@ with(outlier.all.summary.table[outlier.all.summary.table$measurement=='abdominal
 dev.off()
 ```
 
+Ceramides
+----------
+
+We tested whether ceramides were elevated in acromegaly patients.
+
+```{r ceramides-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+lipid.data <- droplevels(subset(melted.data, measurement %in% lipid.data.vars))
+lipid.data$measurement <- factor(lipid.data$measurement, levels=lipid.data.vars)
+lipid.summary <- ddply(lipid.data, .(diagnosis,measurement), summarise,
+                       mean = mean(value),
+                       sd = sd(value),
+                       se = sd(value)/sqrt(length(value)),
+                       n = length(value))
+lipid.summary$rel.mean <- lipid.summary$mean/lipid.summary$mean[1:9]
+lipid.summary$rel.se <- lipid.summary$se/lipid.summary$mean[1:9]
+
+pdf('../figures/Ceramide Levels.pdf')
+par(mar=c(8,4.1,4.1,2.1))
+plot <- barplot(as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.mean')[2:10]), beside=T, las=2, ylab="Relative Levels", ylim=c(0,1.9))
+superpose.eb(plot, 
+             as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.mean')[2:10]),
+             as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.se')[2:10]))
+dev.off()
+
+par(mar=c(8,4.1,4.1,2.1))
+plot <- barplot(as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.mean')[2:10]), beside=T, las=2, ylab="Relative Levels", ylim=c(0,1.9))
+superpose.eb(plot, 
+             as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.mean')[2:10]),
+             as.matrix(dcast(lipid.summary, diagnosis~measurement, value.var='rel.se')[2:10]))
+
+lipid.summary.table <- all.summary.table[all.summary.table$measurement %in% lipid.data.vars,]
+lipid.summary.table$padj <- p.adjust(lipid.summary.table$pval, method="BH")
+```
+
+```{r lipid-table, results='asis', echo=FALSE} 
+library(xtable) 
+print(xtable(lipid.summary.table[order(lipid.summary.table$pval),], digits=c(rep(1,6),5,5)), type='html') 
+``` 
+
 References
 -----------
 ```{r, results='asis', echo=FALSE, message=FALSE}
 write.bibtex(c(car=citation("car"), base=citation("stats")), file = "clinical-tests.bib")
 bibliography("html")
 ```
+
+
 
 Session Information
 -------------------
