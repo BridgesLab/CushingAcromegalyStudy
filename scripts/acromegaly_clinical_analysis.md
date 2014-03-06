@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ``Wed Mar  5 19:13:40 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Thu Mar  6 09:20:27 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -12,9 +12,6 @@ Statistics
 This analysis included 11 controls and 9 acromegaly patients. 
 
 
-```
-## Error: object '..' not found
-```
 
 
 First we checked whether the data was normally distributed using a Shapiro-Wilk test.  If a Shapiro-Wilk Normality test had a p-value <0.05 for a measurement in either the control or the acromegaly cases, we did a Wilcoxon test. This was appropriate for Cer.C14, Cer.C16, Cer.C20, Glu.Cer.C16, insulin, HOMA.IR, glycerol.ins.iso.iso.
@@ -29,7 +26,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Wed Mar  5 19:13:41 2014 -->
+<!-- Thu Mar  6 09:20:28 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 28 </TD> <TD> HOMA.IR </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 7.6 </TD> <TD align="right"> 3.1 </TD> <TD align="right"> 0.00137 </TD> <TD align="right"> 0.04251 </TD> </TR>
@@ -135,7 +132,7 @@ Correlation with BMI
 The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215, r=0.5372, R2=0.2886)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.6167).
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Wed Mar  5 19:13:42 2014 -->
+<!-- Thu Mar  6 09:20:29 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.2268 </TD> <TD align="right"> 0.6719 </TD> <TD align="right"> -1.83 </TD> <TD align="right"> 0.0879 </TD> </TR>
@@ -143,7 +140,7 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215
   <TR> <TD align="right"> diagnosisAcromegaly </TD> <TD align="right"> 0.9085 </TD> <TD align="right"> 0.2529 </TD> <TD align="right"> 3.59 </TD> <TD align="right"> 0.0027 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Wed Mar  5 19:13:42 2014 -->
+<!-- Thu Mar  6 09:20:29 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.07 </TD> <TD align="right"> 1.23 </TD> </TR>
@@ -250,7 +247,7 @@ We tested whether ceramides were elevated in acromegaly patients.
 
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Wed Mar  5 19:13:42 2014 -->
+<!-- Thu Mar  6 09:20:30 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 13 </TD> <TD> Cer.C24 </TD> <TD align="right"> 4.3 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 6.7 </TD> <TD align="right"> 1.0 </TD> <TD align="right"> 0.03814 </TD> <TD align="right"> 0.25603 </TD> </TR>

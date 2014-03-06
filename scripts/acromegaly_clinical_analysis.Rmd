@@ -57,8 +57,8 @@ for (param in levels(melted.data.used$measurement)) {
 test.summary.table$test <- ifelse(test.summary.table$shapiro.control<0.05|test.summary.table$shapiro.acromegaly<0.05, 
                                   "Wilcoxon Test", 
                                   ifelse(test.summary.table$levene.test<0.05, "Welch's T-Test", "Student's T-Test"))
-
-write.csv(../data/processed/"Clinical Test Parameters.csv")
+test_output_file <- "../data/processed/Clinical Test Parameters.csv"
+write.csv(test.summary.table, test_output_file)
 ```
 
 First we checked whether the data was normally distributed using a Shapiro-Wilk test.  If a Shapiro-Wilk Normality test had a p-value <0.05 for a measurement in either the control or the acromegaly cases, we did a Wilcoxon test. This was appropriate for `r rownames(test.summary.table[test.summary.table$test == 'Wilcoxon Test',])`.
