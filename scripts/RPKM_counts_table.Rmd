@@ -1,0 +1,46 @@
+Title making the RPKM table
+========================================================
+```{r exclusion, echo=FALSE}
+remove_patient <- 29
+```
+
+Making the RPKM Table
+The counts table was the regularized transformation from DESeq2 using **deseq_analysis_outlier_of_htseq.Rmd**.  It already excluded the outlier sample, which was patient **`r remove_patient`**.
+
+```{r Read data, echo=FALSE}
+filtered_counts_filename <- "../data/processed/RLD_DESeq2_Results-Acromegaly.csv"
+filtered.counts <- read.csv(filtered_counts_filename, header=T, row.names='X')
+#rownames(filtered.counts) <- filtered.counts[,1]
+#filtered.counts <- filtered.counts[,-1]
+processed_filename <- "../data/processed/RPKM_counts_table_Acromegaly.csv"
+
+#Divide each column (sample) by the total number of reads (sum of that column)
+rpm.table <- sweep(filtered.counts, 2, colSums(filtered.counts), '/')
+rpm.table <- sweep(rpm.table, 2, 10^9, '*')
+```
+
+```{r getting gene length}
+
+#calculate length for each gene
+library(GenomicFeatures)
+txdb <- makeTranscriptDbFromGFF("../data/raw/Homo_sapiens.GRCh37.74.gtf",format="gtf")
+save(txdb,file="txdb.RData")
+# then collect the exons per gene id
+exons.list.per.gene <- exonsBy(txdb,by="gene")
+# then for each gene, reduce all the exons to a set of non overlapping exons, calculate their lengths (widths) and sum then
+exonic.gene.sizes <- lapply(exons.list.per.gene,function(x){sum(width(reduce(x)))})
+gene_lengths <- unlist(exonic.gene.sizes)
+comvals <- intersect(names(gene_lengths),rownames(rpm.table))
+
+counts.rpkm <-  sweep(rpm.table[comvals,], 1, unlist(gene_lengths[comvals]),  "/")
+write.csv(counts.rpkm, file=processed_filename)
+```
+
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```
+
