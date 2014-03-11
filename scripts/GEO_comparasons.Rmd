@@ -9,7 +9,7 @@ This script was most recently run on `r date()`.
 #for references
 library(devtools)
 require(knitcitations)
-acromegaly.data <- read.csv('../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv', row.names='Row.names')
+acromegaly.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv', row.names='X')
 ```
 
 Huo et al Dataset
