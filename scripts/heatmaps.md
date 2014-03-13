@@ -16,7 +16,7 @@ Statistics
 ##     cite
 ```
 
-This file was most recently processed on ``Tue Mar 11 14:08:21 2014``.  This uses the DESeq normalized data.
+This file was most recently processed on ``Thu Mar 13 08:59:29 2014``.  This uses the DESeq normalized data.
 
 
 Differentially Expressed Genes

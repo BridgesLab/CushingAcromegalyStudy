@@ -12,7 +12,7 @@ bib <- read.bibtex("references.bib") #loads the bib file
 #load in the previously processed and annoted acromegaly analysis results
 analysis.file <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
 analysis.data <- read.csv(analysis.file, row.names='X')
-transcripts.file <- "../data/processed/RPKM_counts_table_Acromegaly.csv"
+transcripts.file <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
