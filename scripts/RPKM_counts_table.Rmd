@@ -8,11 +8,11 @@ Making the RPKM Table
 The counts table was the regularized transformation from DESeq2 using **deseq_analysis_outlier_of_htseq.Rmd**.  It already excluded the outlier sample, which was patient **`r remove_patient`**.
 
 ```{r Read data, echo=FALSE}
-filtered_counts_filename <- "../data/processed/RLD_DESeq2_Results-Acromegaly.csv"
+filtered_counts_filename <- "../data/processed/VSD_DESeq2_Results-Acromegaly.csv"
 filtered.counts <- read.csv(filtered_counts_filename, header=T, row.names='X')
 #rownames(filtered.counts) <- filtered.counts[,1]
 #filtered.counts <- filtered.counts[,-1]
-processed_filename <- "../data/processed/RPKM_counts_table_Acromegaly.csv"
+processed_filename <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
 
 #Divide each column (sample) by the total number of reads (sum of that column)
 rpm.table <- sweep(filtered.counts, 2, colSums(filtered.counts), '/')
