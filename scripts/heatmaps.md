@@ -16,7 +16,7 @@ Statistics
 ##     cite
 ```
 
-This file was most recently processed on ``Sun Jan 19 10:13:37 2014``.  This uses the DESeq normalized data.
+This file was most recently processed on ``Thu Mar 13 08:59:29 2014``.  This uses the DESeq normalized data.
 
 
 Differentially Expressed Genes
@@ -37,6 +37,11 @@ To test the grouping of differentially expressed transcripts, we only examined g
 ```
 
 ![plot of chunk de-heatmap](figure/de-heatmap1.png) ![plot of chunk de-heatmap](figure/de-heatmap2.png) 
+
+```
+## pdf 
+##   3
+```
 
 ```
 ## pdf 
@@ -73,7 +78,7 @@ sessionInfo()
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-6       caTools_1.16       digest_0.6.4      
 ##  [4] evaluate_0.5.1     formatR_0.10       gdata_2.13.2      
-##  [7] gtools_3.1.1       httr_0.2           KernSmooth_2.23-10
+##  [7] gtools_3.3.0       httr_0.2           KernSmooth_2.23-10
 ## [10] RCurl_1.95-4.1     stringr_0.6.2      tools_3.0.2       
 ## [13] XML_3.95-0.2       xtable_1.7-1
 ```

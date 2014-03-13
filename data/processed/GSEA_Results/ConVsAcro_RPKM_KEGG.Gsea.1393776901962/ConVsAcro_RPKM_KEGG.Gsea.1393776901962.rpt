@@ -1,0 +1,31 @@
+producer_class	xtools.gsea.Gsea
+producer_timestamp	1393776901962
+param	collapse	false
+param	cls	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/data/processed/GSEA_pheno_acromegaly.cls#Control_versus_Acromegaly
+param	plot_top_x	20
+param	norm	meandiv
+param	save_rnd_lists	false
+param	median	false
+param	num	100
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.kegg.v4.0.symbols.gmt
+param	gui	false
+param	metric	tTest
+param	rpt_label	ConVsAcro_RPKM_KEGG
+param	help	false
+param	order	descending
+param	out	/Users/vphan/gsea_home/output/mar02
+param	permute	phenotype
+param	rnd_type	no_balance
+param	set_min	15
+param	include_only_symbols	true
+param	sort	real
+param	rnd_seed	149
+param	nperm	1000
+param	zip_report	false
+param	set_max	500
+param	res	/Users/vphan/Quynh/NextGenSeq/CushingAcromegalyStudy/data/processed/GSEA_Acromegaly_input_RPKM.txt
+
+file	/Users/vphan/gsea_home/output/mar02/ConVsAcro_RPKM_KEGG.Gsea.1393776901962/index.html

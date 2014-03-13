@@ -10,9 +10,9 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv"
-analysis.data <- read.csv(analysis.file, row.names='Row.names')
-transcripts.file <- "../data/processed/Normalized_htseq_Counts_Table.csv"
+analysis.file <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
+analysis.data <- read.csv(analysis.file, row.names='X')
+transcripts.file <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
@@ -62,12 +62,14 @@ diff.exprs.acromegaly <- diff.exprs.ordered.genes[,colnames(diff.exprs.ordered.g
 plot(as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.acromegaly)))))))
 heatmap.colors <- brewer.pal(11, "BrBG")
 heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
+dev.copy(pdf, '../figures/differential-expressor-heatmap-RPKM.pdf')
+dev.off()
 
 #write it out to a final figure as well
-pdf('../figures/differential-expressor-heatmap.pdf')
-heatmap.colors <- brewer.pal(11, "BrBG")
-heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
-dev.off()
+#pdf('../figures/differential-expressor-heatmap-RPKM.pdf')
+#heatmap.colors <- brewer.pal(11, "BrBG")
+#heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, #density.info="none", trace="none", labCol=F, margins=c(6,6))
+#dev.off()
 ```
 
 References

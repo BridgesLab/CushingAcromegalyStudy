@@ -11,8 +11,8 @@ library(GO.db, quietly=TRUE)
 library(KEGG.db, quietly=TRUE)
 write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
 bib <- read.bibtex("../references.bib") #loads the bib file
-acromegaly.data <- read.csv('../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv', row.names='Row.names')
-cushing.data <- read.csv('../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv', row.names='Row.names')
+acromegaly.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv', row.names='X')
+cushing.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Cushing.csv', row.names='X')
 
 acromegaly.genes=as.integer(acromegaly.data$padj<.05)
 names(acromegaly.genes) = rownames(acromegaly.data)

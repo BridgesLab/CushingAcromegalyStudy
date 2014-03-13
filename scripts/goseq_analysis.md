@@ -1,7 +1,7 @@
 GOSeq of DESeq Data for Acromegaly and Cushing's Patients
 =============================================================
 
-This script was most recently run on Sun Jan 19 08:53:20 2014.  This script searches KEGG and GO for enriched categories and pathways.
+This script was most recently run on Tue Mar 11 00:33:48 2014.  This script searches KEGG and GO for enriched categories and pathways.
 
 
 
@@ -12,7 +12,7 @@ significantly enriched GO (<a href="http://dx.doi.org/10.1038/75556">Botstein et
 
 This analysis uses the GO database updated with the datestamp 20130907 downloaded from ftp://ftp.geneontology.org/pub/go/godatabase/archive/latest-lite/.  The KEGG database was downloaded from ftp://ftp.genome.jp/pub/kegg/genomes with a datestamp of 2011-Mar15.
 
-This analysis included the 532 significant cushing transcripts (533 genes) and the 671 significant acromegaly transcripts (672 genes).  We did not separate upregulated genes from downregulated genes in this analysis.
+This analysis included the 475 significant cushing transcripts (476 genes) and the 560 significant acromegaly transcripts (561 genes).  We did not separate upregulated genes from downregulated genes in this analysis.
 
 ![plot of chunk goseq-analysis](figure/goseq-analysis1.png) ![plot of chunk goseq-analysis](figure/goseq-analysis2.png) 
 
@@ -22,220 +22,193 @@ Significantly different terms and pathways
 
 ### Cushing Significant Processes
 
-For cushing, we found 0 significantly different GO terms for molecular function, 2 significantly different GO terms for biological processes and 1 significantly different KEGG pathways.
+For cushing, we found 0 significantly different GO terms for molecular function, 0 significantly different GO terms for biological processes and 2 significantly different KEGG pathways.
 
-<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
-<TABLE border=1>
-<CAPTION ALIGN="bottom"> Biological Processes Enriched in Acromegaly Patients </CAPTION>
-<TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
-  <TR> <TD align="right"> 2201 </TD> <TD> GO:0006007 </TD> <TD align="right"> 13 </TD> <TD align="right"> 53 </TD> <TD align="right"> 0.03691 </TD> <TD> glucose catabolic process </TD> </TR>
-  <TR> <TD align="right"> 16423 </TD> <TD> GO:0046365 </TD> <TD align="right"> 14 </TD> <TD align="right"> 59 </TD> <TD align="right"> 0.03691 </TD> <TD> monosaccharide catabolic process </TD> </TR>
-   </TABLE>
 
 ```
 ## Warning: data length exceeds size of matrix
 ```
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
+<!-- Tue Mar 11 00:35:26 2014 -->
+<TABLE border=1>
+<CAPTION ALIGN="bottom"> Biological Processes Enriched in Acromegaly Patients </CAPTION>
+<TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
+  </TABLE>
+
+```
+## Warning: data length exceeds size of matrix
+```
+
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Tue Mar 11 00:35:26 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Molecular Functions Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
   </TABLE>
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
+<!-- Tue Mar 11 00:35:26 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> KEGG Pathways Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> path_name </TH>  </TR>
-  <TR> <TD align="right"> 1 </TD> <TD> 00010 </TD> <TD align="right"> 11 </TD> <TD align="right"> 41 </TD> <TD align="right"> 0.00354 </TD> <TD> Glycolysis / Gluconeogenesis </TD> </TR>
+  <TR> <TD align="right"> 1 </TD> <TD> 00010 </TD> <TD align="right"> 9 </TD> <TD align="right"> 41 </TD> <TD align="right"> 0.00311 </TD> <TD> Glycolysis / Gluconeogenesis </TD> </TR>
+  <TR> <TD align="right"> 62 </TD> <TD> 00620 </TD> <TD align="right"> 7 </TD> <TD align="right"> 32 </TD> <TD align="right"> 0.01560 </TD> <TD> Pyruvate metabolism </TD> </TR>
    </TABLE>
 
 
 ### Acromegaly Significant Processes
 
-For acromegaly, we found 5 significantly different GO terms for molecular function, 164 significantly different GO terms for biological processes and 0 significantly different KEGG pathways.
+For acromegaly, we found 0 significantly different GO terms for molecular function, 144 significantly different GO terms for biological processes and 0 significantly different KEGG pathways.
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
+<!-- Tue Mar 11 00:35:26 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Biological Processes Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
-  <TR> <TD align="right"> 15382 </TD> <TD> GO:0044699 </TD> <TD align="right"> 450 </TD> <TD align="right"> 7722 </TD> <TD align="right"> 0.00000 </TD> <TD> single-organism process </TD> </TR>
-  <TR> <TD align="right"> 15401 </TD> <TD> GO:0044763 </TD> <TD align="right"> 419 </TD> <TD align="right"> 7109 </TD> <TD align="right"> 0.00000 </TD> <TD> single-organism cellular process </TD> </TR>
-  <TR> <TD align="right"> 15388 </TD> <TD> GO:0044707 </TD> <TD align="right"> 255 </TD> <TD align="right"> 3720 </TD> <TD align="right"> 0.00000 </TD> <TD> single-multicellular organism process </TD> </TR>
-  <TR> <TD align="right"> 10407 </TD> <TD> GO:0032502 </TD> <TD align="right"> 229 </TD> <TD align="right"> 3236 </TD> <TD align="right"> 0.00000 </TD> <TD> developmental process </TD> </TR>
-  <TR> <TD align="right"> 10405 </TD> <TD> GO:0032501 </TD> <TD align="right"> 259 </TD> <TD align="right"> 3829 </TD> <TD align="right"> 0.00000 </TD> <TD> multicellular organismal process </TD> </TR>
-  <TR> <TD align="right"> 4619 </TD> <TD> GO:0007275 </TD> <TD align="right"> 202 </TD> <TD align="right"> 2832 </TD> <TD align="right"> 0.00000 </TD> <TD> multicellular organismal development </TD> </TR>
-  <TR> <TD align="right"> 19114 </TD> <TD> GO:0048731 </TD> <TD align="right"> 175 </TD> <TD align="right"> 2451 </TD> <TD align="right"> 0.00000 </TD> <TD> system development </TD> </TR>
-  <TR> <TD align="right"> 15405 </TD> <TD> GO:0044767 </TD> <TD align="right"> 180 </TD> <TD align="right"> 2592 </TD> <TD align="right"> 0.00001 </TD> <TD> single-organism developmental process </TD> </TR>
-  <TR> <TD align="right"> 19777 </TD> <TD> GO:0050896 </TD> <TD align="right"> 290 </TD> <TD align="right"> 4812 </TD> <TD align="right"> 0.00001 </TD> <TD> response to stimulus </TD> </TR>
-  <TR> <TD align="right"> 4352 </TD> <TD> GO:0007154 </TD> <TD align="right"> 227 </TD> <TD align="right"> 3541 </TD> <TD align="right"> 0.00001 </TD> <TD> cell communication </TD> </TR>
-  <TR> <TD align="right"> 4852 </TD> <TD> GO:0008150 </TD> <TD align="right"> 542 </TD> <TD align="right"> 10533 </TD> <TD align="right"> 0.00001 </TD> <TD> biological_process </TD> </TR>
-  <TR> <TD align="right"> 8340 </TD> <TD> GO:0023052 </TD> <TD align="right"> 222 </TD> <TD align="right"> 3460 </TD> <TD align="right"> 0.00001 </TD> <TD> signaling </TD> </TR>
-  <TR> <TD align="right"> 15383 </TD> <TD> GO:0044700 </TD> <TD align="right"> 222 </TD> <TD align="right"> 3460 </TD> <TD align="right"> 0.00001 </TD> <TD> single organism signaling </TD> </TR>
-  <TR> <TD align="right"> 18829 </TD> <TD> GO:0048513 </TD> <TD align="right"> 129 </TD> <TD align="right"> 1714 </TD> <TD align="right"> 0.00001 </TD> <TD> organ development </TD> </TR>
-  <TR> <TD align="right"> 21361 </TD> <TD> GO:0051716 </TD> <TD align="right"> 243 </TD> <TD align="right"> 3885 </TD> <TD align="right"> 0.00001 </TD> <TD> cellular response to stimulus </TD> </TR>
-  <TR> <TD align="right"> 4898 </TD> <TD> GO:0008283 </TD> <TD align="right"> 94 </TD> <TD align="right"> 1161 </TD> <TD align="right"> 0.00001 </TD> <TD> cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 19196 </TD> <TD> GO:0048856 </TD> <TD align="right"> 192 </TD> <TD align="right"> 2870 </TD> <TD align="right"> 0.00001 </TD> <TD> anatomical structure development </TD> </TR>
-  <TR> <TD align="right"> 22999 </TD> <TD> GO:0065007 </TD> <TD align="right"> 371 </TD> <TD align="right"> 6562 </TD> <TD align="right"> 0.00001 </TD> <TD> biological regulation </TD> </TR>
-  <TR> <TD align="right"> 5984 </TD> <TD> GO:0009987 </TD> <TD align="right"> 503 </TD> <TD align="right"> 9648 </TD> <TD align="right"> 0.00002 </TD> <TD> cellular process </TD> </TR>
-  <TR> <TD align="right"> 19205 </TD> <TD> GO:0048869 </TD> <TD align="right"> 148 </TD> <TD align="right"> 2078 </TD> <TD align="right"> 0.00002 </TD> <TD> cellular developmental process </TD> </TR>
-  <TR> <TD align="right"> 4373 </TD> <TD> GO:0007165 </TD> <TD align="right"> 204 </TD> <TD align="right"> 3172 </TD> <TD align="right"> 0.00002 </TD> <TD> signal transduction </TD> </TR>
-  <TR> <TD align="right"> 8425 </TD> <TD> GO:0030154 </TD> <TD align="right"> 139 </TD> <TD align="right"> 1918 </TD> <TD align="right"> 0.00002 </TD> <TD> cell differentiation </TD> </TR>
-  <TR> <TD align="right"> 23000 </TD> <TD> GO:0065008 </TD> <TD align="right"> 146 </TD> <TD align="right"> 2114 </TD> <TD align="right"> 0.00004 </TD> <TD> regulation of biological quality </TD> </TR>
-  <TR> <TD align="right"> 11003 </TD> <TD> GO:0032879 </TD> <TD align="right"> 89 </TD> <TD align="right"> 1104 </TD> <TD align="right"> 0.00006 </TD> <TD> regulation of localization </TD> </TR>
-  <TR> <TD align="right"> 4381 </TD> <TD> GO:0007167 </TD> <TD align="right"> 66 </TD> <TD align="right"> 723 </TD> <TD align="right"> 0.00006 </TD> <TD> enzyme linked receptor protein signaling pathway </TD> </TR>
-  <TR> <TD align="right"> 19534 </TD> <TD> GO:0050789 </TD> <TD align="right"> 347 </TD> <TD align="right"> 6209 </TD> <TD align="right"> 0.00014 </TD> <TD> regulation of biological process </TD> </TR>
-  <TR> <TD align="right"> 3126 </TD> <TD> GO:0006468 </TD> <TD align="right"> 76 </TD> <TD align="right"> 920 </TD> <TD align="right"> 0.00019 </TD> <TD> protein phosphorylation </TD> </TR>
-  <TR> <TD align="right"> 3879 </TD> <TD> GO:0006796 </TD> <TD align="right"> 134 </TD> <TD align="right"> 1975 </TD> <TD align="right"> 0.00025 </TD> <TD> phosphate-containing compound metabolic process </TD> </TR>
-  <TR> <TD align="right"> 3878 </TD> <TD> GO:0006793 </TD> <TD align="right"> 136 </TD> <TD align="right"> 2011 </TD> <TD align="right"> 0.00037 </TD> <TD> phosphorus metabolic process </TD> </TR>
-  <TR> <TD align="right"> 19539 </TD> <TD> GO:0050793 </TD> <TD align="right"> 89 </TD> <TD align="right"> 1145 </TD> <TD align="right"> 0.00039 </TD> <TD> regulation of developmental process </TD> </TR>
-  <TR> <TD align="right"> 19540 </TD> <TD> GO:0050794 </TD> <TD align="right"> 332 </TD> <TD align="right"> 5926 </TD> <TD align="right"> 0.00044 </TD> <TD> regulation of cellular process </TD> </TR>
-  <TR> <TD align="right"> 5820 </TD> <TD> GO:0009719 </TD> <TD align="right"> 70 </TD> <TD align="right"> 848 </TD> <TD align="right"> 0.00062 </TD> <TD> response to endogenous stimulus </TD> </TR>
-  <TR> <TD align="right"> 13375 </TD> <TD> GO:0042221 </TD> <TD align="right"> 143 </TD> <TD align="right"> 2161 </TD> <TD align="right"> 0.00071 </TD> <TD> response to chemical stimulus </TD> </TR>
-  <TR> <TD align="right"> 20442 </TD> <TD> GO:0051239 </TD> <TD align="right"> 102 </TD> <TD align="right"> 1398 </TD> <TD align="right"> 0.00083 </TD> <TD> regulation of multicellular organismal process </TD> </TR>
-  <TR> <TD align="right"> 535 </TD> <TD> GO:0001649 </TD> <TD align="right"> 18 </TD> <TD align="right"> 111 </TD> <TD align="right"> 0.00113 </TD> <TD> osteoblast differentiation </TD> </TR>
-  <TR> <TD align="right"> 15182 </TD> <TD> GO:0044057 </TD> <TD align="right"> 33 </TD> <TD align="right"> 298 </TD> <TD align="right"> 0.00113 </TD> <TD> regulation of system process </TD> </TR>
-  <TR> <TD align="right"> 5023 </TD> <TD> GO:0008610 </TD> <TD align="right"> 42 </TD> <TD align="right"> 442 </TD> <TD align="right"> 0.00122 </TD> <TD> lipid biosynthetic process </TD> </TR>
-  <TR> <TD align="right"> 20452 </TD> <TD> GO:0051246 </TD> <TD align="right"> 92 </TD> <TD align="right"> 1265 </TD> <TD align="right"> 0.00122 </TD> <TD> regulation of protein metabolic process </TD> </TR>
-  <TR> <TD align="right"> 27409 </TD> <TD> GO:1901700 </TD> <TD align="right"> 64 </TD> <TD align="right"> 779 </TD> <TD align="right"> 0.00122 </TD> <TD> response to oxygen-containing compound </TD> </TR>
-  <TR> <TD align="right"> 3459 </TD> <TD> GO:0006629 </TD> <TD align="right"> 68 </TD> <TD align="right"> 869 </TD> <TD align="right"> 0.00165 </TD> <TD> lipid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 7117 </TD> <TD> GO:0016310 </TD> <TD align="right"> 80 </TD> <TD align="right"> 1046 </TD> <TD align="right"> 0.00168 </TD> <TD> phosphorylation </TD> </TR>
-  <TR> <TD align="right"> 27407 </TD> <TD> GO:1901698 </TD> <TD align="right"> 46 </TD> <TD align="right"> 497 </TD> <TD align="right"> 0.00188 </TD> <TD> response to nitrogen compound </TD> </TR>
-  <TR> <TD align="right"> 28540 </TD> <TD> GO:2000026 </TD> <TD align="right"> 69 </TD> <TD align="right"> 861 </TD> <TD align="right"> 0.00216 </TD> <TD> regulation of multicellular organismal development </TD> </TR>
-  <TR> <TD align="right"> 7767 </TD> <TD> GO:0019538 </TD> <TD align="right"> 190 </TD> <TD align="right"> 3157 </TD> <TD align="right"> 0.00231 </TD> <TD> protein metabolic process </TD> </TR>
-  <TR> <TD align="right"> 4569 </TD> <TD> GO:0007243 </TD> <TD align="right"> 60 </TD> <TD align="right"> 730 </TD> <TD align="right"> 0.00244 </TD> <TD> intracellular protein kinase cascade </TD> </TR>
-  <TR> <TD align="right"> 6405 </TD> <TD> GO:0010876 </TD> <TD align="right"> 23 </TD> <TD align="right"> 179 </TD> <TD align="right"> 0.00251 </TD> <TD> lipid localization </TD> </TR>
-  <TR> <TD align="right"> 470 </TD> <TD> GO:0001503 </TD> <TD align="right"> 26 </TD> <TD align="right"> 218 </TD> <TD align="right"> 0.00269 </TD> <TD> ossification </TD> </TR>
-  <TR> <TD align="right"> 4378 </TD> <TD> GO:0007166 </TD> <TD align="right"> 121 </TD> <TD align="right"> 1793 </TD> <TD align="right"> 0.00311 </TD> <TD> cell surface receptor signaling pathway </TD> </TR>
-  <TR> <TD align="right"> 4676 </TD> <TD> GO:0007399 </TD> <TD align="right"> 92 </TD> <TD align="right"> 1242 </TD> <TD align="right"> 0.00317 </TD> <TD> nervous system development </TD> </TR>
-  <TR> <TD align="right"> 13290 </TD> <TD> GO:0042127 </TD> <TD align="right"> 69 </TD> <TD align="right"> 896 </TD> <TD align="right"> 0.00352 </TD> <TD> regulation of cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 539 </TD> <TD> GO:0001657 </TD> <TD align="right"> 13 </TD> <TD align="right"> 68 </TD> <TD align="right"> 0.00360 </TD> <TD> ureteric bud development </TD> </TR>
-  <TR> <TD align="right"> 6020 </TD> <TD> GO:0010033 </TD> <TD align="right"> 108 </TD> <TD align="right"> 1589 </TD> <TD align="right"> 0.00360 </TD> <TD> response to organic substance </TD> </TR>
-  <TR> <TD align="right"> 19330 </TD> <TD> GO:0050673 </TD> <TD align="right"> 24 </TD> <TD align="right"> 196 </TD> <TD align="right"> 0.00364 </TD> <TD> epithelial cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 20137 </TD> <TD> GO:0051094 </TD> <TD align="right"> 47 </TD> <TD align="right"> 530 </TD> <TD align="right"> 0.00364 </TD> <TD> positive regulation of developmental process </TD> </TR>
-  <TR> <TD align="right"> 7519 </TD> <TD> GO:0019220 </TD> <TD align="right"> 76 </TD> <TD align="right"> 1006 </TD> <TD align="right"> 0.00371 </TD> <TD> regulation of phosphate metabolic process </TD> </TR>
-  <TR> <TD align="right"> 23640 </TD> <TD> GO:0070887 </TD> <TD align="right"> 103 </TD> <TD align="right"> 1497 </TD> <TD align="right"> 0.00372 </TD> <TD> cellular response to chemical stimulus </TD> </TR>
-  <TR> <TD align="right"> 19215 </TD> <TD> GO:0048878 </TD> <TD align="right"> 43 </TD> <TD align="right"> 475 </TD> <TD align="right"> 0.00372 </TD> <TD> chemical homeostasis </TD> </TR>
-  <TR> <TD align="right"> 884 </TD> <TD> GO:0001932 </TD> <TD align="right"> 56 </TD> <TD align="right"> 678 </TD> <TD align="right"> 0.00377 </TD> <TD> regulation of protein phosphorylation </TD> </TR>
-  <TR> <TD align="right"> 15308 </TD> <TD> GO:0044281 </TD> <TD align="right"> 128 </TD> <TD align="right"> 2022 </TD> <TD align="right"> 0.00404 </TD> <TD> small molecule metabolic process </TD> </TR>
-  <TR> <TD align="right"> 20332 </TD> <TD> GO:0051174 </TD> <TD align="right"> 76 </TD> <TD align="right"> 1018 </TD> <TD align="right"> 0.00502 </TD> <TD> regulation of phosphorus metabolic process </TD> </TR>
-  <TR> <TD align="right"> 6082 </TD> <TD> GO:0010243 </TD> <TD align="right"> 42 </TD> <TD align="right"> 464 </TD> <TD align="right"> 0.00539 </TD> <TD> response to organonitrogen compound </TD> </TR>
-  <TR> <TD align="right"> 18833 </TD> <TD> GO:0048518 </TD> <TD align="right"> 171 </TD> <TD align="right"> 2795 </TD> <TD align="right"> 0.00539 </TD> <TD> positive regulation of biological process </TD> </TR>
-  <TR> <TD align="right"> 18840 </TD> <TD> GO:0048519 </TD> <TD align="right"> 157 </TD> <TD align="right"> 2529 </TD> <TD align="right"> 0.00560 </TD> <TD> negative regulation of biological process </TD> </TR>
-  <TR> <TD align="right"> 23984 </TD> <TD> GO:0071495 </TD> <TD align="right"> 52 </TD> <TD align="right"> 612 </TD> <TD align="right"> 0.00560 </TD> <TD> cellular response to endogenous stimulus </TD> </TR>
-  <TR> <TD align="right"> 2099 </TD> <TD> GO:0003008 </TD> <TD align="right"> 75 </TD> <TD align="right"> 1003 </TD> <TD align="right"> 0.00572 </TD> <TD> system process </TD> </TR>
-  <TR> <TD align="right"> 10045 </TD> <TD> GO:0032268 </TD> <TD align="right"> 81 </TD> <TD align="right"> 1132 </TD> <TD align="right"> 0.00572 </TD> <TD> regulation of cellular protein metabolic process </TD> </TR>
-  <TR> <TD align="right"> 27301 </TD> <TD> GO:1901652 </TD> <TD align="right"> 29 </TD> <TD align="right"> 276 </TD> <TD align="right"> 0.00627 </TD> <TD> response to peptide </TD> </TR>
-  <TR> <TD align="right"> 2576 </TD> <TD> GO:0006112 </TD> <TD align="right"> 18 </TD> <TD align="right"> 128 </TD> <TD align="right"> 0.00650 </TD> <TD> energy reserve metabolic process </TD> </TR>
-  <TR> <TD align="right"> 13083 </TD> <TD> GO:0040007 </TD> <TD align="right"> 49 </TD> <TD align="right"> 581 </TD> <TD align="right"> 0.00650 </TD> <TD> growth </TD> </TR>
-  <TR> <TD align="right"> 20184 </TD> <TD> GO:0051128 </TD> <TD align="right"> 79 </TD> <TD align="right"> 1081 </TD> <TD align="right"> 0.00664 </TD> <TD> regulation of cellular component organization </TD> </TR>
-  <TR> <TD align="right"> 15390 </TD> <TD> GO:0044710 </TD> <TD align="right"> 147 </TD> <TD align="right"> 2416 </TD> <TD align="right"> 0.00725 </TD> <TD> single-organism metabolic process </TD> </TR>
-  <TR> <TD align="right"> 14897 </TD> <TD> GO:0043434 </TD> <TD align="right"> 28 </TD> <TD align="right"> 267 </TD> <TD align="right"> 0.00797 </TD> <TD> response to peptide hormone stimulus </TD> </TR>
-  <TR> <TD align="right"> 12296 </TD> <TD> GO:0035295 </TD> <TD align="right"> 33 </TD> <TD align="right"> 333 </TD> <TD align="right"> 0.00974 </TD> <TD> tube development </TD> </TR>
-  <TR> <TD align="right"> 18862 </TD> <TD> GO:0048523 </TD> <TD align="right"> 144 </TD> <TD align="right"> 2319 </TD> <TD align="right"> 0.01071 </TD> <TD> negative regulation of cellular process </TD> </TR>
-  <TR> <TD align="right"> 6227 </TD> <TD> GO:0010646 </TD> <TD align="right"> 112 </TD> <TD align="right"> 1688 </TD> <TD align="right"> 0.01159 </TD> <TD> regulation of cell communication </TD> </TR>
-  <TR> <TD align="right"> 6943 </TD> <TD> GO:0016049 </TD> <TD align="right"> 29 </TD> <TD align="right"> 290 </TD> <TD align="right"> 0.01159 </TD> <TD> cell growth </TD> </TR>
-  <TR> <TD align="right"> 16238 </TD> <TD> GO:0045597 </TD> <TD align="right"> 36 </TD> <TD align="right"> 390 </TD> <TD align="right"> 0.01159 </TD> <TD> positive regulation of cell differentiation </TD> </TR>
-  <TR> <TD align="right"> 3960 </TD> <TD> GO:0006869 </TD> <TD align="right"> 19 </TD> <TD align="right"> 151 </TD> <TD align="right"> 0.01232 </TD> <TD> lipid transport </TD> </TR>
-  <TR> <TD align="right"> 6921 </TD> <TD> GO:0016043 </TD> <TD align="right"> 205 </TD> <TD align="right"> 3500 </TD> <TD align="right"> 0.01243 </TD> <TD> cellular component organization </TD> </TR>
-  <TR> <TD align="right"> 16233 </TD> <TD> GO:0045595 </TD> <TD align="right"> 62 </TD> <TD align="right"> 806 </TD> <TD align="right"> 0.01265 </TD> <TD> regulation of cell differentiation </TD> </TR>
-  <TR> <TD align="right"> 23832 </TD> <TD> GO:0071310 </TD> <TD align="right"> 85 </TD> <TD align="right"> 1219 </TD> <TD align="right"> 0.01265 </TD> <TD> cellular response to organic substance </TD> </TR>
-  <TR> <TD align="right"> 2506 </TD> <TD> GO:0006066 </TD> <TD align="right"> 27 </TD> <TD align="right"> 267 </TD> <TD align="right"> 0.01273 </TD> <TD> alcohol metabolic process </TD> </TR>
-  <TR> <TD align="right"> 13086 </TD> <TD> GO:0040008 </TD> <TD align="right"> 36 </TD> <TD align="right"> 400 </TD> <TD align="right"> 0.01422 </TD> <TD> regulation of growth </TD> </TR>
-  <TR> <TD align="right"> 15261 </TD> <TD> GO:0044255 </TD> <TD align="right"> 52 </TD> <TD align="right"> 671 </TD> <TD align="right"> 0.01422 </TD> <TD> cellular lipid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 23942 </TD> <TD> GO:0071462 </TD> <TD align="right"> 3 </TD> <TD align="right"> 3 </TD> <TD align="right"> 0.01422 </TD> <TD> cellular response to water stimulus </TD> </TR>
-  <TR> <TD align="right"> 3592 </TD> <TD> GO:0006694 </TD> <TD align="right"> 14 </TD> <TD align="right"> 98 </TD> <TD align="right"> 0.01482 </TD> <TD> steroid biosynthetic process </TD> </TR>
-  <TR> <TD align="right"> 4413 </TD> <TD> GO:0007178 </TD> <TD align="right"> 23 </TD> <TD align="right"> 205 </TD> <TD align="right"> 0.01501 </TD> <TD> transmembrane receptor protein serine/threonine kinase signaling pathway </TD> </TR>
-  <TR> <TD align="right"> 13506 </TD> <TD> GO:0042325 </TD> <TD align="right"> 56 </TD> <TD align="right"> 723 </TD> <TD align="right"> 0.01512 </TD> <TD> regulation of phosphorylation </TD> </TR>
-  <TR> <TD align="right"> 14044 </TD> <TD> GO:0042692 </TD> <TD align="right"> 27 </TD> <TD align="right"> 258 </TD> <TD align="right"> 0.01544 </TD> <TD> muscle cell differentiation </TD> </TR>
-  <TR> <TD align="right"> 22361 </TD> <TD> GO:0060341 </TD> <TD align="right"> 45 </TD> <TD align="right"> 547 </TD> <TD align="right"> 0.01554 </TD> <TD> regulation of cellular localization </TD> </TR>
-  <TR> <TD align="right"> 4866 </TD> <TD> GO:0008202 </TD> <TD align="right"> 20 </TD> <TD align="right"> 176 </TD> <TD align="right"> 0.01576 </TD> <TD> steroid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 3122 </TD> <TD> GO:0006464 </TD> <TD align="right"> 131 </TD> <TD align="right"> 2088 </TD> <TD align="right"> 0.01576 </TD> <TD> cellular protein modification process </TD> </TR>
-  <TR> <TD align="right"> 12831 </TD> <TD> GO:0036211 </TD> <TD align="right"> 131 </TD> <TD align="right"> 2088 </TD> <TD align="right"> 0.01576 </TD> <TD> protein modification process </TD> </TR>
-  <TR> <TD align="right"> 5923 </TD> <TD> GO:0009893 </TD> <TD align="right"> 106 </TD> <TD align="right"> 1620 </TD> <TD align="right"> 0.01618 </TD> <TD> positive regulation of metabolic process </TD> </TR>
-  <TR> <TD align="right"> 12268 </TD> <TD> GO:0035239 </TD> <TD align="right"> 25 </TD> <TD align="right"> 231 </TD> <TD align="right"> 0.01675 </TD> <TD> tube morphogenesis </TD> </TR>
-  <TR> <TD align="right"> 490 </TD> <TD> GO:0001523 </TD> <TD align="right"> 8 </TD> <TD align="right"> 36 </TD> <TD align="right"> 0.01698 </TD> <TD> retinoid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 4383 </TD> <TD> GO:0007169 </TD> <TD align="right"> 45 </TD> <TD align="right"> 535 </TD> <TD align="right"> 0.01698 </TD> <TD> transmembrane receptor protein tyrosine kinase signaling pathway </TD> </TR>
-  <TR> <TD align="right"> 5809 </TD> <TD> GO:0009653 </TD> <TD align="right"> 104 </TD> <TD align="right"> 1544 </TD> <TD align="right"> 0.01698 </TD> <TD> anatomical structure morphogenesis </TD> </TR>
-  <TR> <TD align="right"> 6165 </TD> <TD> GO:0010562 </TD> <TD align="right"> 44 </TD> <TD align="right"> 531 </TD> <TD align="right"> 0.01698 </TD> <TD> positive regulation of phosphorus metabolic process </TD> </TR>
-  <TR> <TD align="right"> 7526 </TD> <TD> GO:0019229 </TD> <TD align="right"> 8 </TD> <TD align="right"> 35 </TD> <TD align="right"> 0.01698 </TD> <TD> regulation of vasoconstriction </TD> </TR>
-  <TR> <TD align="right"> 13992 </TD> <TD> GO:0042592 </TD> <TD align="right"> 59 </TD> <TD align="right"> 787 </TD> <TD align="right"> 0.01698 </TD> <TD> homeostatic process </TD> </TR>
-  <TR> <TD align="right"> 17216 </TD> <TD> GO:0045937 </TD> <TD align="right"> 44 </TD> <TD align="right"> 531 </TD> <TD align="right"> 0.01698 </TD> <TD> positive regulation of phosphate metabolic process </TD> </TR>
-  <TR> <TD align="right"> 15310 </TD> <TD> GO:0044283 </TD> <TD align="right"> 31 </TD> <TD align="right"> 344 </TD> <TD align="right"> 0.01700 </TD> <TD> small molecule biosynthetic process </TD> </TR>
-  <TR> <TD align="right"> 22851 </TD> <TD> GO:0061061 </TD> <TD align="right"> 35 </TD> <TD align="right"> 381 </TD> <TD align="right"> 0.01734 </TD> <TD> muscle structure development </TD> </TR>
-  <TR> <TD align="right"> 24530 </TD> <TD> GO:0072358 </TD> <TD align="right"> 52 </TD> <TD align="right"> 645 </TD> <TD align="right"> 0.01734 </TD> <TD> cardiovascular system development </TD> </TR>
-  <TR> <TD align="right"> 24531 </TD> <TD> GO:0072359 </TD> <TD align="right"> 52 </TD> <TD align="right"> 645 </TD> <TD align="right"> 0.01734 </TD> <TD> circulatory system development </TD> </TR>
-  <TR> <TD align="right"> 5895 </TD> <TD> GO:0009888 </TD> <TD align="right"> 71 </TD> <TD align="right"> 973 </TD> <TD align="right"> 0.01735 </TD> <TD> tissue development </TD> </TR>
-  <TR> <TD align="right"> 8338 </TD> <TD> GO:0023051 </TD> <TD align="right"> 110 </TD> <TD align="right"> 1684 </TD> <TD align="right"> 0.01779 </TD> <TD> regulation of signaling </TD> </TR>
-  <TR> <TD align="right"> 22546 </TD> <TD> GO:0060562 </TD> <TD align="right"> 24 </TD> <TD align="right"> 220 </TD> <TD align="right"> 0.01779 </TD> <TD> epithelial tube morphogenesis </TD> </TR>
-  <TR> <TD align="right"> 20443 </TD> <TD> GO:0051240 </TD> <TD align="right"> 36 </TD> <TD align="right"> 410 </TD> <TD align="right"> 0.01831 </TD> <TD> positive regulation of multicellular organismal process </TD> </TR>
-  <TR> <TD align="right"> 6228 </TD> <TD> GO:0010647 </TD> <TD align="right"> 54 </TD> <TD align="right"> 702 </TD> <TD align="right"> 0.01856 </TD> <TD> positive regulation of cell communication </TD> </TR>
-  <TR> <TD align="right"> 14872 </TD> <TD> GO:0043412 </TD> <TD align="right"> 135 </TD> <TD align="right"> 2186 </TD> <TD align="right"> 0.01856 </TD> <TD> macromolecule modification </TD> </TR>
-  <TR> <TD align="right"> 15285 </TD> <TD> GO:0044267 </TD> <TD align="right"> 163 </TD> <TD align="right"> 2769 </TD> <TD align="right"> 0.01856 </TD> <TD> cellular protein metabolic process </TD> </TR>
-  <TR> <TD align="right"> 15391 </TD> <TD> GO:0044711 </TD> <TD align="right"> 31 </TD> <TD align="right"> 348 </TD> <TD align="right"> 0.01891 </TD> <TD> single-organism biosynthetic process </TD> </TR>
-  <TR> <TD align="right"> 27410 </TD> <TD> GO:1901701 </TD> <TD align="right"> 43 </TD> <TD align="right"> 521 </TD> <TD align="right"> 0.01891 </TD> <TD> cellular response to oxygen-containing compound </TD> </TR>
-  <TR> <TD align="right"> 8265 </TD> <TD> GO:0022010 </TD> <TD align="right"> 4 </TD> <TD align="right"> 7 </TD> <TD align="right"> 0.01927 </TD> <TD> central nervous system myelination </TD> </TR>
-  <TR> <TD align="right"> 10086 </TD> <TD> GO:0032291 </TD> <TD align="right"> 4 </TD> <TD align="right"> 7 </TD> <TD align="right"> 0.01927 </TD> <TD> axon ensheathment in central nervous system </TD> </TR>
-  <TR> <TD align="right"> 3904 </TD> <TD> GO:0006813 </TD> <TD align="right"> 11 </TD> <TD align="right"> 64 </TD> <TD align="right"> 0.01934 </TD> <TD> potassium ion transport </TD> </TR>
-  <TR> <TD align="right"> 24210 </TD> <TD> GO:0071840 </TD> <TD align="right"> 207 </TD> <TD align="right"> 3597 </TD> <TD align="right"> 0.01964 </TD> <TD> cellular component organization or biogenesis </TD> </TR>
-  <TR> <TD align="right"> 9338 </TD> <TD> GO:0031214 </TD> <TD align="right"> 12 </TD> <TD align="right"> 77 </TD> <TD align="right"> 0.02032 </TD> <TD> biomineral tissue development </TD> </TR>
-  <TR> <TD align="right"> 7015 </TD> <TD> GO:0016101 </TD> <TD align="right"> 8 </TD> <TD align="right"> 38 </TD> <TD align="right"> 0.02076 </TD> <TD> diterpenoid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 18855 </TD> <TD> GO:0048522 </TD> <TD align="right"> 150 </TD> <TD align="right"> 2490 </TD> <TD align="right"> 0.02111 </TD> <TD> positive regulation of cellular process </TD> </TR>
-  <TR> <TD align="right"> 17456 </TD> <TD> GO:0046058 </TD> <TD align="right"> 12 </TD> <TD align="right"> 76 </TD> <TD align="right"> 0.02130 </TD> <TD> cAMP metabolic process </TD> </TR>
-  <TR> <TD align="right"> 4904 </TD> <TD> GO:0008285 </TD> <TD align="right"> 36 </TD> <TD align="right"> 417 </TD> <TD align="right"> 0.02179 </TD> <TD> negative regulation of cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 8303 </TD> <TD> GO:0022603 </TD> <TD align="right"> 42 </TD> <TD align="right"> 500 </TD> <TD align="right"> 0.02209 </TD> <TD> regulation of anatomical structure morphogenesis </TD> </TR>
-  <TR> <TD align="right"> 19761 </TD> <TD> GO:0050877 </TD> <TD align="right"> 52 </TD> <TD align="right"> 671 </TD> <TD align="right"> 0.02320 </TD> <TD> neurological system process </TD> </TR>
-  <TR> <TD align="right"> 23602 </TD> <TD> GO:0070848 </TD> <TD align="right"> 42 </TD> <TD align="right"> 503 </TD> <TD align="right"> 0.02320 </TD> <TD> response to growth factor stimulus </TD> </TR>
-  <TR> <TD align="right"> 27250 </TD> <TD> GO:1901615 </TD> <TD align="right"> 29 </TD> <TD align="right"> 314 </TD> <TD align="right"> 0.02374 </TD> <TD> organic hydroxy compound metabolic process </TD> </TR>
-  <TR> <TD align="right"> 8345 </TD> <TD> GO:0023056 </TD> <TD align="right"> 53 </TD> <TD align="right"> 698 </TD> <TD align="right"> 0.02601 </TD> <TD> positive regulation of signaling </TD> </TR>
-  <TR> <TD align="right"> 5773 </TD> <TD> GO:0009605 </TD> <TD align="right"> 67 </TD> <TD align="right"> 940 </TD> <TD align="right"> 0.02640 </TD> <TD> response to external stimulus </TD> </TR>
-  <TR> <TD align="right"> 13738 </TD> <TD> GO:0042445 </TD> <TD align="right"> 13 </TD> <TD align="right"> 94 </TD> <TD align="right"> 0.02833 </TD> <TD> hormone metabolic process </TD> </TR>
-  <TR> <TD align="right"> 24154 </TD> <TD> GO:0071704 </TD> <TD align="right"> 362 </TD> <TD align="right"> 6995 </TD> <TD align="right"> 0.02886 </TD> <TD> organic substance metabolic process </TD> </TR>
-  <TR> <TD align="right"> 910 </TD> <TD> GO:0001944 </TD> <TD align="right"> 38 </TD> <TD align="right"> 443 </TD> <TD align="right"> 0.02887 </TD> <TD> vasculature development </TD> </TR>
-  <TR> <TD align="right"> 1136 </TD> <TD> GO:0002118 </TD> <TD align="right"> 3 </TD> <TD align="right"> 4 </TD> <TD align="right"> 0.02887 </TD> <TD> aggressive behavior </TD> </TR>
-  <TR> <TD align="right"> 5826 </TD> <TD> GO:0009743 </TD> <TD align="right"> 14 </TD> <TD align="right"> 106 </TD> <TD align="right"> 0.02979 </TD> <TD> response to carbohydrate stimulus </TD> </TR>
-  <TR> <TD align="right"> 24411 </TD> <TD> GO:0072163 </TD> <TD align="right"> 4 </TD> <TD align="right"> 8 </TD> <TD align="right"> 0.02997 </TD> <TD> mesonephric epithelium development </TD> </TR>
-  <TR> <TD align="right"> 5679 </TD> <TD> GO:0009415 </TD> <TD align="right"> 3 </TD> <TD align="right"> 4 </TD> <TD align="right"> 0.03016 </TD> <TD> response to water stimulus </TD> </TR>
-  <TR> <TD align="right"> 6210 </TD> <TD> GO:0010628 </TD> <TD align="right"> 61 </TD> <TD align="right"> 836 </TD> <TD align="right"> 0.03022 </TD> <TD> positive regulation of gene expression </TD> </TR>
-  <TR> <TD align="right"> 22032 </TD> <TD> GO:0055082 </TD> <TD align="right"> 29 </TD> <TD align="right"> 319 </TD> <TD align="right"> 0.03022 </TD> <TD> cellular chemical homeostasis </TD> </TR>
-  <TR> <TD align="right"> 23883 </TD> <TD> GO:0071363 </TD> <TD align="right"> 41 </TD> <TD align="right"> 495 </TD> <TD align="right"> 0.03022 </TD> <TD> cellular response to growth factor stimulus </TD> </TR>
-  <TR> <TD align="right"> 19338 </TD> <TD> GO:0050678 </TD> <TD align="right"> 19 </TD> <TD align="right"> 168 </TD> <TD align="right"> 0.03056 </TD> <TD> regulation of epithelial cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 7513 </TD> <TD> GO:0019216 </TD> <TD align="right"> 19 </TD> <TD align="right"> 173 </TD> <TD align="right"> 0.03096 </TD> <TD> regulation of lipid metabolic process </TD> </TR>
-  <TR> <TD align="right"> 9270 </TD> <TD> GO:0031102 </TD> <TD align="right"> 6 </TD> <TD align="right"> 22 </TD> <TD align="right"> 0.03102 </TD> <TD> neuron projection regeneration </TD> </TR>
-  <TR> <TD align="right"> 7807 </TD> <TD> GO:0019637 </TD> <TD align="right"> 66 </TD> <TD align="right"> 955 </TD> <TD align="right"> 0.03138 </TD> <TD> organophosphate metabolic process </TD> </TR>
-  <TR> <TD align="right"> 20062 </TD> <TD> GO:0051049 </TD> <TD align="right"> 57 </TD> <TD align="right"> 778 </TD> <TD align="right"> 0.03138 </TD> <TD> regulation of transport </TD> </TR>
-  <TR> <TD align="right"> 4767 </TD> <TD> GO:0007603 </TD> <TD align="right"> 8 </TD> <TD align="right"> 41 </TD> <TD align="right"> 0.03171 </TD> <TD> phototransduction, visible light </TD> </TR>
-  <TR> <TD align="right"> 11228 </TD> <TD> GO:0033002 </TD> <TD align="right"> 12 </TD> <TD align="right"> 84 </TD> <TD align="right"> 0.03171 </TD> <TD> muscle cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 22618 </TD> <TD> GO:0060675 </TD> <TD align="right"> 8 </TD> <TD align="right"> 39 </TD> <TD align="right"> 0.03171 </TD> <TD> ureteric bud morphogenesis </TD> </TR>
-  <TR> <TD align="right"> 502 </TD> <TD> GO:0001558 </TD> <TD align="right"> 23 </TD> <TD align="right"> 231 </TD> <TD align="right"> 0.03198 </TD> <TD> regulation of cell growth </TD> </TR>
-  <TR> <TD align="right"> 17602 </TD> <TD> GO:0046165 </TD> <TD align="right"> 14 </TD> <TD align="right"> 110 </TD> <TD align="right"> 0.03225 </TD> <TD> alcohol biosynthetic process </TD> </TR>
-  <TR> <TD align="right"> 6362 </TD> <TD> GO:0010817 </TD> <TD align="right"> 23 </TD> <TD align="right"> 231 </TD> <TD align="right"> 0.03533 </TD> <TD> regulation of hormone levels </TD> </TR>
-  <TR> <TD align="right"> 7522 </TD> <TD> GO:0019222 </TD> <TD align="right"> 218 </TD> <TD align="right"> 3887 </TD> <TD align="right"> 0.03533 </TD> <TD> regulation of metabolic process </TD> </TR>
-  <TR> <TD align="right"> 21000 </TD> <TD> GO:0051481 </TD> <TD align="right"> 3 </TD> <TD align="right"> 4 </TD> <TD align="right"> 0.03602 </TD> <TD> reduction of cytosolic calcium ion concentration </TD> </TR>
-  <TR> <TD align="right"> 517 </TD> <TD> GO:0001568 </TD> <TD align="right"> 36 </TD> <TD align="right"> 422 </TD> <TD align="right"> 0.04087 </TD> <TD> blood vessel development </TD> </TR>
-  <TR> <TD align="right"> 8636 </TD> <TD> GO:0030334 </TD> <TD align="right"> 31 </TD> <TD align="right"> 348 </TD> <TD align="right"> 0.04087 </TD> <TD> regulation of cell migration </TD> </TR>
-  <TR> <TD align="right"> 9535 </TD> <TD> GO:0031399 </TD> <TD align="right"> 62 </TD> <TD align="right"> 884 </TD> <TD align="right"> 0.04187 </TD> <TD> regulation of protein modification process </TD> </TR>
-  <TR> <TD align="right"> 20342 </TD> <TD> GO:0051179 </TD> <TD align="right"> 187 </TD> <TD align="right"> 3268 </TD> <TD align="right"> 0.04218 </TD> <TD> localization </TD> </TR>
-  <TR> <TD align="right"> 15387 </TD> <TD> GO:0044706 </TD> <TD align="right"> 15 </TD> <TD align="right"> 125 </TD> <TD align="right"> 0.04281 </TD> <TD> multi-multicellular organism process </TD> </TR>
-  <TR> <TD align="right"> 22526 </TD> <TD> GO:0060537 </TD> <TD align="right"> 26 </TD> <TD align="right"> 270 </TD> <TD align="right"> 0.04371 </TD> <TD> muscle tissue development </TD> </TR>
-  <TR> <TD align="right"> 4857 </TD> <TD> GO:0008152 </TD> <TD align="right"> 375 </TD> <TD align="right"> 7339 </TD> <TD align="right"> 0.04416 </TD> <TD> metabolic process </TD> </TR>
-  <TR> <TD align="right"> 5760 </TD> <TD> GO:0009584 </TD> <TD align="right"> 8 </TD> <TD align="right"> 44 </TD> <TD align="right"> 0.04708 </TD> <TD> detection of visible light </TD> </TR>
-  <TR> <TD align="right"> 19014 </TD> <TD> GO:0048660 </TD> <TD align="right"> 9 </TD> <TD align="right"> 56 </TD> <TD align="right"> 0.04708 </TD> <TD> regulation of smooth muscle cell proliferation </TD> </TR>
-  <TR> <TD align="right"> 10963 </TD> <TD> GO:0032870 </TD> <TD align="right"> 27 </TD> <TD align="right"> 294 </TD> <TD align="right"> 0.04910 </TD> <TD> cellular response to hormone stimulus </TD> </TR>
-  <TR> <TD align="right"> 3654 </TD> <TD> GO:0006721 </TD> <TD align="right"> 8 </TD> <TD align="right"> 45 </TD> <TD align="right"> 0.04954 </TD> <TD> terpenoid metabolic process </TD> </TR>
-   </TABLE>
-<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
-<TABLE border=1>
-<CAPTION ALIGN="bottom"> Molecular Functions Enriched in Acromegaly Patients </CAPTION>
-<TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
-  <TR> <TD align="right"> 6334 </TD> <TD> GO:0005515 </TD> <TD align="right"> 334 </TD> <TD align="right"> 5840 </TD> <TD align="right"> 0.00018 </TD> <TD> protein binding </TD> </TR>
-  <TR> <TD align="right"> 5596 </TD> <TD> GO:0004871 </TD> <TD align="right"> 59 </TD> <TD align="right"> 729 </TD> <TD align="right"> 0.03035 </TD> <TD> signal transducer activity </TD> </TR>
-  <TR> <TD align="right"> 9010 </TD> <TD> GO:0019899 </TD> <TD align="right"> 73 </TD> <TD align="right"> 971 </TD> <TD align="right"> 0.03035 </TD> <TD> enzyme binding </TD> </TR>
-  <TR> <TD align="right"> 12264 </TD> <TD> GO:0060089 </TD> <TD align="right"> 59 </TD> <TD align="right"> 729 </TD> <TD align="right"> 0.03035 </TD> <TD> molecular transducer activity </TD> </TR>
-  <TR> <TD align="right"> 8477 </TD> <TD> GO:0016717 </TD> <TD align="right"> 4 </TD> <TD align="right"> 6 </TD> <TD align="right"> 0.04539 </TD> <TD> oxidoreductase activity, acting on paired donors, with oxidation of a pair of donors resulting in the reduction of molecular oxygen to two molecules of water </TD> </TR>
+  <TR> <TD align="right"> 10547 </TD> <TD> GO:0032502 </TD> <TD align="right"> 209 </TD> <TD align="right"> 3363 </TD> <TD align="right"> 0.00000 </TD> <TD> developmental process </TD> </TR>
+  <TR> <TD align="right"> 15558 </TD> <TD> GO:0044707 </TD> <TD align="right"> 231 </TD> <TD align="right"> 3894 </TD> <TD align="right"> 0.00000 </TD> <TD> single-multicellular organism process </TD> </TR>
+  <TR> <TD align="right"> 10545 </TD> <TD> GO:0032501 </TD> <TD align="right"> 235 </TD> <TD align="right"> 4011 </TD> <TD align="right"> 0.00000 </TD> <TD> multicellular organismal process </TD> </TR>
+  <TR> <TD align="right"> 4671 </TD> <TD> GO:0007275 </TD> <TD align="right"> 185 </TD> <TD align="right"> 2950 </TD> <TD align="right"> 0.00000 </TD> <TD> multicellular organismal development </TD> </TR>
+  <TR> <TD align="right"> 19297 </TD> <TD> GO:0048731 </TD> <TD align="right"> 164 </TD> <TD align="right"> 2555 </TD> <TD align="right"> 0.00001 </TD> <TD> system development </TD> </TR>
+  <TR> <TD align="right"> 15552 </TD> <TD> GO:0044699 </TD> <TD align="right"> 397 </TD> <TD align="right"> 8062 </TD> <TD align="right"> 0.00002 </TD> <TD> single-organism process </TD> </TR>
+  <TR> <TD align="right"> 15575 </TD> <TD> GO:0044767 </TD> <TD align="right"> 168 </TD> <TD align="right"> 2708 </TD> <TD align="right"> 0.00003 </TD> <TD> single-organism developmental process </TD> </TR>
+  <TR> <TD align="right"> 15571 </TD> <TD> GO:0044763 </TD> <TD align="right"> 371 </TD> <TD align="right"> 7438 </TD> <TD align="right"> 0.00004 </TD> <TD> single-organism cellular process </TD> </TR>
+  <TR> <TD align="right"> 3503 </TD> <TD> GO:0006629 </TD> <TD align="right"> 70 </TD> <TD align="right"> 895 </TD> <TD align="right"> 0.00007 </TD> <TD> lipid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 19015 </TD> <TD> GO:0048513 </TD> <TD align="right"> 120 </TD> <TD align="right"> 1795 </TD> <TD align="right"> 0.00008 </TD> <TD> organ development </TD> </TR>
+  <TR> <TD align="right"> 4399 </TD> <TD> GO:0007154 </TD> <TD align="right"> 210 </TD> <TD align="right"> 3712 </TD> <TD align="right"> 0.00009 </TD> <TD> cell communication </TD> </TR>
+  <TR> <TD align="right"> 5882 </TD> <TD> GO:0009719 </TD> <TD align="right"> 70 </TD> <TD align="right"> 883 </TD> <TD align="right"> 0.00009 </TD> <TD> response to endogenous stimulus </TD> </TR>
+  <TR> <TD align="right"> 8516 </TD> <TD> GO:0030154 </TD> <TD align="right"> 132 </TD> <TD align="right"> 2027 </TD> <TD align="right"> 0.00009 </TD> <TD> cell differentiation </TD> </TR>
+  <TR> <TD align="right"> 19380 </TD> <TD> GO:0048856 </TD> <TD align="right"> 178 </TD> <TD align="right"> 2986 </TD> <TD align="right"> 0.00009 </TD> <TD> anatomical structure development </TD> </TR>
+  <TR> <TD align="right"> 8431 </TD> <TD> GO:0023052 </TD> <TD align="right"> 206 </TD> <TD align="right"> 3631 </TD> <TD align="right"> 0.00009 </TD> <TD> signaling </TD> </TR>
+  <TR> <TD align="right"> 15553 </TD> <TD> GO:0044700 </TD> <TD align="right"> 206 </TD> <TD align="right"> 3631 </TD> <TD align="right"> 0.00009 </TD> <TD> single organism signaling </TD> </TR>
+  <TR> <TD align="right"> 21562 </TD> <TD> GO:0051716 </TD> <TD align="right"> 225 </TD> <TD align="right"> 4068 </TD> <TD align="right"> 0.00009 </TD> <TD> cellular response to stimulus </TD> </TR>
+  <TR> <TD align="right"> 19966 </TD> <TD> GO:0050896 </TD> <TD align="right"> 267 </TD> <TD align="right"> 5044 </TD> <TD align="right"> 0.00010 </TD> <TD> response to stimulus </TD> </TR>
+  <TR> <TD align="right"> 19390 </TD> <TD> GO:0048869 </TD> <TD align="right"> 139 </TD> <TD align="right"> 2190 </TD> <TD align="right"> 0.00010 </TD> <TD> cellular developmental process </TD> </TR>
+  <TR> <TD align="right"> 11153 </TD> <TD> GO:0032879 </TD> <TD align="right"> 84 </TD> <TD align="right"> 1152 </TD> <TD align="right"> 0.00013 </TD> <TD> regulation of localization </TD> </TR>
+  <TR> <TD align="right"> 4420 </TD> <TD> GO:0007165 </TD> <TD align="right"> 190 </TD> <TD align="right"> 3317 </TD> <TD align="right"> 0.00013 </TD> <TD> signal transduction </TD> </TR>
+  <TR> <TD align="right"> 5081 </TD> <TD> GO:0008610 </TD> <TD align="right"> 43 </TD> <TD align="right"> 458 </TD> <TD align="right"> 0.00014 </TD> <TD> lipid biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 27639 </TD> <TD> GO:1901700 </TD> <TD align="right"> 64 </TD> <TD align="right"> 809 </TD> <TD align="right"> 0.00014 </TD> <TD> response to oxygen-containing compound </TD> </TR>
+  <TR> <TD align="right"> 3922 </TD> <TD> GO:0006793 </TD> <TD align="right"> 130 </TD> <TD align="right"> 2083 </TD> <TD align="right"> 0.00014 </TD> <TD> phosphorus metabolic process </TD> </TR>
+  <TR> <TD align="right"> 19728 </TD> <TD> GO:0050793 </TD> <TD align="right"> 86 </TD> <TD align="right"> 1200 </TD> <TD align="right"> 0.00019 </TD> <TD> regulation of developmental process </TD> </TR>
+  <TR> <TD align="right"> 23234 </TD> <TD> GO:0065008 </TD> <TD align="right"> 136 </TD> <TD align="right"> 2215 </TD> <TD align="right"> 0.00022 </TD> <TD> regulation of biological quality </TD> </TR>
+  <TR> <TD align="right"> 15560 </TD> <TD> GO:0044710 </TD> <TD align="right"> 145 </TD> <TD align="right"> 2485 </TD> <TD align="right"> 0.00026 </TD> <TD> single-organism metabolic process </TD> </TR>
+  <TR> <TD align="right"> 927 </TD> <TD> GO:0001944 </TD> <TD align="right"> 43 </TD> <TD align="right"> 458 </TD> <TD align="right"> 0.00061 </TD> <TD> vasculature development </TD> </TR>
+  <TR> <TD align="right"> 3923 </TD> <TD> GO:0006796 </TD> <TD align="right"> 126 </TD> <TD align="right"> 2043 </TD> <TD align="right"> 0.00068 </TD> <TD> phosphate-containing compound metabolic process </TD> </TR>
+  <TR> <TD align="right"> 24233 </TD> <TD> GO:0071495 </TD> <TD align="right"> 53 </TD> <TD align="right"> 633 </TD> <TD align="right"> 0.00077 </TD> <TD> cellular response to endogenous stimulus </TD> </TR>
+  <TR> <TD align="right"> 4956 </TD> <TD> GO:0008283 </TD> <TD align="right"> 83 </TD> <TD align="right"> 1207 </TD> <TD align="right"> 0.00088 </TD> <TD> cell proliferation </TD> </TR>
+  <TR> <TD align="right"> 522 </TD> <TD> GO:0001568 </TD> <TD align="right"> 41 </TD> <TD align="right"> 436 </TD> <TD align="right"> 0.00094 </TD> <TD> blood vessel development </TD> </TR>
+  <TR> <TD align="right"> 13245 </TD> <TD> GO:0040007 </TD> <TD align="right"> 51 </TD> <TD align="right"> 615 </TD> <TD align="right"> 0.00095 </TD> <TD> growth </TD> </TR>
+  <TR> <TD align="right"> 15431 </TD> <TD> GO:0044255 </TD> <TD align="right"> 54 </TD> <TD align="right"> 689 </TD> <TD align="right"> 0.00100 </TD> <TD> cellular lipid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 24788 </TD> <TD> GO:0072358 </TD> <TD align="right"> 55 </TD> <TD align="right"> 668 </TD> <TD align="right"> 0.00100 </TD> <TD> cardiovascular system development </TD> </TR>
+  <TR> <TD align="right"> 24789 </TD> <TD> GO:0072359 </TD> <TD align="right"> 55 </TD> <TD align="right"> 668 </TD> <TD align="right"> 0.00100 </TD> <TD> circulatory system development </TD> </TR>
+  <TR> <TD align="right"> 27637 </TD> <TD> GO:1901698 </TD> <TD align="right"> 45 </TD> <TD align="right"> 516 </TD> <TD align="right"> 0.00100 </TD> <TD> response to nitrogen compound </TD> </TR>
+  <TR> <TD align="right"> 6471 </TD> <TD> GO:0010876 </TD> <TD align="right"> 23 </TD> <TD align="right"> 187 </TD> <TD align="right"> 0.00122 </TD> <TD> lipid localization </TD> </TR>
+  <TR> <TD align="right"> 3636 </TD> <TD> GO:0006694 </TD> <TD align="right"> 16 </TD> <TD align="right"> 105 </TD> <TD align="right"> 0.00126 </TD> <TD> steroid biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 3166 </TD> <TD> GO:0006468 </TD> <TD align="right"> 70 </TD> <TD align="right"> 955 </TD> <TD align="right"> 0.00135 </TD> <TD> protein phosphorylation </TD> </TR>
+  <TR> <TD align="right"> 4924 </TD> <TD> GO:0008202 </TD> <TD align="right"> 22 </TD> <TD align="right"> 183 </TD> <TD align="right"> 0.00135 </TD> <TD> steroid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 20383 </TD> <TD> GO:0051128 </TD> <TD align="right"> 79 </TD> <TD align="right"> 1132 </TD> <TD align="right"> 0.00135 </TD> <TD> regulation of cellular component organization </TD> </TR>
+  <TR> <TD align="right"> 4428 </TD> <TD> GO:0007167 </TD> <TD align="right"> 59 </TD> <TD align="right"> 751 </TD> <TD align="right"> 0.00143 </TD> <TD> enzyme linked receptor protein signaling pathway </TD> </TR>
+  <TR> <TD align="right"> 5871 </TD> <TD> GO:0009653 </TD> <TD align="right"> 105 </TD> <TD align="right"> 1609 </TD> <TD align="right"> 0.00176 </TD> <TD> anatomical structure morphogenesis </TD> </TR>
+  <TR> <TD align="right"> 6146 </TD> <TD> GO:0010243 </TD> <TD align="right"> 42 </TD> <TD align="right"> 483 </TD> <TD align="right"> 0.00176 </TD> <TD> response to organonitrogen compound </TD> </TR>
+  <TR> <TD align="right"> 15480 </TD> <TD> GO:0044283 </TD> <TD align="right"> 33 </TD> <TD align="right"> 357 </TD> <TD align="right"> 0.00176 </TD> <TD> small molecule biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 547 </TD> <TD> GO:0001649 </TD> <TD align="right"> 17 </TD> <TD align="right"> 117 </TD> <TD align="right"> 0.00191 </TD> <TD> osteoblast differentiation </TD> </TR>
+  <TR> <TD align="right"> 15478 </TD> <TD> GO:0044281 </TD> <TD align="right"> 122 </TD> <TD align="right"> 2083 </TD> <TD align="right"> 0.00207 </TD> <TD> small molecule metabolic process </TD> </TR>
+  <TR> <TD align="right"> 15561 </TD> <TD> GO:0044711 </TD> <TD align="right"> 33 </TD> <TD align="right"> 363 </TD> <TD align="right"> 0.00221 </TD> <TD> single-organism biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 27640 </TD> <TD> GO:1901701 </TD> <TD align="right"> 45 </TD> <TD align="right"> 539 </TD> <TD align="right"> 0.00221 </TD> <TD> cellular response to oxygen-containing compound </TD> </TR>
+  <TR> <TD align="right"> 7017 </TD> <TD> GO:0016049 </TD> <TD align="right"> 30 </TD> <TD align="right"> 303 </TD> <TD align="right"> 0.00239 </TD> <TD> cell growth </TD> </TR>
+  <TR> <TD align="right"> 13537 </TD> <TD> GO:0042221 </TD> <TD align="right"> 132 </TD> <TD align="right"> 2236 </TD> <TD align="right"> 0.00247 </TD> <TD> response to chemical stimulus </TD> </TR>
+  <TR> <TD align="right"> 23233 </TD> <TD> GO:0065007 </TD> <TD align="right"> 335 </TD> <TD align="right"> 6842 </TD> <TD align="right"> 0.00255 </TD> <TD> biological regulation </TD> </TR>
+  <TR> <TD align="right"> 13248 </TD> <TD> GO:0040008 </TD> <TD align="right"> 37 </TD> <TD align="right"> 418 </TD> <TD align="right"> 0.00299 </TD> <TD> regulation of growth </TD> </TR>
+  <TR> <TD align="right"> 17785 </TD> <TD> GO:0046165 </TD> <TD align="right"> 16 </TD> <TD align="right"> 114 </TD> <TD align="right"> 0.00299 </TD> <TD> alcohol biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 19019 </TD> <TD> GO:0048518 </TD> <TD align="right"> 163 </TD> <TD align="right"> 2905 </TD> <TD align="right"> 0.00299 </TD> <TD> positive regulation of biological process </TD> </TR>
+  <TR> <TD align="right"> 6082 </TD> <TD> GO:0010033 </TD> <TD align="right"> 102 </TD> <TD align="right"> 1641 </TD> <TD align="right"> 0.00319 </TD> <TD> response to organic substance </TD> </TR>
+  <TR> <TD align="right"> 23888 </TD> <TD> GO:0070887 </TD> <TD align="right"> 97 </TD> <TD align="right"> 1537 </TD> <TD align="right"> 0.00327 </TD> <TD> cellular response to chemical stimulus </TD> </TR>
+  <TR> <TD align="right"> 4621 </TD> <TD> GO:0007243 </TD> <TD align="right"> 56 </TD> <TD align="right"> 751 </TD> <TD align="right"> 0.00353 </TD> <TD> intracellular protein kinase cascade </TD> </TR>
+  <TR> <TD align="right"> 3641 </TD> <TD> GO:0006695 </TD> <TD align="right"> 9 </TD> <TD align="right"> 39 </TD> <TD align="right"> 0.00370 </TD> <TD> cholesterol biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 7191 </TD> <TD> GO:0016310 </TD> <TD align="right"> 74 </TD> <TD align="right"> 1083 </TD> <TD align="right"> 0.00417 </TD> <TD> phosphorylation </TD> </TR>
+  <TR> <TD align="right"> 20336 </TD> <TD> GO:0051094 </TD> <TD align="right"> 45 </TD> <TD align="right"> 560 </TD> <TD align="right"> 0.00451 </TD> <TD> positive regulation of developmental process </TD> </TR>
+  <TR> <TD align="right"> 2542 </TD> <TD> GO:0006066 </TD> <TD align="right"> 27 </TD> <TD align="right"> 273 </TD> <TD align="right"> 0.00452 </TD> <TD> alcohol metabolic process </TD> </TR>
+  <TR> <TD align="right"> 9445 </TD> <TD> GO:0031214 </TD> <TD align="right"> 13 </TD> <TD align="right"> 81 </TD> <TD align="right"> 0.00525 </TD> <TD> biomineral tissue development </TD> </TR>
+  <TR> <TD align="right"> 27484 </TD> <TD> GO:1901617 </TD> <TD align="right"> 17 </TD> <TD align="right"> 133 </TD> <TD align="right"> 0.00535 </TD> <TD> organic hydroxy compound biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 24081 </TD> <TD> GO:0071310 </TD> <TD align="right"> 82 </TD> <TD align="right"> 1257 </TD> <TD align="right"> 0.00607 </TD> <TD> cellular response to organic substance </TD> </TR>
+  <TR> <TD align="right"> 4004 </TD> <TD> GO:0006869 </TD> <TD align="right"> 19 </TD> <TD align="right"> 158 </TD> <TD align="right"> 0.00709 </TD> <TD> lipid transport </TD> </TR>
+  <TR> <TD align="right"> 5888 </TD> <TD> GO:0009743 </TD> <TD align="right"> 15 </TD> <TD align="right"> 109 </TD> <TD align="right"> 0.00719 </TD> <TD> response to carbohydrate stimulus </TD> </TR>
+  <TR> <TD align="right"> 19729 </TD> <TD> GO:0050794 </TD> <TD align="right"> 304 </TD> <TD align="right"> 6169 </TD> <TD align="right"> 0.00753 </TD> <TD> regulation of cellular process </TD> </TR>
+  <TR> <TD align="right"> 27480 </TD> <TD> GO:1901615 </TD> <TD align="right"> 30 </TD> <TD align="right"> 330 </TD> <TD align="right"> 0.00753 </TD> <TD> organic hydroxy compound metabolic process </TD> </TR>
+  <TR> <TD align="right"> 9373 </TD> <TD> GO:0031099 </TD> <TD align="right"> 12 </TD> <TD align="right"> 76 </TD> <TD align="right"> 0.00833 </TD> <TD> regeneration </TD> </TR>
+  <TR> <TD align="right"> 7122 </TD> <TD> GO:0016126 </TD> <TD align="right"> 9 </TD> <TD align="right"> 45 </TD> <TD align="right"> 0.00946 </TD> <TD> sterol biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 20651 </TD> <TD> GO:0051246 </TD> <TD align="right"> 82 </TD> <TD align="right"> 1298 </TD> <TD align="right"> 0.00946 </TD> <TD> regulation of protein metabolic process </TD> </TR>
+  <TR> <TD align="right"> 24132 </TD> <TD> GO:0071363 </TD> <TD align="right"> 41 </TD> <TD align="right"> 503 </TD> <TD align="right"> 0.00978 </TD> <TD> cellular response to growth factor stimulus </TD> </TR>
+  <TR> <TD align="right"> 5985 </TD> <TD> GO:0009893 </TD> <TD align="right"> 102 </TD> <TD align="right"> 1684 </TD> <TD align="right"> 0.00991 </TD> <TD> positive regulation of metabolic process </TD> </TR>
+  <TR> <TD align="right"> 7587 </TD> <TD> GO:0019216 </TD> <TD align="right"> 20 </TD> <TD align="right"> 181 </TD> <TD align="right"> 0.01042 </TD> <TD> regulation of lipid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 551 </TD> <TD> GO:0001657 </TD> <TD align="right"> 12 </TD> <TD align="right"> 74 </TD> <TD align="right"> 0.01074 </TD> <TD> ureteric bud development </TD> </TR>
+  <TR> <TD align="right"> 507 </TD> <TD> GO:0001558 </TD> <TD align="right"> 24 </TD> <TD align="right"> 242 </TD> <TD align="right"> 0.01097 </TD> <TD> regulation of cell growth </TD> </TR>
+  <TR> <TD align="right"> 6292 </TD> <TD> GO:0010647 </TD> <TD align="right"> 53 </TD> <TD align="right"> 734 </TD> <TD align="right"> 0.01164 </TD> <TD> positive regulation of cell communication </TD> </TR>
+  <TR> <TD align="right"> 23842 </TD> <TD> GO:0070848 </TD> <TD align="right"> 41 </TD> <TD align="right"> 510 </TD> <TD align="right"> 0.01193 </TD> <TD> response to growth factor stimulus </TD> </TR>
+  <TR> <TD align="right"> 24191 </TD> <TD> GO:0071462 </TD> <TD align="right"> 3 </TD> <TD align="right"> 3 </TD> <TD align="right"> 0.01193 </TD> <TD> cellular response to water stimulus </TD> </TR>
+  <TR> <TD align="right"> 28772 </TD> <TD> GO:2000026 </TD> <TD align="right"> 63 </TD> <TD align="right"> 913 </TD> <TD align="right"> 0.01233 </TD> <TD> regulation of multicellular organismal development </TD> </TR>
+  <TR> <TD align="right"> 901 </TD> <TD> GO:0001932 </TD> <TD align="right"> 51 </TD> <TD align="right"> 700 </TD> <TD align="right"> 0.01245 </TD> <TD> regulation of protein phosphorylation </TD> </TR>
+  <TR> <TD align="right"> 19723 </TD> <TD> GO:0050789 </TD> <TD align="right"> 314 </TD> <TD align="right"> 6463 </TD> <TD align="right"> 0.01245 </TD> <TD> regulation of biological process </TD> </TR>
+  <TR> <TD align="right"> 474 </TD> <TD> GO:0001503 </TD> <TD align="right"> 23 </TD> <TD align="right"> 227 </TD> <TD align="right"> 0.01262 </TD> <TD> ossification </TD> </TR>
+  <TR> <TD align="right"> 16411 </TD> <TD> GO:0045595 </TD> <TD align="right"> 59 </TD> <TD align="right"> 839 </TD> <TD align="right"> 0.01262 </TD> <TD> regulation of cell differentiation </TD> </TR>
+  <TR> <TD align="right"> 4425 </TD> <TD> GO:0007166 </TD> <TD align="right"> 111 </TD> <TD align="right"> 1879 </TD> <TD align="right"> 0.01461 </TD> <TD> cell surface receptor signaling pathway </TD> </TR>
+  <TR> <TD align="right"> 19400 </TD> <TD> GO:0048878 </TD> <TD align="right"> 39 </TD> <TD align="right"> 500 </TD> <TD align="right"> 0.01620 </TD> <TD> chemical homeostasis </TD> </TR>
+  <TR> <TD align="right"> 19041 </TD> <TD> GO:0048522 </TD> <TD align="right"> 143 </TD> <TD align="right"> 2585 </TD> <TD align="right"> 0.01624 </TD> <TD> positive regulation of cellular process </TD> </TR>
+  <TR> <TD align="right"> 4925 </TD> <TD> GO:0008203 </TD> <TD align="right"> 13 </TD> <TD align="right"> 95 </TD> <TD align="right"> 0.01718 </TD> <TD> cholesterol metabolic process </TD> </TR>
+  <TR> <TD align="right"> 8436 </TD> <TD> GO:0023056 </TD> <TD align="right"> 52 </TD> <TD align="right"> 730 </TD> <TD align="right"> 0.01718 </TD> <TD> positive regulation of signaling </TD> </TR>
+  <TR> <TD align="right"> 5957 </TD> <TD> GO:0009888 </TD> <TD align="right"> 68 </TD> <TD align="right"> 1021 </TD> <TD align="right"> 0.02142 </TD> <TD> tissue development </TD> </TR>
+  <TR> <TD align="right"> 27531 </TD> <TD> GO:1901652 </TD> <TD align="right"> 26 </TD> <TD align="right"> 285 </TD> <TD align="right"> 0.02323 </TD> <TD> response to peptide </TD> </TR>
+  <TR> <TD align="right"> 7590 </TD> <TD> GO:0019218 </TD> <TD align="right"> 9 </TD> <TD align="right"> 51 </TD> <TD align="right"> 0.02338 </TD> <TD> regulation of steroid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 10182 </TD> <TD> GO:0032268 </TD> <TD align="right"> 73 </TD> <TD align="right"> 1161 </TD> <TD align="right"> 0.02338 </TD> <TD> regulation of cellular protein metabolic process </TD> </TR>
+  <TR> <TD align="right"> 2612 </TD> <TD> GO:0006112 </TD> <TD align="right"> 16 </TD> <TD align="right"> 132 </TD> <TD align="right"> 0.02373 </TD> <TD> energy reserve metabolic process </TD> </TR>
+  <TR> <TD align="right"> 7593 </TD> <TD> GO:0019220 </TD> <TD align="right"> 68 </TD> <TD align="right"> 1041 </TD> <TD align="right"> 0.02373 </TD> <TD> regulation of phosphate metabolic process </TD> </TR>
+  <TR> <TD align="right"> 13452 </TD> <TD> GO:0042127 </TD> <TD align="right"> 61 </TD> <TD align="right"> 923 </TD> <TD align="right"> 0.02382 </TD> <TD> regulation of cell proliferation </TD> </TR>
+  <TR> <TD align="right"> 19197 </TD> <TD> GO:0048660 </TD> <TD align="right"> 9 </TD> <TD align="right"> 53 </TD> <TD align="right"> 0.02382 </TD> <TD> regulation of smooth muscle cell proliferation </TD> </TR>
+  <TR> <TD align="right"> 20641 </TD> <TD> GO:0051239 </TD> <TD align="right"> 90 </TD> <TD align="right"> 1477 </TD> <TD align="right"> 0.02382 </TD> <TD> regulation of multicellular organismal process </TD> </TR>
+  <TR> <TD align="right"> 5839 </TD> <TD> GO:0009611 </TD> <TD align="right"> 57 </TD> <TD align="right"> 847 </TD> <TD align="right"> 0.02644 </TD> <TD> response to wounding </TD> </TR>
+  <TR> <TD align="right"> 16416 </TD> <TD> GO:0045597 </TD> <TD align="right"> 33 </TD> <TD align="right"> 404 </TD> <TD align="right"> 0.02644 </TD> <TD> positive regulation of cell differentiation </TD> </TR>
+  <TR> <TD align="right"> 12120 </TD> <TD> GO:0034405 </TD> <TD align="right"> 6 </TD> <TD align="right"> 22 </TD> <TD align="right"> 0.02653 </TD> <TD> response to fluid shear stress </TD> </TR>
+  <TR> <TD align="right"> 24775 </TD> <TD> GO:0072330 </TD> <TD align="right"> 16 </TD> <TD align="right"> 143 </TD> <TD align="right"> 0.02653 </TD> <TD> monocarboxylic acid biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 6995 </TD> <TD> GO:0016043 </TD> <TD align="right"> 189 </TD> <TD align="right"> 3611 </TD> <TD align="right"> 0.02787 </TD> <TD> cellular component organization </TD> </TR>
+  <TR> <TD align="right"> 3519 </TD> <TD> GO:0006639 </TD> <TD align="right"> 12 </TD> <TD align="right"> 89 </TD> <TD align="right"> 0.02871 </TD> <TD> acylglycerol metabolic process </TD> </TR>
+  <TR> <TD align="right"> 15061 </TD> <TD> GO:0043434 </TD> <TD align="right"> 25 </TD> <TD align="right"> 276 </TD> <TD align="right"> 0.02885 </TD> <TD> response to peptide hormone stimulus </TD> </TR>
+  <TR> <TD align="right"> 29889 </TD> <TD> GO:2001237 </TD> <TD align="right"> 8 </TD> <TD align="right"> 41 </TD> <TD align="right"> 0.02885 </TD> <TD> negative regulation of extrinsic apoptotic signaling pathway </TD> </TR>
+  <TR> <TD align="right"> 5741 </TD> <TD> GO:0009415 </TD> <TD align="right"> 3 </TD> <TD align="right"> 4 </TD> <TD align="right"> 0.02929 </TD> <TD> response to water stimulus </TD> </TR>
+  <TR> <TD align="right"> 20531 </TD> <TD> GO:0051174 </TD> <TD align="right"> 68 </TD> <TD align="right"> 1054 </TD> <TD align="right"> 0.02963 </TD> <TD> regulation of phosphorus metabolic process </TD> </TR>
+  <TR> <TD align="right"> 3518 </TD> <TD> GO:0006638 </TD> <TD align="right"> 12 </TD> <TD align="right"> 90 </TD> <TD align="right"> 0.02987 </TD> <TD> neutral lipid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 6229 </TD> <TD> GO:0010562 </TD> <TD align="right"> 41 </TD> <TD align="right"> 550 </TD> <TD align="right"> 0.02987 </TD> <TD> positive regulation of phosphorus metabolic process </TD> </TR>
+  <TR> <TD align="right"> 6291 </TD> <TD> GO:0010646 </TD> <TD align="right"> 103 </TD> <TD align="right"> 1750 </TD> <TD align="right"> 0.02987 </TD> <TD> regulation of cell communication </TD> </TR>
+  <TR> <TD align="right"> 7844 </TD> <TD> GO:0019538 </TD> <TD align="right"> 169 </TD> <TD align="right"> 3249 </TD> <TD align="right"> 0.02987 </TD> <TD> protein metabolic process </TD> </TR>
+  <TR> <TD align="right"> 17399 </TD> <TD> GO:0045937 </TD> <TD align="right"> 41 </TD> <TD align="right"> 550 </TD> <TD align="right"> 0.02987 </TD> <TD> positive regulation of phosphate metabolic process </TD> </TR>
+  <TR> <TD align="right"> 19017 </TD> <TD> GO:0048514 </TD> <TD align="right"> 32 </TD> <TD align="right"> 384 </TD> <TD align="right"> 0.02987 </TD> <TD> blood vessel morphogenesis </TD> </TR>
+  <TR> <TD align="right"> 20261 </TD> <TD> GO:0051049 </TD> <TD align="right"> 55 </TD> <TD align="right"> 815 </TD> <TD align="right"> 0.02987 </TD> <TD> regulation of transport </TD> </TR>
+  <TR> <TD align="right"> 22577 </TD> <TD> GO:0060341 </TD> <TD align="right"> 42 </TD> <TD align="right"> 578 </TD> <TD align="right"> 0.02987 </TD> <TD> regulation of cellular localization </TD> </TR>
+  <TR> <TD align="right"> 2136 </TD> <TD> GO:0003008 </TD> <TD align="right"> 69 </TD> <TD align="right"> 1074 </TD> <TD align="right"> 0.02992 </TD> <TD> system process </TD> </TR>
+  <TR> <TD align="right"> 3505 </TD> <TD> GO:0006633 </TD> <TD align="right"> 13 </TD> <TD align="right"> 105 </TD> <TD align="right"> 0.02992 </TD> <TD> fatty acid biosynthetic process </TD> </TR>
+  <TR> <TD align="right"> 7121 </TD> <TD> GO:0016125 </TD> <TD align="right"> 13 </TD> <TD align="right"> 104 </TD> <TD align="right"> 0.02992 </TD> <TD> sterol metabolic process </TD> </TR>
+  <TR> <TD align="right"> 19196 </TD> <TD> GO:0048659 </TD> <TD align="right"> 9 </TD> <TD align="right"> 56 </TD> <TD align="right"> 0.02992 </TD> <TD> smooth muscle cell proliferation </TD> </TR>
+  <TR> <TD align="right"> 15350 </TD> <TD> GO:0044057 </TD> <TD align="right"> 28 </TD> <TD align="right"> 329 </TD> <TD align="right"> 0.02995 </TD> <TD> regulation of system process </TD> </TR>
+  <TR> <TD align="right"> 9375 </TD> <TD> GO:0031102 </TD> <TD align="right"> 6 </TD> <TD align="right"> 23 </TD> <TD align="right"> 0.03002 </TD> <TD> neuron projection regeneration </TD> </TR>
+  <TR> <TD align="right"> 145 </TD> <TD> GO:0000165 </TD> <TD align="right"> 35 </TD> <TD align="right"> 448 </TD> <TD align="right"> 0.03113 </TD> <TD> MAPK cascade </TD> </TR>
+  <TR> <TD align="right"> 10948 </TD> <TD> GO:0032787 </TD> <TD align="right"> 28 </TD> <TD align="right"> 343 </TD> <TD align="right"> 0.03113 </TD> <TD> monocarboxylic acid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 19122 </TD> <TD> GO:0048584 </TD> <TD align="right"> 66 </TD> <TD align="right"> 1038 </TD> <TD align="right"> 0.03113 </TD> <TD> positive regulation of response to stimulus </TD> </TR>
+  <TR> <TD align="right"> 24668 </TD> <TD> GO:0072163 </TD> <TD align="right"> 4 </TD> <TD align="right"> 9 </TD> <TD align="right"> 0.03113 </TD> <TD> mesonephric epithelium development </TD> </TR>
+  <TR> <TD align="right"> 19048 </TD> <TD> GO:0048523 </TD> <TD align="right"> 131 </TD> <TD align="right"> 2385 </TD> <TD align="right"> 0.03143 </TD> <TD> negative regulation of cellular process </TD> </TR>
+  <TR> <TD align="right"> 6030 </TD> <TD> GO:0009967 </TD> <TD align="right"> 49 </TD> <TD align="right"> 704 </TD> <TD align="right"> 0.03153 </TD> <TD> positive regulation of signal transduction </TD> </TR>
+  <TR> <TD align="right"> 24235 </TD> <TD> GO:0071498 </TD> <TD align="right"> 4 </TD> <TD align="right"> 9 </TD> <TD align="right"> 0.03341 </TD> <TD> cellular response to fluid shear stress </TD> </TR>
+  <TR> <TD align="right"> 4460 </TD> <TD> GO:0007178 </TD> <TD align="right"> 21 </TD> <TD align="right"> 216 </TD> <TD align="right"> 0.03350 </TD> <TD> transmembrane receptor protein serine/threonine kinase signaling pathway </TD> </TR>
+  <TR> <TD align="right"> 6273 </TD> <TD> GO:0010627 </TD> <TD align="right"> 43 </TD> <TD align="right"> 602 </TD> <TD align="right"> 0.03593 </TD> <TD> regulation of intracellular protein kinase cascade </TD> </TR>
+  <TR> <TD align="right"> 13668 </TD> <TD> GO:0042325 </TD> <TD align="right"> 51 </TD> <TD align="right"> 747 </TD> <TD align="right"> 0.03761 </TD> <TD> regulation of phosphorylation </TD> </TR>
+  <TR> <TD align="right"> 4794 </TD> <TD> GO:0007568 </TD> <TD align="right"> 17 </TD> <TD align="right"> 163 </TD> <TD align="right"> 0.04006 </TD> <TD> aging </TD> </TR>
+  <TR> <TD align="right"> 12966 </TD> <TD> GO:0036109 </TD> <TD align="right"> 4 </TD> <TD align="right"> 10 </TD> <TD align="right"> 0.04332 </TD> <TD> alpha-linolenic acid metabolic process </TD> </TR>
+  <TR> <TD align="right"> 4728 </TD> <TD> GO:0007399 </TD> <TD align="right"> 81 </TD> <TD align="right"> 1303 </TD> <TD align="right"> 0.04361 </TD> <TD> nervous system development </TD> </TR>
+  <TR> <TD align="right"> 12431 </TD> <TD> GO:0035270 </TD> <TD align="right"> 10 </TD> <TD align="right"> 69 </TD> <TD align="right"> 0.04679 </TD> <TD> endocrine system development </TD> </TR>
+  <TR> <TD align="right"> 5884 </TD> <TD> GO:0009725 </TD> <TD align="right"> 37 </TD> <TD align="right"> 503 </TD> <TD align="right"> 0.04716 </TD> <TD> response to hormone stimulus </TD> </TR>
+  <TR> <TD align="right"> 8686 </TD> <TD> GO:0030282 </TD> <TD align="right"> 10 </TD> <TD align="right"> 69 </TD> <TD align="right"> 0.04716 </TD> <TD> bone mineralization </TD> </TR>
+  <TR> <TD align="right"> 19026 </TD> <TD> GO:0048519 </TD> <TD align="right"> 140 </TD> <TD align="right"> 2606 </TD> <TD align="right"> 0.04716 </TD> <TD> negative regulation of biological process </TD> </TR>
+  <TR> <TD align="right"> 27638 </TD> <TD> GO:1901699 </TD> <TD align="right"> 28 </TD> <TD align="right"> 332 </TD> <TD align="right"> 0.04856 </TD> <TD> cellular response to nitrogen compound </TD> </TR>
+  <TR> <TD align="right"> 17639 </TD> <TD> GO:0046058 </TD> <TD align="right"> 11 </TD> <TD align="right"> 80 </TD> <TD align="right"> 0.04942 </TD> <TD> cAMP metabolic process </TD> </TR>
+  <TR> <TD align="right"> 10384 </TD> <TD> GO:0032386 </TD> <TD align="right"> 24 </TD> <TD align="right"> 280 </TD> <TD align="right"> 0.04998 </TD> <TD> regulation of intracellular transport </TD> </TR>
    </TABLE>
 
 ```
@@ -243,7 +216,18 @@ For acromegaly, we found 5 significantly different GO terms for molecular functi
 ```
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
-<!-- Sun Jan 19 08:54:28 2014 -->
+<!-- Tue Mar 11 00:35:26 2014 -->
+<TABLE border=1>
+<CAPTION ALIGN="bottom"> Molecular Functions Enriched in Acromegaly Patients </CAPTION>
+<TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> Term </TH>  </TR>
+  </TABLE>
+
+```
+## Warning: data length exceeds size of matrix
+```
+
+<!-- html table generated in R 3.0.2 by xtable 1.7-1 package -->
+<!-- Tue Mar 11 00:35:26 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> KEGG Pathways Enriched in Acromegaly Patients </CAPTION>
 <TR> <TH>  </TH> <TH> category </TH> <TH> numDEInCat </TH> <TH> numInCat </TH> <TH> padj </TH> <TH> path_name </TH>  </TR>
@@ -291,11 +275,11 @@ sessionInfo()
 ## loaded via a namespace (and not attached):
 ##  [1] biomaRt_2.18.0         Biostrings_2.30.1      bitops_1.0-6          
 ##  [4] BSgenome_1.30.0        digest_0.6.4           evaluate_0.5.1        
-##  [7] formatR_0.10           GenomicFeatures_1.14.2 GenomicRanges_1.14.4  
+##  [7] formatR_0.10           GenomicFeatures_1.14.3 GenomicRanges_1.14.4  
 ## [10] grid_3.0.2             httr_0.2               IRanges_1.20.6        
-## [13] lattice_0.20-24        Matrix_1.1-1.1         mgcv_1.7-27           
-## [16] nlme_3.1-113           RCurl_1.95-4.1         Rsamtools_1.14.2      
-## [19] rtracklayer_1.22.0     stats4_3.0.2           stringr_0.6.2         
+## [13] lattice_0.20-27        Matrix_1.1-2           mgcv_1.7-28           
+## [16] nlme_3.1-113           RCurl_1.95-4.1         Rsamtools_1.14.3      
+## [19] rtracklayer_1.22.4     stats4_3.0.2           stringr_0.6.2         
 ## [22] tools_3.0.2            XML_3.95-0.2           XVector_0.2.0         
 ## [25] zlibbioc_1.8.0
 ```

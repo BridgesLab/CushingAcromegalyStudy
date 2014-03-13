@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 remove_patient <- 29
 ```
 
-The counts tables were generated previously using HTseq and a shell script.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
 This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
 
 ```{r loading-data, echo=FALSE, message=FALSE, warning=FALSE}
@@ -15,34 +15,49 @@ library(knitcitations) #for generation of citations
 write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
 bib <- read.bibtex("references.bib") #loads the bib file
 
-
-transcript.counts <- read.table("../data/raw/htseq_gene_counts.txt", header=TRUE)
+transcript.counts <- read.table("../data/raw/htseq_gene_counts_GRCh37.74.txt", header=TRUE)
 rownames(transcript.counts) <- transcript.counts[,1]
 transcript.counts <- transcript.counts[,-1]
-#convert all column names to lower case
-colnames(transcript.counts) <- tolower(colnames(transcript.counts))
-#replace "_" with nothing 
-colnames(transcript.counts) <- gsub("_", "", colnames(transcript.counts))
+
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
-```
 
-```{r cds-construction, echo=FALSE, message=FALSE}
 #this command removes the cushings samples
-acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's",])
-cds.acromegaly = DESeqDataSetFromMatrix( countData=transcript.counts[,acromegaly.mapping$samplename], 
-                                  colData=acromegaly.mapping,
-                                  design=~group )
+acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's"&mapping$patient!=remove_patient,])
+acromegaly.counts <- transcript.counts[,acromegaly.mapping$samplename]
 
 #this command removes the acromegaly samples
 cushing.mapping <- droplevels(mapping[mapping$group != "Acromegaly"&mapping$samplename %in% colnames(transcript.counts),])
-cds.cushing = DESeqDataSetFromMatrix( 
-  countData=transcript.counts[,cushing.mapping$samplename], 
-  colData=cushing.mapping,
-  design=~group )
+cushing.counts <- transcript.counts[,cushing.mapping$samplename]
+```
+
+This step gets the protein coding genes only.
+
+```{r protein coding genes, echo=FALSE, message=FALSE}
+#required packages
+library(biomaRt,quietly=TRUE)
+write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
+bib <- read.bibtex("references.bib") #loads the bib file
+#download gene name annotation data for results sets.
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    filter= 'biotype',
+    values = 'protein_coding',
+    mart=ensembl)
+
+cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
+acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
+
+```
+
+```{r cds-construction, echo=FALSE, message=FALSE}
+cds.acromegaly = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~group)
+
+cds.cushing = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~group)
 ```
 
 These data were analysed in  by DESeq `r citep(bib[["DESeq2"]])`. We did not remove lower expressing genes because we pre-filtered the data to examine only one transcript per gene.  
@@ -60,11 +75,40 @@ plotMA(cushing.cds,ylim=c(-2,2),main="DESeq2 Analysis of Cushing Samples")
 acromegaly.results <- results(acromegaly.cds)
 cushing.results <- results(cushing.cds)
 
-write.csv(acromegaly.results, "../data/processed/acromegaly_deseq2_results_with_htseq.csv")
-write.csv(cushing.results, "../data/processed/cushing_deseq2_results_with_htseq.csv")
+write.csv(acromegaly.results, "../data/processed/acromegaly_results_GRCh37.74.csv")
+write.csv(cushing.results, "../data/processed/cushing_results_GRCh37.74.csv")
 ```
 
+Count data transformations for visualization. This will output regularized transformation (RLD) counts and variance stabilized (VSD) counts for Cushing and Acromegaly in the **data/processed/** folder.
 
+Counts transformations
+-------------------
+```{r getting count data transformed, echo=FALSE, message=FALSE}
+###regularized log transformation
+rld.acromegaly <- rlogTransformation(acromegaly.cds, blind=TRUE)
+rld.cushing <- rlogTransformation(cushing.cds, blind=TRUE)
+
+rld.cushing.counts <- assay(rld.cushing)
+colnames(rld.cushing.counts) <- mapping$samplename[as.numeric(colnames(rld.cushing.counts))]
+rld.acromegaly.counts <- assay(rld.acromegaly)
+colnames(rld.acromegaly.counts) <- mapping$samplename[as.numeric(colnames(rld.acromegaly.counts))]
+
+write.csv(rld.cushing.counts, "../data/processed/RLD_DESeq2_Results-Cushing.csv")
+write.csv(rld.acromegaly.counts, "../data/processed/RLD_DESeq2_Results-Acromegaly.csv")
+
+###variance stabilizing transformation
+vsd.acromegaly <- varianceStabilizingTransformation(acromegaly.cds, blind=TRUE)
+vsd.cushing <- varianceStabilizingTransformation(cushing.cds, blind=TRUE)
+
+vsd.cushing.counts <- assay(vsd.cushing)
+colnames(rld.cushing.counts) <- mapping$samplename[as.numeric(colnames(vsd.cushing.counts))]
+vsd.acromegaly.counts <- assay(vsd.acromegaly)
+colnames(vsd.acromegaly.counts) <- mapping$samplename[as.numeric(colnames(vsd.acromegaly.counts))]
+
+write.csv(vsd.cushing.counts, "../data/processed/VSD_DESeq2_Results-Cushing.csv")
+write.csv(vsd.acromegaly.counts, "../data/processed/VSD_DESeq2_Results-Acromegaly.csv")
+
+```
 
 Annotation
 -------------
@@ -72,25 +116,13 @@ Annotation
 This step annotates the data tables with the official gene symbols.
 
 ```{r annotation, echo=FALSE, message=FALSE}
-#required packages
-library(knitcitations, quietly=TRUE) #for generation of citations
-library(biomaRt,quietly=TRUE)
-library(plyr) #for using the ddply function
-write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
-bib <- read.bibtex("references.bib") #loads the bib file
-#download gene name annotation data for results sets.
-ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
-transcriptInfo <- getBM(
-    attributes=c('external_gene_id', 'ensembl_gene_id'), 
-    values = 'ensembl_gene_id',
-    mart=ensembl)
-#merge results files with transcript info files.
-annotated.cushing.results <- merge(cushing.results, transcriptInfo, by.x=0, by.y="ensembl_gene_id")
-annotated.acromegaly.results <- merge(acromegaly.results, transcriptInfo, by.x=0, by.y="ensembl_gene_id")
+transcriptInfo <- transcriptInfo[order(transcriptInfo$ensembl_gene_id),]
+cushing.results$external_gene_id <- transcriptInfo$external_gene_id
+acromegaly.results$external_gene_id <- transcriptInfo$external_gene_id
 
 #write annotated results files.
-write.csv(annotated.cushing.results, "../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv")
-write.csv(annotated.acromegaly.results, "../data/processed/htseq_Annotated DESeq2 Results - Acromegaly.csv")
+write.csv(cushing.results, "../data/processed/Annotated Results GRCh37.74 - Cushing.csv")
+write.csv(acromegaly.results, "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv")
 ```
 
 The data was annotated from Ensembl data, using the biomaRt package `r citep(bib[[c("biomaRt1","biomaRt2")]])`.
@@ -98,21 +130,21 @@ The data was annotated from Ensembl data, using the biomaRt package `r citep(bib
 Differentially Expressed Genes
 --------------------------------
 ```{r differentially-expressed, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
-acromegaly.diff.genes <- subset(as.data.frame(annotated.acromegaly.results), padj <= 0.05) 
+acromegaly.diff.genes <- subset(as.data.frame(acromegaly.results), padj <= 0.05) 
 with(acromegaly.diff.genes, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Genes in Acromegaly Patients Using htseq counts"))
 acromegaly.up.genes <- subset(acromegaly.diff.genes, log2FoldChange > 0)
-write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes with HTseq and DEseq2.txt")
+write(as.character(acromegaly.up.genes), file = "../data/processed/Acromegaly Upregulated Genes GRCh37.74.txt")
 
 acromegaly.down.genes <- subset(acromegaly.diff.genes, log2FoldChange < 0)
-write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes with HTseq and DEseq2.txt")
+write(as.character(acromegaly.down.genes), file = "../data/processed/Acromegaly Downregulated Genes GRCh37.74.txt")
 
-cushing.diff.genes <- subset(as.data.frame(annotated.cushing.results) , padj <= 0.05) 
+cushing.diff.genes <- subset(as.data.frame(cushing.results) , padj <= 0.05) 
 with(cushing.diff.genes, plot(log2FoldChange, padj, pch=16, main="Differentially Expressed Genes in Cushing's Patients using htseq counts"))
 cushing.up.genes <- subset(cushing.diff.genes, log2FoldChange > 0)
-write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated genes with HTseq and DEseq2.txt")
+write(as.character(cushing.up.genes), file = "../data/processed/Cushing Upregulated genes GRCh37.74.txt")
 
 cushing.down.genes <- subset(cushing.diff.genes, log2FoldChange < 0)
-write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes with HTseq and DEseq2.txt")
+write(as.character(cushing.down.genes), file = "../data/processed/Cushing Downregulated Genes GRCh37.74.txt")
 ```
 
 ### Acromegaly

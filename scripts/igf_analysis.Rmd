@@ -23,7 +23,7 @@ mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
 
 igf_sample_mapping <- merge(igf_data, mapping, by.x='X', by.y='patient..')
-transcripts.file <- "../data/processed/Normalized_htseq_Counts_Table.csv"
+transcripts.file <- "../data/processed/RLD_DESeq2_Results-Acromegaly.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 filtered.transcript.counts <- transcript.counts[,igf_sample_mapping$samplename]
 ```
