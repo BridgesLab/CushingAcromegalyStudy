@@ -13,6 +13,7 @@ The raw data in this analysis is located in **data/raw** and is the following fi
 * **patient_legend.txt** describes the units used for measurements in the patient table.
 * **patient_sample_mapping.csv** maps the patients to their corresponding samples.
 * **transcript_counts_table.csv** has the transcript level counts table.
+* **htseq_gene_counts_GRCh37.74.txt** has the transcript level counts table using the new assembly
 * **exon_counts_table.csv** has the exon level counts table.  These data has not yet been incorporated into our analysis.
 * **acromegaly_patient_IGF1.csv** has the IGF-1 levels for the acromegaly patients.
 
@@ -22,13 +23,9 @@ Script Files
 ---------------
 Script files are saved in **scripts** folder and were analysed in this order
 
-### counts_table_filtering.Rmd
-
-This file filters the counts table to show only the most abundant transcript.  It starts with the file **data/raw/transcript_counts_table.csv** and then ends up with **data/processed/filtered_transcript_counts_table.csv.**
-
 ### deseq_analysis_outlier.Rmd
 
-This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files **data/processed/filtered_transcript_counts_table.csv.** and **data/raw/patient_sample_mapping.csv** and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.
+This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files **data/raw/htseq_gene_counts_GRCh37.74.txt** and **data/raw/patient_sample_mapping.csv** and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.
 
 ### goseq-analysis.Rmd
 
@@ -58,12 +55,10 @@ This takes measured IGF-1 levels from acromegaly patients and compares it to *IG
 GSEA Analysis
 ----------------------
 
-For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by t-test, with 1000 permutations of the phenotype.  The input files located in data/processed were:
+For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by log2foldchange, with 1000 permutations of the gene set.  The input files located in data/processed were:
 
-* GSEA_pheno_acromegaly.txt
-* GSEA_pheno_acromegaly.txt
-* GSEA_Acromegaly_input_htseq_DEseq2.txt
-* GSEA_Cushing_input_htseq_DEseq2.txt
+* GSEA_Acromegaly_prerank_pvalues.rnk
+* GSEA_Cushing_prerank_pvalues.rnk
 
 The expression dataset was selected from either acromegaly or cushing.  The gene sets databases tested were:
 
@@ -75,8 +70,7 @@ The expression dataset was selected from either acromegaly or cushing.  The gene
 * For miRNA gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.mir.v4.0.symbols.gmt
 * For REACTOME gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.reactome.v4.0.symbols.gmt
 
-WIth the default 1000 permutations, based on phenotype (Cushing versus Control or Acromegaly versus Control), and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets <15 or >500 members.
-The chip platform was gseaftp.broadinstitute.org://pub/gsea/annotations/GENE_SYMBOL.chip.  The metric for ranking genes was tTest.
+WIth the default 1000 permutations and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets <15 or >500 members.
 
 Figures
 -----------
