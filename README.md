@@ -52,6 +52,10 @@ This script compares our significant genes to another similar dataset.  This set
 
 This takes measured IGF-1 levels from acromegaly patients and compares it to *IGF1*  expression from WAT explants.
 
+### MakeGSEATable.py
+
+This scripts takes the master gsea report file and output the Name, NES, NOM p-value, FDR q-value and Gene Details for all the significant gene sets.  This creates the Supplementary tables 1,2, and 3.  It also requires *reader.pyc* and *reader.py* module to run the script.
+
 GSEA Analysis
 ----------------------
 
