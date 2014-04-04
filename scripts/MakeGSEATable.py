@@ -16,19 +16,23 @@ results = []
 sub_results = []
 #sub_file_name= ""
 with open(outfile, 'w') as fout:
-	fout.write("Name\tSize\tNES\tNOM p-value\tFDR q-value\tGene Details\n")
-	for i in range(len(data)):
-		sub_file_name= ""
-		if data['FDR q-val'][i] < 0.25:
-			#results.append( [data['NAME'][i], data['SIZE'][i], data['NES'][i], data['NOM p-val'][i], data['FDR q-val'][i]] )
-			fout.write(str(data['NAME'][i])+'\t'+str(data['SIZE'][i])+'\t'+str(data['NES'][i])+'\t'+str(data['NOM p-val'][i])+'\t'+str(data['FDR q-val'][i])+'\t')
-			sub_file_name=str(data['NAME'][i])+'.xls'
-    		for root, subFolders, files in os.walk(rootdir):
-      			for filename in files:
-      				if filename==sub_file_name:
-      					sub_data=reader.Read(os.path.join(sys.argv[1],filename),'\t')
-      					gene_list =','.join(sub_data['PROBE'])
-      					#print gene_list
-      					fout.write(gene_list)
-      		fout.write('\n')
+   fout.write("Name\tSize\tNES\tNOM p-value\tFDR q-value\tGene Details\n")
+   for i in range(len(data)):
+      sub_file_name= ""
+      if data['FDR q-val'][i] < 0.25:
+         #results.append( [data['NAME'][i], data['SIZE'][i], data['NES'][i], data['NOM p-val'][i], data['FDR q-val'][i]] )
+         fout.write(str(data['NAME'][i])+'\t'+str(data['SIZE'][i])+'\t'+str(data['NES'][i])+'\t'+str(data['NOM p-val'][i])+'\t'+str(data['FDR q-val'][i])+'\t')
+         sub_file_name=str(data['NAME'][i])+'.xls'
+         for root, subFolders, files in os.walk(rootdir):
+            for filename in files:
+               if filename==sub_file_name:
+                  gene_list=""
+                  sub_data=reader.Read(os.path.join(sys.argv[1],filename),'\t')
+                  for j in range(len(sub_data)):
+                    if sub_data['CORE ENRICHMENT'][j]=='Yes':
+                        gene_list += str(sub_data['PROBE'][j])+','
+                  gene_list = gene_list[:-1] #remove the last ','
+                        #print gene_list
+                  fout.write(gene_list)
+         fout.write('\n')
 
