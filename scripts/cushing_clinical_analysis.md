@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Cushing Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 18:16:25 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 18:56:06 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -9,7 +9,7 @@ Statistics
 
 
 
-This analysis included 11 controls and 0 cushing patients. 
+This analysis included 11 controls and 8 cushing patients. 
 
 
 
@@ -28,7 +28,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:16:26 2014 -->
+<!-- Wed Apr 23 18:56:08 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 2 </TD> <TD> age </TD> <TD align="right"> 63.4 </TD> <TD align="right"> 2.7 </TD> <TD align="right"> 38.6 </TD> <TD align="right"> 2.9 </TD> <TD align="right"> 0.00001 </TD> <TD align="right"> 0.00033 </TD> </TR>
@@ -71,12 +71,18 @@ Graphs
 ## Barplots
 
 ```
-## Error: object 'Cushing_mean' not found
+## pdf 
+##   2
 ```
 
+![plot of chunk barplots](figure/barplots1.png) 
+
 ```
-## Error: object 'Cushing_mean' not found
+## pdf 
+##   2
 ```
+
+![plot of chunk barplots](figure/barplots2.png) ![plot of chunk barplots](figure/barplots3.png) 
 
 ```
 ## pdf 
@@ -84,231 +90,39 @@ Graphs
 ```
 
 ```
-## Error: object 'Cushing_mean' not found
+## pdf 
+##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk barplots](figure/barplots4.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk barplots](figure/barplots5.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk barplots](figure/barplots6.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk barplots](figure/barplots7.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: plot.new has not been called yet
-```
-
-```
-## pdf 
-##   2
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: plot.new has not been called yet
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## pdf 
-##   2
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## pdf 
-##   2
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk barplots](figure/barplots8.png) 
 
 
 Correlation with BMI
@@ -317,10 +131,10 @@ Correlation with BMI
 
 
 
-The BMI significantly correlated with the natural logarithm of the BMI (p=0.0052, r=0.6448, R2=0.4157)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.8698).
+The HOMA score significantly correlated with the natural logarithm of the BMI (p=0.0052, r=0.6448, R2=0.4157)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.8698).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:16:27 2014 -->
+<!-- Wed Apr 23 18:56:08 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.0493 </TD> <TD align="right"> 0.6059 </TD> <TD align="right"> -1.73 </TD> <TD align="right"> 0.1053 </TD> </TR>
@@ -328,7 +142,7 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0052
   <TR> <TD align="right"> diagnosisCushing's </TD> <TD align="right"> 0.4083 </TD> <TD align="right"> 0.2866 </TD> <TD align="right"> 1.42 </TD> <TD align="right"> 0.1762 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:16:27 2014 -->
+<!-- Wed Apr 23 18:56:08 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.10 </TD> <TD align="right"> 1.28 </TD> </TR>
@@ -337,13 +151,13 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0052
    </TABLE>
 
 
-The results of this linear model are a significant main effect of both BMI (p=0.0114) and the diagnosis (p=0.1762) with a r-squared value of 0.4168.  This corresponds to an effect size of 1.5042.
+The results of this linear model are a significant main effect of BMI (p=0.0114) but not the the diagnosis (p=0.1762) with a r-squared value of 0.4168.  This corresponds to an effect size of 1.5042.
 
 ### Model Plot
 
 
 ```r
-pdf("../figures/BMI-HOMA Correlation.pdf")
+pdf("../figures/Cushing - BMI-HOMA Correlation.pdf")
 with(cushing.data, plot(BMI, log(HOMA.IR), pch = 19, las = 1, col = diagnosis, 
     ylab = "Log HOMA-IR Score", xlab = "BMI (mg/kg2)"))
 legend("topleft", levels(cushing.data$diagnosis)[1:2], pch = 19, bty = "n", 
@@ -374,114 +188,46 @@ One subject was identified as an outlier based on the heatmap.  This was sample 
 
 
 ```
-## Error: object 'Cushing_mean' not found
+## pdf 
+##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots1.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots2.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots3.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots4.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots5.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## Error: object 'Cushing_mean' not found
-```
-
-```
-## pdf 
-##   2
-```
+![plot of chunk outlier-barplots](figure/outlier-barplots6.png) ![plot of chunk outlier-barplots](figure/outlier-barplots7.png) ![plot of chunk outlier-barplots](figure/outlier-barplots8.png) 
 
 
 Ceramides
@@ -499,7 +245,7 @@ We tested whether ceramides were elevated in cushing patients.
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:16:27 2014 -->
+<!-- Wed Apr 23 18:56:09 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 9 </TD> <TD> Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.5 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.22289 </TD> <TD align="right"> 0.73255 </TD> </TR>
