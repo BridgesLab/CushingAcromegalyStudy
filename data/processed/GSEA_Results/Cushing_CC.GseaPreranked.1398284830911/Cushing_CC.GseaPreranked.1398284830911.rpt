@@ -1,0 +1,22 @@
+producer_class	xtools.gsea.GseaPreranked
+producer_timestamp	1398284830911
+param	collapse	false
+param	plot_top_x	64
+param	rnk	/Users/vphan/Quynh/NextGenSeq/CushingAcroStudy/data/processed/GSEA_Cushing_prerank_FC.rnk
+param	norm	meandiv
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.cc.v4.0.symbols.gmt
+param	gui	false
+param	rpt_label	Cushing_CC
+param	help	false
+param	out	/Users/vphan/gsea_home/output/apr23
+param	include_only_symbols	true
+param	set_min	15
+param	nperm	1000
+param	rnd_seed	149
+param	zip_report	false
+param	set_max	500
+
+file	/Users/vphan/gsea_home/output/apr23/Cushing_CC.GseaPreranked.1398284830911/index.html
