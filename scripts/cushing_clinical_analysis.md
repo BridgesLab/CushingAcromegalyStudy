@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Cushing Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 19:14:24 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 19:16:38 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -18,6 +18,44 @@ First we checked whether the data was normally distributed using a Shapiro-Wilk 
 
 We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package <a href="http://socserv.socsci.mcmaster.ca/jfox/Books/Companion">Fox & Weisberg (2011)</a>.  A Welch's t-test for unequal variance was appropriate for glucose based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Wed Apr 23 19:16:40 2014 -->
+<TABLE border=1>
+<CAPTION ALIGN="bottom"> Summary of statistical tests used </CAPTION>
+<TR> <TH>  </TH> <TH> shapiro.control </TH> <TH> shapiro.cushing </TH> <TH> levene.test </TH> <TH> test </TH>  </TR>
+  <TR> <TD align="right"> height </TD> <TD align="right"> 0.148 </TD> <TD align="right"> 0.713 </TD> <TD align="right"> 0.859 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> weight </TD> <TD align="right"> 0.261 </TD> <TD align="right"> 0.126 </TD> <TD align="right"> 0.878 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> BMI </TD> <TD align="right"> 0.556 </TD> <TD align="right"> 0.312 </TD> <TD align="right"> 0.136 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> abdominal.circumference </TD> <TD align="right"> 0.690 </TD> <TD align="right"> 0.130 </TD> <TD align="right"> 0.234 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C14 </TD> <TD align="right"> 0.021 </TD> <TD align="right"> 0.087 </TD> <TD align="right"> 0.298 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C18.1 </TD> <TD align="right"> 0.891 </TD> <TD align="right"> 0.983 </TD> <TD align="right"> 0.276 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C16 </TD> <TD align="right"> 0.883 </TD> <TD align="right"> 0.389 </TD> <TD align="right"> 0.792 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C18 </TD> <TD align="right"> 0.916 </TD> <TD align="right"> 0.057 </TD> <TD align="right"> 0.289 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C20 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.037 </TD> <TD align="right"> 0.302 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C22..area. </TD> <TD align="right"> 0.657 </TD> <TD align="right"> 0.002 </TD> <TD align="right"> 0.313 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C24.1..area. </TD> <TD align="right"> 0.119 </TD> <TD align="right"> 0.332 </TD> <TD align="right"> 0.208 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C24 </TD> <TD align="right"> 0.752 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.286 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C16 </TD> <TD align="right"> 0.674 </TD> <TD align="right"> 0.336 </TD> <TD align="right"> 0.942 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C18 </TD> <TD align="right"> 0.570 </TD> <TD align="right"> 0.709 </TD> <TD align="right"> 0.553 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C18.1 </TD> <TD align="right"> 0.204 </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.630 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> insulin </TD> <TD align="right"> 0.085 </TD> <TD align="right"> 0.039 </TD> <TD align="right"> 0.012 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> glucose </TD> <TD align="right"> 0.458 </TD> <TD align="right"> 0.151 </TD> <TD align="right"> 0.043 </TD> <TD> Welch's T-Test </TD> </TR>
+  <TR> <TD align="right"> HOMA.IR </TD> <TD align="right"> 0.028 </TD> <TD align="right"> 0.052 </TD> <TD align="right"> 0.037 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.no.tx </TD> <TD align="right"> 0.297 </TD> <TD align="right"> 0.132 </TD> <TD align="right"> 0.064 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.insulin.2.nM </TD> <TD align="right"> 0.183 </TD> <TD align="right"> 0.237 </TD> <TD align="right"> 0.054 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.iso.30.nM </TD> <TD align="right"> 0.245 </TD> <TD align="right"> 0.545 </TD> <TD align="right"> 0.605 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.iso </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.256 </TD> <TD align="right"> 0.866 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.ctrl </TD> <TD align="right"> 0.065 </TD> <TD align="right"> 0.091 </TD> <TD align="right"> 0.513 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.iso.ctrl </TD> <TD align="right"> 0.513 </TD> <TD align="right"> 0.720 </TD> <TD align="right"> 0.405 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.iso.iso </TD> <TD align="right"> 0.966 </TD> <TD align="right"> 0.444 </TD> <TD align="right"> 0.483 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> age </TD> <TD align="right"> 0.459 </TD> <TD align="right"> 0.748 </TD> <TD align="right"> 0.886 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> largest.diameter.of.tumor </TD> <TD align="right"> 0.784 </TD> <TD align="right"> 0.441 </TD> <TD align="right"> 0.655 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Creatinine </TD> <TD align="right"> 0.498 </TD> <TD align="right"> 0.014 </TD> <TD align="right"> 0.539 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> AST </TD> <TD align="right"> 0.068 </TD> <TD align="right"> 0.194 </TD> <TD align="right"> 0.095 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> ALT </TD> <TD align="right"> 0.231 </TD> <TD align="right"> 0.015 </TD> <TD align="right"> 0.035 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> alk.phos </TD> <TD align="right"> 0.566 </TD> <TD align="right"> 0.668 </TD> <TD align="right"> 0.248 </TD> <TD> Student's T-Test </TD> </TR>
+   </TABLE>
+
 
 
 ```
@@ -28,7 +66,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:14:25 2014 -->
+<!-- Wed Apr 23 19:16:40 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 2 </TD> <TD> age </TD> <TD align="right"> 63.4 </TD> <TD align="right"> 2.7 </TD> <TD align="right"> 38.6 </TD> <TD align="right"> 2.9 </TD> <TD align="right"> 0.00001 </TD> <TD align="right"> 0.00033 </TD> </TR>
@@ -141,7 +179,7 @@ Correlation with BMI
 The HOMA score significantly correlated with the natural logarithm of the BMI (p=0.0052, r=0.6448, R2=0.4157)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.8698).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:14:26 2014 -->
+<!-- Wed Apr 23 19:16:41 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.0493 </TD> <TD align="right"> 0.6059 </TD> <TD align="right"> -1.73 </TD> <TD align="right"> 0.1053 </TD> </TR>
@@ -149,7 +187,7 @@ The HOMA score significantly correlated with the natural logarithm of the BMI (p
   <TR> <TD align="right"> diagnosisCushing's </TD> <TD align="right"> 0.4083 </TD> <TD align="right"> 0.2866 </TD> <TD align="right"> 1.42 </TD> <TD align="right"> 0.1762 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:14:26 2014 -->
+<!-- Wed Apr 23 19:16:41 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.10 </TD> <TD align="right"> 1.28 </TD> </TR>
@@ -266,7 +304,7 @@ We tested whether ceramides were elevated in cushing patients.
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:14:27 2014 -->
+<!-- Wed Apr 23 19:16:41 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 9 </TD> <TD> Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.5 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.22289 </TD> <TD align="right"> 0.73255 </TD> </TR>

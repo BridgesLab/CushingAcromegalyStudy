@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 18:24:04 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 19:17:31 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -18,6 +18,44 @@ First we checked whether the data was normally distributed using a Shapiro-Wilk 
 
 We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package <a href="http://socserv.socsci.mcmaster.ca/jfox/Books/Companion">Fox & Weisberg (2011)</a>.  A Welch's t-test for unequal variance was appropriate for glycerol.no.tx based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Wed Apr 23 19:17:32 2014 -->
+<TABLE border=1>
+<CAPTION ALIGN="bottom"> Summary of statistical tests used </CAPTION>
+<TR> <TH>  </TH> <TH> shapiro.control </TH> <TH> shapiro.acromegaly </TH> <TH> levene.test </TH> <TH> test </TH>  </TR>
+  <TR> <TD align="right"> height </TD> <TD align="right"> 0.148 </TD> <TD align="right"> 0.530 </TD> <TD align="right"> 0.436 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> weight </TD> <TD align="right"> 0.261 </TD> <TD align="right"> 0.250 </TD> <TD align="right"> 0.392 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> BMI </TD> <TD align="right"> 0.556 </TD> <TD align="right"> 0.157 </TD> <TD align="right"> 0.786 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> abdominal.circumference </TD> <TD align="right"> 0.690 </TD> <TD align="right"> 0.819 </TD> <TD align="right"> 0.581 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C14 </TD> <TD align="right"> 0.021 </TD> <TD align="right"> 0.550 </TD> <TD align="right"> 0.320 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C18.1 </TD> <TD align="right"> 0.891 </TD> <TD align="right"> 0.083 </TD> <TD align="right"> 0.607 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C16 </TD> <TD align="right"> 0.883 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.127 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C18 </TD> <TD align="right"> 0.916 </TD> <TD align="right"> 0.510 </TD> <TD align="right"> 0.083 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C20 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.618 </TD> <TD align="right"> 0.974 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C22..area. </TD> <TD align="right"> 0.657 </TD> <TD align="right"> 0.155 </TD> <TD align="right"> 0.357 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C24.1..area. </TD> <TD align="right"> 0.119 </TD> <TD align="right"> 0.209 </TD> <TD align="right"> 0.693 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Cer.C24 </TD> <TD align="right"> 0.752 </TD> <TD align="right"> 0.685 </TD> <TD align="right"> 0.540 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C16 </TD> <TD align="right"> 0.674 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.770 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C18 </TD> <TD align="right"> 0.570 </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.333 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Glu.Cer.C18.1 </TD> <TD align="right"> 0.204 </TD> <TD align="right"> 0.602 </TD> <TD align="right"> 0.843 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> insulin </TD> <TD align="right"> 0.085 </TD> <TD align="right"> 0.004 </TD> <TD align="right"> 0.094 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> glucose </TD> <TD align="right"> 0.458 </TD> <TD align="right"> 0.764 </TD> <TD align="right"> 0.078 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> HOMA.IR </TD> <TD align="right"> 0.028 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.113 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.no.tx </TD> <TD align="right"> 0.297 </TD> <TD align="right"> 0.324 </TD> <TD align="right"> 0.004 </TD> <TD> Welch's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.insulin.2.nM </TD> <TD align="right"> 0.183 </TD> <TD align="right"> 0.972 </TD> <TD align="right"> 0.124 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.iso.30.nM </TD> <TD align="right"> 0.245 </TD> <TD align="right"> 0.401 </TD> <TD align="right"> 0.066 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.iso </TD> <TD align="right"> 0.104 </TD> <TD align="right"> 0.052 </TD> <TD align="right"> 0.189 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.ctrl </TD> <TD align="right"> 0.065 </TD> <TD align="right"> 0.457 </TD> <TD align="right"> 0.182 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.iso.ctrl </TD> <TD align="right"> 0.513 </TD> <TD align="right"> 0.132 </TD> <TD align="right"> 0.194 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> glycerol.ins.iso.iso </TD> <TD align="right"> 0.966 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.268 </TD> <TD> Wilcoxon Test </TD> </TR>
+  <TR> <TD align="right"> age </TD> <TD align="right"> 0.459 </TD> <TD align="right"> 0.242 </TD> <TD align="right"> 0.105 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> largest.diameter.of.tumor </TD> <TD align="right"> 0.784 </TD> <TD align="right"> 0.081 </TD> <TD align="right"> 0.414 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> Creatinine </TD> <TD align="right"> 0.498 </TD> <TD align="right"> 0.714 </TD> <TD align="right"> 0.959 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> AST </TD> <TD align="right"> 0.068 </TD> <TD align="right"> 0.052 </TD> <TD align="right"> 0.573 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> ALT </TD> <TD align="right"> 0.231 </TD> <TD align="right"> 0.493 </TD> <TD align="right"> 0.562 </TD> <TD> Student's T-Test </TD> </TR>
+  <TR> <TD align="right"> alk.phos </TD> <TD align="right"> 0.566 </TD> <TD align="right"> 0.088 </TD> <TD align="right"> 0.216 </TD> <TD> Student's T-Test </TD> </TR>
+   </TABLE>
+
 
 
 ```
@@ -26,7 +64,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:24:05 2014 -->
+<!-- Wed Apr 23 19:17:32 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 28 </TD> <TD> HOMA.IR </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 7.6 </TD> <TD align="right"> 3.1 </TD> <TD align="right"> 0.00137 </TD> <TD align="right"> 0.04251 </TD> </TR>
@@ -132,7 +170,7 @@ Correlation with BMI
 The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215, r=0.5372, R2=0.2886)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.6167).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:24:06 2014 -->
+<!-- Wed Apr 23 19:17:33 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.2268 </TD> <TD align="right"> 0.6719 </TD> <TD align="right"> -1.83 </TD> <TD align="right"> 0.0879 </TD> </TR>
@@ -140,7 +178,7 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215
   <TR> <TD align="right"> diagnosisAcromegaly </TD> <TD align="right"> 0.9085 </TD> <TD align="right"> 0.2529 </TD> <TD align="right"> 3.59 </TD> <TD align="right"> 0.0027 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:24:06 2014 -->
+<!-- Wed Apr 23 19:17:33 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.07 </TD> <TD align="right"> 1.23 </TD> </TR>
@@ -247,7 +285,7 @@ We tested whether ceramides were elevated in acromegaly patients.
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:24:07 2014 -->
+<!-- Wed Apr 23 19:17:33 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 13 </TD> <TD> Cer.C24 </TD> <TD align="right"> 4.3 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 6.7 </TD> <TD align="right"> 1.0 </TD> <TD align="right"> 0.03814 </TD> <TD align="right"> 0.25603 </TD> </TR>

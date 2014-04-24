@@ -65,6 +65,10 @@ First we checked whether the data was normally distributed using a Shapiro-Wilk 
 
 We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package `r citet(bib[["car"]])`.  A Welch's t-test for unequal variance was appropriate for `r rownames(test.summary.table[test.summary.table$test == "Welch's T-Test",])` based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
+```{r, echo=FALSE, results='asis'}
+library(xtable)
+print(xtable(test.summary.table, caption='Summary of statistical tests used', digits=3),type='html')
+```
 
 ```{r analysis, echo=FALSE}
 #for glucose homeostatic measurements
