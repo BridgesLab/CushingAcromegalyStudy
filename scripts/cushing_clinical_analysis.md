@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Cushing Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 19:16:38 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 19:25:30 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -19,7 +19,7 @@ First we checked whether the data was normally distributed using a Shapiro-Wilk 
 We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package <a href="http://socserv.socsci.mcmaster.ca/jfox/Books/Companion">Fox & Weisberg (2011)</a>.  A Welch's t-test for unequal variance was appropriate for glucose based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:16:40 2014 -->
+<!-- Wed Apr 23 19:25:32 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Summary of statistical tests used </CAPTION>
 <TR> <TH>  </TH> <TH> shapiro.control </TH> <TH> shapiro.cushing </TH> <TH> levene.test </TH> <TH> test </TH>  </TR>
@@ -66,7 +66,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:16:40 2014 -->
+<!-- Wed Apr 23 19:25:32 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 2 </TD> <TD> age </TD> <TD align="right"> 63.4 </TD> <TD align="right"> 2.7 </TD> <TD align="right"> 38.6 </TD> <TD align="right"> 2.9 </TD> <TD align="right"> 0.00001 </TD> <TD align="right"> 0.00033 </TD> </TR>
@@ -113,14 +113,14 @@ Graphs
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots1.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing1.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots2.png) ![plot of chunk barplots](figure/barplots3.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing2.png) ![plot of chunk barplots-cushing](figure/barplots-cushing3.png) 
 
 ```
 ## pdf 
@@ -132,42 +132,42 @@ Graphs
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots4.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing4.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots5.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing5.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots6.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing6.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots7.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing7.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots8.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing8.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots9.png) 
+![plot of chunk barplots-cushing](figure/barplots-cushing9.png) 
 
 
 Correlation with BMI
@@ -179,7 +179,7 @@ Correlation with BMI
 The HOMA score significantly correlated with the natural logarithm of the BMI (p=0.0052, r=0.6448, R2=0.4157)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.8698).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:16:41 2014 -->
+<!-- Wed Apr 23 19:25:32 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.0493 </TD> <TD align="right"> 0.6059 </TD> <TD align="right"> -1.73 </TD> <TD align="right"> 0.1053 </TD> </TR>
@@ -187,7 +187,7 @@ The HOMA score significantly correlated with the natural logarithm of the BMI (p
   <TR> <TD align="right"> diagnosisCushing's </TD> <TD align="right"> 0.4083 </TD> <TD align="right"> 0.2866 </TD> <TD align="right"> 1.42 </TD> <TD align="right"> 0.1762 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:16:41 2014 -->
+<!-- Wed Apr 23 19:25:32 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.10 </TD> <TD align="right"> 1.28 </TD> </TR>
@@ -231,7 +231,7 @@ with(cushing.data[cushing.data$diagnosis == "Cushing's" & cushing.data$id !=
     "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[3]))
 ```
 
-![plot of chunk correlation-plot](figure/correlation-plot.png) 
+![plot of chunk correlation-plot-cushing](figure/correlation-plot-cushing.png) 
 
 ### Model Diagnostics
 ![plot of chunk model-diagnostic-plots](figure/model-diagnostic-plots.png) 
@@ -251,42 +251,42 @@ One subject was identified as an outlier based on the heatmap.  This was sample 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots1.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing1.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots2.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing2.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots3.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing3.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots4.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing4.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots5.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing5.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk outlier-barplots](figure/outlier-barplots6.png) ![plot of chunk outlier-barplots](figure/outlier-barplots7.png) ![plot of chunk outlier-barplots](figure/outlier-barplots8.png) 
+![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing6.png) ![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing7.png) ![plot of chunk outlier-barplots-cushing](figure/outlier-barplots-cushing8.png) 
 
 
 Ceramides
@@ -300,11 +300,11 @@ We tested whether ceramides were elevated in cushing patients.
 ##   2
 ```
 
-![plot of chunk ceramides-barplots](figure/ceramides-barplots.png) 
+![plot of chunk ceramides-barplots-cushing](figure/ceramides-barplots-cushing.png) 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:16:41 2014 -->
+<!-- Wed Apr 23 19:25:33 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 9 </TD> <TD> Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.5 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.22289 </TD> <TD align="right"> 0.73255 </TD> </TR>

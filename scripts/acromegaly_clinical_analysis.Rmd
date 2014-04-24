@@ -116,7 +116,7 @@ Graphs
 ------
 
 ## Barplots
-```{r barplots, echo=FALSE, warning=FALSE, message=FALSE}
+```{r barplots-acromegaly, echo=FALSE, warning=FALSE, message=FALSE}
 superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
@@ -406,7 +406,7 @@ The results of this linear model are a significant main effect of both BMI (p=`r
 
 ### Model Plot
 
-```{r correlation-plot}
+```{r correlation-plot-acromegaly}
 pdf('../figures/Acromegaly - BMI-HOMA Correlation.pdf')
 with(acromegaly.data, plot(BMI, log(HOMA.IR),
                            pch=19,las=1,
@@ -415,6 +415,13 @@ legend("topleft", levels(acromegaly.data$diagnosis)[1:2], pch=19, bty="n", col=p
 with(acromegaly.data[acromegaly.data$diagnosis == "Control"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[1]))
 with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[2]))
 dev.off()
+
+with(acromegaly.data, plot(BMI, log(HOMA.IR),
+                           pch=19,las=1,
+    col=diagnosis, ylab='Log HOMA-IR Score', xlab="BMI (mg/kg2)"))
+legend("topleft", levels(acromegaly.data$diagnosis)[1:2], pch=19, bty="n", col=palette()[1:2], lty=1)
+with(acromegaly.data[acromegaly.data$diagnosis == "Control"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[1]))
+with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly"&acromegaly.data$id!='29',], abline(lm(log(HOMA.IR)~BMI), col=palette()[2]))
 ```
 ### Model Diagnostics
 ```{r, model-diagnostic-plots, echo=FALSE}
@@ -442,7 +449,7 @@ outlier.all.summary.table <- merge(
 )
 ```
 
-```{r outlier-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+```{r outlier-barplots-acromegaly, echo=FALSE, warning=FALSE, messages=FALSE}
 
 pdf("../figures/Acromegaly - HOMA Barplot - Outlier.pdf")
 #HOMA Score
@@ -565,7 +572,7 @@ Ceramides
 
 We tested whether ceramides were elevated in acromegaly patients.
 
-```{r ceramides-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+```{r ceramides-barplots-acromegaly, echo=FALSE, warning=FALSE, messages=FALSE}
 lipid.data <- droplevels(subset(melted.data, measurement %in% lipid.data.vars))
 lipid.data$measurement <- factor(lipid.data$measurement, levels=lipid.data.vars)
 lipid.summary <- ddply(lipid.data, .(diagnosis,measurement), summarise,

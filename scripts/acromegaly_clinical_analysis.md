@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Acromegaly Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 19:17:31 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 19:25:23 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -19,7 +19,7 @@ First we checked whether the data was normally distributed using a Shapiro-Wilk 
 We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package <a href="http://socserv.socsci.mcmaster.ca/jfox/Books/Companion">Fox & Weisberg (2011)</a>.  A Welch's t-test for unequal variance was appropriate for glycerol.no.tx based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:17:32 2014 -->
+<!-- Wed Apr 23 19:25:25 2014 -->
 <TABLE border=1>
 <CAPTION ALIGN="bottom"> Summary of statistical tests used </CAPTION>
 <TR> <TH>  </TH> <TH> shapiro.control </TH> <TH> shapiro.acromegaly </TH> <TH> levene.test </TH> <TH> test </TH>  </TR>
@@ -64,7 +64,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:17:32 2014 -->
+<!-- Wed Apr 23 19:25:25 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 28 </TD> <TD> HOMA.IR </TD> <TD align="right"> 2.0 </TD> <TD align="right"> 0.3 </TD> <TD align="right"> 7.6 </TD> <TD align="right"> 3.1 </TD> <TD align="right"> 0.00137 </TD> <TD align="right"> 0.04251 </TD> </TR>
@@ -111,14 +111,14 @@ Graphs
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots1.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly1.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots2.png) ![plot of chunk barplots](figure/barplots3.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly2.png) ![plot of chunk barplots-acromegaly](figure/barplots-acromegaly3.png) 
 
 ```
 ## pdf 
@@ -130,35 +130,35 @@ Graphs
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots4.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly4.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots5.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly5.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots6.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly6.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots7.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly7.png) 
 
 ```
 ## pdf 
 ##   2
 ```
 
-![plot of chunk barplots](figure/barplots8.png) 
+![plot of chunk barplots-acromegaly](figure/barplots-acromegaly8.png) 
 
 
 Correlation with BMI
@@ -170,7 +170,7 @@ Correlation with BMI
 The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215, r=0.5372, R2=0.2886)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.6167).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:17:33 2014 -->
+<!-- Wed Apr 23 19:25:26 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.2268 </TD> <TD align="right"> 0.6719 </TD> <TD align="right"> -1.83 </TD> <TD align="right"> 0.0879 </TD> </TR>
@@ -178,7 +178,7 @@ The BMI significantly correlated with the natural logarithm of the BMI (p=0.0215
   <TR> <TD align="right"> diagnosisAcromegaly </TD> <TD align="right"> 0.9085 </TD> <TD align="right"> 0.2529 </TD> <TD align="right"> 3.59 </TD> <TD align="right"> 0.0027 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:17:33 2014 -->
+<!-- Wed Apr 23 19:25:26 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.07 </TD> <TD align="right"> 1.23 </TD> </TR>
@@ -209,6 +209,20 @@ dev.off()
 ## pdf 
 ##   2
 ```
+
+```r
+
+with(acromegaly.data, plot(BMI, log(HOMA.IR), pch = 19, las = 1, col = diagnosis, 
+    ylab = "Log HOMA-IR Score", xlab = "BMI (mg/kg2)"))
+legend("topleft", levels(acromegaly.data$diagnosis)[1:2], pch = 19, bty = "n", 
+    col = palette()[1:2], lty = 1)
+with(acromegaly.data[acromegaly.data$diagnosis == "Control" & acromegaly.data$id != 
+    "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[1]))
+with(acromegaly.data[acromegaly.data$diagnosis == "Acromegaly" & acromegaly.data$id != 
+    "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[2]))
+```
+
+![plot of chunk correlation-plot-acromegaly](figure/correlation-plot-acromegaly.png) 
 
 ### Model Diagnostics
 ![plot of chunk model-diagnostic-plots](figure/model-diagnostic-plots.png) 
@@ -281,11 +295,11 @@ We tested whether ceramides were elevated in acromegaly patients.
 ##   2
 ```
 
-![plot of chunk ceramides-barplots](figure/ceramides-barplots.png) 
+![plot of chunk ceramides-barplots-acromegaly](figure/ceramides-barplots-acromegaly.png) 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 19:17:33 2014 -->
+<!-- Wed Apr 23 19:25:26 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Acromegaly_mean </TH> <TH> Acromegaly_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 13 </TD> <TD> Cer.C24 </TD> <TD align="right"> 4.3 </TD> <TD align="right"> 0.6 </TD> <TD align="right"> 6.7 </TD> <TD align="right"> 1.0 </TD> <TD align="right"> 0.03814 </TD> <TD align="right"> 0.25603 </TD> </TR>

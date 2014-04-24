@@ -6,7 +6,7 @@ This file was last compiled on ```r date()```.  Unless otherwise noted this anal
 Statistics
 -------------
 
-```{r data entry, echo=FALSE, message=FALSE}
+```{r data-entry, echo=FALSE, message=FALSE}
 data <- read.csv('../data/raw/patient_table.csv')
 #removed cushing data
 cushing.data <- subset(data, diagnosis %in% c("cushing's", "non secreting adenoma"), drop=TRUE)
@@ -116,7 +116,7 @@ Graphs
 ------
 
 ## Barplots
-```{r barplots, echo=FALSE, warning=FALSE, message=FALSE}
+```{r barplots-cushing, echo=FALSE, warning=FALSE, message=FALSE}
 superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
@@ -447,7 +447,7 @@ The results of this linear model are a significant main effect of BMI (p=`r summ
 
 ### Model Plot
 
-```{r correlation-plot}
+```{r correlation-plot-cushing}
 pdf('../figures/Cushing - BMI-HOMA Correlation.pdf')
 with(cushing.data, plot(BMI, log(HOMA.IR),
                            pch=19,las=1,
@@ -490,7 +490,7 @@ outlier.all.summary.table <- merge(
 )
 ```
 
-```{r outlier-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+```{r outlier-barplots-cushing, echo=FALSE, warning=FALSE, messages=FALSE}
 
 pdf("../figures/Cushing - HOMA Barplot - Outlier.pdf")
 #HOMA Score
@@ -707,7 +707,7 @@ Ceramides
 
 We tested whether ceramides were elevated in cushing patients.
 
-```{r ceramides-barplots, echo=FALSE, warning=FALSE, messages=FALSE}
+```{r ceramides-barplots-cushing, echo=FALSE, warning=FALSE, messages=FALSE}
 lipid.data <- droplevels(subset(melted.data, measurement %in% lipid.data.vars))
 lipid.data$measurement <- factor(lipid.data$measurement, levels=lipid.data.vars)
 lipid.summary <- ddply(lipid.data, .(diagnosis,measurement), summarise,
