@@ -1,7 +1,7 @@
 Analysis of Clinical Data for Cushing Patients
 =============================================================
 
-This file was last compiled on ``Wed Apr 23 18:56:06 2014``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Wed Apr 23 19:14:24 2014``.  Unless otherwise noted this analysis removes subject 29.
 
 Statistics
 -------------
@@ -28,7 +28,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:56:08 2014 -->
+<!-- Wed Apr 23 19:14:25 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 2 </TD> <TD> age </TD> <TD align="right"> 63.4 </TD> <TD align="right"> 2.7 </TD> <TD align="right"> 38.6 </TD> <TD align="right"> 2.9 </TD> <TD align="right"> 0.00001 </TD> <TD align="right"> 0.00033 </TD> </TR>
@@ -124,6 +124,13 @@ Graphs
 
 ![plot of chunk barplots](figure/barplots8.png) 
 
+```
+## pdf 
+##   2
+```
+
+![plot of chunk barplots](figure/barplots9.png) 
+
 
 Correlation with BMI
 -----------------------
@@ -134,7 +141,7 @@ Correlation with BMI
 The HOMA score significantly correlated with the natural logarithm of the BMI (p=0.0052, r=0.6448, R2=0.4157)To correct for the BMI effect on the HOMA-IR score, I generated a linear model comparing the HOMA score to the BMI and the diagnosis.  We tested for an interaction between HOMA-IR and BMI in this model, and did not observe any evidence of an interaction (p=0.8698).
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:56:08 2014 -->
+<!-- Wed Apr 23 19:14:26 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt;|t|) </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> -1.0493 </TD> <TD align="right"> 0.6059 </TD> <TD align="right"> -1.73 </TD> <TD align="right"> 0.1053 </TD> </TR>
@@ -142,7 +149,7 @@ The HOMA score significantly correlated with the natural logarithm of the BMI (p
   <TR> <TD align="right"> diagnosisCushing's </TD> <TD align="right"> 0.4083 </TD> <TD align="right"> 0.2866 </TD> <TD align="right"> 1.42 </TD> <TD align="right"> 0.1762 </TD> </TR>
    </TABLE>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:56:08 2014 -->
+<!-- Wed Apr 23 19:14:26 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 2.5 % </TH> <TH> 97.5 % </TH>  </TR>
   <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 0.10 </TD> <TD align="right"> 1.28 </TD> </TR>
@@ -160,12 +167,12 @@ The results of this linear model are a significant main effect of BMI (p=0.0114)
 pdf("../figures/Cushing - BMI-HOMA Correlation.pdf")
 with(cushing.data, plot(BMI, log(HOMA.IR), pch = 19, las = 1, col = diagnosis, 
     ylab = "Log HOMA-IR Score", xlab = "BMI (mg/kg2)"))
-legend("topleft", levels(cushing.data$diagnosis)[1:2], pch = 19, bty = "n", 
-    col = palette()[1:2], lty = 1)
+legend("topleft", levels(cushing.data$diagnosis)[c(1, 3)], pch = 19, bty = "n", 
+    col = palette()[c(1, 3)], lty = 1)
 with(cushing.data[cushing.data$diagnosis == "Control" & cushing.data$id != "29", 
     ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[1]))
 with(cushing.data[cushing.data$diagnosis == "Cushing's" & cushing.data$id != 
-    "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[2]))
+    "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[3]))
 dev.off()
 ```
 
@@ -173,6 +180,20 @@ dev.off()
 ## pdf 
 ##   2
 ```
+
+```r
+
+with(cushing.data, plot(BMI, log(HOMA.IR), pch = 19, las = 1, col = diagnosis, 
+    ylab = "Log HOMA-IR Score", xlab = "BMI (mg/kg2)"))
+legend("topleft", levels(cushing.data$diagnosis)[c(1, 3)], pch = 19, bty = "n", 
+    col = palette()[c(1, 3)], lty = 1)
+with(cushing.data[cushing.data$diagnosis == "Control" & cushing.data$id != "29", 
+    ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[1]))
+with(cushing.data[cushing.data$diagnosis == "Cushing's" & cushing.data$id != 
+    "29", ], abline(lm(log(HOMA.IR) ~ BMI), col = palette()[3]))
+```
+
+![plot of chunk correlation-plot](figure/correlation-plot.png) 
 
 ### Model Diagnostics
 ![plot of chunk model-diagnostic-plots](figure/model-diagnostic-plots.png) 
@@ -245,7 +266,7 @@ We tested whether ceramides were elevated in cushing patients.
 
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Wed Apr 23 18:56:09 2014 -->
+<!-- Wed Apr 23 19:14:27 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> measurement </TH> <TH> Control_mean </TH> <TH> Control_se </TH> <TH> Cushing's_mean </TH> <TH> Cushing's_se </TH> <TH> pval </TH> <TH> padj </TH>  </TR>
   <TR> <TD align="right"> 9 </TD> <TD> Cer.C18 </TD> <TD align="right"> 0.4 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.5 </TD> <TD align="right"> 0.0 </TD> <TD align="right"> 0.22289 </TD> <TD align="right"> 0.73255 </TD> </TR>
