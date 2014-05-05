@@ -23,7 +23,7 @@ mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
 
 igf_sample_mapping <- merge(igf_data, mapping, by.x='X', by.y='patient..')
-transcripts.file <- "../data/processed/RLD_DESeq2_Results-Acromegaly.csv"
+transcripts.file <- "../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 filtered.transcript.counts <- transcript.counts[,igf_sample_mapping$samplename]
 ```
@@ -68,7 +68,7 @@ plot(igf_sample_mapping$igf1,
      t(igf.transcript.counts['ENSG00000017427',]),
      pch=19, ylab="IGF1 Expression (Arbitrary Units)",
      xlab="IGF Levels (pg/mL)",las=1,
-     xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(0,max(t(igf.transcript.counts['ENSG00000017427',]))))
+     xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(4,max(t(igf.transcript.counts['ENSG00000017427',]))))
 abline(lm(t(igf.transcript.counts['ENSG00000017427',])~igf_sample_mapping$igf1))
 dev.off()
 ```
@@ -102,7 +102,7 @@ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
 
 for (gene in levels(summary$hgnc_symbol)) {
-  #pdf(sprintf('../figures/igf-%s-barplot.pdf', gene))
+  pdf(sprintf('../figures/igf-%s-barplot.pdf', gene))
   summary.gene <- dcast(subset(summary, hgnc_symbol==gene),
                   group~Gene, 
                   value.var="mean")
