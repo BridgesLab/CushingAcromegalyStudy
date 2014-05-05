@@ -4,7 +4,7 @@ Barplot Analysis of Acromegaly Results
 Used Analysed DESeq results.
 
 ```{r file-input, echo=FALSE, warning=FALSE}
-filename <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
+filename <- "../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
 deseq.filename <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
 #read in the file
 normalized.data <- read.csv(filename, row.names='X')
@@ -44,6 +44,7 @@ genes.of.interest.long <- reshape(genes.of.interest.data, direction="long", vary
 
 rpkm.long <- reshape(rpkm.data.unique, direction="long", varying=list(names(rpkm.data.unique)[1:18]), v.names="Expression", idvar="hgnc_symbol", timevar="Disease", ids=rownames(rpkm.data.unique), times=c(rep('Control',11),rep('Acromegaly',7)))
 
+#calculate standard error
 library(plyr)
 goi.long.cal <- ddply(genes.of.interest.long, .(Genes,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
 
@@ -68,13 +69,11 @@ for (gene in genes.of.interest) {
   #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=rev(Disease),y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
   ggsave(filename=paste('../figures/',gene,'-barplot.pdf',sep=""))
-  #dev.copy(pdf, (paste('../figures/',gene,'-barplot.pdf',sep="")))
-  #dev.off()
 }
 
 ```
 
-```{r lipase-barplots, echo=FALSE, warning=FALSE}
+```{r lipase-barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis',  warning=FALSE}
 #missing lipb, fix showing acro/control
 lipases <- c("LPL","PNPLA2", "MGLL","LIPE", "LIPA", "LIPC", "PNLIP","LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
 
@@ -86,25 +85,28 @@ lipase.long <- reshape(lipase.rpkm, direction="long", varying=list(names(lipase.
 #calcualte mean and se
 lipase.cal <- ddply(lipase.long, .(Genes,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
 #make Disease as a factor and change it levels to Control, Acro
-lipase.cal$Disease <- factor(lipase.cal$Disease, levels=rev(levels(lipase.cal$Disease)))
+lipase.cal$Disease <- factor(lipase.cal$Disease)
+levels(lipase.cal$Disease) <- rev(levels(lipase.cal$Disease))
 
 #qplot(data=lipase.cal, x=Genes, y=mean_Expression, geom="bar", fill=Disease, position="dodge", stat="identity")
-
+library(ggplot2)
 ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
-  geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=T) +
-  geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
-  theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
-  theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
-  theme(panel.border=element_blank())+ 
-  theme(axis.line = element_line(color = 'black')) +
-  scale_fill_grey(start = 0.3, end = .9) +
-  theme(legend.position="none")#guides(fill = guide_legend(keywidth = .5, keyheight = .5))
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position="top")
 
 ggsave("../figures/all-lipases-RPKM.pdf")
 
 ```
 
-```{r draw lipase genes, echo=FALSE, warning=FALSE}
+```{r draw lipase genes, echo=FALSE, fig.show='asis',  warning=FALSE}
 #draw each lipase gene
 for (gene in lipases) {
   #pdf(sprintf('../figures/%s-barplot.pdf', gene))
@@ -121,187 +123,42 @@ for (gene in lipases) {
     theme(axis.line = element_line(color = 'black'))
   
   ggsave(filename=paste('../figures/lipase-',gene,'-barplot.pdf',sep=""))
-  #dev.copy(pdf, (paste('../figures/lipase-',gene,'-barplot.pdf',sep="")))
-  #dev.off()
 }
 ```
-```{r drawing gene insulin and lipolysis signaling pathway }
+
+```{r drawing gene insulin and lipolysis signaling pathway, echo=FALSE, fig.show='asis' }
 insulin <- c("FASN", "TCF7L2", "SOCS2", "AKT1", "PYGM", "ACACA", "SLC2A4")
 unsat_FA <- c("ELOVL5", "ELOVL6", "FADS1", "FADS2", "SCD", "HSD17B12", "ACOX1", "HADHA", "PECR")
 lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPLA2")
 
-gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%insulin,]
-gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%unsat_FA,]
-gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%lipolysis,]
-  #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+gene.data.name <- c('insulin', 'unsat_FA', 'lipolysis')
 
-ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+
-  geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=T) +
-  geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
-  theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
-  theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
-  theme(panel.border=element_blank())+ 
-  theme(axis.line = element_line(color = 'black')) +
-  scale_fill_grey(start = 0.3, end = .9) +
-  #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
-  theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-  theme(legend.position="none")
-
-ggsave(filename=paste('../figures/lipolysis-barplot.pdf',sep=""))
-
-insulin.fc <- deseq.data[deseq.data$external_gene_id%in%insulin,]
-insulin.fc$FoldChange <- ifelse(insulin.fc$log2FoldChange >0, 2^(insulin.fc$log2FoldChange), -1/2^(insulin.fc$log2FoldChange))
-write.table(insulin.fc, file="../data/processed/insulin_FC.txt" , sep="\t", row.names=T, quote=FALSE)
+for (name in gene.data.name){
+  #name <- as.name(name) #convert string to variable name
+  gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
+  
+  ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=T) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position="none")
+  
+  ggsave(filename=paste('../Figures/', name, '-barplot.pdf',sep=""))
+}
+#insulin.fc <- deseq.data[deseq.data$external_gene_id%in%insulin,]
+#insulin.fc$FoldChange <- ifelse(insulin.fc$log2FoldChange >0, 2^(insulin.fc$log2FoldChange), -1/2^(insulin.fc$log2FoldChange))
+#write.table(insulin.fc, file="../data/processed/insulin_FC.txt" , sep="\t", row.names=T, quote=FALSE)
 ```
 
 
 The data used is in the file **`r filename`**.  This file was most recently processed on ```r date()```.
 
-Normalization of Expression
---------------------------------
-```{r normalization, echo=FALSE, warning=FALSE}
-
-library(biomaRt)
-#
-ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
-gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
-                   filters = 'hgnc_symbol', values = genes.of.interest, mart = ensembl)
-```
-
-We examined the following genes: ```r genes.of.interest[order(genes.of.interest)]```, generating a total of **```r length(genes.of.interest)```** barplots.
-
-```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
-library(reshape2)
-filtered.normalized.data$Gene <- rownames(filtered.normalized.data)
-#melt the data, so that each transcript/sample has one value
-filtered.normalized.melted.data <- melt(filtered.normalized.data[gene.data$ensembl_gene_id,], variable.name="samplename", id.vars="Gene")
-filtered.normalized.melted.data$value <- as.numeric(filtered.normalized.melted.data$value)
-
-#annotate that data frame with the gene name
-normalized.melted.data.full <- merge(filtered.normalized.melted.data, gene.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
-#annotate the data frame with the sample identification
-normalized.melted.data.annotated <- merge(normalized.melted.data.full, 
-                                          mapping)
-normalized.melted.data.annotated <- subset(normalized.melted.data.annotated, group != "Cushing's")
-library(plyr)
-summary <- ddply(normalized.melted.data.annotated, .(Gene, group),
-                  summarise,
-                  mean=mean(value, na.rm=T),
-                  se=sd(value, na.rm=T)/sqrt(length(value)),
-                  number=length(value))
-summary <- merge(summary, gene.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
-superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
-arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
-length = length, ...)
-
-
-for (gene in genes.of.interest) {
-  pdf(sprintf('../figures/%s-barplot.pdf', gene))
-  summary.gene <- dcast(subset(summary, hgnc_symbol==gene),
-                  group~Gene, 
-                  value.var="mean")
-  max <- max(subset(summary, hgnc_symbol==gene)$mean + subset(summary, hgnc_symbol==gene)$se)
-#  if(ncol(summary.gene) > 2){
-#      if(which.max(colMeans(summary.gene)) == 1) {
-#        max.transcript<- 2
-#      } else {
-#        max.transcript <- which.max(colMeans(summary.gene))+1
-#      }
-#        
-#    } else {
-#      max.transcript <- 2
-#      }
-  
-  max.transcript <- which.max(summary.gene[1,2:ncol(summary.gene)])+1
-  plot <- barplot(summary.gene[,max.transcript],
-                ylim=c(0,max),
-                ylab = "Reads Per Million Reads",
-                las=1,cex.axis=1,cex.names=1,
-                main=gene)
-  axis(1, at = c(0.75,1.9), labels = summary.gene$group, tick=FALSE)
-  superpose.eb(plot, 
-               summary.gene[,max.transcript], 
-               dcast(subset(summary, hgnc_symbol==gene), group~Gene, value.var="se")[,max.transcript])
-  dev.off()
-}
-
-
-```
-
-```{r lipase-barplots, echo=FALSE, warning=FALSE}
-#missing lipb, fix showing acro/control
-lipases <- c("LIPE", "PNPLA2", "MGLL", "LPL", "LIPC", "PNLIP","LIPA", "LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
-
-
-lipase.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
-                   filters = 'hgnc_symbol', values = lipases, mart = ensembl)
-lipase.length <- getBM(attributes=c('ensembl_gene_id','cds_length'),
-                   filters = 'hgnc_symbol', values = lipases, mart = ensembl)
-merged.lipase.data <- merge(lipase.data, lipase.length)
-#melt the data, so that each transcript/sample has one value
-normalized.melted.lipase.data <- melt(as.data.frame(filtered.normalized.data[merged.lipase.data$ensembl_gene_id,]), variable.name="samplename", id.vars="Gene")
-#annotate that data frame with the gene name
-normalized.melted.lipase.data.full <- merge(normalized.melted.lipase.data, merged.lipase.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
-#annotate the data frame with the sample identification
-normalized.melted.lipase.data.annotated <- merge(normalized.melted.lipase.data.full, 
-                                          mapping)
-normalized.melted.lipase.data.annotated <- subset(normalized.melted.lipase.data.annotated, group != "Cushing's")
-
-#normalized value by length
-normalized.melted.lipase.data.annotated$rpkm <- normalized.melted.lipase.data.annotated$value/normalized.melted.lipase.data.annotated$cds_length*1000
-#removed transcripts with unknown length
-normalized.melted.lipase.data.annotated <- normalized.melted.lipase.data.annotated[!(is.na(normalized.melted.lipase.data.annotated$rpkm)),]
-
-lipase.summary <- ddply(normalized.melted.lipase.data.annotated, .(Gene, group),
-                  summarise,
-                  mean=mean(rpkm),
-                  se=sd(rpkm)/sqrt(length(rpkm)),
-                  number=length(rpkm))
-lipase.summary <- merge(lipase.summary, lipase.data, by.x="Gene", by.y="ensembl_gene_id", all.x=T)
-superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
-arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
-length = length, ...)
-
-for (gene in lipases) {
-  pdf(sprintf('../figures/lipase-%s-barplot.pdf', gene))
-  summary.gene <- dcast(subset(lipase.summary, hgnc_symbol==gene),
-                  group~Gene, 
-                  value.var="mean")
-  max <- max(subset(lipase.summary, hgnc_symbol==gene)$mean + subset(lipase.summary, hgnc_symbol==gene)$se)
-  max.transcript <- which.max(summary.gene[1,2:ncol(summary.gene)])+1
-  plot <- barplot(summary.gene[,max.transcript],
-                ylim=c(0,max),
-                ylab = "mRNA Expression (RPKM)",
-                las=1,cex.axis=1,cex.names=1,
-                main=gene)
-  axis(1, at = c(0.75,1.9), labels = summary.gene$group, tick=FALSE)
-  superpose.eb(plot, 
-               summary.gene[,max.transcript], 
-               dcast(subset(lipase.summary, hgnc_symbol==gene), group~Gene, value.var="se")[,max.transcript])
-  dev.off()
-}
-
-
-```
-
-Summarized Lipases
----------------------
-```{r summarised-lipases, echo=F, warning=FALSE}
-max.lipase.expressors <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='mean')
-max.lipase.expressors.se <- dcast(lipase.summary, hgnc_symbol~group, function(x) max(x), value.var='se')
-ordered.max.lipase.expressors <- max.lipase.expressors[with(max.lipase.expressors, order(-Control)), ]
-ordered.max.lipase.expressors.se <- max.lipase.expressors.se[with(max.lipase.expressors, order(-Control)), ]
-
-pdf('../figures/all-lipases.pdf')
-plot <- barplot(as.matrix(t(ordered.max.lipase.expressors[,2:3])), beside=T,
-        names.arg=ordered.max.lipase.expressors$hgnc_symbol, las=2,
-        ylab="mRNA Expression (RPKM)",
-        ylim=c(0,75000),
-        main="Lipase Gene Expression in Human WAT")
-superpose.eb(plot, as.matrix(t(ordered.max.lipase.expressors[,2:3])), as.matrix(t(ordered.max.lipase.expressors.se[,2:3])))
-legend("topright", c("Control", "Acromegaly"), fill=grey.colors(2), bty="n")
-dev.off()
-```
 
 Session Information
 ---------------------
