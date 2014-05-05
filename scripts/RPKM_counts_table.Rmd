@@ -8,19 +8,44 @@ Making the RPKM Table
 The counts table was the regularized transformation from DESeq2 using **deseq_analysis_outlier_of_htseq.Rmd**.  It already excluded the outlier sample, which was patient **`r remove_patient`**.
 
 ```{r Read data, echo=FALSE}
-filtered_counts_filename <- "../data/processed/VSD_DESeq2_Results-Acromegaly.csv"
-filtered.counts <- read.csv(filtered_counts_filename, header=T, row.names='X')
+filtered_counts_filename <- "../data/raw/htseq_gene_counts_GRCh37.74.txt"
+filtered.counts <- read.table(filtered_counts_filename, header=T)
 #rownames(filtered.counts) <- filtered.counts[,1]
 #filtered.counts <- filtered.counts[,-1]
-processed_filename <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
+processed_filename <- "../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
+mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+
+filtered.mapping.acro <- filtered.mapping[filtered.mapping$group!="Cushing's",]
+filtered.mapping.acro <- filtered.mapping.acro[order(filtered.mapping.acro$group),]
+
+filtered.mapping.cushing <- filtered.mapping[filtered.mapping$group!="Acromegaly",]
+filtered.mapping.cushing <- filtered.mapping.cushing[filtered.mapping.cushing$samplename!="sample12128",] # this sample does not have sequence data.
+filtered.mapping.cushing <- filtered.mapping.cushing[order(filtered.mapping.cushing$group),]
+
+#get the htseq counts for acro
+filtered.counts.acro <- filtered.counts[,filtered.mapping.acro$samplename]
+rownames(filtered.counts.acro) <- filtered.counts$Genes
+#get the htseq counts for cushing
+filtered.counts.cushing <- filtered.counts[,filtered.mapping.cushing$samplename]
+rownames(filtered.counts.cushing) <- filtered.counts$Genes
+
+filtered.counts.acro$Mean.Con <- rowMeans(filtered.counts.acro[,1:11])
+filtered.counts.acro$Mean.Acro <- rowMeans(filtered.counts.acro[,12:18])
 
 #Divide each column (sample) by the total number of reads (sum of that column)
-rpm.table <- sweep(filtered.counts, 2, colSums(filtered.counts), '/')
+rpm.table <- sweep(filtered.counts.acro, 2, colSums(filtered.counts.acro), '/')
 rpm.table <- sweep(rpm.table, 2, 10^9, '*')
+
+rpm.table.cushing <- sweep(filtered.counts.cushing, 2, colSums(filtered.counts.cushing), '/')
+rpm.table.cushing <- sweep(rpm.table.cushing, 2, 10^9, '*')
+
 ```
 
 ```{r getting gene length}
-
 #calculate length for each gene
 library(GenomicFeatures)
 txdb <- makeTranscriptDbFromGFF("../data/raw/Homo_sapiens.GRCh37.74.gtf",format="gtf")
@@ -30,10 +55,41 @@ exons.list.per.gene <- exonsBy(txdb,by="gene")
 # then for each gene, reduce all the exons to a set of non overlapping exons, calculate their lengths (widths) and sum then
 exonic.gene.sizes <- lapply(exons.list.per.gene,function(x){sum(width(reduce(x)))})
 gene_lengths <- unlist(exonic.gene.sizes)
-comvals <- intersect(names(gene_lengths),rownames(rpm.table))
+comvals <- intersect(names(gene_lengths),rownames(filtered.counts.acro))
 
 counts.rpkm <-  sweep(rpm.table[comvals,], 1, unlist(gene_lengths[comvals]),  "/")
-write.csv(counts.rpkm, file=processed_filename)
+counts.rpkm.cushing <- sweep(rpm.table.cushing[comvals,],1,unlist(gene_lengths[comvals]), "/")
+
+counts.rpkm$Mean.Con <- rowMeans(counts.rpkm[,1:11])
+counts.rpkm$Mean.Acro <- rowMeans(counts.rpkm[,12:18])
+
+write.csv(counts.rpkm, file="../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv")
+write.csv(counts.rpkm.cushing, file="../data/processed/RPKM_counts_Cushing_GRCh37.74.csv")
+```
+
+```{r plot the gene length vs mean counts}
+library(reshape2)
+gene.lengths.long <- melt(gene_lengths, v.names="Length")
+colnames(gene.lengths.long) <- "Gene.Length"
+#remove the last 5 rows
+mean.counts <- filtered.counts.acro[1:63675,]
+rpm.table.test <- rpm.table
+rpm.table.test$Mean.Con <- rowMeans(rpm.table[,1:11])
+rpm.table.test$Mean.Acro <- rowMeans(rpm.table[,12:18])
+rpm.table.test <-rpm.table.test[1:63675,]
+
+master <- merge(rpm.table.test, gene.lengths.long, by.x="row.names", by.y="row.names")
+master$FC <- master$Mean.Acro/master$Mean.Con
+master <- master[order(master$FC, decreasing=T),]
+master.noInf <- master[(master$FC!='Inf'),]
+master.noInf <- master[(master$FC!='NaN'),]
+master.noInf <- master[(master$FC!=0),]
+master.noInf <- master[(master$Mean.Con>100),]
+
+library(ggplot2)
+ggplot(master.noInf, aes(x=Gene.Length, y=Mean.Con))+geom_point(shape=1)+xlim(0,20000)+ ylab("Mean Control Counts") +ylim(0,5000)+ggtitle("Mean couns vs Gene Length (only genes with counts > 100)")
+
+ggsave(file="figure/Mean counts vs Gene Length.pdf")
 ```
 
 
