@@ -35,7 +35,7 @@ This script searches KEGG and GO for enriched categories and pathways.  This gen
 
 This generates the heatmap used in Figure 2.
 
-## barplots.Rmd
+### barplots.Rmd
 
 This script generates all the barplots used in Figures 3, 4 and Supplementary Figures 1 and 2.
 
