@@ -68,7 +68,7 @@ for (gene in genes.of.interest) {
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
   #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=rev(Disease),y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../figures/',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
 }
 
 ```
@@ -102,16 +102,16 @@ ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position="top")
 
-ggsave("../figures/all-lipases-RPKM.pdf")
+ggsave("../figures/Acromegaly-all-lipases-RPKM.pdf")
 
 ```
 
 ```{r draw lipase genes, echo=FALSE, fig.show='asis',  warning=FALSE}
 #draw each lipase gene
 for (gene in lipases) {
-  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  #pdf(sprintf('../figures/Acromegaly-%s-barplot.pdf', gene))
   gene.data <- lipase.cal[lipase.cal$Genes==gene,]
-  #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+  #pdf(paste('../figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=Disease,y=mean_Expression)) + 
     geom_bar(stat="identity", col="black") + 
     geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2) + 
@@ -122,7 +122,7 @@ for (gene in lipases) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../figures/lipase-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../figures/Acromegaly-lipase-',gene,'-barplot.pdf',sep=""))
 }
 ```
 
@@ -149,7 +149,7 @@ for (name in gene.data.name){
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position="none")
   
-  ggsave(filename=paste('../Figures/', name, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }
 #insulin.fc <- deseq.data[deseq.data$external_gene_id%in%insulin,]
 #insulin.fc$FoldChange <- ifelse(insulin.fc$log2FoldChange >0, 2^(insulin.fc$log2FoldChange), -1/2^(insulin.fc$log2FoldChange))
