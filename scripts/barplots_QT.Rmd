@@ -131,29 +131,44 @@ insulin <- c("FASN", "TCF7L2", "SOCS2", "AKT1", "PYGM", "ACACA", "SLC2A4")
 unsat_FA <- c("ELOVL5", "ELOVL6", "FADS1", "FADS2", "SCD", "HSD17B12", "ACOX1", "HADHA", "PECR")
 lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPLA2")
 
-gene.data.name <- c('insulin', 'unsat_FA', 'lipolysis')
+figureXX <- c("SOCS2", "CISH")
+figureX <- c("MAPK3","MAPK7","FOS","JUN","JUNB")
+figure1A <- c("PTPN3", "PTPN4")
+figure1B <- c("CCNC","CCNE","CDKN2B")
+figure1C <- c("NAP1L1","ORC2","BAG4","CAPN6")
+figure1D <- c("MAP3K5","MAPK14","MAPK13","MAPKAPK3")
+figure4A <- c("LPL","PNPLA2","LIPE","MGLL")
+figure4B <- c("ABHD5","ADRB3","ACVR1C")
+figure4C <- c("AACA","ACACA","ACSL3","FASN")
+figure4D <- c("SCD","FADS1","FADS2","CYB5A")
+sup1E <- c("UGP2", "PYGM")
+sup2A <- c("INSR","IRS1","IRS2","AKT1","AKT2","AKT3","SLC2A4")
+sup2B <- c("STAT4","STAT6","IKBKB","IL1B","IL6","MCP1","IKBKE")
+sup2C <- c("HSD11B1","HSD11B2","NR3C1","NR3C2")
 
+gene.data.name <- c('figureXX', 'figureX', 'figure1A', 'figure1B', 'figure1C', 'figure1D', 
+                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
+  gene.data$hgnc_symbol <- factor(gene.data$hgnc_symbol, levels=eval(as.name(name)))
   
-  ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+
-    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=T) +
+  ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+ 
+    #this line together with show_guide=F and the element_rect=black get rid of the slash in legend box
+    geom_bar(stat="identity", width=.8, position=position_dodge(width=.8)) +
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
     geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
     theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
     theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank())+ 
     theme(axis.line = element_line(color = 'black')) +
-    scale_fill_grey(start = 0.3, end = .9) +
+    scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-    theme(legend.position="none")
+    theme(legend.position=c(.17,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))
   
   ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }
-#insulin.fc <- deseq.data[deseq.data$external_gene_id%in%insulin,]
-#insulin.fc$FoldChange <- ifelse(insulin.fc$log2FoldChange >0, 2^(insulin.fc$log2FoldChange), -1/2^(insulin.fc$log2FoldChange))
-#write.table(insulin.fc, file="../data/processed/insulin_FC.txt" , sep="\t", row.names=T, quote=FALSE)
 ```
 
 
