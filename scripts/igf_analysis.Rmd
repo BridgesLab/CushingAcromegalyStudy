@@ -66,7 +66,7 @@ write.csv(annotated.igf.summary, '../data/processed/IGF1 Correlations.csv')
 pdf('../figures/IGF1 Correlation.pdf')
 plot(igf_sample_mapping$igf1,
      t(igf.transcript.counts['ENSG00000017427',]),
-     pch=19, ylab="IGF1 Expression (Arbitrary Units)",
+     pch=19, ylab="IGF1 Expression (RPKM)",
      xlab="IGF Levels (pg/mL)",las=1,
      xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(4,max(t(igf.transcript.counts['ENSG00000017427',]))))
 abline(lm(t(igf.transcript.counts['ENSG00000017427',])~igf_sample_mapping$igf1))

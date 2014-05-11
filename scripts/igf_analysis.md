@@ -1,7 +1,7 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun May  4 23:01:48 2014``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun May 11 11:15:53 2014``.
 
 
 ```
@@ -31,7 +31,7 @@ Correlation of IGF levels with IGF Related Transcripts
 
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-3 package -->
-<!-- Sun May  4 23:03:22 2014 -->
+<!-- Sun May 11 11:16:58 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Row.names </TH> <TH> rsq </TH> <TH> pval </TH> <TH> estimate </TH> <TH> padj </TH> <TH> hgnc_symbol </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> ENSG00000017427 </TD> <TD align="right"> 0.622 </TD> <TD align="right"> 0.035 </TD> <TD align="right"> 0.016 </TD> <TD align="right"> 0.606 </TD> <TD> IGF1 </TD> </TR>

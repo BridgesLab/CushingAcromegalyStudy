@@ -138,13 +138,14 @@ figure1B <- c("CCNC","CCNE","CDKN2B")
 figure1C <- c("NAP1L1","ORC2","BAG4","CAPN6")
 figure1D <- c("MAP3K5","MAPK14","MAPK13","MAPKAPK3")
 figure4A <- c("LPL","PNPLA2","LIPE","MGLL")
-figure4B <- c("ABHD5","ADRB3","ACVR1C")
+figure4B <- c("ABHD5","ADRB1", "ADRB2", "ADRB3")
 figure4C <- c("AACA","ACACA","ACSL3","FASN")
 figure4D <- c("SCD","FADS1","FADS2","CYB5A")
 sup1E <- c("UGP2", "PYGM")
 sup2A <- c("INSR","IRS1","IRS2","AKT1","AKT2","AKT3","SLC2A4")
 sup2B <- c("STAT4","STAT6","IKBKB","IL1B","IL6","MCP1","IKBKE")
 sup2C <- c("HSD11B1","HSD11B2","NR3C1","NR3C2")
+figureIGF_IGFBP3 <- c("IGF1","IGFBP3")
 
 gene.data.name <- c('figureXX', 'figureX', 'figure1A', 'figure1B', 'figure1C', 'figure1D', 
                     'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C')
@@ -165,7 +166,7 @@ for (name in gene.data.name){
     scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-    theme(legend.position=c(.17,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))
   
   ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }
