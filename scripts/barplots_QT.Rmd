@@ -172,6 +172,73 @@ for (name in gene.data.name){
     
   ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }
+
+gene.data.name <- c('figure4C', 'figure4C_FASN','figure4D_SCD', 'figure4D')
+for (name in gene.data.name){
+  #name <- as.name(name) #convert string to variable name
+  gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
+  gene.data$hgnc_symbol <- factor(gene.data$hgnc_symbol, levels=eval(as.name(name)))
+  
+  assign(sprintf("plot_%s", name), ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+ 
+    #this line together with show_guide=F and the element_rect=black get rid of the slash in legend box
+    geom_bar(stat="identity", width=.8, position=position_dodge(width=.8)) +
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black")))
+}
+
+#build multiplot function
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+  
+pdf('../Figures/Acromegaly_FASN_Combined.pdf')
+multiplot(plot_figure4C,plot_figure4C_FASN, cols=2)
+dev.off()
+
+pdf('../Figures/Acromegaly_SCD_Combined.pdf')
+multiplot(plot_figure4D_SCD,plot_figure4D, cols=2)
+dev.off()
 ```
 
 
