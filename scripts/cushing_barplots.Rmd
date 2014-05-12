@@ -1,0 +1,170 @@
+Barplot Analysis of Cushing Results
+=======================================
+
+Used Analysed DESeq results.  There was no sequence data for sample 12128 and we removed the control patient id 29 due to his missing the exclusion criteria.
+
+```{r file-input, echo=FALSE, warning=FALSE}
+filename <- "../data/processed/RPKM_counts_Cushing_GRCh37.74.csv"
+deseq.filename <- "../data/processed/Annotated Results GRCh37.74 - Cushing.csv"
+#read in the file
+normalized.data <- read.csv(filename, row.names='X')
+deseq.data <- read.csv(deseq.filename, row.names='X')
+mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+filtered.normalized.data <- normalized.data[,colnames(normalized.data ) %in% filtered.mapping$samplename]
+filtered.mapping.cush <- filtered.mapping[filtered.mapping$group!="Acromegaly",]
+filtered.mapping.cush <- filtered.mapping.cush[order(filtered.mapping.cush$group),]
+filtered.normalized.cush <- filtered.normalized.data[,colnames(filtered.normalized.data) %in% filtered.mapping.cush$samplename]
+#colnames(filtered.normalized.cush) <- filtered.mapping.cush$group
+
+
+#get gene names for transcripts
+library(biomaRt)
+ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl")
+gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
+                   filters = 'ensembl_gene_id', values = rownames(filtered.normalized.data), mart = ensembl)
+rpkm.data <- merge(filtered.normalized.cush, gene.data, by.x='row.names', by.y='ensembl_gene_id') 
+rpkm.data.unique <- rpkm.data[!duplicated(rpkm.data$hgnc_symbol),]
+
+rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
+rpkm.data.unique <- rpkm.data.unique[,-1]
+
+#paste gene here
+genes.of.interest <- c("NR3C1","NR3C2")
+
+
+
+genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
+#put the data in long format
+library(reshape2)  
+genes.of.interest.long <- reshape(genes.of.interest.data, direction="long", varying=list(names(genes.of.interest.data)[1:16]), v.names="Expression", idvar="Genes", timevar="Disease", ids=rownames(genes.of.interest.data), times=c(rep('Control',11),rep("Cushing's",5)))
+
+rpkm.long <- reshape(rpkm.data.unique, direction="long", varying=list(names(rpkm.data.unique)[1:16]), v.names="Expression", idvar="hgnc_symbol", timevar="Disease", ids=rownames(rpkm.data.unique), times=c(rep('Control',11),rep("Cushing's",5)))
+
+#calculate standard error
+library(plyr)
+goi.long.cal <- ddply(genes.of.interest.long, .(Genes,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
+
+rpkm.long.cal <- ddply(rpkm.long, .(hgnc_symbol,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
+
+rpkm.long.cal$Disease <- factor(rpkm.long.cal$Disease)
+rpkm.long.cal$Disease <- factor(rpkm.long.cal$Disease, levels=rev(levels(rpkm.long.cal$Disease)))
+
+goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA',]
+goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA.1',]
+goi.long.cal <- goi.long.cal[order(rev(goi.long.cal$Genes), goi.long.cal$Disease, decreasing=T),]
+
+rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$hgnc_symbol), rev(rpkm.long.cal$Disease), decreasing=T),]
+```
+
+```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
+library(reshape2)
+library(ggplot2)
+for (gene in genes.of.interest) {
+  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
+  #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+  ggplot(gene.data, aes(x=rev(Disease),y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
+  ggsave(filename=paste('../figures/Cushing-',gene,'-barplot.pdf',sep=""))
+}
+
+```
+
+```{r cushing-lipase-barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis',  warning=FALSE}
+#missing lipb, fix showing cush/control
+lipases <- c("LPL","PNPLA2", "MGLL","LIPE", "LIPA", "LIPC", "PNLIP","LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
+
+#lipase.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
+ #                  filters = 'hgnc_symbol', values = lipases, mart = ensembl)
+
+lipase.rpkm <- rpkm.data.unique[lipases,]
+lipase.long <- reshape(lipase.rpkm, direction="long", varying=list(names(lipase.rpkm)[1:16]), v.names="Expression", idvar="Genes", timevar="Disease", ids=rownames(lipase.rpkm), times=c(rep('Control',11),rep("Cushing's",5)))
+#calcualte mean and se
+lipase.cal <- ddply(lipase.long, .(Genes,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
+#make Disease as a factor and change it levels to Control, cush
+lipase.cal$Disease <- factor(lipase.cal$Disease)
+levels(lipase.cal$Disease) <- rev(levels(lipase.cal$Disease))
+
+#qplot(data=lipase.cal, x=Genes, y=mean_Expression, geom="bar", fill=Disease, position="dodge", stat="identity")
+library(ggplot2)
+ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position="top")
+
+ggsave("../figures/Cushing-all-lipases-RPKM.pdf")
+
+```
+
+```{r draw lipase genes, echo=FALSE, fig.show='asis',  warning=FALSE}
+#draw each lipase gene
+for (gene in lipases) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  gene.data <- lipase.cal[lipase.cal$Genes==gene,]
+  #pdf(paste('../figures/Cushing-',gene,'-barplot.pdf',sep=""))
+  ggplot(gene.data, aes(x=Disease,y=mean_Expression)) + 
+    geom_bar(stat="identity", col="black") + 
+    geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2) + 
+    scale_x_discrete(labels=gene.data$Disease) + 
+    xlab("") + ylab("RPKM")+ theme_bw() + ggtitle(gene) + 
+    theme(panel.grid.minor = element_blank()) + 
+    theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank()) + 
+    theme(axis.line = element_line(color = 'black'))
+  
+  ggsave(filename=paste('../figures/Cushing-lipase-',gene,'-barplot.pdf',sep=""))
+}
+```
+
+```{r drawing gene insulin and lipolysis signaling pathway, echo=FALSE, fig.show='asis' }
+
+#add groups here
+akt_isoforms <- c("AKT1", "AKT2", "AKT3")
+irs_isoforms <- c("IRS1","IRS2","IRS3","IRS4")
+
+#add group names from above to this list
+gene.data.name <- c(akt_isoforms, irs_isoforms)
+for (name in gene.data.name){
+  #name <- as.name(name) #convert string to variable name
+  gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
+  gene.data$hgnc_symbol <- factor(gene.data$hgnc_symbol, levels=eval(as.name(name)))
+  
+  ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+ 
+    #this line together with show_guide=F and the element_rect=black get rid of the slash in legend box
+    geom_bar(stat="identity", width=.8, position=position_dodge(width=.8)) +
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle("FASN")
+    
+  ggsave(filename=paste('../Figures/Cushing-', name, '-barplot.pdf',sep=""))
+}
+```
+
+
+The data used is in the file **`r filename`**.  This file was most recently processed on ```r date()```.
+
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```
