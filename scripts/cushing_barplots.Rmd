@@ -132,9 +132,11 @@ for (gene in lipases) {
 #add groups here
 akt_isoforms <- c("AKT1", "AKT2", "AKT3")
 irs_isoforms <- c("IRS1","IRS2","IRS3","IRS4")
+acsl_isoforms <- c("ACSL1", "ACSL4")
+aldh_isoforms <- c("ALDH2", "ALDH7A1","ALDH1B1")
 
 #add group names from above to this list
-gene.data.name <- c(akt_isoforms, irs_isoforms)
+gene.data.name <- c('akt_isoforms', 'irs_isoforms', 'acsl_isoforms', 'aldh_isoforms')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
@@ -152,7 +154,7 @@ for (name in gene.data.name){
     scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle("FASN")
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
   ggsave(filename=paste('../Figures/Cushing-', name, '-barplot.pdf',sep=""))
 }
