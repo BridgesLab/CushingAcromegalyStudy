@@ -69,6 +69,7 @@ Used Analysed DESeq results.
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
+## Saving 7 x 7 in image
 ```
 
 
@@ -133,7 +134,7 @@ Used Analysed DESeq results.
 
 
 
-The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Tue May 13 08:49:36 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Tue May 13 15:07:44 2014``.
 
 
 Session Information
