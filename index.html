@@ -52,6 +52,8 @@ The raw data in this analysis is located in <strong>data/raw</strong> and is the
 <li>
 <strong>transcript_counts_table.csv</strong> has the transcript level counts table.</li>
 <li>
+<strong>htseq_gene_counts_GRCh37.74.txt</strong> has the transcript level counts table using the new assembly</li>
+<li>
 <strong>exon_counts_table.csv</strong> has the exon level counts table.  These data has not yet been incorporated into our analysis.</li>
 <li>
 <strong>acromegaly_patient_IGF1.csv</strong> has the IGF-1 levels for the acromegaly patients.</li>
@@ -63,14 +65,9 @@ The raw data in this analysis is located in <strong>data/raw</strong> and is the
 <p>Script files are saved in <strong>scripts</strong> folder and were analysed in this order</p>
 
 <h3>
-<a name="counts_table_filteringrmd" class="anchor" href="#counts_table_filteringrmd"><span class="octicon octicon-link"></span></a>counts_table_filtering.Rmd</h3>
-
-<p>This file filters the counts table to show only the most abundant transcript.  It starts with the file <strong>data/raw/transcript_counts_table.csv</strong> and then ends up with <strong>data/processed/filtered_transcript_counts_table.csv.</strong></p>
-
-<h3>
 <a name="deseq_analysis_outlierrmd" class="anchor" href="#deseq_analysis_outlierrmd"><span class="octicon octicon-link"></span></a>deseq_analysis_outlier.Rmd</h3>
 
-<p>This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files <strong>data/processed/filtered_transcript_counts_table.csv.</strong> and <strong>data/raw/patient_sample_mapping.csv</strong> and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.</p>
+<p>This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files <strong>data/raw/htseq_gene_counts_GRCh37.74.txt</strong> and <strong>data/raw/patient_sample_mapping.csv</strong> and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.</p>
 
 <h3>
 <a name="goseq-analysisrmd" class="anchor" href="#goseq-analysisrmd"><span class="octicon octicon-link"></span></a>goseq-analysis.Rmd</h3>
@@ -82,8 +79,8 @@ The raw data in this analysis is located in <strong>data/raw</strong> and is the
 
 <p>This generates the heatmap used in Figure 2.</p>
 
-<h2>
-<a name="barplotsrmd" class="anchor" href="#barplotsrmd"><span class="octicon octicon-link"></span></a>barplots.Rmd</h2>
+<h3>
+<a name="barplotsrmd" class="anchor" href="#barplotsrmd"><span class="octicon octicon-link"></span></a>barplots.Rmd</h3>
 
 <p>This script generates all the barplots used in Figures 3, 4 and Supplementary Figures 1 and 2.</p>
 
@@ -101,6 +98,31 @@ The raw data in this analysis is located in <strong>data/raw</strong> and is the
 <a name="igf_analysisrmd" class="anchor" href="#igf_analysisrmd"><span class="octicon octicon-link"></span></a>igf_analysis.Rmd</h3>
 
 <p>This takes measured IGF-1 levels from acromegaly patients and compares it to <em>IGF1</em>  expression from WAT explants.</p>
+
+<h3>
+<a name="makegseatablepy" class="anchor" href="#makegseatablepy"><span class="octicon octicon-link"></span></a>MakeGSEATable.py</h3>
+
+<p>This scripts takes the master gsea report file and output the Name, NES, NOM p-value, FDR q-value and Gene Details for all the significant gene sets.  This creates the Supplementary tables 1,2, and 3.  It also requires <em>reader.pyc</em> and <em>reader.py</em> module to run the script.</p>
+
+<h2>
+<a name="gsea-analysis" class="anchor" href="#gsea-analysis"><span class="octicon octicon-link"></span></a>GSEA Analysis</h2>
+
+<p>For analysis by GSEA which is an external java program, we prepared the input files by running the script <strong>GSEA_inputs_CushingAcromegaly.Rmd</strong>.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by log2foldchange, with 1000 permutations of the gene set.  The input files located in data/processed were:</p>
+
+<ul>
+<li>GSEA_Acromegaly_prerank_pvalues.rnk</li>
+<li>GSEA_Cushing_prerank_pvalues.rnk</li>
+</ul><p>The expression dataset was selected from either acromegaly or cushing.  The gene sets databases tested were:</p>
+
+<ul>
+<li>For KEGG gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.kegg.v4.0.symbols.gmt</li>
+<li>For GO annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.all.v4.0.symbols.gmt</li>
+<li>For GO-BP annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.bp.v4.0.symbols.gmt</li>
+<li>For GO-MF annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.mf.v4.0.symbols.gmt</li>
+<li>For transcription factors gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.tft.v4.0.symbols.gmt</li>
+<li>For miRNA gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.mir.v4.0.symbols.gmt</li>
+<li>For REACTOME gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.reactome.v4.0.symbols.gmt</li>
+</ul><p>WIth the default 1000 permutations and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets 500 members.</p>
 
 <h2>
 <a name="figures" class="anchor" href="#figures"><span class="octicon octicon-link"></span></a>Figures</h2>
