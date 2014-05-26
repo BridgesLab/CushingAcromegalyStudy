@@ -1,4 +1,4 @@
-<a href="10.5281/zenodo.10147">
+<a href="http://dx.doi.org/10.5281/zenodo.10147">
 <img alt="Zenodo DOI Button" src="https://zenodo.org/badge/3925/BridgesLab/CushingAcromegalyStudy.png">
 </a>
 <!-- Open Knowledge Link -->
