@@ -1,7 +1,20 @@
+<a href="10.5281/zenodo.10147">
+<img alt="Zenodo DOI Button" src="https://zenodo.org/badge/3925/BridgesLab/CushingAcromegalyStudy.png">
+</a>
+<!-- Open Knowledge Link -->
+ <a href="http://opendefinition.org/">
+ <img alt="This material is Open Knowledge" border="0"
+  src="http://assets.okfn.org/images/ok_buttons/ok_80x15_blue.png" /></a>
+<!-- /Open Knowledge Link -->
+
 Code and Raw Data for Acromegaly and Cushing Analyses
 ========================================================
 
 This data was analysed at first on the mbni and felix servers to generate counts tables.  The rest of the analysis was performed locally once the counts table was generated.  See the **processing** folder for the code used in the generation of these alignments and counts tables.
+
+Licence
+--------
+This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0. - See more at: http://opendatacommons.org/licenses/by/#sthash.i6n4YNvv.dpuf
 
 Data Files
 ------------
