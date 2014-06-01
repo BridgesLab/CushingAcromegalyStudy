@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Jun  1 14:12:40 2014``.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Jun  1 15:01:31 2014``.
 
 
 
@@ -27,7 +27,7 @@ These data were analysed in  by DESeq (<a href="http://dx.doi.org/10.1186/gb-201
 Full Analysis
 --------------
 
-![plot of chunk deseq-analysis](figure/deseq-analysis1.png) ![plot of chunk deseq-analysis](figure/deseq-analysis2.png) 
+![plot of chunk deseq-analysis](figure/deseq-analysis1.pdf) ![plot of chunk deseq-analysis](figure/deseq-analysis2.pdf) 
 
 
 Count data transformations for visualization. This will output regularized transformation (RLD) counts and variance stabilized (VSD) counts for Cushing and Acromegaly in the **data/processed/** folder.

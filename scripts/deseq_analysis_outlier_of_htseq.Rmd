@@ -65,7 +65,7 @@ These data were analysed in  by DESeq `r citep(bib[["DESeq2"]])`. We did not rem
 Full Analysis
 --------------
 
-```{r deseq-analysis, echo=FALSE, message=FALSE}
+```{r deseq-analysis, echo=FALSE, dev=c('pdf','png'), message=FALSE}
 acromegaly.cds <- DESeq(cds.acromegaly)
 cushing.cds <- DESeq(cds.cushing)
 
