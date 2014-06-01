@@ -33,7 +33,7 @@ rpkm.data.unique <- rpkm.data[!duplicated(rpkm.data$hgnc_symbol),]
 rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
-genes.of.interest <- c("IGF1", "IGFBP3", "CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6")
+genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6")
 
 
 
@@ -148,9 +148,12 @@ sup2A <- c("INSR","IRS1","IRS2","AKT1","AKT2","AKT3","SLC2A4")
 sup2B <- c("STAT6","IKBKB","IL1B","IL6","MCP1","IKBKE")
 sup2C <- c("HSD11B1","HSD11B2","NR3C1","NR3C2")
 figureIGF_IGFBP3 <- c("IGF1","IGFBP3")
+igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
+ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
+rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 
 gene.data.name <- c('figureXX', 'figureX', 'figure1A', 'figure1B', 'figure1C', 'figure1D', 
-                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C')
+                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C','igf_complex','rgs_isoforms','ags_isoforms')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
@@ -168,7 +171,7 @@ for (name in gene.data.name){
     scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle("FASN")
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
   ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }

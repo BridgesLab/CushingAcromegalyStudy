@@ -127,14 +127,17 @@ for (gene in lipases) {
 }
 ```
 
-```{r drawing gene insulin and lipolysis signaling pathway, echo=FALSE, fig.show='asis' }
+```{r grouped-plots, echo=FALSE, fig.show='asis' }
+insulin <- c("FASN", "TCF7L2", "SOCS2", "AKT1", "PYGM", "ACACA", "SLC2A4")
+unsat_FA <- c("ELOVL5", "ELOVL6", "FADS1", "FADS2", "SCD", "HSD17B12", "ACOX1", "HADHA", "PECR")
+lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPLA2")
 
-#add groups here
-akt_isoforms <- c("AKT1", "AKT2", "AKT3")
-irs_isoforms <- c("IRS1","IRS2","IRS3","IRS4")
 
-#add group names from above to this list
-gene.data.name <- c(akt_isoforms, irs_isoforms)
+igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
+ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
+rgs_isoforms <- paste("RGS", seq(1,22), sep="")
+
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
@@ -152,10 +155,11 @@ for (name in gene.data.name){
     scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
-    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle("FASN")
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
   ggsave(filename=paste('../Figures/Cushing-', name, '-barplot.pdf',sep=""))
 }
+
 ```
 
 

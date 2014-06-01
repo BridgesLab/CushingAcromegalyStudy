@@ -1,7 +1,7 @@
 Analysis of Methylation Data from Cushing's Study
 =============================================================
 
-This file was last compiled on ``Sun Jan 19 08:30:53 2014``.
+This file was last compiled on ``Fri May 23 12:57:12 2014``.
 
 
 ```
@@ -99,7 +99,7 @@ To test this, we asked whether the genes with a significantly different methylat
 ```
 ## 
 ## FALSE  TRUE 
-##   678   322
+##   718   282
 ```
 
 ```
@@ -122,8 +122,8 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.2 (2013-09-25)
-## Platform: x86_64-apple-darwin10.8.0 (64-bit)
+## R version 3.1.0 (2014-04-10)
+## Platform: x86_64-apple-darwin13.1.0 (64-bit)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -132,9 +132,9 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] xlsx_0.5.5     xlsxjars_0.5.0 rJava_0.9-6    knitr_1.5     
+## [1] xlsx_0.5.5     xlsxjars_0.6.0 rJava_0.9-6    knitr_1.5     
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.1 formatR_0.10   stringr_0.6.2  tools_3.0.2
+## [1] evaluate_0.5.5 formatR_0.10   stringr_0.6.2  tools_3.1.0
 ```
 
