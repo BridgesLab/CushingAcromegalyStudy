@@ -1,4 +1,4 @@
-Analysis of Data for Acromegaly Patients by Heatmaps
+Analysis of Data for Cushings Patients by Heatmaps
 =============================================================
 
 Statistics
@@ -6,7 +6,7 @@ Statistics
 
 
 
-This file was most recently processed on ``Sun Jun  1 14:20:18 2014``.  This uses the DESeq normalized data found in ../data/processed/RPKM_VSD_counts_table_Acromegaly.csv.
+This file was most recently processed on ``Sun Jun  1 14:58:17 2014``.  This uses the DESeq normalized data found in ../data/processed/RPKM_counts_Cushing_GRCh37.74.csv.
 
 
 Differentially Expressed Genes
@@ -14,7 +14,7 @@ Differentially Expressed Genes
 
 To test the grouping of differentially expressed transcripts, we only examined genes with significantly different transcripts based on DESeq analysis.
 
-![plot of chunk acromegaly-de-heatmap](figure/acromegaly-de-heatmap1.png) ![plot of chunk acromegaly-de-heatmap](figure/acromegaly-de-heatmap2.png) 
+![plot of chunk cushing-de-heatmap](figure/cushing-de-heatmap1.png) ![plot of chunk cushing-de-heatmap](figure/cushing-de-heatmap2.png) 
 
 ```
 ## pdf 

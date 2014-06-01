@@ -1,4 +1,4 @@
-Analysis of Data for Acromegaly Patients by Heatmaps
+Analysis of Data for Cushings Patients by Heatmaps
 =============================================================
 
 Statistics
@@ -10,9 +10,9 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
+analysis.file <- "../data/processed/Annotated Results GRCh37.74 - Cushing.csv"
 analysis.data <- read.csv(analysis.file, row.names='X')
-transcripts.file <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
+transcripts.file <- "../data/processed/RPKM_counts_Cushing_GRCh37.74.csv" #This is not the VSD/RLD transformed data, which might be better
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 #set the conditions
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
@@ -34,7 +34,7 @@ Differentially Expressed Genes
 
 To test the grouping of differentially expressed transcripts, we only examined genes with significantly different transcripts based on DESeq analysis.
 
-```{r acromegaly-de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE, message=FALSE}
+```{r cushing-de-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE, message=FALSE}
 
 #subset for differenially expressed transcripts
 differential.transcripts <- rownames(diff.transcripts)
@@ -51,18 +51,20 @@ rownames(diff.exprs.ordered.genes) <- as.character(ordered.transcripts[!(duplica
 library(gplots,quietly=TRUE)
 library(RColorBrewer,quietly=TRUE)
 bars <- brewer.pal(2, "Set1")
-color.map <- function(x) { if (x=="Acromegaly") bars[1] else bars[2] }
+color.map <- function(x) { if (x=="Cushing's") bars[1] else bars[2] }
 
-mapping.acromegaly <- subset(filtered.mapping, group != "Cushing's")
-diagnosis.colors <- sapply(mapping.acromegaly[order(match(mapping.acromegaly$samplename,colnames(diff.exprs))),]$group, FUN=color.map)
+mapping.acromegaly <- subset(filtered.mapping, group != "Acromegaly")
+diagnosis.colors <- sapply(mapping.acromegaly[order(match(mapping.acromegaly$samplename,colnames(diff.exprs))),]$group, FUN=color.map)[1:16]
 
 #remove cushing samples
 diff.exprs.acromegaly <- diff.exprs.ordered.genes[,colnames(diff.exprs.ordered.genes) %in% mapping.acromegaly$samplename]
 
-plot(as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.acromegaly)))))))
+cushing.dendrogram <- as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.acromegaly))))))
+plot(cushing.dendrogram)
+
 heatmap.colors <- brewer.pal(11, "BrBG")
-heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=F, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", labCol=F, margins=c(6,6))
-dev.copy(pdf, '../figures/Acromegaly-differential-expressor-heatmap-RPKM.pdf')
+heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=NA, Colv=NA, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", margins=c(6,6))
+dev.copy(pdf, '../figures/Cushing - differential-expressor-heatmap-RPKM.pdf')
 dev.off()
 
 #write it out to a final figure as well
