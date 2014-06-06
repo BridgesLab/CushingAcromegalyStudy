@@ -101,7 +101,7 @@ vsd.acromegaly <- varianceStabilizingTransformation(acromegaly.cds, blind=TRUE)
 vsd.cushing <- varianceStabilizingTransformation(cushing.cds, blind=TRUE)
 
 vsd.cushing.counts <- assay(vsd.cushing)
-colnames(rld.cushing.counts) <- mapping$samplename[as.numeric(colnames(vsd.cushing.counts))]
+colnames(vsd.cushing.counts) <- mapping$samplename[as.numeric(colnames(vsd.cushing.counts))]
 vsd.acromegaly.counts <- assay(vsd.acromegaly)
 colnames(vsd.acromegaly.counts) <- mapping$samplename[as.numeric(colnames(vsd.acromegaly.counts))]
 
