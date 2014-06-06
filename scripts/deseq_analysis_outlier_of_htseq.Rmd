@@ -153,7 +153,7 @@ There were **`r dim(acromegaly.diff.genes)[1]`** differentially expressed genes 
 
 ### Cushing's Disease
 
-There were **`r dim(cushing.diff.genes)[1]`** differentially expressed genes from the acromegaly patients, with **`r table(cushing.diff.genes$log2FoldChange > 0)[1]`** genes downregulated and **`r table(cushing.diff.genes$log2FoldChange > 0)[2]`** genes upregulated.
+There were **`r dim(cushing.diff.genes)[1]`** differentially expressed genes from the cushings patients, with **`r table(cushing.diff.genes$log2FoldChange > 0)[1]`** genes downregulated and **`r table(cushing.diff.genes$log2FoldChange > 0)[2]`** genes upregulated.
 
 
 Bibiography

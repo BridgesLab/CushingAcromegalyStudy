@@ -5,7 +5,7 @@ DESeq Analysis of Cushing and Acromegaly Patient Samples with Outlier Removed
 
 
 The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **29**.
-This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Sun Jun  1 15:01:31 2014``.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ``Wed Jun  4 13:59:19 2014``.
 
 
 
@@ -58,7 +58,7 @@ There were **547** differentially expressed genes from the acromegaly patients, 
 
 ### Cushing's Disease
 
-There were **473** differentially expressed genes from the acromegaly patients, with **192** genes downregulated and **281** genes upregulated.
+There were **473** differentially expressed genes from the cushings patients, with **192** genes downregulated and **281** genes upregulated.
 
 
 Bibiography

@@ -48,11 +48,20 @@ Used Analysed DESeq results.  There was no sequence data for sample 12128 and we
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
 ```
 
 
 
-The data used is in the file **../data/processed/RPKM_counts_Cushing_GRCh37.74.csv**.  This file was most recently processed on ``Sun Jun  1 14:00:14 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Cushing_GRCh37.74.csv**.  This file was most recently processed on ``Wed Jun  4 15:16:13 2014``.
 
 
 Session Information
