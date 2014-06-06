@@ -52,13 +52,12 @@ goi.long.cal <- ddply(genes.of.interest.long, .(Genes,Disease), summarise, se = 
 rpkm.long.cal <- ddply(rpkm.long, .(hgnc_symbol,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
 
 rpkm.long.cal$Disease <- factor(rpkm.long.cal$Disease)
-rpkm.long.cal$Disease <- factor(rpkm.long.cal$Disease, levels=rev(levels(rpkm.long.cal$Disease)))
 
 goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA',]
 goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA.1',]
 goi.long.cal <- goi.long.cal[order(rev(goi.long.cal$Genes), goi.long.cal$Disease, decreasing=T),]
 
-rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$hgnc_symbol), rev(rpkm.long.cal$Disease), decreasing=T),]
+rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$hgnc_symbol), rpkm.long.cal$Disease, decreasing=T),]
 ```
 
 ```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
@@ -68,7 +67,7 @@ for (gene in genes.of.interest) {
   #pdf(sprintf('../figures/%s-barplot.pdf', gene))
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
   #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
-  ggplot(gene.data, aes(x=rev(Disease),y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
+  ggplot(gene.data, aes(x=Disease,y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
   ggsave(filename=paste('../figures/Cushing-',gene,'-barplot.pdf',sep=""))
 }
 
@@ -87,7 +86,6 @@ lipase.long <- reshape(lipase.rpkm, direction="long", varying=list(names(lipase.
 lipase.cal <- ddply(lipase.long, .(Genes,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
 #make Disease as a factor and change it levels to Control, cush
 lipase.cal$Disease <- factor(lipase.cal$Disease)
-levels(lipase.cal$Disease) <- rev(levels(lipase.cal$Disease))
 
 #qplot(data=lipase.cal, x=Genes, y=mean_Expression, geom="bar", fill=Disease, position="dodge", stat="identity")
 library(ggplot2)
