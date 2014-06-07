@@ -184,9 +184,29 @@ hljs.initHighlightingOnLoad();
 <p>Making the RPKM Table
 The counts table was the regularized transformation from DESeq2 using <strong>deseq_analysis_outlier_of_htseq.Rmd</strong>.  It already excluded the outlier sample, which was patient <strong>29</strong>.</p>
 
-<pre><code class="r">
-# calculate length for each gene
+<pre><code>## Error: undefined columns selected
+</code></pre>
+
+<pre><code>## Error: object &#39;filtered.counts.acro&#39; not found
+</code></pre>
+
+<pre><code>## Error: object &#39;filtered.counts.acro&#39; not found
+</code></pre>
+
+<pre><code>## Error: object &#39;filtered.counts.acro&#39; not found
+</code></pre>
+
+<pre><code>## Error: object &#39;filtered.counts.acro&#39; not found
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table&#39; not found
+</code></pre>
+
+<pre><code class="r"># calculate length for each gene
 library(GenomicFeatures)
+</code></pre>
+
+<pre><code>## Warning: package &#39;GenomicFeatures&#39; was built under R version 3.0.3
 </code></pre>
 
 <pre><code>## Loading required package: BiocGenerics
@@ -244,8 +264,7 @@ library(GenomicFeatures)
 ## Now generating chrominfo from available sequence names. No chromosome length information is available.
 </code></pre>
 
-<pre><code class="r">save(txdb, file = &quot;txdb.RData&quot;)
-# then collect the exons per gene id
+<pre><code class="r"># save(txdb,file=&#39;txdb.RData&#39;) then collect the exons per gene id
 exons.list.per.gene &lt;- exonsBy(txdb, by = &quot;gene&quot;)
 # then for each gene, reduce all the exons to a set of non overlapping
 # exons, calculate their lengths (widths) and sum then
@@ -253,11 +272,132 @@ exonic.gene.sizes &lt;- lapply(exons.list.per.gene, function(x) {
     sum(width(reduce(x)))
 })
 gene_lengths &lt;- unlist(exonic.gene.sizes)
-comvals &lt;- intersect(names(gene_lengths), rownames(rpm.table))
+comvals &lt;- intersect(names(gene_lengths), rownames(filtered.counts.cushing))
 
 counts.rpkm &lt;- sweep(rpm.table[comvals, ], 1, unlist(gene_lengths[comvals]), 
     &quot;/&quot;)
-write.csv(counts.rpkm, file = processed_filename)
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table&#39; not found
+</code></pre>
+
+<pre><code class="r">counts.rpkm.cushing &lt;- sweep(rpm.table.cushing[comvals, ], 1, unlist(gene_lengths[comvals]), 
+    &quot;/&quot;)
+
+counts.rpkm$Mean.Con &lt;- rowMeans(counts.rpkm[, 1:11])
+</code></pre>
+
+<pre><code>## Error: object &#39;counts.rpkm&#39; not found
+</code></pre>
+
+<pre><code class="r">counts.rpkm$Mean.Acro &lt;- rowMeans(counts.rpkm[, 12:18])
+</code></pre>
+
+<pre><code>## Error: object &#39;counts.rpkm&#39; not found
+</code></pre>
+
+<pre><code class="r">
+# write.csv(counts.rpkm,
+# file=&#39;../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv&#39;)
+# write.csv(counts.rpkm.cushing,
+# file=&#39;../data/processed/RPKM_counts_Cushing_GRCh37.74.csv&#39;)
+
+# write.csv(counts.rpkm,
+# file=&#39;../data/processed/RPKM_VSD_Acromegaly_GRCh37.74.csv&#39;)
+write.csv(counts.rpkm.cushing, file = &quot;../data/processed/RPKM_VSD_counts_table_Cushing.csv&quot;)
+</code></pre>
+
+<pre><code class="r">library(reshape2)
+gene.lengths.long &lt;- melt(gene_lengths, v.names = &quot;Length&quot;)
+colnames(gene.lengths.long) &lt;- &quot;Gene.Length&quot;
+# remove the last 5 rows
+mean.counts &lt;- filtered.counts.acro[1:63675, ]
+</code></pre>
+
+<pre><code>## Error: object &#39;filtered.counts.acro&#39; not found
+</code></pre>
+
+<pre><code class="r">rpm.table.test &lt;- rpm.table
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table&#39; not found
+</code></pre>
+
+<pre><code class="r">rpm.table.test$Mean.Con &lt;- rowMeans(rpm.table[, 1:11])
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table&#39; not found
+</code></pre>
+
+<pre><code class="r">rpm.table.test$Mean.Acro &lt;- rowMeans(rpm.table[, 12:18])
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table&#39; not found
+</code></pre>
+
+<pre><code class="r">rpm.table.test &lt;- rpm.table.test[1:63675, ]
+</code></pre>
+
+<pre><code>## Error: object &#39;rpm.table.test&#39; not found
+</code></pre>
+
+<pre><code class="r">
+master &lt;- merge(rpm.table.test, gene.lengths.long, by.x = &quot;row.names&quot;, by.y = &quot;row.names&quot;)
+</code></pre>
+
+<pre><code>## Error: error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;merge&#39;: Error: object &#39;rpm.table.test&#39; not found
+</code></pre>
+
+<pre><code class="r">master$FC &lt;- master$Mean.Acro/master$Mean.Con
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">master &lt;- master[order(master$FC, decreasing = T), ]
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">master.noInf &lt;- master[(master$FC != &quot;Inf&quot;), ]
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">master.noInf &lt;- master[(master$FC != &quot;NaN&quot;), ]
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">master.noInf &lt;- master[(master$FC != 0), ]
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">master.noInf &lt;- master[(master$Mean.Con &gt; 100), ]
+</code></pre>
+
+<pre><code>## Error: object &#39;master&#39; not found
+</code></pre>
+
+<pre><code class="r">
+library(ggplot2)
+ggplot(master.noInf, aes(x = Gene.Length, y = Mean.Con)) + geom_point(shape = 1) + 
+    xlim(0, 20000) + ylab(&quot;Mean Control Counts&quot;) + ylim(0, 5000) + ggtitle(&quot;Mean couns vs Gene Length (only genes with counts &gt; 100)&quot;)
+</code></pre>
+
+<pre><code>## Error: object &#39;master.noInf&#39; not found
+</code></pre>
+
+<pre><code class="r">
+ggsave(file = &quot;figure/Mean counts vs Gene Length.pdf&quot;)
+</code></pre>
+
+<pre><code>## Error: plot should be a ggplot2 plot
 </code></pre>
 
 <h2>Session Information</h2>
@@ -276,17 +416,21 @@ write.csv(counts.rpkm, file = processed_filename)
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] GenomicFeatures_1.14.3 AnnotationDbi_1.24.0   Biobase_2.22.0        
-## [4] GenomicRanges_1.14.4   XVector_0.2.0          IRanges_1.20.6        
-## [7] BiocGenerics_0.8.0     knitr_1.5             
+##  [1] ggplot2_0.9.3.1        reshape2_1.4           GenomicFeatures_1.14.5
+##  [4] AnnotationDbi_1.24.0   Biobase_2.22.0         GenomicRanges_1.14.4  
+##  [7] XVector_0.2.0          IRanges_1.20.7         BiocGenerics_0.8.0    
+## [10] knitr_1.5             
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] biomaRt_2.18.0     Biostrings_2.30.1  bitops_1.0-6      
-##  [4] BSgenome_1.30.0    DBI_0.2-7          evaluate_0.5.1    
-##  [7] formatR_0.10       RCurl_1.95-4.1     Rsamtools_1.14.3  
-## [10] RSQLite_0.11.4     rtracklayer_1.22.4 stats4_3.0.2      
-## [13] stringr_0.6.2      tools_3.0.2        XML_3.95-0.2      
-## [16] zlibbioc_1.8.0
+##  [4] BSgenome_1.30.0    colorspace_1.2-4   DBI_0.2-7         
+##  [7] digest_0.6.4       evaluate_0.5.5     formatR_0.10      
+## [10] grid_3.0.2         gtable_0.1.2       MASS_7.3-33       
+## [13] munsell_0.4.2      plyr_1.8.1         proto_0.3-10      
+## [16] Rcpp_0.11.1        RCurl_1.95-4.1     Rsamtools_1.14.3  
+## [19] RSQLite_0.11.4     rtracklayer_1.22.7 scales_0.2.4      
+## [22] stats4_3.0.2       stringr_0.6.2      tools_3.0.2       
+## [25] XML_3.95-0.2       zlibbioc_1.8.0
 </code></pre>
 
 </body>
