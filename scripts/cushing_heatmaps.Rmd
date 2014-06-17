@@ -74,6 +74,40 @@ dev.off()
 #dev.off()
 ```
 
+Ribosomal Genes
+---------------
+
+```{r cushing-ribosome-heatmap, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE, message=FALSE}
+
+#subset for ribosomal genes (starts with RP or RL)
+library(gdata)
+ribsosome.large.data <- analysis.data[startsWith(analysis.data$external_gene_id, "RPL"),]
+ribsosome.small.data <- analysis.data[startsWith(analysis.data$external_gene_id, "RPS"),]
+ribosome.data <- rbind(ribsosome.large.data, ribsosome.small.data)
+ribosome.data.ordered <- ribosome.data[order(ribosome.data$log2FoldChange),]
+ribosome.data.ordered.not.null <- ribosome.data.ordered[ribosome.data.ordered$baseMean>10,]
+
+ribosome.genes <- rownames(ribosome.data.ordered.not.null)
+ribosome.exprs <- filtered.transcript.counts[ribosome.genes,]
+
+mapping.acromegaly <- subset(filtered.mapping, group != "Acromegaly")
+diagnosis.colors <- sapply(mapping.acromegaly[order(match(mapping.acromegaly$samplename,colnames(diff.exprs))),]$group, FUN=color.map)[1:16]
+
+#remove cushing samples
+ribo.exprs.acromegaly <- ribosome.exprs[,colnames(ribosome.exprs) %in% mapping.acromegaly$samplename]
+
+ribo.dendrogram <- as.dendrogram(hclust(dist(t(scale(as.matrix(ribo.exprs.acromegaly))))))
+plot(ribo.dendrogram)
+
+heatmap.colors <- brewer.pal(11, "BrBG")
+heatmap.2(log(as.matrix(ribo.exprs.acromegaly)+1), scale="row", Rowv=NA, Colv=NA, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", margins=c(6,5))
+dev.copy(pdf, '../figures/Cushing - ribosome-heatmap-RPKM.pdf')
+dev.off()
+
+heatmap.2(log(as.matrix(ribo.exprs.acromegaly)+1), scale="row", Rowv=T, Colv=NA, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", margins=c(6,5))
+dev.copy(pdf, '../figures/Cushing - ribosome-heatmap-RPKM-row.pdf')
+```
+
 References
 -----------
 ```{r bibliography, echo=FALSE, results='asis'}
