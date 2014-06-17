@@ -8,8 +8,10 @@ Making the RPKM Table
 The counts table was the regularized transformation from DESeq2 using **deseq_analysis_outlier_of_htseq.Rmd**.  It already excluded the outlier sample, which was patient **`r remove_patient`**.
 
 ```{r Read data, echo=FALSE}
-filtered_counts_filename <- "../data/raw/htseq_gene_counts_GRCh37.74.txt"
-filtered.counts <- read.table(filtered_counts_filename, header=T)
+#filtered_counts_filename <- "../data/raw/htseq_gene_counts_GRCh37.74.txt"
+#filtered.counts <- read.table(filtered_counts_filename, header=T)
+filtered_counts_filename <- "../data/processed/VSD_DESeq2_Results-Cushing.csv"
+filtered.counts <- read.csv(filtered_counts_filename)
 #rownames(filtered.counts) <- filtered.counts[,1]
 #filtered.counts <- filtered.counts[,-1]
 processed_filename <- "../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
@@ -32,6 +34,7 @@ rownames(filtered.counts.acro) <- filtered.counts$Genes
 #get the htseq counts for cushing
 filtered.counts.cushing <- filtered.counts[,filtered.mapping.cushing$samplename]
 rownames(filtered.counts.cushing) <- filtered.counts$Genes
+rownames(filtered.counts.cushing) <- filtered.counts$X
 
 filtered.counts.acro$Mean.Con <- rowMeans(filtered.counts.acro[,1:11])
 filtered.counts.acro$Mean.Acro <- rowMeans(filtered.counts.acro[,12:18])
@@ -49,13 +52,13 @@ rpm.table.cushing <- sweep(rpm.table.cushing, 2, 10^9, '*')
 #calculate length for each gene
 library(GenomicFeatures)
 txdb <- makeTranscriptDbFromGFF("../data/raw/Homo_sapiens.GRCh37.74.gtf",format="gtf")
-save(txdb,file="txdb.RData")
+#save(txdb,file="txdb.RData")
 # then collect the exons per gene id
 exons.list.per.gene <- exonsBy(txdb,by="gene")
 # then for each gene, reduce all the exons to a set of non overlapping exons, calculate their lengths (widths) and sum then
 exonic.gene.sizes <- lapply(exons.list.per.gene,function(x){sum(width(reduce(x)))})
 gene_lengths <- unlist(exonic.gene.sizes)
-comvals <- intersect(names(gene_lengths),rownames(filtered.counts.acro))
+comvals <- intersect(names(gene_lengths),rownames(filtered.counts.cushing))
 
 counts.rpkm <-  sweep(rpm.table[comvals,], 1, unlist(gene_lengths[comvals]),  "/")
 counts.rpkm.cushing <- sweep(rpm.table.cushing[comvals,],1,unlist(gene_lengths[comvals]), "/")
@@ -63,8 +66,11 @@ counts.rpkm.cushing <- sweep(rpm.table.cushing[comvals,],1,unlist(gene_lengths[c
 counts.rpkm$Mean.Con <- rowMeans(counts.rpkm[,1:11])
 counts.rpkm$Mean.Acro <- rowMeans(counts.rpkm[,12:18])
 
-write.csv(counts.rpkm, file="../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv")
-write.csv(counts.rpkm.cushing, file="../data/processed/RPKM_counts_Cushing_GRCh37.74.csv")
+#write.csv(counts.rpkm, file="../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv")
+#write.csv(counts.rpkm.cushing, file="../data/processed/RPKM_counts_Cushing_GRCh37.74.csv")
+
+#write.csv(counts.rpkm, file="../data/processed/RPKM_VSD_Acromegaly_GRCh37.74.csv")
+write.csv(counts.rpkm.cushing, file="../data/processed/RPKM_VSD_counts_table_Cushing.csv")
 ```
 
 ```{r plot the gene length vs mean counts}
