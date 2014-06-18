@@ -3,10 +3,15 @@ Analysis of Methylation Data from Cushing's Study
 
 This file was last compiled on ```r date()```.
 
-```{r data entry, echo=FALSE}
+```{r data entry, echo=FALSE, warning=FALSE}
 library(xlsx)
 methylation.data.file <- '../data/raw/Summary Table of Cushings Relative Control Methylation Jan 6 2013.xlsx'
 methylation.data <- read.xlsx2(methylation.data.file, sheetIndex=1,startRow=2)
+methylation.data$Average.Beta.Control <- as.numeric(as.character(methylation.data$Average.Beta.Control))
+methylation.data$Average.Beta.Cushings <- as.numeric(as.character(methylation.data$Average.Beta.Cushings))
+methylation.data$DiffScore.Cushings <- as.numeric(as.character(methylation.data$DiffScore.Cushings))
+methylation.data$Delta.Beta.Cushings <- as.numeric(as.character(methylation.data$Delta.Beta.Cushings))
+
 expression.data.file <- '../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv'
 expression.data <- read.csv(expression.data.file)
 combined.data <- merge(expression.data, methylation.data,
@@ -89,6 +94,26 @@ with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',],
 abline(lm.fit.tss1500)
 
 ```
+
+How Many Genes were Differentially Methylated
+----------------------------------------------
+
+```{r differentially-methylated, echo=FALSE}
+hypomethylated.data <- droplevels(subset(methylation.data, Delta.Beta.Cushings<0))
+hypermethylated.data <- droplevels(subset(methylation.data, Delta.Beta.Cushings>0))
+
+hypomethylated_genes_file <- '../data/processed/Cushings Hypomethylated Genes.txt'
+write(levels(hypomethylated.data$Gene.Symbol), hypomethylated_genes_file)
+
+hypermethylated_genes_file <- '../data/processed/Cushings Hypermethylated Genes.txt'
+write(levels(hypermethylated.data$Gene.Symbol), hypermethylated_genes_file)
+```
+
+There was `r length(levels(methylation.data$Gene.Symbol))` that had differential methylation including `r length(levels(hypomethylated.data$Gene.Symbol))` hypomethylated genes and `r length(levels(hypermethylated.data$Gene.Symbol))` hypermethylated genes.  There was also `r length(intersect(levels(hypermethylated.data$Gene.Symbol),levels(hypomethylated.data$Gene.Symbol)))` genes which were hypomethylated in one location and hypermethulated in another.  These genes are written to a files named `r hypomethylated_genes` and `r hypermethylated_genes`.
+
+Only genes in TS1500
+---------------------
+
 Session Information
 -------------------
 ```{r session-info}

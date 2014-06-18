@@ -142,8 +142,9 @@ bcaa_degradation <- c('AOX1','BCAT1','IL4I1','ACAT2','OXCT1','HMGCS1','ALDH9A1',
 interferon_signaling <- c('EIF4A3','SOCS1','GBP1','HLA-DRB1','IFI35','UBE2L6','IFNAR2','UBA52','HLA-A','MX1','PTPN6','B2M','RPS27A','TYK2','NUP85','PML','HLA-DQA1','IP6K2','IFIT1','EIF4A2','MX2','NUP35','TRIM25','AAAS','GBP7','IRF6','FLNB','PLCG1','GBP5','IFI27','HERC5','PSMB8','HLA-B','XAF1','ISG15','OASL','IRF1','HLA-F','NCAM1','IFITM3','UBA7','IRF3','IFITM2','HLA-DPB1','IRF4','IFITM1','IRF7','IRF9','HLA-DPA1','HLA-C')
 intferon_gamma <- c('SOCS1','GBP1','HLA-DRB1','HLA-A','PTPN6','B2M','PML','HLA-DQA1','GBP7','IRF6','GBP5','HLA-B','OASL','IRF1','HLA-F','NCAM1','IRF3','HLA-DPB1','IRF4','IRF7','IRF9','HLA-DPA1','HLA-C')
 interferon_gamma_no_b2m <- c('SOCS1','GBP1','HLA-DRB1','HLA-A','PTPN6','PML','HLA-DQA1','GBP7','IRF6','GBP5','HLA-B','OASL','IRF1','HLA-F','NCAM1','IRF3','HLA-DPB1','IRF4','IRF7','IRF9','HLA-DPA1','HLA-C')
+IRF_isoforms <- c('IRF1','IRF2','IRF3','IRF4','IRF5','IRF6','IRF7','IRF8','IRF9')
 
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m')
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]

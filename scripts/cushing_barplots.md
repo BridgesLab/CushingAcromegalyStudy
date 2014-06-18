@@ -9,7 +9,10 @@ Used Analysed DESeq results.  There was no sequence data for sample 12128 and we
 
 ```
 ## Saving 7 x 7 in image
-## Saving 7 x 7 in image
+```
+
+```
+## Error: cannot open file '../figures/Cushing-NR3C1-barplot.pdf'
 ```
 
 
@@ -19,27 +22,18 @@ Used Analysed DESeq results.  There was no sequence data for sample 12128 and we
 ## Saving 7 x 7 in image
 ```
 
+```
+## Error: cannot open file '../figures/Cushing-all-lipases-RPKM.pdf'
+```
+
 
 
 ```
 ## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
-## Saving 7 x 7 in image
+```
+
+```
+## Error: cannot open file '../figures/Cushing-lipase-LPL-barplot.pdf'
 ```
 
 
@@ -57,11 +51,12 @@ Used Analysed DESeq results.  There was no sequence data for sample 12128 and we
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
+## Saving 7 x 7 in image
 ```
 
 
 
-The data used is in the file **../data/processed/RPKM_counts_Cushing_GRCh37.74.csv**.  This file was most recently processed on ``Fri Jun  6 17:40:04 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Cushing_GRCh37.74.csv**.  This file was most recently processed on ``Tue Jun 10 14:12:01 2014``.
 
 
 Session Information
