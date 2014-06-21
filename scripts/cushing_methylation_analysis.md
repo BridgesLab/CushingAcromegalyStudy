@@ -1,19 +1,12 @@
 Analysis of Methylation Data from Cushing's Study
 =============================================================
 
-This file was last compiled on ``Wed Jun 18 11:42:39 2014``.
+This file was last compiled on ``Sat Jun 21 10:38:57 2014``.
 
 
 ```
 ## Loading required package: rJava
 ## Loading required package: xlsxjars
-```
-
-```
-## Warning: NAs introduced by coercion
-## Warning: NAs introduced by coercion
-## Warning: NAs introduced by coercion
-## Warning: NAs introduced by coercion
 ```
 
 The methylation is in ../data/raw/Summary Table of Cushings Relative Control Methylation Jan 6 2013.xlsx wherea se we used ../data/processed/htseq_Annotated DESeq2 Results - Cushing.csv for the relative expression.
@@ -23,11 +16,6 @@ Statics
 
 Tested the predictive value on the delta-beta value on the fold change.
 
-
-```r
-lm.fit.tss1500 <- lm(2^log2FoldChange~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
-summary(lm.fit.tss1500)
-```
 
 ```
 ## 
@@ -52,17 +40,7 @@ summary(lm.fit.tss1500)
 ## F-statistic: 0.95 on 1 and 119 DF,  p-value: 0.332
 ```
 
-```r
-par(mfrow=c(2,2))
-plot(lm.fit.tss1500)
-```
-
-![plot of chunk statistics](figure/statistics1.png) 
-
-```r
-lm.fit.tss200 <- lm(2^log2FoldChange~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',])
-summary(lm.fit.tss200)
-```
+![plot of chunk methylation-all-gene-plots](figure/methylation-all-gene-plots1.png) 
 
 ```
 ## 
@@ -87,11 +65,7 @@ summary(lm.fit.tss200)
 ## F-statistic: 0.341 on 1 and 54 DF,  p-value: 0.562
 ```
 
-```r
-plot(lm.fit.tss200)
-```
-
-![plot of chunk statistics](figure/statistics2.png) 
+![plot of chunk methylation-all-gene-plots](figure/methylation-all-gene-plots2.png) 
 
 Are Differentially Methylated Genes More Likely to Be Differentially Expressed?
 ---------------------------------------------------------------------------------
@@ -102,20 +76,29 @@ To test this, we asked whether the genes with a significantly different methylat
 ```
 ## 
 ## FALSE  TRUE 
-##   699   301
+##   709   291
 ```
 
 ```
 ## 
 ## FALSE  TRUE 
-##   805   195
+##   799   201
 ```
 
 Figures
 ----------
 
-![plot of chunk figures](figure/figures1.png) ![plot of chunk figures](figure/figures2.png) ![plot of chunk figures](figure/figures3.png) 
+![plot of chunk methylation-significant-genes](figure/methylation-significant-genes1.png) ![plot of chunk methylation-significant-genes](figure/methylation-significant-genes2.png) ![plot of chunk methylation-significant-genes](figure/methylation-significant-genes3.png) 
 
+How Many Genes were Differentially Methylated
+----------------------------------------------
+
+
+
+There was 1035 that had differential methylation including 493 hypomethylated genes and 584 hypermethylated genes.  There was also 43 genes which were hypomethylated in one location and hypermethulated in another.  These genes are written to a files named ../data/processed/Cushings Hypomethylated Genes.txt and ../data/processed/Cushings Hypermethylated Genes.txt.
+
+Only genes in TS1500
+---------------------
 
 Session Information
 -------------------

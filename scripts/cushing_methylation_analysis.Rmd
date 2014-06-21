@@ -28,7 +28,7 @@ Statics
 
 Tested the predictive value on the delta-beta value on the fold change.
 
-```{r statistics}
+```{r methylation-all-gene-plots, dev=c('png','pdf'), echo=FALSE}
 lm.fit.tss1500 <- lm(2^log2FoldChange~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
 summary(lm.fit.tss1500)
 par(mfrow=c(2,2))
@@ -73,7 +73,7 @@ options(warn = old.warn)
 Figures
 ----------
 
-```{r figures, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+```{r methylation-significant-genes, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
 with(combined.data, plot(Delta.Beta.Cushings,log2FoldChange
                          , pch=19, cex=0.1,
                          col=UCSC_REFGENE_GROUP,
@@ -109,7 +109,7 @@ hypermethylated_genes_file <- '../data/processed/Cushings Hypermethylated Genes.
 write(levels(hypermethylated.data$Gene.Symbol), hypermethylated_genes_file)
 ```
 
-There was `r length(levels(methylation.data$Gene.Symbol))` that had differential methylation including `r length(levels(hypomethylated.data$Gene.Symbol))` hypomethylated genes and `r length(levels(hypermethylated.data$Gene.Symbol))` hypermethylated genes.  There was also `r length(intersect(levels(hypermethylated.data$Gene.Symbol),levels(hypomethylated.data$Gene.Symbol)))` genes which were hypomethylated in one location and hypermethulated in another.  These genes are written to a files named `r hypomethylated_genes` and `r hypermethylated_genes`.
+There was `r length(levels(methylation.data$Gene.Symbol))` that had differential methylation including `r length(levels(hypomethylated.data$Gene.Symbol))` hypomethylated genes and `r length(levels(hypermethylated.data$Gene.Symbol))` hypermethylated genes.  There was also `r length(intersect(levels(hypermethylated.data$Gene.Symbol),levels(hypomethylated.data$Gene.Symbol)))` genes which were hypomethylated in one location and hypermethulated in another.  These genes are written to a files named `r hypomethylated_genes_file` and `r hypermethylated_genes_file`.
 
 Only genes in TS1500
 ---------------------
