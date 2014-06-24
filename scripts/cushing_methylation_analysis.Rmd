@@ -159,13 +159,11 @@ with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',],
      plot(Delta.Beta.Cushings,2^log2FoldChange,
                          pch=19, cex=0.1,
                          main="Only TSS200"))
-abline(lm.fit.tss200)
 
 with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',], 
      plot(Delta.Beta.Cushings,2^log2FoldChange,
                        pch=19, cex=0.1,
                          main="Only TSS1500"))
-abline(lm.fit.tss1500)
 
 ```
 
@@ -185,8 +183,8 @@ write(levels(hypermethylated.data$Gene.Symbol), hypermethylated_genes_file)
 
 There was `r length(levels(methylation.data$Gene.Symbol))` that had differential methylation including `r length(levels(hypomethylated.data$Gene.Symbol))` hypomethylated genes and `r length(levels(hypermethylated.data$Gene.Symbol))` hypermethylated genes.  There was also `r length(intersect(levels(hypermethylated.data$Gene.Symbol),levels(hypomethylated.data$Gene.Symbol)))` genes which were hypomethylated in one location and hypermethylated in another.  These genes are written to a files named `r hypomethylated_genes_file` and `r hypermethylated_genes_file`.
 
-Only genes in TS1500
----------------------
+The `r length(unique(as.character(subset(combined.data, padj<0.05)$external_gene_id)))` genes which were differentially methylated **and** differentially expressed were `r unique(as.character(subset(combined.data, padj<0.05)$external_gene_id))`.
+
 
 Session Information
 -------------------
