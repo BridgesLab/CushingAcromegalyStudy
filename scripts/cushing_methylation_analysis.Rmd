@@ -28,11 +28,6 @@ combined.data$DE <- ifelse(combined.data$padj<0.05, 1, 0)
 combined.data$DE <- factor(combined.data$DE)
 combined.data$DM <- ifelse(is.na(combined.data$Delta.Beta.Cushings),0,1)
 
-library(plyr)
-union.data <- rbind.fill(expression.data, methylation.data)
-union.data$DE <- ifelse(union.data$padj<0.05, 1, 0)
-union.data$DE <- factor(union.data$DE)
-union.data$DM <- ifelse(is.na(union.data$Delta.Beta.Cushings),0,1)
 ```
 
 The methylation is in `r methylation.data.file` wherea se we used `r expression.data.file` for the relative expression.
@@ -100,7 +95,7 @@ To test this, we asked whether the genes with a significantly different methylat
 
 ```{r diff-expression, echo=FALSE, warning=FALSE}
 num_DE_DM <- nrow(combined.data.DE)
-num_notDE_DM <- nrow(methylation.data)-nrow(combined.data.DE)
+num_notDE_DM <- length(unique(methylation.data$Gene.Symbol))-nrow(combined.data.DE)
 num_DE_notDM <- nrow(DE) - num_DE_DM
 num_notDE_notDM <- nrow(expression.data)-nrow(DE)-num_notDE_DM
 contigency.table <- as.table(rbind(c(num_DE_DM, num_DE_notDM ), c(num_notDE_DM, num_notDE_notDM)))
@@ -112,11 +107,11 @@ Xsq <- chisq.test(contigency.table)
 Xsq
 Xsq$observed   # observed counts (same as contigency.table)
 Xsq$expected   # expected counts under the null
+```
 
-############
-logit <- glm(DE ~ DM, data=union.data, family="binomial")
+The Chi-sq p-value is `r Xsq$p.value`, indicating that there is no relationship between methylation and expression.
 
-############
+```{r Statisics-continue}
 
 hypermethylated.genes <- levels(droplevels(combined.data[combined.data$Delta.Beta.Cushings>0,]$external_gene_id))
 hypomethylated.genes <- levels(droplevels(combined.data[combined.data$Delta.Beta.Cushings<0,]$external_gene_id))
