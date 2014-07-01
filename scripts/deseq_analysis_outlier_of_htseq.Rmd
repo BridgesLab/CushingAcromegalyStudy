@@ -93,8 +93,8 @@ colnames(rld.cushing.counts) <- mapping$samplename[as.numeric(colnames(rld.cushi
 rld.acromegaly.counts <- assay(rld.acromegaly)
 colnames(rld.acromegaly.counts) <- mapping$samplename[as.numeric(colnames(rld.acromegaly.counts))]
 
-write.csv(rld.cushing.counts, "../data/processed/RLD_DESeq2_Results-Cushing.csv")
-write.csv(rld.acromegaly.counts, "../data/processed/RLD_DESeq2_Results-Acromegaly.csv")
+write.csv(rld.cushing.counts, "../data/processed/RLD_DESeq2-results-Cushing.csv")
+write.csv(rld.acromegaly.counts, "../data/processed/RLD_DESeq2-results-Acromegaly.csv")
 
 ###variance stabilizing transformation
 vsd.acromegaly <- varianceStabilizingTransformation(acromegaly.cds, blind=TRUE)
@@ -105,8 +105,8 @@ colnames(vsd.cushing.counts) <- mapping$samplename[as.numeric(colnames(vsd.cushi
 vsd.acromegaly.counts <- assay(vsd.acromegaly)
 colnames(vsd.acromegaly.counts) <- mapping$samplename[as.numeric(colnames(vsd.acromegaly.counts))]
 
-write.csv(vsd.cushing.counts, "../data/processed/VSD_DESeq2_Results-Cushing.csv")
-write.csv(vsd.acromegaly.counts, "../data/processed/VSD_DESeq2_Results-Acromegaly.csv")
+write.csv(vsd.cushing.counts, "../data/processed/VSD_DESeq2_results-Cushing.csv")
+write.csv(vsd.acromegaly.counts, "../data/processed/VSD_DESeq2_results-Acromegaly.csv")
 
 ```
 
