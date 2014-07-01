@@ -1,0 +1,187 @@
+---
+title: "CheckAgeAsConfounder"
+output: html_document
+---
+
+This is to check if age is a confouding factor for expression, methylation, and the relation
+
+```{r read files, echo=FALSE}
+sample_file <- "../data/raw/patient_sample_mapping.csv"
+patient_file <- "../data/raw/patient_table.csv"
+
+sample_mapping <-read.csv(sample_file)
+patient_info <- read.csv(patient_file)
+
+mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
+```
+
+```{r exclusion, echo=FALSE}
+remove_patient <- 29
+```
+
+The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
+
+```{r loading-data, echo=FALSE, message=FALSE, warning=FALSE}
+#required packages
+library(DESeq2 ,quietly=TRUE) #for deseq analysis
+transcript.counts <- read.table("../data/raw/htseq_gene_counts_GRCh37.74.txt", header=TRUE)
+rownames(transcript.counts) <- transcript.counts[,1]
+transcript.counts <- transcript.counts[,-1]
+
+#set the conditions
+#mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+
+#this command removes the cushings samples
+acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's" & mapping$patient!=remove_patient,])
+acromegaly.counts <- transcript.counts[,acromegaly.mapping$samplename]
+
+#this command removes the acromegaly samples
+cushing.mapping <- droplevels(mapping[mapping$group != "Acromegaly"&mapping$samplename %in% colnames(transcript.counts),])
+cushing.counts <- transcript.counts[,cushing.mapping$samplename]
+
+#break age into sub groups
+acromegaly.mapping$age <- cut(acromegaly.mapping$age, breaks=c(0,40,60,100))
+cushing.mapping$age <- cut(cushing.mapping$age, breaks=c(0,40,60,100))
+```
+
+This step gets the protein coding genes only.
+
+```{r protein coding genes, echo=FALSE, message=FALSE}
+#required packages
+library(biomaRt,quietly=TRUE)
+#download gene name annotation data for results sets.
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    filter= 'biotype',
+    values = 'protein_coding',
+    mart=ensembl)
+
+cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
+acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
+
+```
+
+```{r cds-construction, echo=FALSE, message=FALSE}
+cds.acromegaly.age = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~age+group)
+cds.acromegaly.age$age <- relevel(cds.acromegaly.age$age, "(0,40]")
+#group is the variable of interest, so put group at the end of the design formula
+cds.cushing.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~age+group)
+cds.cushing.age$age <- relevel(cds.cushing.age$age, "(0,40]")
+
+cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~BMI+group)
+
+#group is the variable of interest, so put group at the end of the design formula
+cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~BMI+group)
+```
+Full Analysis
+--------------
+
+```{r deseq-analysis adjusting for age, echo=FALSE, dev=c('pdf','png'), message=FALSE}
+acromegaly.cds.age <- DESeq(cds.acromegaly.age)
+cushing.cds.age <- DESeq(cds.cushing.age)
+acromegaly.cds.bmi <- DESeq(cds.acromegaly.bmi)
+cushing.cds.bmi <- DESeq(cds.cushing.bmi)
+
+plotMA(acromegaly.cds.age,ylim=c(-2,2),main="DESeq2 - Acromegaly adjusting for age")
+plotMA(cushing.cds.age,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for age")
+plotMA(acromegaly.cds.bmi,ylim=c(-2,2),main="DESeq2 - Acromegaly adjusting for BMI")
+plotMA(cushing.cds.bmi,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI")
+
+acromegaly.results.age <- results(acromegaly.cds.age)
+cushing.results.age <- results(cushing.cds.age)
+sum(acromegaly.results.age$padj<.05, na.rm=TRUE)
+sum(cushing.results.age$padj<0.05, na.rm=TRUE)
+
+#getting the reuslts for age as an factor variable
+acro.age.effect <- results(acromegaly.cds.age, contrast=c("age","(40.60]", "(0.40]"))
+sum(acro.age.effect$padj<0.05, na.rm=TRUE)
+acro.age.combined <- merge(acromegaly.results.age, acro.age.effect, by.x="row.names", by.y="row.names")
+colnames(acro.age.combined)[2:7]<- gsub("x","AcrovsControl", colnames(acro.age.combined)[2:7])
+colnames(acro.age.combined)[8:13]<-gsub("y","age60vs40", colnames(acro.age.combined[8:13]))
+
+cushing.age.effect <-results(cushing.cds.age, contrast=c("age","(40.60]", "(0.40]"))
+sum(cushing.age.effect$padj<0.05, na.rm=TRUE)
+cushing.age.combined <- merge(cushing.results.age, cushing.age.effect, by.x="row.names", by.y="row.names")
+colnames(cushing.age.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.age.combined)[2:7])
+colnames(cushing.age.combined)[8:13]<-gsub("y","age60vs40", colnames(cushing.age.combined[8:13]))
+
+#getting the results for just the age effect as continuous
+#acro.age.effect <- results(acromegaly.cds.age, name="age")
+#cushing.age.effect <- results(cushing.cds.age, name="age")
+
+acromegaly.results.bmi <- results(acromegaly.cds.bmi)
+cushing.results.bmi <- results(cushing.cds.bmi)
+#getting the results for just the bmi effect
+acro.bmi.effect <- results(acromegaly.cds.bmi, name="BMI")
+acro.bmi.combined <- merge(acromegaly.results.bmi, acro.bmi.effect, by.x="row.names", by.y="row.names")
+colnames(acro.bmi.combined)[2:7]<- gsub("x","AcrovsControl", colnames(acro.bmi.combined)[2:7])
+colnames(acro.bmi.combined)[8:13]<-gsub("y","bmi", colnames(acro.bmi.combined[8:13]))
+
+acro.bmi.effect <- acro.bmi.effect[order(acro.bmi.effect$padj, na.last=TRUE),]
+cushing.bmi.effect <- results(cushing.cds.bmi, name="BMI")
+cushing.bmi.combined <- merge(cushing.results.bmi, cushing.bmi.effect, by.x="row.names", by.y="row.names")
+colnames(cushing.bmi.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.bmi.combined)[2:7])
+colnames(cushing.bmi.combined)[8:13]<-gsub("y","bmi", colnames(cushing.bmi.combined[8:13]))
+cushing.bmi.effect <- cushing.bmi.effect[order(cushing.bmi.effect$padj, na.last=TRUE),]
+
+acromegaly.results.age <- acromegaly.results.age[order(acromegaly.results.age$padj, na.last=TRUE),]
+cushing.results.age <- cushing.results.age[order(cushing.results.age$padj, na.last=TRUE),]
+acromegaly.results.bmi <- acromegaly.results.bmi[order(acromegaly.results.bmi$padj, na.last=TRUE),]
+cushing.results.bmi <- cushing.results.bmi[order(cushing.results.bmi$padj, na.last=TRUE),]
+
+write.csv(acro.age.combined, "../data/processed/acromegaly_results_GRCh37.74-adjusting_age.csv")
+write.csv(cushing.age.combined, "../data/processed/cushing_results_GRCh37.74-adjusting_age.csv")
+write.csv(acro.bmi.combined, "../data/processed/acromegaly_results_GRCh37.74-adjusting_bmi.csv")
+write.csv(cushing.bmi.combined, "../data/processed/cushing_results_GRCh37.74-adjusting_bmi.csv")
+```
+
+Annotation
+-------------
+
+This step annotates the data tables with the official gene symbols.
+
+```{r annotation, echo=FALSE, message=FALSE}
+cushing.age.combined <- merge(cushing.age.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+#cushing.age.combined$external_gene_id <- transcriptInfo$external_gene_id
+acro.age.combined <- merge(acro.age.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+
+cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+acro.bmi.combined <- merge(acro.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+
+#write annotated results files.
+write.csv(cushing.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_age.csv")
+write.csv(acro.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv")
+write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_bmi.csv")
+write.csv(acro.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_bmi.csv")
+```
+Adjusting for age
+----------------
+Acromegaly: The number of genes that are affected by age is `r sum(acro.age.combined$padj.age60vs40<0.05, na.rm=TRUE)`, i.e. `r acro.age.combined$external_gene_id[which(acro.age.combined$padj.age60vs40<0.05)]`. The number of significant genes affected by disease is `r sum(acro.age.combined$padj.ageAcrovsControl<0.05, na.rm=TRUE)`, i.e. `r acro.age.combined$external_gene_id[which(acro.age.combined$padj.AcrovsControl<0.05)]`. Genes that are affected by age and disease are `r acro.age.combined$external_gene_id[which(acro.age.combined$padj.age60vs40<0.05 & acro.age.combined$padj.AcrovsControl<0.05)]`.
+
+Cushings: the number of genes that are affected by age is `r sum(cushing.age.combined$padj.age60vs40<0.05, na.rm=TRUE)`. Those genes are `r cushing.age.combined$external_gene_id[which(cushing.age.combined$padj.age60vs40<0.05)]`.
+
+The number of significant genes affected by disease is `r sum(cushing.age.combined$padj.CushingvsControl<0.05, na.rm=TRUE)`. Those genes are `r unique(cushing.age.combined$external_gene_id[which(cushing.age.combined$padj.CushingvsControl<0.05)])`. 
+
+Genes that are affected by age and disease are `r cushing.age.combined$external_gene_id[which(cushing.age.combined$padj.age60vs40<0.05 & cushing.age.combined$padj.CushingvsControl<0.05)]`.
+
+Adjusting for BMI
+------------------
+Acromegaly: The number of genes that are affected by BMI is `r sum(acro.bmi.combined$padj.bmi<0.05, na.rm=TRUE)`. The number of significant genes affected by disease is `r sum(acro.bmi.combined$padj.AcrovsControl<0.05, na.rm=TRUE)`. Genes that are affected by age and disease are `r acro.bmi.combined$external_gene_id[which(acro.bmi.combined$padj.bmi<0.05 & acro.bmi.combined$padj.AcrovsControl<0.05)]`.
+
+Cushings: the number of genes that are affected by BMI is `r sum(cushing.bmi.combined$padj.bmi<0.05, na.rm=TRUE)`. 
+The number of significant genes affected by disease is `r sum(cushing.bmi.combined$padj.CushingvsControl<0.05, na.rm=TRUE)`.
+
+Genes that are affected by age and disease are `r cushing.bmi.combined$external_gene_id[which(cushing.bmi.combined$padj.bmi<0.05 & cushing.bmi.combined$padj.CushingvsControl<0.05)]`.
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```
