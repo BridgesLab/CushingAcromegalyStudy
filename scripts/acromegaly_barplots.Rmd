@@ -151,9 +151,11 @@ figureIGF_IGFBP3 <- c("IGF1","IGFBP3")
 igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
 ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
 rgs_isoforms <- paste("RGS", seq(1,22), sep="")
+ptps <- paste("PTPN", seq(1,23), sep="")
+socs_isoforms <- paste("SOCS", seq(1,7), sep="")
 
 gene.data.name <- c('figureXX', 'figureX', 'figure1A', 'figure1B', 'figure1C', 'figure1D', 
-                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C','igf_complex','rgs_isoforms','ags_isoforms')
+                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C','igf_complex','rgs_isoforms','ags_isoforms','ptps','socs_isoforms')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
