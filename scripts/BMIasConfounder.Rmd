@@ -5,7 +5,7 @@ date: "July 24, 2014"
 output: html_document
 ---
 
-This is to check if age is a confouding factor for expression, methylation, and the relation
+This is to check if BMI is a confouding factor between disease and gene expressions.
 
 ```{r read files, echo=FALSE}
 sample_file <- "../data/raw/patient_sample_mapping.csv"
@@ -65,7 +65,7 @@ transcriptInfo <- getBM(
     mart=ensembl)
 
 cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
-acromegaly.protein.coding1 <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
+acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
 
 
 ```
@@ -73,55 +73,57 @@ acromegaly.protein.coding1 <- acromegaly.counts[rownames(acromegaly.counts)%in%t
 ```{r cds-construction, echo=FALSE, message=FALSE}
 acromegaly.mapping$condition <- factor(paste0(acromegaly.mapping$group, ".",acromegaly.mapping$BMI))
 #acromegaly.mapping <- acromegaly.mapping[order(acromegaly.mapping$group),]
-cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding1, colData=acromegaly.mapping, design=~BMI + group + BMI:group)
+cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~BMI + group + BMI:group)
 acromegaly.mapping$group<- relevel(acromegaly.mapping$group, "Control")
 acromegaly.mapping$BMI<- relevel(acromegaly.mapping$BMI, "(0,25]")
 
 
 #group is the variable of interest, so put group at the end of the design formula
-cushing.mapping$condition <- factor(paste0(cushing.mapping$group, ".",cushing.mapping$BMI))
-#cushing.mapping <- cushing.mapping[order(cushing.mapping$group),]
-cushing.mapping$condition <- relevel(cushing.mapping$condition, "Cushings.(25,30]")
-cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~condition)
+#cushing.mapping$condition <- factor(paste0(cushing.mapping$group, ".",cushing.mapping$BMI))
+cushing.mappingsub <- cushing.mapping[cushing.mapping$BMI %in% c("(25,30]","(30,50]"),]
+cushing.countssub <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mappingsub$samplename]
+cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.countssub, colData=cushing.mappingsub, design=~BMI+group+BMI:group)
+cushing.mappingsub$BMI<- droplevels(cushing.mappingsub$BMI)
 
 ```
 Full Analysis
 --------------
 
 ```{r deseq-analysis adjusting for age, echo=FALSE, dev=c('pdf','png'), message=FALSE}
-#### ACROMEGALY#########
+#### ACROMEGALY: has many comparisons, not yet finish#########
 acromegaly.cds.bmi <- DESeq(cds.acromegaly.bmi)
 plotMA(acromegaly.cds.bmi,ylim=c(-2,2),main="DESeq2 - Acromegaly adjusting for BMI")
 acromegaly.results.bmi <- results(acromegaly.cds.bmi)
 sum(acromegaly.results.bmi$padj<.05, na.rm=TRUE)
+resultsNames(acromegaly.cds.bmi)
 #getting the reuslts for bmi as an factor variable
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=list("BMI.0.25..groupAcromegaly", "BMI.0.25..groupControl"))
-sum(acro.bmi.contrast$padj<.05, na.rm=TRUE)
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=list("BMI.0.25..groupAcromegaly", "BMI.0.25..groupControl"))
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=c("condition", "Acromegaly..25.30.", "Control..25.30."))
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=c("condition", "Acromegaly..30.50.", "Control..30.50."))
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=c("condition", "Acromegaly..25.30.", "Acromegaly..0.25."))
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=c("condition", "Acromegaly..30.50.", "Acromegaly..0.25."))
-acro.bmi.contrast <- results(acromegaly.cds.bmi, contrast=c("condition", "Acromegaly..30.50.", "Acromegaly..25.30."))
+'acro.disease.normal <- results(acromegaly.cds.bmi, contrast=list("BMI.30.50..groupAcromegaly", "BMI.0.25..groupAcromegaly"))
+sum(acro.disease.normal$padj<.05, na.rm=TRUE)
+acro.disease.overweight <- results(acromegaly.cds.bmi, contrast=list("BMI.25.30..groupAcromegaly", "BMI.25.30..groupControl"))
+acro.disease.obese <- results(acromegaly.cds.bmi, contrast=list("BMI.30.50..groupAcromegaly", "BMI.30.50..groupControl"))
 #acro.bmi.combined <- merge(acromegaly.results.bmi, acro.bmi.contrast, by.x="row.names", by.y="row.names")
+acro.bmi.combined <- cbind(acro.disease.normal, acro.disease.overweight)
 colnames(acro.bmi.combined)[2:7]<- gsub("x","AcrovsControl", colnames(acro.bmi.combined)[2:7])
 colnames(acro.bmi.combined)[8:13]<-gsub("y","Obese_vs_Overweight", colnames(acro.bmi.combined[8:13]))
 acro.bmi.combined <- acro.bmi.combined[order(acro.bmi.combined$padj.bmi, na.last=TRUE),]
-acromegaly.results.bmi <- acromegaly.results.bmi[order(acromegaly.results.bmi$padj, na.last=TRUE),]
-write.csv(acro.bmi.combined, "../data/processed/acromegaly_results_GRCh37.74-adjusting_bmi.csv")
+#acromegaly.results.bmi <- acromegaly.results.bmi[order(acromegaly.results.bmi$padj, na.last=TRUE),]
+write.csv(acro.bmi.combined, "../data/processed/acromegaly_results_GRCh37.74-adjusting_bmi.csv")'
 
 ###### CUSHING'S #########
 cushing.cds.bmi <- DESeq(cds.cushing.bmi)
 plotMA(cushing.cds.bmi,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI")
 cushing.results.bmi <- results(cushing.cds.bmi)
 sum(cushing.results.bmi$padj<0.05, na.rm=TRUE)
+resultsNames(cushing.cds.bmi)
 
-cushing.bmi.effect <- results(cushing.cds.bmi, contrast=c("BMI", "(30.50]", "(25.30]"))
-cushing.bmi.combined <- merge(cushing.results.bmi, cushing.bmi.effect, by.x="row.names", by.y="row.names")
+cushing.bmi.effect <- results(cushing.cds.bmi, name="BMI_.30.50._vs_.25.30.")
+cushing.group.effect <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")
+cushing.bmi<- merge(cushing.bmi.effect, cushing.group.effect, by="row.names", all.x=TRUE, all.y=TRUE)
+cushing.bmi.combined <- merge(cushing.bmi, cushing.results.bmi, by.x="Row.names", by.y="row.names")
 colnames(cushing.bmi.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.bmi.combined)[2:7])
 colnames(cushing.bmi.combined)[8:13]<-gsub("y","Obese_vs_Overweight", colnames(cushing.bmi.combined[8:13]))
-cushing.bmi.combined <- cushing.bmi.combined[order(cushing.bmi.combined$padj.bmi, na.last=TRUE),]
-cushing.results.bmi <- cushing.results.bmi[order(cushing.results.bmi$padj, na.last=TRUE),]
+#colnames(cushing.bmi.combined)[14:19]<-gsub("","Obese_Cush_vs_OverW_Con", colnames(cushing.bmi.combined[14:19]))
+cushing.bmi.combined <- cushing.bmi.combined[order(cushing.bmi.combined$padj, na.last=TRUE),]
 write.csv(cushing.bmi.combined, "../data/processed/cushing_results_GRCh37.74-adjusting_bmi.csv")
 ```
 
@@ -149,9 +151,32 @@ acromegaly.long2 <- reshape(acromegaly.protein.coding, direction="long",
                            timevar="BMI",times=acromegaly.mapping$BMI)
 acromegaly.long$Disease <-acromegaly.long1$Disease
 acromegaly.long$BMI <- acromegaly.long2$BMI#ifelse(acromegaly.long2$BMI=="(0,25]", "Normal", ifelse(acromegaly.long$BMI=="(25,30]", "Overweight", "Obsese"))
-interaction.plot(acromegaly.long$Disease, acromegaly.long$BMI, acromegaly.long$Fitted_Values)
-plot(acro.fitted, acro.residuals, main="Fitted vs Residuals", xlab="Fitted", ylab="Residuals", pch=19)
+interaction.plot(acromegaly.long$Disease, acromegaly.long$BMI, acromegaly.long$Fitted_Values, main="Acro-InteractionPlot")
+plot(acro.fitted, acro.residuals, main="Acro-Fitted vs Residuals", xlab="Fitted", ylab="Residuals", pch=19)
 
+################CUSHING'S###################
+cushing.fitted <- assays(cushing.cds.bmi)[["mu"]]
+fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.bmi) )
+cushing.residuals <- counts(cushing.cds.bmi, normalized=TRUE) - fitted.common.scale
+cushing.counts <- cbind(cushing.countssub, cushing.fitted)
+cushing.counts <- cushing.counts[15:28]
+cushing.counts <- cushing.counts[complete.cases(cushing.counts),]
+cushing.long1 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="Disease",times=cushing.mappingsub$group)
+cushing.long2 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="BMI",times=cushing.mappingsub$BMI)
+cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
+cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mappingsub$samplename, id.vars="row.names")
+cushing.residuals.long$BMI <- cushing.long2$BMI
+#cushing.long$Disease <-cushing.long1$Disease
+cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(25,30]", "Overweight", "Obsese")
+interaction.plot(cushing.long1$Disease, cushing.long1$BMI, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Disease", ylab="Fitted_Values")
+plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals", xlab="Fitted", ylab="Residuals", pch=19)
+plot(Residuals~BMI, cushing.residuals.long)
 
 ```
 Annotation
@@ -162,20 +187,12 @@ This step annotates the data tables with the official gene symbols.
 ```{r annotation, echo=FALSE, message=FALSE}
 
 cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
-acro.bmi.combined <- merge(acro.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+#acro.bmi.combined <- merge(acro.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
 
 #write annotated results files.
 write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_bmi.csv")
-write.csv(acro.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_bmi.csv")
+#write.csv(acro.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_bmi.csv")
 ```
-Adjusting for BMI
-------------------
-Acromegaly: The number of genes that are affected by BMI is `r sum(acro.bmi.combined$padj.bmi<0.05, na.rm=TRUE)`. The number of significant genes affected by disease is `r sum(acro.bmi.combined$padj.AcrovsControl<0.05, na.rm=TRUE)`. Genes that are affected by age and disease are `r acro.bmi.combined$external_gene_id[which(acro.bmi.combined$padj.bmi<0.05 & acro.bmi.combined$padj.AcrovsControl<0.05)]`.
-
-Cushings: the number of genes that are affected by BMI is `r sum(cushing.bmi.combined$padj.bmi<0.05, na.rm=TRUE)`. 
-The number of significant genes affected by disease is `r sum(cushing.bmi.combined$padj.CushingvsControl<0.05, na.rm=TRUE)`.
-
-Genes that are affected by age and disease are `r cushing.bmi.combined$external_gene_id[which(cushing.bmi.combined$padj.bmi<0.05 & cushing.bmi.combined$padj.CushingvsControl<0.05)]`.
 
 Session Information
 -------------------
