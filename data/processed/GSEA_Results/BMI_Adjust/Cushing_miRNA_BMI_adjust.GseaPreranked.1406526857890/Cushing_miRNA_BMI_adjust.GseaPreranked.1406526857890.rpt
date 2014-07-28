@@ -1,0 +1,23 @@
+producer_class	xtools.gsea.GseaPreranked
+producer_timestamp	1406526857890
+param	collapse	false
+param	plot_top_x	20
+param	rnk	/Users/vphan/Quynh/NextGenSeq/CushingAcroStudy/data/processed/GSEA_Cushing_BMI_adjusted_prerank_FC.rnk
+param	norm	meandiv
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.mir.v4.0.symbols.gmt
+param	gui	false
+param	chip	gseaftp.broadinstitute.org://pub/gsea/annotations/GENE_SYMBOL.chip
+param	rpt_label	Cushing_miRNA_BMI_adjust
+param	help	false
+param	out	/Users/vphan/gsea_home/output/jul28
+param	include_only_symbols	true
+param	set_min	15
+param	nperm	1000
+param	rnd_seed	149
+param	zip_report	false
+param	set_max	500
+
+file	/Users/vphan/gsea_home/output/jul28/Cushing_miRNA_BMI_adjust.GseaPreranked.1406526857890/index.html
