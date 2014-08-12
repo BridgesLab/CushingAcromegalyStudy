@@ -159,19 +159,19 @@ plot(acro.fitted, acro.residuals, main="Acro-Fitted vs Residuals", xlab="Fitted"
 cushing.fitted <- assays(cushing.cds.bmi)[["mu"]]
 fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.bmi) )
 cushing.residuals <- counts(cushing.cds.bmi, normalized=TRUE) - fitted.common.scale
-cushing.counts <- cbind(cushing.countssub, cushing.fitted)
+cushing.counts <- cbind(cushing.counts, cushing.fitted)
 cushing.counts <- cushing.counts[17:32]
 cushing.counts <- cushing.counts[complete.cases(cushing.counts),]
 cushing.long1 <- reshape(cushing.counts, direction="long", 
                            ids=rownames(cushing.counts), idvar="Genes",
                            varying=colnames(cushing.counts), v.names="Fitted_Values",
-                           timevar="Disease",times=cushing.mappingsub$group)
+                           timevar="Disease",times=cushing.mapping$group)
 cushing.long2 <- reshape(cushing.counts, direction="long", 
                            ids=rownames(cushing.counts), idvar="Genes",
                            varying=colnames(cushing.counts), v.names="Fitted_Values",
-                           timevar="BMI",times=cushing.mappingsub$BMI1)
+                           timevar="BMI",times=cushing.mapping$BMI1)
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
-cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mappingsub$samplename, id.vars="row.names")
+cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping$samplename, id.vars="row.names")
 cushing.residuals.long$BMI <- cushing.long2$BMI
 #cushing.long$Disease <-cushing.long1$Disease
 cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(0,30]", "Not Obese", "Obsese")
@@ -191,25 +191,25 @@ plot(cushing.pca, main="Scree Plot")
 plot(cushing.pca$x[,1:2], pch=20,  col=c("red","blue", "green" ))
 dev.copy2pdf(file= "figure/PCA_2d.pdf" )
 
-biplot(cushing.pca$x)
 #mycolors <- c("red", "green", "blue") # Define plotting colors.
 library(scatterplot3d) # Loads library scatterplot3d.
 scatterplot3d(cushing.pca$x[,1:3], pch=20, highlight.3d=TRUE, main="3d PCA")
 dev.copy2pdf(file= "figure/PCA_3d.pdf" )
 
+#PCA of samples
 pca <- as.data.frame(prcomp(t(na.omit(counts(cushing.cds.bmi, normalized=TRUE))))$x)
 col <- 1:2
 groups <- colData(cushing.cds.bmi)$group
 plot(PC2~PC1, data=pca, bg=col[groups], pch=20, main="PCA for samples", col=groups)
-text(pca$PC1, pca$PC2, rownames(pca), pos= 3)
+text(pca$PC1, pca$PC2, rownames(pca), pos= 2)
 dev.copy2pdf(file= "figure/PCA_samples.pdf" )
 ```
 
 Clustering
 
 ```{r kmeans, dev='pdf', echo=FALSE}
+library(RColorBrewer)
 k <- 3
-
 norm.counts <- counts(cushing.cds.bmi, normalized=TRUE)
 notAllZero <- (rowSums(norm.counts) > 0)
 norm.counts.noNA <- norm.counts[notAllZero,]
@@ -219,23 +219,25 @@ plot(norm.counts.noNA[,"2"],norm.counts.noNA[,"17"],col=niceCols[km$cluster], pc
 points(km$centers, col = niceCols[1:k], pch = 8, cex=2)
 dev.copy2pdf(file="figure/k-means.pdf")
 
-library(cluster)
-set.seed(112358)
-cl<-pam(t(scale(t(cushing.fitted.noNA))), 3)
-plot(cushing.fitted.noNA[,"2"],cushing.fitted.noNA[,"17"], col=niceCols[cl$cluster],pch=19)
-plot(cl) 
-dev.copy2pdf(file="figure/k-meloids.pdf")
+#library(cluster)
+#set.seed(112358)
+#dist <- dist(norm.counts.noNA, method="euclidean")
+#cl<-hc(dist)
+#plot(norm.counts.noNA[,"2"],norm.counts.noNA[,"17"], col=niceCols[cl$cluster],pch=19)
+#plot(cl) 
+#dev.copy2pdf(file="figure/k-meloids.pdf")
+
 ```
 
 Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
 
-```{r Cushing's effect on obese and not obese patients, echo=FALSE}
+```{r Cushing effect on obese and not obese patients, echo=FALSE}
 #library(reshape2)
 cushing.mapping.obese <- cushing.mapping[cushing.mapping$BMI1=="(30,50]",] 
 cushing.counts.obese <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.obese$samplename]
 cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~group)
 cushing.cds.obese <- DESeq(cds.cushing.obese)
-plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients adjusting for Age")
+plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients")
 cushing.results.obese <- results(cushing.cds.obese)
 sum(cushing.results.obese$padj<0.05, na.rm=TRUE)
 resultsNames(cushing.cds.obese)
@@ -270,7 +272,7 @@ fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.notObese) 
 cushing.residuals <- counts(cushing.cds.notObese, normalized=TRUE) - fitted.common.scale
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
 cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
-plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Obese", xlab="Fitted", ylab="Residuals", pch=19)
+plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals notObese", xlab="Fitted", ylab="Residuals", pch=19)
 
 ```
 
@@ -282,8 +284,8 @@ This step annotates the data tables with the official gene symbols.
 ```{r annotation, echo=FALSE, message=FALSE}
 
 cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
-cushing.group.obese <- merge(cushing.group.obese, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
-cushing.group.notObese <- merge(cushing.group.notObese, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+cushing.group.obese <- merge(cushing.group.obese, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+cushing.group.notObese <- merge(cushing.group.notObese, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
 
 #write annotated results files.
 write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_Cushings_bmi.csv")
