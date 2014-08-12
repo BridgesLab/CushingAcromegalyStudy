@@ -35,7 +35,10 @@ transcript.counts <- transcript.counts[,-1]
 #mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
-levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+#levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
+levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
+levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
 
 #this command removes the cushings samples
 acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's" & mapping$patient!=remove_patient,])
@@ -152,8 +155,10 @@ acromegaly.long2 <- reshape(acromegaly.protein.coding, direction="long",
                            timevar="BMI",times=acromegaly.mapping$BMI1)
 acromegaly.long$Disease <-acromegaly.long1$Disease
 acromegaly.long$BMI <- ifelse(acromegaly.long2$BMI=="(0,25]", "Normal", ifelse(acromegaly.long2$BMI=="(25,30]", "Overweight", "Obsese"))
+par(mfrow=c(1,2))
 interaction.plot(acromegaly.long$Disease, acromegaly.long$BMI, acromegaly.long$Fitted_Values, main="Acro-InteractionPlot", ylab="Mean of Fitted Values", xlab="Disease")
 plot(acro.fitted, acro.residuals, main="Acro-Fitted vs Residuals", xlab="Fitted", ylab="Residuals", pch=19)
+dev.copy2pdf(file="figure/Acro_interaction_plot.pdf")
 
 ################CUSHING'S###################
 cushing.fitted <- assays(cushing.cds.bmi)[["mu"]]
@@ -175,9 +180,11 @@ cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", va
 cushing.residuals.long$BMI <- cushing.long2$BMI
 #cushing.long$Disease <-cushing.long1$Disease
 cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(0,30]", "Not Obese", "Obsese")
+par(mfrow=c(2,2))
 interaction.plot(cushing.long1$Disease, cushing.long1$BMI, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Disease", ylab="Mean of Fitted Values")
 plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals", xlab="Fitted", ylab="Residuals", pch=19)
 plot(Residuals~BMI, cushing.residuals.long)
+dev.copy2pdf(file="figure/Cushing_interaction_plot.pdf")
 ```
 
 
@@ -187,12 +194,14 @@ cushing.fitted.noNA <- cushing.fitted[complete.cases(cushing.fitted),]
 cushing.pca <- prcomp(cushing.fitted.noNA,scale=TRUE)
 summary(cushing.pca)
 #scree plot
+par(mfrow=c(1,2))
 plot(cushing.pca, main="Scree Plot")
 plot(cushing.pca$x[,1:2], pch=20,  col=c("red","blue", "green" ))
 dev.copy2pdf(file= "figure/PCA_2d.pdf" )
 
 #mycolors <- c("red", "green", "blue") # Define plotting colors.
 library(scatterplot3d) # Loads library scatterplot3d.
+par(mfrow=c(1,1))
 scatterplot3d(cushing.pca$x[,1:3], pch=20, highlight.3d=TRUE, main="3d PCA")
 dev.copy2pdf(file= "figure/PCA_3d.pdf" )
 
