@@ -48,6 +48,7 @@ cushing.counts <- transcript.counts[,cushing.mapping$samplename]
 #break bmi into normal, overweight, obese
 acromegaly.mapping$BMI1 <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
 cushing.mapping$BMI1 <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
+cushing.mapping$ageSq <- cushing.mapping$age^2
 ```
 
 This step gets the protein coding genes only.
@@ -68,10 +69,10 @@ acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%tr
 ```
 Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
 
-```{r Cushing's effect on obese and not obese patients, echo=FALSE}
+```{r Cushing effect on obese and not obese patients, echo=FALSE}
 cushing.mapping.obese <- cushing.mapping[cushing.mapping$BMI1=="(30,50]",] 
 cushing.counts.obese <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.obese$samplename]
-cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~age+group)
+cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~age+ageSq+group)
 cushing.cds.obese <- DESeq(cds.cushing.obese)
 plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients adjusting for Age")
 cushing.results.obese <- results(cushing.cds.obese)
@@ -99,20 +100,21 @@ cushing.long1 <- reshape(cushing.counts, direction="long",
 cushing.long2 <- reshape(cushing.counts, direction="long", 
                            ids=rownames(cushing.counts), idvar="Genes",
                            varying=colnames(cushing.counts), v.names="Fitted_Values",
-                           timevar="Age",times=cushing.mapping.obese$age)
+                           timevar="AgeSq",times=cushing.mapping.obese$ageSq)
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
 cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
-cushing.residuals.long$Age <- cushing.long2$Age
+cushing.residuals.long$AgeSq <- cushing.long2$AgeSq
 cushing.residuals.long$Disease <- cushing.long1$Disease
-cushing.long1$Age <-cushing.long2$Age
+cushing.long1$AgeSq <-cushing.long2$AgeSq
 #cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(0,30]", "Not Obese", "Obsese")
-interaction.plot(cushing.long1$Age, cushing.long1$Disease, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Age", ylab="Mean of Fitted Values")
+interaction.plot(cushing.long1$AgeSq, cushing.long1$Disease, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Age", ylab="Mean of Fitted Values")
 plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Obese", xlab="Fitted", ylab="Residuals", pch=19)
-plot(Residuals~Disease, cushing.residuals.long, main="Obese patients")
+
+plot(age~Fitted_Values, cushing.long1, main="Obese patients")
 
 
 
-###########################
+###########################NOT OBESE ###############
 cushing.mapping.notObese$age1 <- cut(cushing.mapping.notObese$age, breaks=c(0,40,100))
 cushing.mapping.notObese <- cushing.mapping[cushing.mapping$BMI1=="(0,30]",]
 cushing.counts.notObese <-cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.notObese$samplename]
