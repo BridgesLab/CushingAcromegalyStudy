@@ -6,14 +6,18 @@ Making the input file
 
 ```{r Read-data, echo=FALSE}
 
-deseq2.Cushing <- "../data/processed/Annotated_Results_GRCh37.74_Cushings_bmi.csv"
+deseq2.Cushing <- "../data/processed/Annotated_Results_Cushings_bmi.csv"
+cushing.obese <- "../data/processed/Annotated_Results_Cushings_Obese.csv"
+cushing.notobese <- "../data/processed/Annotated_Results_Cushings_NotObese.csv"
 deseq2.Acromegaly <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
 deseq2.Cushing.results <- read.csv(deseq2.Cushing, row.names="X")
+cushing.obese.results <- read.csv(cushing.obese, row.names="X")
+cushing.notobese.results <- read.csv(cushing.notobese, row.names="X")
 deseq2.Acromegaly.results <- read.csv(deseq2.Acromegaly, row.names="X")
 
 #order by pvalue and get rid of those with NA foldchange
 Acromegaly.results.noNA <- deseq2.Acromegaly.results[which(deseq2.Acromegaly.results$padj != 'NA'),]
-Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FoldChange),]
+#Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FoldChange,decreasing=TRUE),]
 Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$padj),c(7,6)]
 #get rid of duplicate genes
 Acromegaly.results.noDup <- Acromegaly.results.noNA[!duplicated(Acromegaly.results.noNA$external_gene_id),]
@@ -22,13 +26,30 @@ write.table(Acromegaly.results.noDup, file=acromegaly_data_file, sep="\t", quote
 
 #order by pvalue and get rid of those with NA pvalues
 cushing.results.noNA <- deseq2.Cushing.results[which(deseq2.Cushing.results$padj != 'NA'),]
-cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$log2FoldChange),]
-cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$padj),c(20,19)]
+cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$log2FoldChange,decreasing=TRUE),c(20,15)]
+#cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$padj),c(20,19)]
 #get rid of duplicate genes
 cushing.results.noDup <- cushing.results.noNA[!duplicated(cushing.results.noNA$external_gene_id),]
 cushing_data_file <- "../data/processed/GSEA_Cushing_BMI_adjusted_prerank_FC.rnk"
 write.table(cushing.results.noDup, file=cushing_data_file, sep="\t", row.names=FALSE, quote=FALSE)
 
+###### Cushing OBESE ############
+cushing.obese.noNA <- cushing.obese.results[which(cushing.obese.results$padj != 'NA'),]
+cushing.obese.noNA <- cushing.obese.noNA[order(cushing.obese.noNA$log2FoldChange,decreasing=TRUE), c(8,3)]
+#cushing.obese.noNA <- cushing.obese.noNA[order(cushing.obese.noNA$padj, decreasing=TRUE),c(8,7)]
+#get rid of duplicate genes
+cushing.obese.noDup <- cushing.obese.noNA[!duplicated(cushing.obese.noNA$external_gene_id),]
+cushing_obese_file <- "../data/processed/GSEA_Cushing_Obese_prerank_FC.rnk"
+write.table(cushing.obese.noDup, file=cushing_obese_file, sep="\t", row.names=FALSE, quote=FALSE)
+
+###### Cushing Not OBESE ############
+cushing.notobese.noNA <- cushing.notobese.results[which(cushing.notobese.results$padj != 'NA'),]
+cushing.notobese.noNA <- cushing.notobese.noNA[order(cushing.notobese.noNA$log2FoldChange,decreasing=TRUE),c(8,3)]
+#cushing.notobese.noNA <- cushing.notobese.noNA[order(cushing.notobese.noNA$padj),c(8,7)]
+#get rid of duplicate genes
+cushing.notobese.noDup <- cushing.notobese.noNA[!duplicated(cushing.notobese.noNA$external_gene_id),]
+cushing_notobese_file <- "../data/processed/GSEA_Cushing_NOTObese_prerank_FC.rnk"
+write.table(cushing.notobese.noDup, file=cushing_notobese_file, sep="\t", row.names=FALSE, quote=FALSE)
 
 ```
 
