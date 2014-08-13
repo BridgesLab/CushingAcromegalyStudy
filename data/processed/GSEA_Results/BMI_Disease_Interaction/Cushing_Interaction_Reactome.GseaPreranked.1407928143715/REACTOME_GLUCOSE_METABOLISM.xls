@@ -1,0 +1,54 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	FBP1	FBP1	fructose-1,6-bisphosphatase 1	11	2.0398786067962646	0.07929794	No	
+row_1	PGM2	PGM2	phosphoglucomutase 2	726	0.7494733929634094	0.048702206	No	
+row_2	PGAM2	PGAM2	phosphoglycerate mutase 2 (muscle)	1027	0.6132864356040955	0.04758147	No	
+row_3	GAPDHS	GAPDHS	glyceraldehyde-3-phosphate dehydrogenase, spermatogenic	1271	0.5378758311271667	0.04829058	No	
+row_4	PFKP	PFKP	phosphofructokinase, platelet	1874	0.4010413587093353	0.013414726	No	
+row_5	PFKM	PFKM	phosphofructokinase, muscle	1942	0.3890574276447296	0.023078512	No	
+row_6	MDH1	MDH1	malate dehydrogenase 1, NAD (soluble)	2101	0.3642287254333496	0.024109779	No	
+row_7	PRKACB	PRKACB	protein kinase, cAMP-dependent, catalytic, beta	2492	0.3045346438884735	0.0032746638	No	
+row_8	CALM3	CALM3	calmodulin 3 (phosphorylase kinase, delta)	2536	0.2999750077724457	0.01145424	No	
+row_9	GOT2	GOT2	glutamic-oxaloacetic transaminase 2, mitochondrial (aspartate aminotransferase 2)	3753	0.1628330498933792	-0.084447175	No	
+row_10	PHKA2	PHKA2	phosphorylase kinase, alpha 2 (liver)	4149	0.13072186708450317	-0.11253858	No	
+row_11	SLC25A13	SLC25A13	solute carrier family 25, member 13 (citrin)	4182	0.12758763134479523	-0.110213116	No	
+row_12	GPI	GPI	glucose phosphate isomerase	4959	0.06617578119039536	-0.17289749	No	
+row_13	PCK1	PCK1	phosphoenolpyruvate carboxykinase 1 (soluble)	5198	0.04837677627801895	-0.1910185	No	
+row_14	GYG1	GYG1	glycogenin 1	5829	0.0028024588245898485	-0.24391182	No	
+row_15	CALM2	CALM2	calmodulin 2 (phosphorylase kinase, delta)	5928	-0.004098257515579462	-0.25199565	No	
+row_16	PHKG2	PHKG2	phosphorylase kinase, gamma 2 (testis)	5945	-0.005478539504110813	-0.2531263	No	
+row_17	PPP2R1B	PPP2R1B	protein phosphatase 2 (formerly 2A), regulatory subunit A (PR 65), beta isoform	6112	-0.015945659950375557	-0.26646522	No	
+row_18	PHKG1	PHKG1	phosphorylase kinase, gamma 1 (muscle)	6763	-0.062175944447517395	-0.31870618	No	
+row_19	PPP2CA	PPP2CA	protein phosphatase 2 (formerly 2A), catalytic subunit, alpha isoform	6777	-0.06348665803670883	-0.31730312	No	
+row_20	GOT1	GOT1	glutamic-oxaloacetic transaminase 1, soluble (aspartate aminotransferase 1)	6904	-0.07231513410806656	-0.32505986	No	
+row_21	PPP2CB	PPP2CB	protein phosphatase 2 (formerly 2A), catalytic subunit, beta isoform	6994	-0.08000059425830841	-0.32940143	No	
+row_22	PFKFB2	PFKFB2	6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 2	7234	-0.09592388570308685	-0.34573668	No	
+row_23	GYG2	GYG2	glycogenin 2	7558	-0.12116961181163788	-0.3681462	No	
+row_24	PPP2R5D	PPP2R5D	protein phosphatase 2, regulatory subunit B (B56), delta isoform	7853	-0.1408548802137375	-0.3873417	No	
+row_25	ENO3	ENO3	enolase 3 (beta, muscle)	8688	-0.20645926892757416	-0.44938874	No	
+row_26	GAPDH	GAPDH	glyceraldehyde-3-phosphate dehydrogenase	8777	-0.2130449414253235	-0.44841388	No	
+row_27	UGP2	UGP2	UDP-glucose pyrophosphorylase 2	8814	-0.21630078554153442	-0.4429361	No	
+row_28	PPP2R1A	PPP2R1A	protein phosphatase 2 (formerly 2A), regulatory subunit A (PR 65), alpha isoform	8894	-0.22364741563796997	-0.44078708	No	
+row_29	PGAM1	PGAM1	phosphoglycerate mutase 1 (brain)	9178	-0.24928541481494904	-0.4547928	No	
+row_30	PCK2	PCK2	phosphoenolpyruvate carboxykinase 2 (mitochondrial)	9573	-0.28949517011642456	-0.4765559	No	
+row_31	SLC25A12	SLC25A12	solute carrier family 25 (mitochondrial carrier, Aralar), member 12	9706	-0.3026473820209503	-0.47575903	No	
+row_32	SLC25A11	SLC25A11	solute carrier family 25 (mitochondrial carrier; oxoglutarate carrier), member 11	9750	-0.30777794122695923	-0.4672726	No	
+row_33	PHKB	PHKB	phosphorylase kinase, beta	9839	-0.3168763220310211	-0.4622143	No	
+row_34	PYGB	PYGB	phosphorylase, glycogen; brain	10227	-0.3653082549571991	-0.48040694	Yes	
+row_35	PFKL	PFKL	phosphofructokinase, liver	10250	-0.36917057633399963	-0.46773928	Yes	
+row_36	PC	PC	pyruvate carboxylase	10561	-0.41660141944885254	-0.47743648	Yes	
+row_37	ENO1	ENO1	enolase 1, (alpha)	10803	-0.46413031220436096	-0.47945935	Yes	
+row_38	PYGL	PYGL	phosphorylase, glycogen; liver (Hers disease, glycogen storage disease type VI)	10850	-0.4734654426574707	-0.46470922	Yes	
+row_39	CALM1	CALM1	calmodulin 1 (phosphorylase kinase, delta)	11029	-0.516349196434021	-0.45937806	Yes	
+row_40	ALDOA	ALDOA	aldolase A, fructose-bisphosphate	11053	-0.5218806862831116	-0.44078884	Yes	
+row_41	AGL	AGL	amylo-1, 6-glucosidase, 4-alpha-glucanotransferase (glycogen debranching enzyme, glycogen storage disease type III)	11072	-0.5299157500267029	-0.42146295	Yes	
+row_42	PRKACA	PRKACA	protein kinase, cAMP-dependent, catalytic, alpha	11353	-0.6332103610038757	-0.42011747	Yes	
+row_43	PFKFB1	PFKFB1	6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 1	11434	-0.6707987785339355	-0.40046722	Yes	
+row_44	PYGM	PYGM	phosphorylase, glycogen; muscle (McArdle syndrome, glycogen storage disease type V)	11519	-0.7260270714759827	-0.3789815	Yes	
+row_45	PFKFB3	PFKFB3	6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 3	11652	-0.8516986966133118	-0.3565918	Yes	
+row_46	GBE1	GBE1	glucan (1,4-alpha-), branching enzyme 1 (glycogen branching enzyme, Andersen disease, glycogen storage disease type IV)	11766	-1.0018450021743774	-0.3266987	Yes	
+row_47	GYS1	GYS1	glycogen synthase 1 (muscle)	11803	-1.068216323852539	-0.28771713	Yes	
+row_48	PGM1	PGM1	phosphoglucomutase 1	11831	-1.1350144147872925	-0.2453514	Yes	
+row_49	ALDOC	ALDOC	aldolase C, fructose-bisphosphate	11868	-1.265086054801941	-0.19862746	Yes	
+row_50	SLC25A1	SLC25A1	solute carrier family 25 (mitochondrial carrier; citrate transporter), member 1	11869	-1.2733514308929443	-0.14854969	Yes	
+row_51	SLC25A10	SLC25A10	solute carrier family 25 (mitochondrial carrier; dicarboxylate transporter), member 10	11888	-1.3761157989501953	-0.09594483	Yes	
+row_52	GYS2	GYS2	glycogen synthase 2 (liver)	11938	-2.544459104537964	-2.397428E-8	Yes	

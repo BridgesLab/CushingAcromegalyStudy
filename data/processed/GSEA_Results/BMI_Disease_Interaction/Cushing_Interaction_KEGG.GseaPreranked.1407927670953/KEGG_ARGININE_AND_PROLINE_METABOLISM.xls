@@ -1,0 +1,40 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	GATM	GATM	glycine amidinotransferase (L-arginine:glycine amidinotransferase)	436	0.9362416863441467	0.027611053	No	
+row_1	NOS3	NOS3	nitric oxide synthase 3 (endothelial cell)	459	0.9151248335838318	0.088562876	No	
+row_2	AMD1	AMD1	adenosylmethionine decarboxylase 1	1583	0.45863640308380127	0.025667116	No	
+row_3	SMS	SMS	spermine synthase	2124	0.3589183986186981	0.0049197883	No	
+row_4	PRODH	PRODH	proline dehydrogenase (oxidase) 1	2280	0.3354487419128418	0.014914793	No	
+row_5	ODC1	ODC1	ornithine decarboxylase 1	3092	0.2303587794303894	-0.037428066	No	
+row_6	SAT2	SAT2	spermidine/spermine N1-acetyltransferase 2	3101	0.22972045838832855	-0.022335738	No	
+row_7	OAT	OAT	ornithine aminotransferase (gyrate atrophy)	3593	0.17695647478103638	-0.05145258	No	
+row_8	GOT2	GOT2	glutamic-oxaloacetic transaminase 2, mitochondrial (aspartate aminotransferase 2)	3753	0.1628330498933792	-0.053639483	No	
+row_9	ADC	ADC	arginine decarboxylase	3967	0.1447492092847824	-0.061605208	No	
+row_10	ALDH4A1	ALDH4A1	aldehyde dehydrogenase 4 family, member A1	4030	0.14103572070598602	-0.0571367	No	
+row_11	P4HA1	P4HA1	procollagen-proline, 2-oxoglutarate 4-dioxygenase (proline 4-hydroxylase), alpha polypeptide I	4304	0.1156594380736351	-0.07214073	No	
+row_12	PYCR2	PYCR2	pyrroline-5-carboxylate reductase family, member 2	5228	0.04611798748373985	-0.1465389	No	
+row_13	CKMT2	CKMT2	creatine kinase, mitochondrial 2 (sarcomeric)	5261	0.04325646162033081	-0.1462595	No	
+row_14	GLS	GLS	glutaminase	5454	0.02926616370677948	-0.16038556	No	
+row_15	P4HA2	P4HA2	procollagen-proline, 2-oxoglutarate 4-dioxygenase (proline 4-hydroxylase), alpha polypeptide II	5468	0.028398362919688225	-0.15952915	No	
+row_16	LAP3	LAP3	leucine aminopeptidase 3	6394	-0.03548962250351906	-0.23482476	No	
+row_17	GOT1	GOT1	glutamic-oxaloacetic transaminase 1, soluble (aspartate aminotransferase 1)	6904	-0.07231513410806656	-0.27263525	No	
+row_18	P4HA3	P4HA3	procollagen-proline, 2-oxoglutarate 4-dioxygenase (proline 4-hydroxylase), alpha polypeptide III	6909	-0.07269708067178726	-0.26798254	No	
+row_19	GLUD1	GLUD1	glutamate dehydrogenase 1	7917	-0.1470891535282135	-0.34251037	No	
+row_20	ALDH18A1	ALDH18A1	aldehyde dehydrogenase 18 family, member A1	9216	-0.2533508241176605	-0.43419975	No	
+row_21	ASL	ASL	argininosuccinate lyase	9563	-0.2888180911540985	-0.44345522	Yes	
+row_22	ALDH1B1	ALDH1B1	aldehyde dehydrogenase 1 family, member B1	9707	-0.30268245935440063	-0.4347004	Yes	
+row_23	ALDH2	ALDH2	aldehyde dehydrogenase 2 family (mitochondrial)	10025	-0.3392234444618225	-0.4380598	Yes	
+row_24	SRM	SRM	spermidine synthase	10044	-0.3410840630531311	-0.41616547	Yes	
+row_25	ARG2	ARG2	arginase, type II	10612	-0.4267430305480957	-0.43452722	Yes	
+row_26	MAOA	MAOA	monoamine oxidase A	10638	-0.4312375485897064	-0.40703434	Yes	
+row_27	ALDH7A1	ALDH7A1	aldehyde dehydrogenase 7 family, member A1	10752	-0.4533115327358246	-0.38542154	Yes	
+row_28	CPS1	CPS1	carbamoyl-phosphate synthetase 1, mitochondrial	10821	-0.46700069308280945	-0.35908785	Yes	
+row_29	ALDH3A2	ALDH3A2	aldehyde dehydrogenase 3 family, member A2	10859	-0.47477924823760986	-0.32961532	Yes	
+row_30	GLUL	GLUL	glutamate-ammonia ligase (glutamine synthetase)	10915	-0.4871659576892853	-0.30080533	Yes	
+row_31	MAOB	MAOB	monoamine oxidase B	10924	-0.4894249439239502	-0.26789075	Yes	
+row_32	GAMT	GAMT	guanidinoacetate N-methyltransferase	11002	-0.5101746916770935	-0.23935053	Yes	
+row_33	PYCRL	PYCRL	pyrroline-5-carboxylate reductase-like	11091	-0.5377092957496643	-0.20984511	Yes	
+row_34	ASS1	ASS1	argininosuccinate synthetase 1	11299	-0.6107672452926636	-0.18532608	Yes	
+row_35	CKB	CKB	creatine kinase, brain	11526	-0.7342788577079773	-0.1539277	Yes	
+row_36	SAT1	SAT1	spermidine/spermine N1-acetyltransferase 1	11529	-0.7394838333129883	-0.10334858	Yes	
+row_37	ACY1	ACY1	aminoacylase 1	11584	-0.780708372592926	-0.054310184	Yes	
+row_38	ALDH9A1	ALDH9A1	aldehyde dehydrogenase 9 family, member A1	11861	-1.2236627340316772	0.006470556	Yes	

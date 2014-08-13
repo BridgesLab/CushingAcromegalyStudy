@@ -1,0 +1,80 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	PTPRC	PTPRC	protein tyrosine phosphatase, receptor type, C	122	1.4036223888397217	0.023330402	Yes	
+row_1	ITGB2	ITGB2	integrin, beta 2 (complement component 3 receptor 3 and 4 subunit)	132	1.381990909576416	0.055670552	Yes	
+row_2	CNTN1	CNTN1	contactin 1	178	1.2891817092895508	0.08275249	Yes	
+row_3	SELL	SELL	selectin L (lymphocyte adhesion molecule 1)	182	1.283226728439331	0.11323311	Yes	
+row_4	CD86	CD86	CD86 molecule	254	1.1721020936965942	0.13531873	Yes	
+row_5	ITGA4	ITGA4	integrin, alpha 4 (antigen CD49D, alpha 4 subunit of VLA-4 receptor)	255	1.1715953350067139	0.1633787	Yes	
+row_6	HLA-C	HLA-C	major histocompatibility complex, class I, C	275	1.1283752918243408	0.18880153	Yes	
+row_7	ITGAM	ITGAM	integrin, alpha M (complement component 3 receptor 3 subunit)	297	1.0869697332382202	0.21306404	Yes	
+row_8	ALCAM	ALCAM	activated leukocyte cell adhesion molecule	311	1.0698810815811157	0.23759182	Yes	
+row_9	SPN	SPN	sialophorin (leukosialin, CD43)	332	1.0423206090927124	0.2608693	Yes	
+row_10	ICAM1	ICAM1	intercellular adhesion molecule 1 (CD54), human rhinovirus receptor	394	0.9689484238624573	0.2789325	Yes	
+row_11	HLA-DQA1	HLA-DQA1	major histocompatibility complex, class II, DQ alpha 1	402	0.9604436755180359	0.30134514	Yes	
+row_12	HLA-B	HLA-B	major histocompatibility complex, class I, B	424	0.9470336437225342	0.32225615	Yes	
+row_13	CD4	CD4	CD4 molecule	486	0.8956335186958313	0.33856344	Yes	
+row_14	HLA-DQB1	HLA-DQB1	major histocompatibility complex, class II, DQ beta 1	544	0.8521199226379395	0.35416582	Yes	
+row_15	HLA-DRB1	HLA-DRB1	major histocompatibility complex, class II, DR beta 1	647	0.7893620729446411	0.3644709	Yes	
+row_16	CADM3	null	null	648	0.7889497876167297	0.38336644	Yes	
+row_17	VCAM1	VCAM1	vascular cell adhesion molecule 1	654	0.7854335308074951	0.40175617	Yes	
+row_18	CD22	CD22	CD22 molecule	692	0.764237642288208	0.4169401	Yes	
+row_19	CLDN7	CLDN7	claudin 7	733	0.7467314600944519	0.4314518	Yes	
+row_20	SELPLG	SELPLG	selectin P ligand	787	0.7203397750854492	0.4442353	Yes	
+row_21	CD6	CD6	CD6 molecule	844	0.6936517357826233	0.4561267	Yes	
+row_22	ITGAL	ITGAL	integrin, alpha L (antigen CD11A (p180), lymphocyte function-associated antigen 1; alpha polypeptide)	927	0.654926598072052	0.46489832	Yes	
+row_23	CD40	CD40	CD40 molecule, TNF receptor superfamily member 5	1064	0.5974285006523132	0.46773976	Yes	
+row_24	CD28	CD28	CD28 molecule	1081	0.5936495661735535	0.48060873	Yes	
+row_25	CD2	CD2	CD2 molecule	1123	0.5814879536628723	0.4910785	Yes	
+row_26	CLDN22	CLDN22	claudin 22	1126	0.5807448625564575	0.50481886	Yes	
+row_27	MPZ	MPZ	myelin protein zero (Charcot-Marie-Tooth neuropathy 1B)	1162	0.5702345967292786	0.515525	Yes	
+row_28	HLA-E	HLA-E	major histocompatibility complex, class I, E	1171	0.5688918828964233	0.5284755	Yes	
+row_29	NFASC	NFASC	neurofascin homolog (chicken)	1189	0.5647954940795898	0.5405691	Yes	
+row_30	PECAM1	PECAM1	platelet/endothelial cell adhesion molecule (CD31 antigen)	1248	0.5457707643508911	0.5487501	Yes	
+row_31	ICAM2	ICAM2	intercellular adhesion molecule 2	1277	0.5353649854660034	0.5592113	Yes	
+row_32	JAM2	JAM2	junctional adhesion molecule 2	1312	0.5249322056770325	0.5689168	Yes	
+row_33	CLDN5	CLDN5	claudin 5 (transmembrane protein deleted in velocardiofacial syndrome)	1313	0.5248610973358154	0.58148736	Yes	
+row_34	ITGB7	ITGB7	integrin, beta 7	1595	0.4550536572933197	0.5686929	No	
+row_35	ITGAV	ITGAV	integrin, alpha V (vitronectin receptor, alpha polypeptide, antigen CD51)	1596	0.4546835124492645	0.5795827	No	
+row_36	SDC4	SDC4	syndecan 4 (amphiglycan, ryudocan)	1775	0.4214828908443451	0.5746688	No	
+row_37	CLDN15	CLDN15	claudin 15	1899	0.3963041603565216	0.5737894	No	
+row_38	SDC3	SDC3	syndecan 3 (N-syndecan)	1940	0.3895041048526764	0.5797455	No	
+row_39	PVRL2	PVRL2	poliovirus receptor-related 2 (herpesvirus entry mediator B)	2164	0.3536311388015747	0.5694123	No	
+row_40	CNTNAP1	CNTNAP1	contactin associated protein 1	2413	0.314523845911026	0.5560346	No	
+row_41	ESAM	ESAM	endothelial cell adhesion molecule	2618	0.288444459438324	0.5457423	No	
+row_42	NLGN2	NLGN2	neuroligin 2	2765	0.26940616965293884	0.53988427	No	
+row_43	HLA-DRB5	HLA-DRB5	major histocompatibility complex, class II, DR beta 5	2786	0.266025185585022	0.5445693	No	
+row_44	VCAN	null	null	2814	0.26176393032073975	0.54856205	No	
+row_45	HLA-DPA1	HLA-DPA1	major histocompatibility complex, class II, DP alpha 1	2819	0.2611694037914276	0.5544799	No	
+row_46	GLG1	GLG1	golgi apparatus protein 1	3163	0.22270461916923523	0.53089297	No	
+row_47	HLA-A	HLA-A	major histocompatibility complex, class I, A	3236	0.2152717411518097	0.5299779	No	
+row_48	CDH5	CDH5	cadherin 5, type 2, VE-cadherin (vascular epithelium)	3275	0.20992712676525116	0.5318017	No	
+row_49	CD276	CD276	CD276 molecule	3591	0.17703424394130707	0.50948185	No	
+row_50	ITGA8	ITGA8	integrin, alpha 8	3625	0.17450442910194397	0.5108788	No	
+row_51	ICOSLG	ICOSLG	inducible T-cell co-stimulator ligand	3722	0.16557611525058746	0.5067499	No	
+row_52	NLGN4X	NLGN4X	neuroligin 4, X-linked	4003	0.14244835078716278	0.48655283	No	
+row_53	SELP	SELP	selectin P (granule membrane protein 140kDa, antigen CD62)	4221	0.12429369240999222	0.47123292	No	
+row_54	F11R	F11R	F11 receptor	4390	0.10959379374980927	0.45969245	No	
+row_55	PVR	PVR	poliovirus receptor	4403	0.10797347128391266	0.46126664	No	
+row_56	CD58	CD58	CD58 molecule	4574	0.0953797772526741	0.4492171	No	
+row_57	PVRL1	PVRL1	poliovirus receptor-related 1 (herpesvirus entry mediator C; nectin)	5101	0.05532143637537956	0.40619132	No	
+row_58	CD34	CD34	CD34 molecule	5195	0.048487283289432526	0.3995111	No	
+row_59	CD99	CD99	CD99 molecule	5444	0.03016892820596695	0.37932304	No	
+row_60	ITGA6	ITGA6	integrin, alpha 6	5469	0.028383010998368263	0.3779792	No	
+row_61	SIGLEC1	SIGLEC1	sialic acid binding Ig-like lectin 1, sialoadhesin	5478	0.02762717753648758	0.37796634	No	
+row_62	JAM3	JAM3	junctional adhesion molecule 3	5664	0.01522869523614645	0.3627324	No	
+row_63	SDC2	SDC2	syndecan 2 (heparan sulfate proteoglycan 1, cell surface-associated, fibroglycan)	5776	0.006904806010425091	0.3535386	No	
+row_64	MPZL1	MPZL1	myelin protein zero-like 1	5901	-0.002605374436825514	0.3431457	No	
+row_65	PVRL3	PVRL3	poliovirus receptor-related 3	6515	-0.044717807322740555	0.29253036	No	
+row_66	ICAM3	ICAM3	intercellular adhesion molecule 3	6527	-0.045628588646650314	0.29269567	No	
+row_67	ITGA9	ITGA9	integrin, alpha 9	6804	-0.06534070521593094	0.2709891	No	
+row_68	ITGB1	ITGB1	integrin, beta 1 (fibronectin receptor, beta polypeptide, antigen CD29 includes MDF2, MSK12)	9549	-0.2874462604522705	0.046507563	No	
+row_69	PTPRM	PTPRM	protein tyrosine phosphatase, receptor type, M	10100	-0.34844714403152466	0.008478583	No	
+row_70	NEGR1	NEGR1	neuronal growth regulator 1	10124	-0.3514711558818817	0.014957108	No	
+row_71	NEO1	NEO1	neogenin homolog 1 (chicken)	10313	-0.3775380253791809	0.008147628	No	
+row_72	HLA-DRA	HLA-DRA	major histocompatibility complex, class II, DR alpha	10646	-0.4321039319038391	-0.009496639	No	
+row_73	PDCD1LG2	PDCD1LG2	programmed cell death 1 ligand 2	11005	-0.5110706090927124	-0.027441878	No	
+row_74	HLA-DPB1	HLA-DPB1	major histocompatibility complex, class II, DP beta 1	11332	-0.6248559355735779	-0.03996379	No	
+row_75	PTPRF	PTPRF	protein tyrosine phosphatase, receptor type, F	11505	-0.7143672704696655	-0.037357055	No	
+row_76	NRCAM	NRCAM	neuronal cell adhesion molecule	11612	-0.8045364618301392	-0.027025826	No	
+row_77	CADM1	null	null	11796	-1.0545411109924316	-0.017199341	No	
+row_78	NLGN1	NLGN1	neuroligin 1	11856	-1.2145259380340576	0.0069141313	No	

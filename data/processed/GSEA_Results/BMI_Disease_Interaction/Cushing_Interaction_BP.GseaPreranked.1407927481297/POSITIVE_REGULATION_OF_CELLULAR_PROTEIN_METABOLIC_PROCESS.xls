@@ -1,0 +1,48 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	TLR8	TLR8	toll-like receptor 8	65	1.550218939781189	0.06905184	Yes	
+row_1	TLR7	TLR7	toll-like receptor 7	102	1.4539470672607422	0.13591458	Yes	
+row_2	SPN	SPN	sialophorin (leukosialin, CD43)	332	1.0423206090927124	0.1667614	Yes	
+row_3	TLR6	TLR6	toll-like receptor 6	551	0.8461346626281738	0.18910272	Yes	
+row_4	CARD14	CARD14	caspase recruitment domain family, member 14	703	0.7601208686828613	0.21294346	Yes	
+row_5	LYN	LYN	v-yes-1 Yamaguchi sarcoma viral related oncogene homolog	778	0.7223382592201233	0.24144298	Yes	
+row_6	TLR1	TLR1	toll-like receptor 1	858	0.6860516667366028	0.26777777	Yes	
+row_7	BCL3	BCL3	B-cell CLL/lymphoma 3	902	0.6669305562973022	0.2962207	Yes	
+row_8	HCLS1	HCLS1	hematopoietic cell-specific Lyn substrate 1	937	0.6509138345718384	0.3246505	Yes	
+row_9	TPP1	TPP1	tripeptidyl peptidase I	1076	0.5948792695999146	0.3416414	Yes	
+row_10	CD28	CD28	CD28 molecule	1081	0.5936495661735535	0.36984125	Yes	
+row_11	CLCF1	CLCF1	cardiotrophin-like cytokine factor 1	1099	0.5886897444725037	0.39670953	Yes	
+row_12	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	1100	0.5886008143424988	0.42500308	Yes	
+row_13	BCL10	BCL10	B-cell CLL/lymphoma 10	1374	0.5059618949890137	0.4263676	Yes	
+row_14	BRCA1	BRCA1	breast cancer 1, early onset	1486	0.47858569025993347	0.4400388	Yes	
+row_15	UBE2D1	UBE2D1	ubiquitin-conjugating enzyme E2D 1 (UBC4/5 homolog, yeast)	1922	0.39229148626327515	0.42231673	No	
+row_16	TNFRSF8	TNFRSF8	tumor necrosis factor receptor superfamily, member 8	1991	0.3804842233657837	0.43488815	No	
+row_17	MAPT	MAPT	microtubule-associated protein tau	2487	0.30518805980682373	0.40793365	No	
+row_18	ATG7	ATG7	ATG7 autophagy related 7 homolog (S. cerevisiae)	2835	0.2599155008792877	0.3912483	No	
+row_19	TLR4	TLR4	toll-like receptor 4	2924	0.24934183061122894	0.395834	No	
+row_20	CD276	CD276	CD276 molecule	3591	0.17703424394130707	0.34833986	No	
+row_21	CCND3	CCND3	cyclin D3	3772	0.16165874898433685	0.34097442	No	
+row_22	TLR3	TLR3	toll-like receptor 3	4187	0.1273282915353775	0.31228167	No	
+row_23	CCND2	CCND2	cyclin D2	4719	0.08497776091098785	0.2717146	No	
+row_24	ARF6	ARF6	ADP-ribosylation factor 6	4825	0.07647567242383957	0.26656127	No	
+row_25	GLMN	GLMN	glomulin, FKBP associated protein	4872	0.07296474277973175	0.26620048	No	
+row_26	CLN6	CLN6	ceroid-lipofuscinosis, neuronal 6, late infantile, variant	5021	0.061251409351825714	0.25669944	No	
+row_27	TPPP	TPPP	-	5876	-4.66806348413229E-4	0.1849089	No	
+row_28	CD81	CD81	CD81 molecule	6727	-0.05970748886466026	0.11630236	No	
+row_29	IRF4	IRF4	interferon regulatory factor 4	6854	-0.06864635646343231	0.10900678	No	
+row_30	EIF2B5	EIF2B5	eukaryotic translation initiation factor 2B, subunit 5 epsilon, 82kDa	6973	-0.07843372970819473	0.10285438	No	
+row_31	NCK2	NCK2	NCK adaptor protein 2	7920	-0.14722925424575806	0.030382292	No	
+row_32	AKTIP	null	null	8185	-0.16811160743236542	0.016263476	No	
+row_33	PPP2R4	PPP2R4	protein phosphatase 2A, regulatory subunit B' (PR 53)	8405	-0.18527840077877045	0.00675391	No	
+row_34	UBE2N	UBE2N	ubiquitin-conjugating enzyme E2N (UBC13 homolog, yeast)	8832	-0.21781259775161743	-0.018598424	No	
+row_35	NCK1	NCK1	NCK adaptor protein 1	8908	-0.2245892584323883	-0.014109371	No	
+row_36	STUB1	STUB1	STIP1 homology and U-box containing protein 1	9240	-0.25560253858566284	-0.029656613	No	
+row_37	BMP4	BMP4	bone morphogenetic protein 4	9550	-0.2878666818141937	-0.04180296	No	
+row_38	CEBPG	CEBPG	CCAAT/enhancer binding protein (C/EBP), gamma	9881	-0.32199135422706604	-0.054074857	No	
+row_39	CCND1	CCND1	cyclin D1	10137	-0.35313844680786133	-0.05854278	No	
+row_40	KATNB1	KATNB1	katanin p80 (WD repeat containing) subunit B 1	10532	-0.4111318588256836	-0.07191154	No	
+row_41	EIF5A	EIF5A	eukaryotic translation initiation factor 5A	10601	-0.42497512698173523	-0.05720148	No	
+row_42	AURKAIP1	AURKAIP1	aurora kinase A interacting protein 1	10730	-0.44866716861724854	-0.04639797	No	
+row_43	CDC42EP2	CDC42EP2	CDC42 effector protein (Rho GTPase binding) 2	10989	-0.5071092844009399	-0.043716915	No	
+row_44	TNK2	TNK2	tyrosine kinase, non-receptor, 2	11482	-0.6971533298492432	-0.051577702	No	
+row_45	PPARGC1A	PPARGC1A	peroxisome proliferative activated receptor, gamma, coactivator 1, alpha	11650	-0.8504496812820435	-0.024740364	No	
+row_46	SAMD4A	SAMD4A	sterile alpha motif domain containing 4A	11775	-1.0167499780654907	0.013706761	No	
