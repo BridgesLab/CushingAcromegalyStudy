@@ -1,0 +1,78 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	GFAP	GFAP	glial fibrillary acidic protein	37	1.5203166007995605	0.010095485	Yes	
+row_1	ESR1	ESR1	estrogen receptor 1	226	0.7680860161781311	0.008390405	Yes	
+row_2	ERBB3	ERBB3	v-erb-b2 erythroblastic leukemia viral oncogene homolog 3 (avian)	256	0.7268721461296082	0.019111086	Yes	
+row_3	PRLR	PRLR	prolactin receptor	828	0.4001586139202118	-0.012525222	Yes	
+row_4	PSEN2	PSEN2	presenilin 2 (Alzheimer disease 4)	955	0.37017181515693665	-0.009385037	Yes	
+row_5	ERBB4	ERBB4	v-erb-a erythroblastic leukemia viral oncogene homolog 4 (avian)	1160	0.32871145009994507	-0.012340507	Yes	
+row_6	SOS1	SOS1	son of sevenless homolog 1 (Drosophila)	1161	0.3285139501094818	6.465065E-4	Yes	
+row_7	CASP9	CASP9	caspase 9, apoptosis-related cysteine peptidase	1522	0.2738032042980194	-0.014500273	Yes	
+row_8	AKT3	AKT3	v-akt murine thymoma viral oncogene homolog 3 (protein kinase B, gamma)	1921	0.22935296595096588	-0.03261673	Yes	
+row_9	PHLPP1	null	null	1947	0.22668524086475372	-0.021583453	Yes	
+row_10	PIK3CA	PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide	2124	0.21139492094516754	-0.02235074	Yes	
+row_11	CDK1	null	null	2319	0.1957928091287613	-0.024524715	Yes	
+row_12	YWHAB	YWHAB	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, beta polypeptide	2639	0.17153091728687286	-0.036467366	Yes	
+row_13	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	2717	0.16599825024604797	-0.02949786	Yes	
+row_14	PGR	PGR	progesterone receptor	2778	0.16217124462127686	-0.021199813	Yes	
+row_15	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	2786	0.16179850697517395	-0.008759845	Yes	
+row_16	CXCL12	CXCL12	chemokine (C-X-C motif) ligand 12 (stromal cell-derived factor 1)	2837	0.15820181369781494	3.1969647E-4	Yes	
+row_17	AKT2	AKT2	v-akt murine thymoma viral oncogene homolog 2	2952	0.15157298743724823	0.004397675	Yes	
+row_18	STAT5A	STAT5A	signal transducer and activator of transcription 5A	3284	0.1307445764541626	-0.008482771	Yes	
+row_19	PTEN	PTEN	phosphatase and tensin homolog (mutated in multiple advanced cancers 1)	3495	0.11924244463443756	-0.011907137	Yes	
+row_20	THEM4	THEM4	thioesterase superfamily member 4	3608	0.1133560985326767	-0.0076728594	Yes	
+row_21	SH2B1	SH2B1	SH2B adaptor protein 1	3650	0.11091899126768112	0.002110027	Yes	
+row_22	CREB1	CREB1	cAMP responsive element binding protein 1	3678	0.10990353673696518	0.0129870055	Yes	
+row_23	S100B	S100B	S100 calcium binding protein B	3731	0.10645920038223267	0.021910248	Yes	
+row_24	AKT1S1	AKT1S1	AKT1 substrate 1 (proline-rich)	3814	0.10250988602638245	0.028489009	Yes	
+row_25	SKP1	null	null	3815	0.10240314900875092	0.041476022	Yes	
+row_26	MDM2	MDM2	Mdm2, transformed 3T3 cell double minute 2, p53 binding protein (mouse)	3848	0.1007230281829834	0.051962253	Yes	
+row_27	GHR	GHR	growth hormone receptor	3943	0.09692245721817017	0.05760322	Yes	
+row_28	RBX1	RBX1	ring-box 1	4152	0.08667994290590286	0.054335155	Yes	
+row_29	BTRC	BTRC	beta-transducin repeat containing	4500	0.07115592807531357	0.040204316	Yes	
+row_30	NCOR1	NCOR1	nuclear receptor co-repressor 1	4949	0.05186089500784874	0.018180387	Yes	
+row_31	RICTOR	RICTOR	-	5197	0.04129911586642265	0.011864493	Yes	
+row_32	APH1A	APH1A	anterior pharynx defective 1 homolog A (C. elegans)	5435	0.031000889837741852	0.0063300924	Yes	
+row_33	MLST8	null	null	5708	0.01937153749167919	-0.001939538	Yes	
+row_34	PSEN1	PSEN1	presenilin 1 (Alzheimer disease 3)	5799	0.015776975080370903	0.004014027	Yes	
+row_35	MAPKAP1	MAPKAP1	mitogen-activated protein kinase associated protein 1	5870	0.012850271537899971	0.01153058	Yes	
+row_36	JAK2	JAK2	Janus kinase 2 (a protein tyrosine kinase)	6049	0.005351989530026913	0.010606996	Yes	
+row_37	GSK3A	GSK3A	glycogen synthase kinase 3 alpha	6233	-0.0016791934613138437	0.009292664	Yes	
+row_38	CUL1	CUL1	cullin 1	6273	-0.003376658773049712	0.01923185	Yes	
+row_39	MAPK1	MAPK1	mitogen-activated protein kinase 1	6415	-0.008404437452554703	0.021199794	Yes	
+row_40	TSC2	TSC2	tuberous sclerosis 2	6490	-0.01201475691050291	0.02840375	Yes	
+row_41	NRG2	NRG2	neuregulin 2	6691	-0.020331406965851784	0.025760878	Yes	
+row_42	RPS6KB2	RPS6KB2	ribosomal protein S6 kinase, 70kDa, polypeptide 2	6793	-0.024208933115005493	0.030854799	Yes	
+row_43	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	6827	-0.025195971131324768	0.04126288	Yes	
+row_44	RAF1	RAF1	v-raf-1 murine leukemia viral oncogene homolog 1	6834	-0.02542162500321865	0.053781	Yes	
+row_45	MAP2K1	MAP2K1	mitogen-activated protein kinase kinase 1	6855	-0.02618763968348503	0.06520502	Yes	
+row_46	GRB2	GRB2	growth factor receptor-bound protein 2	6902	-0.02824850007891655	0.074597165	Yes	
+row_47	HBEGF	HBEGF	heparin-binding EGF-like growth factor	7005	-0.0325201041996479	0.07961293	Yes	
+row_48	NEDD4	NEDD4	neural precursor cell expressed, developmentally down-regulated 4	7827	-0.07024894654750824	0.028439268	Yes	
+row_49	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	7870	-0.07244590669870377	0.038144007	Yes	
+row_50	NRAS	NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	7877	-0.07260607928037643	0.050662123	Yes	
+row_51	EGFR	EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	7941	-0.07492638379335403	0.058725722	Yes	
+row_52	KRAS	KRAS	v-Ki-ras2 Kirsten rat sarcoma viral oncogene homolog	7986	-0.07667643576860428	0.06827416	Yes	
+row_53	NRG4	NRG4	neuregulin 4	8047	-0.07988275587558746	0.07657221	Yes	
+row_54	MAP2K2	MAP2K2	mitogen-activated protein kinase kinase 2	8138	-0.08396964520215988	0.082525775	Yes	
+row_55	MTOR	null	null	8299	-0.09068407863378525	0.08300888	Yes	
+row_56	TAB2	null	null	8312	-0.09106079488992691	0.0950581	Yes	
+row_57	CHUK	CHUK	conserved helix-loop-helix ubiquitous kinase	8357	-0.09293519705533981	0.10460654	Yes	
+row_58	UBA52	UBA52	ubiquitin A-52 residue ribosomal protein fusion product 1	8372	-0.09357085824012756	0.116499454	Yes	
+row_59	BAD	BAD	BCL2-antagonist of cell death	8618	-0.10636632889509201	0.110339865	Yes	
+row_60	RPS27A	RPS27A	ribosomal protein S27a	8913	-0.1208079382777214	0.100350946	Yes	
+row_61	STAT5B	STAT5B	signal transducer and activator of transcription 5B	9033	-0.12699298560619354	0.10403818	Yes	
+row_62	WWP1	WWP1	WW domain containing E3 ubiquitin protein ligase 1	9258	-0.1388266235589981	0.099519715	Yes	
+row_63	YAP1	YAP1	Yes-associated protein 1, 65kDa	9379	-0.14430545270442963	0.1031288	Yes	
+row_64	PDPK1	PDPK1	3-phosphoinositide dependent protein kinase-1	9411	-0.14638367295265198	0.11369318	Yes	
+row_65	FOXO1	null	null	9472	-0.14981041848659515	0.121991225	Yes	
+row_66	APH1B	APH1B	anterior pharynx defective 1 homolog B (C. elegans)	9656	-0.15936031937599182	0.1206769	Yes	
+row_67	FOXO3	null	null	9691	-0.16126222908496857	0.13100682	Yes	
+row_68	FOXO4	null	null	9845	-0.17031815648078918	0.13203698	Yes	
+row_69	ADAM17	ADAM17	ADAM metallopeptidase domain 17 (tumor necrosis factor, alpha, converting enzyme)	10076	-0.1857728213071823	0.12704962	No	
+row_70	SHC1	SHC1	SHC (Src homology 2 domain containing) transforming protein 1	10399	-0.20691996812820435	0.11487252	No	
+row_71	NCSTN	NCSTN	nicastrin	10662	-0.22917547821998596	0.10738439	No	
+row_72	MAPK3	MAPK3	mitogen-activated protein kinase 3	10948	-0.2629789710044861	0.098098814	No	
+row_73	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	11488	-0.3387789726257324	0.06896329	No	
+row_74	TRIB3	TRIB3	tribbles homolog 3 (Drosophila)	11582	-0.35275715589523315	0.07468241	No	
+row_75	WWOX	WWOX	WW domain containing oxidoreductase	11824	-0.40006211400032043	0.06883541	No	
+row_76	PSENEN	PSENEN	presenilin enhancer 2 homolog (C. elegans)	12232	-0.5298672318458557	0.050015606	No	
