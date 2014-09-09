@@ -51,6 +51,8 @@ cushing.counts <- transcript.counts[,cushing.mapping$samplename]
 #break bmi into normal, overweight, obese
 acromegaly.mapping$BMI1 <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
 cushing.mapping$BMI1 <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
+cushing.mapping$BMI.cat <- ifelse(cushing.mapping$BMI1=="(0,30]", "Not_obese", "Obese")
+cushing.mapping$BMI.cat <- factor(cushing.mapping$BMI.cat)
 
 ```
 
@@ -84,10 +86,12 @@ acromegaly.mapping$BMI1<- relevel(acromegaly.mapping$BMI1, "(0,25]")
 #group is the variable of interest, so put group at the end of the design formula
 #cushing.mapping$condition <- factor(paste0(cushing.mapping$group, ".",cushing.mapping$BMI))
 #cushing.mappingsub <- cushing.mapping[cushing.mapping$BMI1 %in% c("(0,30]","(30,50]"),]
+cushing.mapping$BMIxGroup <- factor(paste0(cushing.mapping$BMI.cat, ".", cushing.mapping$group))
 cushing.counts <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping$samplename]
-cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.counts, colData=cushing.mapping, design=~BMI1+group+BMI1:group)
+cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.counts, colData=cushing.mapping, design=~BMI.cat+group+BMI.cat:group)
+cds.cushing.bmiGroup = DESeqDataSetFromMatrix(countData=cushing.counts, colData=cushing.mapping, design=~BMIxGroup)
 #cushing.mappingsub$BMI1<- droplevels(cushing.mappingsub$BMI1)
-cushing.mapping$BMI1 <- relevel(cushing.mapping$BMI1, "(0,30]")
+cushing.mapping$BMI.cat <- relevel(cushing.mapping$BMI.cat, "Not_obese")
 cushing.mapping$group <- relevel(cushing.mapping$group, "Control")
 ```
 Full Analysis
@@ -114,21 +118,45 @@ acro.bmi.combined <- acro.bmi.combined[order(acro.bmi.combined$padj.bmi, na.last
 write.csv(acro.bmi.combined, "../data/processed/acromegaly_results_GRCh37.74-adjusting_bmi.csv")'
 
 ###### CUSHING'S #########
+#************To look at the interaction term only, use the model that has all group, bmi, and groupxbmi ***************
 cushing.cds.bmi <- DESeq(cds.cushing.bmi)
 plotMA(cushing.cds.bmi,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI")
 cushing.results.bmi <- results(cushing.cds.bmi)
 sum(cushing.results.bmi$padj<0.05, na.rm=TRUE)
 resultsNames(cushing.cds.bmi)
 
-cushing.bmi.effect <- results(cushing.cds.bmi, name="BMI1_.30.50._vs_.0.30.")
-cushing.group.effect <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")
-cushing.bmi<- merge(cushing.bmi.effect, cushing.group.effect, by="row.names", all.x=TRUE, all.y=TRUE)
-cushing.bmi.combined <- merge(cushing.bmi, cushing.results.bmi, by.x="Row.names", by.y="row.names")
-colnames(cushing.bmi.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.bmi.combined)[2:7])
-colnames(cushing.bmi.combined)[8:13]<-gsub("y","Obese_vs_Not_Obese", colnames(cushing.bmi.combined[8:13]))
+cushing.results.bmi$log2FC_Obese_vs_notObese <- results(cushing.cds.bmi, name="BMI.cat_Obese_vs_Not_obese")$log2FoldChange
+cushing.results.bmi$lfcSE_Obese_vs_notObese <- results(cushing.cds.bmi, name="BMI.cat_Obese_vs_Not_obese")$lfcSE
+cushing.results.bmi$pvalue_Obese_vs_notObese <- results(cushing.cds.bmi, name="BMI.cat_Obese_vs_Not_obese")$pvalue
+cushing.results.bmi$padj_Obese_vs_notObese <- results(cushing.cds.bmi, name="BMI.cat_Obese_vs_Not_obese")$padj
 
-cushing.bmi.combined <- cushing.bmi.combined[order(cushing.bmi.combined$padj, na.last=TRUE),]
-write.csv(cushing.bmi.combined, "../data/processed/cushing_results_GRCh37.74-adjusting_bmi.csv")
+cushing.results.bmi$log2FC_Cushing_vs_Con <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")$log2FoldChange
+cushing.results.bmi$lfcSE_Cushing_vs_Con <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")$lfcSE
+cushing.results.bmi$pvalue_Cushing_vs_Con <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")$pvalue
+cushing.results.bmi$padj_Cushing_vs_Con <- results(cushing.cds.bmi, name="group_Cushing.s_vs_Control")$padj
+
+cushing.results.bmi <- cushing.results.bmi[order(cushing.results.bmi$padj, na.last=TRUE),]
+#write.csv(cushing.results.bmi, "../data/processed/cushing_results_GRCh37.74-adjusting_bmi.csv")
+
+#### To look at genes that are affected by Cushing's in the Not obese or Obese group, I used the model that has the new variable bmiGroup#######
+cushing.cds.bmixgroup <- DESeq(cds.cushing.bmiGroup)
+cushing.results.bmixgroup <- results(cushing.cds.bmixgroup)
+plotMA(cushing.cds.bmixgroup,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI")
+
+cushing.results.bmixgroup$log2FC_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$log2FoldChange
+cushing.results.bmixgroup$lfcSE_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$lfcSE
+cushing.results.bmixgroup$pvalue_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$pvalue
+cushing.results.bmixgroup$padj_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$padj
+sum(cushing.results.bmixgroup$padj_NotObese_CushingvCon<0.05, na.rm=TRUE)
+
+cushing.results.bmixgroup$log2FC_Obese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Obese.Cushing.s", "Obese.Control"))$log2FoldChange
+cushing.results.bmixgroup$lfcSE_Obese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Obese.Cushing.s", "Obese.Control"))$lfcSE
+cushing.results.bmixgroup$pvalue_Obese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Obese.Cushing.s", "Obese.Control"))$pvalue
+cushing.results.bmixgroup$padj_Obese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Obese.Cushing.s", "Obese.Control"))$padj
+sum(cushing.results.bmixgroup$padj_Obese_CushingvCon<0.05, na.rm=TRUE)
+
+
+
 ```
 
 ```{r graphs, dev='pdf', echo=FALSE}
@@ -238,10 +266,13 @@ dev.copy2pdf(file="figure/k-means.pdf")
 
 ```
 
-Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
+
 
 ```{r Cushing effect on obese and not obese patients, echo=FALSE}
 #library(reshape2)
+######## Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
+
+#####NOTE: need to add AGE into the design #################
 cushing.mapping.obese <- cushing.mapping[cushing.mapping$BMI1=="(30,50]",] 
 cushing.counts.obese <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.obese$samplename]
 cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~group)
@@ -291,15 +322,16 @@ Annotation
 This step annotates the data tables with the official gene symbols.
 
 ```{r annotation, echo=FALSE, message=FALSE}
-
-cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
-cushing.group.obese <- merge(cushing.group.obese, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
-cushing.group.notObese <- merge(cushing.group.notObese, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+cushing.results.bmixgroup <- cushing.results.bmixgroup[,7:14]
+cushing.bmi.combined <- merge(cushing.results.bmi, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+cushing.results.bmixgroup <- merge(cushing.results.bmixgroup, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+#cushing.group.notObese <- merge(cushing.group.notObese, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
 
 #write annotated results files.
-write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_Cushings_bmi.csv")
-write.csv(cushing.group.obese, "../data/processed/Annotated_Results_Cushings_Obese.csv")
-write.csv(cushing.group.notObese, "../data/processed/Annotated_Results_Cushings_NotObese.csv")
+write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_Cushings_bmi_adjusting.csv")
+write.csv(cushing.results.bmixgroup, "../data/processed/Annotated_Results_Cushings_NotObese_and_Obese.csv")
+#write.csv(cushing.group.obese, "../data/processed/Annotated_Results_Cushings_Obese.csv")
+#write.csv(cushing.group.notObese, "../data/processed/Annotated_Results_Cushings_NotObese.csv")
 #write.csv(acro.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_bmi.csv")
 ```
 
