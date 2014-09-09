@@ -1,0 +1,88 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	TNFSF14	TNFSF14	tumor necrosis factor (ligand) superfamily, member 14	132	1.5309289693832397	0.0041158292	No	
+row_1	NLRP3	null	null	135	1.5256880521774292	0.015498288	No	
+row_2	KPNA2	KPNA2	karyopherin alpha 2 (RAG cohort 1, importin alpha 1)	475	1.1673511266708374	0.008043407	No	
+row_3	NFKBIE	NFKBIE	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon	934	0.905360996723175	-0.006063233	No	
+row_4	FYB	FYB	FYN binding protein (FYB-120/130)	1059	0.8545595407485962	-0.0015002268	No	
+row_5	CDH1	CDH1	cadherin 1, type 1, E-cadherin (epithelial)	1250	0.7882586121559143	-6.2643207E-4	No	
+row_6	BCL3	BCL3	B-cell CLL/lymphoma 3	1707	0.6669305562973022	-0.014621278	No	
+row_7	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	2080	0.5886008143424988	-0.023920765	No	
+row_8	NLRP12	null	null	2087	0.5878831148147583	-0.012761895	No	
+row_9	NXF5	NXF5	nuclear RNA export factor 5	2620	0.5025990009307861	-0.031004924	No	
+row_10	NPM1	NPM1	nucleophosmin (nucleolar phosphoprotein B23, numatrin)	3058	0.44088906049728394	-0.043937724	No	
+row_11	BCL6	BCL6	B-cell CLL/lymphoma 6 (zinc finger protein 51)	3335	0.40825411677360535	-0.047871087	No	
+row_12	PPP1R10	PPP1R10	protein phosphatase 1, regulatory subunit 10	3403	0.3995459973812103	-0.040121943	No	
+row_13	HTATIP2	HTATIP2	HIV-1 Tat interactive protein 2, 30kDa	3786	0.359945684671402	-0.0499804	No	
+row_14	NFKBIL1	NFKBIL1	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor-like 1	4680	0.2751508057117462	-0.0884023	No	
+row_15	DDX39A	null	null	5201	0.23379527032375336	-0.10597456	No	
+row_16	NF1	NF1	neurofibromin 1 (neurofibromatosis, von Recklinghausen disease, Watson disease)	5991	0.17511756718158722	-0.13858315	No	
+row_17	DUSP16	DUSP16	dual specificity phosphatase 16	6273	0.15915273129940033	-0.14279601	Yes	
+row_18	GLI3	GLI3	GLI-Kruppel family member GLI3 (Greig cephalopolysyndactyly syndrome)	6350	0.1542254239320755	-0.13554993	Yes	
+row_19	ANP32A	ANP32A	acidic (leucine-rich) nuclear phosphoprotein 32 family, member A	6376	0.15268929302692413	-0.12545311	Yes	
+row_20	NOP58	null	null	6548	0.1439070850610733	-0.123517275	Yes	
+row_21	TRPS1	TRPS1	trichorhinophalangeal syndrome I	6636	0.13938972353935242	-0.11688607	Yes	
+row_22	NUP98	NUP98	nucleoporin 98kDa	6753	0.13227397203445435	-0.111875884	Yes	
+row_23	ATXN1	ATXN1	ataxin 1	7115	0.10754899680614471	-0.120560504	Yes	
+row_24	F2R	F2R	coagulation factor II (thrombin) receptor	7148	0.10493120551109314	-0.11085496	Yes	
+row_25	HNRNPA1	null	null	7173	0.10370884090662003	-0.10070224	Yes	
+row_26	UPF1	UPF1	UPF1 regulator of nonsense transcripts homolog (yeast)	7286	0.09661805629730225	-0.09546847	Yes	
+row_27	SMG6	SMG6	Smg-6 homolog, nonsense mediated mRNA decay factor (C. elegans)	7556	0.08122289180755615	-0.09901055	Yes	
+row_28	RANBP2	RANBP2	RAN binding protein 2	7642	0.07489420473575592	-0.09226755	Yes	
+row_29	NUDT4	NUDT4	nudix (nucleoside diphosphate linked moiety X)-type motif 4	7671	0.07347007840871811	-0.082338415	Yes	
+row_30	NUPL2	NUPL2	nucleoporin like 2	7842	0.06327873468399048	-0.08034668	Yes	
+row_31	PTTG1IP	PTTG1IP	pituitary tumor-transforming 1 interacting protein	7857	0.06247606500983238	-0.06963499	Yes	
+row_32	NUP214	NUP214	nucleoporin 214kDa	8013	0.05308687686920166	-0.0668048	Yes	
+row_33	NCBP2	NCBP2	nuclear cap binding protein subunit 2, 20kDa	8168	0.042941249907016754	-0.0639187	Yes	
+row_34	NUP160	NUP160	nucleoporin 160kDa	8450	0.025328069925308228	-0.06813154	Yes	
+row_35	TRIP6	TRIP6	thyroid hormone receptor interactor 6	8555	0.01922406069934368	-0.0624506	Yes	
+row_36	XPO7	XPO7	exportin 7	8628	0.01578274369239807	-0.05498094	Yes	
+row_37	SMG1	SMG1	-	8663	0.01312560960650444	-0.04538719	Yes	
+row_38	MYBBP1A	MYBBP1A	MYB binding protein (P160) 1a	8828	0.0038615642115473747	-0.043060068	Yes	
+row_39	FLNA	FLNA	filamin A, alpha (actin binding protein 280)	8948	1.1537829414010048E-4	-0.038217578	Yes	
+row_40	F2	F2	coagulation factor II (thrombin)	9586	-1.9461898773442954E-5	-0.062329806	Yes	
+row_41	TNF	TNF	tumor necrosis factor (TNF superfamily, member 2)	9955	-3.0642448109574616E-5	-0.0714057	Yes	
+row_42	STRADB	null	null	10083	-2.5037655723281205E-4	-0.06701039	Yes	
+row_43	MCM3AP	MCM3AP	MCM3 minichromosome maintenance deficient 3 (S. cerevisiae) associated protein	10234	-0.009241498075425625	-0.06390071	Yes	
+row_44	CALR	CALR	calreticulin	10276	-0.011594744399189949	-0.05469824	Yes	
+row_45	SMAD3	SMAD3	SMAD, mothers against DPP homolog 3 (Drosophila)	10653	-0.03309660032391548	-0.064221315	Yes	
+row_46	PPIH	PPIH	peptidylprolyl isomerase H (cyclophilin H)	10658	-0.03325828164815903	-0.05295065	Yes	
+row_47	RPAIN	RPAIN	RPA interacting protein	10991	-0.05341942608356476	-0.06001425	Yes	
+row_48	NCKIPSD	NCKIPSD	NCK interacting protein with SH3 domain	11050	-0.0567670539021492	-0.051762033	Yes	
+row_49	SMG7	SMG7	Smg-7 homolog, nonsense mediated mRNA decay factor (C. elegans)	11125	-0.06101665273308754	-0.044404168	Yes	
+row_50	RERE	RERE	arginine-glutamic acid dipeptide (RE) repeats	11432	-0.08073295652866364	-0.050014444	Yes	
+row_51	DDX19B	DDX19B	DEAD (Asp-Glu-Ala-As) box polypeptide 19B	11713	-0.09685622900724411	-0.05417139	Yes	
+row_52	DDX25	DDX25	DEAD (Asp-Glu-Ala-Asp) box polypeptide 25	11856	-0.10656562447547913	-0.050614532	Yes	
+row_53	CEP57	CEP57	centrosomal protein 57kDa	11912	-0.11033686995506287	-0.042194624	Yes	
+row_54	UPF2	UPF2	UPF2 regulator of nonsense transcripts homolog (yeast)	12002	-0.11565890163183212	-0.035675216	Yes	
+row_55	KHDRBS1	KHDRBS1	KH domain containing, RNA binding, signal transduction associated 1	12059	-0.11897730827331543	-0.027311204	Yes	
+row_56	TPR	TPR	translocated promoter region (to activated MET oncogene)	12068	-0.11948592960834503	-0.016264128	Yes	
+row_57	XPO6	XPO6	exportin 6	12153	-0.12440407276153564	-0.009465236	Yes	
+row_58	MXI1	MXI1	MAX interactor 1	12572	-0.15049612522125244	-0.021335991	Yes	
+row_59	PDIA3	PDIA3	protein disulfide isomerase family A, member 3	12832	-0.16825023293495178	-0.0243191	Yes	
+row_60	TONSL	null	null	13048	-0.18210652470588684	-0.024842734	Yes	
+row_61	NUP107	NUP107	nucleoporin 107kDa	13128	-0.18675902485847473	-0.017764356	Yes	
+row_62	RAE1	RAE1	RAE1 RNA export 1 homolog (S. pombe)	13482	-0.20957088470458984	-0.026001796	Yes	
+row_63	CBLB	CBLB	Cas-Br-M (murine) ecotropic retroviral transforming sequence b	13844	-0.2336329072713852	-0.034686413	Yes	
+row_64	TNPO1	TNPO1	transportin 1	13880	-0.2369387298822403	-0.025148561	Yes	
+row_65	MALT1	MALT1	mucosa associated lymphoid tissue lymphoma translocation gene 1	14018	-0.24671369791030884	-0.021312216	Yes	
+row_66	NUP133	NUP133	nucleoporin 133kDa	14156	-0.257491797208786	-0.017475873	Yes	
+row_67	GSK3B	GSK3B	glycogen synthase kinase 3 beta	14390	-0.27713486552238464	-0.019005656	Yes	
+row_68	STRADA	null	null	14458	-0.28213605284690857	-0.011256512	Yes	
+row_69	AGFG1	null	null	14930	-0.3208922743797302	-0.026089815	Yes	
+row_70	KPNA3	KPNA3	karyopherin alpha 3 (importin alpha 4)	14943	-0.32195329666137695	-0.015266329	Yes	
+row_71	ZFYVE9	ZFYVE9	zinc finger, FYVE domain containing 9	14947	-0.3222711682319641	-0.0039397674	Yes	
+row_72	SMG5	SMG5	Smg-5 homolog, nonsense mediated mRNA decay factor (C. elegans)	14966	-0.32352960109710693	0.0065483367	Yes	
+row_73	TSC1	TSC1	tuberous sclerosis 1	14990	-0.32596051692962646	0.016756956	Yes	
+row_74	KPNB1	KPNB1	karyopherin (importin) beta 1	15130	-0.3396322429180145	0.020481504	Yes	
+row_75	UHMK1	UHMK1	U2AF homology motif (UHM) kinase 1	15489	-0.3759237229824066	0.011964578	Yes	
+row_76	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	15618	-0.3889485001564026	0.016303996	Yes	
+row_77	KPNA6	KPNA6	karyopherin alpha 6 (importin alpha 7)	15624	-0.3893512189388275	0.027518764	Yes	
+row_78	EIF5A	EIF5A	eukaryotic translation initiation factor 5A	15899	-0.42497512698173523	0.023697197	Yes	
+row_79	KPNA1	KPNA1	karyopherin alpha 1 (importin alpha 5)	15999	-0.4363548457622528	0.029657632	Yes	
+row_80	FAF1	FAF1	Fas (TNFRSF6) associated factor 1	16517	-0.5169954895973206	0.01225306	Yes	
+row_81	KPNA5	KPNA5	karyopherin alpha 5 (importin alpha 6)	16522	-0.5175918936729431	0.023523724	Yes	
+row_82	KPNA4	KPNA4	karyopherin alpha 4 (importin alpha 3)	16551	-0.5242539048194885	0.033452857	Yes	
+row_83	BARD1	BARD1	BRCA1 associated RING domain 1	16558	-0.5265129804611206	0.044611726	Yes	
+row_84	NUP205	NUP205	nucleoporin 205kDa	16601	-0.5355439782142639	0.0537583	Yes	
+row_85	IPO5	null	null	17283	-0.7466138005256653	0.027186595	Yes	
+row_86	MDFI	MDFI	MyoD family inhibitor	17708	-1.0200469493865967	0.014980457	Yes	

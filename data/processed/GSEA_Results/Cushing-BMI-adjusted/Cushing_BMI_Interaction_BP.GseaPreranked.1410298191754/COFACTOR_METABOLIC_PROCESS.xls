@@ -1,0 +1,52 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MTHFD2	MTHFD2	methylenetetrahydrofolate dehydrogenase (NADP+ dependent) 2, methenyltetrahydrofolate cyclohydrolase	906	0.9167619347572327	-0.03093327	No	
+row_1	PPT1	PPT1	palmitoyl-protein thioesterase 1 (ceroid-lipofuscinosis, neuronal 1, infantile)	1696	0.6688247919082642	-0.05533971	No	
+row_2	ACOT1	ACOT1	acyl-CoA thioesterase 1	2109	0.5839613676071167	-0.05871524	No	
+row_3	NFE2L1	NFE2L1	nuclear factor (erythroid-derived 2)-like 1	4084	0.3291635513305664	-0.14922678	No	
+row_4	CTNS	CTNS	cystinosis, nephropathic	4287	0.3100583851337433	-0.14088748	No	
+row_5	ACOT12	ACOT12	acyl-CoA thioesterase 12	4634	0.2796589434146881	-0.14058122	No	
+row_6	ISCU	null	null	5163	0.23708824813365936	-0.15042779	No	
+row_7	SDHD	SDHD	succinate dehydrogenase complex, subunit D, integral membrane protein	7914	0.058076709508895874	-0.2842284	No	
+row_8	GCLM	GCLM	glutamate-cysteine ligase, modifier subunit	10706	-0.0358317606151104	-0.42031622	No	
+row_9	GCLC	GCLC	glutamate-cysteine ligase, catalytic subunit	10966	-0.052128616720438004	-0.41515666	No	
+row_10	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	11465	-0.08268962800502777	-0.42332968	No	
+row_11	ALAS1	ALAS1	aminolevulinate, delta-, synthase 1	11869	-0.1071261540055275	-0.42620316	Yes	
+row_12	OXSM	OXSM	3-oxoacyl-ACP synthase, mitochondrial	11870	-0.10716527700424194	-0.40659532	Yes	
+row_13	COX10	COX10	COX10 homolog, cytochrome c oxidase assembly protein, heme A: farnesyltransferase (yeast)	11956	-0.11359036713838577	-0.39172918	Yes	
+row_14	COQ7	COQ7	coenzyme Q7 homolog, ubiquinone (yeast)	12289	-0.13208657503128052	-0.39064193	Yes	
+row_15	FECH	FECH	ferrochelatase (protoporphyria)	12398	-0.138970285654068	-0.37705883	Yes	
+row_16	CPOX	CPOX	coproporphyrinogen oxidase	12757	-0.1631494015455246	-0.377422	Yes	
+row_17	SDHC	SDHC	succinate dehydrogenase complex, subunit C, integral membrane protein, 15kDa	12976	-0.1778063029050827	-0.36997527	Yes	
+row_18	ACOT9	ACOT9	acyl-CoA thioesterase 9	13196	-0.19099831581115723	-0.3625843	Yes	
+row_19	NFS1	NFS1	NFS1 nitrogen fixation 1 (S. cerevisiae)	13207	-0.1919396072626114	-0.34353432	Yes	
+row_20	COX15	COX15	COX15 homolog, cytochrome c oxidase assembly protein (yeast)	13574	-0.21529406309127808	-0.34434375	Yes	
+row_21	PGLS	PGLS	6-phosphogluconolactonase	13968	-0.24309830367565155	-0.34665936	Yes	
+row_22	MOCS2	MOCS2	molybdenum cofactor synthesis 2	14014	-0.24636439979076385	-0.32956183	Yes	
+row_23	BLVRA	BLVRA	biliverdin reductase A	14788	-0.30894720554351807	-0.3530757	Yes	
+row_24	ALDH1L1	ALDH1L1	aldehyde dehydrogenase 1 family, member L1	15157	-0.34203770756721497	-0.35399672	Yes	
+row_25	GLRX2	GLRX2	glutaredoxin 2	15199	-0.3469238877296448	-0.33667606	Yes	
+row_26	PDHB	PDHB	pyruvate dehydrogenase (lipoamide) beta	15366	-0.36409997940063477	-0.3263285	Yes	
+row_27	SDHB	SDHB	succinate dehydrogenase complex, subunit B, iron sulfur (Ip)	15669	-0.39567816257476807	-0.3235677	Yes	
+row_28	COQ2	COQ2	coenzyme Q2 homolog, prenyltransferase (yeast)	15680	-0.39687973260879517	-0.3045177	Yes	
+row_29	COASY	COASY	Coenzyme A synthase	15727	-0.4021037518978119	-0.28747594	Yes	
+row_30	ACO2	ACO2	aconitase 2, mitochondrial	15801	-0.4100615680217743	-0.2719404	Yes	
+row_31	PPOX	PPOX	protoporphyrinogen oxidase	15875	-0.4212389588356018	-0.25640488	Yes	
+row_32	TSPO	TSPO	translocator protein (18kDa)	15911	-0.4263248145580292	-0.23874949	Yes	
+row_33	MLYCD	MLYCD	malonyl-CoA decarboxylase	16097	-0.44996440410614014	-0.22946185	Yes	
+row_34	UROS	UROS	uroporphyrinogen III synthase (congenital erythropoietic porphyria)	16266	-0.47439679503440857	-0.21922587	Yes	
+row_35	MOCOS	MOCOS	molybdenum cofactor sulfurase	16367	-0.4903218746185303	-0.20519651	Yes	
+row_36	PGD	PGD	phosphogluconate dehydrogenase	16405	-0.49669045209884644	-0.1876527	Yes	
+row_37	GLYAT	GLYAT	glycine-N-acyltransferase	16431	-0.5033350586891174	-0.1694395	Yes	
+row_38	PDSS1	PDSS1	prenyl (decaprenyl) diphosphate synthase, subunit 1	16436	-0.5040400624275208	-0.15005478	Yes	
+row_39	SDHA	SDHA	succinate dehydrogenase complex, subunit A, flavoprotein (Fp)	16451	-0.5070504546165466	-0.13122794	Yes	
+row_40	GPX1	GPX1	glutathione peroxidase 1	16754	-0.5717337727546692	-0.12846713	Yes	
+row_41	PDSS2	PDSS2	prenyl (decaprenyl) diphosphate synthase, subunit 2	16807	-0.5850475430488586	-0.111760095	Yes	
+row_42	COQ3	COQ3	coenzyme Q3 homolog, methyltransferase (S. cerevisiae)	16859	-0.5987062454223633	-0.09499729	Yes	
+row_43	NNT	NNT	nicotinamide nucleotide transhydrogenase	16902	-0.6087390780448914	-0.07773241	Yes	
+row_44	ACOT4	ACOT4	acyl-CoA thioesterase 4	16954	-0.6228163242340088	-0.06096959	Yes	
+row_45	ACOT2	ACOT2	acyl-CoA thioesterase 2	16970	-0.6283757090568542	-0.04219852	Yes	
+row_46	FTCD	FTCD	formiminotransferase cyclodeaminase	17040	-0.6489056944847107	-0.026439834	Yes	
+row_47	ALAD	ALAD	aminolevulinate, delta-, dehydratase	17086	-0.6635318994522095	-0.009342311	Yes	
+row_48	ALAS2	ALAS2	aminolevulinate, delta-, synthase 2 (sideroblastic/hypochromic anemia)	17768	-1.096826434135437	-0.027723981	Yes	
+row_49	ME1	ME1	malic enzyme 1, NADP(+)-dependent, cytosolic	17897	-1.3848865032196045	-0.015256603	Yes	
+row_50	ACLY	ACLY	ATP citrate lyase	17929	-1.5669523477554321	0.0026219091	Yes	

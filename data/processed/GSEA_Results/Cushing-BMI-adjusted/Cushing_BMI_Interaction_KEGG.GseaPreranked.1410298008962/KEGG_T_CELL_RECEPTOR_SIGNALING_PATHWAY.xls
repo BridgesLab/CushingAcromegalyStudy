@@ -1,0 +1,105 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CD40LG	CD40LG	CD40 ligand (TNF superfamily, member 5, hyper-IgM syndrome)	42	1.836396336555481	0.007265472	Yes	
+row_1	CD3D	CD3D	CD3d molecule, delta (CD3-TCR complex)	158	1.483785629272461	0.01044657	Yes	
+row_2	PTPRC	PTPRC	protein tyrosine phosphatase, receptor type, C	227	1.4036223888397217	0.016257335	Yes	
+row_3	PDCD1	PDCD1	programmed cell death 1	285	1.3426673412322998	0.02268355	Yes	
+row_4	MAPK13	MAPK13	mitogen-activated protein kinase 13	358	1.2658839225769043	0.028270513	Yes	
+row_5	CARD11	CARD11	caspase recruitment domain family, member 11	426	1.199575424194336	0.034137227	Yes	
+row_6	ITK	ITK	IL2-inducible T-cell kinase	443	1.1869149208068848	0.042857405	Yes	
+row_7	NFATC4	NFATC4	nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 4	456	1.1807785034179688	0.051801387	Yes	
+row_8	MAPK12	MAPK12	mitogen-activated protein kinase 12	569	1.0833368301391602	0.055150338	Yes	
+row_9	ICOS	ICOS	inducible T-cell co-stimulator	570	1.082912802696228	0.06476572	Yes	
+row_10	RASGRP1	RASGRP1	RAS guanyl releasing protein 1 (calcium and DAG-regulated)	615	1.0571271181106567	0.07191929	Yes	
+row_11	PIK3R5	PIK3R5	phosphoinositide-3-kinase, regulatory subunit 5, p101	870	0.9333097338676453	0.0673233	Yes	
+row_12	NFKBIE	NFKBIE	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon	934	0.905360996723175	0.07341381	Yes	
+row_13	CD4	CD4	CD4 molecule	954	0.8956335186958313	0.08196614	Yes	
+row_14	VAV1	VAV1	vav 1 oncogene	1129	0.8297806978225708	0.08184617	Yes	
+row_15	LCP2	LCP2	lymphocyte cytosolic protein 2 (SH2 domain containing leukocyte protein of 76kDa)	1181	0.8122606873512268	0.08860809	Yes	
+row_16	CTLA4	CTLA4	cytotoxic T-lymphocyte-associated protein 4	1204	0.8048347234725952	0.09699257	Yes	
+row_17	LCK	LCK	lymphocyte-specific protein tyrosine kinase	1236	0.7938902378082275	0.10487349	Yes	
+row_18	IL10	IL10	interleukin 10	1469	0.7221774458885193	0.1015084	Yes	
+row_19	VAV2	VAV2	vav 2 oncogene	1491	0.7189512252807617	0.109948836	Yes	
+row_20	IKBKG	IKBKG	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase gamma	1501	0.7174059748649597	0.119060665	Yes	
+row_21	TEC	TEC	tec protein tyrosine kinase	1574	0.6981850266456604	0.124647625	Yes	
+row_22	PIK3R3	PIK3R3	phosphoinositide-3-kinase, regulatory subunit 3 (p55, gamma)	1655	0.6795732975006104	0.12978698	Yes	
+row_23	CD3E	CD3E	CD3e molecule, epsilon (CD3-TCR complex)	1770	0.6525624990463257	0.13302404	Yes	
+row_24	CD28	CD28	CD28 molecule	2055	0.5936495661735535	0.12674953	Yes	
+row_25	PIK3CG	PIK3CG	phosphoinositide-3-kinase, catalytic, gamma polypeptide	2075	0.5890746116638184	0.13530186	Yes	
+row_26	PIK3CD	PIK3CD	phosphoinositide-3-kinase, catalytic, delta polypeptide	2098	0.585756778717041	0.14368634	Yes	
+row_27	LAT	LAT	linker for activation of T cells	2238	0.5637192726135254	0.14552464	Yes	
+row_28	MAP3K8	MAP3K8	mitogen-activated protein kinase kinase kinase 8	2517	0.5192782878875732	0.13958582	No	
+row_29	BCL10	BCL10	B-cell CLL/lymphoma 10	2594	0.5059618949890137	0.14494899	No	
+row_30	PIK3R2	PIK3R2	phosphoinositide-3-kinase, regulatory subunit 2 (p85 beta)	2883	0.4651300311088562	0.13845068	No	
+row_31	ZAP70	ZAP70	zeta-chain (TCR) associated protein kinase 70kDa	3062	0.43976932764053345	0.13810691	No	
+row_32	PAK1	PAK1	p21/Cdc42/Rac1-activated kinase 1 (STE20 homolog, yeast)	4040	0.3339287340641022	0.09305883	No	
+row_33	PAK6	PAK6	p21(CDKN1A)-activated kinase 6	4754	0.26828548312187195	0.06278164	No	
+row_34	CD3G	CD3G	CD3g molecule, gamma (CD3-TCR complex)	4999	0.2485099583864212	0.05874515	No	
+row_35	VAV3	VAV3	vav 3 oncogene	5923	0.1795906126499176	0.016718393	No	
+row_36	CSF2	CSF2	colony stimulating factor 2 (granulocyte-macrophage)	6182	0.1638047993183136	0.011898597	No	
+row_37	MAPK3	MAPK3	mitogen-activated protein kinase 3	6310	0.15669673681259155	0.014408291	No	
+row_38	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	6347	0.1543331742286682	0.022009464	No	
+row_39	IFNG	IFNG	interferon, gamma	6615	0.14066900312900543	0.016686115	No	
+row_40	PLCG1	PLCG1	phospholipase C, gamma 1	6645	0.13832354545593262	0.02467894	No	
+row_41	RELA	RELA	v-rel reticuloendotheliosis viral oncogene homolog A, nuclear factor of kappa light polypeptide gene enhancer in B-cells 3, p65 (avian)	6698	0.1350451558828354	0.031384908	No	
+row_42	CDK4	CDK4	cyclin-dependent kinase 4	6739	0.13308265805244446	0.038762283	No	
+row_43	MAPK14	MAPK14	mitogen-activated protein kinase 14	6993	0.11469068378210068	0.034222238	No	
+row_44	NFKB1	NFKB1	nuclear factor of kappa light polypeptide gene enhancer in B-cells 1 (p105)	7017	0.11354798078536987	0.042550765	No	
+row_45	GRB2	GRB2	growth factor receptor-bound protein 2	7244	0.09994592517614365	0.039521378	No	
+row_46	FYN	FYN	FYN oncogene related to SRC, FGR, YES	7437	0.08797107636928558	0.038394302	No	
+row_47	CBL	CBL	Cas-Br-M (murine) ecotropic retroviral transforming sequence	7493	0.08494449406862259	0.044932418	No	
+row_48	NRAS	NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	7973	0.055168960243463516	0.027747603	No	
+row_49	KRAS	KRAS	v-Ki-ras2 Kirsten rat sarcoma viral oncogene homolog	8018	0.05276089534163475	0.034901172	No	
+row_50	IKBKB	IKBKB	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase beta	8023	0.05251364782452583	0.044292755	No	
+row_51	JUN	JUN	jun oncogene	8066	0.04959257319569588	0.05155823	No	
+row_52	MAP2K1	MAP2K1	mitogen-activated protein kinase kinase 1	8118	0.046312082558870316	0.058320146	No	
+row_53	NFKBIB	NFKBIB	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, beta	8551	0.019482756033539772	0.043764997	No	
+row_54	NFKBIA	NFKBIA	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, alpha	8608	0.016596529632806778	0.050247163	No	
+row_55	CD247	CD247	CD247 molecule	8766	0.007404955103993416	0.05107835	No	
+row_56	IL4	IL4	interleukin 4	9552	-1.873215296654962E-5	0.016772734	No	
+row_57	PPP3R2	PPP3R2	protein phosphatase 3 (formerly 2B), regulatory subunit B, 19kDa, beta isoform (calcineurin B, type II)	9601	-1.9690754925250076E-5	0.023702504	No	
+row_58	CBLC	CBLC	Cas-Br-M (murine) ecotropic retroviral transforming sequence c	9774	-2.872195364034269E-5	0.023694435	No	
+row_59	TNF	TNF	tumor necrosis factor (TNF superfamily, member 2)	9955	-3.0642448109574616E-5	0.023238763	No	
+row_60	AKT3	AKT3	v-akt murine thymoma viral oncogene homolog 3 (protein kinase B, gamma)	10088	-6.227301200851798E-4	0.025468705	No	
+row_61	MAPK11	MAPK11	mitogen-activated protein kinase 11	10141	-0.003978052642196417	0.032174673	No	
+row_62	GRAP2	GRAP2	GRB2-related adaptor protein 2	10218	-0.008449498564004898	0.037537836	No	
+row_63	DLG1	DLG1	discs, large homolog 1 (Drosophila)	10397	-0.01822168566286564	0.037194062	No	
+row_64	PIK3CB	PIK3CB	phosphoinositide-3-kinase, catalytic, beta polypeptide	10604	-0.030299244448542595	0.035283685	No	
+row_65	CD8A	CD8A	CD8a molecule	10944	-0.05054832249879837	0.025931912	No	
+row_66	PAK2	PAK2	p21 (CDKN1A)-activated kinase 2	11467	-0.08284351229667664	0.00634123	No	
+row_67	NFAT5	NFAT5	nuclear factor of activated T-cells 5, tonicity-responsive	12144	-0.12380937486886978	-0.021865798	No	
+row_68	FOS	FOS	v-fos FBJ murine osteosarcoma viral oncogene homolog	12225	-0.1283831000328064	-0.01672644	No	
+row_69	MAPK1	MAPK1	mitogen-activated protein kinase 1	12367	-0.13728365302085876	-0.015000049	No	
+row_70	NCK2	NCK2	NCK adaptor protein 2	12514	-0.14722925424575806	-0.01355341	No	
+row_71	CDC42	CDC42	cell division cycle 42 (GTP binding protein, 25kDa)	12553	-0.1493949294090271	-0.0060641374	No	
+row_72	PPP3CC	PPP3CC	protein phosphatase 3 (formerly 2B), catalytic subunit, gamma isoform (calcineurin A gamma)	12706	-0.15850317478179932	-0.0049532005	No	
+row_73	PRKCQ	PRKCQ	protein kinase C, theta	13010	-0.1794186234474182	-0.012290762	No	
+row_74	MAP2K2	MAP2K2	mitogen-activated protein kinase kinase 2	13233	-0.1934378445148468	-0.015096347	No	
+row_75	NFATC3	NFATC3	nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 3	13241	-0.19411809742450714	-0.005872614	No	
+row_76	CHUK	CHUK	conserved helix-loop-helix ubiquitous kinase	13328	-0.1996307373046875	-0.0010689565	No	
+row_77	RAF1	RAF1	v-raf-1 murine leukemia viral oncogene homolog 1	13408	-0.2051384150981903	0.0041263537	No	
+row_78	NCK1	NCK1	NCK adaptor protein 1	13708	-0.2245892584323883	-0.0029874062	No	
+row_79	CBLB	CBLB	Cas-Br-M (murine) ecotropic retroviral transforming sequence b	13844	-0.2336329072713852	-9.2531415E-4	No	
+row_80	PAK4	PAK4	p21(CDKN1A)-activated kinase 4	13963	-0.2426404505968094	0.0020879335	No	
+row_81	IL5	IL5	interleukin 5 (colony-stimulating factor, eosinophil)	13980	-0.24381814897060394	0.010808113	No	
+row_82	MALT1	MALT1	mucosa associated lymphoid tissue lymphoma translocation gene 1	14018	-0.24671369791030884	0.018353337	No	
+row_83	RHOA	RHOA	ras homolog gene family, member A	14052	-0.2488839030265808	0.026122361	No	
+row_84	GSK3B	GSK3B	glycogen synthase kinase 3 beta	14390	-0.27713486552238464	0.016882489	No	
+row_85	MAP3K7	MAP3K7	mitogen-activated protein kinase kinase kinase 7	14448	-0.2816230058670044	0.023308706	No	
+row_86	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	14453	-0.2819172441959381	0.03270029	No	
+row_87	PIK3CA	PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide	14457	-0.28208601474761963	0.042147823	No	
+row_88	PDK1	PDK1	pyruvate dehydrogenase kinase, isozyme 1	14508	-0.28567636013031006	0.048965693	No	
+row_89	PPP3R1	PPP3R1	protein phosphatase 3 (formerly 2B), regulatory subunit B, 19kDa, alpha isoform (calcineurin B, type I)	14556	-0.2894733250141144	0.055951413	No	
+row_90	MAP2K7	MAP2K7	mitogen-activated protein kinase kinase 7	14609	-0.2933454215526581	0.06265738	No	
+row_91	NFATC2	NFATC2	nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 2	15160	-0.34264156222343445	0.04150009	No	
+row_92	CHP2	null	null	15200	-0.347057044506073	0.048933417	No	
+row_93	CD8B	CD8B	CD8b molecule	15312	-0.3587448000907898	0.052338313	No	
+row_94	PPP3CB	PPP3CB	protein phosphatase 3 (formerly 2B), catalytic subunit, beta isoform (calcineurin A beta)	15343	-0.3619929254055023	0.06027519	No	
+row_95	PTPN6	PTPN6	protein tyrosine phosphatase, non-receptor type 6	15439	-0.3701745271682739	0.06457529	No	
+row_96	PAK3	PAK3	p21 (CDKN1A)-activated kinase 3	15590	-0.38583990931510925	0.06579813	No	
+row_97	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	15618	-0.3889485001564026	0.07390286	No	
+row_98	MAPK9	MAPK9	mitogen-activated protein kinase 9	15625	-0.3894881010055542	0.08318254	No	
+row_99	NFATC1	NFATC1	nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 1	15775	-0.4068942368030548	0.08446133	No	
+row_100	PPP3CA	PPP3CA	protein phosphatase 3 (formerly 2B), catalytic subunit, alpha isoform (calcineurin A alpha)	15942	-0.4296032786369324	0.08478896	No	
+row_101	SOS2	SOS2	son of sevenless homolog 2 (Drosophila)	16432	-0.5034164190292358	0.067044646	No	
+row_102	AKT2	AKT2	v-akt murine thymoma viral oncogene homolog 2	16703	-0.5592105984687805	0.06155344	No	
+row_103	SOS1	SOS1	son of sevenless homolog 1 (Drosophila)	17837	-1.2199686765670776	0.0077771177	No	
