@@ -141,7 +141,7 @@ cushing.results.bmi <- cushing.results.bmi[order(cushing.results.bmi$padj, na.la
 #### To look at genes that are affected by Cushing's in the Not obese or Obese group, I used the model that has the new variable bmiGroup#######
 cushing.cds.bmixgroup <- DESeq(cds.cushing.bmiGroup)
 cushing.results.bmixgroup <- results(cushing.cds.bmixgroup)
-plotMA(cushing.cds.bmixgroup,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI")
+plotMA(cushing.cds.bmixgroup,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI using BMIxGroup variable")
 
 cushing.results.bmixgroup$log2FC_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$log2FoldChange
 cushing.results.bmixgroup$lfcSE_NotObese_CushingvCon <- results(cushing.cds.bmixgroup, contrast=c("BMIxGroup","Not_obese.Cushing.s", "Not_obese.Control"))$lfcSE
@@ -266,6 +266,7 @@ dev.copy2pdf(file="figure/k-means.pdf")
 
 ```
 
+Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
 
 
 ```{r Cushing effect on obese and not obese patients, echo=FALSE}
@@ -277,42 +278,42 @@ cushing.mapping.obese <- cushing.mapping[cushing.mapping$BMI1=="(30,50]",]
 cushing.counts.obese <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.obese$samplename]
 cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~group)
 cushing.cds.obese <- DESeq(cds.cushing.obese)
-plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients")
+#plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients")
 cushing.results.obese <- results(cushing.cds.obese)
 sum(cushing.results.obese$padj<0.05, na.rm=TRUE)
 resultsNames(cushing.cds.obese)
 
 cushing.group.obese <- results(cushing.cds.obese, contrast=c("group", "Cushing.s", "Control"))
 cushing.group.obese <- cushing.group.obese[order(cushing.group.obese$padj, na.last=TRUE),]
-write.csv(cushing.group.obese, "../data/processed/cushing_results_Obese.csv")
+#write.csv(cushing.group.obese, "../data/processed/cushing_results_Obese.csv")
 
 cushing.fitted <- assays(cushing.cds.obese)[["mu"]]
 fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.obese) )
 cushing.residuals <- counts(cushing.cds.obese, normalized=TRUE) - fitted.common.scale
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
 cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
-plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Obese", xlab="Fitted", ylab="Residuals", pch=19)
+#plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Obese", xlab="Fitted", ylab="Residuals", pch=19)
 
 ################
 cushing.mapping.notObese <- cushing.mapping[cushing.mapping$BMI1=="(0,30]",]
 cushing.counts.notObese <-cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.notObese$samplename]
 cds.cushing.notObese = DESeqDataSetFromMatrix(countData=cushing.counts.notObese, colData=cushing.mapping.notObese, design=~group)
 cushing.cds.notObese <- DESeq(cds.cushing.notObese)
-plotMA(cushing.cds.notObese,ylim=c(-2,2),main="DESeq2 - Cushing's effect in NOT obese patients")
+#plotMA(cushing.cds.notObese,ylim=c(-2,2),main="DESeq2 - Cushing's effect in NOT obese patients")
 cushing.results.notObese <- results(cushing.cds.notObese)
 sum(cushing.results.notObese$padj<0.05, na.rm=TRUE)
 resultsNames(cushing.cds.notObese)
 
 cushing.group.notObese <- results(cushing.cds.notObese, contrast=c("group", "Cushing.s", "Control"))
 cushing.group.notObese <- cushing.group.notObese[order(cushing.group.notObese$padj, na.last=TRUE),]
-write.csv(cushing.group.notObese, "../data/processed/cushing_results_NOT_Obese.csv")
+#write.csv(cushing.group.notObese, "../data/processed/cushing_results_NOT_Obese.csv")
 
 cushing.fitted <- assays(cushing.cds.notObese)[["mu"]]
 fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.notObese) )
 cushing.residuals <- counts(cushing.cds.notObese, normalized=TRUE) - fitted.common.scale
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
 cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
-plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals notObese", xlab="Fitted", ylab="Residuals", pch=19)
+#plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals notObese", xlab="Fitted", ylab="Residuals", pch=19)
 
 ```
 
