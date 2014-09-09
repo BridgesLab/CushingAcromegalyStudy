@@ -1,0 +1,71 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	COL4A4	COL4A4	collagen, type IV, alpha 4	54	1.4840716123580933	0.011270134	No	
+row_1	ALOX15B	ALOX15B	arachidonate 15-lipoxygenase, type B	155	1.1385931968688965	0.01997144	No	
+row_2	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	181	1.0868723392486572	0.03286105	No	
+row_3	CDKN2A	CDKN2A	cyclin-dependent kinase inhibitor 2A (melanoma, p16, inhibits CDK4)	576	0.6827303171157837	0.025144197	No	
+row_4	PLCE1	PLCE1	phospholipase C, epsilon 1	666	0.6435614228248596	0.03445979	No	
+row_5	PPT1	PPT1	palmitoyl-protein thioesterase 1 (ceroid-lipofuscinosis, neuronal 1, infantile)	848	0.5625672936439514	0.038637724	No	
+row_6	GLI2	GLI2	GLI-Kruppel family member GLI2	1214	0.46291565895080566	0.032540347	No	
+row_7	CDHR2	null	null	1391	0.42536860704421997	0.0369975	No	
+row_8	RASGRP4	RASGRP4	RAS guanyl releasing protein 4	2107	0.3197839856147766	0.011354696	No	
+row_9	ENO1	ENO1	enolase 1, (alpha)	2225	0.30707409977912903	0.019106653	No	
+row_10	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	2622	0.2676279544830322	0.01127811	No	
+row_11	EREG	EREG	epiregulin	2981	0.23601210117340088	0.005571642	No	
+row_12	DLC1	DLC1	deleted in liver cancer 1	4169	0.16603539884090424	-0.04642957	No	
+row_13	GHR	GHR	growth hormone receptor	4862	0.13591942191123962	-0.070787966	No	
+row_14	RTN4RL1	RTN4RL1	reticulon 4 receptor-like 1	4912	0.1335664540529251	-0.05923861	No	
+row_15	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	5516	0.10874473303556442	-0.07862688	Yes	
+row_16	NDUFS3	NDUFS3	NADH dehydrogenase (ubiquinone) Fe-S protein 3, 30kDa (NADH-coenzyme Q reductase)	5760	0.09919248521327972	-0.07791127	Yes	
+row_17	SPHK1	SPHK1	sphingosine kinase 1	5841	0.09639297425746918	-0.06809309	Yes	
+row_18	MTOR	null	null	5936	0.09277284890413284	-0.059056718	Yes	
+row_19	DERL2	DERL2	Der1-like domain family, member 2	6121	0.08607254177331924	-0.055046316	Yes	
+row_20	DCBLD2	DCBLD2	discoidin, CUB and LCCL domain containing 2	6189	0.0829368308186531	-0.044502154	Yes	
+row_21	NOTCH2	NOTCH2	Notch homolog 2 (Drosophila)	6297	0.07887709140777588	-0.036191758	Yes	
+row_22	BCL6	BCL6	B-cell CLL/lymphoma 6 (zinc finger protein 51)	6368	0.07605605572462082	-0.02581513	Yes	
+row_23	PRSS2	PRSS2	protease, serine, 2 (trypsin 2)	6587	0.0697353407740593	-0.023703424	Yes	
+row_24	NOL8	NOL8	nucleolar protein 8	6777	0.0637081190943718	-0.019972242	Yes	
+row_25	CDKN2AIP	null	null	6798	0.06274618953466415	-0.006803409	Yes	
+row_26	PPP1R9B	PPP1R9B	protein phosphatase 1, regulatory subunit 9B, spinophilin	7052	0.05477927625179291	-0.006646248	Yes	
+row_27	DMBX1	DMBX1	diencephalon/mesencephalon homeobox 1	7141	0.052026599645614624	0.0027251868	Yes	
+row_28	CDK11A	null	null	7565	0.037731483578681946	-0.0066111465	Yes	
+row_29	SERTAD2	SERTAD2	SERTA domain containing 2	7566	0.037698835134506226	0.007674568	Yes	
+row_30	XRN2	XRN2	5'-3' exoribonuclease 2	7777	0.030475644394755363	0.010233024	Yes	
+row_31	CDKN2C	CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)	8897	-0.001617775997146964	-0.037970793	Yes	
+row_32	CAPRIN2	null	null	8919	-0.0024210214614868164	-0.024857802	Yes	
+row_33	TP53	TP53	tumor protein p53 (Li-Fraumeni syndrome)	9353	-0.018481053411960602	-0.034752578	Yes	
+row_34	FGF20	FGF20	fibroblast growth factor 20	9368	-0.01882675662636757	-0.02124868	Yes	
+row_35	SGMS1	null	null	9652	-0.02818613499403	-0.022766842	Yes	
+row_36	SMAD4	SMAD4	SMAD, mothers against DPP homolog 4 (Drosophila)	10528	-0.05706389620900154	-0.0573447	Yes	
+row_37	CDA	CDA	cytidine deaminase	10669	-0.061679381877183914	-0.050877158	Yes	
+row_38	RB1	RB1	retinoblastoma 1 (including osteosarcoma)	10682	-0.06206221878528595	-0.03726157	Yes	
+row_39	BIN3	BIN3	bridging integrator 3	10715	-0.06331941485404968	-0.024762869	Yes	
+row_40	UBB	UBB	ubiquitin B	10991	-0.07183472812175751	-0.025834277	Yes	
+row_41	ALOX12	ALOX12	arachidonate 12-lipoxygenase	12032	-0.10196342319250107	-0.06962641	Yes	
+row_42	RERG	RERG	RAS-like, estrogen-regulated, growth inhibitor	12236	-0.10994959622621536	-0.06667705	Yes	
+row_43	TGFB2	TGFB2	transforming growth factor, beta 2	12259	-0.11100511997938156	-0.053619903	Yes	
+row_44	BBC3	BBC3	BCL2 binding component 3	12267	-0.11123232543468475	-0.039725095	Yes	
+row_45	BCAR1	BCAR1	breast cancer anti-estrogen resistance 1	12322	-0.11289601773023605	-0.028454961	Yes	
+row_46	PML	PML	promyelocytic leukemia	12669	-0.12448537349700928	-0.033491302	Yes	
+row_47	SMAD3	SMAD3	SMAD, mothers against DPP homolog 3 (Drosophila)	12966	-0.13758859038352966	-0.035735436	Yes	
+row_48	FAM107A	FAM107A	family with sequence similarity 107, member A	13100	-0.14450618624687195	-0.028876984	Yes	
+row_49	NOP58	null	null	13155	-0.14749984443187714	-0.01760685	Yes	
+row_50	IP6K2	null	null	13402	-0.15857842564582825	-0.01705878	Yes	
+row_51	NUPR1	NUPR1	-	13455	-0.16151297092437744	-0.0056769587	Yes	
+row_52	RTN4RL2	RTN4RL2	reticulon 4 receptor-like 2	13476	-0.1624142825603485	0.007491874	Yes	
+row_53	ING4	ING4	inhibitor of growth family, member 4	13659	-0.1719520092010498	0.011613965	Yes	
+row_54	APBB2	APBB2	amyloid beta (A4) precursor protein-binding, family B, member 2 (Fe65-like)	13808	-0.18032525479793549	0.017634755	Yes	
+row_55	SERTAD3	SERTAD3	SERTA domain containing 3	13841	-0.18184666335582733	0.030133458	Yes	
+row_56	CDKN2D	CDKN2D	cyclin-dependent kinase inhibitor 2D (p19, inhibits CDK4)	14036	-0.19322554767131805	0.03358542	Yes	
+row_57	CDK11B	null	null	14258	-0.20688284933567047	0.03552959	Yes	
+row_58	OSGIN1	OSGIN1	oxidative stress induced growth inhibitor 1	14591	-0.22768978774547577	0.03127507	Yes	
+row_59	ACVR1B	ACVR1B	activin A receptor, type IB	14624	-0.2293323427438736	0.043773774	Yes	
+row_60	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	15647	-0.3072167932987213	9.868348E-4	Yes	
+row_61	APBB1	APBB1	amyloid beta (A4) precursor protein-binding, family B, member 1 (Fe65)	15773	-0.31732863187789917	0.008292039	Yes	
+row_62	NDUFA13	NDUFA13	NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 13	15814	-0.32238978147506714	0.02034399	Yes	
+row_63	PTCH1	PTCH1	patched homolog 1 (Drosophila)	16021	-0.3431493937969208	0.023125822	Yes	
+row_64	ING5	ING5	inhibitor of growth family, member 5	16127	-0.3553445041179657	0.031547908	Yes	
+row_65	BNIPL	BNIPL	BCL2/adenovirus E1B 19kD interacting protein like	17275	-0.5883268117904663	-0.018219542	Yes	
+row_66	TNN	TNN	tenascin N	17345	-0.6160888671875	-0.00778707	Yes	
+row_67	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	17628	-0.7395151853561401	-0.009249387	Yes	
+row_68	SPINK5	SPINK5	serine peptidase inhibitor, Kazal type 5	17766	-0.8563147187232971	-0.0026143123	Yes	
+row_69	BMPR1B	BMPR1B	bone morphogenetic protein receptor, type IB	17846	-0.9761914014816284	0.0072597195	Yes	

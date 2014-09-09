@@ -1,0 +1,71 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	NFAM1	NFAM1	NFAT activating protein with ITAM motif 1	283	0.9310135841369629	-0.0015181615	No	
+row_1	PTPRC	PTPRC	protein tyrosine phosphatase, receptor type, C	611	0.6670646071434021	-0.0054934626	No	
+row_2	CLEC7A	CLEC7A	C-type lectin domain family 7, member A	628	0.6592228412628174	0.007898746	No	
+row_3	CRTAM	CRTAM	cytotoxic and regulatory T cell molecule	760	0.5993828177452087	0.014868885	No	
+row_4	IL8	IL8	interleukin 8	1159	0.4767025411128998	0.0069286544	No	
+row_5	THY1	THY1	Thy-1 cell surface antigen	1677	0.3768590986728668	-0.0076570227	No	
+row_6	LAT2	LAT2	linker for activation of T cells family, member 2	1680	0.3763894736766815	0.0065170033	No	
+row_7	CD276	CD276	CD276 molecule	2011	0.33039072155952454	0.00237417	No	
+row_8	CD40LG	CD40LG	CD40 ligand (TNF superfamily, member 5, hyper-IgM syndrome)	2229	0.30658963322639465	0.004541718	No	
+row_9	IL18	IL18	interleukin 18 (interferon-gamma-inducing factor)	2484	0.2808852791786194	0.004643035	No	
+row_10	CD4	CD4	CD4 molecule	2534	0.27583402395248413	0.01619239	No	
+row_11	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	2622	0.2676279544830322	0.025619669	No	
+row_12	PREX1	PREX1	-	2708	0.25852397084236145	0.035158634	No	
+row_13	TLR4	TLR4	toll-like receptor 4	3285	0.2174307256937027	0.017278157	No	
+row_14	CD1D	CD1D	CD1d molecule	3293	0.21676814556121826	0.031172963	No	
+row_15	GLMN	GLMN	glomulin, FKBP associated protein	4129	0.16832183301448822	-0.0011711329	No	
+row_16	CD7	CD7	CD7 molecule	4683	0.14374291896820068	-0.017767197	No	
+row_17	IL27	IL27	interleukin 27	4804	0.13822723925113678	-0.010182773	No	
+row_18	SIT1	SIT1	signaling threshold regulating transmembrane adaptor 1	4906	0.13411378860473633	-0.001537311	No	
+row_19	SLA2	SLA2	Src-like-adaptor 2	5021	0.1292213797569275	0.0063821776	No	
+row_20	HELLS	HELLS	helicase, lymphoid-specific	5035	0.12843796610832214	0.019941919	No	
+row_21	SOCS5	SOCS5	suppressor of cytokine signaling 5	5927	0.09319470822811127	-0.015529445	No	
+row_22	LST1	LST1	leukocyte specific transcript 1	6088	0.0876905769109726	-0.010178785	No	
+row_23	VWF	VWF	von Willebrand factor	6749	0.06474920362234116	-0.032750167	No	
+row_24	CD2	CD2	CD2 molecule	6984	0.05653076618909836	-0.031531967	No	
+row_25	CD47	CD47	CD47 molecule	7448	0.04131712764501572	-0.043102063	No	
+row_26	NCK1	NCK1	NCK adaptor protein 1	7617	0.03609180450439453	-0.038198154	No	
+row_27	CD79A	CD79A	CD79a molecule, immunoglobulin-associated alpha	7889	0.026322172954678535	-0.039046187	No	
+row_28	KRT2	KRT2	keratin 2 (epidermal ichthyosis bullosa of Siemens)	8079	0.0228863637894392	-0.035315007	No	
+row_29	ELF4	ELF4	E74-like factor 4 (ets domain transcription factor)	8432	0.014305101707577705	-0.04068641	No	
+row_30	CXCR2	null	null	8476	0.012799459509551525	-0.02880199	No	
+row_31	TNFSF13	TNFSF13	tumor necrosis factor (ligand) superfamily, member 13	8899	-0.001640958827920258	-0.03808248	No	
+row_32	NHEJ1	NHEJ1	nonhomologous end-joining factor 1	9035	-0.0066098542883992195	-0.031335715	No	
+row_33	SFTPD	SFTPD	surfactant, pulmonary-associated protein D	9509	-0.023600587621331215	-0.043464255	No	
+row_34	CD28	CD28	CD28 molecule	9886	-0.03648750111460686	-0.050175916	No	
+row_35	LAX1	LAX1	lymphocyte transmembrane adaptor 1	10189	-0.04619907960295677	-0.052755114	No	
+row_36	LAT	LAT	linker for activation of T cells	11415	-0.08436740934848785	-0.1068784	Yes	
+row_37	IL7	IL7	interleukin 7	11436	-0.08520427346229553	-0.09370957	Yes	
+row_38	IL12A	IL12A	interleukin 12A (natural killer cell stimulatory factor 1, cytotoxic lymphocyte maturation factor 1, p35)	11590	-0.0905262678861618	-0.087968	Yes	
+row_39	IL4	IL4	interleukin 4	11801	-0.09608854353427887	-0.085409544	Yes	
+row_40	SPACA3	SPACA3	sperm acrosome associated 3	12262	-0.11114642024040222	-0.09681211	Yes	
+row_41	F2	F2	coagulation factor II (thrombin)	12295	-0.11215446889400482	-0.08431341	Yes	
+row_42	JAG2	JAG2	jagged 2	12373	-0.11450287699699402	-0.074327685	Yes	
+row_43	TPD52	TPD52	tumor protein D52	12574	-0.11960139125585556	-0.07121079	Yes	
+row_44	SART1	SART1	squamous cell carcinoma antigen recognised by T cells	12980	-0.13852159678936005	-0.07954193	Yes	
+row_45	WBP2NL	WBP2NL	WBP2 N-terminal like	13284	-0.1529877483844757	-0.08217697	Yes	
+row_46	CX3CL1	CX3CL1	chemokine (C-X3-C motif) ligand 1	13306	-0.1540716141462326	-0.069063984	Yes	
+row_47	ICOSLG	ICOSLG	inducible T-cell co-stimulator ligand	13624	-0.16984587907791138	-0.07248084	Yes	
+row_48	AZU1	AZU1	azurocidin 1 (cationic antimicrobial protein 37)	13802	-0.1801186054944992	-0.06807953	Yes	
+row_49	HDAC4	HDAC4	histone deacetylase 4	13902	-0.18545182049274445	-0.05932238	Yes	
+row_50	CEBPG	CEBPG	CCAAT/enhancer binding protein (C/EBP), gamma	13960	-0.1892423927783966	-0.04821978	Yes	
+row_51	CADM1	null	null	13995	-0.1913212090730667	-0.035832763	Yes	
+row_52	PF4	PF4	platelet factor 4 (chemokine (C-X-C motif) ligand 4)	14111	-0.19725893437862396	-0.02796912	Yes	
+row_53	HDAC5	HDAC5	histone deacetylase 5	14847	-0.2433808594942093	-0.054728806	Yes	
+row_54	EBI3	EBI3	Epstein-Barr virus induced gene 3	15244	-0.27257534861564636	-0.06255735	Yes	
+row_55	NCK2	NCK2	NCK adaptor protein 2	15824	-0.3236287534236908	-0.08060536	Yes	
+row_56	IL12B	IL12B	interleukin 12B (natural killer cell stimulatory factor 2, cytotoxic lymphocyte maturation factor 2, p40)	15831	-0.32446709275245667	-0.06665471	Yes	
+row_57	ZAP70	ZAP70	zeta-chain (TCR) associated protein kinase 70kDa	15844	-0.3248138427734375	-0.053039126	Yes	
+row_58	HDAC7	null	null	15905	-0.33170703053474426	-0.042104054	Yes	
+row_59	LCK	LCK	lymphocyte-specific protein tyrosine kinase	16206	-0.3654719889163971	-0.044571567	Yes	
+row_60	L3MBTL4	L3MBTL4	l(3)mbt-like 4 (Drosophila)	16434	-0.3981480598449707	-0.042962458	Yes	
+row_61	CD24	CD24	CD24 molecule	16717	-0.4465959370136261	-0.044424776	Yes	
+row_62	INHA	INHA	inhibin, alpha	16723	-0.44785618782043457	-0.030418282	Yes	
+row_63	HDAC9	HDAC9	histone deacetylase 9	16725	-0.4482143819332123	-0.016188413	Yes	
+row_64	GP1BA	GP1BA	glycoprotein Ib (platelet), alpha polypeptide	16764	-0.45487168431282043	-0.0040247734	Yes	
+row_65	CD3D	CD3D	CD3d molecule, delta (CD3-TCR complex)	16979	-0.4999789595603943	-0.0016896933	Yes	
+row_66	SIRPG	SIRPG	signal-regulatory protein gamma	17112	-0.5342355370521545	0.005224602	Yes	
+row_67	CD3E	CD3E	CD3e molecule, epsilon (CD3-TCR complex)	17235	-0.5695471167564392	0.012697338	Yes	
+row_68	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	17628	-0.7395151853561401	0.0050921715	Yes	
+row_69	SPINK5	SPINK5	serine peptidase inhibitor, Kazal type 5	17766	-0.8563147187232971	0.011727246	Yes	
