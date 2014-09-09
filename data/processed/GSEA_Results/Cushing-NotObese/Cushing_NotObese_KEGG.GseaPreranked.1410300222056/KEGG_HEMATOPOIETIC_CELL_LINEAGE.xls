@@ -1,0 +1,82 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MME	MME	membrane metallo-endopeptidase (neutral endopeptidase, enkephalinase)	46	1.6029571294784546	0.009775273	No	
+row_1	TFRC	TFRC	transferrin receptor (p90, CD71)	839	0.6540791392326355	-0.022134747	No	
+row_2	CD38	CD38	CD38 molecule	1124	0.5764650106430054	-0.025658537	No	
+row_3	CD1A	CD1A	CD1a molecule	1318	0.5339524149894714	-0.02409739	No	
+row_4	CR2	CR2	complement component (3d/Epstein Barr virus) receptor 2	1862	0.44411811232566833	-0.042093687	No	
+row_5	CD36	CD36	CD36 molecule (thrombospondin receptor)	2412	0.38213834166526794	-0.060425255	No	
+row_6	CSF2RA	CSF2RA	colony stimulating factor 2 receptor, alpha, low-affinity (granulocyte-macrophage)	2649	0.3536621630191803	-0.06126688	No	
+row_7	IL5	IL5	interleukin 5 (colony-stimulating factor, eosinophil)	3913	0.24600496888160706	-0.11949563	No	
+row_8	ANPEP	ANPEP	alanyl (membrane) aminopeptidase (aminopeptidase N, aminopeptidase M, microsomal aminopeptidase, CD13, p150)	4703	0.19025017321109772	-0.15123801	No	
+row_9	IL6R	IL6R	interleukin 6 receptor	4957	0.1734348088502884	-0.15302958	No	
+row_10	HLA-DRB1	HLA-DRB1	major histocompatibility complex, class II, DR beta 1	5872	0.12120649963617325	-0.19175676	No	
+row_11	GP1BA	GP1BA	glycoprotein Ib (platelet), alpha polypeptide	6268	0.09849389642477036	-0.20148306	No	
+row_12	HLA-DRA	HLA-DRA	major histocompatibility complex, class II, DR alpha	6331	0.09495119750499725	-0.19260183	No	
+row_13	GYPA	GYPA	glycophorin A (MNS blood group)	6579	0.08202607929706573	-0.19405812	No	
+row_14	TNF	TNF	tumor necrosis factor (TNF superfamily, member 2)	6670	0.07837656140327454	-0.1867415	No	
+row_15	ITGA1	ITGA1	integrin, alpha 1	6743	0.07520434260368347	-0.17841907	No	
+row_16	GP9	GP9	glycoprotein IX (platelet)	6946	0.06549520045518875	-0.17736083	No	
+row_17	ITGB3	ITGB3	integrin, beta 3 (platelet glycoprotein IIIa, antigen CD61)	8303	0.009746127761900425	-0.24078627	No	
+row_18	ITGA2B	ITGA2B	integrin, alpha 2b (platelet glycoprotein IIb of IIb/IIIa complex, antigen CD41)	8802	-0.018637148663401604	-0.25626802	No	
+row_19	ITGA6	ITGA6	integrin, alpha 6	8899	-0.023643214255571365	-0.24928668	No	
+row_20	EPO	EPO	erythropoietin	9136	-0.03671920672059059	-0.2501283	No	
+row_21	CD8B	CD8B	CD8b molecule	9140	-0.03693969547748566	-0.23795027	No	
+row_22	IL11	IL11	interleukin 11	9248	-0.04335944727063179	-0.23158358	No	
+row_23	CD8A	CD8A	CD8a molecule	9851	-0.07554225623607635	-0.2528767	No	
+row_24	IL4	IL4	interleukin 4	10032	-0.08475132286548615	-0.25058913	No	
+row_25	CD7	CD7	CD7 molecule	10210	-0.0900997444987297	-0.24813393	No	
+row_26	CSF2	CSF2	colony stimulating factor 2 (granulocyte-macrophage)	10425	-0.09753632545471191	-0.24774623	No	
+row_27	IL3	IL3	interleukin 3 (colony-stimulating factor, multiple)	10554	-0.10151662677526474	-0.242553	No	
+row_28	CD9	CD9	CD9 molecule	11326	-0.14498722553253174	-0.27328956	No	
+row_29	CD1B	CD1B	CD1b molecule	12179	-0.20081785321235657	-0.3085523	No	
+row_30	ITGA5	ITGA5	integrin, alpha 5 (fibronectin receptor, alpha polypeptide)	12426	-0.21748797595500946	-0.3099527	No	
+row_31	IL11RA	IL11RA	interleukin 11 receptor, alpha	12704	-0.23573318123817444	-0.31308535	No	
+row_32	IL6	IL6	interleukin 6 (interferon, beta 2)	13195	-0.27353715896606445	-0.32812008	No	
+row_33	IL1R1	IL1R1	interleukin 1 receptor, type I	13536	-0.3014656901359558	-0.33477306	Yes	
+row_34	FLT3LG	FLT3LG	fms-related tyrosine kinase 3 ligand	13648	-0.30837929248809814	-0.32862988	Yes	
+row_35	EPOR	EPOR	erythropoietin receptor	13697	-0.31153517961502075	-0.31896636	Yes	
+row_36	CD19	CD19	CD19 molecule	13738	-0.31474682688713074	-0.30885583	Yes	
+row_37	KITLG	KITLG	KIT ligand	13740	-0.3148147463798523	-0.29656604	Yes	
+row_38	CD59	CD59	CD59 molecule, complement regulatory protein	13984	-0.3357832133769989	-0.2977988	Yes	
+row_39	IL3RA	IL3RA	interleukin 3 receptor, alpha (low affinity)	14124	-0.3488743007183075	-0.29322022	Yes	
+row_40	HLA-DRB5	HLA-DRB5	major histocompatibility complex, class II, DR beta 5	14301	-0.36381712555885315	-0.29070914	Yes	
+row_41	THPO	THPO	thrombopoietin (myeloproliferative leukemia virus oncogene ligand, megakaryocyte growth and development factor)	14396	-0.3720889389514923	-0.28361604	Yes	
+row_42	IL5RA	IL5RA	interleukin 5 receptor, alpha	14960	-0.4310428202152252	-0.3027299	Yes	
+row_43	ITGAM	ITGAM	integrin, alpha M (complement component 3 receptor 3 subunit)	14975	-0.4332652986049652	-0.2911665	Yes	
+row_44	CD34	CD34	CD34 molecule	15127	-0.44975805282592773	-0.28725848	Yes	
+row_45	CD55	CD55	CD55 molecule, decay accelerating factor for complement (Cromer blood group)	15189	-0.45753052830696106	-0.2783214	Yes	
+row_46	CSF1	CSF1	colony stimulating factor 1 (macrophage)	15293	-0.4677293598651886	-0.27173117	Yes	
+row_47	IL4R	IL4R	interleukin 4 receptor	15294	-0.46773338317871094	-0.2593855	Yes	
+row_48	CD2	CD2	CD2 molecule	15359	-0.474498987197876	-0.25061604	Yes	
+row_49	IL7	IL7	interleukin 7	15365	-0.4755626618862152	-0.23854975	Yes	
+row_50	CD44	CD44	CD44 molecule (Indian blood group)	15426	-0.4829900562763214	-0.22955677	Yes	
+row_51	CD5	CD5	CD5 molecule	15444	-0.48558327555656433	-0.21816103	Yes	
+row_52	ITGA3	ITGA3	integrin, alpha 3 (antigen CD49C, alpha 3 subunit of VLA-3 receptor)	15501	-0.4924126863479614	-0.20894454	Yes	
+row_53	ITGA4	ITGA4	integrin, alpha 4 (antigen CD49D, alpha 4 subunit of VLA-4 receptor)	15559	-0.5011599063873291	-0.19978394	Yes	
+row_54	CD33	CD33	CD33 molecule	15940	-0.5548037886619568	-0.20867205	Yes	
+row_55	GP5	GP5	glycoprotein V (platelet)	16040	-0.5710927844047546	-0.20185833	Yes	
+row_56	CSF1R	CSF1R	colony stimulating factor 1 receptor, formerly McDonough feline sarcoma viral (v-fms) oncogene homolog	16107	-0.5815710425376892	-0.19320063	Yes	
+row_57	CD4	CD4	CD4 molecule	16266	-0.6084993481636047	-0.18968374	Yes	
+row_58	ITGA2	ITGA2	integrin, alpha 2 (CD49B, alpha 2 subunit of VLA-2 receptor)	16352	-0.624620258808136	-0.18208772	Yes	
+row_59	CD3G	CD3G	CD3g molecule, gamma (CD3-TCR complex)	16502	-0.6522218585014343	-0.17806792	Yes	
+row_60	CSF3	CSF3	colony stimulating factor 3 (granulocyte)	16739	-0.7081075310707092	-0.17890956	Yes	
+row_61	CD14	CD14	CD14 molecule	17082	-0.8003625869750977	-0.1856743	Yes	
+row_62	IL9R	IL9R	interleukin 9 receptor	17278	-0.8674203157424927	-0.1842249	Yes	
+row_63	IL7R	IL7R	interleukin 7 receptor	17294	-0.8732972741127014	-0.17271739	Yes	
+row_64	IL1B	IL1B	interleukin 1, beta	17316	-0.8808064460754395	-0.16154516	Yes	
+row_65	CD22	CD22	CD22 molecule	17383	-0.902955174446106	-0.15288746	Yes	
+row_66	CSF3R	CSF3R	colony stimulating factor 3 receptor (granulocyte)	17428	-0.9212608933448792	-0.14300042	Yes	
+row_67	CR1	CR1	complement component (3b/4b) receptor 1 (Knops blood group)	17580	-1.022261619567871	-0.13909239	Yes	
+row_68	FLT3	FLT3	fms-related tyrosine kinase 3	17639	-1.0621511936187744	-0.12998766	Yes	
+row_69	CD3E	CD3E	CD3e molecule, epsilon (CD3-TCR complex)	17717	-1.1262367963790894	-0.12194462	Yes	
+row_70	MS4A1	MS4A1	membrane-spanning 4-domains, subfamily A, member 1	17864	-1.3244616985321045	-0.11775719	Yes	
+row_71	CD1D	CD1D	CD1d molecule	17869	-1.3383170366287231	-0.10563502	Yes	
+row_72	IL1R2	IL1R2	interleukin 1 receptor, type II	17902	-1.432450294494629	-0.09507745	Yes	
+row_73	CD37	CD37	CD37 molecule	17913	-1.460057258605957	-0.083290555	Yes	
+row_74	KIT	KIT	v-kit Hardy-Zuckerman 4 feline sarcoma viral oncogene homolog	17924	-1.493561863899231	-0.07150366	Yes	
+row_75	CD1E	CD1E	CD1e molecule	17930	-1.504909634590149	-0.059437376	Yes	
+row_76	CD3D	CD3D	CD3d molecule, delta (CD3-TCR complex)	17946	-1.625305414199829	-0.04792987	Yes	
+row_77	IL2RA	IL2RA	interleukin 2 receptor, alpha	17953	-1.687045931816101	-0.03591946	Yes	
+row_78	FCER2	FCER2	Fc fragment of IgE, low affinity II, receptor for (CD23)	17965	-1.842146873474121	-0.024188446	Yes	
+row_79	TPO	TPO	thyroid peroxidase	17966	-1.881674885749817	-0.011842767	Yes	
+row_80	CD1C	CD1C	CD1c molecule	17969	-1.9785213470458984	3.9115595E-4	Yes	

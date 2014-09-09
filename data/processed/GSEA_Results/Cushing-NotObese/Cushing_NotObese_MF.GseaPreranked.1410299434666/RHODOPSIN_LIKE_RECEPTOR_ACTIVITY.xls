@@ -1,0 +1,101 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	ADRA1A	ADRA1A	adrenergic, alpha-1A-, receptor	168	1.1566941738128662	6.0244964E-4	No	
+row_1	HPGD	HPGD	hydroxyprostaglandin dehydrogenase 15-(NAD)	224	1.0646426677703857	0.0075258706	No	
+row_2	PTGER3	PTGER3	prostaglandin E receptor 3 (subtype EP3)	381	0.8926272392272949	0.008799573	No	
+row_3	HTR7	HTR7	5-hydroxytryptamine (serotonin) receptor 7 (adenylate cyclase-coupled)	383	0.8900375962257385	0.018743636	No	
+row_4	PAX8	PAX8	paired box gene 8	547	0.7745625972747803	0.019625774	No	
+row_5	OPRK1	OPRK1	opioid receptor, kappa 1	873	0.6424973607063293	0.01144599	No	
+row_6	HTR1F	HTR1F	5-hydroxytryptamine (serotonin) receptor 1F	1629	0.479939728975296	-0.02078705	No	
+row_7	TACR2	TACR2	tachykinin receptor 2	1828	0.45007213950157166	-0.021862732	No	
+row_8	F2RL2	F2RL2	coagulation factor II (thrombin) receptor-like 2	1923	0.43761199712753296	-0.017120887	No	
+row_9	MC5R	MC5R	melanocortin 5 receptor	2181	0.4087514579296112	-0.021496901	No	
+row_10	TAS1R3	TAS1R3	taste receptor, type 1, member 3	2304	0.39461079239845276	-0.018321313	No	
+row_11	DRD4	DRD4	dopamine receptor D4	2670	0.35136473178863525	-0.028738609	No	
+row_12	FSHR	FSHR	follicle stimulating hormone receptor	2959	0.3228197395801544	-0.034848694	No	
+row_13	CHRM3	CHRM3	cholinergic receptor, muscarinic 3	3053	0.3144204020500183	-0.030050911	No	
+row_14	TAS2R5	TAS2R5	taste receptor, type 2, member 5	4114	0.23257006704807281	-0.07934498	No	
+row_15	F2R	F2R	coagulation factor II (thrombin) receptor	4322	0.21759329736232758	-0.0809241	No	
+row_16	ADRA2B	ADRA2B	adrenergic, alpha-2B-, receptor	4385	0.21216042339801788	-0.074392244	No	
+row_17	GALR2	GALR2	galanin receptor 2	4472	0.20587019622325897	-0.0692029	No	
+row_18	HTR6	HTR6	5-hydroxytryptamine (serotonin) receptor 6	5046	0.1691761165857315	-0.091255255	No	
+row_19	OR2H2	OR2H2	olfactory receptor, family 2, subfamily H, member 2	5057	0.1691761165857315	-0.08181463	No	
+row_20	GPR17	GPR17	G protein-coupled receptor 17	5235	0.16009590029716492	-0.08171562	No	
+row_21	NMUR1	NMUR1	neuromedin U receptor 1	5453	0.14722749590873718	-0.083854124	No	
+row_22	F2RL3	F2RL3	coagulation factor II (thrombin) receptor-like 3	5487	0.14536407589912415	-0.075700074	No	
+row_23	CHRM2	CHRM2	cholinergic receptor, muscarinic 2	5594	0.13919590413570404	-0.07162948	No	
+row_24	AVPR1A	AVPR1A	arginine vasopressin receptor 1A	5935	0.1177104189991951	-0.08064833	No	
+row_25	GP1BA	GP1BA	glycoprotein Ib (platelet), alpha polypeptide	6268	0.09849389642477036	-0.08921968	No	
+row_26	BRS3	BRS3	bombesin-like receptor 3	6350	0.09377631545066833	-0.08375064	No	
+row_27	CHRM1	CHRM1	cholinergic receptor, muscarinic 1	6425	0.08943302929401398	-0.07789004	No	
+row_28	OR3A1	OR3A1	olfactory receptor, family 3, subfamily A, member 1	6668	0.07837656140327454	-0.081426986	No	
+row_29	SSTR2	SSTR2	somatostatin receptor 2	6755	0.07462132722139359	-0.07623764	No	
+row_30	ADRA2A	ADRA2A	adrenergic, alpha-2A-, receptor	7237	0.050620634108781815	-0.093143724	No	
+row_31	HRH3	HRH3	histamine receptor H3	7719	0.02843756414949894	-0.11004981	Yes	
+row_32	OPRD1	OPRD1	opioid receptor, delta 1	7745	0.028352556750178337	-0.101448245	Yes	
+row_33	TAS2R3	TAS2R3	taste receptor, type 2, member 3	7746	0.028352556750178337	-0.09144825	Yes	
+row_34	CCKAR	CCKAR	cholecystokinin A receptor	8113	0.01872013881802559	-0.101921484	Yes	
+row_35	TAS1R2	TAS1R2	taste receptor, type 1, member 2	8119	0.01872013881802559	-0.09220117	Yes	
+row_36	GRK1	GRK1	G protein-coupled receptor kinase 1	8124	0.01872013881802559	-0.082424924	Yes	
+row_37	HTR2A	HTR2A	5-hydroxytryptamine (serotonin) receptor 2A	8239	0.013896530494093895	-0.07880183	Yes	
+row_38	NMUR2	NMUR2	neuromedin U receptor 2	8342	0.007474873214960098	-0.07450749	Yes	
+row_39	CHRM4	CHRM4	cholinergic receptor, muscarinic 4	8696	-0.0124928904697299	-0.084253535	Yes	
+row_40	SSTR5	SSTR5	somatostatin receptor 5	8702	-0.013024049811065197	-0.074533224	Yes	
+row_41	GNRHR	GNRHR	gonadotropin-releasing hormone receptor	8756	-0.01645202748477459	-0.067497924	Yes	
+row_42	ADRB2	ADRB2	adrenergic, beta-2-, receptor, surface	8771	-0.017271071672439575	-0.058281053	Yes	
+row_43	DRD2	DRD2	dopamine receptor D2	8893	-0.023275498300790787	-0.055049527	Yes	
+row_44	GRPR	GRPR	gastrin-releasing peptide receptor	9229	-0.042523808777332306	-0.06378869	Yes	
+row_45	PTGFR	PTGFR	prostaglandin F receptor (FP)	9346	-0.04854658618569374	-0.060277477	Yes	
+row_46	HTR1B	HTR1B	5-hydroxytryptamine (serotonin) receptor 1B	9603	-0.06248198822140694	-0.064597555	Yes	
+row_47	GPR135	GPR135	G protein-coupled receptor 135	9653	-0.06506126374006271	-0.057338506	Yes	
+row_48	SSTR3	SSTR3	somatostatin receptor 3	10002	-0.08331827074289322	-0.066804856	Yes	
+row_49	OPRM1	OPRM1	opioid receptor, mu 1	10352	-0.0946560651063919	-0.07632715	Yes	
+row_50	TAS1R1	TAS1R1	taste receptor, type 1, member 1	10632	-0.10432832688093185	-0.0819338	Yes	
+row_51	NPBWR1	NPBWR1	neuropeptides B/W receptor 1	10693	-0.10656217485666275	-0.07529006	Yes	
+row_52	MCHR1	MCHR1	melanin-concentrating hormone receptor 1	11020	-0.12582047283649445	-0.083525784	Yes	
+row_53	DRD5	DRD5	dopamine receptor D5	11135	-0.13262027502059937	-0.07990269	Yes	
+row_54	ADRA1B	ADRA1B	adrenergic, alpha-1B-, receptor	11294	-0.1427646279335022	-0.078740865	Yes	
+row_55	FPR2	null	null	11379	-0.1477200835943222	-0.07343964	Yes	
+row_56	HTR1D	HTR1D	5-hydroxytryptamine (serotonin) receptor 1D	12064	-0.19210326671600342	-0.101701096	Yes	
+row_57	PTGER1	PTGER1	prostaglandin E receptor 1 (subtype EP1), 42kDa	12106	-0.1954621970653534	-0.09399455	Yes	
+row_58	ADRA1D	ADRA1D	adrenergic, alpha-1D-, receptor	12288	-0.20851604640483856	-0.09411929	Yes	
+row_59	TAS2R4	TAS2R4	taste receptor, type 2, member 4	12306	-0.20960579812526703	-0.08507023	Yes	
+row_60	ADRA2C	ADRA2C	adrenergic, alpha-2C-, receptor	12400	-0.21571163833141327	-0.08027245	Yes	
+row_61	CRY1	CRY1	cryptochrome 1 (photolyase-like)	12503	-0.22213870286941528	-0.07597811	Yes	
+row_62	C3AR1	C3AR1	complement component 3a receptor 1	12561	-0.22586116194725037	-0.069166556	Yes	
+row_63	HTR4	HTR4	5-hydroxytryptamine (serotonin) receptor 4	12721	-0.2367658168077469	-0.06806067	Yes	
+row_64	C5AR1	C5AR1	complement component 5a receptor 1	12795	-0.24238532781600952	-0.062144127	Yes	
+row_65	OR2S2	OR2S2	olfactory receptor, family 2, subfamily S, member 2	12995	-0.25737354159355164	-0.063275754	Yes	
+row_66	PDGFRB	PDGFRB	platelet-derived growth factor receptor, beta polypeptide	13020	-0.2596058249473572	-0.054618258	Yes	
+row_67	HCRTR2	HCRTR2	hypocretin (orexin) receptor 2	13171	-0.27181437611579895	-0.05300893	Yes	
+row_68	PTGER2	PTGER2	prostaglandin E receptor 2 (subtype EP2), 53kDa	13389	-0.2893528640270233	-0.05514743	Yes	
+row_69	HRH1	HRH1	histamine receptor H1	13614	-0.3061264157295227	-0.057677496	Yes	
+row_70	OXTR	OXTR	oxytocin receptor	13621	-0.3068006634712219	-0.048013125	Yes	
+row_71	CHRM5	CHRM5	cholinergic receptor, muscarinic 5	13625	-0.3069554269313812	-0.03818094	Yes	
+row_72	CNR2	CNR2	cannabinoid receptor 2 (macrophage)	13701	-0.3118716776371002	-0.032376274	Yes	
+row_73	HTR3B	HTR3B	5-hydroxytryptamine (serotonin) receptor 3B	13854	-0.32374459505081177	-0.03087882	Yes	
+row_74	TSHR	TSHR	thyroid stimulating hormone receptor	13872	-0.3255375027656555	-0.021829762	Yes	
+row_75	CXCR2	null	null	13992	-0.3367128074169159	-0.01848636	Yes	
+row_76	NMBR	NMBR	neuromedin B receptor	14069	-0.3441985845565796	-0.012737633	Yes	
+row_77	TBXA2R	TBXA2R	thromboxane A2 receptor	14750	-0.4072062075138092	-0.040775336	Yes	
+row_78	CMKLR1	CMKLR1	chemokine-like receptor 1	14827	-0.41656693816185	-0.03502661	Yes	
+row_79	DRD1	DRD1	dopamine receptor D1	15115	-0.44855135679244995	-0.041080758	Yes	
+row_80	TACR1	TACR1	tachykinin receptor 1	15136	-0.45073023438453674	-0.032199513	Yes	
+row_81	OR2C1	OR2C1	olfactory receptor, family 2, subfamily C, member 1	15259	-0.46416956186294556	-0.029023925	Yes	
+row_82	CYSLTR1	CYSLTR1	cysteinyl leukotriene receptor 1	15723	-0.5222160220146179	-0.044923127	Yes	
+row_83	ADRB1	ADRB1	adrenergic, beta-1-, receptor	15727	-0.5223604440689087	-0.035090942	Yes	
+row_84	HTR2B	HTR2B	5-hydroxytryptamine (serotonin) receptor 2B	16038	-0.5709912776947021	-0.042431656	Yes	
+row_85	PDGFRL	PDGFRL	platelet-derived growth factor receptor-like	16218	-0.5990670919418335	-0.042444523	Yes	
+row_86	CNR1	CNR1	cannabinoid receptor 1 (brain)	16403	-0.6336684226989746	-0.042737078	Yes	
+row_87	BDKRB2	BDKRB2	bradykinin receptor B2	17055	-0.7905402183532715	-0.069152586	Yes	
+row_88	PTGER4	PTGER4	prostaglandin E receptor 4 (subtype EP4)	17130	-0.8164858222007751	-0.06329198	Yes	
+row_89	BDKRB1	BDKRB1	bradykinin receptor B1	17203	-0.8399609923362732	-0.057319507	Yes	
+row_90	HRH2	HRH2	histamine receptor H2	17212	-0.8428391218185425	-0.04776701	Yes	
+row_91	OPN4	OPN4	opsin 4 (melanopsin)	17252	-0.8578886985778809	-0.039948583	Yes	
+row_92	PTAFR	PTAFR	platelet-activating factor receptor	17480	-0.9500722289085388	-0.042646464	Yes	
+row_93	SSTR1	SSTR1	somatostatin receptor 1	17602	-1.036681056022644	-0.03941494	Yes	
+row_94	GALR1	GALR1	galanin receptor 1	17659	-1.0773711204528809	-0.032547455	Yes	
+row_95	ADRB3	ADRB3	adrenergic, beta-3-, receptor	17720	-1.13185715675354	-0.025903722	Yes	
+row_96	OPCML	OPCML	opioid binding protein/cell adhesion molecule-like	17737	-1.1480112075805664	-0.016798727	Yes	
+row_97	FPR3	null	null	17811	-1.2385294437408447	-0.010882187	Yes	
+row_98	FPR1	FPR1	formyl peptide receptor 1	17825	-1.2699990272521973	-0.001609378	Yes	
+row_99	XCR1	XCR1	chemokine (C motif) receptor 1	17861	-1.319053292274475	0.0064327987	Yes	

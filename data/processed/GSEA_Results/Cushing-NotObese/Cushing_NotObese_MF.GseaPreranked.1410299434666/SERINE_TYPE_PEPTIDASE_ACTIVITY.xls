@@ -1,0 +1,42 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	LTF	LTF	lactotransferrin	1615	0.4819316267967224	-0.065652125	No	
+row_1	CORIN	CORIN	corin, serine peptidase	2712	0.34746500849723816	-0.102368034	No	
+row_2	APEH	APEH	N-acylaminoacyl-peptide hydrolase	2839	0.3321802616119385	-0.08500277	No	
+row_3	F12	F12	coagulation factor XII (Hageman factor)	3270	0.2955847680568695	-0.08458666	No	
+row_4	FURIN	FURIN	furin (paired basic amino acid cleaving enzyme)	3629	0.26634201407432556	-0.080156274	No	
+row_5	TMPRSS6	TMPRSS6	transmembrane protease, serine 6	4074	0.2351011335849762	-0.08052071	No	
+row_6	PREP	PREP	prolyl endopeptidase	4338	0.2161572426557541	-0.07079372	No	
+row_7	CPD	CPD	carboxypeptidase D	5624	0.13721083104610443	-0.118047096	No	
+row_8	TOR1A	TOR1A	torsin family 1, member A (torsin A)	5714	0.13209030032157898	-0.09861894	No	
+row_9	PRSS36	PRSS36	protease, serine, 36	6105	0.10757814347743988	-0.09597267	No	
+row_10	CELA2B	null	null	7484	0.03741054981946945	-0.14841115	No	
+row_11	PRSS3	PRSS3	protease, serine, 3 (mesotrypsin)	7875	0.025030415505170822	-0.14576489	No	
+row_12	HTRA1	HTRA1	HtrA serine peptidase 1	8044	0.022053109481930733	-0.13074128	No	
+row_13	PCSK9	PCSK9	proprotein convertase subtilisin/kexin type 9	9070	-0.032747991383075714	-0.16349867	No	
+row_14	HGFAC	HGFAC	HGF activator	9267	-0.04423241689801216	-0.15003617	No	
+row_15	TPP2	TPP2	tripeptidyl peptidase II	9608	-0.06285897642374039	-0.14460221	No	
+row_16	F2	F2	coagulation factor II (thrombin)	10193	-0.08955695480108261	-0.15277219	No	
+row_17	KLK2	KLK2	kallikrein 2, prostatic	11383	-0.14797934889793396	-0.1946732	No	
+row_18	F11	F11	coagulation factor XI (plasma thromboplastin antecedent)	11992	-0.1870483160018921	-0.20418125	Yes	
+row_19	PCSK2	PCSK2	proprotein convertase subtilisin/kexin type 2	12023	-0.18915580213069916	-0.18146363	Yes	
+row_20	PROC	PROC	protein C (inactivator of coagulation factors Va and VIIIa)	12168	-0.19953152537345886	-0.16510193	Yes	
+row_21	GZMB	GZMB	granzyme B (granzyme 2, cytotoxic T-lymphocyte-associated serine esterase 1)	12205	-0.20270608365535736	-0.14271882	Yes	
+row_22	KLK1	KLK1	kallikrein 1, renal/pancreas/salivary	12284	-0.20828603208065033	-0.12267738	Yes	
+row_23	ACR	ACR	acrosin	12850	-0.24704326689243317	-0.12978803	Yes	
+row_24	HTRA2	HTRA2	HtrA serine peptidase 2	13175	-0.27196982502937317	-0.123462014	Yes	
+row_25	MASP2	MASP2	mannan-binding lectin serine peptidase 2	13380	-0.28859469294548035	-0.110445544	Yes	
+row_26	PRSS2	PRSS2	protease, serine, 2 (trypsin 2)	13559	-0.30235588550567627	-0.095979474	Yes	
+row_27	TPP1	TPP1	tripeptidyl peptidase I	14181	-0.3537280261516571	-0.10621233	Yes	
+row_28	GZMA	GZMA	granzyme A (granzyme 1, cytotoxic T-lymphocyte-associated serine esterase 3)	14251	-0.3607529401779175	-0.0856691	Yes	
+row_29	F7	F7	coagulation factor VII (serum prothrombin conversion accelerator)	14479	-0.38032421469688416	-0.07393497	Yes	
+row_30	C1S	C1S	complement component 1, s subcomponent	14617	-0.3927111327648163	-0.057182997	Yes	
+row_31	C1R	C1R	complement component 1, r subcomponent	15245	-0.4631069004535675	-0.06775038	Yes	
+row_32	KLKB1	KLKB1	kallikrein B, plasma (Fletcher factor) 1	15776	-0.530006468296051	-0.072909646	Yes	
+row_33	DPP4	DPP4	dipeptidyl-peptidase 4 (CD26, adenosine deaminase complexing protein 2)	16775	-0.7163519263267517	-0.10416169	Yes	
+row_34	MASP1	MASP1	mannan-binding lectin serine peptidase 1 (C4/C2 activating component of Ra-reactive factor)	16828	-0.7276867032051086	-0.08267064	Yes	
+row_35	PCSK6	PCSK6	proprotein convertase subtilisin/kexin type 6	16990	-0.7714939713478088	-0.067256756	Yes	
+row_36	PLG	PLG	plasminogen	17134	-0.8173549771308899	-0.050839305	Yes	
+row_37	CFD	CFD	complement factor D (adipsin)	17202	-0.8399328589439392	-0.030184565	Yes	
+row_38	CFI	CFI	complement factor I	17656	-1.0762066841125488	-0.031050788	Yes	
+row_39	F10	F10	coagulation factor X	17675	-1.087503433227539	-0.0076641142	Yes	
+row_40	CTSG	CTSG	cathepsin G	17821	-1.266113042831421	0.008641829	Yes	

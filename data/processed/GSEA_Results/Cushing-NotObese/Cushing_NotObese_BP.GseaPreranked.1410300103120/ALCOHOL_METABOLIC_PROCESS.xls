@@ -1,0 +1,85 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	ALDOC	ALDOC	aldolase C, fructose-bisphosphate	17	2.082402229309082	0.01095467	Yes	
+row_1	DHCR24	DHCR24	24-dehydrocholesterol reductase	20	2.0210180282592773	0.022747656	Yes	
+row_2	DHCR7	DHCR7	7-dehydrocholesterol reductase	90	1.378201961517334	0.030796163	Yes	
+row_3	SLC25A10	SLC25A10	solute carrier family 25 (mitochondrial carrier; dicarboxylate transporter), member 10	103	1.3225587606430054	0.04203027	Yes	
+row_4	PGD	PGD	phosphogluconate dehydrogenase	511	0.7996342778205872	0.031188708	Yes	
+row_5	CYP46A1	CYP46A1	cytochrome P450, family 46, subfamily A, polypeptide 1	554	0.771284282207489	0.040746182	Yes	
+row_6	ALDOA	ALDOA	aldolase A, fructose-bisphosphate	675	0.7165890336036682	0.04594441	Yes	
+row_7	PDK3	PDK3	pyruvate dehydrogenase kinase, isozyme 3	754	0.686042845249176	0.053489927	Yes	
+row_8	COQ3	COQ3	coenzyme Q3 homolog, methyltransferase (S. cerevisiae)	1020	0.6007121801376343	0.050584428	Yes	
+row_9	COQ2	COQ2	coenzyme Q2 homolog, prenyltransferase (yeast)	1175	0.5620808005332947	0.053882472	Yes	
+row_10	PFKFB1	PFKFB1	6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 1	1325	0.5324110984802246	0.057459958	Yes	
+row_11	UGP2	UGP2	UDP-glucose pyrophosphorylase 2	1329	0.5314706563949585	0.06919706	Yes	
+row_12	NPC1L1	NPC1L1	NPC1 (Niemann-Pick disease, type C1, gene)-like 1	1362	0.5254219770431519	0.07931341	Yes	
+row_13	ADH6	ADH6	alcohol dehydrogenase 6 (class V)	1445	0.5097043514251709	0.08663537	Yes	
+row_14	PPARGC1A	PPARGC1A	peroxisome proliferative activated receptor, gamma, coactivator 1, alpha	1449	0.5084941983222961	0.098372474	Yes	
+row_15	G6PD	G6PD	glucose-6-phosphate dehydrogenase	1464	0.5068974494934082	0.109494805	Yes	
+row_16	ADH4	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	1478	0.5034123659133911	0.12067303	Yes	
+row_17	FDPS	FDPS	farnesyl diphosphate synthase (farnesyl pyrophosphate synthetase, dimethylallyltranstransferase, geranyltranstransferase)	1606	0.4828391969203949	0.12548004	Yes	
+row_18	ACN9	ACN9	ACN9 homolog (S. cerevisiae)	1957	0.43507128953933716	0.117824085	Yes	
+row_19	IRS2	IRS2	insulin receptor substrate 2	2164	0.410402774810791	0.11821596	Yes	
+row_20	PDK1	PDK1	pyruvate dehydrogenase kinase, isozyme 1	2319	0.3928442895412445	0.12151401	Yes	
+row_21	MBTPS2	MBTPS2	membrane-bound transcription factor peptidase, site 2	2491	0.37264716625213623	0.12386196	Yes	
+row_22	FBP2	FBP2	fructose-1,6-bisphosphatase 2	2698	0.3493259847164154	0.12425384	Yes	
+row_23	ABCG1	ABCG1	ATP-binding cassette, sub-family G (WHITE), member 1	3169	0.30329757928848267	0.10989135	Yes	
+row_24	ARPP19	null	null	3490	0.27762269973754883	0.10391202	Yes	
+row_25	TGFB2	TGFB2	transforming growth factor, beta 2	3566	0.2715302109718323	0.1116252	Yes	
+row_26	GFPT1	GFPT1	glutamine-fructose-6-phosphate transaminase 1	3670	0.2628994286060333	0.11777352	Yes	
+row_27	ALDH2	ALDH2	aldehyde dehydrogenase 2 family (mitochondrial)	3745	0.25887879729270935	0.12554258	Yes	
+row_28	HDLBP	HDLBP	high density lipoprotein binding protein (vigilin)	4060	0.23606863617897034	0.11989859	Yes	
+row_29	PFKL	PFKL	phosphofructokinase, liver	4124	0.23173575103282928	0.12828241	Yes	
+row_30	IPPK	IPPK	inositol 1,3,4,5,6-pentakisphosphate 2-kinase	4485	0.20420674979686737	0.12006758	Yes	
+row_31	SULT1B1	SULT1B1	sulfotransferase family, cytosolic, 1B, member 1	4590	0.19749140739440918	0.12616001	Yes	
+row_32	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	4712	0.18962059915065765	0.13130236	Yes	
+row_33	UGDH	UGDH	UDP-glucose dehydrogenase	4738	0.18746916949748993	0.14180993	Yes	
+row_34	ADH7	ADH7	alcohol dehydrogenase 7 (class IV), mu or sigma polypeptide	5054	0.1691761165857315	0.13611004	Yes	
+row_35	ECD	ECD	ecdysoneless homolog (Drosophila)	5930	0.11809932440519333	0.099112995	Yes	
+row_36	HPRT1	HPRT1	hypoxanthine phosphoribosyltransferase 1 (Lesch-Nyhan syndrome)	6023	0.11264193058013916	0.10587608	Yes	
+row_37	BRS3	BRS3	bombesin-like receptor 3	6350	0.09377631545066833	0.09956143	Yes	
+row_38	APOF	APOF	apolipoprotein F	6398	0.09069599956274033	0.10883947	Yes	
+row_39	PMM2	PMM2	phosphomannomutase 2	6441	0.088718481361866	0.11839694	Yes	
+row_40	GMDS	GMDS	GDP-mannose 4,6-dehydratase	6768	0.07373853772878647	0.11208229	Yes	
+row_41	HK1	HK1	hexokinase 1	6776	0.07341936975717545	0.123595834	Yes	
+row_42	ADH5	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	7108	0.057423099875450134	0.11700174	Yes	
+row_43	CLN6	CLN6	ceroid-lipofuscinosis, neuronal 6, late infantile, variant	7398	0.041357316076755524	0.11275494	Yes	
+row_44	PGLS	PGLS	6-phosphogluconolactonase	7496	0.03682304918766022	0.119238585	Yes	
+row_45	CNBP	CNBP	CCHC-type zinc finger, nucleic acid binding protein	7517	0.035916879773139954	0.1300256	Yes	
+row_46	NR0B2	NR0B2	nuclear receptor subfamily 0, group B, member 2	7646	0.02887495793402195	0.13477673	Yes	
+row_47	CEL	CEL	carboxyl ester lipase (bile salt-stimulated lipase)	8279	0.011688876897096634	0.11136041	Yes	
+row_48	SOAT1	SOAT1	sterol O-acyltransferase (acyl-Coenzyme A: cholesterol acyltransferase) 1	8377	0.005084640812128782	0.11784405	Yes	
+row_49	ATF4	ATF4	activating transcription factor 4 (tax-responsive enhancer element B67)	8472	2.929550246335566E-4	0.124495365	Yes	
+row_50	FPGT	FPGT	fucose-1-phosphate guanylyltransferase	8680	-0.011610334739089012	0.124831356	Yes	
+row_51	SCARB1	SCARB1	scavenger receptor class B, member 1	8741	-0.015298058278858662	0.13338286	Yes	
+row_52	ETNK1	ETNK1	ethanolamine kinase 1	8932	-0.025099391117691994	0.13466893	Yes	
+row_53	TSTA3	TSTA3	tissue specific transplantation antigen P35B	8972	-0.027602829039096832	0.14439407	Yes	
+row_54	ALDH3B1	ALDH3B1	aldehyde dehydrogenase 3 family, member B1	9761	-0.07115355879068375	0.11225927	No	
+row_55	IL4	IL4	interleukin 4	10032	-0.08475132286548615	0.10907433	No	
+row_56	GALT	GALT	galactose-1-phosphate uridylyltransferase	10337	-0.09400282800197601	0.10398921	No	
+row_57	SLC35A2	SLC35A2	solute carrier family 35 (UDP-galactose transporter), member A2	10545	-0.10150546580553055	0.104325205	No	
+row_58	AKR1D1	AKR1D1	aldo-keto reductase family 1, member D1 (delta 4-3-ketosteroid-5-beta-reductase)	10773	-0.11047413945198059	0.10354344	No	
+row_59	AKR1A1	AKR1A1	aldo-keto reductase family 1, member A1 (aldehyde reductase)	10993	-0.12426567077636719	0.10320878	No	
+row_60	PDK4	PDK4	pyruvate dehydrogenase kinase, isozyme 4	12097	-0.19475002586841583	0.053469326	No	
+row_61	ALDH3B2	ALDH3B2	aldehyde dehydrogenase 3 family, member B2	12193	-0.20138311386108398	0.060064748	No	
+row_62	APOL2	APOL2	apolipoprotein L, 2	12782	-0.24174903333187103	0.039107498	No	
+row_63	PPARD	PPARD	peroxisome proliferative activated receptor, delta	12980	-0.2558363676071167	0.04000237	No	
+row_64	SNCAIP	SNCAIP	synuclein, alpha interacting protein (synphilin)	13365	-0.28760746121406555	0.030446224	No	
+row_65	GCK	GCK	glucokinase (hexokinase 4, maturity onset diabetes of the young 2)	13424	-0.29263296723365784	0.039109495	No	
+row_66	CELA3B	null	null	13841	-0.3233462870121002	0.027764942	No	
+row_67	STARD3	STARD3	START domain containing 3	14199	-0.3552755117416382	0.019717768	No	
+row_68	GFPT2	GFPT2	glutamine-fructose-6-phosphate transaminase 2	14258	-0.36112284660339355	0.02838104	No	
+row_69	GALK1	GALK1	galactokinase 1	14413	-0.3739292323589325	0.031679083	No	
+row_70	CLN8	CLN8	ceroid-lipofuscinosis, neuronal 8 (epilepsy, progressive with mental retardation)	14491	-0.38111644983291626	0.03928049	No	
+row_71	PFKM	PFKM	phosphofructokinase, muscle	14725	-0.40414026379585266	0.038163397	No	
+row_72	PTEN	PTEN	phosphatase and tensin homolog (mutated in multiple advanced cancers 1)	15083	-0.44428080320358276	0.030116223	No	
+row_73	MIOX	MIOX	myo-inositol oxygenase	15097	-0.4469263255596161	0.041294444	No	
+row_74	PDK2	PDK2	pyruvate dehydrogenase kinase, isozyme 2	15320	-0.46983638405799866	0.04079212	No	
+row_75	ALDH1A3	ALDH1A3	aldehyde dehydrogenase 1 family, member A3	15472	-0.48871785402297974	0.044257827	No	
+row_76	SOAT2	SOAT2	sterol O-acyltransferase 2	16025	-0.569034993648529	0.025312537	No	
+row_77	CHST15	null	null	16078	-0.5764864087104797	0.034311134	No	
+row_78	ADH1B	ADH1B	alcohol dehydrogenase IB (class I), beta polypeptide	16534	-0.6578482985496521	0.02078696	No	
+row_79	FBP1	FBP1	fructose-1,6-bisphosphatase 1	16825	-0.7273348569869995	0.016484266	No	
+row_80	SPHK1	SPHK1	sphingosine kinase 1	16869	-0.7402491569519043	0.025985854	No	
+row_81	GAPDHS	GAPDHS	glyceraldehyde-3-phosphate dehydrogenase, spermatogenic	17441	-0.92892986536026	0.005978696	No	
+row_82	CHST1	CHST1	carbohydrate (keratan sulfate Gal-6) sulfotransferase 1	17790	-1.2057201862335205	-0.0015654879	No	
+row_83	ALDOB	ALDOB	aldolase B, fructose-bisphosphate	17920	-1.4807857275009155	0.003129751	No	
