@@ -1,0 +1,63 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	TLR8	TLR8	toll-like receptor 8	119	1.550218939781189	0.009486553	Yes	
+row_1	CD1D	CD1D	CD1d molecule	169	1.4648584127426147	0.022880446	Yes	
+row_2	PTPRC	PTPRC	protein tyrosine phosphatase, receptor type, C	227	1.4036223888397217	0.035827786	Yes	
+row_3	NFAM1	NFAM1	NFAT activating protein with ITAM motif 1	329	1.295225977897644	0.046319086	Yes	
+row_4	APOBEC3F	APOBEC3F	apolipoprotein B mRNA editing enzyme, catalytic polypeptide-like 3F	430	1.1967934370040894	0.056866203	Yes	
+row_5	CRTAM	CRTAM	cytotoxic and regulatory T cell molecule	727	0.9947987794876099	0.056472767	Yes	
+row_6	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	968	0.8907591700553894	0.059205204	Yes	
+row_7	LAX1	LAX1	lymphocyte transmembrane adaptor 1	1172	0.8154166340827942	0.064002946	Yes	
+row_8	LCK	LCK	lymphocyte-specific protein tyrosine kinase	1236	0.7938902378082275	0.07661538	Yes	
+row_9	KRT1	KRT1	keratin 1 (epidermolytic hyperkeratosis)	1331	0.7622308135032654	0.087497406	Yes	
+row_10	IL27	IL27	interleukin 27	1411	0.7356608510017395	0.09921673	Yes	
+row_11	IKBKG	IKBKG	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase gamma	1501	0.7174059748649597	0.110377856	Yes	
+row_12	EREG	EREG	epiregulin	1548	0.7039934992790222	0.1239392	Yes	
+row_13	THY1	THY1	Thy-1 cell surface antigen	1749	0.6576285362243652	0.1289044	Yes	
+row_14	CD3E	CD3E	CD3e molecule, epsilon (CD3-TCR complex)	1770	0.6525624990463257	0.14391705	Yes	
+row_15	CD28	CD28	CD28 molecule	2055	0.5936495661735535	0.14419346	Yes	
+row_16	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	2080	0.5886008143424988	0.15898283	Yes	
+row_17	LAT	LAT	linker for activation of T cells	2238	0.5637192726135254	0.16634825	Yes	
+row_18	CFHR1	CFHR1	complement factor H-related 1	2560	0.5117454528808594	0.16455933	Yes	
+row_19	TRAT1	TRAT1	T cell receptor associated transmembrane adaptor 1	2639	0.49902501702308655	0.17633447	Yes	
+row_20	IL7	IL7	interleukin 7	2984	0.4502396285533905	0.17326172	Yes	
+row_21	ZAP70	ZAP70	zeta-chain (TCR) associated protein kinase 70kDa	3062	0.43976932764053345	0.18509267	Yes	
+row_22	LAT2	LAT2	linker for activation of T cells family, member 2	3137	0.43116357922554016	0.19709109	Yes	
+row_23	IL18	IL18	interleukin 18 (interferon-gamma-inducing factor)	3467	0.39191505312919617	0.19485563	Yes	
+row_24	CD47	CD47	CD47 molecule	3509	0.3878012001514435	0.20869607	Yes	
+row_25	LST1	LST1	leukocyte specific transcript 1	3706	0.3673248291015625	0.21388455	Yes	
+row_26	C2	C2	complement component 2	4955	0.2517872750759125	0.16035129	No	
+row_27	TNFSF13	TNFSF13	tumor necrosis factor (ligand) superfamily, member 13	5232	0.23139774799346924	0.16107424	No	
+row_28	TRAF2	TRAF2	TNF receptor-associated factor 2	5788	0.19027116894721985	0.14622363	No	
+row_29	CD276	CD276	CD276 molecule	5958	0.17703424394130707	0.15291923	No	
+row_30	ICOSLG	ICOSLG	inducible T-cell co-stimulator ligand	6152	0.16557611525058746	0.15827517	No	
+row_31	APOBEC3G	APOBEC3G	apolipoprotein B mRNA editing enzyme, catalytic polypeptide-like 3G	6246	0.16073445975780487	0.16921303	No	
+row_32	FYN	FYN	FYN oncogene related to SRC, FGR, YES	7437	0.08797107636928558	0.11891727	No	
+row_33	GLMN	GLMN	glomulin, FKBP associated protein	7683	0.07296474277973175	0.12137061	No	
+row_34	TARBP2	TARBP2	Tar (HIV-1) RNA binding protein 2	7860	0.06214454397559166	0.12767547	No	
+row_35	EBI3	EBI3	Epstein-Barr virus induced gene 3	8399	0.028570540249347687	0.11377381	No	
+row_36	IFNK	IFNK	interferon, kappa	9266	-9.752978424870662E-10	0.08156346	No	
+row_37	IL4	IL4	interleukin 4	9552	-1.873215296654962E-5	0.08178403	No	
+row_38	SPACA3	SPACA3	sperm acrosome associated 3	9568	-1.9098939446848817E-5	0.097075775	No	
+row_39	NCR1	NCR1	natural cytotoxicity triggering receptor 1	9762	-2.834317638189532E-5	0.102431715	No	
+row_40	IL12B	IL12B	interleukin 12B (natural killer cell stimulatory factor 2, cytotoxic lymphocyte maturation factor 2, p40)	9973	-3.081327668041922E-5	0.106838726	No	
+row_41	CD79A	CD79A	CD79a molecule, immunoglobulin-associated alpha	10009	-3.1937321182340384E-5	0.12101409	No	
+row_42	BCAR1	BCAR1	breast cancer anti-estrogen resistance 1	10659	-0.033290598541498184	0.1009165	No	
+row_43	TRAF6	TRAF6	TNF receptor-associated factor 6	11480	-0.08369646966457367	0.071273826	No	
+row_44	SART1	SART1	squamous cell carcinoma antigen recognised by T cells	11742	-0.09886398166418076	0.07283406	No	
+row_45	SFTPD	SFTPD	surfactant, pulmonary-associated protein D	12101	-0.12150028347969055	0.06897984	No	
+row_46	NCK2	NCK2	NCK adaptor protein 2	12514	-0.14722925424575806	0.06211138	No	
+row_47	SIRPG	SIRPG	signal-regulatory protein gamma	12926	-0.17488914728164673	0.055298746	No	
+row_48	UBE2N	UBE2N	ubiquitin-conjugating enzyme E2N (UBC13 homolog, yeast)	13611	-0.21781259775161743	0.033247482	No	
+row_49	NCK1	NCK1	NCK adaptor protein 1	13708	-0.2245892584323883	0.044017874	No	
+row_50	MIA3	MIA3	melanoma inhibitory activity family, member 3	13931	-0.23975661396980286	0.047755055	No	
+row_51	MALT1	MALT1	mucosa associated lymphoid tissue lymphoma translocation gene 1	14018	-0.24671369791030884	0.05908364	No	
+row_52	MAP3K7	MAP3K7	mitogen-activated protein kinase kinase kinase 7	14448	-0.2816230058670044	0.05126626	No	
+row_53	IL12A	IL12A	interleukin 12A (natural killer cell stimulatory factor 1, cytotoxic lymphocyte maturation factor 1, p35)	14823	-0.3114861845970154	0.04651893	No	
+row_54	CD24	CD24	CD24 molecule	14918	-0.3197523355484009	0.057400964	No	
+row_55	TGFB2	TGFB2	transforming growth factor, beta 2	14919	-0.3198855221271515	0.073529996	No	
+row_56	SOCS5	SOCS5	suppressor of cytokine signaling 5	15240	-0.3507876694202423	0.0717969	No	
+row_57	SLA2	SLA2	Src-like-adaptor 2	16949	-0.6225702166557312	-0.00741317	No	
+row_58	SPINK5	SPINK5	serine peptidase inhibitor, Kazal type 5	16987	-0.632634699344635	0.0066505536	No	
+row_59	SIT1	SIT1	signaling threshold regulating transmembrane adaptor 1	17023	-0.6436607837677002	0.020825915	No	
+row_60	INHA	INHA	inhibin, alpha	17288	-0.7482497692108154	0.022218693	No	
+row_61	CADM1	null	null	17731	-1.0545411109924316	0.013675662	No	

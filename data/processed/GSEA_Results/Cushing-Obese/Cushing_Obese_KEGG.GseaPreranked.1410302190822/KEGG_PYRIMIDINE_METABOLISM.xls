@@ -1,0 +1,95 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	RRM2	RRM2	ribonucleotide reductase M2 polypeptide	18	1.8900034427642822	0.009631755	No	
+row_1	TK1	TK1	thymidine kinase 1, soluble	30	1.6891348361968994	0.019654943	No	
+row_2	ZNRD1	ZNRD1	zinc ribbon domain containing 1	489	0.7392061948776245	0.004682325	No	
+row_3	POLR2J3	POLR2J3	-	880	0.5520635843276978	-0.0064877993	No	
+row_4	RRM2B	RRM2B	ribonucleotide reductase M2 B (TP53 inducible)	938	0.5368233919143677	9.631134E-4	No	
+row_5	TYMS	TYMS	thymidylate synthetase	1256	0.45159852504730225	-0.0061249216	No	
+row_6	PRIM1	PRIM1	primase, polypeptide 1, 49kDa	2243	0.3056582808494568	-0.050622787	No	
+row_7	TYMP	null	null	2470	0.28261199593544006	-0.05262219	No	
+row_8	NME1	NME1	non-metastatic cells 1, protein (NM23A) expressed in	3222	0.22057506442070007	-0.083979085	No	
+row_9	TXNRD1	TXNRD1	thioredoxin reductase 1	3500	0.2015000581741333	-0.08883036	No	
+row_10	RRM1	RRM1	ribonucleotide reductase M1 polypeptide	3587	0.1964368224143982	-0.0830011	No	
+row_11	DCTD	DCTD	dCMP deaminase	3637	0.19364751875400543	-0.075102836	No	
+row_12	POLR1B	POLR1B	polymerase (RNA) I polypeptide B, 128kDa	3664	0.19207456707954407	-0.06591843	No	
+row_13	DPYD	DPYD	dihydropyrimidine dehydrogenase	4316	0.15786117315292358	-0.091683425	Yes	
+row_14	POLD2	POLD2	polymerase (DNA directed), delta 2, regulatory subunit 50kDa	4349	0.15613222122192383	-0.082834534	Yes	
+row_15	PNPT1	PNPT1	polyribonucleotide nucleotidyltransferase 1	4380	0.15478916466236115	-0.0738738	Yes	
+row_16	UPP2	UPP2	uridine phosphorylase 2	4437	0.15398599207401276	-0.06636698	Yes	
+row_17	AK3	AK3	adenylate kinase 3	4455	0.15303610265254974	-0.0566793	Yes	
+row_18	UMPS	UMPS	uridine monophosphate synthetase (orotate phosphoribosyl transferase and orotidine-5'-decarboxylase)	4531	0.14932385087013245	-0.05023493	Yes	
+row_19	NME6	NME6	non-metastatic cells 6, protein expressed in (nucleoside-diphosphate kinase)	4935	0.13261327147483826	-0.062132	Yes	
+row_20	NME7	NME7	non-metastatic cells 7, protein expressed in (nucleoside-diphosphate kinase)	4979	0.1308661699295044	-0.053898223	Yes	
+row_21	UPB1	UPB1	ureidopropionase, beta	5036	0.12840314209461212	-0.04639139	Yes	
+row_22	UPP1	UPP1	uridine phosphorylase 1	5042	0.12813206017017365	-0.036032688	Yes	
+row_23	CANT1	CANT1	calcium activated nucleotidase 1	5449	0.11098082363605499	-0.048097517	Yes	
+row_24	POLE3	POLE3	polymerase (DNA directed), epsilon 3 (p17 subunit)	5615	0.10481613874435425	-0.04668586	Yes	
+row_25	POLD3	POLD3	polymerase (DNA-directed), delta 3, accessory subunit	5659	0.10330461710691452	-0.03845208	Yes	
+row_26	CMPK1	null	null	5666	0.10299903899431229	-0.028149297	Yes	
+row_27	POLR3F	POLR3F	polymerase (RNA) III (DNA directed) polypeptide F, 39 kDa	5736	0.10008794814348221	-0.021369413	Yes	
+row_28	ITPA	ITPA	inosine triphosphatase (nucleoside triphosphate pyrophosphatase)	5855	0.09589430689811707	-0.01732956	Yes	
+row_29	POLR2K	POLR2K	polymerase (RNA) II (DNA directed) polypeptide K, 7.0kDa	5890	0.09438536316156387	-0.008592511	Yes	
+row_30	POLR2D	POLR2D	polymerase (RNA) II (DNA directed) polypeptide D	6062	0.08859465271234512	-0.007516367	Yes	
+row_31	UCK2	UCK2	uridine-cytidine kinase 2	6185	0.08311646431684494	-0.0037001912	Yes	
+row_32	NT5C1A	NT5C1A	5'-nucleotidase, cytosolic IA	6268	0.079881452023983	0.002352746	Yes	
+row_33	POLR1D	POLR1D	polymerase (RNA) I polypeptide D, 16kDa	6314	0.07827781140804291	0.010474687	Yes	
+row_34	POLA1	POLA1	polymerase (DNA directed), alpha 1	6468	0.07303932309150696	0.012557373	Yes	
+row_35	POLR1E	POLR1E	polymerase (RNA) I polypeptide E, 53kDa	6779	0.0636112242937088	0.005860771	Yes	
+row_36	PRIM2	null	null	6852	0.06100927293300629	0.012472899	Yes	
+row_37	POLA2	POLA2	polymerase (DNA directed), alpha 2 (70kD subunit)	7103	0.05337202176451683	0.009131438	Yes	
+row_38	CTPS2	CTPS2	CTP synthase II	7343	0.044916316866874695	0.0064050877	Yes	
+row_39	PNP	null	null	7393	0.043384816497564316	0.014303353	Yes	
+row_40	POLR2A	POLR2A	polymerase (RNA) II (DNA directed) polypeptide A, 220kDa	7427	0.04240191727876663	0.023096323	Yes	
+row_41	POLR2F	POLR2F	polymerase (RNA) II (DNA directed) polypeptide F	7433	0.042102452367544174	0.033455025	Yes	
+row_42	POLR2B	POLR2B	polymerase (RNA) II (DNA directed) polypeptide B, 140kDa	7440	0.04168318212032318	0.043757807	Yes	
+row_43	DCK	DCK	deoxycytidine kinase	7457	0.04110521450638771	0.0535014	Yes	
+row_44	TK2	TK2	thymidine kinase 2, mitochondrial	7660	0.03490768000483513	0.052844055	Yes	
+row_45	ENTPD3	ENTPD3	ectonucleoside triphosphate diphosphohydrolase 3	8117	0.02245844341814518	0.037983276	Yes	
+row_46	UPRT	null	null	8123	0.022246411070227623	0.04834198	Yes	
+row_47	POLR3H	POLR3H	polymerase (RNA) III (DNA directed) polypeptide H (22.9kD)	8225	0.020126890391111374	0.05333245	Yes	
+row_48	ENTPD1	ENTPD1	ectonucleoside triphosphate diphosphohydrolase 1	8470	0.013030321337282658	0.050326508	Yes	
+row_49	POLD4	POLD4	polymerase (DNA-directed), delta 4	8785	0.0022007040679454803	0.04340623	Yes	
+row_50	CAD	CAD	carbamoyl-phosphate synthetase 2, aspartate transcarbamylase, and dihydroorotase	9088	-0.008669848553836346	0.03715698	Yes	
+row_51	ENTPD5	ENTPD5	ectonucleoside triphosphate diphosphohydrolase 5	9210	-0.013065631501376629	0.041029073	Yes	
+row_52	POLE2	POLE2	polymerase (DNA directed), epsilon 2 (p59 subunit)	9213	-0.013163086026906967	0.051555533	Yes	
+row_53	POLE4	POLE4	polymerase (DNA-directed), epsilon 4 (p12 subunit)	9519	-0.02384926751255989	0.045138527	Yes	
+row_54	POLR2L	POLR2L	polymerase (RNA) II (DNA directed) polypeptide L, 7.6kDa	9975	-0.03953088819980621	0.030333664	Yes	
+row_55	POLR2J	POLR2J	polymerase (RNA) II (DNA directed) polypeptide J, 13.3kDa	10367	-0.05172375217080116	0.019107621	Yes	
+row_56	POLR3D	POLR3D	polymerase (RNA) III (DNA directed) polypeptide D, 44kDa	10400	-0.05270537734031677	0.02795651	Yes	
+row_57	POLR2E	POLR2E	polymerase (RNA) II (DNA directed) polypeptide E, 25kDa	10490	-0.05587691068649292	0.033618014	Yes	
+row_58	POLR2I	POLR2I	polymerase (RNA) II (DNA directed) polypeptide I, 14.5kDa	10574	-0.058585114777088165	0.03961503	Yes	
+row_59	CDA	CDA	cytidine deaminase	10669	-0.061679381877183914	0.04499694	Yes	
+row_60	ENTPD4	ENTPD4	ectonucleoside triphosphate diphosphohydrolase 4	10912	-0.0692816898226738	0.042102832	Yes	
+row_61	UCK1	UCK1	uridine-cytidine kinase 1	11267	-0.08002990484237671	0.032945793	Yes	
+row_62	POLR1A	POLR1A	polymerase (RNA) I polypeptide A, 194kDa	11387	-0.08347499370574951	0.036929727	Yes	
+row_63	POLR3A	POLR3A	polymerase (RNA) III (DNA directed) polypeptide A, 155kDa	11486	-0.08726223558187485	0.04208796	Yes	
+row_64	ENTPD6	ENTPD6	ectonucleoside triphosphate diphosphohydrolase 6 (putative function)	11504	-0.08787881582975388	0.051775634	Yes	
+row_65	NT5C2	NT5C2	5'-nucleotidase, cytosolic II	11989	-0.10068925470113754	0.03534912	Yes	
+row_66	NME1-NME2	NME1-NME2	-	12083	-0.10393568873405457	0.040786948	Yes	
+row_67	DTYMK	DTYMK	deoxythymidylate kinase (thymidylate kinase)	12983	-0.13886380195617676	0.0011540374	Yes	
+row_68	DUT	DUT	dUTP pyrophosphatase	12996	-0.13946779072284698	0.011121307	Yes	
+row_69	POLR1C	POLR1C	polymerase (RNA) I polypeptide C, 30kDa	13006	-0.14004941284656525	0.021256333	Yes	
+row_70	NT5C	NT5C	5', 3'-nucleotidase, cytosolic	13068	-0.14314477145671844	0.02848357	Yes	
+row_71	POLR2G	POLR2G	polymerase (RNA) II (DNA directed) polypeptide G	13176	-0.1483100950717926	0.033138532	Yes	
+row_72	TXNRD2	TXNRD2	thioredoxin reductase 2	13245	-0.1512327492237091	0.039974336	Yes	
+row_73	POLR3GL	POLR3GL	polymerase (RNA) III (DNA directed) polypeptide G (32kD) like	13767	-0.17837758362293243	0.021478817	Yes	
+row_74	POLE	POLE	polymerase (DNA directed), epsilon	13923	-0.1867651492357254	0.023449665	Yes	
+row_75	DHODH	DHODH	dihydroorotate dehydrogenase	13936	-0.1880049705505371	0.033416934	Yes	
+row_76	ENTPD8	ENTPD8	ectonucleoside triphosphate diphosphohydrolase 8	14021	-0.19251471757888794	0.039358035	Yes	
+row_77	POLR2C	POLR2C	polymerase (RNA) II (DNA directed) polypeptide C, 33kDa	14132	-0.19846954941749573	0.043845236	Yes	
+row_78	POLR3B	POLR3B	polymerase (RNA) III (DNA directed) polypeptide B	14245	-0.20578528940677643	0.048220605	Yes	
+row_79	CMPK2	null	null	14831	-0.2419324517250061	0.026146268	Yes	
+row_80	NT5C1B	NT5C1B	5'-nucleotidase, cytosolic IB	14921	-0.2481781393289566	0.031807773	Yes	
+row_81	POLR3C	POLR3C	polymerase (RNA) III (DNA directed) polypeptide C (62kD)	15509	-0.2941444218158722	0.009621599	Yes	
+row_82	POLD1	POLD1	polymerase (DNA directed), delta 1, catalytic subunit 125kDa	15590	-0.3009158670902252	0.015786374	Yes	
+row_83	NME4	NME4	non-metastatic cells 4, protein expressed in	15607	-0.3029588758945465	0.025529968	Yes	
+row_84	NUDT2	NUDT2	nudix (nucleoside diphosphate linked moiety X)-type motif 2	15797	-0.32066601514816284	0.025599567	Yes	
+row_85	POLR2H	POLR2H	polymerase (RNA) II (DNA directed) polypeptide H	15879	-0.3293660879135132	0.031708423	Yes	
+row_86	UCKL1	UCKL1	uridine-cytidine kinase 1-like 1	15941	-0.3347468972206116	0.03893566	Yes	
+row_87	POLR3G	POLR3G	polymerase (RNA) III (DNA directed) polypeptide G (32kD)	16020	-0.3430549204349518	0.045212273	Yes	
+row_88	NT5E	NT5E	5'-nucleotidase, ecto (CD73)	16184	-0.362419456243515	0.04673577	Yes	
+row_89	NME3	NME3	non-metastatic cells 3, protein expressed in	16327	-0.38192686438560486	0.049433563	Yes	
+row_90	POLR3K	POLR3K	polymerase (RNA) III (DNA directed) polypeptide K, 12.3 kDa	16550	-0.41620972752571106	0.047657836	Yes	
+row_91	NT5M	NT5M	5',3'-nucleotidase, mitochondrial	17322	-0.6086088418960571	0.015182562	Yes	
+row_92	NME5	NME5	non-metastatic cells 5, protein expressed in (nucleoside-diphosphate kinase)	17529	-0.691530704498291	0.01430154	Yes	
+row_93	DPYS	DPYS	dihydropyrimidinase	17833	-0.9609296321868896	0.007996371	Yes	

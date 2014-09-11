@@ -1,0 +1,497 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	COL11A1	COL11A1	collagen, type XI, alpha 1	5	2.687086820602417	0.0017301041	No	
+row_1	GABRB2	GABRB2	gamma-aminobutyric acid (GABA) A receptor, beta 2	40	1.659473180770874	0.0018012644	No	
+row_2	PAX3	PAX3	paired box gene 3 (Waardenburg syndrome 1)	49	1.570095419883728	0.0033597536	No	
+row_3	RP1	RP1	retinitis pigmentosa 1 (autosomal dominant)	59	1.5236998796463013	0.0048610377	No	
+row_4	GCHFR	GCHFR	GTP cyclohydrolase I feedback regulator	94	1.3538408279418945	0.004932198	No	
+row_5	AKR1C1	AKR1C1	aldo-keto reductase family 1, member C1 (dihydrodiol dehydrogenase 1; 20-alpha (3-alpha)-hydroxysteroid dehydrogenase)	98	1.3371753692626953	0.006776712	No	
+row_6	HSPB7	HSPB7	heat shock 27kDa protein family, member 7 (cardiovascular)	126	1.261668086051941	0.007248307	No	
+row_7	ALDH9A1	ALDH9A1	aldehyde dehydrogenase 9 family, member A1	166	1.15786612033844	0.007033442	No	
+row_8	ADRA1A	ADRA1A	adrenergic, alpha-1A-, receptor	168	1.1566941738128662	0.0089923665	No	
+row_9	P2RX6	null	null	181	1.1239244937896729	0.010322036	No	
+row_10	KCNQ3	KCNQ3	potassium voltage-gated channel, KQT-like subfamily, member 3	248	1.027242660522461	0.0085626375	No	
+row_11	APOE	APOE	apolipoprotein E	296	0.9737268090248108	0.007890132	No	
+row_12	NLGN1	NLGN1	neuroligin 1	356	0.9090720415115356	0.0065311687	No	
+row_13	GABBR2	GABBR2	gamma-aminobutyric acid (GABA) B receptor, 2	375	0.8984922170639038	0.0075176083	No	
+row_14	HTR7	HTR7	5-hydroxytryptamine (serotonin) receptor 7 (adenylate cyclase-coupled)	383	0.8900375962257385	0.009133303	No	
+row_15	KCNA1	KCNA1	potassium voltage-gated channel, shaker-related subfamily, member 1 (episodic ataxia with myokymia)	407	0.8740774393081665	0.009833718	No	
+row_16	ASPH	ASPH	aspartate beta-hydroxylase	412	0.8720569610595703	0.011621026	No	
+row_17	RABGGTA	RABGGTA	Rab geranylgeranyltransferase, alpha subunit	418	0.8645690083503723	0.01335113	No	
+row_18	LPL	LPL	lipoprotein lipase	481	0.825818657875061	0.011820552	No	
+row_19	NQO1	NQO1	NAD(P)H dehydrogenase, quinone 1	520	0.7933976054191589	0.011662892	No	
+row_20	GPX1	GPX1	glutathione peroxidase 1	530	0.7844296097755432	0.013164177	No	
+row_21	SLC6A4	SLC6A4	solute carrier family 6 (neurotransmitter transporter, serotonin), member 4	582	0.7569718360900879	0.012262852	No	
+row_22	TULP2	TULP2	tubby like protein 2	631	0.7351929545402527	0.011533143	No	
+row_23	ALDOA	ALDOA	aldolase A, fructose-bisphosphate	675	0.7165890336036682	0.011089458	No	
+row_24	AGT	AGT	angiotensinogen (serpin peptidase inhibitor, clade A, member 8)	773	0.6776444315910339	0.0075567057	No	
+row_25	SFRP5	SFRP5	secreted frizzled-related protein 5	778	0.6757276654243469	0.009344014	No	
+row_26	SCNN1A	SCNN1A	sodium channel, nonvoltage-gated 1 alpha	798	0.669819176197052	0.01027325	No	
+row_27	SYT1	SYT1	synaptotagmin I	824	0.661029040813446	0.010859254	No	
+row_28	OPRK1	OPRK1	opioid receptor, kappa 1	873	0.6424973607063293	0.010129545	No	
+row_29	COL3A1	COL3A1	collagen, type III, alpha 1 (Ehlers-Danlos syndrome type IV, autosomal dominant)	923	0.6279548406600952	0.00934263	No	
+row_30	CRYAB	CRYAB	crystallin, alpha B	960	0.6159471273422241	0.009299381	No	
+row_31	LPAR3	null	null	1003	0.6050942540168762	0.008912901	No	
+row_32	SNTA1	SNTA1	syntrophin, alpha 1 (dystrophin-associated protein A1, 59kDa, acidic component)	1045	0.594084620475769	0.008583627	No	
+row_33	ATP2B2	ATP2B2	ATPase, Ca++ transporting, plasma membrane 2	1069	0.5880016684532166	0.009284042	No	
+row_34	ADORA3	ADORA3	adenosine A3 receptor	1112	0.5781714916229248	0.008897562	No	
+row_35	SYN1	SYN1	synapsin I	1179	0.5615196228027344	0.0071381633	No	
+row_36	OPA1	OPA1	optic atrophy 1 (autosomal dominant)	1213	0.5530563592910767	0.0072665284	No	
+row_37	NPC1L1	NPC1L1	NPC1 (Niemann-Pick disease, type C1, gene)-like 1	1362	0.5254219770431519	8.163225E-4	No	
+row_38	NDP	NDP	Norrie disease (pseudoglioma)	1369	0.523888885974884	0.0024892217	No	
+row_39	MYOM1	MYOM1	myomesin 1 (skelemin) 185kDa	1380	0.5214167237281799	0.003933301	No	
+row_40	CELF2	null	null	1399	0.5170835852622986	0.004919741	No	
+row_41	GAMT	GAMT	guanidinoacetate N-methyltransferase	1448	0.5086610913276672	0.0041900314	No	
+row_42	GLRA1	GLRA1	glycine receptor, alpha 1 (startle disease/hyperekplexia, stiff man syndrome)	1467	0.5065866708755493	0.005176471	No	
+row_43	YWHAG	YWHAG	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, gamma polypeptide	1546	0.4910318851470947	0.0027306126	No	
+row_44	SLIT2	SLIT2	slit homolog 2 (Drosophila)	1561	0.4890851080417633	0.003945872	No	
+row_45	BEST1	null	null	1563	0.48902013897895813	0.005904796	No	
+row_46	SLC1A1	SLC1A1	solute carrier family 1 (neuronal/epithelial high affinity glutamate transporter, system Xag), member 1	1575	0.4875369966030121	0.0072916704	No	
+row_47	GCLC	GCLC	glutamate-cysteine ligase, catalytic subunit	1609	0.4827922582626343	0.0074200355	No	
+row_48	HTR1F	HTR1F	5-hydroxytryptamine (serotonin) receptor 1F	1629	0.479939728975296	0.008349271	No	
+row_49	GDNF	GDNF	glial cell derived neurotrophic factor	1635	0.47869595885276794	0.010079375	No	
+row_50	EIF2B2	EIF2B2	eukaryotic translation initiation factor 2B, subunit 2 beta, 39kDa	1654	0.476248174905777	0.011065814	No	
+row_51	TIMM8B	TIMM8B	translocase of inner mitochondrial membrane 8 homolog B (yeast)	1728	0.46361225843429565	0.008905981	No	
+row_52	NPPA	NPPA	natriuretic peptide precursor A	1774	0.45653992891311646	0.008347886	No	
+row_53	LDLR	LDLR	low density lipoprotein receptor (familial hypercholesterolemia)	1798	0.4539666473865509	0.009048301	No	
+row_54	FXN	FXN	frataxin	1804	0.4529642164707184	0.010778405	No	
+row_55	SORD	SORD	sorbitol dehydrogenase	1823	0.45052021741867065	0.011764845	No	
+row_56	TACR2	TACR2	tachykinin receptor 2	1828	0.45007213950157166	0.0135521535	No	
+row_57	UBR3	null	null	1859	0.444620281457901	0.013852133	No	
+row_58	GCLM	GCLM	glutamate-cysteine ligase, modifier subunit	1949	0.4354647099971771	0.010777021	No	
+row_59	RRH	RRH	retinal pigment epithelium-derived rhodopsin homolog	2076	0.4212077260017395	0.0055853245	No	
+row_60	TAS1R3	TAS1R3	taste receptor, type 1, member 3	2304	0.39461079239845276	-0.0053840736	No	
+row_61	CASQ2	CASQ2	calsequestrin 2 (cardiac muscle)	2372	0.38621985912323	-0.0072006774	No	
+row_62	EPB41	EPB41	erythrocyte membrane protein band 4.1 (elliptocytosis 1, RH-linked)	2443	0.3780619204044342	-0.009188896	No	
+row_63	CACNA1F	CACNA1F	calcium channel, voltage-dependent, alpha 1F subunit	2453	0.37711554765701294	-0.0076876115	No	
+row_64	CYB5R3	CYB5R3	cytochrome b5 reductase 3	2464	0.37578558921813965	-0.0062435325	No	
+row_65	AKAP9	AKAP9	A kinase (PRKA) anchor protein (yotiao) 9	2498	0.3716968297958374	-0.0061151674	No	
+row_66	CHRNB4	CHRNB4	cholinergic receptor, nicotinic, beta 4	2575	0.3617331087589264	-0.008446615	No	
+row_67	DAG1	DAG1	dystroglycan 1 (dystrophin-associated glycoprotein 1)	2591	0.3604593575000763	-0.007288561	No	
+row_68	CXCL10	CXCL10	chemokine (C-X-C motif) ligand 10	2636	0.35513123869895935	-0.0077894507	No	
+row_69	DRD4	DRD4	dopamine receptor D4	2670	0.35136473178863525	-0.0076610856	No	
+row_70	VSX1	VSX1	visual system homeobox 1 homolog, CHX10-like (zebrafish)	2696	0.3493788540363312	-0.0070750806	No	
+row_71	KCNMB3	KCNMB3	potassium large conductance calcium-activated channel, subfamily M beta member 3	2704	0.3487885296344757	-0.0054593864	No	
+row_72	CORIN	CORIN	corin, serine peptidase	2712	0.34746500849723816	-0.0038436921	No	
+row_73	PCDHB4	PCDHB4	protocadherin beta 4	2820	0.33395102620124817	-0.0079484945	No	
+row_74	NOVA1	NOVA1	neuro-oncological ventral antigen 1	2872	0.3297354578971863	-0.008849818	No	
+row_75	COPA	COPA	coatomer protein complex, subunit alpha	2988	0.32038724422454834	-0.01341226	No	
+row_76	ALDH7A1	ALDH7A1	aldehyde dehydrogenase 7 family, member A1	3001	0.3187446594238281	-0.012082592	No	
+row_77	MYL2	MYL2	myosin, light chain 2, regulatory, cardiac, slow	3107	0.311418354511261	-0.016072983	No	
+row_78	KIF1B	KIF1B	kinesin family member 1B	3184	0.30262491106987	-0.018404432	No	
+row_79	GPR98	GPR98	G protein-coupled receptor 98	3187	0.30239903926849365	-0.016502714	No	
+row_80	LUM	LUM	lumican	3307	0.29255902767181396	-0.021293975	No	
+row_81	KCNQ5	KCNQ5	potassium voltage-gated channel, KQT-like subfamily, member 5	3332	0.29083800315856934	-0.020650765	No	
+row_82	UNC13B	UNC13B	unc-13 homolog B (C. elegans)	3496	0.27721402049064636	-0.027959045	No	
+row_83	GJC1	GJC1	gap junction protein, chi 1, 31.9kDa (connexin 31.9)	3533	0.27417293190956116	-0.028002296	No	
+row_84	TGFB2	TGFB2	transforming growth factor, beta 2	3566	0.2715302109718323	-0.027816724	No	
+row_85	GRHPR	GRHPR	glyoxylate reductase/hydroxypyruvate reductase	3591	0.2695567011833191	-0.027173515	No	
+row_86	GRIK2	GRIK2	glutamate receptor, ionotropic, kainate 2	3655	0.26387810707092285	-0.0287613	No	
+row_87	ATP2A1	ATP2A1	ATPase, Ca++ transporting, cardiac muscle, fast twitch 1	3674	0.2626335620880127	-0.02777486	No	
+row_88	MYOF	null	null	3728	0.26003310084342957	-0.028790593	No	
+row_89	PCDHB11	PCDHB11	protocadherin beta 11	3795	0.2559032142162323	-0.030549992	No	
+row_90	USH2A	USH2A	Usher syndrome 2A (autosomal recessive, mild)	3815	0.25418877601623535	-0.029620757	No	
+row_91	GNAS	GNAS	GNAS complex locus	3881	0.247917041182518	-0.031322952	No	
+row_92	CNGB1	CNGB1	cyclic nucleotide gated channel beta 1	3882	0.24784289300441742	-0.029306822	No	
+row_93	PLCE1	PLCE1	phospholipase C, epsilon 1	3911	0.2460843175649643	-0.028892433	No	
+row_94	CYB5R4	CYB5R4	cytochrome b5 reductase 4	4068	0.23558679223060608	-0.03580028	No	
+row_95	TAS2R5	TAS2R5	taste receptor, type 2, member 5	4114	0.23257006704807281	-0.03635837	No	
+row_96	SCN5A	SCN5A	sodium channel, voltage-gated, type V, alpha (long QT syndrome 3)	4118	0.23228797316551208	-0.034513857	No	
+row_97	MAPK1	MAPK1	mitogen-activated protein kinase 1	4130	0.2312145233154297	-0.033126984	No	
+row_98	AOC2	AOC2	amine oxidase, copper containing 2 (retina-specific)	4138	0.23053836822509766	-0.031511288	No	
+row_99	MYO6	MYO6	myosin VI	4237	0.22408559918403625	-0.035101246	No	
+row_100	GRIK1	GRIK1	glutamate receptor, ionotropic, kainate 1	4270	0.22122780978679657	-0.03491568	No	
+row_101	OPN1SW	OPN1SW	opsin 1 (cone pigments), short-wave-sensitive (color blindness, tritan)	4272	0.22118550539016724	-0.032956753	No	
+row_102	MYL6	MYL6	myosin, light chain 6, alkali, smooth muscle and non-muscle	4343	0.21577779948711395	-0.03494497	No	
+row_103	OPA3	OPA3	optic atrophy 3 (autosomal recessive, with chorea and spastic paraplegia)	4403	0.21129858493804932	-0.036303937	No	
+row_104	GJA3	GJA3	gap junction protein, alpha 3, 46kDa (connexin 46)	4425	0.2099008709192276	-0.035489112	No	
+row_105	AQP6	AQP6	aquaporin 6, kidney specific	4438	0.20887765288352966	-0.03415944	No	
+row_106	GALR2	GALR2	galanin receptor 2	4472	0.20587019622325897	-0.03403108	No	
+row_107	PCDHB5	PCDHB5	protocadherin beta 5	4507	0.2028762400150299	-0.033959918	No	
+row_108	PCDHB16	PCDHB16	protocadherin beta 16	4564	0.19940468668937683	-0.035147265	No	
+row_109	SLC5A7	SLC5A7	solute carrier family 5 (choline transporter), member 7	4579	0.19858112931251526	-0.033932004	No	
+row_110	CRYZ	CRYZ	crystallin, zeta (quinone reductase)	4606	0.19624251127243042	-0.033403207	No	
+row_111	NDUFB9	NDUFB9	NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 9, 22kDa	4642	0.19357192516326904	-0.03338925	No	
+row_112	ERAP2	null	null	4656	0.19286659359931946	-0.032116786	No	
+row_113	PCDHB10	PCDHB10	protocadherin beta 10	4668	0.19214847683906555	-0.030729912	No	
+row_114	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	4712	0.18962059915065765	-0.031173596	No	
+row_115	CBLN1	CBLN1	cerebellin 1 precursor	4722	0.1889788657426834	-0.029672312	No	
+row_116	MYH6	MYH6	myosin, heavy chain 6, cardiac muscle, alpha (cardiomyopathy, hypertrophic 1)	4739	0.1874583512544632	-0.028571462	No	
+row_117	ATP6AP2	ATP6AP2	ATPase, H+ transporting, lysosomal accessory protein 2	4965	0.17305734753608704	-0.03942645	No	
+row_118	SLC26A5	SLC26A5	solute carrier family 26, member 5 (prestin)	4983	0.17199848592281342	-0.038382806	No	
+row_119	RIT2	RIT2	Ras-like without CAAX 2	5043	0.1691761165857315	-0.03974177	No	
+row_120	HTR6	HTR6	5-hydroxytryptamine (serotonin) receptor 6	5046	0.1691761165857315	-0.03784005	No	
+row_121	HCRTR1	HCRTR1	hypocretin (orexin) receptor 1	5112	0.16702598333358765	-0.039542247	No	
+row_122	TIMM13	TIMM13	translocase of inner mitochondrial membrane 13 homolog (yeast)	5183	0.16325445473194122	-0.041530464	No	
+row_123	GNB3	GNB3	guanine nucleotide binding protein (G protein), beta polypeptide 3	5191	0.16271629929542542	-0.03991477	No	
+row_124	FLII	FLII	flightless I homolog (Drosophila)	5239	0.15975184738636017	-0.040587272	No	
+row_125	CACNA1E	CACNA1E	calcium channel, voltage-dependent, alpha 1E subunit	5241	0.15971750020980835	-0.03862835	No	
+row_126	SLC6A1	SLC6A1	solute carrier family 6 (neurotransmitter transporter, GABA), member 1	5274	0.15761953592300415	-0.03844278	No	
+row_127	RDH5	RDH5	retinol dehydrogenase 5 (11-cis/9-cis)	5285	0.15711133182048798	-0.0369987	No	
+row_128	PI4KA	null	null	5307	0.15568022429943085	-0.036183875	No	
+row_129	SYT5	SYT5	synaptotagmin V	5426	0.14866000413894653	-0.040917933	No	
+row_130	NMUR1	NMUR1	neuromedin U receptor 1	5453	0.14722749590873718	-0.04038913	No	
+row_131	TIMM10	TIMM10	translocase of inner mitochondrial membrane 10 homolog (yeast)	5455	0.14711225032806396	-0.03843021	No	
+row_132	SLC1A2	SLC1A2	solute carrier family 1 (glial high affinity glutamate transporter), member 2	5470	0.14642782509326935	-0.03721495	No	
+row_133	CNGA1	CNGA1	cyclic nucleotide gated channel alpha 1	5476	0.14598414301872253	-0.035484847	No	
+row_134	RPGR	RPGR	retinitis pigmentosa GTPase regulator	5536	0.14236682653427124	-0.03684381	No	
+row_135	SCN10A	SCN10A	sodium channel, voltage-gated, type X, alpha	5557	0.1409238576889038	-0.03597178	No	
+row_136	CHRM2	CHRM2	cholinergic receptor, muscarinic 2	5594	0.13919590413570404	-0.03601503	No	
+row_137	SNTB1	SNTB1	syntrophin, beta 1 (dystrophin-associated protein A1, 59kDa, basic component 1)	5621	0.1373586654663086	-0.03548623	No	
+row_138	CDS1	CDS1	CDP-diacylglycerol synthase (phosphatidate cytidylyltransferase) 1	5625	0.13707923889160156	-0.033641715	No	
+row_139	MYOT	MYOT	myotilin	5638	0.13640238344669342	-0.032312047	No	
+row_140	CKMT2	CKMT2	creatine kinase, mitochondrial 2 (sarcomeric)	5685	0.13333021104335785	-0.032927345	No	
+row_141	NTSR2	NTSR2	neurotensin receptor 2	5695	0.13305462896823883	-0.03142606	No	
+row_142	UBB	UBB	ubiquitin B	5732	0.13059917092323303	-0.03146931	No	
+row_143	CRH	CRH	corticotropin releasing hormone	5889	0.12029542028903961	-0.038377155	No	
+row_144	PDE6H	PDE6H	phosphodiesterase 6H, cGMP-specific, cone, gamma	5892	0.12010888755321503	-0.03647544	No	
+row_145	GNAT1	GNAT1	guanine nucleotide binding protein (G protein), alpha transducing activity polypeptide 1	5924	0.11835438013076782	-0.03623266	No	
+row_146	AVPR1A	AVPR1A	arginine vasopressin receptor 1A	5935	0.1177104189991951	-0.034788582	No	
+row_147	CHM	CHM	choroideremia (Rab escort protein 1)	5943	0.11751196533441544	-0.033172887	No	
+row_148	PCDHB3	PCDHB3	protocadherin beta 3	6007	0.11357595771551132	-0.034760673	No	
+row_149	HPRT1	HPRT1	hypoxanthine phosphoribosyltransferase 1 (Lesch-Nyhan syndrome)	6023	0.11264193058013916	-0.033602618	No	
+row_150	TRPC3	TRPC3	transient receptor potential cation channel, subfamily C, member 3	6047	0.11072888970375061	-0.032902204	No	
+row_151	KCNE1	KCNE1	potassium voltage-gated channel, Isk-related family, member 1	6074	0.10937399417161942	-0.032373402	No	
+row_152	CHRNG	CHRNG	cholinergic receptor, nicotinic, gamma	6086	0.10854265093803406	-0.030986529	No	
+row_153	CLCN5	CLCN5	chloride channel 5 (nephrolithiasis 2, X-linked, Dent disease)	6214	0.10164140909910202	-0.03623543	No	
+row_154	SAG	SAG	S-antigen; retina and pineal gland (arrestin)	6260	0.09877536445856094	-0.036793526	No	
+row_155	BRS3	BRS3	bombesin-like receptor 3	6350	0.09377631545066833	-0.039868638	No	
+row_156	NFAT5	NFAT5	nuclear factor of activated T-cells 5, tonicity-responsive	6411	0.08986379951238632	-0.041284807	No	
+row_157	PITPNA	PITPNA	phosphatidylinositol transfer protein, alpha	6418	0.08964621275663376	-0.039611906	No	
+row_158	SLC6A2	SLC6A2	solute carrier family 6 (neurotransmitter transporter, noradrenalin), member 2	6444	0.08846337348222733	-0.039025903	No	
+row_159	SNAPIN	null	null	6470	0.0872398167848587	-0.038439896	No	
+row_160	TULP1	TULP1	tubby like protein 1	6498	0.08640173822641373	-0.037968304	No	
+row_161	OTOF	OTOF	otoferlin	6514	0.08539853990077972	-0.03681025	No	
+row_162	TBC1D8	TBC1D8	TBC1 domain family, member 8 (with GRAM domain)	6548	0.08349613845348358	-0.036681883	No	
+row_163	STRN4	STRN4	striatin, calmodulin binding protein 4	6610	0.08026549965143204	-0.038155258	No	
+row_164	LPA	LPA	lipoprotein, Lp(a)	6643	0.07906536012887955	-0.037969686	No	
+row_165	SIX3	SIX3	sine oculis homeobox homolog 3 (Drosophila)	6829	0.07043848931789398	-0.046536475	No	
+row_166	RLBP1	RLBP1	retinaldehyde binding protein 1	6852	0.069394052028656	-0.045778856	No	
+row_167	RHO	RHO	rhodopsin (opsin 2, rod pigment) (retinitis pigmentosa 4, autosomal dominant)	6855	0.069394052028656	-0.043877136	No	
+row_168	PRPH2	null	null	7026	0.06150881573557854	-0.051585853	No	
+row_169	RPE65	RPE65	retinal pigment epithelium-specific protein 65kDa	7058	0.06005258485674858	-0.051343076	No	
+row_170	CNGB3	CNGB3	cyclic nucleotide gated channel beta 3	7161	0.0547226183116436	-0.055161856	No	
+row_171	GJB6	GJB6	gap junction protein, beta 6 (connexin 30)	7227	0.051208604127168655	-0.05686405	No	
+row_172	ABCA4	ABCA4	ATP-binding cassette, sub-family A (ABC1), member 4	7260	0.04923536255955696	-0.056678478	No	
+row_173	CACNA1B	CACNA1B	calcium channel, voltage-dependent, L type, alpha 1B subunit	7268	0.04886981099843979	-0.055062786	No	
+row_174	KCNJ12	KCNJ12	potassium inwardly-rectifying channel, subfamily J, member 12	7289	0.04751509800553322	-0.054190755	No	
+row_175	HCN4	HCN4	hyperpolarization activated cyclic nucleotide-gated potassium channel 4	7302	0.04634525626897812	-0.052861087	No	
+row_176	CD24	CD24	CD24 molecule	7397	0.04143174737691879	-0.056222223	No	
+row_177	EIF2B5	EIF2B5	eukaryotic translation initiation factor 2B, subunit 5 epsilon, 82kDa	7485	0.03728215768933296	-0.059182927	No	
+row_178	CDH23	CDH23	cadherin-like 23	7495	0.03696216642856598	-0.057681642	No	
+row_179	ABLIM1	ABLIM1	actin binding LIM protein 1	7528	0.035402752459049225	-0.05749607	No	
+row_180	PMP22	PMP22	peripheral myelin protein 22	7549	0.03423511981964111	-0.056624044	No	
+row_181	TNNT1	TNNT1	troponin T type 1 (skeletal, slow)	7637	0.02903074584901333	-0.059584744	No	
+row_182	GUCA1A	GUCA1A	guanylate cyclase activator 1A (retina)	7642	0.02887495793402195	-0.057797436	No	
+row_183	NTF4	null	null	7698	0.028718555346131325	-0.05892758	No	
+row_184	HRH3	HRH3	histamine receptor H3	7719	0.02843756414949894	-0.05805555	No	
+row_185	POU4F3	POU4F3	POU domain, class 4, transcription factor 3	7742	0.028421318158507347	-0.05729793	No	
+row_186	VAX2	VAX2	ventral anterior homeobox 2	7744	0.028352556750178337	-0.055339005	No	
+row_187	TAS2R3	TAS2R3	taste receptor, type 2, member 3	7746	0.028352556750178337	-0.053380083	No	
+row_188	POU3F4	POU3F4	POU domain, class 3, transcription factor 4	7835	0.026160338893532753	-0.05639799	No	
+row_189	HOMER1	HOMER1	homer homolog 1 (Drosophila)	7864	0.0253435131162405	-0.0559836	No	
+row_190	CHRNA4	CHRNA4	cholinergic receptor, nicotinic, alpha 4	7880	0.025030415505170822	-0.054825544	No	
+row_191	HTR3A	HTR3A	5-hydroxytryptamine (serotonin) receptor 3A	7890	0.025030415505170822	-0.05332426	No	
+row_192	STX1B	null	null	7917	0.024588486179709435	-0.052795462	No	
+row_193	DMPK	DMPK	dystrophia myotonica-protein kinase	7923	0.024417368695139885	-0.05106536	No	
+row_194	RCAN1	null	null	7969	0.02360210195183754	-0.051623452	No	
+row_195	CHRNA5	CHRNA5	cholinergic receptor, nicotinic, alpha 5	7986	0.02241259254515171	-0.050522603	No	
+row_196	USH1C	USH1C	Usher syndrome 1C (autosomal recessive, severe)	7987	0.0224055927246809	-0.048506472	No	
+row_197	CACNG1	CACNG1	calcium channel, voltage-dependent, gamma subunit 1	7990	0.0224055927246809	-0.046604756	No	
+row_198	CRYAA	CRYAA	crystallin, alpha A	8000	0.0224055927246809	-0.04510347	No	
+row_199	KIFC3	KIFC3	kinesin family member C3	8057	0.021564792841672897	-0.04629082	No	
+row_200	MYBPH	MYBPH	myosin binding protein H	8060	0.02117934636771679	-0.0443891	No	
+row_201	TAS1R2	TAS1R2	taste receptor, type 1, member 2	8119	0.01872013881802559	-0.04569086	No	
+row_202	GRK1	GRK1	G protein-coupled receptor kinase 1	8124	0.01872013881802559	-0.04390355	No	
+row_203	MYL9	MYL9	myosin, light chain 9, regulatory	8176	0.01708129420876503	-0.044804875	No	
+row_204	PCDHB13	PCDHB13	protocadherin beta 13	8178	0.017017459496855736	-0.04284595	No	
+row_205	KCNE2	KCNE2	potassium voltage-gated channel, Isk-related family, member 2	8181	0.01683635078370571	-0.04094423	No	
+row_206	UTRN	UTRN	utrophin (homologous to dystrophin)	8195	0.016023293137550354	-0.039671768	No	
+row_207	PAX6	PAX6	paired box gene 6 (aniridia, keratitis)	8203	0.015568182803690434	-0.03805607	No	
+row_208	MTHFR	MTHFR	5,10-methylenetetrahydrofolate reductase (NADPH)	8210	0.015154007822275162	-0.036383174	No	
+row_209	HTR2A	HTR2A	5-hydroxytryptamine (serotonin) receptor 2A	8239	0.013896530494093895	-0.035968784	No	
+row_210	EYA3	EYA3	eyes absent homolog 3 (Drosophila)	8247	0.0134338503703475	-0.03435309	No	
+row_211	CEL	CEL	carboxyl ester lipase (bile salt-stimulated lipase)	8279	0.011688876897096634	-0.034110315	No	
+row_212	NMUR2	NMUR2	neuromedin U receptor 2	8342	0.007474873214960098	-0.03564089	No	
+row_213	KCNJ1	KCNJ1	potassium inwardly-rectifying channel, subfamily J, member 1	8471	3.3703533699736E-4	-0.040946998	No	
+row_214	NPR1	NPR1	natriuretic peptide receptor A/guanylate cyclase A (atrionatriuretic peptide receptor A)	8694	-0.01241276040673256	-0.051630374	No	
+row_215	FSCN2	FSCN2	fascin homolog 2, actin-bundling protein, retinal (Strongylocentrotus purpuratus)	8716	-0.013935272581875324	-0.05081555	No	
+row_216	GABARAP	GABARAP	GABA(A) receptor-associated protein	8732	-0.014879623427987099	-0.049657494	No	
+row_217	AIPL1	AIPL1	aryl hydrocarbon receptor interacting protein-like 1	8846	-0.020778579637408257	-0.054105524	No	
+row_218	DRD2	DRD2	dopamine receptor D2	8893	-0.023275498300790787	-0.054720826	No	
+row_219	YWHAH	YWHAH	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, eta polypeptide	8903	-0.023784590885043144	-0.053219542	No	
+row_220	DYSF	DYSF	dysferlin, limb girdle muscular dystrophy 2B (autosomal recessive)	8927	-0.024886688217520714	-0.052519128	No	
+row_221	GRM3	GRM3	glutamate receptor, metabotropic 3	8963	-0.02704271301627159	-0.05250517	No	
+row_222	RAB3A	RAB3A	RAB3A, member RAS oncogene family	9111	-0.03543001040816307	-0.058898173	No	
+row_223	NF1	NF1	neurofibromin 1 (neurofibromatosis, von Recklinghausen disease, Watson disease)	9153	-0.03756045177578926	-0.059227448	No	
+row_224	DNAJC19	DNAJC19	DnaJ (Hsp40) homolog, subfamily C, member 19	9179	-0.03936414793133736	-0.05864144	No	
+row_225	OPRL1	OPRL1	opiate receptor-like 1	9184	-0.039710160344839096	-0.056854133	No	
+row_226	SIX6	SIX6	sine oculis homeobox homolog 6 (Drosophila)	9225	-0.042357154190540314	-0.0571262	No	
+row_227	WDR1	WDR1	WD repeat domain 1	9226	-0.04237458109855652	-0.055110075	No	
+row_228	SCTR	SCTR	secretin receptor	9305	-0.04639938101172447	-0.057555933	No	
+row_229	TBL1X	TBL1X	transducin (beta)-like 1X-linked	9341	-0.048473529517650604	-0.057541978	No	
+row_230	TIMM9	TIMM9	translocase of inner mitochondrial membrane 9 homolog (yeast)	9342	-0.04849625378847122	-0.055525847	No	
+row_231	IQCB1	IQCB1	IQ motif containing B1	9391	-0.05088641494512558	-0.056255557	No	
+row_232	MYO9A	MYO9A	myosin IXA	9494	-0.05682799220085144	-0.060074333	No	
+row_233	AQP5	AQP5	aquaporin 5	9504	-0.057488542050123215	-0.05857305	No	
+row_234	NPHS1	NPHS1	nephrosis 1, congenital, Finnish type (nephrin)	9533	-0.05866238474845886	-0.05815866	No	
+row_235	PCDHB6	PCDHB6	protocadherin beta 6	9601	-0.06243497133255005	-0.059975263	No	
+row_236	HTR1B	HTR1B	5-hydroxytryptamine (serotonin) receptor 1B	9603	-0.06248198822140694	-0.058016337	No	
+row_237	PRR4	PRR4	proline rich 4 (lacrimal)	9674	-0.06592889875173569	-0.06000456	No	
+row_238	CNP	CNP	2',3'-cyclic nucleotide 3' phosphodiesterase	9725	-0.0685708150267601	-0.060848676	No	
+row_239	OCLM	OCLM	oculomedin	9753	-0.07040448486804962	-0.060377084	No	
+row_240	KCNK3	KCNK3	potassium channel, subfamily K, member 3	9894	-0.07787949591875076	-0.066369645	No	
+row_241	SLMAP	SLMAP	sarcolemma associated protein	9906	-0.0785856693983078	-0.06498277	No	
+row_242	HCN2	HCN2	hyperpolarization activated cyclic nucleotide-gated potassium channel 2	9915	-0.07893422991037369	-0.06342428	No	
+row_243	ATP6V1B1	ATP6V1B1	ATPase, H+ transporting, lysosomal 56/58kDa, V1 subunit B1 (Renal tubular acidosis with deafness)	9955	-0.08058983832597733	-0.06363915	No	
+row_244	KCNN1	KCNN1	potassium intermediate/small conductance calcium-activated channel, subfamily N, member 1	9974	-0.08178380876779556	-0.06265271	No	
+row_245	KNG1	KNG1	kininogen 1	9995	-0.08307597041130066	-0.06178068	No	
+row_246	CRYBA1	CRYBA1	crystallin, beta A1	10006	-0.08335988223552704	-0.0603366	No	
+row_247	NMU	NMU	neuromedin U	10008	-0.08337055891752243	-0.058377676	No	
+row_248	NPHS2	NPHS2	nephrosis 2, idiopathic, steroid-resistant (podocin)	10043	-0.08495993912220001	-0.058306515	No	
+row_249	AQP7	AQP7	aquaporin 7	10124	-0.08666054904460907	-0.060866784	No	
+row_250	PCDHB14	PCDHB14	protocadherin beta 14	10150	-0.08756685256958008	-0.06028078	No	
+row_251	KCNMB2	KCNMB2	potassium large conductance calcium-activated channel, subfamily M, beta member 2	10159	-0.08801690489053726	-0.05872229	No	
+row_252	CRYBA4	CRYBA4	crystallin, beta A4	10195	-0.08955695480108261	-0.058708336	No	
+row_253	UTS2R	UTS2R	urotensin 2 receptor	10213	-0.090343177318573	-0.057664692	No	
+row_254	CYP1B1	CYP1B1	cytochrome P450, family 1, subfamily B, polypeptide 1	10220	-0.0905030220746994	-0.05599179	No	
+row_255	MYL6B	MYL6B	myosin, light chain 6B, alkali, smooth muscle and non-muscle	10244	-0.0917086973786354	-0.055291377	No	
+row_256	UNC119	UNC119	unc-119 homolog (C. elegans)	10346	-0.09448990225791931	-0.059052948	No	
+row_257	OPRM1	OPRM1	opioid receptor, mu 1	10352	-0.0946560651063919	-0.057322845	No	
+row_258	SLC26A3	SLC26A3	solute carrier family 26, member 3	10356	-0.09469413012266159	-0.05547833	No	
+row_259	RAX	RAX	retina and anterior neural fold homeobox	10441	-0.09769922494888306	-0.05826742	No	
+row_260	MYH7	MYH7	myosin, heavy chain 7, cardiac muscle, beta	10476	-0.0983174741268158	-0.058196258	No	
+row_261	CORT	CORT	cortistatin	10494	-0.09873905777931213	-0.057152614	No	
+row_262	ARR3	ARR3	arrestin 3, retinal (X-arrestin)	10581	-0.10177306085824966	-0.060056113	No	
+row_263	CHRNA1	CHRNA1	cholinergic receptor, nicotinic, alpha 1 (muscle)	10589	-0.10196231305599213	-0.058440417	No	
+row_264	APOC2	APOC2	apolipoprotein C-II	10602	-0.10251373797655106	-0.05711075	No	
+row_265	PPP1R12B	PPP1R12B	protein phosphatase 1, regulatory (inhibitor) subunit 12B	10610	-0.10278084874153137	-0.055495054	No	
+row_266	TAS1R1	TAS1R1	taste receptor, type 1, member 1	10632	-0.10432832688093185	-0.05468023	No	
+row_267	DBH	DBH	dopamine beta-hydroxylase (dopamine beta-monooxygenase)	10658	-0.10516396909952164	-0.054094225	No	
+row_268	NPBWR1	NPBWR1	neuropeptides B/W receptor 1	10693	-0.10656217485666275	-0.054023065	No	
+row_269	TNNT2	TNNT2	troponin T type 2 (cardiac)	10796	-0.1118849590420723	-0.05784184	No	
+row_270	ACVRL1	ACVRL1	activin A receptor type II-like 1	10807	-0.1125742495059967	-0.056397762	No	
+row_271	CLDN16	CLDN16	claudin 16	11012	-0.12516863644123077	-0.066051446	No	
+row_272	CLNS1A	CLNS1A	chloride channel, nucleotide-sensitive, 1A	11088	-0.1297154426574707	-0.06832569	No	
+row_273	NPR2	NPR2	natriuretic peptide receptor B/guanylate cyclase B (atrionatriuretic peptide receptor B)	11097	-0.1300763338804245	-0.0667672	No	
+row_274	RS1	RS1	retinoschisis (X-linked, juvenile) 1	11112	-0.13083933293819427	-0.065551944	No	
+row_275	RABGGTB	RABGGTB	Rab geranylgeranyltransferase, beta subunit	11178	-0.13549496233463287	-0.06725413	No	
+row_276	RCVRN	RCVRN	recoverin	11270	-0.14108075201511383	-0.07044366	No	
+row_277	EML2	EML2	echinoderm microtubule associated protein like 2	11278	-0.14168664813041687	-0.068827964	No	
+row_278	DFNB31	DFNB31	deafness, autosomal recessive 31	11300	-0.1431252807378769	-0.06801314	No	
+row_279	CABP4	CABP4	calcium binding protein 4	11318	-0.1442658007144928	-0.06696949	No	
+row_280	NPHP3	NPHP3	nephronophthisis 3 (adolescent)	11320	-0.14447727799415588	-0.06501057	No	
+row_281	CD9	CD9	CD9 molecule	11326	-0.14498722553253174	-0.06328046	No	
+row_282	GUCY1A3	GUCY1A3	guanylate cyclase 1, soluble, alpha 3	11365	-0.14714907109737396	-0.063438125	No	
+row_283	SLC26A4	SLC26A4	solute carrier family 26, member 4	11367	-0.14722734689712524	-0.061479203	No	
+row_284	IMPG2	IMPG2	interphotoreceptor matrix proteoglycan 2	11382	-0.14792557060718536	-0.060263943	No	
+row_285	KCNB2	KCNB2	potassium voltage-gated channel, Shab-related subfamily, member 2	11502	-0.1552909016609192	-0.06505521	No	
+row_286	REN	REN	renin	11551	-0.15835224092006683	-0.06578492	No	
+row_287	ZNF354A	ZNF354A	zinc finger protein 354A	11652	-0.16511312127113342	-0.06948928	No	
+row_288	NRL	NRL	neural retina leucine zipper	11656	-0.16525685787200928	-0.06764477	No	
+row_289	PNOC	PNOC	prepronociceptin	11767	-0.17237451672554016	-0.071921185	No	
+row_290	DHRS3	DHRS3	dehydrogenase/reductase (SDR family) member 3	11785	-0.1733885556459427	-0.07087754	No	
+row_291	ROM1	ROM1	retinal outer segment membrane protein 1	11862	-0.17909668385982513	-0.07320899	No	
+row_292	PABPN1	PABPN1	poly(A) binding protein, nuclear 1	11864	-0.17913298308849335	-0.071250066	No	
+row_293	SLC22A18	SLC22A18	solute carrier family 22 (organic cation transporter), member 18	11915	-0.18260067701339722	-0.07209419	No	
+row_294	TYR	TYR	tyrosinase (oculocutaneous albinism IA)	11959	-0.18518200516700745	-0.07253787	No	
+row_295	RGR	RGR	retinal G protein coupled receptor	12026	-0.1895008236169815	-0.074297264	No	
+row_296	RIMS1	RIMS1	regulating synaptic membrane exocytosis 1	12052	-0.19126911461353302	-0.07371126	No	
+row_297	PDC	PDC	phosducin	12054	-0.1914995163679123	-0.07175234	No	
+row_298	HTR1D	HTR1D	5-hydroxytryptamine (serotonin) receptor 1D	12064	-0.19210326671600342	-0.070251055	No	
+row_299	ENG	ENG	endoglin (Osler-Rendu-Weber syndrome 1)	12092	-0.19440242648124695	-0.069779456	No	
+row_300	NOS1	NOS1	nitric oxide synthase 1 (neuronal)	12098	-0.1948344111442566	-0.06804936	No	
+row_301	MYBPC3	MYBPC3	myosin binding protein C, cardiac	12130	-0.19675736129283905	-0.06780658	No	
+row_302	SCN7A	SCN7A	sodium channel, voltage-gated, type VII, alpha	12219	-0.20364679396152496	-0.07082449	No	
+row_303	CRYBB3	CRYBB3	crystallin, beta B3	12264	-0.2068348079919815	-0.07132538	No	
+row_304	SRI	SRI	sorcin	12265	-0.2069101482629776	-0.06930925	No	
+row_305	TAS2R4	TAS2R4	taste receptor, type 2, member 4	12306	-0.20960579812526703	-0.069581315	No	
+row_306	PXK	PXK	PX domain containing serine/threonine kinase	12353	-0.21282124519348145	-0.07019661	No	
+row_307	CALY	null	null	12393	-0.21539069712162018	-0.07041148	No	
+row_308	EFEMP1	EFEMP1	EGF-containing fibulin-like extracellular matrix protein 1	12422	-0.21725402772426605	-0.069997095	No	
+row_309	OAT	OAT	ornithine aminotransferase (gyrate atrophy)	12447	-0.21876676380634308	-0.06935388	No	
+row_310	ADM	ADM	adrenomedullin	12473	-0.2202622890472412	-0.068767875	No	
+row_311	NPTN	NPTN	neuroplastin	12481	-0.22076964378356934	-0.06715218	No	
+row_312	ATXN7	ATXN7	ataxin 7	12496	-0.22158950567245483	-0.06593692	No	
+row_313	TAZ	TAZ	tafazzin (cardiomyopathy, dilated 3A (X-linked); endocardial fibroelastosis 2; Barth syndrome)	12502	-0.22201880812644958	-0.064206816	No	
+row_314	CACNA1S	CACNA1S	calcium channel, voltage-dependent, L type, alpha 1S subunit	12510	-0.22266685962677002	-0.06259113	No	
+row_315	C3AR1	C3AR1	complement component 3a receptor 1	12561	-0.22586116194725037	-0.06343524	No	
+row_316	ATXN3	ATXN3	ataxin 3	12698	-0.23530808091163635	-0.06919899	No	
+row_317	SYN3	SYN3	synapsin III	12760	-0.23995830118656158	-0.07067236	No	
+row_318	MYL5	MYL5	myosin, light chain 5, regulatory	12761	-0.23998607695102692	-0.068656236	No	
+row_319	C5AR1	C5AR1	complement component 5a receptor 1	12795	-0.24238532781600952	-0.06852787	No	
+row_320	SCNN1B	SCNN1B	sodium channel, nonvoltage-gated 1, beta (Liddle syndrome)	12840	-0.246205136179924	-0.06902876	No	
+row_321	AQP2	AQP2	aquaporin 2 (collecting duct)	12870	-0.24848705530166626	-0.06867158	No	
+row_322	BAIAP3	BAIAP3	BAI1-associated protein 3	12900	-0.25045526027679443	-0.06831439	No	
+row_323	OLR1	OLR1	oxidised low density lipoprotein (lectin-like) receptor 1	12977	-0.25574439764022827	-0.07064584	No	
+row_324	PPARD	PPARD	peroxisome proliferative activated receptor, delta	12980	-0.2558363676071167	-0.068744116	No	
+row_325	EIF2B4	EIF2B4	eukaryotic translation initiation factor 2B, subunit 4 delta, 67kDa	13018	-0.259542852640152	-0.06884457	No	
+row_326	DIAPH1	DIAPH1	diaphanous homolog 1 (Drosophila)	13113	-0.2661656439304352	-0.072205715	No	
+row_327	HCRTR2	HCRTR2	hypocretin (orexin) receptor 2	13171	-0.27181437611579895	-0.07345027	No	
+row_328	MBP	MBP	myelin basic protein	13205	-0.2741076946258545	-0.0733219	No	
+row_329	CHRNB1	CHRNB1	cholinergic receptor, nicotinic, beta 1 (muscle)	13246	-0.2773286998271942	-0.07359397	No	
+row_330	RTP4	RTP4	receptor transporter protein 4	13284	-0.28025874495506287	-0.07369442	No	
+row_331	GRIA2	GRIA2	glutamate receptor, ionotropic, AMPA 2	13348	-0.286361426115036	-0.07528221	Yes	
+row_332	SNCAIP	SNCAIP	synuclein, alpha interacting protein (synphilin)	13365	-0.28760746121406555	-0.074181356	Yes	
+row_333	CPNE6	CPNE6	copine VI (neuronal)	13374	-0.2881024181842804	-0.07262287	Yes	
+row_334	ELN	ELN	elastin (supravalvular aortic stenosis, Williams-Beuren syndrome)	13381	-0.2887129783630371	-0.07094997	Yes	
+row_335	IMPG1	IMPG1	interphotoreceptor matrix proteoglycan 1	13486	-0.29757508635520935	-0.074883156	Yes	
+row_336	DES	DES	desmin	13492	-0.2985171675682068	-0.073153056	Yes	
+row_337	SLC1A3	SLC1A3	solute carrier family 1 (glial high affinity glutamate transporter), member 3	13548	-0.30203500390052795	-0.0742832	Yes	
+row_338	RAPSN	RAPSN	receptor-associated protein of the synapse, 43kD	13549	-0.30205345153808594	-0.07226707	Yes	
+row_339	MYO3A	MYO3A	myosin IIIA	13582	-0.3044308125972748	-0.0720815	Yes	
+row_340	PDE6A	PDE6A	phosphodiesterase 6A, cGMP-specific, rod, alpha	13596	-0.3055259883403778	-0.07080904	Yes	
+row_341	KEL	KEL	Kell blood group, metallo-endopeptidase	13601	-0.30565571784973145	-0.069021724	Yes	
+row_342	OXTR	OXTR	oxytocin receptor	13621	-0.3068006634712219	-0.06809249	Yes	
+row_343	CRYBB2	CRYBB2	crystallin, beta B2	13675	-0.30997130274772644	-0.069108225	Yes	
+row_344	QPRT	QPRT	quinolinate phosphoribosyltransferase (nicotinate-nucleotide pyrophosphorylase (carboxylating))	13729	-0.3140520453453064	-0.070123956	Yes	
+row_345	HTR3B	HTR3B	5-hydroxytryptamine (serotonin) receptor 3B	13854	-0.32374459505081177	-0.07520124	Yes	
+row_346	PDE7B	PDE7B	phosphodiesterase 7B	13863	-0.3245628774166107	-0.07364275	Yes	
+row_347	GJA1	GJA1	gap junction protein, alpha 1, 43kDa (connexin 43)	13891	-0.3268624544143677	-0.07317116	Yes	
+row_348	APBA1	APBA1	amyloid beta (A4) precursor protein-binding, family A, member 1 (X11)	13910	-0.32839691638946533	-0.07218472	Yes	
+row_349	SYPL1	SYPL1	synaptophysin-like 1	13987	-0.3361382484436035	-0.07451617	Yes	
+row_350	GAA	GAA	glucosidase, alpha; acid (Pompe disease, glycogen storage disease type II)	14014	-0.33877167105674744	-0.07398737	Yes	
+row_351	PDE6C	PDE6C	phosphodiesterase 6C, cGMP-specific, cone, alpha prime	14025	-0.3395300805568695	-0.07254329	Yes	
+row_352	ACE	ACE	angiotensin I converting enzyme (peptidyl-dipeptidase A) 1	14050	-0.34253349900245667	-0.071900085	Yes	
+row_353	TTN	TTN	titin	14109	-0.3475028872489929	-0.07320184	Yes	
+row_354	RDH10	RDH10	retinol dehydrogenase 10 (all-trans)	14132	-0.3495507836341858	-0.07244422	Yes	
+row_355	WFS1	WFS1	Wolfram syndrome 1 (wolframin)	14145	-0.35031962394714355	-0.07111455	Yes	
+row_356	CHRNE	CHRNE	cholinergic receptor, nicotinic, epsilon	14155	-0.351700097322464	-0.06961326	Yes	
+row_357	GPR176	GPR176	G protein-coupled receptor 176	14165	-0.35260671377182007	-0.068111986	Yes	
+row_358	GABRR1	GABRR1	gamma-aminobutyric acid (GABA) receptor, rho 1	14175	-0.3534354865550995	-0.0666107	Yes	
+row_359	CLCNKA	CLCNKA	chloride channel Ka	14177	-0.3535037934780121	-0.06465177	Yes	
+row_360	GLRB	GLRB	glycine receptor, beta	14231	-0.3577633798122406	-0.06566751	Yes	
+row_361	IFT88	IFT88	intraflagellar transport 88 homolog (Chlamydomonas)	14252	-0.36076435446739197	-0.06479548	Yes	
+row_362	TRPV2	TRPV2	transient receptor potential cation channel, subfamily V, member 2	14268	-0.36175450682640076	-0.06363742	Yes	
+row_363	RDH8	RDH8	retinol dehydrogenase 8 (all-trans)	14276	-0.362508624792099	-0.06202173	Yes	
+row_364	CTNS	CTNS	cystinosis, nephropathic	14288	-0.3632376194000244	-0.060634855	Yes	
+row_365	GRM7	GRM7	glutamate receptor, metabotropic 7	14330	-0.3666332960128784	-0.06096413	Yes	
+row_366	PDE6G	PDE6G	phosphodiesterase 6G, cGMP-specific, rod, gamma	14376	-0.3707132041454315	-0.061522223	Yes	
+row_367	MPZ	MPZ	myelin protein zero (Charcot-Marie-Tooth neuropathy 1B)	14405	-0.37328121066093445	-0.061107833	Yes	
+row_368	XCL2	XCL2	chemokine (C motif) ligand 2	14458	-0.3780265748500824	-0.062066365	Yes	
+row_369	EYA4	EYA4	eyes absent homolog 4 (Drosophila)	14482	-0.3805944323539734	-0.061365947	Yes	
+row_370	KCNIP2	KCNIP2	Kv channel interacting protein 2	14532	-0.3853052258491516	-0.062152863	Yes	
+row_371	RDH12	RDH12	retinol dehydrogenase 12 (all-trans/9-cis/11-cis)	14557	-0.38731610774993896	-0.061509654	Yes	
+row_372	GUCY1B3	GUCY1B3	guanylate cyclase 1, soluble, beta 3	14600	-0.3913455009460449	-0.061896134	Yes	
+row_373	COCH	COCH	coagulation factor C homolog, cochlin (Limulus polyphemus)	14616	-0.39268434047698975	-0.06073808	Yes	
+row_374	AQP3	AQP3	aquaporin 3 (Gill blood group)	14634	-0.39396199584007263	-0.059694435	Yes	
+row_375	MAL	MAL	mal, T-cell differentiation protein	14661	-0.3962627351284027	-0.059165634	Yes	
+row_376	COL18A1	COL18A1	collagen, type XVIII, alpha 1	14732	-0.4050973057746887	-0.06115385	Yes	
+row_377	PTGS2	PTGS2	prostaglandin-endoperoxide synthase 2 (prostaglandin G/H synthase and cyclooxygenase)	14744	-0.40636008977890015	-0.059766978	Yes	
+row_378	GRM1	GRM1	glutamate receptor, metabotropic 1	14762	-0.40858668088912964	-0.058723334	Yes	
+row_379	CXCL12	CXCL12	chemokine (C-X-C motif) ligand 12 (stromal cell-derived factor 1)	14785	-0.41140177845954895	-0.057965714	Yes	
+row_380	SSPN	SSPN	sarcospan (Kras oncogene-associated gene)	14873	-0.42095983028411865	-0.06092642	Yes	
+row_381	KCNMB4	KCNMB4	potassium large conductance calcium-activated channel, subfamily M, beta member 4	14874	-0.42105451226234436	-0.058910288	Yes	
+row_382	GHRL	GHRL	ghrelin/obestatin preprohormone	14915	-0.42593109607696533	-0.059182357	Yes	
+row_383	DLL4	DLL4	delta-like 4 (Drosophila)	14987	-0.4347434937953949	-0.06122778	Yes	
+row_384	SMTN	SMTN	smoothelin	14996	-0.43535315990448	-0.059669293	Yes	
+row_385	BSN	BSN	bassoon (presynaptic cytomatrix protein)	15025	-0.4387069344520569	-0.059254903	Yes	
+row_386	ADORA2B	ADORA2B	adenosine A2b receptor	15029	-0.4390573799610138	-0.05741039	Yes	
+row_387	CLCN1	CLCN1	chloride channel 1, skeletal muscle (Thomsen disease, autosomal dominant)	15053	-0.4418941140174866	-0.05670997	Yes	
+row_388	PDE6D	PDE6D	phosphodiesterase 6D, cGMP-specific, rod, delta	15070	-0.4434458315372467	-0.055609122	Yes	
+row_389	HAP1	HAP1	huntingtin-associated protein 1 (neuroan 1)	15100	-0.4471694827079773	-0.055251937	Yes	
+row_390	DFNA5	DFNA5	deafness, autosomal dominant 5	15108	-0.4482165277004242	-0.053636245	Yes	
+row_391	DRD1	DRD1	dopamine receptor D1	15115	-0.44855135679244995	-0.051963344	Yes	
+row_392	CHGA	CHGA	chromogranin A (parathyroid secretory protein 1)	15118	-0.4487166702747345	-0.050061624	Yes	
+row_393	ADORA2A	ADORA2A	adenosine A2a receptor	15126	-0.4497528076171875	-0.048445933	Yes	
+row_394	KCNG2	KCNG2	potassium voltage-gated channel, subfamily G, member 2	15155	-0.4529934823513031	-0.048031542	Yes	
+row_395	MYO7A	MYO7A	myosin VIIA	15206	-0.46009352803230286	-0.04887566	Yes	
+row_396	HOXB2	HOXB2	homeobox B2	15242	-0.4630088806152344	-0.048861705	Yes	
+row_397	COLQ	COLQ	collagen-like tail subunit (single strand of homotrimer) of asymmetric acetylcholinesterase	15254	-0.4637938439846039	-0.04747483	Yes	
+row_398	CNGA3	CNGA3	cyclic nucleotide gated channel alpha 3	15281	-0.46600717306137085	-0.04694603	Yes	
+row_399	SERPING1	SERPING1	serpin peptidase inhibitor, clade G (C1 inhibitor), member 1, (angioedema, hereditary)	15321	-0.46987301111221313	-0.047160897	Yes	
+row_400	MEOX2	MEOX2	mesenchyme homeobox 2	15327	-0.4706813097000122	-0.04543079	Yes	
+row_401	DTNA	DTNA	dystrobrevin, alpha	15352	-0.473804235458374	-0.044787582	Yes	
+row_402	FXYD1	FXYD1	FXYD domain containing ion transport regulator 1 (phospholemman)	15382	-0.4776481091976166	-0.044430397	Yes	
+row_403	GCGR	GCGR	glucagon receptor	15459	-0.48698925971984863	-0.046761844	Yes	
+row_404	NTSR1	NTSR1	neurotensin receptor 1 (high affinity)	15477	-0.48950234055519104	-0.0457182	Yes	
+row_405	AQP9	AQP9	aquaporin 9	15528	-0.4957413077354431	-0.04656232	Yes	
+row_406	CHML	CHML	choroideremia-like (Rab escort protein 2)	15626	-0.508751630783081	-0.050095074	Yes	
+row_407	SCN2B	SCN2B	sodium channel, voltage-gated, type II, beta	15634	-0.5104344487190247	-0.04847938	Yes	
+row_408	SCNN1G	SCNN1G	sodium channel, nonvoltage-gated 1, gamma	15713	-0.5206639170646667	-0.050925236	Yes	
+row_409	KCNQ1	KCNQ1	potassium voltage-gated channel, KQT-like subfamily, member 1	15733	-0.5238097906112671	-0.049996004	Yes	
+row_410	GRIA1	GRIA1	glutamate receptor, ionotropic, AMPA 1	15761	-0.5279523730278015	-0.049524408	Yes	
+row_411	MYO1A	MYO1A	myosin IA	15771	-0.5293987989425659	-0.048023123	Yes	
+row_412	PLP1	PLP1	proteolipid protein 1 (Pelizaeus-Merzbacher disease, spastic paraplegia 2, uncomplicated)	15779	-0.5304636359214783	-0.046407428	Yes	
+row_413	CRX	CRX	cone-rod homeobox	15837	-0.5384299159049988	-0.047651984	Yes	
+row_414	MYH11	MYH11	myosin, heavy chain 11, smooth muscle	15846	-0.5412116050720215	-0.046093494	Yes	
+row_415	SCN1B	SCN1B	sodium channel, voltage-gated, type I, beta	15923	-0.5518513321876526	-0.04842494	Yes	
+row_416	CHRNA10	CHRNA10	cholinergic receptor, nicotinic, alpha 10	15931	-0.5530909895896912	-0.04680925	Yes	
+row_417	TECTA	TECTA	tectorin alpha	15986	-0.562044084072113	-0.047882188	Yes	
+row_418	KCNH2	KCNH2	potassium voltage-gated channel, subfamily H (eag-related), member 2	15991	-0.56294846534729	-0.04609488	Yes	
+row_419	CACNA1H	CACNA1H	calcium channel, voltage-dependent, alpha 1H subunit	15996	-0.5634644031524658	-0.044307567	Yes	
+row_420	TGFBI	TGFBI	transforming growth factor, beta-induced, 68kDa	16029	-0.5695520043373108	-0.044122	Yes	
+row_421	HTR2B	HTR2B	5-hydroxytryptamine (serotonin) receptor 2B	16038	-0.5709912776947021	-0.04256351	Yes	
+row_422	TPM1	TPM1	tropomyosin 1 (alpha)	16049	-0.5719925761222839	-0.04111943	Yes	
+row_423	GABRR2	GABRR2	gamma-aminobutyric acid (GABA) receptor, rho 2	16052	-0.5724954009056091	-0.03921771	Yes	
+row_424	CNTN4	CNTN4	contactin 4	16095	-0.5792360901832581	-0.03960419	Yes	
+row_425	NPHP1	NPHP1	nephronophthisis 1 (juvenile)	16135	-0.5861522555351257	-0.039819054	Yes	
+row_426	NPTX1	NPTX1	neuronal pentraxin I	16142	-0.5873725414276123	-0.038146157	Yes	
+row_427	GRM5	GRM5	glutamate receptor, metabotropic 5	16144	-0.5876221060752869	-0.03618723	Yes	
+row_428	CRYBB1	CRYBB1	crystallin, beta B1	16190	-0.5952685475349426	-0.03674533	Yes	
+row_429	UTS2	UTS2	urotensin 2	16271	-0.6090694069862366	-0.039305594	Yes	
+row_430	PCDHB2	PCDHB2	protocadherin beta 2	16276	-0.6099013090133667	-0.037518285	Yes	
+row_431	KCNK5	KCNK5	potassium channel, subfamily K, member 5	16284	-0.6112596392631531	-0.035902593	Yes	
+row_432	GUCY2D	GUCY2D	guanylate cyclase 2D, membrane (retina-specific)	16293	-0.6128366589546204	-0.034344103	Yes	
+row_433	POU6F2	POU6F2	POU domain, class 6, transcription factor 2	16294	-0.6131168007850647	-0.032327972	Yes	
+row_434	KCNMA1	KCNMA1	potassium large conductance calcium-activated channel, subfamily M, alpha member 1	16305	-0.6154887676239014	-0.030883893	Yes	
+row_435	ACTC1	ACTC1	actin, alpha, cardiac muscle 1	16312	-0.6163047552108765	-0.029210994	Yes	
+row_436	GRIN2B	GRIN2B	glutamate receptor, ionotropic, N-methyl D-aspartate 2B	16363	-0.6259810328483582	-0.030055113	Yes	
+row_437	DOC2A	DOC2A	double C2-like domains, alpha	16369	-0.6274045705795288	-0.02832501	Yes	
+row_438	KCNE1L	KCNE1L	KCNE1-like	16384	-0.6306080222129822	-0.02710975	Yes	
+row_439	KCNC4	KCNC4	potassium voltage-gated channel, Shaw-related subfamily, member 4	16389	-0.6315572261810303	-0.025322441	Yes	
+row_440	CPLX1	CPLX1	complexin 1	16399	-0.6333582401275635	-0.023821156	Yes	
+row_441	SLC8A1	SLC8A1	solute carrier family 8 (sodium/calcium exchanger), member 1	16448	-0.6430783867835999	-0.024550866	Yes	
+row_442	GJA5	GJA5	gap junction protein, alpha 5, 40kDa (connexin 40)	16601	-0.6763776540756226	-0.031229893	Yes	
+row_443	AMIGO1	AMIGO1	adhesion molecule with Ig-like domain 1	16605	-0.6772772073745728	-0.029385379	Yes	
+row_444	GNAO1	GNAO1	guanine nucleotide binding protein (G protein), alpha activating activity polypeptide O	16639	-0.6838382482528687	-0.029257013	Yes	
+row_445	COL4A3	COL4A3	collagen, type IV, alpha 3 (Goodpasture antigen)	16683	-0.6952856779098511	-0.029700696	Yes	
+row_446	GPR143	GPR143	G protein-coupled receptor 143	16757	-0.7123767137527466	-0.03186053	Yes	
+row_447	PDE6B	PDE6B	phosphodiesterase 6B, cGMP-specific, rod, beta (congenital stationary night blindness 3, autosomal dominant)	16766	-0.7145622968673706	-0.030302042	Yes	
+row_448	PGAM2	PGAM2	phosphoglycerate mutase 2 (muscle)	16767	-0.714712381362915	-0.028285913	Yes	
+row_449	PITPNM1	PITPNM1	phosphatidylinositol transfer protein, membrane-associated 1	16840	-0.732733428478241	-0.030388542	Yes	
+row_450	SEPT5	SEPT5	septin 5	16855	-0.7365142703056335	-0.029173281	Yes	
+row_451	SPHK1	SPHK1	sphingosine kinase 1	16869	-0.7402491569519043	-0.027900817	Yes	
+row_452	MYO15A	MYO15A	myosin XVA	16906	-0.7498422265052795	-0.027944067	Yes	
+row_453	CRYM	CRYM	crystallin, mu	16917	-0.7531620264053345	-0.026499989	Yes	
+row_454	CNN1	CNN1	calponin 1, basic, smooth muscle	16940	-0.7594497799873352	-0.025742369	Yes	
+row_455	CLCNKB	CLCNKB	chloride channel Kb	16955	-0.7619114518165588	-0.024527108	Yes	
+row_456	GRM4	GRM4	glutamate receptor, metabotropic 4	17008	-0.7770625352859497	-0.025485639	Yes	
+row_457	PROK2	PROK2	prokineticin 2	17033	-0.7862777709960938	-0.024842428	Yes	
+row_458	GRIK4	GRIK4	glutamate receptor, ionotropic, kainate 4	17050	-0.7891111969947815	-0.023741579	Yes	
+row_459	SLC1A6	SLC1A6	solute carrier family 1 (high affinity aspartate/glutamate transporter), member 6	17054	-0.7901511192321777	-0.021897065	Yes	
+row_460	GRIN2A	GRIN2A	glutamate receptor, ionotropic, N-methyl D-aspartate 2A	17057	-0.7916672229766846	-0.019995345	Yes	
+row_461	AMPH	AMPH	amphiphysin (Stiff-Man syndrome with breast cancer 128kDa autoantigen)	17087	-0.8028665781021118	-0.01963816	Yes	
+row_462	NFE2	NFE2	nuclear factor (erythroid-derived 2), 45kDa	17131	-0.8168025612831116	-0.020081844	Yes	
+row_463	KIF5A	KIF5A	kinesin family member 5A	17149	-0.8215296864509583	-0.0190382	Yes	
+row_464	KCNIP1	KCNIP1	Kv channel interacting protein 1	17155	-0.8229511976242065	-0.017308095	Yes	
+row_465	AQP1	AQP1	aquaporin 1 (Colton blood group)	17160	-0.8239243030548096	-0.015520787	Yes	
+row_466	TACSTD2	TACSTD2	tumor-associated calcium signal transducer 2	17163	-0.8250497579574585	-0.013619068	Yes	
+row_467	DLG4	DLG4	discs, large homolog 4 (Drosophila)	17174	-0.8278846144676208	-0.012174988	Yes	
+row_468	SCN4A	SCN4A	sodium channel, voltage-gated, type IV, alpha	17195	-0.8373805284500122	-0.011302959	Yes	
+row_469	PTGS1	PTGS1	prostaglandin-endoperoxide synthase 1 (prostaglandin G/H synthase and cyclooxygenase)	17238	-0.8500353097915649	-0.0116894385	Yes	
+row_470	OPN4	OPN4	opsin 4 (melanopsin)	17252	-0.8578886985778809	-0.010416974	Yes	
+row_471	AQP4	AQP4	aquaporin 4	17258	-0.8596409559249878	-0.008686869	Yes	
+row_472	VIPR1	VIPR1	vasoactive intestinal peptide receptor 1	17261	-0.8610178232192993	-0.0067851506	Yes	
+row_473	RYR2	RYR2	ryanodine receptor 2 (cardiac)	17264	-0.8614031672477722	-0.004883432	Yes	
+row_474	RYR1	RYR1	ryanodine receptor 1 (skeletal)	17265	-0.8623391389846802	-0.0028673026	Yes	
+row_475	LTB4R	LTB4R	leukotriene B4 receptor	17326	-0.8848580121994019	-0.0042834715	Yes	
+row_476	KCNMB1	KCNMB1	potassium large conductance calcium-activated channel, subfamily M, beta member 1	17336	-0.8873870372772217	-0.0027821874	Yes	
+row_477	TNNC1	TNNC1	troponin C type 1 (slow)	17356	-0.8926377892494202	-0.0018529528	Yes	
+row_478	RGS16	RGS16	regulator of G-protein signalling 16	17370	-0.8994497060775757	-5.804883E-4	Yes	
+row_479	MYCBPAP	MYCBPAP	MYCBP associated protein	17406	-0.9134120345115662	-5.6653307E-4	Yes	
+row_480	GAD1	GAD1	glutamate decarboxylase 1 (brain, 67kDa)	17453	-0.9361170530319214	-0.0011818325	Yes	
+row_481	EYA1	EYA1	eyes absent homolog 1 (Drosophila)	17466	-0.9420711398124695	1.4783691E-4	Yes	
+row_482	AKAP5	AKAP5	A kinase (PRKA) anchor protein 5	17517	-0.9771597385406494	-6.9628237E-4	Yes	
+row_483	TRDN	TRDN	triadin	17595	-1.0317723751068115	-0.0030849357	Yes	
+row_484	COL4A4	COL4A4	collagen, type IV, alpha 4	17647	-1.0681872367858887	-0.00398626	Yes	
+row_485	GJB2	GJB2	gap junction protein, beta 2, 26kDa (connexin 26)	17682	-1.0944377183914185	-0.0039151	Yes	
+row_486	KCNQ4	KCNQ4	potassium voltage-gated channel, KQT-like subfamily, member 4	17734	-1.144851565361023	-0.004816424	Yes	
+row_487	TNNC2	TNNC2	troponin C type 2 (fast)	17774	-1.1937355995178223	-0.0050312886	Yes	
+row_488	KCNN3	KCNN3	potassium intermediate/small conductance calcium-activated channel, subfamily N, member 3	17785	-1.200668215751648	-0.0035872094	Yes	
+row_489	HRC	HRC	histidine rich calcium binding protein	17796	-1.2107691764831543	-0.00214313	Yes	
+row_490	SGCA	SGCA	sarcoglycan, alpha (50kDa dystrophin-associated glycoprotein)	17824	-1.269598126411438	-0.0016715351	Yes	
+row_491	ACTA1	ACTA1	actin, alpha 1, skeletal muscle	17839	-1.292921781539917	-4.562756E-4	Yes	
+row_492	GRM2	GRM2	glutamate receptor, metabotropic 2	17842	-1.2976442575454712	0.0014454435	Yes	
+row_493	CHRNA7	CHRNA7	cholinergic receptor, nicotinic, alpha 7	17858	-1.3165065050125122	0.0026034978	Yes	
+row_494	KCND2	KCND2	potassium voltage-gated channel, Shal-related subfamily, member 2	17877	-1.3614553213119507	0.0035899375	Yes	
+row_495	GCH1	GCH1	GTP cyclohydrolase 1 (dopa-responsive dystonia)	17929	-1.5017238855361938	0.0026886133	Yes	

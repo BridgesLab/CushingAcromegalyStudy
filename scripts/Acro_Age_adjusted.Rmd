@@ -1,0 +1,334 @@
+---
+title: "CheckAgeAsConfounder"
+output: html_document
+---
+
+This is to check if age is a confouding factor for expression, methylation, and the relation
+
+```{r read files, echo=FALSE}
+sample_file <- "../data/raw/patient_sample_mapping.csv"
+patient_file <- "../data/raw/patient_table.csv"
+
+sample_mapping <-read.csv(sample_file)
+patient_info <- read.csv(patient_file)
+
+mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
+```
+
+```{r exclusion, echo=FALSE}
+remove_patient <- 29
+```
+
+The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
+
+```{r loading-data, echo=FALSE, message=FALSE, warning=FALSE}
+#required packages
+library(DESeq2 ,quietly=TRUE) #for deseq analysis
+transcript.counts <- read.table("../data/raw/htseq_gene_counts_GRCh37.74.txt", header=TRUE)
+rownames(transcript.counts) <- transcript.counts[,1]
+transcript.counts <- transcript.counts[,-1]
+
+#set the conditions
+#mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
+levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
+levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
+
+#this command removes the cushings samples
+acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's" & mapping$patient!=remove_patient,])
+acromegaly.counts <- transcript.counts[,acromegaly.mapping$samplename]
+
+#this command removes the acromegaly samples
+cushing.mapping <- droplevels(mapping[mapping$group != "Acromegaly"&mapping$samplename %in% colnames(transcript.counts),])
+cushing.counts <- transcript.counts[,cushing.mapping$samplename]
+cushing.mapping$age.cat <- cut(cushing.mapping$age, breaks=c(0,40,60,100))
+cushing.mapping$BMI.cat <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
+
+#break age into sub groups
+acromegaly.mapping$age.cat <- cut(acromegaly.mapping$age, breaks=c(0,40,60,100))
+acromegaly.mapping$BMI.cat <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
+acromegaly.mapping$BMI.cat <- ifelse(acromegaly.mapping$BMI.cat=="(0,25]", "Normal", ifelse(acromegaly.mapping$BMI.cat=="(25,30]", "Overweight", "Obsese"))
+acromegaly.mapping$BMI.cat <- factor(acromegaly.mapping$BMI.cat)
+acromegaly.mapping$age.cat <- factor(acromegaly.mapping$age.cat)
+```
+
+```{r acro_diagnostic_graphs, dev='pdf', echo=FALSE}
+library(reshape2)
+acromegaly.long <- reshape(acromegaly.counts, direction="long", 
+                           ids=rownames(acromegaly.counts), idvar="Genes",
+                           varying=colnames(acromegaly.counts), v.names="Counts",
+                           timevar="Age", times=acromegaly.mapping$age.cat)
+acromegaly.long1 <- reshape(acromegaly.counts, direction="long", 
+                           ids=rownames(acromegaly.counts), idvar="Genes",
+                           varying=colnames(acromegaly.counts), v.names="Counts",
+                           timevar="Disease", times=acromegaly.mapping$group)
+acromegaly.long2 <- reshape(acromegaly.counts, direction="long", 
+                           ids=rownames(acromegaly.counts), idvar="Genes",
+                           varying=colnames(acromegaly.counts), v.names="Counts",
+                           timevar="BMI", times=acromegaly.mapping$BMI.cat)
+acromegaly.long$Disease <- acromegaly.long1$Disease
+acromegaly.long$BMI <- acromegaly.long2$BMI
+acro.long.control <- acromegaly.long[acromegaly.long$Disease=="Control",]
+acro.long.acro <- acromegaly.long[acromegaly.long$Disease=="Acromegaly",]
+par(mfrow=c(2,2))
+library(ggplot2)
+g1 <- ggplot(acromegaly.long, aes(x=Age, y=Counts, colour=Disease))
+g1+geom_point()
+interaction.plot(acromegaly.long$Age, acromegaly.long$Disease, acromegaly.long$Counts,main="Age vs Counts", ylab="Counts", xlab="Age", trace.label="Condition")
+interaction.plot(acro.long.control$Age, acro.long.control$BMI, acro.long.control$Counts, main="Age vs Counts in Control", ylab="Counts", xlab="Age", trace.label="BMI")
+interaction.plot(acro.long.acro$Age, acro.long.acro$BMI, acro.long.acro$Counts, main="Age vs Counts in Acromegaly", ylab="Counts", xlab="Age", trace.label="BMI")
+dev.copy2pdf(file="figure/Age_vs_MeanCounts_exploring_graphs.pdf")
+
+acro.counts.means <- colMeans(acromegaly.counts)
+acro.counts.long <- t(acro.counts.means)
+```
+
+```{r additional functions, echo=FALSE}
+#These functions were copied from the R-cookbook
+## Summarizes data.
+## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   groupvars: a vector containing names of columns that contain grouping variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+    require(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This does the summary. For each group's data frame, return a vector with
+    # N, mean, and sd
+    datac <- ddply(data, groupvars, .drop=.drop,
+      .fun = function(xx, col) {
+        c(N    = length2(xx[[col]], na.rm=na.rm),
+          mean = mean   (xx[[col]], na.rm=na.rm),
+          sd   = sd     (xx[[col]], na.rm=na.rm)
+        )
+      },
+      measurevar
+    )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+```{r acro-Age-vs-Mean-Counts-graphs, dev='pdf', echo=FALSE}
+acro.means.long <- melt(acro.counts.means)
+acro.means.long$age <- acromegaly.mapping$age
+acro.means.long$group <- acromegaly.mapping$group
+acro.means.long$BMI <- acromegaly.mapping$BMI.cat
+acro.means.long$age.cat <- acromegaly.mapping$age.cat
+acro.summary <- summarySE(acro.means.long, measurevar="value", groupvars=c("group","age.cat"))
+acro.summary$age <- acro.summary$age.cat
+
+g <-ggplot (acro.means.long, aes (age, value, colour = group)) +geom_point(size=3)+
+  geom_vline(xintercept=c(40,60),linetype="dashed", colour="green")+
+  #geom_errorbar(data=acro.summary, aes(ymin=value-se, ymax=value+se), width=.1) +
+  #geom_point(data=acro.summary, aes(x=age.cat, y=value, group=group)) +
+  theme_bw()+labs(y="Average counts", title="Age vs Average Counts for all patients")+ylim(180,320)
+  
+g1<- ggplot(acro.summary, aes(x=age.cat,y=value, colour=group))+
+    geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1) +
+    geom_line(aes(group=group)) + geom_point(size=3)+ ylim(180,320)+theme_bw()+
+  labs(x="Age group", y="Average counts", title="Average Counts for patients in each age group")
+
+multiplot(g,g1,cols=1)
+dev.copy2pdf(file="figure/Age_vs_MeanCounts.pdf")
+
+par(mfrow=c(1,1))
+g<-ggplot (acro.means.long, aes (age, value, colour = group))
+g+geom_point()+facet_grid(.~BMI)+theme_bw()+labs(y="Mean counts")
+dev.copy2pdf(file="figure/Age_vs_MeanCounts_byBMI.pdf")
+
+```
+
+
+This step gets the protein coding genes only.
+
+```{r protein coding genes, echo=FALSE, message=FALSE}
+#required packages
+library(biomaRt,quietly=TRUE)
+#download gene name annotation data for results sets.
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    filter= 'biotype',
+    values = 'protein_coding',
+    mart=ensembl)
+
+cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
+acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
+
+```
+
+```{r cds-construction, echo=FALSE, message=FALSE}
+acromegaly.mapping$agexGroup <- factor(paste0(acromegaly.mapping$group, ".", acromegaly.mapping$age.cat))
+acromegaly.mapping$agexBMI <- factor(paste(acromegaly.mapping$BMI.cat, ".", acromegaly.mapping$age.cat, sep=""))
+
+cds.acromegaly.age= DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~agexGroup)
+cds.acromegaly.age$agexGroup <- factor(paste0(cds.acromegaly.age$group, ".", cds.acromegaly.age$age.cat))
+cds.acromegaly.age$agexGroup <-relevel(cds.acromegaly.age$agexGroup, ref="Control.(40,60]")
+
+
+### Acro vs Control regardless the age group #####
+cds.acromegaly= DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~age.cat+group)
+cds.acromegaly$age.cat <- relevel(cds.acromegaly$age.cat, ref="(0,40]")
+cds.acromegaly$group <- relevel(cds.acromegaly$group, ref="Control")
+#cds.acromegaly$BMI <- relevel(cds.acromegaly$BMI.cat, ref="Normal")
+
+rld <- rlogTransformation(cds.acromegaly, blind=TRUE)
+plotPCA(rld, intgroup=c("age.cat", "group"))
+dev.copy2pdf(file="figure/PCA_Acromegaly_Age_adjusted.pdf")
+#, "(40,60].Control", "(60,100].Control", "(0,40].Acromegaly","(40,60].Acromegaly", "(60,100].Acromegaly")
+
+#group is the variable of interest, so put group at the end of the design formula
+```
+
+Full Analysis
+--------------
+
+```{r deseq-analysis acro adjusting for age, echo=FALSE, dev=c('pdf','png'), message=FALSE}
+acro.cds.age <- DESeq(cds.acromegaly.age,betaPrior=FALSE)
+acro.age.res <- results(acro.cds.age)
+sum(acro.age.res$padj<0.05, na.rm=TRUE)
+
+acro.cds <- DESeq(cds.acromegaly, betaPrior=FALSE)
+acro.res<- results(acro.cds)
+sum(acro.res$padj<0.05, na.rm=TRUE)
+
+### compare Acro and Control in the age group 40 to 60
+acro.age.res$log2FC_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$log2FoldChange
+acro.age.res$lfcSE_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$lfcSE
+acro.age.res$pavlue_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$pvalue
+acro.age.res$padj_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$padj
+### compare Acro and Control in the age group 60 to 100
+acro.age.res$log2FC_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$log2FoldChange
+acro.age.res$lfcSE_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$lfcSE
+acro.age.res$pvalue_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$pvalue
+acro.age.res$padj_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$padj
+
+###replace the Control 60.100 vs Control 40.60 results with the results b/w Acro and Control in all ages
+acro.age.res$log2FoldChange <- acro.res$log2FoldChange
+acro.age.res$lfcSE <- acro.res$lfcSE
+acro.age.res$stat <- acro.res$stat
+acro.age.res$pvalue <- acro.res$pvalue
+acro.age.res$padj <- acro.res$padj
+
+sum(acro.age.res$padj_AcrovsCon_40.60<0.05, na.rm=TRUE)
+acro.age.res<- acro.age.res[order(acro.age.res$padj_AcrovsCon_40.60),]
+
+#write.csv(acro.age.res, "../data/processed/Acromegaly_DESeq_Reulst_Age_Adjusted.csv")
+
+#acro.fitted <- assays(cds.acromegaly.age)[["mu"]]
+#fitted.common.scale = t( t( acro.fitted) / sizeFactors(cds.acromegaly.age) )
+#acro.residuals <- counts(cds.acromegaly.age, normalized=TRUE) - fitted.common.scale
+#plot(acro.fitted, acro.residuals)
+
+####LRT####
+acro.cds.age.LRT <-DESeq(cds.acromegaly.age, test="LRT", full=~age.cat+group, reduced=~age.cat)
+acro.age.res.LRT <- results(acro.cds.age.LRT)
+sum(acro.age.res.LRT$padj<0.05, na.rm=TRUE)
+
+plotMA(acro.cds.age,ylim=c(-6,6),main="DESeq2 - Acromegaly adjusting for age")
+plotMA(acro.cds.age.LRT,ylim=c(-6,6),main="DESeq2-LRT - Acromegaly adjusting for age")
+
+
+acro.age.res <- acro.age.res[order(acro.age.res$padj),]
+acro.age.res.LRT <- acro.age.res.LRT[order(acro.age.res.LRT$padj),]
+
+#write.csv(acro.age.res.LRT, "../data/processed/LRT_Acromegaly_DESeq_Reulst_Age_Adjusted.csv")
+
+###############
+
+```
+
+Annotation
+-------------
+
+This step annotates the data tables with the official gene symbols.
+
+```{r annotation, echo=FALSE, message=FALSE}
+acro.age.Wald <- merge(acro.age.res, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+acro.age.LRT <- merge(acro.age.res.LRT, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+
+#write annotated results files.
+write.csv(acro.age.Wald, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age.csv")
+write.csv(acro.age.LRT, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age_LRT.csv")
+```
+Adjusting for age
+----------------
+Acromegaly: The number of significant genes affected by disease controlling for all age groups is `r sum(acro.res$padj<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (40,60] is `r sum(acro.age.res$padj_AcrovsCon_40.60<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (60,100] is `r sum(acro.age.res$padj_AcrovsCon_60.100<0.05, na.rm=TRUE)`.
+
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```

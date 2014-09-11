@@ -1,0 +1,43 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MMP9	MMP9	matrix metallopeptidase 9 (gelatinase B, 92kDa gelatinase, 92kDa type IV collagenase)	6	2.2234537601470947	0.023474982	Yes	
+row_1	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	181	1.0868723392486572	0.037582807	Yes	
+row_2	E2F2	E2F2	E2F transcription factor 2	229	1.007041335105896	0.058771756	Yes	
+row_3	E2F1	E2F1	E2F transcription factor 1	481	0.7429078817367554	0.0685863	Yes	
+row_4	CCND1	CCND1	cyclin D1	506	0.7276408672332764	0.09105766	Yes	
+row_5	CDKN2A	CDKN2A	cyclin-dependent kinase inhibitor 2A (melanoma, p16, inhibits CDK4)	576	0.6827303171157837	0.111019954	Yes	
+row_6	MYC	MYC	v-myc myelocytomatosis viral oncogene homolog (avian)	829	0.5733202695846558	0.12077874	Yes	
+row_7	EGF	EGF	epidermal growth factor (beta-urogastrone)	934	0.5383961796760559	0.13878955	Yes	
+row_8	CDH1	CDH1	cadherin 1, type 1, E-cadherin (epithelial)	1053	0.5052058100700378	0.15601976	Yes	
+row_9	IL8	IL8	interleukin 8	1159	0.4767025411128998	0.17397481	Yes	
+row_10	E2F3	E2F3	E2F transcription factor 3	1218	0.4616062641143799	0.19455042	Yes	
+row_11	THBS1	THBS1	thrombospondin 1	1802	0.3590194284915924	0.18585369	Yes	
+row_12	MMP1	MMP1	matrix metallopeptidase 1 (interstitial collagenase)	1952	0.33731770515441895	0.20135543	Yes	
+row_13	NRAS	NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	2023	0.3292310833930969	0.22126196	Yes	
+row_14	TYMP	null	null	2470	0.28261199593544006	0.22020392	Yes	
+row_15	MDM2	MDM2	Mdm2, transformed 3T3 cell double minute 2, p53 binding protein (mouse)	2660	0.26304733753204346	0.23347539	Yes	
+row_16	FGFR3	FGFR3	fibroblast growth factor receptor 3 (achondroplasia, thanatophoric dwarfism)	3826	0.18236126005649567	0.19232813	No	
+row_17	DAPK1	DAPK1	death-associated protein kinase 1	4112	0.1689838171005249	0.20024693	No	
+row_18	KRAS	KRAS	v-Ki-ras2 Kirsten rat sarcoma viral oncogene homolog	4496	0.15100745856761932	0.20270157	No	
+row_19	MAP2K1	MAP2K1	mitogen-activated protein kinase kinase 1	5410	0.11268350481987	0.17560504	No	
+row_20	MAPK1	MAPK1	mitogen-activated protein kinase 1	5925	0.09326386451721191	0.17075552	No	
+row_21	VEGFA	null	null	6911	0.05930470675230026	0.13964449	No	
+row_22	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	7352	0.04460795968770981	0.13892098	No	
+row_23	ERBB2	ERBB2	v-erb-b2 erythroblastic leukemia viral oncogene homolog 2, neuro/glioblastoma derived oncogene homolog (avian)	8515	0.01191489864140749	0.09794099	No	
+row_24	BRAF	BRAF	v-raf murine sarcoma viral oncogene homolog B1	9351	-0.018417533487081528	0.0751935	No	
+row_25	TP53	TP53	tumor protein p53 (Li-Fraumeni syndrome)	9353	-0.018481053411960602	0.098947264	No	
+row_26	RPS6KA5	RPS6KA5	ribosomal protein S6 kinase, 90kDa, polypeptide 5	10505	-0.05639461427927017	0.0585806	No	
+row_27	RB1	RB1	retinoblastoma 1 (including osteosarcoma)	10682	-0.06206221878528595	0.07257691	No	
+row_28	ARAF	ARAF	v-raf murine sarcoma 3611 viral oncogene homolog	10999	-0.07205863296985626	0.078767255	No	
+row_29	MAPK3	MAPK3	mitogen-activated protein kinase 3	11424	-0.08472120016813278	0.078935854	No	
+row_30	MAP2K2	MAP2K2	mitogen-activated protein kinase kinase 2	11511	-0.08796411007642746	0.09795028	No	
+row_31	RAF1	RAF1	v-raf-1 murine leukemia viral oncogene homolog 1	12563	-0.11913646012544632	0.0631593	No	
+row_32	FIGF	FIGF	c-fos induced growth factor (vascular endothelial growth factor D)	13172	-0.1480385810136795	0.053068634	No	
+row_33	VEGFB	VEGFB	vascular endothelial growth factor B	13282	-0.15288709104061127	0.070800655	No	
+row_34	CDK4	CDK4	cyclin-dependent kinase 4	13375	-0.15726280212402344	0.08948054	No	
+row_35	DAPK3	DAPK3	death-associated protein kinase 3	13762	-0.17822207510471344	0.09176791	No	
+row_36	EGFR	EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	13985	-0.1902906596660614	0.1031994	No	
+row_37	RASSF1	RASSF1	Ras association (RalGDS/AF-6) domain family 1	14555	-0.224976047873497	0.09528325	No	
+row_38	VEGFC	VEGFC	vascular endothelial growth factor C	15117	-0.2618679106235504	0.08781315	No	
+row_39	PGF	PGF	placental growth factor, vascular endothelial growth factor-related protein	15446	-0.28905245661735535	0.09333441	No	
+row_40	MMP2	MMP2	matrix metallopeptidase 2 (gelatinase A, 72kDa gelatinase, 72kDa type IV collagenase)	16690	-0.4417375922203064	0.047838107	No	
+row_41	DAPK2	DAPK2	death-associated protein kinase 2	16891	-0.4800593852996826	0.060496252	No	

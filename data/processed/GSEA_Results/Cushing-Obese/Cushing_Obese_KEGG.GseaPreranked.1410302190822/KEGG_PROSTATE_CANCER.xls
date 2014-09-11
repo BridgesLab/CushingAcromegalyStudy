@@ -1,0 +1,87 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	181	1.0868723392486572	0.0015110881	Yes	
+row_1	E2F2	E2F2	E2F transcription factor 2	229	1.007041335105896	0.010511976	Yes	
+row_2	PIK3R5	PIK3R5	phosphoinositide-3-kinase, regulatory subunit 5, p101	392	0.8102574348449707	0.0130850505	Yes	
+row_3	IKBKG	IKBKG	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase gamma	443	0.7743995189666748	0.021918256	Yes	
+row_4	E2F1	E2F1	E2F transcription factor 1	481	0.7429078817367554	0.031478085	Yes	
+row_5	CCND1	CCND1	cyclin D1	506	0.7276408672332764	0.041764535	Yes	
+row_6	EGF	EGF	epidermal growth factor (beta-urogastrone)	934	0.5383961796760559	0.029525692	Yes	
+row_7	PIK3R3	PIK3R3	phosphoinositide-3-kinase, regulatory subunit 3 (p55, gamma)	1005	0.5176858901977539	0.037241016	Yes	
+row_8	PIK3CG	PIK3CG	phosphoinositide-3-kinase, catalytic, gamma polypeptide	1067	0.5024480223655701	0.04545939	Yes	
+row_9	E2F3	E2F3	E2F transcription factor 3	1218	0.4616062641143799	0.04870319	Yes	
+row_10	NRAS	NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	2023	0.3292310833930969	0.015392301	Yes	
+row_11	PDGFD	PDGFD	platelet derived growth factor D	2336	0.2950958013534546	0.009581272	Yes	
+row_12	HSP90AA1	HSP90AA1	heat shock protein 90kDa alpha (cytosolic), class A member 1	2542	0.27503395080566406	0.009750904	Yes	
+row_13	MDM2	MDM2	Mdm2, transformed 3T3 cell double minute 2, p53 binding protein (mouse)	2660	0.26304733753204346	0.014839209	Yes	
+row_14	HSP90B1	HSP90B1	heat shock protein 90kDa beta (Grp94), member 1	2887	0.2438460886478424	0.013835066	Yes	
+row_15	CREB3L3	CREB3L3	cAMP responsive element binding protein 3-like 3	2969	0.23680411279201508	0.020935556	Yes	
+row_16	GRB2	GRB2	growth factor receptor-bound protein 2	3456	0.20478010177612305	0.005398967	Yes	
+row_17	PDGFC	PDGFC	platelet derived growth factor C	3457	0.2046613246202469	0.017026873	Yes	
+row_18	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	3601	0.19595621526241302	0.020661935	Yes	
+row_19	AR	AR	androgen receptor (dihydrotestosterone receptor; testicular feminization; spinal and bulbar muscular atrophy; Kennedy disease)	3658	0.19244994223117828	0.029159777	Yes	
+row_20	TCF7	TCF7	transcription factor 7 (T-cell specific, HMG-box)	3676	0.19111861288547516	0.039837483	Yes	
+row_21	PIK3CB	PIK3CB	phosphoinositide-3-kinase, catalytic, beta polypeptide	4004	0.17296719551086426	0.033188045	Yes	
+row_22	SOS1	SOS1	son of sevenless homolog 1 (Drosophila)	4038	0.17133751511573792	0.04297145	Yes	
+row_23	CCNE1	CCNE1	cyclin E1	4153	0.16720090806484222	0.048227437	Yes	
+row_24	CREB1	CREB1	cAMP responsive element binding protein 1	4278	0.15971647202968597	0.052924484	Yes	
+row_25	FOXO1	null	null	4394	0.1543549746274948	0.05812458	Yes	
+row_26	KRAS	KRAS	v-Ki-ras2 Kirsten rat sarcoma viral oncogene homolog	4496	0.15100745856761932	0.06410719	Yes	
+row_27	CTNNB1	CTNNB1	catenin (cadherin-associated protein), beta 1, 88kDa	4623	0.14618739485740662	0.068692446	Yes	
+row_28	FGFR2	FGFR2	ffer syndrome, Jackson-Weiss syndrome)	4685	0.14346197247505188	0.07691082	Yes	
+row_29	CCNE2	CCNE2	cyclin E2	4692	0.14319075644016266	0.08820336	Yes	
+row_30	INSRR	INSRR	insulin receptor-related receptor	5028	0.12892784178256989	0.08110677	Yes	
+row_31	MAP2K1	MAP2K1	mitogen-activated protein kinase kinase 1	5410	0.11268350481987	0.07143905	Yes	
+row_32	PTEN	PTEN	phosphatase and tensin homolog (mutated in multiple advanced cancers 1)	5517	0.10871399939060211	0.077142194	Yes	
+row_33	HSP90AB1	HSP90AB1	heat shock protein 90kDa alpha (cytosolic), class B member 1	5807	0.09760197252035141	0.072616726	Yes	
+row_34	MAPK1	MAPK1	mitogen-activated protein kinase 1	5925	0.09326386451721191	0.07770503	Yes	
+row_35	MTOR	null	null	5936	0.09277284890413284	0.088774	Yes	
+row_36	PIK3CA	PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide	6037	0.08902686089277267	0.094812505	Yes	
+row_37	IGF1	IGF1	insulin-like growth factor 1 (somatomedin C)	6207	0.08231507986783981	0.09699432	Yes	
+row_38	TCF7L2	TCF7L2	transcription factor 7-like 2 (T-cell specific, HMG-box)	6370	0.07590702921152115	0.0995674	Yes	
+row_39	EP300	EP300	E1A binding protein p300	6573	0.07037588953971863	0.09990471	Yes	
+row_40	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	6825	0.0618990957736969	0.097503215	Yes	
+row_41	LEF1	LEF1	lymphoid enhancer-binding factor 1	7027	0.05536671355366707	0.09789642	Yes	
+row_42	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	7352	0.04460795968770981	0.09141467	Yes	
+row_43	PDGFA	PDGFA	platelet-derived growth factor alpha polypeptide	7786	0.030271627008914948	0.07884046	Yes	
+row_44	ATF4	ATF4	activating transcription factor 4 (tax-responsive enhancer element B67)	8205	0.02094145491719246	0.06710466	Yes	
+row_45	BAD	BAD	BCL2-antagonist of cell death	8286	0.019815102219581604	0.07426105	Yes	
+row_46	CDK2	CDK2	cyclin-dependent kinase 2	8376	0.016395820304751396	0.080914386	Yes	
+row_47	ERBB2	ERBB2	v-erb-b2 erythroblastic leukemia viral oncogene homolog 2, neuro/glioblastoma derived oncogene homolog (avian)	8515	0.01191489864140749	0.08482891	Yes	
+row_48	GSK3B	GSK3B	glycogen synthase kinase 3 beta	8612	0.008273749612271786	0.091091	Yes	
+row_49	NFKBIA	NFKBIA	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, alpha	8654	0.0067857904359698296	0.10042725	Yes	
+row_50	CHUK	CHUK	conserved helix-loop-helix ubiquitous kinase	8686	0.005718722473829985	0.11032244	Yes	
+row_51	CREB3L2	CREB3L2	cAMP responsive element binding protein 3-like 2	8882	-0.0010829477105289698	0.111051016	Yes	
+row_52	GSTP1	GSTP1	glutathione S-transferase pi	9101	-0.009296659380197525	0.110494025	Yes	
+row_53	PDGFRB	PDGFRB	platelet-derived growth factor receptor, beta polypeptide	9244	-0.014136252924799919	0.114184976	Yes	
+row_54	BRAF	BRAF	v-raf murine sarcoma viral oncogene homolog B1	9351	-0.018417533487081528	0.11988812	Yes	
+row_55	TP53	TP53	tumor protein p53 (Li-Fraumeni syndrome)	9353	-0.018481053411960602	0.13146013	Yes	
+row_56	CREB3	CREB3	cAMP responsive element binding protein 3	10193	-0.04634900391101837	0.09619295	No	
+row_57	PDPK1	PDPK1	3-phosphoinositide dependent protein kinase-1	10447	-0.054282233119010925	0.09367967	No	
+row_58	CREBBP	CREBBP	CREB binding protein (Rubinstein-Taybi syndrome)	10577	-0.05862259119749069	0.09809724	No	
+row_59	RB1	RB1	retinoblastoma 1 (including osteosarcoma)	10682	-0.06206221878528595	0.103912175	No	
+row_60	ARAF	ARAF	v-raf murine sarcoma 3611 viral oncogene homolog	10999	-0.07205863296985626	0.09787757	No	
+row_61	PDGFRA	PDGFRA	platelet-derived growth factor receptor, alpha polypeptide	11359	-0.08257090300321579	0.08943952	No	
+row_62	NFKB1	NFKB1	nuclear factor of kappa light polypeptide gene enhancer in B-cells 1 (p105)	11413	-0.08428052067756653	0.09810504	No	
+row_63	MAPK3	MAPK3	mitogen-activated protein kinase 3	11424	-0.08472120016813278	0.109174006	No	
+row_64	MAP2K2	MAP2K2	mitogen-activated protein kinase kinase 2	11511	-0.08796411007642746	0.11599503	No	
+row_65	IGF1R	IGF1R	insulin-like growth factor 1 receptor	11806	-0.0962228924036026	0.111190096	No	
+row_66	SOS2	SOS2	son of sevenless homolog 2 (Drosophila)	12116	-0.1054426059126854	0.10554674	No	
+row_67	IKBKB	IKBKB	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase beta	12215	-0.10914205759763718	0.11169704	No	
+row_68	RAF1	RAF1	v-raf-1 murine leukemia viral oncogene homolog 1	12563	-0.11913646012544632	0.10392972	No	
+row_69	PIK3CD	PIK3CD	phosphoinositide-3-kinase, catalytic, delta polypeptide	12674	-0.12471305578947067	0.10940928	No	
+row_70	FGFR1	FGFR1	fibroblast growth factor receptor 1 (fms-related tyrosine kinase 2, Pfeiffer syndrome)	12695	-0.1257985532283783	0.11991931	No	
+row_71	CASP9	CASP9	caspase 9, apoptosis-related cysteine peptidase	12998	-0.13951437175273895	0.11466722	No	
+row_72	TCF7L1	TCF7L1	transcription factor 7-like 1 (T-cell specific, HMG-box)	13434	-0.16040489077568054	0.10198122	No	
+row_73	AKT3	AKT3	v-akt murine thymoma viral oncogene homolog 3 (protein kinase B, gamma)	13727	-0.17594929039478302	0.09728808	No	
+row_74	RELA	RELA	v-rel reticuloendotheliosis viral oncogene homolog A, nuclear factor of kappa light polypeptide gene enhancer in B-cells 3, p65 (avian)	13736	-0.17629410326480865	0.10846883	No	
+row_75	EGFR	EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	13985	-0.1902906596660614	0.10623502	No	
+row_76	BCL2	BCL2	B-cell CLL/lymphoma 2	14101	-0.19688071310520172	0.111435115	No	
+row_77	CREB3L1	CREB3L1	cAMP responsive element binding protein 3-like 1	14500	-0.22193734347820282	0.100817196	No	
+row_78	PDGFB	PDGFB	platelet-derived growth factor beta polypeptide (simian sarcoma viral (v-sis) oncogene homolog)	14615	-0.22863756120204926	0.106073186	No	
+row_79	CREB3L4	CREB3L4	cAMP responsive element binding protein 3-like 4	14715	-0.2349158376455307	0.11216758	No	
+row_80	CREB5	CREB5	cAMP responsive element binding protein 5	14953	-0.25051239132881165	0.11054861	No	
+row_81	TGFA	TGFA	transforming growth factor, alpha	15547	-0.29754239320755005	0.08903135	No	
+row_82	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	15647	-0.3072167932987213	0.09512576	No	
+row_83	AKT2	AKT2	v-akt murine thymoma viral oncogene homolog 2	15716	-0.3122718036174774	0.10295287	No	
+row_84	PIK3R2	PIK3R2	phosphoinositide-3-kinase, regulatory subunit 2 (p85 beta)	15794	-0.32018500566482544	0.11027694	No	
+row_85	NKX3-1	NKX3-1	NK3 transcription factor related, locus 1 (Drosophila)	17615	-0.732769250869751	0.020177713	No	

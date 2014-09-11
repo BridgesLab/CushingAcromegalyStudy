@@ -1,0 +1,63 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CDKN2B	CDKN2B	cyclin-dependent kinase inhibitor 2B (p15, inhibits CDK4)	84	1.386384129524231	0.011440223	Yes	
+row_1	E2F1	E2F1	E2F transcription factor 1	271	0.9947983026504517	0.017186895	Yes	
+row_2	CDKN2C	CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)	301	0.9669626355171204	0.03169717	Yes	
+row_3	CENPF	CENPF	centromere protein F, 350/400ka (mitosin)	415	0.869438648223877	0.04151864	Yes	
+row_4	MYO16	null	null	440	0.8552241921424866	0.056308012	Yes	
+row_5	CDKN3	CDKN3	cyclin-dependent kinase inhibitor 3 (CDK2-associated dual specificity phosphatase)	946	0.6207018494606018	0.044248376	Yes	
+row_6	CDK2AP1	CDK2AP1	CDK2-associated protein 1	1235	0.5482925772666931	0.04430149	Yes	
+row_7	GSPT1	GSPT1	G1 to S phase transition 1	1529	0.4940298795700073	0.044075515	Yes	
+row_8	BCAT1	BCAT1	branched chain aminotransferase 1, cytosolic	2203	0.4068105220794678	0.022638261	Yes	
+row_9	CDCA5	CDCA5	cell division cycle associated 5	2578	0.36135199666023254	0.017890932	Yes	
+row_10	CUL5	CUL5	cullin 5	2623	0.3561694324016571	0.031563923	Yes	
+row_11	PPP6C	PPP6C	protein phosphatase 6, catalytic subunit	2719	0.3466925621032715	0.042390134	Yes	
+row_12	BIRC5	BIRC5	baculoviral IAP repeat-containing 5 (survivin)	2881	0.32894638180732727	0.049532283	Yes	
+row_13	CUL3	CUL3	cullin 3	3286	0.2941933274269104	0.04311038	Yes	
+row_14	CUL2	CUL2	cullin 2	3385	0.28604161739349365	0.053769134	Yes	
+row_15	ANAPC5	ANAPC5	anaphase promoting complex subunit 5	3846	0.25142085552215576	0.04422136	Yes	
+row_16	CUL1	CUL1	cullin 1	3856	0.2504619061946869	0.059848018	Yes	
+row_17	FOXN3	null	null	3885	0.24779112637043	0.07441412	Yes	
+row_18	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	4224	0.22532956302165985	0.07167628	Yes	
+row_19	CUL4A	CUL4A	cullin 4A	4463	0.20675630867481232	0.07452035	Yes	
+row_20	LATS1	LATS1	LATS, large tumor suppressor, homolog 1 (Drosophila)	4473	0.2058272510766983	0.09014701	Yes	
+row_21	RCC1	RCC1	regulator of chromosome condensation 1	4704	0.19020192325115204	0.09343764	Yes	
+row_22	ACVR1B	ACVR1B	activin A receptor, type IB	4802	0.18335849046707153	0.10415221	Yes	
+row_23	POLA1	POLA1	polymerase (DNA directed), alpha 1	4919	0.17598305642604828	0.113806225	Yes	
+row_24	LATS2	LATS2	LATS, large tumor suppressor, homolog 2 (Drosophila)	5846	0.12269549816846848	0.07824673	Yes	
+row_25	SKP2	SKP2	S-phase kinase-associated protein 2 (p45)	5956	0.11672389507293701	0.08829147	Yes	
+row_26	TBRG4	TBRG4	transforming growth factor beta regulator 4	5987	0.11486425995826721	0.10274593	Yes	
+row_27	DBF4	DBF4	DBF4 homolog (S. cerevisiae)	6139	0.10578341037034988	0.11044627	Yes	
+row_28	APBB2	APBB2	amyloid beta (A4) precursor protein-binding, family B, member 2 (Fe65-like)	6169	0.10408490151166916	0.12495655	Yes	
+row_29	ANAPC10	ANAPC10	anaphase promoting complex subunit 10	6232	0.10018749535083771	0.13762479	Yes	
+row_30	ACVR1	ACVR1	activin A receptor, type I	6687	0.07757141441106796	0.12841193	Yes	
+row_31	ABL1	ABL1	v-abl Abelson murine leukemia viral oncogene homolog 1	6716	0.07619288563728333	0.14297803	Yes	
+row_32	CDKN2A	CDKN2A	cyclin-dependent kinase inhibitor 2A (melanoma, p16, inhibits CDK4)	6903	0.06704459339380264	0.14872469	Yes	
+row_33	APBB1	APBB1	amyloid beta (A4) precursor protein-binding, family B, member 1 (Fe65)	6933	0.06607045978307724	0.16323498	Yes	
+row_34	SPDYA	SPDYA	speedy homolog A (Drosophila)	7075	0.05896908789873123	0.1714935	Yes	
+row_35	USH1C	USH1C	Usher syndrome 1C (autosomal recessive, severe)	7987	0.0224055927246809	0.13677129	Yes	
+row_36	POLE	POLE	polymerase (DNA directed), epsilon	8182	0.016769874840974808	0.14207141	Yes	
+row_37	ANAPC4	ANAPC4	anaphase promoting complex subunit 4	8215	0.014969621784985065	0.15641423	Yes	
+row_38	KATNA1	KATNA1	katanin p60 (ATPase-containing) subunit A 1	8689	-0.012256531044840813	0.14614081	Yes	
+row_39	CDC25C	CDC25C	cell division cycle 25C	8809	-0.01898322068154812	0.15562735	Yes	
+row_40	CDC6	CDC6	CDC6 cell division cycle 6 homolog (S. cerevisiae)	8935	-0.025419143959879875	0.16477899	Yes	
+row_41	CDC23	CDC23	CDC23 (cell division cycle 23, yeast, homolog)	9038	-0.031102096661925316	0.17521448	Yes	
+row_42	KHDRBS1	KHDRBS1	KH domain containing, RNA binding, signal transduction associated 1	9259	-0.04403207451105118	0.1790633	Yes	
+row_43	KPNA2	KPNA2	karyopherin alpha 2 (RAG cohort 1, importin alpha 1)	9472	-0.05536966025829315	0.18335867	Yes	
+row_44	CHMP1A	null	null	10286	-0.09323124587535858	0.15410674	No	
+row_45	TAF1	TAF1	TAF1 RNA polymerase II, TATA box binding protein (TBP)-associated factor, 250kDa	11462	-0.15321967005729675	0.10464827	No	
+row_46	GFI1B	GFI1B	growth factor independent 1B (potential regulator of CDKN1A, translocated in CML)	11538	-0.15740622580051422	0.116590865	No	
+row_47	TPD52L1	TPD52L1	tumor protein D52-like 1	11618	-0.1629096120595932	0.12831019	No	
+row_48	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	11763	-0.172224223613739	0.13640127	No	
+row_49	POLD1	POLD1	polymerase (DNA directed), delta 1, catalytic subunit 125kDa	12805	-0.24350468814373016	0.094422564	No	
+row_50	CDKN2D	CDKN2D	cyclin-dependent kinase inhibitor 2D (p19, inhibits CDK4)	12835	-0.24600468575954437	0.10893284	No	
+row_51	CDK4	CDK4	cyclin-dependent kinase 4	13399	-0.29042860865592957	0.09363569	No	
+row_52	FOXO4	null	null	13416	-0.29222995042800903	0.10887162	No	
+row_53	CDC7	CDC7	CDC7 cell division cycle 7 (S. cerevisiae)	14359	-0.36924123764038086	0.07241902	No	
+row_54	GFI1	GFI1	growth factor independent 1	14653	-0.3956057131290436	0.072193034	No	
+row_55	CDK10	CDK10	cyclin-dependent kinase (CDC2-like) 10	14656	-0.3957962989807129	0.088210426	No	
+row_56	CDK6	CDK6	cyclin-dependent kinase 6	15188	-0.4574775993824005	0.0746995	No	
+row_57	MAP3K11	MAP3K11	mitogen-activated protein kinase kinase kinase 11	15636	-0.5107899904251099	0.06587737	No	
+row_58	CDKN1C	CDKN1C	cyclin-dependent kinase inhibitor 1C (p57, Kip2)	16589	-0.6739057302474976	0.028866574	No	
+row_59	CDK2	CDK2	cyclin-dependent kinase 2	17230	-0.8479586243629456	0.009271352	No	
+row_60	DDX11	DDX11	DEAD/H (Asp-Glu-Ala-Asp/His) box polypeptide 11 (CHL1-like helicase homolog, S. cerevisiae)	17348	-0.8898240327835083	0.018869543	No	
+row_61	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	17564	-1.0130281448364258	0.02299746	No	

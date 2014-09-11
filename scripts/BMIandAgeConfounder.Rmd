@@ -1,0 +1,184 @@
+---
+title: "BMIandAgeConfounder"
+author: "Quynh Tran"
+date: "August 10, 2014"
+output: html_document
+---
+
+This is to check if BMI is a confouding factor between disease and gene expressions.
+
+```{r read files, echo=FALSE}
+sample_file <- "../data/raw/patient_sample_mapping.csv"
+patient_file <- "../data/raw/patient_table.csv"
+
+sample_mapping <-read.csv(sample_file)
+patient_info <- read.csv(patient_file)
+
+mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
+```
+
+```{r exclusion, echo=FALSE}
+remove_patient <- 29
+```
+
+The counts tables were generated previously using  **HTseq.sh** shell script and **merge.command** on Hera.  It removes the outlier data point from the analysis, which was patient **`r remove_patient`**.
+This script requires a transcript counts table.  There is also a sample mapping file called **patient_sample_mapping.csv** which links the diagnosis the the samples.  This file was most recently processed on ```r date()```.
+
+```{r loading-data, echo=FALSE, message=FALSE, warning=FALSE}
+#required packages
+library(DESeq2 ,quietly=TRUE) #for deseq analysis
+transcript.counts <- read.table("../data/raw/htseq_gene_counts_GRCh37.74.txt", header=TRUE)
+rownames(transcript.counts) <- transcript.counts[,1]
+transcript.counts <- transcript.counts[,-1]
+
+#set the conditions
+#mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly", "Cushing's")
+
+#this command removes the cushings samples
+acromegaly.mapping <- droplevels(mapping[mapping$group != "Cushing's" & mapping$patient!=remove_patient,])
+acromegaly.counts <- transcript.counts[,acromegaly.mapping$samplename]
+
+#this command removes the acromegaly samples
+cushing.mapping <- droplevels(mapping[mapping$group != "Acromegaly"&mapping$samplename %in% colnames(transcript.counts),])
+cushing.counts <- transcript.counts[,cushing.mapping$samplename]
+
+#break bmi into normal, overweight, obese
+acromegaly.mapping$BMI1 <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
+cushing.mapping$BMI1 <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
+cushing.mapping$ageSq <- cushing.mapping$age^2
+```
+
+This step gets the protein coding genes only.
+
+```{r protein coding genes, echo=FALSE, message=FALSE}
+#required packages
+library(biomaRt,quietly=TRUE)
+#download gene name annotation data for results sets.
+ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+transcriptInfo <- getBM(
+    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    filter= 'biotype',
+    values = 'protein_coding',
+    mart=ensembl)
+
+cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
+acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
+```
+Separate the cushing's patients into two groups: obese and not obese to examine the effect of the disease on gene expression when adjusting for age
+
+```{r Cushing effect on obese and not obese patients, echo=FALSE}
+cushing.mapping.obese <- cushing.mapping[cushing.mapping$BMI1=="(30,50]",] 
+cushing.counts.obese <- cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.obese$samplename]
+cds.cushing.obese = DESeqDataSetFromMatrix(countData=cushing.counts.obese, colData=cushing.mapping.obese, design=~age+ageSq+group)
+cushing.cds.obese <- DESeq(cds.cushing.obese)
+plotMA(cushing.cds.obese,ylim=c(-2,2),main="Cushing's effect in obese patients adjusting for Age")
+cushing.results.obese <- results(cushing.cds.obese)
+sum(cushing.results.obese$padj<0.05, na.rm=TRUE)
+resultsNames(cushing.cds.obese)
+
+cushing.group.obese <- results(cushing.cds.obese, contrast=c("group", "Cushing.s", "Control"))
+cushing.age.obese <- results(cushing.cds.obese, name="age")
+cushing.obese.combined <- merge(cushing.group.obese, cushing.age.obese, by.x="row.names", by.y="row.names")
+colnames(cushing.obese.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.obese.combined)[2:7])
+colnames(cushing.obese.combined)[8:13]<-gsub("y","Age", colnames(cushing.obese.combined[8:13]))
+cushing.obese.combined <- cushing.obese.combined[order(cushing.obese.combined$padj.CushingvsControl, na.last=TRUE),]
+write.csv(cushing.obese.combined, "../data/processed/cushing_results_Obese_Age_adjust.csv")
+
+cushing.fitted <- assays(cushing.cds.obese)[["mu"]]
+fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.obese) )
+cushing.residuals <- counts(cushing.cds.obese, normalized=TRUE) - fitted.common.scale
+cushing.counts <- cbind(cushing.counts.obese, cushing.fitted)
+cushing.counts <- cushing.counts[10:18]
+cushing.counts <- cushing.counts[complete.cases(cushing.counts),]
+cushing.long1 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="Disease",times=cushing.mapping.obese$group)
+cushing.long2 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="AgeSq",times=cushing.mapping.obese$ageSq)
+cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
+cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
+cushing.residuals.long$AgeSq <- cushing.long2$AgeSq
+cushing.residuals.long$Disease <- cushing.long1$Disease
+cushing.long1$AgeSq <-cushing.long2$AgeSq
+#cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(0,30]", "Not Obese", "Obsese")
+interaction.plot(cushing.long1$AgeSq, cushing.long1$Disease, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Age", ylab="Mean of Fitted Values")
+plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Obese", xlab="Fitted", ylab="Residuals", pch=19)
+
+plot(age~Fitted_Values, cushing.long1, main="Obese patients")
+
+
+
+###########################NOT OBESE ###############
+cushing.mapping.notObese$age1 <- cut(cushing.mapping.notObese$age, breaks=c(0,40,100))
+cushing.mapping.notObese <- cushing.mapping[cushing.mapping$BMI1=="(0,30]",]
+cushing.counts.notObese <-cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.notObese$samplename]
+cds.cushing.notObese = DESeqDataSetFromMatrix(countData=cushing.counts.notObese, colData=cushing.mapping.notObese, design=~age+group)
+#cushing.mapping.notObese$age1 <- relevel(cushing.mapping.notObese$age1, "(0,40]")
+cushing.cds.notObese <- DESeq(cds.cushing.notObese)
+plotMA(cushing.cds.notObese,ylim=c(-2,2),main="DESeq2 - Cushing's effect in NOT obese patients")
+cushing.results.notObese <- results(cushing.cds.notObese)
+sum(cushing.results.notObese$padj<0.05, na.rm=TRUE)
+resultsNames(cushing.cds.notObese)
+
+cushing.group.notObese <- results(cushing.cds.notObese, contrast=c("group", "Cushing.s", "Control"))
+cushing.age.notObese <- results(cushing.cds.notObese, name="age")
+#cushing.notObese.combine <- cushing.group.notObese[order(cushing.group.notObese$padj, na.last=TRUE),]
+cushing.notObese.combined <- merge(cushing.group.notObese, cushing.age.notObese, by.x="row.names", by.y="row.names")
+colnames(cushing.notObese.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.notObese.combined)[2:7])
+colnames(cushing.notObese.combined)[8:13]<-gsub("y","Age", colnames(cushing.notObese.combined[8:13]))
+cushing.notObese.combined <- cushing.notObese.combined[order(cushing.notObese.combined$padj.CushingvsControl, na.last=TRUE),]
+write.csv(cushing.notObese.combined, "../data/processed/cushing_results_NOT_Obese_Age_adjust.csv")
+
+cushing.fitted <- assays(cushing.cds.notObese)[["mu"]]
+fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.notObese) )
+cushing.residuals <- counts(cushing.cds.notObese, normalized=TRUE) - fitted.common.scale
+cushing.counts <- cbind(cushing.counts.notObese, cushing.fitted)
+cushing.counts <- cushing.counts[8:14]
+cushing.counts <- cushing.counts[complete.cases(cushing.counts),]
+cushing.long1 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="Disease",times=cushing.mapping.notObese$group)
+cushing.long2 <- reshape(cushing.counts, direction="long", 
+                           ids=rownames(cushing.counts), idvar="Genes",
+                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           timevar="Age",times=cushing.mapping.notObese$age)
+cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
+cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
+cushing.residuals.long$Age <- cushing.long2$Age
+cushing.residuals.long$Disease <- cushing.long1$Disease
+cushing.long1$Age <-cushing.long2$Age
+#cushing.long1$BMI <- ifelse(cushing.long2$BMI=="(0,30]", "Not Obese", "Obsese")
+interaction.plot(cushing.long1$Age, cushing.long1$Disease, cushing.long1$Fitted_Values, main="Cushing-InteractionPlot", xlab="Age", ylab="Mean of Fitted Values")
+plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals Not Obese", xlab="Fitted", ylab="Residuals", pch=19)
+plot(Residuals~Disease, cushing.residuals.long, main="Not Obese patients")
+plot(Residuals~Age, cushing.residuals.long, main="Not Obese Patients")
+```
+
+Annotation
+-------------
+
+This step annotates the data tables with the official gene symbols.
+
+```{r annotation, echo=FALSE, message=FALSE}
+
+cushing.obese.combined <- merge(cushing.obese.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+cushing.notObese.combined <- merge(cushing.notObese.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+
+#write annotated results files.
+write.csv(cushing.obese.combined, "../data/processed/Annotated_Results_Cushings_Obese_Age_adjust.csv")
+write.csv(cushing.notObese.combined, "../data/processed/Annotated_Results_Cushings_NotObese_Age_adjust.csv")
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```

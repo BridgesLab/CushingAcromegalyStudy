@@ -74,8 +74,11 @@ GSEA Analysis
 
 For analysis by GSEA which is an external java program, we prepared the input files by running the script **GSEA_inputs_CushingAcromegaly.Rmd**.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by log2foldchange, with 1000 permutations of the gene set.  The input files located in data/processed were:
 
-* GSEA_Acromegaly_prerank_pvalues.rnk
-* GSEA_Cushing_prerank_pvalues.rnk
+* GSEA_Acromegaly_age40-60_adjusted_prerank_FC.rnk
+* GSEA_Acromegaly_age60-100_adjusted_prerank_FC.rnk
+* GSEA_Cushing_BMI_interaction_prerank_FC.rnk
+* GSEA_Cushing_NOTObese_prerank_FC.rnk
+* GSEA_Cushing_Obese_prerank_FC.rnk
 
 The expression dataset was selected from either acromegaly or cushing.  The gene sets databases tested were:
 
@@ -88,6 +91,8 @@ The expression dataset was selected from either acromegaly or cushing.  The gene
 * For REACTOME gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.reactome.v4.0.symbols.gmt
 
 WIth the default 1000 permutations and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets <15 or >500 members.
+
+The Enrichment statistics was set to "CLASSIC".
 
 Figures
 -----------
