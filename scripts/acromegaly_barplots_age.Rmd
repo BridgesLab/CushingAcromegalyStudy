@@ -45,6 +45,11 @@ rpkm.long$Age <- rpkm.age$Age
 
 
 genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6")
+young.sig.genes <- read.csv("../data/processed/Acro_vs_Control_Young_Sig_Genes.csv")
+young.sig.genes <- young.sig.genes[-1,-1]
+young.sig.genes <- as.character(young.sig.genes)
+
+old.sig.genes <- c("CPXM1", "SCD", "FADS2", "IGSF10")
 
 
 #calculate standard error
@@ -65,15 +70,59 @@ goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA',]
 goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA.1',]
 goi.long.cal <- goi.long.cal[order(rev(goi.long.cal$Genes), goi.long.cal$Disease, decreasing=T),]
 
+young.long.cal <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%young.sig.genes,]
+#young.long.cal <- young.long.cal[young.long.cal$hgnc_symbol!='NA',]
+#young.long.cal <- young.long.cal[young.long.cal$hgnc_symbol!='NA.1',]
+
 ```
 
 ```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
 library(reshape2)
 library(ggplot2)
-gene="SCD"
+
 for (gene in genes.of.interest) {
   #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
+    #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+  ggplot(gene.data, aes(x=Disease,y=mean_Expression,fill=Age)) + 
+    geom_bar(stat="identity", position="dodge", colour="black") + 
+    geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), position=position_dodge(0.9), width=.2) + 
+    xlab("") + ylab("mRNA Expression (RPKM)")+ 
+    theme_bw() + ggtitle(gene) + 
+    theme(panel.grid.minor = element_blank()) + 
+    theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank()) + 
+      #scale_x_discrete(labels=gene.data$Disease) + 
+    theme(axis.line = element_line(color = 'black'))+
+    scale_colour_grey(start = 0.5, end = .9)
+  ggsave(filename=paste('../Figures/Acro_Age/Acro-Age-',gene,'-barplot.pdf',sep=""))
+}
+
+for (gene in young.sig.genes) {
+  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  #print(gene)
+  if((gene!="FLJ27365") & (gene!="RP11-407P15.2")){
+    gene.data <- young.long.cal[young.long.cal$hgnc_symbol==gene,]
+    #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+    ggplot(gene.data, aes(x=Disease,y=mean_Expression,fill=Age)) + 
+      geom_bar(stat="identity", position="dodge", colour="black") + 
+      geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), position=position_dodge(0.9), width=.2) + 
+      xlab("") + ylab("mRNA Expression (RPKM)")+ 
+      theme_bw() + ggtitle(gene) + 
+      theme(panel.grid.minor = element_blank()) + 
+      theme(panel.grid.major = element_blank()) + 
+      theme(panel.border=element_blank()) + 
+      #scale_x_discrete(labels=gene.data$Disease) + 
+      theme(axis.line = element_line(color = 'black'))+
+      scale_colour_grey(start = 0.5, end = .9)
+    ggsave(filename=paste('../Figures/Acro_Age/Acro-Young-',gene,'-barplot.pdf',sep=""))
+  }
+}
+
+for (gene in old.sig.genes) {
+  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol==gene,]
   #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=Disease,y=mean_Expression,fill=Age)) + 
     geom_bar(stat="identity", position="dodge", colour="black") + 
@@ -86,7 +135,7 @@ for (gene in genes.of.interest) {
     #scale_x_discrete(labels=gene.data$Disease) + 
     theme(axis.line = element_line(color = 'black'))+
     scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../figures/Age/Acro-Age-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Acro_Age/Acro-Old-',gene,'-barplot.pdf',sep=""))
 }
 
 ```
@@ -115,7 +164,7 @@ ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position="top")
 
-ggsave("../Figures/Age/Acro-Age-adjusted-all-lipases-RPKM.pdf")
+ggsave("../Figures/Acro_Age/Acro-Age-adjusted-all-lipases-RPKM.pdf")
 
 ```
 
@@ -136,7 +185,7 @@ for (gene in lipases) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../Figures/Age/Acro-Age-lipase-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Acro_Age/Acro-Age-lipase-',gene,'-barplot.pdf',sep=""))
 }
 ```
 
@@ -192,7 +241,7 @@ for (name in gene.data.name){
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
-  ggsave(filename=paste('../Figures/Age/Acro-Age', name, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Acro_Age/Acro-Age', name, '-barplot.pdf',sep=""))
 }
 
 gene.data.name <- c('figure4C', 'figure4C_FASN','figure4D_SCD', 'figure4D')
@@ -257,11 +306,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
   
-pdf('../Figures/Age/Acromegaly_Age_FASN_Combined.pdf')
+pdf('../Figures/Acro_Age/Acromegaly_Age_FASN_Combined.pdf')
 multiplot(plot_figure4C,plot_figure4C_FASN, cols=2)
 dev.off()
 
-pdf('../Figures/Age/Acromegaly_Age_SCD_Combined.pdf')
+pdf('../Figures/Acro_Age/Acromegaly_Age_SCD_Combined.pdf')
 multiplot(plot_figure4D_SCD,plot_figure4D, cols=2)
 dev.off()
 ```
