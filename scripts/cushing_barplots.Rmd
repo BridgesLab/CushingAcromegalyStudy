@@ -12,7 +12,9 @@ deseq.data <- read.csv(deseq.filename, row.names='X')
 mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
-levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
+levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
+levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
 
 filtered.mapping <- mapping[mapping$patient.. != 29,]
 filtered.normalized.data <- normalized.data[,colnames(normalized.data ) %in% filtered.mapping$samplename]
@@ -52,12 +54,13 @@ goi.long.cal <- ddply(genes.of.interest.long, .(Genes,Disease), summarise, se = 
 rpkm.long.cal <- ddply(rpkm.long, .(hgnc_symbol,Disease), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T))
 
 rpkm.long.cal$Disease <- factor(rpkm.long.cal$Disease)
+goi.long.cal$Disease <- factor(goi.long.cal$Disease)
 
 goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA',]
 goi.long.cal <- goi.long.cal[goi.long.cal$Genes!='NA.1',]
-goi.long.cal <- goi.long.cal[order(rev(goi.long.cal$Genes), goi.long.cal$Disease, decreasing=T),]
+goi.long.cal <- goi.long.cal[order(goi.long.cal$Genes, goi.long.cal$Disease, decreasing=F),]
 
-rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$hgnc_symbol), rpkm.long.cal$Disease, decreasing=T),]
+rpkm.long.cal <- rpkm.long.cal[order(rpkm.long.cal$hgnc_symbol, rpkm.long.cal$Disease, decreasing=F),]
 ```
 
 ```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
@@ -68,7 +71,7 @@ for (gene in genes.of.interest) {
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
   #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=Disease,y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../figures/Cushing-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Cushing-',gene,'-barplot.pdf',sep=""))
 }
 
 ```
@@ -101,7 +104,7 @@ ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position="top")
 
-ggsave("../figures/Cushing-all-lipases-RPKM.pdf")
+ggsave("../Figures/Cushing-all-lipases-RPKM.pdf")
 
 ```
 
@@ -121,7 +124,7 @@ for (gene in lipases) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../figures/Cushing-lipase-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../Figures/Cushing-lipase-',gene,'-barplot.pdf',sep=""))
 }
 ```
 
