@@ -18,8 +18,8 @@ deseq2.Acromegaly.results <- read.csv(deseq2.Acromegaly, row.names="X")
 #order by pvalue and get rid of those with NA foldchange
 Acromegaly.results.noNA <- deseq2.Acromegaly.results[which(deseq2.Acromegaly.results$padj != 'NA'),]
 #Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FoldChange,decreasing=TRUE),]
-Acromegaly.results.noNA.0.60 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_0.60),c(16,8)]
-Acromegaly.results.noNA.60.100 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_60.100),c(16,12)]
+Acromegaly.results.noNA.0.60 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_0.60),c(24,8)]
+Acromegaly.results.noNA.60.100 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_60.100),c(24,12)]
 #get rid of duplicate genes
 Acromegaly.results.noDup.0.60 <- Acromegaly.results.noNA.0.60[!duplicated(Acromegaly.results.noNA$external_gene_id),]
 Acromegaly.results.noDup.60.100 <- Acromegaly.results.noNA.60.100[!duplicated(Acromegaly.results.noNA$external_gene_id),]
