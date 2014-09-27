@@ -48,7 +48,7 @@ cushing.mapping$age.cat <- cut(cushing.mapping$age, breaks=c(0,40,60,100))
 cushing.mapping$BMI.cat <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
 
 #break age into sub groups
-acromegaly.mapping$age.cat <- cut(acromegaly.mapping$age, breaks=c(0,40,60,100))
+acromegaly.mapping$age.cat <- cut(acromegaly.mapping$age, breaks=c(0,60,100))
 acromegaly.mapping$BMI.cat <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
 acromegaly.mapping$BMI.cat <- ifelse(acromegaly.mapping$BMI.cat=="(0,25]", "Normal", ifelse(acromegaly.mapping$BMI.cat=="(25,30]", "Overweight", "Obsese"))
 acromegaly.mapping$BMI.cat <- factor(acromegaly.mapping$BMI.cat)
@@ -187,7 +187,7 @@ acro.summary <- summarySE(acro.means.long, measurevar="value", groupvars=c("grou
 acro.summary$age <- acro.summary$age.cat
 
 g <-ggplot (acro.means.long, aes (age, value, colour = group)) +geom_point(size=3)+
-  geom_vline(xintercept=c(40,60),linetype="dashed", colour="green")+
+  geom_vline(xintercept=c(60),linetype="dashed", colour="green")+
   #geom_errorbar(data=acro.summary, aes(ymin=value-se, ymax=value+se), width=.1) +
   #geom_point(data=acro.summary, aes(x=age.cat, y=value, group=group)) +
   theme_bw()+labs(y="Average counts", title="Age vs Average Counts for all patients")+ylim(180,320)
@@ -232,12 +232,12 @@ acromegaly.mapping$agexBMI <- factor(paste(acromegaly.mapping$BMI.cat, ".", acro
 
 cds.acromegaly.age= DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~agexGroup)
 cds.acromegaly.age$agexGroup <- factor(paste0(cds.acromegaly.age$group, ".", cds.acromegaly.age$age.cat))
-cds.acromegaly.age$agexGroup <-relevel(cds.acromegaly.age$agexGroup, ref="Control.(40,60]")
+cds.acromegaly.age$agexGroup <-relevel(cds.acromegaly.age$agexGroup, ref="Control.(0,60]")
 
 
 ### Acro vs Control regardless the age group #####
 cds.acromegaly= DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~age.cat+group)
-cds.acromegaly$age.cat <- relevel(cds.acromegaly$age.cat, ref="(0,40]")
+cds.acromegaly$age.cat <- relevel(cds.acromegaly$age.cat, ref="(0,60]")
 cds.acromegaly$group <- relevel(cds.acromegaly$group, ref="Control")
 #cds.acromegaly$BMI <- relevel(cds.acromegaly$BMI.cat, ref="Normal")
 
@@ -261,11 +261,11 @@ acro.cds <- DESeq(cds.acromegaly, betaPrior=FALSE)
 acro.res<- results(acro.cds)
 sum(acro.res$padj<0.05, na.rm=TRUE)
 
-### compare Acro and Control in the age group 40 to 60
-acro.age.res$log2FC_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$log2FoldChange
-acro.age.res$lfcSE_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$lfcSE
-acro.age.res$pavlue_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$pvalue
-acro.age.res$padj_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$padj
+### compare Acro and Control in the age group 0 to 60
+acro.age.res$log2FC_AcrovsCon_0.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..0.60._vs_Control..0.60.")$log2FoldChange
+acro.age.res$lfcSE_AcrovsCon_0.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..0.60._vs_Control..0.60.")$lfcSE
+acro.age.res$pavlue_AcrovsCon_0.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..0.60._vs_Control..0.60.")$pvalue
+acro.age.res$padj_AcrovsCon_0.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..0.60._vs_Control..0.60.")$padj
 
 ### compare Acro and Control in the age group 60 to 100
 acro.age.res$log2FC_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$log2FoldChange
@@ -280,10 +280,10 @@ acro.age.res$pvalue_OldvsYoung_Con <- acro.age.res$pvalue
 acro.age.res$padj_OldvsYoung_Con <- acro.age.res$padj
 
 ### compare Old vs Young in the Acromegaly group
-acro.age.res$log2FC_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$log2FoldChange
-acro.age.res$lfcSE_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$lfcSE
-acro.age.res$pvalue_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$pvalue
-acro.age.res$padj_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$padj
+acro.age.res$log2FC_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..0.60."))$log2FoldChange
+acro.age.res$lfcSE_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..0.60."))$lfcSE
+acro.age.res$pvalue_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..0.60."))$pvalue
+acro.age.res$padj_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..0.60."))$padj
 
 ###replace the Control 60.100 vs Control 40.60 results with the results b/w Acro and Control in all ages
 acro.age.res$log2FoldChange <- acro.res$log2FoldChange
@@ -292,8 +292,8 @@ acro.age.res$stat <- acro.res$stat
 acro.age.res$pvalue <- acro.res$pvalue
 acro.age.res$padj <- acro.res$padj
 
-sum(acro.age.res$padj_AcrovsCon_40.60<0.05, na.rm=TRUE)
-acro.age.res<- acro.age.res[order(acro.age.res$padj_AcrovsCon_40.60),]
+sum(acro.age.res$padj_AcrovsCon_0.60<0.05, na.rm=TRUE)
+acro.age.res<- acro.age.res[order(acro.age.res$padj_AcrovsCon_0.60),]
 
 #write.csv(acro.age.res, "../data/processed/Acromegaly_DESeq_Reulst_Age_Adjusted.csv")
 
@@ -328,17 +328,17 @@ This step annotates the data tables with the official gene symbols.
 ```{r annotation, echo=FALSE, message=FALSE}
 acro.age.Wald <- merge(acro.age.res, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
 acro.age.LRT <- merge(acro.age.res.LRT, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
-sig.4060 <- subset(acro.age.Wald, padj_AcrovsCon_40.60<0.05)
-sig.4060 <- sig.4060$external_gene_id
+sig.060 <- subset(acro.age.Wald, padj_AcrovsCon_0.60<0.05)
+sig.060 <- sig.060$external_gene_id
 
 #write annotated results files.
 write.csv(acro.age.Wald, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age.csv")
 write.csv(acro.age.LRT, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age_LRT.csv")
-write.csv(sig.4060, "../data/processed/Acro_vs_Control_Young_Sig_Genes.csv")
+write.csv(sig.060, "../data/processed/Acro_vs_Control_Young_Sig_Genes.csv")
 ```
 Adjusting for age
 ----------------
-Acromegaly: The number of significant genes affected by disease controlling for all age groups is `r sum(acro.res$padj<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (40,60] is `r sum(acro.age.res$padj_AcrovsCon_40.60<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (60,100] is `r sum(acro.age.res$padj_AcrovsCon_60.100<0.05, na.rm=TRUE)`.
+Acromegaly: The number of significant genes affected by disease controlling for all age groups is `r sum(acro.res$padj<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (0,60] is `r sum(acro.age.res$padj_AcrovsCon_0.60<0.05, na.rm=TRUE)`. Number of genes significantly changed between Acromegaly and Control in the age group (60,100] is `r sum(acro.age.res$padj_AcrovsCon_60.100<0.05, na.rm=TRUE)`.
 
 
 Session Information
