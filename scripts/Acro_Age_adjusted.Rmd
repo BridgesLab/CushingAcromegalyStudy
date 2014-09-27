@@ -266,11 +266,24 @@ acro.age.res$log2FC_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acr
 acro.age.res$lfcSE_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$lfcSE
 acro.age.res$pavlue_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$pvalue
 acro.age.res$padj_AcrovsCon_40.60 <- results(acro.cds.age, name="agexGroup_Acromegaly..40.60._vs_Control..40.60.")$padj
+
 ### compare Acro and Control in the age group 60 to 100
 acro.age.res$log2FC_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$log2FoldChange
 acro.age.res$lfcSE_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$lfcSE
 acro.age.res$pvalue_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$pvalue
 acro.age.res$padj_AcrovsCon_60.100 <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Control..60.100."))$padj
+
+### compare Old vs Young in the Control group
+acro.age.res$log2FC_OldvsYoung_Con <- acro.age.res$log2FoldChange
+acro.age.res$lfcSE_OldvsYoung_Con <- acro.age.res$lfcSE
+acro.age.res$pvalue_OldvsYoung_Con <- acro.age.res$pvalue
+acro.age.res$padj_OldvsYoung_Con <- acro.age.res$padj
+
+### compare Old vs Young in the Acromegaly group
+acro.age.res$log2FC_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$log2FoldChange
+acro.age.res$lfcSE_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$lfcSE
+acro.age.res$pvalue_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$pvalue
+acro.age.res$padj_OldvsYoung_Acro <- results(acro.cds.age, contrast=c("agexGroup","Acromegaly..60.100.","Acromegaly..40.60."))$padj
 
 ###replace the Control 60.100 vs Control 40.60 results with the results b/w Acro and Control in all ages
 acro.age.res$log2FoldChange <- acro.res$log2FoldChange
@@ -315,10 +328,13 @@ This step annotates the data tables with the official gene symbols.
 ```{r annotation, echo=FALSE, message=FALSE}
 acro.age.Wald <- merge(acro.age.res, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
 acro.age.LRT <- merge(acro.age.res.LRT, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
+sig.4060 <- subset(acro.age.Wald, padj_AcrovsCon_40.60<0.05)
+sig.4060 <- sig.4060$external_gene_id
 
 #write annotated results files.
 write.csv(acro.age.Wald, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age.csv")
 write.csv(acro.age.LRT, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age_LRT.csv")
+write.csv(sig.4060, "../data/processed/Acro_vs_Control_Young_Sig_Genes.csv")
 ```
 Adjusting for age
 ----------------

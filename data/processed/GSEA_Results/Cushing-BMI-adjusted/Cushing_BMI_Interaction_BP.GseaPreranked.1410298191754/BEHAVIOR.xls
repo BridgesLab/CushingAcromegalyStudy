@@ -1,0 +1,130 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CCR5	CCR5	chemokine (C-C motif) receptor 5	24	2.001473903656006	0.0064072497	Yes	
+row_1	CCL22	CCL22	chemokine (C-C motif) ligand 22	39	1.840990662574768	0.013374786	Yes	
+row_2	FPR1	FPR1	formyl peptide receptor 1	63	1.733115553855896	0.019838065	Yes	
+row_3	CCL18	CCL18	chemokine (C-C motif) ligand 18 (pulmonary and activation-regulated)	98	1.6075520515441895	0.025685027	Yes	
+row_4	CXCL1	CXCL1	chemokine (C-X-C motif) ligand 1 (melanoma growth stimulating activity, alpha)	145	1.5055263042449951	0.030859645	Yes	
+row_5	PTGDS	PTGDS	prostaglandin D2 synthase 21kDa (brain)	146	1.5038822889328003	0.038611583	Yes	
+row_6	PTAFR	PTAFR	platelet-activating factor receptor	148	1.4969303607940674	0.046307493	Yes	
+row_7	C5AR1	C5AR1	complement component 5a receptor 1	175	1.4589771032333374	0.052602686	Yes	
+row_8	XCR1	XCR1	chemokine (C motif) receptor 1	213	1.421815037727356	0.05828156	Yes	
+row_9	PLAUR	PLAUR	plasminogen activator, urokinase receptor	226	1.403631567955017	0.06536116	Yes	
+row_10	ITGB2	ITGB2	integrin, beta 2 (complement component 3 receptor 3 and 4 subunit)	247	1.381990909576416	0.07199252	Yes	
+row_11	CCRL2	CCRL2	chemokine (C-C motif) receptor-like 2	265	1.358743667602539	0.07879197	Yes	
+row_12	FOSL1	FOSL1	FOS-like antigen 1	326	1.2960245609283447	0.083182186	Yes	
+row_13	CCR2	CCR2	chemokine (C-C motif) receptor 2	341	1.286083698272705	0.09014972	Yes	
+row_14	SYK	SYK	spleen tyrosine kinase	361	1.2647136449813843	0.09683712	Yes	
+row_15	CCL8	CCL8	chemokine (C-C motif) ligand 8	614	1.0576542615890503	0.09046982	Yes	
+row_16	SPN	SPN	sialophorin (leukosialin, CD43)	645	1.0423206090927124	0.0965409	Yes	
+row_17	DLG4	DLG4	discs, large homolog 4 (Drosophila)	680	1.022748351097107	0.10238787	Yes	
+row_18	CMKLR1	CMKLR1	chemokine-like receptor 1	776	0.9732685089111328	0.10481708	Yes	
+row_19	CNR1	CNR1	cannabinoid receptor 1 (brain)	889	0.9241300821304321	0.106293805	Yes	
+row_20	CXCR4	CXCR4	chemokine (C-X-C motif) receptor 4	1013	0.8723173141479492	0.10715421	Yes	
+row_21	PLAU	PLAU	plasminogen activator, urokinase	1034	0.8647602200508118	0.11378557	Yes	
+row_22	LTB4R2	LTB4R2	leukotriene B4 receptor 2	1091	0.8401881456375122	0.11839991	Yes	
+row_23	CCR7	CCR7	chemokine (C-C motif) receptor 7	1113	0.8333911895751953	0.12497524	Yes	
+row_24	DOCK2	DOCK2	dedicator of cytokinesis 2	1193	0.8089196681976318	0.12830092	Yes	
+row_25	CX3CR1	CX3CR1	chemokine (C-X3-C motif) receptor 1	1199	0.8074938058853149	0.1357727	Yes	
+row_26	CCL2	CCL2	chemokine (C-C motif) ligand 2	1285	0.7765570282936096	0.1387622	Yes	
+row_27	IL10	IL10	interleukin 10	1469	0.7221774458885193	0.1362609	Yes	
+row_28	HCRTR2	HCRTR2	hypocretin (orexin) receptor 2	1570	0.6995724439620972	0.13840997	Yes	
+row_29	XCL1	XCL1	chemokine (C motif) ligand 1	1676	0.6735368967056274	0.14027889	Yes	
+row_30	CCL3	CCL3	chemokine (C-C motif) ligand 3	1805	0.6438815593719482	0.14085916	Yes	
+row_31	C5	C5	complement component 5	1851	0.6352945566177368	0.1460898	Yes	
+row_32	PROK2	PROK2	prokineticin 2	1855	0.6348188519477844	0.15367366	Yes	
+row_33	CCL7	CCL7	chemokine (C-C motif) ligand 7	2097	0.5862485766410828	0.14792268	No	
+row_34	CCL24	CCL24	chemokine (C-C motif) ligand 24	2552	0.5130841732025146	0.1302376	No	
+row_35	CX3CL1	CX3CL1	chemokine (C-X3-C motif) ligand 1	2579	0.5091891884803772	0.13653278	No	
+row_36	MCHR1	MCHR1	melanin-concentrating hormone receptor 1	3381	0.40165290236473083	0.09940575	No	
+row_37	CCL13	CCL13	chemokine (C-C motif) ligand 13	3864	0.35246238112449646	0.08015186	No	
+row_38	CXCL12	CXCL12	chemokine (C-X-C motif) ligand 12 (stromal cell-derived factor 1)	4100	0.32846128940582275	0.07473706	No	
+row_39	CCR6	CCR6	chemokine (C-C motif) receptor 6	4120	0.3274388909339905	0.08142445	No	
+row_40	CCR4	CCR4	chemokine (C-C motif) receptor 4	4271	0.3114362061023712	0.08077209	No	
+row_41	PLD1	PLD1	phospholipase D1, phosphatidylcholine-specific	4338	0.30554449558258057	0.08482613	No	
+row_42	CCL21	CCL21	chemokine (C-C motif) ligand 21	4423	0.29915139079093933	0.087871656	No	
+row_43	CXCL6	CXCL6	chemokine (C-X-C motif) ligand 6 (granulocyte chemotactic protein 2)	4547	0.28743213415145874	0.088732064	No	
+row_44	CXCR2	null	null	4561	0.2862827181816101	0.09575563	No	
+row_45	RNASE2	RNASE2	ribonuclease, RNase A family, 2 (liver, eosinophil-derived neurotoxin)	4625	0.280574232339859	0.09997776	No	
+row_46	IL1RAPL1	IL1RAPL1	interleukin 1 receptor accessory protein-like 1	4650	0.2780567407608032	0.106385015	No	
+row_47	IL8	IL8	interleukin 8	4801	0.2636469006538391	0.10573265	No	
+row_48	ABAT	ABAT	4-aminobutyrate aminotransferase	4826	0.26109305024147034	0.112139896	No	
+row_49	CCR9	CCR9	chemokine (C-C motif) receptor 9	4852	0.259914755821228	0.11849112	No	
+row_50	GHRL	GHRL	ghrelin/obestatin preprohormone	5023	0.24694699048995972	0.11671818	No	
+row_51	FPR2	null	null	5079	0.24218082427978516	0.12138854	No	
+row_52	CNR2	CNR2	cannabinoid receptor 2 (macrophage)	5196	0.2340088188648224	0.122641146	No	
+row_53	CCL28	CCL28	chemokine (C-C motif) ligand 28	5440	0.21635963022708893	0.11677812	No	
+row_54	NMUR2	NMUR2	neuromedin U receptor 2	5661	0.19974128901958466	0.11220375	No	
+row_55	CCR8	CCR8	chemokine (C-C motif) receptor 8	5806	0.18863792717456818	0.11188755	No	
+row_56	NF1	NF1	neurofibromin 1 (neurofibromatosis, von Recklinghausen disease, Watson disease)	5991	0.17511756718158722	0.10933021	No	
+row_57	OPRM1	OPRM1	opioid receptor, mu 1	6222	0.1621059626340866	0.10419555	No	
+row_58	MAPK14	MAPK14	mitogen-activated protein kinase 14	6993	0.11469068378210068	0.068805404	No	
+row_59	CXCR3	CXCR3	chemokine (C-X-C motif) receptor 3	7098	0.1087503507733345	0.07073036	No	
+row_60	CCL5	CCL5	chemokine (C-C motif) ligand 5	7342	0.09329681098461151	0.064867325	No	
+row_61	FYN	FYN	FYN oncogene related to SRC, FGR, YES	7437	0.08797107636928558	0.06735256	No	
+row_62	ADCY8	ADCY8	adenylate cyclase 8 (brain)	7881	0.06060308218002319	0.050283793	No	
+row_63	MAP2K1	MAP2K1	mitogen-activated protein kinase kinase 1	8118	0.046312082558870316	0.044812962	No	
+row_64	BRS3	BRS3	bombesin-like receptor 3	9034	4.000899207312614E-5	0.0012986516	No	
+row_65	CCL17	CCL17	chemokine (C-C motif) ligand 17	9153	1.4099506188358646E-5	0.0024392046	No	
+row_66	PYY	PYY	peptide YY	9161	8.446948413620703E-6	0.009798942	No	
+row_67	GALR2	GALR2	galanin receptor 2	9172	6.073311396903591E-6	0.016990593	No	
+row_68	CXCL13	CXCL13	chemokine (C-X-C motif) ligand 13 (B-cell chemoattractant)	9173	5.5082518883864395E-6	0.02474253	No	
+row_69	AGRP	AGRP	agouti related protein homolog (mouse)	9236	-9.410862089609395E-10	0.02902069	No	
+row_70	CCL11	CCL11	chemokine (C-C motif) ligand 11	9299	-1.0027292329795046E-9	0.03329885	No	
+row_71	CCL20	CCL20	chemokine (C-C motif) ligand 20	9473	-1.3721148206968792E-5	0.031357825	No	
+row_72	NPW	NPW	neuropeptide W	9495	-1.4753687537449878E-5	0.03793316	No	
+row_73	IL4	IL4	interleukin 4	9552	-1.873215296654962E-5	0.04254749	No	
+row_74	CXCL5	CXCL5	chemokine (C-X-C motif) ligand 5	9623	-2.085209962388035E-5	0.04637742	No	
+row_75	CCR3	CCR3	chemokine (C-C motif) receptor 3	9711	-2.7667685571941547E-5	0.049254864	No	
+row_76	CCL25	CCL25	chemokine (C-C motif) ligand 25	9720	-2.834317638189532E-5	0.05655857	No	
+row_77	CCKAR	CCKAR	cholecystokinin A receptor	9724	-2.834317638189532E-5	0.06414242	No	
+row_78	PPP1R17	null	null	9992	-3.1054860301082954E-5	0.056934703	No	
+row_79	PIK3CB	PIK3CB	phosphoinositide-3-kinase, catalytic, beta polypeptide	10604	-0.030299244448542595	0.030453114	No	
+row_80	CXCL2	CXCL2	chemokine (C-X-C motif) ligand 2	10666	-0.03379003331065178	0.0347873	No	
+row_81	CXCL14	CXCL14	chemokine (C-X-C motif) ligand 14	10698	-0.03512054309248924	0.040802352	No	
+row_82	HPRT1	HPRT1	hypoxanthine phosphoribosyltransferase 1 (Lesch-Nyhan syndrome)	10803	-0.04167969524860382	0.042727306	No	
+row_83	DYNLRB1	DYNLRB1	dynein, light chain, roadblock-type 1	10877	-0.046465229243040085	0.046389148	No	
+row_84	TACR1	TACR1	tachykinin receptor 1	11040	-0.056311868131160736	0.045064438	No	
+row_85	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	11465	-0.08268962800502777	0.029060215	No	
+row_86	RALBP1	RALBP1	ralA binding protein 1	11642	-0.0926421582698822	0.026951104	No	
+row_87	SFTPD	SFTPD	surfactant, pulmonary-associated protein D	12101	-0.12150028347969055	0.009041904	No	
+row_88	FOSB	FOSB	FBJ murine osteosarcoma viral oncogene homolog B	12332	-0.13500215113162994	0.0039072437	No	
+row_89	MAPK1	MAPK1	mitogen-activated protein kinase 1	12367	-0.13728365302085876	0.009754206	No	
+row_90	CKLF	CKLF	chemokine-like factor	12383	-0.13822168111801147	0.016665714	No	
+row_91	CDH13	CDH13	cadherin 13, H-cadherin (heart)	12471	-0.14395277202129364	0.019543156	No	
+row_92	CCL19	CCL19	chemokine (C-C motif) ligand 19	13076	-0.18368658423423767	-0.006546232	No	
+row_93	CRH	CRH	corticotropin releasing hormone	13371	-0.20269028842449188	-0.015266728	No	
+row_94	PF4	PF4	platelet factor 4 (chemokine (C-X-C motif) ligand 4)	13562	-0.21459081768989563	-0.01816024	No	
+row_95	AIMP1	null	null	13706	-0.22445648908615112	-0.018420404	No	
+row_96	CCL15	CCL15	chemokine (C-C motif) ligand 15	13833	-0.2327175736427307	-0.017728081	No	
+row_97	DEFB1	DEFB1	defensin, beta 1	13858	-0.23502641916275024	-0.011320831	No	
+row_98	CXCL9	CXCL9	chemokine (C-X-C motif) ligand 9	14133	-0.2556156814098358	-0.018920753	No	
+row_99	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	14453	-0.2819172441959381	-0.029041966	No	
+row_100	UBR3	null	null	14456	-0.28206196427345276	-0.021402085	No	
+row_101	ZIC1	ZIC1	Zic family member 1 (odd-paired homolog, Drosophila)	14793	-0.30911150574684143	-0.03247579	No	
+row_102	TGFB2	TGFB2	transforming growth factor, beta 2	14919	-0.3198855221271515	-0.031727433	No	
+row_103	NPY2R	NPY2R	neuropeptide Y receptor Y2	14993	-0.32604148983955383	-0.02806559	No	
+row_104	HTT	null	null	15214	-0.34824270009994507	-0.032639965	No	
+row_105	SLIT2	SLIT2	slit homolog 2 (Drosophila)	15661	-0.3948323428630829	-0.04987682	No	
+row_106	CXCL10	CXCL10	chemokine (C-X-C motif) ligand 10	15784	-0.4079757034778595	-0.04896038	No	
+row_107	MAOA	MAOA	monoamine oxidase A	15955	-0.4312375485897064	-0.05073332	No	
+row_108	APOE	APOE	apolipoprotein E	16240	-0.47108790278434753	-0.058893528	No	
+row_109	LEP	LEP	leptin (obesity homolog, mouse)	16256	-0.473068505525589	-0.051982023	No	
+row_110	HCRTR1	HCRTR1	hypocretin (orexin) receptor 1	16474	-0.5107303857803345	-0.056388307	No	
+row_111	KAL1	KAL1	Kallmann syndrome 1 sequence	16605	-0.537377119064331	-0.055920098	No	
+row_112	ACSL4	ACSL4	acyl-CoA synthetase long-chain family member 4	16622	-0.5408952832221985	-0.04906462	No	
+row_113	NOVA1	NOVA1	neuro-oncological ventral antigen 1	16711	-0.5608587265014648	-0.046243206	No	
+row_114	SCG2	SCG2	secretogranin II (chromogranin C)	17042	-0.6492027044296265	-0.056980737	No	
+row_115	TAS2R5	TAS2R5	taste receptor, type 2, member 5	17054	-0.6519157290458679	-0.049845114	No	
+row_116	RALA	RALA	v-ral simian leukemia viral oncogene homolog A (ras related)	17337	-0.7757499814033508	-0.057893265	No	
+row_117	TRPV1	TRPV1	transient receptor potential cation channel, subfamily V, member 1	17350	-0.7799522280693054	-0.05081367	No	
+row_118	OPRK1	OPRK1	opioid receptor, kappa 1	17353	-0.7815646529197693	-0.04317379	No	
+row_119	CCL16	CCL16	chemokine (C-C motif) ligand 16	17493	-0.8575676679611206	-0.04320984	No	
+row_120	PMCH	PMCH	pro-melanin-concentrating hormone	17592	-0.9148521423339844	-0.04094871	No	
+row_121	SAA1	SAA1	serum amyloid A1	17602	-0.9277793765068054	-0.033701032	No	
+row_122	FGF2	FGF2	fibroblast growth factor 2 (basic)	17679	-0.9894781708717346	-0.030207276	No	
+row_123	CCL27	CCL27	chemokine (C-C motif) ligand 27	17747	-1.0707019567489624	-0.02620926	No	
+row_124	CCL23	CCL23	chemokine (C-C motif) ligand 23	17842	-1.226580262184143	-0.023724018	No	
+row_125	VLDLR	VLDLR	very low density lipoprotein receptor	17903	-1.3981659412384033	-0.019333802	No	
+row_126	S100B	S100B	S100 calcium binding protein B	17918	-1.5026206970214844	-0.012366265	No	
+row_127	CXCL11	CXCL11	chemokine (C-X-C motif) ligand 11	17927	-1.5585750341415405	-0.005062557	No	
+row_128	CRHBP	CRHBP	corticotropin releasing hormone binding protein	17937	-1.6230634450912476	0.0021851233	No	

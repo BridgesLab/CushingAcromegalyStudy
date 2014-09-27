@@ -1,0 +1,34 @@
+Summary of Age-Corrected Effects
+========================================================
+
+```{r data-entry, echo=FALSE}
+input_file <- '../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv'
+age_data <- read.csv(input_file)
+
+all_sig <- unique(c(levels(droplevels(subset(age_data, padj<0.05)$external_gene_id)), levels(droplevels(subset(age_data, padj_AcrovsCon_40.60<0.05)$external_gene_id)), levels(droplevels(subset(age_data, padj_AcrovsCon_60.100<0.05)$external_gene_id))))
+```
+
+This analysis uses as an input the age-adjusted analysis, found in `r input_file`.  This script was most recently run on `r date()`.  
+
+Number of Significantly Different Genes
+----------------------------------------
+
+After adjusting for age there were `r length(subset(age_data, padj<0.05)$external_gene_id)` significantly different genes.  There were also `r length(subset(age_data, padj_AcrovsCon_40.60<0.05)$external_gene_id)` significantly different genes in the 40-60 year old cohort and `r length(subset(age_data, padj_AcrovsCon_60.100<0.05)$external_gene_id)` genes in the 60+ cohort.  All together this includes `r length(all_sig)`.  The overlap between these genes is shown below
+
+```{r age-adjusted-venn, echo=FALSE, dev=c('pdf','png'), message=FALSE}
+library(Vennerable)
+
+Vcombined.list <- list(Globally = subset(age_data, padj<0.05)$external_gene_id, 
+                       Younger = subset(age_data, padj_AcrovsCon_40.60<0.05)$external_gene_id, 
+                       Older = subset(age_data, padj_AcrovsCon_60.100<0.05)$external_gene_id)
+Venn.GRE = Venn(Vcombined.list)
+plot(Venn.GRE, doWeights = TRUE)
+
+```
+
+Session Information
+-------------------
+```{r session-info}
+sessionInfo()
+```
+

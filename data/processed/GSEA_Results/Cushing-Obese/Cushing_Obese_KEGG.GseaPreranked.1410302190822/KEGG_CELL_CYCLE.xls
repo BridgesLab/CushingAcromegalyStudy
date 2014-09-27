@@ -1,0 +1,123 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	BUB1	BUB1	BUB1 budding uninhibited by benzimidazoles 1 homolog (yeast)	44	1.525092601776123	0.005732425	Yes	
+row_1	CDC20	CDC20	CDC20 cell division cycle 20 homolog (S. cerevisiae)	55	1.4808708429336548	0.013369079	Yes	
+row_2	BUB1B	BUB1B	BUB1 budding uninhibited by benzimidazoles 1 homolog beta (yeast)	69	1.4085071086883545	0.020837713	Yes	
+row_3	ESPL1	ESPL1	extra spindle poles like 1 (S. cerevisiae)	109	1.2515043020248413	0.026850171	Yes	
+row_4	CCNB2	CCNB2	cyclin B2	144	1.1646296977996826	0.033142664	Yes	
+row_5	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	181	1.0868723392486572	0.039323144	Yes	
+row_6	TTK	TTK	TTK protein kinase	207	1.0417832136154175	0.046119694	Yes	
+row_7	E2F2	E2F2	E2F transcription factor 2	229	1.007041335105896	0.053140275	Yes	
+row_8	MAD2L1	MAD2L1	MAD2 mitotic arrest deficient-like 1 (yeast)	275	0.9377237558364868	0.058816694	Yes	
+row_9	CDC45	null	null	337	0.8575862646102905	0.063597	Yes	
+row_10	CCNA1	CCNA1	cyclin A1	383	0.8178853392601013	0.06927342	Yes	
+row_11	CDKN2B	CDKN2B	cyclin-dependent kinase inhibitor 2B (p15, inhibits CDK4)	432	0.7827387452125549	0.07478182	Yes	
+row_12	CDK1	null	null	434	0.7824277281761169	0.08292253	Yes	
+row_13	CDC6	CDC6	CDC6 cell division cycle 6 homolog (S. cerevisiae)	447	0.7667244076728821	0.09044717	Yes	
+row_14	ORC1	null	null	453	0.7618855237960815	0.09836386	Yes	
+row_15	E2F1	E2F1	E2F transcription factor 1	481	0.7429078817367554	0.1050484	Yes	
+row_16	CCND1	CCND1	cyclin D1	506	0.7276408672332764	0.11190096	Yes	
+row_17	PLK1	PLK1	polo-like kinase 1 (Drosophila)	569	0.6885367035865784	0.116625264	Yes	
+row_18	CDKN2A	CDKN2A	cyclin-dependent kinase inhibitor 2A (melanoma, p16, inhibits CDK4)	576	0.6827303171157837	0.12448595	Yes	
+row_19	CCNB1	CCNB1	cyclin B1	595	0.6725459694862366	0.13167454	Yes	
+row_20	PKMYT1	PKMYT1	protein kinase, membrane associated tyrosine/threonine 1	755	0.6012926697731018	0.1309662	Yes	
+row_21	MYC	MYC	v-myc myelocytomatosis viral oncogene homolog (avian)	829	0.5733202695846558	0.13507442	Yes	
+row_22	CDC25C	CDC25C	cell division cycle 25C	1169	0.4728583097457886	0.12428487	Yes	
+row_23	E2F3	E2F3	E2F transcription factor 3	1218	0.4616062641143799	0.12979327	Yes	
+row_24	MCM2	MCM2	MCM2 minichromosome maintenance deficient 2, mitotin (S. cerevisiae)	1372	0.4287644326686859	0.12942097	Yes	
+row_25	CCND2	CCND2	cyclin D2	1440	0.4144679009914398	0.13386524	Yes	
+row_26	MCM4	MCM4	MCM4 minichromosome maintenance deficient 4 (S. cerevisiae)	1519	0.402045339345932	0.13769343	Yes	
+row_27	CCNA2	CCNA2	cyclin A2	1541	0.3985832631587982	0.14471401	Yes	
+row_28	PTTG1	PTTG1	pituitary tumor-transforming 1	1766	0.3647034764289856	0.14036523	Yes	
+row_29	ATR	ATR	ataxia telangiectasia and Rad3 related	1980	0.3349369466304779	0.13663252	Yes	
+row_30	SMC1B	SMC1B	structural maintenance of chromosomes 1B	2015	0.33008697628974915	0.14292501	Yes	
+row_31	ORC6	null	null	2411	0.2881889045238495	0.12899907	Yes	
+row_32	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	2622	0.2676279544830322	0.12543438	Yes	
+row_33	MDM2	MDM2	Mdm2, transformed 3T3 cell double minute 2, p53 binding protein (mouse)	2660	0.26304733753204346	0.13155885	Yes	
+row_34	GADD45A	GADD45A	growth arrest and DNA-damage-inducible, alpha	2933	0.2392004281282425	0.12452175	Yes	
+row_35	RBL1	RBL1	retinoblastoma-like 1 (p107)	3025	0.2326861172914505	0.12762186	Yes	
+row_36	CDC25A	CDC25A	cell division cycle 25A	3844	0.1815619170665741	0.090005085	Yes	
+row_37	RBX1	RBX1	ring-box 1	3878	0.1795101761817932	0.09635358	Yes	
+row_38	YWHAQ	YWHAQ	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, theta polypeptide	3939	0.17629317939281464	0.1011899	Yes	
+row_39	YWHAH	YWHAH	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, eta polypeptide	3965	0.17516371607780457	0.10798645	Yes	
+row_40	CHEK2	CHEK2	CHK2 checkpoint homolog (S. pombe)	4101	0.16961756348609924	0.10862227	Yes	
+row_41	CCNE1	CCNE1	cyclin E1	4153	0.16720090806484222	0.11396264	Yes	
+row_42	PCNA	PCNA	proliferating cell nuclear antigen	4177	0.165414959192276	0.12087121	Yes	
+row_43	ANAPC4	ANAPC4	anaphase promoting complex subunit 4	4329	0.15726342797279358	0.120610915	Yes	
+row_44	SMC1A	SMC1A	structural maintenance of chromosomes 1A	4680	0.14386813342571259	0.10920528	Yes	
+row_45	CCNE2	CCNE2	cyclin E2	4692	0.14319075644016266	0.11678593	Yes	
+row_46	MCM6	MCM6	MCM6 minichromosome maintenance deficient 6 (MIS5 homolog, S. pombe) (S. cerevisiae)	4836	0.1367809921503067	0.11697369	Yes	
+row_47	CDC14B	CDC14B	CDC14 cell division cycle 14 homolog B (S. cerevisiae)	4936	0.13254685699939728	0.11962575	Yes	
+row_48	SFN	SFN	stratifin	4958	0.13175205886363983	0.12664632	Yes	
+row_49	SMAD2	SMAD2	SMAD, mothers against DPP homolog 2 (Drosophila)	5233	0.11973166465759277	0.1194972	Yes	
+row_50	CUL1	CUL1	cullin 1	5366	0.11427885293960571	0.12030104	Yes	
+row_51	GADD45G	GADD45G	growth arrest and DNA-damage-inducible, gamma	5368	0.11419888585805893	0.12844175	Yes	
+row_52	PRKDC	PRKDC	protein kinase, DNA-activated, catalytic polypeptide	5675	0.1025739386677742	0.11950042	Yes	
+row_53	CDC25B	CDC25B	cell division cycle 25B	5761	0.09913904219865799	0.12293657	Yes	
+row_54	SKP1	null	null	6101	0.08729240298271179	0.11214701	Yes	
+row_55	HDAC2	HDAC2	histone deacetylase 2	6112	0.08683651685714722	0.11978366	Yes	
+row_56	ATM	ATM	ataxia telangiectasia mutated (includes complementation groups A, C and D)	6357	0.07652270048856735	0.11431474	Yes	
+row_57	YWHAG	YWHAG	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, gamma polypeptide	6499	0.07203032076358795	0.11461452	Yes	
+row_58	EP300	EP300	E1A binding protein p300	6573	0.07037588953971863	0.11872275	Yes	
+row_59	CCNH	CCNH	cyclin H	6613	0.06892645359039307	0.12473521	Yes	
+row_60	HDAC1	HDAC1	histone deacetylase 1	6657	0.06751806288957596	0.13052364	Yes	
+row_61	CDC27	CDC27	cell division cycle 27	6830	0.06178658455610275	0.12908721	Yes	
+row_62	YWHAE	YWHAE	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, epsilon polypeptide	6941	0.05809091404080391	0.13112319	Yes	
+row_63	CCND3	CCND3	cyclin D3	7003	0.05619437247514725	0.1359035	Yes	
+row_64	MCM5	MCM5	MCM5 minichromosome maintenance deficient 5, cell division cycle 46 (S. cerevisiae)	7241	0.04835701361298561	0.13082662	Yes	
+row_65	BUB3	BUB3	BUB3 budding uninhibited by benzimidazoles 3 homolog (yeast)	7256	0.047983113676309586	0.13823925	Yes	
+row_66	CDC26	CDC26	cell division cycle 26	7409	0.04311235994100571	0.13792296	Yes	
+row_67	YWHAB	YWHAB	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, beta polypeptide	7650	0.03523527830839157	0.13267806	Yes	
+row_68	DBF4	DBF4	DBF4 homolog (S. cerevisiae)	7780	0.030417241156101227	0.13364992	Yes	
+row_69	ANAPC10	ANAPC10	anaphase promoting complex subunit 10	8014	0.023812349885702133	0.12879707	Yes	
+row_70	CDK2	CDK2	cyclin-dependent kinase 2	8376	0.016395820304751396	0.11677536	Yes	
+row_71	E2F5	E2F5	E2F transcription factor 5, p130-binding	8493	0.012436452321708202	0.1184753	Yes	
+row_72	GSK3B	GSK3B	glycogen synthase kinase 3 beta	8612	0.008273749612271786	0.12006323	Yes	
+row_73	CHEK1	CHEK1	CHK1 checkpoint homolog (S. pombe)	8668	0.006402978673577309	0.12517959	Yes	
+row_74	RBL2	RBL2	retinoblastoma-like 2 (p130)	8803	0.001649328856728971	0.1258714	Yes	
+row_75	CDKN2C	CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)	8897	-0.001617775997146964	0.1288595	Yes	
+row_76	GADD45B	GADD45B	growth arrest and DNA-damage-inducible, beta	8931	-0.00287720188498497	0.135208	Yes	
+row_77	YWHAZ	YWHAZ	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, zeta polypeptide	8993	-0.004993973299860954	0.1399883	Yes	
+row_78	STAG2	STAG2	stromal antigen 2	9091	-0.008708854205906391	0.14275238	Yes	
+row_79	ANAPC7	ANAPC7	anaphase promoting complex subunit 7	9289	-0.016022615134716034	0.13991578	Yes	
+row_80	TP53	TP53	tumor protein p53 (Li-Fraumeni syndrome)	9353	-0.018481053411960602	0.14458407	Yes	
+row_81	RAD21	RAD21	RAD21 homolog (S. pombe)	9502	-0.023273862898349762	0.1444918	Yes	
+row_82	SMC3	SMC3	structural maintenance of chromosomes 3	9809	-0.03430655598640442	0.13555047	Yes	
+row_83	CDC14A	CDC14A	CDC14 cell division cycle 14 homolog A (S. cerevisiae)	9830	-0.034836575388908386	0.14262705	Yes	
+row_84	ORC3	null	null	10180	-0.045986372977495193	0.13127743	Yes	
+row_85	ANAPC13	ANAPC13	anaphase promoting complex subunit 13	10354	-0.05142270028591156	0.12978499	Yes	
+row_86	CDK6	CDK6	cyclin-dependent kinase 6	10364	-0.05165332555770874	0.13747765	Yes	
+row_87	SMAD4	SMAD4	SMAD, mothers against DPP homolog 4 (Drosophila)	10528	-0.05706389620900154	0.13654527	Yes	
+row_88	CREBBP	CREBBP	CREB binding protein (Rubinstein-Taybi syndrome)	10577	-0.05862259119749069	0.14205366	Yes	
+row_89	MCM3	MCM3	MCM3 minichromosome maintenance deficient 3 (S. cerevisiae)	10612	-0.059703562408685684	0.14834616	Yes	
+row_90	RB1	RB1	retinoblastoma 1 (including osteosarcoma)	10682	-0.06206221878528595	0.15267842	Yes	
+row_91	STAG1	STAG1	stromal antigen 1	10779	-0.0651308223605156	0.15549849	Yes	
+row_92	SKP2	SKP2	S-phase kinase-associated protein 2 (p45)	10841	-0.06702198088169098	0.16027881	Yes	
+row_93	E2F4	E2F4	E2F transcription factor 4, p107/p130-binding	10995	-0.0719652846455574	0.15990649	No	
+row_94	CDC16	CDC16	CDC16 cell division cycle 16 homolog (S. cerevisiae)	11293	-0.0805935263633728	0.15146922	No	
+row_95	TFDP2	TFDP2	transcription factor Dp-2 (E2F dimerization partner 2)	11581	-0.09033937007188797	0.14359201	No	
+row_96	ANAPC11	ANAPC11	APC11 anaphase promoting complex subunit 11 homolog (yeast)	12029	-0.10177312791347504	0.12675373	No	
+row_97	WEE1	WEE1	WEE1 homolog (S. pombe)	12043	-0.10267437994480133	0.13422236	No	
+row_98	TGFB2	TGFB2	transforming growth factor, beta 2	12259	-0.11100511997938156	0.13037764	No	
+row_99	SMAD3	SMAD3	SMAD, mothers against DPP homolog 3 (Drosophila)	12966	-0.13758859038352966	0.09903362	No	
+row_100	ORC4	null	null	13060	-0.1428636908531189	0.10202172	No	
+row_101	ANAPC1	ANAPC1	anaphase promoting complex subunit 1	13080	-0.14341875910758972	0.10915431	No	
+row_102	MAD2L2	MAD2L2	MAD2 mitotic arrest deficient-like 2 (yeast)	13215	-0.15009936690330505	0.10984613	No	
+row_103	CDK4	CDK4	cyclin-dependent kinase 4	13375	-0.15726280212402344	0.10913778	No	
+row_104	ANAPC5	ANAPC5	anaphase promoting complex subunit 5	13469	-0.16220994293689728	0.11212587	No	
+row_105	ABL1	ABL1	v-abl Abelson murine leukemia viral oncogene homolog 1	13493	-0.16333439946174622	0.11903444	No	
+row_106	CDC23	CDC23	CDC23 (cell division cycle 23, yeast, homolog)	13634	-0.17047105729579926	0.11939022	No	
+row_107	CDKN2D	CDKN2D	cyclin-dependent kinase inhibitor 2D (p19, inhibits CDK4)	14036	-0.19322554767131805	0.10512825	No	
+row_108	TFDP1	TFDP1	transcription factor Dp-1	14169	-0.2000940889120102	0.10593208	No	
+row_109	TGFB3	TGFB3	transforming growth factor, beta 3	14392	-0.21608030796051025	0.101695314	No	
+row_110	MCM7	MCM7	MCM7 minichromosome maintenance deficient 7 (S. cerevisiae)	14539	-0.22437557578086853	0.10171505	No	
+row_111	CCNB3	CCNB3	cyclin B3	14541	-0.22441492974758148	0.10985576	No	
+row_112	ANAPC2	ANAPC2	anaphase promoting complex subunit 2	14554	-0.22496145963668823	0.1173804	No	
+row_113	ORC5	null	null	14680	-0.23294372856616974	0.11857629	No	
+row_114	ORC2	null	null	15082	-0.2595970928668976	0.10431431	No	
+row_115	MAD1L1	MAD1L1	MAD1 mitotic arrest deficient-like 1 (yeast)	15345	-0.2801840007305145	0.09783727	No	
+row_116	FZR1	FZR1	fizzy/cell division cycle 20 related 1 (Drosophila)	15519	-0.29495227336883545	0.09634483	No	
+row_117	CDKN1C	CDKN1C	cyclin-dependent kinase inhibitor 1C (p57, Kip2)	15595	-0.30139419436454773	0.100341044	No	
+row_118	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	15647	-0.3072167932987213	0.10568143	No	
+row_119	ZBTB17	ZBTB17	zinc finger and BTB domain containing 17	15949	-0.3357560932636261	0.09702012	No	
+row_120	CDC7	CDC7	CDC7 cell division cycle 7 (S. cerevisiae)	17132	-0.5400387644767761	0.039016902	No	
+row_121	CDK7	CDK7	cyclin-dependent kinase 7 (MO15 homolog, Xenopus laevis, cdk-activating kinase)	17960	-1.3349637985229492	8.96064E-4	No	

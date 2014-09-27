@@ -6,9 +6,9 @@ Making the input file
 
 ```{r Read-data, echo=FALSE}
 
-deseq2.Cushing <- "../data/processed/Annotated_Results_Cushings_bmi.csv"
-cushing.obese <- "../data/processed/Annotated_Results_Cushings_Obese.csv"
-cushing.notobese <- "../data/processed/Annotated_Results_Cushings_NotObese.csv"
+deseq2.Cushing <- "../data/processed/Annotated_Results_Cushings_bmi_adjusting.csv"
+cushing.obese <- "../data/processed/Annotated_Results_Cushings_NotObese_and_Obese.csv"
+cushing.notobese <- "../data/processed/Annotated_Results_Cushings_NotObese_and_Obese.csv"
 deseq2.Acromegaly <- "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_Age.csv"
 deseq2.Cushing.results <- read.csv(deseq2.Cushing, row.names="X")
 cushing.obese.results <- read.csv(cushing.obese, row.names="X")
@@ -29,17 +29,17 @@ write.table(Acromegaly.results.noDup.40.60, file=acromegaly_data_file_40.60, sep
 write.table(Acromegaly.results.noDup.60.100, file=acromegaly_data_file_60.100, sep="\t", quote=FALSE, row.names=FALSE)
 
 #order by pvalue and get rid of those with NA pvalues
-cushing.results.noNA <- deseq2.Cushing.results[which(deseq2.Cushing.results$padj != 'NA'),]
-cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$log2FoldChange,decreasing=TRUE),c(20,15)]
+cushing.results.noNA <- deseq2.Cushing.results[which(deseq2.Cushing.results$log2FoldChange != 'NA'),]
+cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$log2FoldChange,decreasing=TRUE),c(16,3)]
 #cushing.results.noNA <- cushing.results.noNA[order(cushing.results.noNA$padj),c(20,19)]
 #get rid of duplicate genes
 cushing.results.noDup <- cushing.results.noNA[!duplicated(cushing.results.noNA$external_gene_id),]
-cushing_data_file <- "../data/processed/GSEA_Cushing_BMI_adjusted_prerank_FC.rnk"
+cushing_data_file <- "../data/processed/GSEA_Cushing_BMI_interaction_prerank_FC.rnk"
 write.table(cushing.results.noDup, file=cushing_data_file, sep="\t", row.names=FALSE, quote=FALSE)
 
 ###### Cushing OBESE ############
-cushing.obese.noNA <- cushing.obese.results[which(cushing.obese.results$padj != 'NA'),]
-cushing.obese.noNA <- cushing.obese.noNA[order(cushing.obese.noNA$log2FoldChange,decreasing=TRUE), c(8,3)]
+cushing.obese.noNA <- cushing.obese.results[which(cushing.obese.results$log2FC_Obese_CushingvCon != 'NA'),]
+cushing.obese.noNA <- cushing.obese.noNA[order(cushing.obese.noNA$log2FC_Obese_CushingvCon,decreasing=TRUE), c(10,6)]
 #cushing.obese.noNA <- cushing.obese.noNA[order(cushing.obese.noNA$padj, decreasing=TRUE),c(8,7)]
 #get rid of duplicate genes
 cushing.obese.noDup <- cushing.obese.noNA[!duplicated(cushing.obese.noNA$external_gene_id),]
@@ -47,8 +47,8 @@ cushing_obese_file <- "../data/processed/GSEA_Cushing_Obese_prerank_FC.rnk"
 write.table(cushing.obese.noDup, file=cushing_obese_file, sep="\t", row.names=FALSE, quote=FALSE)
 
 ###### Cushing Not OBESE ############
-cushing.notobese.noNA <- cushing.notobese.results[which(cushing.notobese.results$padj != 'NA'),]
-cushing.notobese.noNA <- cushing.notobese.noNA[order(cushing.notobese.noNA$log2FoldChange,decreasing=TRUE),c(8,3)]
+cushing.notobese.noNA <- cushing.notobese.results[which(cushing.notobese.results$log2FC_NotObese_CushingvCon != 'NA'),]
+cushing.notobese.noNA <- cushing.notobese.noNA[order(cushing.notobese.noNA$log2FC_NotObese_CushingvCon,decreasing=TRUE),c(10,2)]
 #cushing.notobese.noNA <- cushing.notobese.noNA[order(cushing.notobese.noNA$padj),c(8,7)]
 #get rid of duplicate genes
 cushing.notobese.noDup <- cushing.notobese.noNA[!duplicated(cushing.notobese.noNA$external_gene_id),]
@@ -57,7 +57,7 @@ write.table(cushing.notobese.noDup, file=cushing_notobese_file, sep="\t", row.na
 
 ```
 
-This script takes the input files `r deseq2.Cushing`, `r deseq2.Acromegaly`.  This script was most recently run on `r date()`.  It writes out two data files `r cushing_data_file` and `r acromegaly_data_file`.
+This script takes the input files `r deseq2.Cushing`, `r cushing.obese`, and `r deseq2.Acromegaly`.  This script was most recently run on `r date()`.  It writes out 5 data files `r cushing_data_file`, `r cushing_obese_file`, `r cushing_notobese_file`, `r acromegaly_data_file_40.60`, and `r acromegaly_data_file_60.100`.
 
 
 Session Information

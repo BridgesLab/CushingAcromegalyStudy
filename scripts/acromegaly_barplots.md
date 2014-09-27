@@ -71,6 +71,22 @@ Used Analysed DESeq results.
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
 ## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+## Saving 7 x 7 in image
+```
+
+```
+## Error: 'data' must be of a vector type, was 'NULL'
 ```
 
 ![plot of chunk lipase-barplots](figure/lipase-barplots.png) 
@@ -136,7 +152,7 @@ Used Analysed DESeq results.
 ```
 
 
-The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Wed Jul  2 12:02:48 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Tue Sep 23 12:24:54 2014``.
 
 
 Session Information
@@ -164,11 +180,11 @@ sessionInfo()
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] AnnotationDbi_1.26.0 Biobase_2.24.0       BiocGenerics_0.10.0 
-##  [4] colorspace_1.2-4     DBI_0.2-7            digest_0.6.4        
-##  [7] evaluate_0.5.5       formatR_0.10         GenomeInfoDb_1.0.2  
-## [10] gtable_0.1.2         IRanges_1.22.8       labeling_0.2        
-## [13] MASS_7.3-33          munsell_0.4.2        parallel_3.1.0      
-## [16] proto_0.3-10         Rcpp_0.11.2          RCurl_1.95-4.1      
+##  [4] colorspace_1.2-4     DBI_0.3.0            digest_0.6.4        
+##  [7] evaluate_0.5.5       formatR_1.0          GenomeInfoDb_1.0.2  
+## [10] gtable_0.1.2         IRanges_1.22.10      labeling_0.3        
+## [13] MASS_7.3-34          munsell_0.4.2        parallel_3.1.0      
+## [16] proto_0.3-10         Rcpp_0.11.2          RCurl_1.95-4.3      
 ## [19] RSQLite_0.11.4       scales_0.2.4         stats4_3.1.0        
 ## [22] stringr_0.6.2        tools_3.1.0          XML_3.98-1.1
 ```
