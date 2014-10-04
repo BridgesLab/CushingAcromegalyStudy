@@ -8,12 +8,16 @@ import os.path
 #collect all the gene names.  It then writes all these results to a text file
 
 rootdir = sys.argv[1] #directory
-infile1 = sys.argv[2] #master file name1: the positive file
-infile2 = sys.argv[3] #master file name2: the negative file
-outfile = sys.argv[4]   #out put file name
+#infile1 = sys.argv[2] #master file name1: the positive file
+#infile2 = sys.argv[3] #master file name2: the negative file
+outfile = sys.argv[2]   #out put file name
 
-data = reader.Read(os.path.join(rootdir, infile1), '\t')
-data2 = reader.Read(os.path.join(rootdir, infile2), '\t') #negative report file
+for root, subFolders, files in os.walk(rootdir):
+   for filename in files:
+      if filename.startswith("gsea_report_for_na_pos"):
+         data = reader.Read(os.path.join(rootdir, filename), '\t')
+      if filename.startswith("gsea_report_for_na_neg"):
+         data2 = reader.Read(os.path.join(rootdir, filename), '\t') #negative report file
 
 results = []
 sub_results = []
