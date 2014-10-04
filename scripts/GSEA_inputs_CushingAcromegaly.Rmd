@@ -17,16 +17,17 @@ deseq2.Acromegaly.results <- read.csv(deseq2.Acromegaly, row.names="X")
 
 #order by pvalue and get rid of those with NA foldchange
 Acromegaly.results.noNA <- deseq2.Acromegaly.results[which(deseq2.Acromegaly.results$padj != 'NA'),]
-#Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FoldChange,decreasing=TRUE),]
-Acromegaly.results.noNA.0.60 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_0.60),c(24,8)]
-Acromegaly.results.noNA.60.100 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_60.100),c(24,12)]
+Acromegaly.results.noNA <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FoldChange,decreasing=TRUE),c(24,3)]
+Acromegaly.results.noDup <- Acromegaly.results.noNA[!duplicated(Acromegaly.results.noNA$external_gene_id),]
+#Acromegaly.results.noNA.0.60 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_0.60),c(24,8)]
+#Acromegaly.results.noNA.60.100 <- Acromegaly.results.noNA[order(Acromegaly.results.noNA$log2FC_AcrovsCon_60.100),c(24,12)]
 #get rid of duplicate genes
-Acromegaly.results.noDup.0.60 <- Acromegaly.results.noNA.0.60[!duplicated(Acromegaly.results.noNA$external_gene_id),]
-Acromegaly.results.noDup.60.100 <- Acromegaly.results.noNA.60.100[!duplicated(Acromegaly.results.noNA$external_gene_id),]
-acromegaly_data_file_0.60 <- "../data/processed/GSEA_Acromegaly_age0-60_adjusted_prerank_FC.rnk"
-acromegaly_data_file_60.100 <- "../data/processed/GSEA_Acromegaly_age60-100_adjusted_prerank_FC.rnk"
-write.table(Acromegaly.results.noDup.0.60, file=acromegaly_data_file_0.60, sep="\t", quote=FALSE, row.names=FALSE)
-write.table(Acromegaly.results.noDup.60.100, file=acromegaly_data_file_60.100, sep="\t", quote=FALSE, row.names=FALSE)
+#Acromegaly.results.noDup.0.60 <- Acromegaly.results.noNA.0.60[!duplicated(Acromegaly.results.noNA.60.100$external_gene_id),]
+#Acromegaly.results.noDup.60.100 <- Acromegaly.results.noNA.60.100[!duplicated(Acromegaly.results.noNA.60.100$external_gene_id),]
+#acromegaly_data_file_0.60 <- "../data/processed/GSEA_Acromegaly_age0-60_adjusted_prerank_FC.rnk"
+acromegaly_data_file <- "../data/processed/GSEA_Acromegaly_age_adjusted_prerank_FC.rnk"
+#write.table(Acromegaly.results.noDup.0.60, file=acromegaly_data_file_0.60, sep="\t", quote=FALSE, row.names=FALSE)
+write.table(Acromegaly.results.noDup, file=acromegaly_data_file, sep="\t", quote=FALSE, row.names=FALSE)
 
 #order by pvalue and get rid of those with NA pvalues
 cushing.results.noNA <- deseq2.Cushing.results[which(deseq2.Cushing.results$log2FoldChange != 'NA'),]
@@ -57,7 +58,7 @@ write.table(cushing.notobese.noDup, file=cushing_notobese_file, sep="\t", row.na
 
 ```
 
-This script takes the input files `r deseq2.Cushing`, `r cushing.obese`, and `r deseq2.Acromegaly`.  This script was most recently run on `r date()`.  It writes out 5 data files `r cushing_data_file`, `r cushing_obese_file`, `r cushing_notobese_file`, `r acromegaly_data_file_0.60`, and `r acromegaly_data_file_60.100`.
+This script takes the input files `r deseq2.Cushing`, `r cushing.obese`, and `r deseq2.Acromegaly`.  This script was most recently run on `r date()`.  It writes out 4 data files `r cushing_data_file`, `r cushing_obese_file`, `r cushing_notobese_file`, and `r acromegaly_data_file`.
 
 
 Session Information
