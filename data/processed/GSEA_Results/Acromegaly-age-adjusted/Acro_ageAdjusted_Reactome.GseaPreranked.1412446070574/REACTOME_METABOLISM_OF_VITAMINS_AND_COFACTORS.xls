@@ -1,0 +1,50 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	FASN	FASN	fatty acid synthase	44	1.6825954914093018	0.017199997	Yes	
+row_1	SLC19A3	SLC19A3	solute carrier family 19, member 3	95	1.214787483215332	0.033962518	Yes	
+row_2	CYB5A	CYB5A	cytochrome b5 type A (microsomal)	210	0.8468726277351379	0.046058614	Yes	
+row_3	MOCOS	MOCOS	molybdenum cofactor sulfurase	220	0.829380452632904	0.06581056	Yes	
+row_4	NMNAT2	NMNAT2	nicotinamide nucleotide adenylyltransferase 2	285	0.7146484851837158	0.0815523	Yes	
+row_5	SLC2A1	SLC2A1	solute carrier family 2 (facilitated glucose transporter), member 1	353	0.6334469318389893	0.0970753	Yes	
+row_6	SHMT1	SHMT1	serine hydroxymethyltransferase 1 (soluble)	385	0.6037265062332153	0.11522316	Yes	
+row_7	MTHFD1	MTHFD1	methylenetetrahydrofolate dehydrogenase (NADP+ dependent) 1, methenyltetrahydrofolate cyclohydrolase, formyltetrahydrofolate synthetase	437	0.5625943541526794	0.13191277	Yes	
+row_8	GPHN	GPHN	gephyrin	782	0.41573959589004517	0.12723891	Yes	
+row_9	QPRT	QPRT	quinolinate phosphoribosyltransferase (nicotinate-nucleotide pyrophosphorylase (carboxylating))	923	0.3731763958930969	0.13743927	Yes	
+row_10	MOCS1	MOCS1	molybdenum cofactor synthesis 1	1274	0.29897788166999817	0.13232793	Yes	
+row_11	SLC5A6	SLC5A6	solute carrier family 5 (sodium-dependent vitamin transporter), member 6	1319	0.2918245494365692	0.14952792	Yes	
+row_12	FPGS	FPGS	folylpolyglutamate synthase	1525	0.2660452425479889	0.15498894	Yes	
+row_13	CYB5R3	CYB5R3	cytochrome b5 reductase 3	1562	0.2609456479549408	0.17277224	Yes	
+row_14	SLC19A2	SLC19A2	solute carrier family 19 (thiamine transporter), member 2	1690	0.24657389521598816	0.18392047	Yes	
+row_15	DHFR	DHFR	dihydrofolate reductase	1881	0.22873973846435547	0.1904752	Yes	
+row_16	NAMPT	null	null	2275	0.19514578580856323	0.18222861	Yes	
+row_17	SLC19A1	SLC19A1	solute carrier family 19 (folate transporter), member 1	2614	0.17165102064609528	0.17799222	Yes	
+row_18	NFS1	NFS1	NFS1 nitrogen fixation 1 (S. cerevisiae)	2705	0.16611002385616302	0.19183822	Yes	
+row_19	NMNAT1	NMNAT1	nicotinamide nucleotide adenylyltransferase 1	2716	0.1653747707605362	0.21151726	Yes	
+row_20	PNPO	PNPO	pyridoxamine 5'-phosphate oxidase	2880	0.155024453997612	0.22004062	Yes	
+row_21	SLC25A16	SLC25A16	solute carrier family 25 (mitochondrial carrier; Graves disease autoantigen), member 16	3062	0.14402492344379425	0.22725156	Yes	
+row_22	MOCS3	MOCS3	molybdenum cofactor synthesis 3	3305	0.13159336149692535	0.2300148	Yes	
+row_23	PANK3	PANK3	pantothenate kinase 3	3322	0.13075704872608185	0.24925636	Yes	
+row_24	SLC46A1	null	null	3484	0.12300010025501251	0.25792554	Yes	
+row_25	NMNAT3	NMNAT3	nicotinamide nucleotide adenylyltransferase 3	3729	0.11096666008234024	0.260543	Yes	
+row_26	AASDHPPT	AASDHPPT	aminoadipate-semialdehyde dehydrogenase-phosphopantetheinyl transferase	3964	0.10111849755048752	0.26388952	Yes	
+row_27	PDXK	PDXK	pyridoxal (pyridoxine, vitamin B6) kinase	4233	0.09012620896100998	0.26475704	Yes	
+row_28	THTPA	THTPA	thiamine triphosphatase	4395	0.08350890874862671	0.27342623	Yes	
+row_29	PPCS	PPCS	phosphopantothenoylcysteine synthetase	6153	0.020436782389879227	0.1657265	No	
+row_30	SLC25A32	SLC25A32	solute carrier family 25, member 32	6266	0.016311369836330414	0.17796841	No	
+row_31	FLAD1	FLAD1	FAD1 flavin adenine dinucleotide synthetase homolog (S. cerevisiae)	6363	0.012562903575599194	0.19137694	No	
+row_32	PANK2	PANK2	pantothenate kinase 2 (Hallervorden-Spatz syndrome)	6731	-0.0010744129540398717	0.18502608	No	
+row_33	MOCS2	MOCS2	molybdenum cofactor synthesis 2	6852	-0.005077442619949579	0.1966847	No	
+row_34	TPK1	TPK1	thiamin pyrophosphokinase 1	7596	-0.03250223398208618	0.16291861	No	
+row_35	RFK	RFK	riboflavin kinase	7737	-0.03811235353350639	0.17311896	No	
+row_36	PPCDC	PPCDC	phosphopantothenoylcysteine decarboxylase	8091	-0.050922028720378876	0.1677889	No	
+row_37	COASY	COASY	Coenzyme A synthase	8571	-0.06837797909975052	0.1532718	No	
+row_38	GSTO1	GSTO1	glutathione S-transferase omega 1	9300	-0.10197563469409943	0.12059939	No	
+row_39	NADK	NADK	NAD kinase	10495	-0.16448932886123657	0.053949587	No	
+row_40	ENPP1	ENPP1	ectonucleotide pyrophosphatase/phosphodiesterase 1	10574	-0.16917948424816132	0.06867055	No	
+row_41	PANK4	PANK4	pantothenate kinase 4	10672	-0.17619577050209045	0.082006164	No	
+row_42	SLC23A2	SLC23A2	solute carrier family 23 (nucleobase transporters), member 2	10772	-0.1835121363401413	0.09519595	No	
+row_43	NADSYN1	NADSYN1	NAD synthetase 1	11103	-0.2080790400505066	0.09154287	No	
+row_44	MTHFR	MTHFR	5,10-methylenetetrahydrofolate reductase (NADPH)	11161	-0.21351243555545807	0.107795	No	
+row_45	GSTO2	GSTO2	glutathione S-transferase omega 2	11840	-0.28000909090042114	0.07876824	No	
+row_46	SLC2A3	SLC2A3	solute carrier family 2 (facilitated glucose transporter), member 3	12211	-0.3309555947780609	0.07219864	No	
+row_47	PANK1	PANK1	pantothenate kinase 1	12363	-0.3561709225177765	0.081596956	No	
+row_48	ACP5	ACP5	acid phosphatase 5, tartrate resistant	13645	-1.0191802978515625	0.0086037405	No	

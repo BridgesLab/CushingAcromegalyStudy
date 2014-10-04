@@ -1,0 +1,92 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAPK13	MAPK13	mitogen-activated protein kinase 13	66	1.4387863874435425	0.00616198	No	
+row_1	VCAM1	VCAM1	vascular cell adhesion molecule 1	200	0.8644023537635803	0.007423791	No	
+row_2	THY1	THY1	Thy-1 cell surface antigen	340	0.6426497101783752	0.008246781	No	
+row_3	GNAI1	GNAI1	guanine nucleotide binding protein (G protein), alpha inhibiting activity polypeptide 1	451	0.5573199987411499	0.01119074	No	
+row_4	OCLN	OCLN	occludin	652	0.46420323848724365	0.007552383	No	
+row_5	CLDN23	CLDN23	claudin 23	737	0.4302745461463928	0.012397899	No	
+row_6	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	1139	0.3232280910015106	-0.005940963	No	
+row_7	MAPK14	MAPK14	mitogen-activated protein kinase 14	1467	0.2731572985649109	-0.0188677	No	
+row_8	PIK3CA	PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide	1541	0.26410651206970215	-0.013217677	No	
+row_9	ARHGAP5	ARHGAP5	Rho GTPase activating protein 5	2238	0.1978517770767212	-0.05313191	No	
+row_10	CTNND1	CTNND1	catenin (cadherin-associated protein), delta 1	3002	0.14772751927375793	-0.09794631	No	
+row_11	PIK3CB	PIK3CB	phosphoinositide-3-kinase, catalytic, beta polypeptide	3154	0.13900476694107056	-0.09800096	No	
+row_12	VCL	VCL	vinculin	3275	0.1329692155122757	-0.09578837	No	
+row_13	CLDN2	CLDN2	claudin 2	3283	0.13257856667041779	-0.085311316	No	
+row_14	CLDN22	CLDN22	claudin 22	3618	0.11607888340950012	-0.09875001	No	
+row_15	PTPN11	PTPN11	protein tyrosine phosphatase, non-receptor type 11 (Noonan syndrome 1)	4197	0.09163010865449905	-0.13003409	No	
+row_16	GNAI3	GNAI3	guanine nucleotide binding protein (G protein), alpha inhibiting activity polypeptide 3	5109	0.05636381357908249	-0.18567275	No	
+row_17	CDH5	CDH5	cadherin 5, type 2, VE-cadherin (vascular epithelium)	5135	0.05551333725452423	-0.17651215	No	
+row_18	CLDN7	CLDN7	claudin 7	5164	0.05456506460905075	-0.16757098	No	
+row_19	ACTG1	ACTG1	actin, gamma 1	5623	0.03761523962020874	-0.19007863	No	
+row_20	PRKCA	PRKCA	protein kinase C, alpha	5629	0.037514716386795044	-0.17945531	No	
+row_21	CDC42	CDC42	cell division cycle 42 (GTP binding protein, 25kDa)	5730	0.034157343208789825	-0.17577998	No	
+row_22	CXCL12	CXCL12	chemokine (C-X-C motif) ligand 12 (stromal cell-derived factor 1)	5755	0.033314064145088196	-0.16654626	No	
+row_23	TXK	TXK	TXK tyrosine kinase	5792	0.03215037286281586	-0.15819018	No	
+row_24	ROCK1	ROCK1	Rho-associated, coiled-coil containing protein kinase 1	5830	0.030801204964518547	-0.14990722	No	
+row_25	RAPGEF4	RAPGEF4	Rap guanine nucleotide exchange factor (GEF) 4	6126	0.02131415531039238	-0.16049358	No	
+row_26	CLDN15	CLDN15	claudin 15	6333	0.013480914756655693	-0.16457076	No	
+row_27	RAP1B	RAP1B	RAP1B, member of RAS oncogene family	6335	0.013438410125672817	-0.15365489	No	
+row_28	MMP2	MMP2	matrix metallopeptidase 2 (gelatinase A, 72kDa gelatinase, 72kDa type IV collagenase)	6797	-0.003289914457127452	-0.17638196	No	
+row_29	RHOH	RHOH	ras homolog gene family, member H	6808	-0.003564136801287532	-0.16612431	No	
+row_30	CLDN1	CLDN1	claudin 1	7249	-0.01915755309164524	-0.18731551	No	
+row_31	F11R	F11R	F11 receptor	7499	-0.02865428850054741	-0.19453758	No	
+row_32	ARHGAP35	null	null	7843	-0.041162412613630295	-0.2086345	Yes	
+row_33	PTK2	PTK2	PTK2 protein tyrosine kinase 2	7863	-0.04170190170407295	-0.1990351	Yes	
+row_34	RHOA	RHOA	ras homolog gene family, member A	7975	-0.04628120735287666	-0.19616427	Yes	
+row_35	ACTN1	ACTN1	actinin, alpha 1	8045	-0.04909741133451462	-0.1902217	Yes	
+row_36	PLCG1	PLCG1	phospholipase C, gamma 1	8082	-0.050528042018413544	-0.18186562	Yes	
+row_37	CTNNA1	CTNNA1	catenin (cadherin-associated protein), alpha 1, 102kDa	8196	-0.05454344302415848	-0.17914106	Yes	
+row_38	GNAI2	GNAI2	guanine nucleotide binding protein (G protein), alpha inhibiting activity polypeptide 2	8398	-0.06134980916976929	-0.18285255	Yes	
+row_39	RAP1A	RAP1A	RAP1A, member of RAS oncogene family	8430	-0.06275816261768341	-0.17413078	Yes	
+row_40	RAC1	RAC1	ras-related C3 botulinum toxin substrate 1 (rho family, small GTP binding protein Rac1)	8537	-0.0671827644109726	-0.17089428	Yes	
+row_41	JAM2	JAM2	junctional adhesion molecule 2	8591	-0.06938041746616364	-0.16378152	Yes	
+row_42	MAPK11	MAPK11	mitogen-activated protein kinase 11	8653	-0.07229321449995041	-0.15725386	Yes	
+row_43	CTNNB1	CTNNB1	catenin (cadherin-associated protein), beta 1, 88kDa	8776	-0.07725327461957932	-0.15518755	Yes	
+row_44	JAM3	JAM3	junctional adhesion molecule 3	8988	-0.08690580725669861	-0.1596304	Yes	
+row_45	VASP	VASP	vasodilator-stimulated phosphoprotein	9208	-0.09721270948648453	-0.16465837	Yes	
+row_46	MYL12A	null	null	9247	-0.09941936284303665	-0.15644856	Yes	
+row_47	CD99	CD99	CD99 molecule	9274	-0.10040571540594101	-0.1473611	Yes	
+row_48	ESAM	ESAM	endothelial cell adhesion molecule	9485	-0.11092285811901093	-0.15173082	Yes	
+row_49	CLDN5	CLDN5	claudin 5 (transmembrane protein deleted in velocardiofacial syndrome)	9618	-0.11669455468654633	-0.15039587	Yes	
+row_50	MYL9	MYL9	myosin, light chain 9, regulatory	9750	-0.12292671203613281	-0.14898778	Yes	
+row_51	MLLT4	MLLT4	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 4	9858	-0.12862953543663025	-0.14582442	Yes	
+row_52	BCAR1	BCAR1	breast cancer anti-estrogen resistance 1	9866	-0.1288716346025467	-0.13534737	Yes	
+row_53	CTNNA3	CTNNA3	catenin (cadherin-associated protein), alpha 3	10052	-0.13777580857276917	-0.13788867	Yes	
+row_54	MSN	MSN	moesin	10053	-0.13780510425567627	-0.12689966	Yes	
+row_55	ITGB1	ITGB1	integrin, beta 1 (fibronectin receptor, beta polypeptide, antigen CD29 includes MDF2, MSK12)	10240	-0.14792375266551971	-0.1295141	Yes	
+row_56	PIK3R3	PIK3R3	phosphoinositide-3-kinase, regulatory subunit 3 (p55, gamma)	10417	-0.15902720391750336	-0.13139717	Yes	
+row_57	EZR	null	null	10436	-0.16071419417858124	-0.12172463	Yes	
+row_58	ACTB	ACTB	actin, beta	10525	-0.1663585901260376	-0.11717166	Yes	
+row_59	MYL12B	null	null	10540	-0.16701118648052216	-0.10720656	Yes	
+row_60	MYL5	MYL5	myosin, light chain 5, regulatory	10567	-0.168934628367424	-0.09811911	Yes	
+row_61	VAV3	VAV3	vav 3 oncogene	10739	-0.18125319480895996	-0.099636495	Yes	
+row_62	PECAM1	PECAM1	platelet/endothelial cell adhesion molecule (CD31 antigen)	10769	-0.1832244098186493	-0.09076846	Yes	
+row_63	PXN	PXN	paxillin	11334	-0.22858524322509766	-0.121028624	Yes	
+row_64	SIPA1	SIPA1	signal-induced proliferation-associated gene 1	11622	-0.25539809465408325	-0.13102989	Yes	
+row_65	ITGA4	ITGA4	integrin, alpha 4 (antigen CD49D, alpha 4 subunit of VLA-4 receptor)	11628	-0.2564152777194977	-0.12040656	Yes	
+row_66	PTK2B	PTK2B	PTK2B protein tyrosine kinase 2 beta	11732	-0.26708346605300903	-0.11695064	Yes	
+row_67	VAV2	VAV2	vav 2 oncogene	11743	-0.2674001157283783	-0.106693	Yes	
+row_68	ACTN4	ACTN4	actinin, alpha 4	11893	-0.2871703803539276	-0.10660138	Yes	
+row_69	PIK3CG	PIK3CG	phosphoinositide-3-kinase, catalytic, gamma polypeptide	11937	-0.2922123670578003	-0.09875725	Yes	
+row_70	ROCK2	ROCK2	Rho-associated, coiled-coil containing protein kinase 2	11946	-0.29288145899772644	-0.088353336	Yes	
+row_71	ICAM1	ICAM1	intercellular adhesion molecule 1 (CD54), human rhinovirus receptor	12230	-0.33429890871047974	-0.098062046	Yes	
+row_72	PLCG2	PLCG2	phospholipase C, gamma 2 (phosphatidylinositol-specific)	12266	-0.341810017824173	-0.089632824	Yes	
+row_73	PIK3CD	PIK3CD	phosphoinositide-3-kinase, catalytic, delta polypeptide	12340	-0.35273680090904236	-0.0839828	Yes	
+row_74	VAV1	VAV1	vav 1 oncogene	12353	-0.35503271222114563	-0.073871434	Yes	
+row_75	CLDN18	CLDN18	claudin 18	12418	-0.36560872197151184	-0.06756318	Yes	
+row_76	MAPK12	MAPK12	mitogen-activated protein kinase 12	12470	-0.376812607049942	-0.06030415	Yes	
+row_77	CYBB	CYBB	cytochrome b-245, beta polypeptide (chronic granulomatous disease)	12550	-0.39365968108177185	-0.05509295	Yes	
+row_78	CYBA	CYBA	cytochrome b-245, alpha polypeptide	12619	-0.41087663173675537	-0.049077243	Yes	
+row_79	RAPGEF3	RAPGEF3	Rap guanine nucleotide exchange factor (GEF) 3	12746	-0.4379562735557556	-0.047303475	Yes	
+row_80	NCF2	NCF2	neutrophil cytosolic factor 2 (65kDa, chronic granulomatous disease, autosomal 2)	12908	-0.4809434115886688	-0.048089493	Yes	
+row_81	ITK	ITK	IL2-inducible T-cell kinase	12929	-0.4880432188510895	-0.03856322	Yes	
+row_82	NCF4	NCF4	neutrophil cytosolic factor 4, 40kDa	12935	-0.4894759953022003	-0.027939893	Yes	
+row_83	ITGAM	ITGAM	integrin, alpha M (complement component 3 receptor 3 subunit)	12999	-0.5088157057762146	-0.021558503	Yes	
+row_84	PIK3R5	PIK3R5	phosphoinositide-3-kinase, regulatory subunit 5, p101	13052	-0.5260119438171387	-0.014372607	Yes	
+row_85	ITGAL	ITGAL	integrin, alpha L (antigen CD11A (p180), lymphocyte function-associated antigen 1; alpha polypeptide)	13086	-0.5365710854530334	-0.005797112	Yes	
+row_86	RAC2	RAC2	ras-related C3 botulinum toxin substrate 2 (rho family, small GTP binding protein Rac2)	13158	-0.5643025040626526	-8.161878E-7	Yes	
+row_87	ITGB2	ITGB2	integrin, beta 2 (complement component 3 receptor 3 and 4 subunit)	13298	-0.6340377330780029	8.221741E-4	Yes	
+row_88	PRKCB	null	null	13366	-0.6694266200065613	0.006911017	Yes	
+row_89	CXCR4	CXCR4	chemokine (C-X-C motif) receptor 4	13434	-0.7140111923217773	0.01299986	Yes	
+row_90	MMP9	MMP9	matrix metallopeptidase 9 (gelatinase B, 92kDa gelatinase, 92kDa type IV collagenase)	13656	-1.0514180660247803	0.007825629	Yes	

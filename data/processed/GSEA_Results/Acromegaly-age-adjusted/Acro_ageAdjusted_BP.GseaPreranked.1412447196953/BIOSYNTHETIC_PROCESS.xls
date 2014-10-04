@@ -1,0 +1,393 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	ALK	ALK	anaplastic lymphoma kinase (Ki-1)	2	2.6552858352661133	0.0024014541	Yes	
+row_1	FADS1	FADS1	fatty acid desaturase 1	15	2.1600422859191895	0.0040550767	Yes	
+row_2	PNPLA3	PNPLA3	patatin-like phospholipase domain containing 3	17	2.1118879318237305	0.006531314	Yes	
+row_3	FADS2	FADS2	fatty acid desaturase 2	20	2.0354111194610596	0.008932768	Yes	
+row_4	PDZD3	PDZD3	PDZ domain containing 3	32	1.8254172801971436	0.010661175	Yes	
+row_5	TFCP2L1	TFCP2L1	transcription factor CP2-like 1	78	1.3609988689422607	0.009846954	Yes	
+row_6	ALAS2	ALAS2	aminolevulinate, delta-, synthase 2 (sideroblastic/hypochromic anemia)	87	1.3028295040130615	0.011799709	Yes	
+row_7	NPC1L1	NPC1L1	NPC1 (Niemann-Pick disease, type C1, gene)-like 1	105	1.1701329946517944	0.013079416	Yes	
+row_8	HAS1	HAS1	hyaluronan synthase 1	116	1.1324646472930908	0.0148826055	Yes	
+row_9	RPS4Y1	RPS4Y1	ribosomal protein S4, Y-linked 1	152	1.0232845544815063	0.014816216	Yes	
+row_10	DHCR24	DHCR24	24-dehydrocholesterol reductase	199	0.8673345446586609	0.013927213	Yes	
+row_11	PCYT2	PCYT2	phosphate cytidylyltransferase 2, ethanolamine	230	0.809599757194519	0.014234739	Yes	
+row_12	ME1	ME1	malic enzyme 1, NADP(+)-dependent, cytosolic	257	0.7616430521011353	0.014841398	Yes	
+row_13	PLCE1	PLCE1	phospholipase C, epsilon 1	298	0.6984060406684875	0.014401093	Yes	
+row_14	GAMT	GAMT	guanidinoacetate N-methyltransferase	318	0.6785721182823181	0.015531234	Yes	
+row_15	DCT	DCT	dopachrome tautomerase (dopachrome delta-isomerase, tyrosine-related protein 2)	333	0.6512060165405273	0.01703529	Yes	
+row_16	SCP2	SCP2	sterol carrier protein 2	345	0.6369196772575378	0.018763697	Yes	
+row_17	LDLR	LDLR	low density lipoprotein receptor (familial hypercholesterolemia)	360	0.6246172189712524	0.020267753	Yes	
+row_18	HSD11B2	HSD11B2	hydroxysteroid (11-beta) dehydrogenase 2	401	0.5932390689849854	0.019827448	Yes	
+row_19	ABCA1	ABCA1	ATP-binding cassette, sub-family A (ABC1), member 1	444	0.5605051517486572	0.019237578	Yes	
+row_20	DHCR7	DHCR7	7-dehydrocholesterol reductase	450	0.5583618879318237	0.021414682	Yes	
+row_21	AGPAT2	AGPAT2	1-acylglycerol-3-phosphate O-acyltransferase 2 (lysophosphatidic acid acyltransferase, beta)	555	0.5065017938613892	0.016188256	Yes	
+row_22	PFKFB1	PFKFB1	6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 1	573	0.4965320825576782	0.017467964	Yes	
+row_23	DMD	DMD	dystrophin (muscular dystrophy, Duchenne and Becker types)	615	0.4818958044052124	0.016952876	Yes	
+row_24	SLC25A10	SLC25A10	solute carrier family 25 (mitochondrial carrier; dicarboxylate transporter), member 10	634	0.4709390103816986	0.0181578	Yes	
+row_25	IGF2BP2	IGF2BP2	insulin-like growth factor 2 mRNA binding protein 2	669	0.4564388692378998	0.018166194	Yes	
+row_26	MAN1A2	MAN1A2	mannosidase, alpha, class 1A, member 2	703	0.44142308831214905	0.018249372	Yes	
+row_27	INHA	INHA	inhibin, alpha	722	0.43555936217308044	0.019454295	Yes	
+row_28	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	769	0.4186110496520996	0.018565292	Yes	
+row_29	TLR4	TLR4	toll-like receptor 4	816	0.40618062019348145	0.017676288	Yes	
+row_30	GCHFR	GCHFR	GTP cyclohydrolase I feedback regulator	827	0.40296992659568787	0.019479478	Yes	
+row_31	CYP7B1	CYP7B1	cytochrome P450, family 7, subfamily B, polypeptide 1	903	0.379238098859787	0.016421763	Yes	
+row_32	EIF3C	null	null	979	0.35915032029151917	0.013364049	Yes	
+row_33	HS3ST3B1	HS3ST3B1	heparan sulfate (glucosamine) 3-O-sulfotransferase 3B1	988	0.3572537302970886	0.015316804	Yes	
+row_34	PAIP2B	null	null	996	0.3566049635410309	0.017344343	Yes	
+row_35	CD81	CD81	CD81 molecule	1001	0.3546712100505829	0.01959623	Yes	
+row_36	B3GNT5	B3GNT5	UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 5	1037	0.3458654582500458	0.019529842	Yes	
+row_37	ALDH9A1	ALDH9A1	aldehyde dehydrogenase 9 family, member A1	1040	0.34508201479911804	0.021931294	Yes	
+row_38	FARS2	FARS2	phenylalanine-tRNA synthetase 2 (mitochondrial)	1129	0.32507383823394775	0.0179014	Yes	
+row_39	MVK	MVK	mevalonate kinase (mevalonic aciduria)	1154	0.3192785680294037	0.018657625	Yes	
+row_40	ST8SIA4	ST8SIA4	ST8 alpha-N-acetyl-neuraminide alpha-2,8-sialyltransferase 4	1181	0.3137657046318054	0.019264285	Yes	
+row_41	TSPO	TSPO	translocator protein (18kDa)	1215	0.3091750144958496	0.019347461	Yes	
+row_42	UGCG	UGCG	UDP-glucose ceramide glucosyltransferase	1257	0.3013940155506134	0.018832374	Yes	
+row_43	ANG	ANG	angiogenin, ribonuclease, RNase A family, 5	1326	0.2904835045337677	0.016298141	Yes	
+row_44	COQ2	COQ2	coenzyme Q2 homolog, prenyltransferase (yeast)	1400	0.2796896994113922	0.0133899925	Yes	
+row_45	MTIF2	MTIF2	mitochondrial translational initiation factor 2	1425	0.27679672837257385	0.014146218	Yes	
+row_46	LIPC	LIPC	lipase, hepatic	1497	0.26969441771507263	0.011387636	Yes	
+row_47	PYCR1	PYCR1	pyrroline-5-carboxylate reductase 1	1566	0.2605764865875244	0.008853404	Yes	
+row_48	PDSS2	PDSS2	prenyl (decaprenyl) diphosphate synthase, subunit 2	1644	0.2511998414993286	0.0056461236	Yes	
+row_49	DGAT2	DGAT2	diacylglycerol O-acyltransferase homolog 2 (mouse)	1724	0.24306796491146088	0.0022892766	Yes	
+row_50	ALAD	ALAD	aminolevulinate, delta-, dehydratase	1746	0.24128341674804688	0.0032698512	Yes	
+row_51	GYPC	GYPC	glycophorin C (Gerbich blood group)	1833	0.23275086283683777	-6.104775E-4	Yes	
+row_52	HRSP12	HRSP12	heat-responsive protein 12	1859	0.2305501103401184	7.096459E-5	Yes	
+row_53	CPOX	CPOX	coproporphyrinogen oxidase	1905	0.22624142467975616	-7.4325583E-4	Yes	
+row_54	B3GAT2	B3GAT2	beta-1,3-glucuronyltransferase 2 (glucuronosyltransferase S)	1951	0.22230757772922516	-0.0015574764	Yes	
+row_55	ALG5	ALG5	asparagine-linked glycosylation 5 homolog (S. cerevisiae, dolichyl-phosphate beta-glucosyltransferase)	1956	0.22198854386806488	6.944115E-4	Yes	
+row_56	DGKE	DGKE	diacylglycerol kinase, epsilon 64kDa	1957	0.22186383605003357	0.003245432	Yes	
+row_57	FUT10	FUT10	fucosyltransferase 10 (alpha (1,3) fucosyltransferase)	2039	0.21427859365940094	-2.609812E-4	Yes	
+row_58	EIF3A	null	null	2077	0.2112434059381485	-4.7693664E-4	Yes	
+row_59	MCAT	MCAT	malonyl CoA:ACP acyltransferase (mitochondrial)	2078	0.2111673504114151	0.0020740838	Yes	
+row_60	DEGS1	DEGS1	degenerative spermatocyte homolog 1, lipid desaturase (Drosophila)	2094	0.21036328375339508	0.003503357	Yes	
+row_61	ETNK1	ETNK1	ethanolamine kinase 1	2099	0.2099347859621048	0.0057552448	Yes	
+row_62	PLOD1	PLOD1	procollagen-lysine 1, 2-oxoglutarate 5-dioxygenase 1	2116	0.2084575891494751	0.007109735	Yes	
+row_63	RPS19	RPS19	ribosomal protein S19	2122	0.20814168453216553	0.0092868395	Yes	
+row_64	B3GALNT1	B3GALNT1	beta-1,3-N-acetylgalactosaminyltransferase 1 (globoside blood group)	2227	0.19857531785964966	0.004060415	Yes	
+row_65	PGGT1B	PGGT1B	protein geranylgeranyltransferase type I, beta subunit	2231	0.1982801854610443	0.0063870857	Yes	
+row_66	IMPA1	IMPA1	inositol(myo)-1(or 4)-monophosphatase 1	2255	0.19669266045093536	0.007218094	Yes	
+row_67	FUT2	FUT2	fucosyltransferase 2 (secretor status included)	2317	0.1927618682384491	0.005207344	Yes	
+row_68	UROS	UROS	uroporphyrinogen III synthase (congenital erythropoietic porphyria)	2339	0.19073057174682617	0.0061879186	Yes	
+row_69	EIF2A	EIF2A	eukaryotic translation initiation factor 2A, 65kDa	2400	0.18578177690505981	0.004251951	Yes	
+row_70	ELANE	null	null	2457	0.18200962245464325	0.002615116	Yes	
+row_71	ALDH18A1	ALDH18A1	aldehyde dehydrogenase 18 family, member A1	2492	0.17913763225078583	0.00262351	Yes	
+row_72	PAIP2	PAIP2	poly(A) binding protein interacting protein 2	2501	0.17822487652301788	0.0045762653	Yes	
+row_73	HBS1L	HBS1L	HBS1-like (S. cerevisiae)	2513	0.1776120960712433	0.0063046715	Yes	
+row_74	GATM	GATM	glycine amidinotransferase (L-arginine:glycine amidinotransferase)	2526	0.1767841875553131	0.007958294	Yes	
+row_75	YBX2	YBX2	Y box binding protein 2	2560	0.1743934154510498	0.008041471	Yes	
+row_76	MTIF3	MTIF3	-	2629	0.17076578736305237	0.0055072387	Yes	
+row_77	PABPC4	PABPC4	poly(A) binding protein, cytoplasmic 4 (inducible form)	2661	0.16869232058525085	0.0057399822	Yes	
+row_78	DARS	DARS	aspartyl-tRNA synthetase	2675	0.16797718405723572	0.0073188217	Yes	
+row_79	PEX7	PEX7	peroxisomal biogenesis factor 7	2688	0.16715051233768463	0.008972445	Yes	
+row_80	DPM1	DPM1	dolichyl-phosphate mannosyltransferase polypeptide 1, catalytic subunit	2735	0.16373027861118317	0.008083441	Yes	
+row_81	STT3B	STT3B	STT3, subunit of the oligosaccharyltransferase complex, homolog B (S. cerevisiae)	2743	0.16331826150417328	0.01011098	Yes	
+row_82	SGMS1	null	null	2756	0.16243544220924377	0.011764603	Yes	
+row_83	AGPS	AGPS	alkylglycerone phosphate synthase	2768	0.16212284564971924	0.013493008	Yes	
+row_84	EIF3E	null	null	2810	0.15950044989585876	0.0129779205	Yes	
+row_85	TSPAN8	TSPAN8	tetraspanin 8	2811	0.15946708619594574	0.015528941	Yes	
+row_86	OXER1	OXER1	oxoeicosanoid (OXE) receptor 1	2827	0.1586369276046753	0.016958214	Yes	
+row_87	COG3	COG3	component of oligomeric golgi complex 3	2856	0.15685833990573883	0.017415307	Yes	
+row_88	NANP	NANP	N-acetylneuraminic acid phosphatase	2888	0.1547720730304718	0.01764805	Yes	
+row_89	AGPAT1	AGPAT1	1-acylglycerol-3-phosphate O-acyltransferase 1 (lysophosphatidic acid acyltransferase, alpha)	2895	0.1543159782886505	0.019750372	Yes	
+row_90	CYP39A1	CYP39A1	cytochrome P450, family 39, subfamily A, polypeptide 1	2916	0.15277090668678284	0.02080573	Yes	
+row_91	EIF4A2	EIF4A2	eukaryotic translation initiation factor 4A, isoform 2	2925	0.15237033367156982	0.022758486	Yes	
+row_92	EIF2B2	EIF2B2	eukaryotic translation initiation factor 2B, subunit 2 beta, 39kDa	2943	0.15105608105659485	0.024038192	Yes	
+row_93	MRPL41	MRPL41	mitochondrial ribosomal protein L41	3003	0.14766532182693481	0.022177007	Yes	
+row_94	UPF1	UPF1	UPF1 regulator of nonsense transcripts homolog (yeast)	3004	0.1476215422153473	0.024728028	Yes	
+row_95	ADK	ADK	adenosine kinase	3007	0.14748792350292206	0.027129482	Yes	
+row_96	SOD1	SOD1	superoxide dismutase 1, soluble (amyotrophic lateral sclerosis 1 (adult))	3029	0.14611005783081055	0.028110057	Yes	
+row_97	ALG6	ALG6	asparagine-linked glycosylation 6 homolog (S. cerevisiae, alpha-1,3-glucosyltransferase)	3078	0.14315329492092133	0.027071487	Yes	
+row_98	HSP90AB1	HSP90AB1	heat shock protein 90kDa alpha (cytosolic), class B member 1	3152	0.13905465602874756	0.02416334	Yes	
+row_99	PIGV	PIGV	phosphatidylinositol glycan anchor biosynthesis, class V	3226	0.1353110820055008	0.021255191	Yes	
+row_100	RPL29	RPL29	ribosomal protein L29	3267	0.13327676057815552	0.020814886	Yes	
+row_101	MAT2B	MAT2B	methionine adenosyltransferase II, beta	3289	0.13238905370235443	0.021795461	Yes	
+row_102	EIF4B	EIF4B	eukaryotic translation initiation factor 4B	3296	0.1320684403181076	0.023897782	Yes	
+row_103	SEPSECS	null	null	3311	0.13138048350811005	0.025401838	Yes	
+row_104	FUT8	FUT8	fucosyltransferase 8 (alpha (1,6) fucosyltransferase)	3327	0.13055366277694702	0.026831113	Yes	
+row_105	CHST12	CHST12	carbohydrate (chondroitin 4) sulfotransferase 12	3403	0.12666353583335876	0.023773398	Yes	
+row_106	PIGH	PIGH	phosphatidylinositol glycan anchor biosynthesis, class H	3416	0.12600022554397583	0.025427021	Yes	
+row_107	ASMTL	ASMTL	acetylserotonin O-methyltransferase-like	3476	0.1234743744134903	0.023565836	Yes	
+row_108	LTA4H	LTA4H	leukotriene A4 hydrolase	3591	0.1177440658211708	0.01759158	Yes	
+row_109	FECH	FECH	ferrochelatase (protoporphyria)	3595	0.11752505600452423	0.019918252	Yes	
+row_110	EIF5	EIF5	eukaryotic translation initiation factor 5	3610	0.11684241890907288	0.021422308	Yes	
+row_111	KARS	KARS	lysyl-tRNA synthetase	3635	0.11542004346847534	0.022178533	Yes	
+row_112	GALNT1	GALNT1	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 1 (GalNAc-T1)	3728	0.11097221821546555	0.017849505	Yes	
+row_113	EIF3I	null	null	3734	0.11070983111858368	0.02002661	Yes	
+row_114	RPS3A	RPS3A	ribosomal protein S3A	3735	0.11070813983678818	0.02257763	Yes	
+row_115	RPL7	RPL7	ribosomal protein L7	3748	0.11020663380622864	0.024231253	Yes	
+row_116	CNBP	CNBP	CCHC-type zinc finger, nucleic acid binding protein	3828	0.10673932731151581	0.020874407	Yes	
+row_117	TUSC3	TUSC3	tumor suppressor candidate 3	3835	0.10630665719509125	0.022976728	Yes	
+row_118	RARS	RARS	arginyl-tRNA synthetase	3844	0.10580150783061981	0.024929482	Yes	
+row_119	RPL5	RPL5	ribosomal protein L5	3868	0.10489540547132492	0.025760492	Yes	
+row_120	PIGS	PIGS	phosphatidylinositol glycan anchor biosynthesis, class S	3897	0.10366104543209076	0.026217584	Yes	
+row_121	CHPT1	CHPT1	choline phosphotransferase 1	3951	0.10150719434022903	0.024805099	Yes	
+row_122	SPR	SPR	sepiapterin reductase (7,8-dihydrobiopterin:NADP+ oxidoreductase)	3972	0.1008262038230896	0.025860457	Yes	
+row_123	MAN1C1	MAN1C1	mannosidase, alpha, class 1C, member 1	3983	0.10034588724374771	0.027663646	Yes	
+row_124	CSGALNACT2	null	null	3984	0.10033184289932251	0.030214665	Yes	
+row_125	BCL10	BCL10	B-cell CLL/lymphoma 10	3986	0.100262850522995	0.032690905	Yes	
+row_126	PAIP1	PAIP1	poly(A) binding protein interacting protein 1	3990	0.09997626394033432	0.035017576	Yes	
+row_127	MRPL3	MRPL3	mitochondrial ribosomal protein L3	4006	0.09932665526866913	0.036446847	Yes	
+row_128	COPS5	COPS5	COP9 constitutive photomorphogenic homolog subunit 5 (Arabidopsis)	4019	0.09901461005210876	0.03810047	Yes	
+row_129	SERP1	SERP1	-	4032	0.09842231869697571	0.039754093	Yes	
+row_130	EIF3F	null	null	4037	0.09815628081560135	0.042005982	Yes	
+row_131	FDPS	FDPS	farnesyl diphosphate synthase (farnesyl pyrophosphate synthetase, dimethylallyltranstransferase, geranyltranstransferase)	4089	0.09624163806438446	0.04074306	Yes	
+row_132	NECAB3	null	null	4091	0.09621484577655792	0.043219298	Yes	
+row_133	HPGD	HPGD	hydroxyprostaglandin dehydrogenase 15-(NAD)	4149	0.09342491626739502	0.04150768	Yes	
+row_134	EEF1A1	EEF1A1	eukaryotic translation elongation factor 1 alpha 1	4185	0.09207643568515778	0.04144129	Yes	
+row_135	CHM	CHM	choroideremia (Rab escort protein 1)	4202	0.09151589870452881	0.04279578	Yes	
+row_136	RPL9	RPL9	ribosomal protein L9	4218	0.09097170829772949	0.044225056	Yes	
+row_137	ST8SIA1	ST8SIA1	ST8 alpha-N-acetyl-neuraminide alpha-2,8-sialyltransferase 1	4406	0.08319652825593948	0.03279163	Yes	
+row_138	MRPL55	MRPL55	mitochondrial ribosomal protein L55	4513	0.07886989414691925	0.027415639	Yes	
+row_139	EIF2S3	EIF2S3	eukaryotic translation initiation factor 2, subunit 3 gamma, 52kDa	4563	0.07716617733240128	0.026302287	Yes	
+row_140	TGFB2	TGFB2	transforming growth factor, beta 2	4602	0.0756683424115181	0.026011549	Yes	
+row_141	UMPS	UMPS	uridine monophosphate synthetase (orotate phosphoribosyl transferase and orotidine-5'-decarboxylase)	4622	0.0747682973742485	0.027141688	Yes	
+row_142	TUFM	TUFM	Tu translation elongation factor, mitochondrial	4636	0.07430987805128098	0.028720528	Yes	
+row_143	PIGO	PIGO	phosphatidylinositol glycan anchor biosynthesis, class O	4637	0.07430941611528397	0.03127155	Yes	
+row_144	B4GALT7	B4GALT7	xylosylprotein beta 1,4-galactosyltransferase, polypeptide 7 (galactosyltransferase I)	4796	0.06865249574184418	0.022006836	Yes	
+row_145	EIF3H	null	null	4856	0.06651012599468231	0.020145651	Yes	
+row_146	RPL31	RPL31	ribosomal protein L31	4915	0.06335726380348206	0.01835925	Yes	
+row_147	EIF3J	null	null	4984	0.06057923287153244	0.015825016	Yes	
+row_148	PET112	null	null	4986	0.06054583564400673	0.018301254	Yes	
+row_149	MRPS7	MRPS7	mitochondrial ribosomal protein S7	5000	0.059751011431217194	0.019880094	Yes	
+row_150	IDI1	IDI1	isopentenyl-diphosphate delta isomerase 1	5045	0.05816240236163139	0.019140657	Yes	
+row_151	COX10	COX10	COX10 homolog, cytochrome c oxidase assembly protein, heme A: farnesyltransferase (yeast)	5073	0.05733804404735565	0.019672533	Yes	
+row_152	METAP1	METAP1	methionyl aminopeptidase 1	5139	0.0553898885846138	0.01736265	Yes	
+row_153	GCLC	GCLC	glutamate-cysteine ligase, catalytic subunit	5169	0.05429345741868019	0.017744958	Yes	
+row_154	RPL4	RPL4	ribosomal protein L4	5203	0.052691612392663956	0.017828137	Yes	
+row_155	ARPP19	null	null	5237	0.05131390690803528	0.017911313	Yes	
+row_156	COQ7	COQ7	coenzyme Q7 homolog, ubiquinone (yeast)	5369	0.046335797756910324	0.010665744	Yes	
+row_157	RPL22	RPL22	ribosomal protein L22	5384	0.04564480111002922	0.012169801	Yes	
+row_158	PTGES3	PTGES3	prostaglandin E synthase 3 (cytosolic)	5424	0.04433566331863403	0.011804279	Yes	
+row_159	AARS	AARS	alanyl-tRNA synthetase	5426	0.04417794570326805	0.014280516	Yes	
+row_160	PPAT	PPAT	phosphoribosyl pyrophosphate amidotransferase	5487	0.04222870245575905	0.0123445485	Yes	
+row_161	TSFM	TSFM	Ts translation elongation factor, mitochondrial	5524	0.04122115299105644	0.012203377	Yes	
+row_162	FDXR	FDXR	ferredoxin reductase	5551	0.04004974663257599	0.012810036	Yes	
+row_163	AP3D1	AP3D1	adaptor-related protein complex 3, delta 1 subunit	5597	0.03838009014725685	0.011995815	Yes	
+row_164	ACN9	ACN9	ACN9 homolog (S. cerevisiae)	5632	0.037441402673721313	0.012004209	Yes	
+row_165	LCAT	LCAT	lecithin-cholesterol acyltransferase	5670	0.035965193063020706	0.011788254	Yes	
+row_166	SDF2	SDF2	stromal cell-derived factor 2	5680	0.03558454290032387	0.013666226	Yes	
+row_167	RPL6	RPL6	ribosomal protein L6	5725	0.034272510558366776	0.012926788	Yes	
+row_168	RPL24	RPL24	ribosomal protein L24	5744	0.033675216138362885	0.014131713	Yes	
+row_169	DPH1	DPH1	DPH1 homolog (S. cerevisiae)	5807	0.031481679528951645	0.012046179	Yes	
+row_170	EIF2AK4	EIF2AK4	eukaryotic translation initiation factor 2 alpha kinase 4	5876	0.029353318735957146	0.009511947	Yes	
+row_171	EXT2	EXT2	exostoses (multiple) 2	5921	0.028063461184501648	0.008772509	Yes	
+row_172	EIF3B	null	null	5928	0.027817225083708763	0.01087483	Yes	
+row_173	COG2	COG2	component of oligomeric golgi complex 2	5955	0.026869328692555428	0.011481489	Yes	
+row_174	B3GALT6	B3GALT6	UDP-Gal:betaGal beta 1,3-galactosyltransferase polypeptide 6	5966	0.026552071794867516	0.013284679	Yes	
+row_175	RPL14	RPL14	ribosomal protein L14	5986	0.025856735184788704	0.01441482	Yes	
+row_176	RPL15	RPL15	ribosomal protein L15	5988	0.025735266506671906	0.016891057	Yes	
+row_177	COX15	COX15	COX15 homolog, cytochrome c oxidase assembly protein (yeast)	6071	0.023038262501358986	0.013309861	Yes	
+row_178	CHST7	CHST7	carbohydrate (N-acetylglucosamine 6-O) sulfotransferase 7	6087	0.02261127531528473	0.014739134	Yes	
+row_179	GMPS	GMPS	guanine monphosphate synthetase	6117	0.021725084632635117	0.015121443	Yes	
+row_180	PI4KB	null	null	6128	0.021262358874082565	0.016924633	Yes	
+row_181	TLR3	TLR3	toll-like receptor 3	6172	0.019913097843527794	0.016259978	Yes	
+row_182	PIK3C2A	PIK3C2A	phosphoinositide-3-kinase, class 2, alpha polypeptide	6230	0.017407990992069244	0.01454836	Yes	
+row_183	SULT1A2	SULT1A2	sulfotransferase family, cytosolic, 1A, phenol-preferring, member 2	6237	0.017260175198316574	0.016650682	Yes	
+row_184	OAZ1	OAZ1	ornithine decarboxylase antizyme 1	6364	0.012508283369243145	0.009779028	Yes	
+row_185	OGT	OGT	O-linked N-acetylglucosamine (GlcNAc) transferase (UDP-N-acetylglucosamine:polypeptide-N-acetylglucosaminyl transferase)	6381	0.011910663917660713	0.011133518	Yes	
+row_186	FNTA	FNTA	farnesyltransferase, CAAX box, alpha	6402	0.011135611683130264	0.012188876	Yes	
+row_187	DPH3	null	null	6429	0.010259314440190792	0.012795535	Yes	
+row_188	MRPL10	MRPL10	mitochondrial ribosomal protein L10	6441	0.009902737103402615	0.014523941	Yes	
+row_189	EIF2B5	EIF2B5	eukaryotic translation initiation factor 2B, subunit 5 epsilon, 82kDa	6451	0.00971581693738699	0.016401913	Yes	
+row_190	GLCE	GLCE	UDP-glucuronic acid epimerase	6509	0.0072204191237688065	0.014690295	Yes	
+row_191	RPS10	RPS10	ribosomal protein S10	6535	0.006243762094527483	0.015371737	Yes	
+row_192	ALG1	ALG1	asparagine-linked glycosylation 1 homolog (S. cerevisiae, beta-1,4-mannosyltransferase)	6543	0.005985054653137922	0.017399276	Yes	
+row_193	RPL30	RPL30	ribosomal protein L30	6574	0.004845820367336273	0.017706802	Yes	
+row_194	EIF1B	EIF1B	eukaryotic translation initiation factor 1B	6583	0.004500121809542179	0.019659558	Yes	
+row_195	EIF5A	EIF5A	eukaryotic translation initiation factor 5A	6587	0.004349810536950827	0.02198623	Yes	
+row_196	EGFR	EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	6598	0.003778409445658326	0.023789417	Yes	
+row_197	DPM2	DPM2	dolichyl-phosphate mannosyltransferase polypeptide 2, regulatory subunit	6606	0.003417061408981681	0.025816957	Yes	
+row_198	HSP90AA1	HSP90AA1	heat shock protein 90kDa alpha (cytosolic), class A member 1	6644	0.0021858164109289646	0.025601001	Yes	
+row_199	NDST1	NDST1	N-deacetylase/N-sulfotransferase (heparan glucosaminyl) 1	6709	-4.8685522051528096E-4	0.0233659	Yes	
+row_200	ETF1	ETF1	eukaryotic translation termination factor 1	6735	-0.0012478528078645468	0.024047343	Yes	
+row_201	NOD1	null	null	6773	-0.0022820818703621626	0.023831388	Yes	
+row_202	MOCS2	MOCS2	molybdenum cofactor synthesis 2	6852	-0.005077442619949579	0.020549323	Yes	
+row_203	EIF4G3	EIF4G3	eukaryotic translation initiation factor 4 gamma, 3	6867	-0.005320991855114698	0.02205338	Yes	
+row_204	EIF2AK3	EIF2AK3	eukaryotic translation initiation factor 2-alpha kinase 3	6904	-0.0065367151983082294	0.021912208	Yes	
+row_205	DOLPP1	DOLPP1	dolichyl pyrophosphate phosphatase 1	6918	-0.007072943728417158	0.023491047	Yes	
+row_206	TNFRSF8	TNFRSF8	tumor necrosis factor receptor superfamily, member 8	6961	-0.008334926329553127	0.022901177	Yes	
+row_207	TSTA3	TSTA3	tissue specific transplantation antigen P35B	7001	-0.009948763996362686	0.022535656	Yes	
+row_208	RPS2	RPS2	ribosomal protein S2	7022	-0.010880239307880402	0.023591014	Yes	
+row_209	STT3A	STT3A	STT3, subunit of the oligosaccharyltransferase complex, homolog A (S. cerevisiae)	7032	-0.011248329654335976	0.025468985	Yes	
+row_210	EIF4G2	EIF4G2	eukaryotic translation initiation factor 4 gamma, 2	7036	-0.011415061540901661	0.027795656	Yes	
+row_211	GALNT7	GALNT7	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 7 (GalNAc-T7)	7067	-0.012444022111594677	0.028103182	Yes	
+row_212	RPL39	RPL39	ribosomal protein L39	7089	-0.013356974348425865	0.029083757	Yes	
+row_213	TRAK1	TRAK1	trafficking protein, kinesin binding 1	7188	-0.016887178644537926	0.024306031	Yes	
+row_214	RPS12	RPS12	ribosomal protein S12	7223	-0.018162958323955536	0.024314424	Yes	
+row_215	PAICS	PAICS	phosphoribosylaminoimidazole carboxylase, phosphoribosylaminoimidazole succinocarboxamide synthetase	7233	-0.018455423414707184	0.026192397	Yes	
+row_216	RPL7A	RPL7A	ribosomal protein L7a	7237	-0.018528837710618973	0.028519068	Yes	
+row_217	WARS	WARS	tryptophanyl-tRNA synthetase	7276	-0.020366376265883446	0.02822833	Yes	
+row_218	RPL3	RPL3	ribosomal protein L3	7300	-0.021123945713043213	0.029059337	Yes	
+row_219	EIF4A3	null	null	7316	-0.02162141539156437	0.03048861	Yes	
+row_220	RPS11	RPS11	ribosomal protein S11	7339	-0.022663837298750877	0.031394403	Yes	
+row_221	EIF2B1	EIF2B1	eukaryotic translation initiation factor 2B, subunit 1 alpha, 26kDa	7383	-0.02433055266737938	0.030729748	Yes	
+row_222	GLMN	GLMN	glomulin, FKBP associated protein	7417	-0.02538677491247654	0.030812925	Yes	
+row_223	COG7	COG7	component of oligomeric golgi complex 7	7421	-0.02551601454615593	0.033139598	Yes	
+row_224	RPL28	RPL28	ribosomal protein L28	7503	-0.028791774064302444	0.029633183	Yes	
+row_225	PGS1	PGS1	phosphatidylglycerophosphate synthase 1	7519	-0.029483744874596596	0.031062458	Yes	
+row_226	EIF1	EIF1	eukaryotic translation initiation factor 1	7530	-0.029857231304049492	0.032865647	Yes	
+row_227	NACA	NACA	nascent-polypeptide-associated complex alpha polypeptide	7545	-0.030176380649209023	0.034369703	Yes	
+row_228	RPS5	RPS5	ribosomal protein S5	7552	-0.030492648482322693	0.036472023	Yes	
+row_229	ADSS	ADSS	adenylosuccinate synthase	7674	-0.03561429679393768	0.029974286	Yes	
+row_230	TSC1	TSC1	tuberous sclerosis 1	7682	-0.035992465913295746	0.032001823	Yes	
+row_231	ALG12	ALG12	asparagine-linked glycosylation 12 homolog (S. cerevisiae, alpha-1,6-mannosyltransferase)	7707	-0.03660063445568085	0.03275805	Yes	
+row_232	RPL35	RPL35	ribosomal protein L35	7723	-0.03760724514722824	0.034187324	Yes	
+row_233	RRBP1	RRBP1	ribosome binding protein 1 homolog 180kDa (dog)	7757	-0.038667209446430206	0.0342705	Yes	
+row_234	RPN1	RPN1	ribophorin I	7759	-0.0386965349316597	0.036746737	Yes	
+row_235	FARSB	null	null	7760	-0.038735922425985336	0.039297756	Yes	
+row_236	TNIP1	TNIP1	TNFAIP3 interacting protein 1	7766	-0.038884952664375305	0.041474864	Yes	
+row_237	RPL38	RPL38	ribosomal protein L38	7800	-0.03968789055943489	0.04155804	Yes	
+row_238	AIMP1	null	null	7927	-0.044103220105171204	0.034686387	Yes	
+row_239	PIGG	PIGG	phosphatidylinositol glycan anchor biosynthesis, class G	7936	-0.04453422129154205	0.03663914	Yes	
+row_240	RPL34	RPL34	ribosomal protein L34	7953	-0.04512700065970421	0.037993632	Yes	
+row_241	MPDU1	MPDU1	mannose-P-dolichol utilization defect 1	8002	-0.0475972555577755	0.036955062	Yes	
+row_242	RPL11	RPL11	ribosomal protein L11	8024	-0.04829037934541702	0.037935637	Yes	
+row_243	CEBPG	CEBPG	CCAAT/enhancer binding protein (C/EBP), gamma	8052	-0.04925720766186714	0.03846751	Yes	
+row_244	BRCA1	BRCA1	breast cancer 1, early onset	8070	-0.05005264654755592	0.03974722	Yes	
+row_245	PIGB	PIGB	phosphatidylinositol glycan anchor biosynthesis, class B	8089	-0.05083037540316582	0.040952142	Yes	
+row_246	RPL23A	RPL23A	ribosomal protein L23a	8119	-0.051680564880371094	0.041334454	Yes	
+row_247	RPL8	RPL8	ribosomal protein L8	8141	-0.052216965705156326	0.04231503	Yes	
+row_248	POFUT1	POFUT1	protein O-fucosyltransferase 1	8183	-0.05379975587129593	0.04179994	Yes	
+row_249	RPL13	RPL13	ribosomal protein L13	8218	-0.055180586874485016	0.041808333	Yes	
+row_250	RPL21	RPL21	ribosomal protein L21	8248	-0.05607540160417557	0.04219064	Yes	
+row_251	RPL18A	RPL18A	ribosomal protein L18a	8257	-0.056571755558252335	0.044143397	Yes	
+row_252	NLRP12	null	null	8259	-0.05659685656428337	0.046619635	Yes	
+row_253	ST6GALNAC6	ST6GALNAC6	ST6 (alpha-N-acetyl-neuraminyl-2,3-beta-galactosyl-1,3)-N-acetylgalactosaminide alpha-2,6-sialyltransferase 6	8294	-0.05799337476491928	0.04662803	Yes	
+row_254	OXSM	OXSM	3-oxoacyl-ACP synthase, mitochondrial	8355	-0.05996674299240112	0.04469206	Yes	
+row_255	FUT1	FUT1	fucosyltransferase 1 (galactoside 2-alpha-L-fucosyltransferase, H blood group)	8365	-0.06027667224407196	0.046570033	Yes	
+row_256	RPL19	RPL19	ribosomal protein L19	8373	-0.0604996383190155	0.048597574	Yes	
+row_257	EIF2B4	EIF2B4	eukaryotic translation initiation factor 2B, subunit 4 delta, 67kDa	8428	-0.06256721168756485	0.047110304	Yes	
+row_258	RPS3	RPS3	ribosomal protein S3	8431	-0.0627712830901146	0.049511757	Yes	
+row_259	YARS	YARS	tyrosyl-tRNA synthetase	8480	-0.06471533328294754	0.048473187	Yes	
+row_260	DDAH2	DDAH2	dimethylarginine dimethylaminohydrolase 2	8491	-0.06523198634386063	0.050276376	Yes	
+row_261	PDSS1	PDSS1	prenyl (decaprenyl) diphosphate synthase, subunit 1	8550	-0.06761310249567032	0.048489977	Yes	
+row_262	COASY	COASY	Coenzyme A synthase	8571	-0.06837797909975052	0.049545333	Yes	
+row_263	MRPS24	MRPS24	mitochondrial ribosomal protein S24	8583	-0.06913488358259201	0.05127374	Yes	
+row_264	GUK1	GUK1	guanylate kinase 1	8587	-0.06928979605436325	0.05360041	Yes	
+row_265	GYG2	GYG2	glycogenin 2	8645	-0.07201506942510605	0.051888794	Yes	
+row_266	ALG2	ALG2	asparagine-linked glycosylation 2 homolog (S. cerevisiae, alpha-1,3-mannosyltransferase)	8661	-0.07246995717287064	0.053318065	Yes	
+row_267	RPL41	RPL41	ribosomal protein L41	8765	-0.07697387784719467	0.048166424	Yes	
+row_268	MAST2	MAST2	microtubule associated serine/threonine kinase 2	8828	-0.07993081212043762	0.04608089	Yes	
+row_269	MRPL51	MRPL51	mitochondrial ribosomal protein L51	8839	-0.08015117794275284	0.04788408	Yes	
+row_270	B4GALT1	B4GALT1	UDP-Gal:betaGlcNAc beta 1,4- galactosyltransferase, polypeptide 1	8860	-0.08138155937194824	0.048939437	Yes	
+row_271	CERS5	null	null	8883	-0.08241795003414154	0.04984523	Yes	
+row_272	RPS6KB2	RPS6KB2	ribosomal protein S6 kinase, 70kDa, polypeptide 2	8894	-0.0828317254781723	0.05164842	Yes	
+row_273	TYMS	TYMS	thymidylate synthetase	8897	-0.08309488743543625	0.05404987	Yes	
+row_274	PIGK	PIGK	phosphatidylinositol glycan anchor biosynthesis, class K	8905	-0.08346360921859741	0.05607741	Yes	
+row_275	TRNAU1AP	null	null	8921	-0.08419984579086304	0.057506684	Yes	
+row_276	PTS	PTS	6-pyruvoyltetrahydropterin synthase	8950	-0.08500707894563675	0.057963777	Yes	
+row_277	EIF1AX	EIF1AX	eukaryotic translation initiation factor 1A, X-linked	8960	-0.08536253124475479	0.05984175	Yes	
+row_278	LARGE	LARGE	like-glycosyltransferase	8979	-0.086475670337677	0.061046675	Yes	
+row_279	COQ3	COQ3	coenzyme Q3 homolog, methyltransferase (S. cerevisiae)	8982	-0.08671458810567856	0.06344812	Yes	
+row_280	CDO1	CDO1	cysteine dioxygenase, type I	9037	-0.08879514038562775	0.061960857	No	
+row_281	FURIN	FURIN	furin (paired basic amino acid cleaving enzyme)	9057	-0.0897911936044693	0.063091	No	
+row_282	PPOX	PPOX	protoporphyrinogen oxidase	9151	-0.09483188390731812	0.058687188	No	
+row_283	EIF3G	null	null	9211	-0.09728510677814484	0.056826003	No	
+row_284	ATG7	ATG7	ATG7 autophagy related 7 homolog (S. cerevisiae)	9276	-0.10055479407310486	0.054590903	No	
+row_285	FNTB	FNTB	farnesyltransferase, CAAX box, beta	9346	-0.1042475551366806	0.05198189	No	
+row_286	MOGS	null	null	9348	-0.10438556969165802	0.054458126	No	
+row_287	AGPAT6	AGPAT6	1-acylglycerol-3-phosphate O-acyltransferase 6 (lysophosphatidic acid acyltransferase, zeta)	9397	-0.1064523309469223	0.053419556	No	
+row_288	ALG8	ALG8	asparagine-linked glycosylation 8 homolog (S. cerevisiae, alpha-1,3-glucosyltransferase)	9402	-0.10662680864334106	0.055671446	No	
+row_289	EIF2B3	EIF2B3	eukaryotic translation initiation factor 2B, subunit 3 gamma, 58kDa	9416	-0.1074412390589714	0.057250284	No	
+row_290	DPM3	DPM3	dolichyl-phosphate mannosyltransferase polypeptide 3	9417	-0.10752613842487335	0.059801303	No	
+row_291	PTGDS	PTGDS	prostaglandin D2 synthase 21kDa (brain)	9460	-0.11012546718120575	0.059211433	No	
+row_292	POMT1	POMT1	protein-O-mannosyltransferase 1	9517	-0.11220268905162811	0.0575746	No	
+row_293	SARS2	SARS2	seryl-tRNA synthetase 2	9520	-0.11237531155347824	0.059976052	No	
+row_294	RPL37	RPL37	ribosomal protein L37	9536	-0.11298709362745285	0.061405327	No	
+row_295	EIF3D	null	null	9640	-0.11772218346595764	0.056253683	No	
+row_296	CD276	CD276	CD276 molecule	9661	-0.11877728998661041	0.057309043	No	
+row_297	MRPL23	MRPL23	mitochondrial ribosomal protein L23	9698	-0.1205211877822876	0.05716787	No	
+row_298	PI4KA	null	null	9711	-0.12121818959712982	0.058821492	No	
+row_299	AK5	AK5	adenylate kinase 5	9757	-0.12316401302814484	0.05800727	No	
+row_300	RPL26	RPL26	ribosomal protein L26	9780	-0.12450592964887619	0.058913063	No	
+row_301	DHPS	DHPS	deoxyhypusine synthase	9844	-0.12789414823055267	0.056752745	No	
+row_302	HS6ST1	HS6ST1	heparan sulfate 6-O-sulfotransferase 1	9850	-0.12832766771316528	0.05892985	No	
+row_303	RPL27A	RPL27A	ribosomal protein L27a	9923	-0.13214334845542908	0.056096487	No	
+row_304	RPS27	RPS27	ribosomal protein S27 (metallopanstimulin 1)	9936	-0.13252060115337372	0.05775011	No	
+row_305	CYP11A1	CYP11A1	cytochrome P450, family 11, subfamily A, polypeptide 1	10046	-0.13739632070064545	0.05214977	No	
+row_306	CMPK1	null	null	10107	-0.14069721102714539	0.050213803	No	
+row_307	APBB1	APBB1	amyloid beta (A4) precursor protein-binding, family B, member 1 (Fe65)	10123	-0.14143702387809753	0.051643074	No	
+row_308	EIF4H	null	null	10175	-0.1441226601600647	0.050380155	No	
+row_309	PIGZ	PIGZ	phosphatidylinositol glycan anchor biosynthesis, class Z	10218	-0.1467113047838211	0.049790286	No	
+row_310	POMGNT1	POMGNT1	protein O-linked mannose beta1,2-N-acetylglucosaminyltransferase	10260	-0.14867271482944489	0.049275197	No	
+row_311	PIGU	null	null	10278	-0.1494479775428772	0.050554905	No	
+row_312	GCLM	GCLM	glutamate-cysteine ligase, modifier subunit	10336	-0.15360744297504425	0.048843287	No	
+row_313	RPL18	RPL18	ribosomal protein L18	10361	-0.155532568693161	0.04959951	No	
+row_314	EXT1	EXT1	exostoses (multiple) 1	10376	-0.1564117670059204	0.051103566	No	
+row_315	PIGA	PIGA	phosphatidylinositol glycan anchor biosynthesis, class A (paroxysmal nocturnal hemoglobinuria)	10382	-0.15675897896289825	0.05328067	No	
+row_316	SGMS2	null	null	10414	-0.15889093279838562	0.053513415	No	
+row_317	UAP1	UAP1	UDP-N-acteylglucosamine pyrophosphorylase 1	10420	-0.15911327302455902	0.05569052	No	
+row_318	CHST11	CHST11	carbohydrate (chondroitin 4) sulfotransferase 11	10478	-0.16349036991596222	0.0539789	No	
+row_319	GMDS	GMDS	GDP-mannose 4,6-dehydratase	10530	-0.1666056215763092	0.052715983	No	
+row_320	MIF	MIF	macrophage migration inhibitory factor (glycosylation-inhibiting factor)	10565	-0.1688023805618286	0.052724376	No	
+row_321	EIF2AK1	EIF2AK1	eukaryotic translation initiation factor 2-alpha kinase 1	10663	-0.175638347864151	0.048021432	No	
+row_322	NDUFA13	NDUFA13	NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 13	10700	-0.17846037447452545	0.047880262	No	
+row_323	TSPAN7	TSPAN7	tetraspanin 7	10702	-0.17873574793338776	0.0503565	No	
+row_324	GBGT1	GBGT1	globoside alpha-1,3-N-acetylgalactosaminyltransferase 1	10708	-0.17903278768062592	0.052533604	No	
+row_325	PIGT	PIGT	phosphatidylinositol glycan anchor biosynthesis, class T	10830	-0.18699127435684204	0.046035863	No	
+row_326	GCNT4	GCNT4	glucosaminyl (N-acetyl) transferase 4, core 2 (beta-1,6-N-acetylglucosaminyltransferase)	10857	-0.18915711343288422	0.046642523	No	
+row_327	MGAT4A	MGAT4A	mannosyl (alpha-1,3-)-glycoprotein beta-1,4-N-acetylglucosaminyltransferase, isozyme A	10875	-0.19040469825267792	0.04792223	No	
+row_328	PI4K2A	null	null	10904	-0.1924912929534912	0.048379324	No	
+row_329	MTRF1	MTRF1	mitochondrial translational release factor 1	10913	-0.1929624080657959	0.05033208	No	
+row_330	DYRK2	DYRK2	dual-specificity tyrosine-(Y)-phosphorylation regulated kinase 2	10943	-0.19598685204982758	0.05071439	No	
+row_331	ALAS1	ALAS1	aminolevulinate, delta-, synthase 1	11018	-0.20126692950725555	0.04773146	No	
+row_332	MGAT4B	MGAT4B	mannosyl (alpha-1,3-)-glycoprotein beta-1,4-N-acetylglucosaminyltransferase, isozyme B	11024	-0.20168933272361755	0.049908563	No	
+row_333	ATF4	ATF4	activating transcription factor 4 (tax-responsive enhancer element B67)	11060	-0.2043112963438034	0.04984217	No	
+row_334	CHST3	CHST3	carbohydrate (chondroitin 6) sulfotransferase 3	11075	-0.20576536655426025	0.05134623	No	
+row_335	SPN	SPN	sialophorin (leukosialin, CD43)	11212	-0.2177116870880127	0.043726746	No	
+row_336	UGDH	UGDH	UDP-glucose dehydrogenase	11231	-0.21955633163452148	0.04493167	No	
+row_337	PIGF	PIGF	phosphatidylinositol glycan anchor biosynthesis, class F	11241	-0.22008894383907318	0.04680964	No	
+row_338	EEF2K	EEF2K	eukaryotic elongation factor-2 kinase	11274	-0.22282180190086365	0.0469676	No	
+row_339	SIGIRR	SIGIRR	single immunoglobulin and toll-interleukin 1 receptor (TIR) domain	11289	-0.22401268780231476	0.048471656	No	
+row_340	LIPA	LIPA	lipase A, lysosomal acid, cholesterol esterase (Wolman disease)	11298	-0.22501593828201294	0.050424412	No	
+row_341	LPCAT1	null	null	11323	-0.2271251529455185	0.05118064	No	
+row_342	HSPB1	HSPB1	heat shock 27kDa protein 1	11374	-0.23255817592144012	0.0499925	No	
+row_343	PIGC	PIGC	phosphatidylinositol glycan anchor biosynthesis, class C	11411	-0.23625479638576508	0.049851328	No	
+row_344	TLR8	TLR8	toll-like receptor 8	11689	-0.26297032833099365	0.031687424	No	
+row_345	BMP6	BMP6	bone morphogenetic protein 6	11763	-0.26911234855651855	0.028779276	No	
+row_346	IL18	IL18	interleukin 18 (interferon-gamma-inducing factor)	11783	-0.2719995081424713	0.029909415	No	
+row_347	HPRT1	HPRT1	hypoxanthine phosphoribosyltransferase 1 (Lesch-Nyhan syndrome)	11867	-0.284090518951416	0.026253436	No	
+row_348	PMM2	PMM2	phosphomannomutase 2	11940	-0.29239991307258606	0.023420071	No	
+row_349	FUT4	FUT4	fucosyltransferase 4 (alpha (1,3) fucosyltransferase, myeloid-specific)	12064	-0.3083856999874115	0.016772768	No	
+row_350	MRPL52	MRPL52	mitochondrial ribosomal protein L52	12092	-0.3128528296947479	0.017304644	No	
+row_351	CD37	CD37	CD37 molecule	12146	-0.3199954926967621	0.015892157	No	
+row_352	PPARGC1A	PPARGC1A	peroxisome proliferative activated receptor, gamma, coactivator 1, alpha	12218	-0.33191660046577454	0.013133576	No	
+row_353	NFE2L1	NFE2L1	nuclear factor (erythroid-derived 2)-like 1	12245	-0.33742886781692505	0.013740235	No	
+row_354	BCAT1	BCAT1	branched chain aminotransferase 1, cytosolic	12269	-0.3424650728702545	0.014571243	No	
+row_355	TLR6	TLR6	toll-like receptor 6	12307	-0.3486592769622803	0.014355288	No	
+row_356	IL10	IL10	interleukin 10	12312	-0.3492559790611267	0.016607177	No	
+row_357	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	12366	-0.35693734884262085	0.01519469	No	
+row_358	TLR1	TLR1	toll-like receptor 1	12408	-0.3646804988384247	0.014679602	No	
+row_359	ADCY7	ADCY7	adenylate cyclase 7	12467	-0.3767051100730896	0.012893201	No	
+row_360	BACE2	BACE2	beta-site APP-cleaving enzyme 2	12484	-0.378410279750824	0.014247691	No	
+row_361	GCH1	GCH1	GTP cyclohydrolase 1 (dopa-responsive dystonia)	12514	-0.38614726066589355	0.014630001	No	
+row_362	HSD3B7	HSD3B7	hydroxy-delta-5-steroid dehydrogenase, 3 beta- and steroid delta-isomerase 7	12528	-0.38913941383361816	0.01620884	No	
+row_363	MARS2	MARS2	methionine-tRNA synthetase 2 (mitochondrial)	12554	-0.3949495851993561	0.016890284	No	
+row_364	BCL3	BCL3	B-cell CLL/lymphoma 3	12577	-0.4004722237586975	0.017796075	No	
+row_365	GYS2	GYS2	glycogen synthase 2 (liver)	12706	-0.4288921356201172	0.010774855	No	
+row_366	INHBB	INHBB	inhibin, beta B (activin AB beta polypeptide)	12735	-0.436172753572464	0.011231947	No	
+row_367	PTPRC	PTPRC	protein tyrosine phosphatase, receptor type, C	12738	-0.4367331862449646	0.013633401	No	
+row_368	GCNT1	GCNT1	glucosaminyl (N-acetyl) transferase 1, core 2 (beta-1,6-N-acetylglucosaminyltransferase)	12798	-0.45104798674583435	0.011772216	No	
+row_369	XYLT1	XYLT1	xylosyltransferase I	12860	-0.46857061982154846	0.009761466	No	
+row_370	CHST15	null	null	12862	-0.468689888715744	0.012237703	No	
+row_371	ABCF1	ABCF1	ATP-binding cassette, sub-family F (GCN20), member 1	12881	-0.4720820188522339	0.013442627	No	
+row_372	GCNT2	GCNT2	glucosaminyl (N-acetyl) transferase 2, I-branching enzyme (I blood group)	12884	-0.4730652868747711	0.01584408	No	
+row_373	PEMT	PEMT	phosphatidylethanolamine N-methyltransferase	13066	-0.5300890803337097	0.0048593557	No	
+row_374	CD74	CD74	CD74 molecule, major histocompatibility complex, class II invariant chain	13129	-0.5512270331382751	0.0027738218	No	
+row_375	CSGALNACT1	null	null	13220	-0.5930734276771545	-0.0014056393	No	
+row_376	IRF4	IRF4	interferon regulatory factor 4	13294	-0.6322653889656067	-0.0043137874	No	
+row_377	GALNT6	GALNT6	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 6 (GalNAc-T6)	13310	-0.6386058926582336	-0.002884514	No	
+row_378	PTGS1	PTGS1	prostaglandin-endoperoxide synthase 1 (prostaglandin G/H synthase and cyclooxygenase)	13376	-0.6731236577033997	-0.005194397	No	
+row_379	TLR7	TLR7	toll-like receptor 7	13383	-0.6793856024742126	-0.0030920755	No	
+row_380	SAMD4A	SAMD4A	sterile alpha motif domain containing 4A	13384	-0.6804729104042053	-5.410551E-4	No	
+row_381	NQO1	NQO1	NAD(P)H dehydrogenase, quinone 1	13436	-0.7153393030166626	-0.0018039744	No	
+row_382	CD28	CD28	CD28 molecule	13460	-0.7392098307609558	-9.7296597E-4	No	
+row_383	ADM	ADM	adrenomedullin	13496	-0.7757499814033508	-0.0010393552	No	
+row_384	DHRS9	DHRS9	dehydrogenase/reductase (SDR family) member 9	13500	-0.7771219611167908	0.0012873159	No	
+row_385	CYP19A1	CYP19A1	cytochrome P450, family 19, subfamily A, polypeptide 1	13520	-0.793352484703064	0.0024174568	No	
+row_386	RPS9	RPS9	ribosomal protein S9	13533	-0.8096078634262085	0.0040710797	No	
+row_387	B3GNT8	B3GNT8	UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 8	13534	-0.8109461069107056	0.0066221	No	
+row_388	EBI3	EBI3	Epstein-Barr virus induced gene 3	13576	-0.8852820992469788	0.006107012	No	
+row_389	KRT7	KRT7	keratin 7	13604	-0.9329259395599365	0.006638888	No	
+row_390	IL6	IL6	interleukin 6 (interferon, beta 2)	13649	-1.024032473564148	0.0058994503	No	
+row_391	BBOX1	BBOX1	butyrobetaine (gamma), 2-oxoglutarate dioxygenase (gamma-butyrobetaine hydroxylase) 1	13757	-2.259600877761841	4.4867606E-4	No	

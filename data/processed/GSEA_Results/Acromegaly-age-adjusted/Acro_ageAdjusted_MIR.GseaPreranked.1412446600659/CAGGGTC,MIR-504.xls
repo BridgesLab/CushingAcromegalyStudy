@@ -1,0 +1,73 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	ELOVL6	ELOVL6	ELOVL family member 6, elongation of long chain fatty acids (FEN1/Elo2, SUR4/Elo3-like, yeast)	183	0.9085769653320312	5.2342005E-4	No	
+row_1	MMD	MMD	monocyte to macrophage differentiation-associated	194	0.8705335855484009	0.013681956	No	
+row_2	CNTFR	CNTFR	ciliary neurotrophic factor receptor	767	0.42063581943511963	-0.014205376	No	
+row_3	GPC4	GPC4	glypican 4	832	0.40196478366851807	-0.0049907486	No	
+row_4	PCDH17	PCDH17	protocadherin 17	833	0.4015502631664276	0.00889814	No	
+row_5	GATA3	GATA3	GATA binding protein 3	1149	0.32077455520629883	-2.1910586E-4	No	
+row_6	RRAGC	RRAGC	Ras-related GTP binding C	1232	0.30645179748535156	0.0076808846	No	
+row_7	STC1	STC1	stanniocalcin 1	1528	0.26578086614608765	2.4345369E-5	No	
+row_8	TP53INP1	TP53INP1	tumor protein p53 inducible nuclear protein 1	1588	0.25795015692710876	0.009604149	No	
+row_9	IKZF4	IKZF4	IKAROS family zinc finger 4 (Eos)	1628	0.2531963586807251	0.02064466	No	
+row_10	ARNT	ARNT	aryl hydrocarbon receptor nuclear translocator	1666	0.24895808100700378	0.03183124	No	
+row_11	SGCD	SGCD	sarcoglycan, delta (35kDa dystrophin-associated glycoprotein)	1841	0.23207342624664307	0.033011977	No	
+row_12	USP9X	USP9X	ubiquitin specific peptidase 9, X-linked	1966	0.22079481184482574	0.037844483	No	
+row_13	SLC25A22	SLC25A22	solute carrier family 25 (mitochondrial carrier: glutamate), member 22	2283	0.19474048912525177	0.028654203	No	
+row_14	PALM2-AKAP2	PALM2-AKAP2	-	2488	0.17946651577949524	0.02764388	No	
+row_15	ZNF608	ZNF608	zinc finger protein 608	2576	0.17382089793682098	0.035178695	No	
+row_16	CEP170	CEP170	centrosomal protein 170kDa	2779	0.16176697611808777	0.034314442	No	
+row_17	YES1	YES1	v-yes-1 Yamaguchi sarcoma viral oncogene homolog 1	2857	0.15681757032871246	0.04257961	No	
+row_18	SORT1	SORT1	sortilin 1	2862	0.15652208030223846	0.056176357	No	
+row_19	PRKAR2A	PRKAR2A	protein kinase, cAMP-dependent, regulatory, type II, alpha	3157	0.13882386684417725	0.048592854	No	
+row_20	CHD6	CHD6	chromodomain helicase DNA binding protein 6	3697	0.11240410804748535	0.023115689	No	
+row_21	IL16	IL16	interleukin 16 (lymphocyte chemoattractant factor)	4405	0.08320588618516922	-0.014631415	No	
+row_22	CDK16	null	null	4758	0.06963593512773514	-0.02645097	No	
+row_23	CECR6	CECR6	cat eye syndrome chromosome region, candidate 6	5651	0.03671829029917717	-0.07770961	No	
+row_24	NFIX	NFIX	nuclear factor I/X (CCAAT-binding transcription factor)	6268	0.016154371201992035	-0.1088105	Yes	
+row_25	CHD3	CHD3	chromodomain helicase DNA binding protein 3	6289	0.015024716034531593	-0.09638231	Yes	
+row_26	HMGN2	HMGN2	high-mobility group nucleosomal binding domain 2	6340	0.013210435397922993	-0.08614519	Yes	
+row_27	OGT	OGT	O-linked N-acetylglucosamine (GlcNAc) transferase (UDP-N-acetylglucosamine:polypeptide-N-acetylglucosaminyl transferase)	6381	0.011910663917660713	-0.07517772	Yes	
+row_28	CSNK1G1	CSNK1G1	casein kinase 1, gamma 1	6517	0.006953557953238487	-0.071148604	Yes	
+row_29	SDC4	SDC4	syndecan 4 (amphiglycan, ryudocan)	6653	0.0020322834607213736	-0.06711949	Yes	
+row_30	POLR3E	POLR3E	polymerase (RNA) III (DNA directed) polypeptide E (80kD)	6701	-9.300171223003417E-5	-0.056663256	Yes	
+row_31	MCMBP	null	null	6762	-0.0019295200472697616	-0.04715649	Yes	
+row_32	BACH2	BACH2	BTB and CNC homology 1, basic leucine zipper transcription factor 2	6895	-0.006443592254072428	-0.042908266	Yes	
+row_33	EPB41	EPB41	erythrocyte membrane protein band 4.1 (elliptocytosis 1, RH-linked)	6978	-0.00909003522247076	-0.035008278	Yes	
+row_34	FZD7	FZD7	frizzled homolog 7 (Drosophila)	7006	-0.010125766508281231	-0.023091342	Yes	
+row_35	PURB	PURB	purine-rich element binding protein B	7384	-0.024348042905330658	-0.03673678	Yes	
+row_36	ZMYND11	ZMYND11	zinc finger, MYND domain containing 11	7484	-0.02800724096596241	-0.03007839	Yes	
+row_37	FXR2	FXR2	fragile X mental retardation, autosomal homolog 2	7547	-0.03024776466190815	-0.020717693	Yes	
+row_38	AKAP2	AKAP2	A kinase (PRKA) anchor protein 2	7980	-0.04688478261232376	-0.038380075	Yes	
+row_39	ZDHHC9	ZDHHC9	zinc finger, DHHC-type containing 9	8036	-0.04865708202123642	-0.02850813	Yes	
+row_40	COPS7B	COPS7B	COP9 constitutive photomorphogenic homolog subunit 7B (Arabidopsis)	8042	-0.04902958124876022	-0.014984418	Yes	
+row_41	SMPD3	SMPD3	sphingomyelin phosphodiesterase 3, neutral membrane (neutral sphingomyelinase II)	8163	-0.052975721657276154	-0.009859771	Yes	
+row_42	PAN2	null	null	8658	-0.07243749499320984	-0.032050345	Yes	
+row_43	CNOT6	CNOT6	CCR4-NOT transcription complex, subunit 6	8698	-0.07365822792053223	-0.021009834	Yes	
+row_44	CTDSPL	CTDSPL	CTD (carboxy-terminal domain, RNA polymerase II, polypeptide A) small phosphatase-like	8717	-0.07429857552051544	-0.008435582	Yes	
+row_45	KLHL18	KLHL18	kelch-like 18 (Drosophila)	8931	-0.0845324769616127	-0.010103222	Yes	
+row_46	LAMTOR1	null	null	9259	-0.09995932132005692	-0.020096892	Yes	
+row_47	C6orf106	C6ORF106	chromosome 6 open reading frame 106	9272	-0.10035558044910431	-0.0070844274	Yes	
+row_48	SUGP2	null	null	9587	-0.11571157723665237	-0.016128639	Yes	
+row_49	AMMECR1L	null	null	9795	-0.1253649890422821	-0.017358067	Yes	
+row_50	VANGL2	VANGL2	vang-like 2 (van gogh, Drosophila)	9811	-0.12601971626281738	-0.0045647076	Yes	
+row_51	PCDH1	PCDH1	protocadherin 1 (cadherin-like 1)	9916	-0.1318356841802597	0.0017285049	Yes	
+row_52	USP2	USP2	ubiquitin specific peptidase 2	10082	-0.13924634456634521	0.0035665613	Yes	
+row_53	CAMK2G	CAMK2G	calcium/calmodulin-dependent protein kinase (CaM kinase) II gamma	10099	-0.13999436795711517	0.016286885	Yes	
+row_54	HAS3	HAS3	hyaluronan synthase 3	10137	-0.14208385348320007	0.027473466	Yes	
+row_55	POMT2	POMT2	protein-O-mannosyltransferase 2	10138	-0.14209291338920593	0.041362356	Yes	
+row_56	NRF1	NRF1	nuclear respiratory factor 1	10620	-0.17292454838752747	0.020121241	Yes	
+row_57	SH2D3C	SH2D3C	SH2 domain containing 3C	10851	-0.18879444897174835	0.017212	Yes	
+row_58	H3F3B	H3F3B	H3 histone, family 3B (H3.3B)	11029	-0.20209069550037384	0.018173631	Yes	
+row_59	CHRD	CHRD	chordin	11059	-0.20425572991371155	0.029944494	Yes	
+row_60	PPIP5K1	null	null	11236	-0.21987175941467285	0.030979162	Yes	
+row_61	SAMD11	SAMD11	sterile alpha motif domain containing 11	11253	-0.22089500725269318	0.043699484	Yes	
+row_62	KDM1B	null	null	11305	-0.2257390171289444	0.053863574	Yes	
+row_63	RNF44	RNF44	ring finger protein 44	11546	-0.24746330082416534	0.050223976	Yes	
+row_64	MNT	MNT	MAX binding protein	11660	-0.2599343955516815	0.05585987	Yes	
+row_65	DBNDD1	DBNDD1	dysbindin (dystrobrevin binding protein 1) domain containing 1	11750	-0.2680343985557556	0.06324861	Yes	
+row_66	KLF13	KLF13	Kruppel-like factor 13	11834	-0.27952274680137634	0.071075566	Yes	
+row_67	BAIAP2	BAIAP2	BAI1-associated protein 2	12385	-0.3596699833869934	0.044795018	Yes	
+row_68	LIF	LIF	leukemia inhibitory factor (cholinergic differentiation factor)	12394	-0.361307293176651	0.058099624	Yes	
+row_69	DND1	DND1	dead end homolog 1 (zebrafish)	12519	-0.3868159055709839	0.062932126	Yes	
+row_70	NTM	null	null	12531	-0.38977715373039246	0.076017626	Yes	
+row_71	IER2	IER2	immediate early response 2	13391	-0.6850981116294861	0.027169153	Yes	

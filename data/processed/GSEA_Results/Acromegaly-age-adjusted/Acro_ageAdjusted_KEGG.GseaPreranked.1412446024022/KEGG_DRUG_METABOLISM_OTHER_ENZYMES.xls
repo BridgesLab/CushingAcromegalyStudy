@@ -1,0 +1,24 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CYP3A5	CYP3A5	cytochrome P450, family 3, subfamily A, polypeptide 5	299	0.6979358792304993	0.021718565	No	
+row_1	CYP3A4	CYP3A4	cytochrome P450, family 3, subfamily A, polypeptide 4	680	0.45263445377349854	0.03754236	No	
+row_2	TK1	TK1	thymidine kinase 1, soluble	859	0.3940664231777191	0.06806669	No	
+row_3	UPB1	UPB1	ureidopropionase, beta	2157	0.20457638800144196	0.017155899	No	
+row_4	TK2	TK2	thymidine kinase 2, mitochondrial	4317	0.08692958205938339	-0.09648687	No	
+row_5	UMPS	UMPS	uridine monophosphate synthetase (orotate phosphoribosyl transferase and orotidine-5'-decarboxylase)	4622	0.0747682973742485	-0.07513218	No	
+row_6	CES2	CES2	carboxylesterase 2 (intestine, liver)	4885	0.06504042446613312	-0.050720938	No	
+row_7	UCK1	UCK1	uridine-cytidine kinase 1	5316	0.048358622938394547	-0.038535886	No	
+row_8	IMPDH2	IMPDH2	IMP (inosine monophosphate) dehydrogenase 2	5806	0.03152645006775856	-0.030644553	No	
+row_9	GMPS	GMPS	guanine monphosphate synthetase	6117	0.021725084632635117	-0.009726512	No	
+row_10	DPYD	DPYD	dihydropyrimidine dehydrogenase	6641	0.0022548094857484102	-0.004309527	No	
+row_11	UCKL1	UCKL1	uridine-cytidine kinase 1-like 1	10134	-0.1419798880815506	-0.21496125	Yes	
+row_12	ITPA	ITPA	inosine triphosphatase (nucleoside triphosphate pyrophosphatase)	10472	-0.16323785483837128	-0.19600812	Yes	
+row_13	TPMT	TPMT	thiopurine S-methyltransferase	10685	-0.17715942859649658	-0.16795814	Yes	
+row_14	IMPDH1	IMPDH1	IMP (inosine monophosphate) dehydrogenase 1	11129	-0.21052418649196625	-0.15671916	Yes	
+row_15	NAT1	NAT1	N-acetyltransferase 1 (arylamine N-acetyltransferase)	11426	-0.23782174289226532	-0.13478227	Yes	
+row_16	UPP1	UPP1	uridine phosphorylase 1	11773	-0.27094322443008423	-0.11648413	Yes	
+row_17	HPRT1	HPRT1	hypoxanthine phosphoribosyltransferase 1 (Lesch-Nyhan syndrome)	11867	-0.284090518951416	-0.07977393	Yes	
+row_18	UCK2	UCK2	uridine-cytidine kinase 2	11869	-0.284338116645813	-0.036368445	Yes	
+row_19	TYMP	null	null	11875	-0.2849295139312744	0.006745941	Yes	
+row_20	CDA	CDA	cytidine deaminase	12232	-0.3349158763885498	0.024316337	Yes	
+row_21	CYP2A6	CYP2A6	cytochrome P450, family 2, subfamily A, polypeptide 6	12420	-0.36591243743896484	0.05418569	Yes	
+row_22	CES1	CES1	carboxylesterase 1 (monocyte/macrophage serine esterase 1)	12624	-0.4120968282222748	0.082890645	Yes	

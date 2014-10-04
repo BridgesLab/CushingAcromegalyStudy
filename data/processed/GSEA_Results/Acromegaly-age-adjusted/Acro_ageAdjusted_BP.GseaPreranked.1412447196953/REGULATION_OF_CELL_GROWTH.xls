@@ -1,0 +1,42 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	CDKN2C	CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)	42	1.7116912603378296	0.021329688	No	
+row_1	PLCE1	PLCE1	phospholipase C, epsilon 1	298	0.6984060406684875	0.027137987	No	
+row_2	DCBLD2	DCBLD2	discoidin, CUB and LCCL domain containing 2	1403	0.27909713983535767	-0.028920656	No	
+row_3	BCL6	BCL6	B-cell CLL/lymphoma 6 (zinc finger protein 51)	1639	0.25189098715782166	-0.021654949	No	
+row_4	APBB2	APBB2	amyloid beta (A4) precursor protein-binding, family B, member 2 (Fe65-like)	2703	0.16614657640457153	-0.0747259	No	
+row_5	SMAD4	SMAD4	SMAD, mothers against DPP homolog 4 (Drosophila)	3920	0.10264402627944946	-0.13894603	No	
+row_6	PML	PML	promyelocytic leukemia	4142	0.09369278699159622	-0.13066013	No	
+row_7	CDKN1B	CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	4261	0.08897101134061813	-0.114868596	No	
+row_8	NDUFS3	NDUFS3	NADH dehydrogenase (ubiquinone) Fe-S protein 3, 30kDa (NADH-coenzyme Q reductase)	4544	0.07771938294172287	-0.1110278	No	
+row_9	TGFB2	TGFB2	transforming growth factor, beta 2	4602	0.0756683424115181	-0.090791166	No	
+row_10	IP6K2	null	null	4684	0.072530098259449	-0.07230342	No	
+row_11	RB1	RB1	retinoblastoma 1 (including osteosarcoma)	4715	0.07143896818161011	-0.05009929	No	
+row_12	NOL8	NOL8	nucleolar protein 8	5071	0.057380251586437225	-0.05157803	No	
+row_13	DLC1	DLC1	deleted in liver cancer 1	5232	0.051642317324876785	-0.038847044	No	
+row_14	DERL2	DERL2	Der1-like domain family, member 2	6766	-0.0020143871661275625	-0.12616707	No	
+row_15	CDK11B	null	null	7750	-0.0385722853243351	-0.1734084	No	
+row_16	CDKN2AIP	null	null	8010	-0.047716692090034485	-0.16789158	No	
+row_17	ALOX12	ALOX12	arachidonate 12-lipoxygenase	8529	-0.0667325034737587	-0.18124819	No	
+row_18	CAPRIN2	null	null	9179	-0.0957951694726944	-0.20415081	No	
+row_19	ACVR1B	ACVR1B	activin A receptor, type IB	9563	-0.11410713195800781	-0.20766993	Yes	
+row_20	BCAR1	BCAR1	breast cancer anti-estrogen resistance 1	9866	-0.1288716346025467	-0.20528653	Yes	
+row_21	APBB1	APBB1	amyloid beta (A4) precursor protein-binding, family B, member 1 (Fe65)	10123	-0.14143702387809753	-0.1995511	Yes	
+row_22	CDK11A	null	null	10141	-0.14235907793045044	-0.17639966	Yes	
+row_23	TP53	TP53	tumor protein p53 (Li-Fraumeni syndrome)	10322	-0.1526256501674652	-0.16512609	Yes	
+row_24	ENO1	ENO1	enolase 1, (alpha)	10395	-0.15784098207950592	-0.1459825	Yes	
+row_25	NDUFA13	NDUFA13	NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 13	10700	-0.17846037447452545	-0.14374486	Yes	
+row_26	SERTAD2	SERTAD2	SERTA domain containing 2	10831	-0.18705615401268005	-0.12882775	Yes	
+row_27	CDKN2D	CDKN2D	cyclin-dependent kinase inhibitor 2D (p19, inhibits CDK4)	10856	-0.18911610543727875	-0.106186405	Yes	
+row_28	PPP1R9B	PPP1R9B	protein phosphatase 1, regulatory subunit 9B, spinophilin	10992	-0.19898371398448944	-0.091633655	Yes	
+row_29	SERTAD3	SERTAD3	SERTA domain containing 3	11077	-0.20585675537586212	-0.073364526	Yes	
+row_30	PPT1	PPT1	palmitoyl-protein thioesterase 1 (ceroid-lipofuscinosis, neuronal 1, infantile)	11276	-0.22306977212429047	-0.063402615	Yes	
+row_31	TGFB1	TGFB1	transforming growth factor, beta 1 (Camurati-Engelmann disease)	11430	-0.23826631903648376	-0.05016154	Yes	
+row_32	CDKN1A	CDKN1A	cyclin-dependent kinase inhibitor 1A (p21, Cip1)	11820	-0.27735909819602966	-0.05411787	Yes	
+row_33	CDA	CDA	cytidine deaminase	12232	-0.3349158763885498	-0.059677348	Yes	
+row_34	INHBA	INHBA	inhibin, beta A (activin A, activin AB alpha polypeptide)	12366	-0.35693734884262085	-0.044978864	Yes	
+row_35	SMAD3	SMAD3	SMAD, mothers against DPP homolog 3 (Drosophila)	12592	-0.40353628993034363	-0.03698445	Yes	
+row_36	RERG	RERG	RAS-like, estrogen-regulated, growth inhibitor	12964	-0.4981432557106018	-0.039629117	Yes	
+row_37	OSGIN1	OSGIN1	oxidative stress induced growth inhibitor 1	13202	-0.5825133323669434	-0.032509148	Yes	
+row_38	SPHK1	SPHK1	sphingosine kinase 1	13465	-0.7439121603965759	-0.027210943	Yes	
+row_39	FAM107A	FAM107A	family with sequence similarity 107, member A	13547	-0.8358158469200134	-0.008723199	Yes	
+row_40	CDKN2A	CDKN2A	cyclin-dependent kinase inhibitor 2A (melanoma, p16, inhibits CDK4)	13704	-1.2060019969940186	0.0042992663	Yes	

@@ -1,0 +1,70 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	PRLR	PRLR	prolactin receptor	36	1.8012731075286865	0.011864058	No	
+row_1	NTRK3	NTRK3	neurotrophic tyrosine kinase, receptor, type 3	154	1.016645908355713	0.017813547	No	
+row_2	GAB1	GAB1	GRB2-associated binding protein 1	535	0.5131394863128662	0.0045589483	No	
+row_3	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	769	0.4186110496520996	0.0020381936	No	
+row_4	SIK2	null	null	811	0.4076811671257019	0.0135371545	No	
+row_5	KDR	KDR	kinase insert domain receptor (a type III receptor tyrosine kinase)	842	0.39935407042503357	0.025839327	No	
+row_6	MAPK8IP2	MAPK8IP2	mitogen-activated protein kinase 8 interacting protein 2	872	0.38963934779167175	0.03821452	No	
+row_7	IRS1	IRS1	insulin receptor substrate 1	882	0.38643157482147217	0.0520501	No	
+row_8	CDH13	CDH13	cadherin 13, H-cadherin (heart)	910	0.37635543942451477	0.06457133	No	
+row_9	PTPRG	PTPRG	protein tyrosine phosphatase, receptor type, G	1125	0.3256465494632721	0.063437946	No	
+row_10	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	1139	0.3232280910015106	0.07698145	No	
+row_11	FRS2	FRS2	fibroblast growth factor receptor substrate 2	1276	0.29892149567604065	0.08154357	No	
+row_12	FGFR3	FGFR3	fibroblast growth factor receptor 3 (achondroplasia, thanatophoric dwarfism)	2676	0.1677800863981247	-0.0061177467	No	
+row_13	MPZL1	MPZL1	myelin protein zero-like 1	2996	0.14800292253494263	-0.014918165	No	
+row_14	CEP57	CEP57	centrosomal protein 57kDa	3218	0.1355697214603424	-0.016562687	No	
+row_15	PICK1	PICK1	protein interacting with PRKCA 1	3510	0.12170910090208054	-0.023318565	No	
+row_16	DOK1	DOK1	docking protein 1, 62kDa (downstream of tyrosine kinase 1)	3522	0.12111461162567139	-0.009629023	No	
+row_17	INSR	INSR	insulin receptor	3531	0.12076906114816666	0.0042795753	No	
+row_18	EPS15	EPS15	epidermal growth factor receptor pathway substrate 15	4623	0.0747494325041771	-0.06089178	No	
+row_19	SORBS1	SORBS1	sorbin and SH3 domain containing 1	4685	0.07250531017780304	-0.050853208	No	
+row_20	REPS2	REPS2	RALBP1 associated Eps domain containing 2	4946	0.06217233091592789	-0.055345483	No	
+row_21	UTP11L	UTP11L	UTP11-like, U3 small nucleolar ribonucleoprotein, (yeast)	5085	0.057091426104307175	-0.0509294	No	
+row_22	ROR1	ROR1	receptor tyrosine kinase-like orphan receptor 1	5149	0.05502180755138397	-0.041036867	No	
+row_23	ERBB3	ERBB3	v-erb-b2 erythroblastic leukemia viral oncogene homolog 3 (avian)	5463	0.042916931211948395	-0.049399167	No	
+row_24	ADRB2	ADRB2	adrenergic, beta-2-, receptor, surface	6094	0.022312376648187637	-0.080908604	No	
+row_25	SRC	SRC	v-src sarcoma (Schmidt-Ruppin A-2) viral oncogene homolog (avian)	6392	0.01149530615657568	-0.0881026	No	
+row_26	ERBB2IP	ERBB2IP	erbb2 interacting protein	6430	0.010197090916335583	-0.07631156	No	
+row_27	EGFR	EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	6598	0.003778409445658326	-0.07401304	No	
+row_28	FIBP	FIBP	fibroblast growth factor (acidic) intracellular binding protein	6965	-0.008424225263297558	-0.086245365	No	
+row_29	CBL	CBL	Cas-Br-M (murine) ecotropic retroviral transforming sequence	7221	-0.018107572570443153	-0.09037255	No	
+row_30	TEK	TEK	TEK tyrosine kinase, endothelial (venous malformations, multiple cutaneous and mucosal)	7837	-0.0410178080201149	-0.12078669	No	
+row_31	ABI1	ABI1	abl-interactor 1	8680	-0.07312680780887604	-0.16777623	Yes	
+row_32	GRB10	GRB10	growth factor receptor-bound protein 10	8867	-0.0817732959985733	-0.16686508	Yes	
+row_33	GRB2	GRB2	growth factor receptor-bound protein 2	9066	-0.0901605486869812	-0.16683015	Yes	
+row_34	RPS6KA5	RPS6KA5	ribosomal protein S6 kinase, 90kDa, polypeptide 5	9083	-0.09147746860980988	-0.15350571	Yes	
+row_35	NCK2	NCK2	NCK adaptor protein 2	9093	-0.09196968376636505	-0.13967013	Yes	
+row_36	PDPK1	PDPK1	3-phosphoinositide dependent protein kinase-1	9162	-0.09506101906299591	-0.13014269	Yes	
+row_37	EPS8	EPS8	epidermal growth factor receptor pathway substrate 8	9224	-0.0980764701962471	-0.12010412	Yes	
+row_38	FLT4	FLT4	fms-related tyrosine kinase 4	9357	-0.1046241968870163	-0.11524992	Yes	
+row_39	FOXO4	null	null	9373	-0.10549543797969818	-0.101852454	Yes	
+row_40	EFNB3	EFNB3	ephrin-B3	9440	-0.10886093974113464	-0.09217898	Yes	
+row_41	AGRN	null	null	9527	-0.11264831572771072	-0.08396589	Yes	
+row_42	BCAR1	BCAR1	breast cancer anti-estrogen resistance 1	9866	-0.1288716346025467	-0.09415367	Yes	
+row_43	ERBB2	ERBB2	v-erb-b2 erythroblastic leukemia viral oncogene homolog 2, neuro/glioblastoma derived oncogene homolog (avian)	10182	-0.14435027539730072	-0.10266201	Yes	
+row_44	FRS3	FRS3	fibroblast growth factor receptor substrate 3	10194	-0.14522144198417664	-0.08897247	Yes	
+row_45	AFAP1L2	null	null	10306	-0.1511039435863495	-0.082584865	Yes	
+row_46	PIK3R3	PIK3R3	phosphoinositide-3-kinase, regulatory subunit 3 (p55, gamma)	10417	-0.15902720391750336	-0.07612424	Yes	
+row_47	SOCS1	SOCS1	suppressor of cytokine signaling 1	10555	-0.16804710030555725	-0.07163514	Yes	
+row_48	IGF2	IGF2	insulin-like growth factor 2 (somatomedin A)	10557	-0.16822992265224457	-0.057215404	Yes	
+row_49	RAPGEF1	RAPGEF1	Rap guanine nucleotide exchange factor (GEF) 1	10617	-0.17261265218257904	-0.04703079	Yes	
+row_50	SHC1	SHC1	SHC (Src homology 2 domain containing) transforming protein 1	10757	-0.18258234858512878	-0.04268773	Yes	
+row_51	PTPRT	PTPRT	protein tyrosine phosphatase, receptor type, T	11137	-0.2111382782459259	-0.055869307	Yes	
+row_52	PXN	PXN	paxillin	11334	-0.22858524322509766	-0.055688348	Yes	
+row_53	IGF1R	IGF1R	insulin-like growth factor 1 receptor	11472	-0.24114258587360382	-0.051199242	Yes	
+row_54	NTRK2	NTRK2	neurotrophic tyrosine kinase, receptor, type 2	11518	-0.24499495327472687	-0.03999236	Yes	
+row_55	AP3S1	AP3S1	adaptor-related protein complex 3, sigma 1 subunit	11698	-0.26378241181373596	-0.03857007	Yes	
+row_56	PTK2B	PTK2B	PTK2B protein tyrosine kinase 2 beta	11732	-0.26708346605300903	-0.026486956	Yes	
+row_57	FGF5	FGF5	fibroblast growth factor 5	12283	-0.3438611924648285	-0.052154843	Yes	
+row_58	BAIAP2	BAIAP2	BAI1-associated protein 2	12385	-0.3596699833869934	-0.045037042	Yes	
+row_59	CD3EAP	CD3EAP	CD3e molecule, epsilon associated protein	12426	-0.3673093318939209	-0.033465065	Yes	
+row_60	PTPRJ	PTPRJ	protein tyrosine phosphatase, receptor type, J	12436	-0.3695794641971588	-0.019629484	Yes	
+row_61	SHC3	SHC3	SHC (Src homology 2 domain containing) transforming protein 3	12456	-0.3741142153739929	-0.0065240976	Yes	
+row_62	GFRA2	GFRA2	GDNF family receptor alpha 2	12557	-0.3959152400493622	6.667213E-4	Yes	
+row_63	CNKSR1	CNKSR1	connector enhancer of kinase suppressor of Ras 1	12560	-0.39654985070228577	0.015013437	Yes	
+row_64	MTSS1	MTSS1	metastasis suppressor 1	12749	-0.43882954120635986	0.015778553	Yes	
+row_65	LCP2	LCP2	lymphocyte cytosolic protein 2 (SH2 domain containing leukocyte protein of 76kDa)	12965	-0.49865594506263733	0.014572146	Yes	
+row_66	BDKRB2	BDKRB2	bradykinin receptor B2	13214	-0.5895102024078369	0.010956101	Yes	
+row_67	CD3E	CD3E	CD3e molecule, epsilon (CD3-TCR complex)	13468	-0.7457391619682312	0.00697496	Yes	
+row_68	FLT3	FLT3	fms-related tyrosine kinase 3	13654	-1.0446569919586182	0.007959134	Yes	

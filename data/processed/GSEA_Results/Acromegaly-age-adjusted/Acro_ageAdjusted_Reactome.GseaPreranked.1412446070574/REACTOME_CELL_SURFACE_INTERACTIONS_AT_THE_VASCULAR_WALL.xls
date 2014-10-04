@@ -1,0 +1,71 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	APOB	APOB	apolipoprotein B (including Ag(x) antigen)	26	1.970473289489746	0.012387073	No	
+row_1	COL1A1	COL1A1	collagen, type I, alpha 1	124	1.1052392721176147	0.019589392	No	
+row_2	COL1A2	COL1A2	collagen, type I, alpha 2	291	0.7051807045936584	0.02175301	No	
+row_3	SLC16A8	SLC16A8	solute carrier family 16, member 8 (monocarboxylic acid transporter 3)	381	0.605832576751709	0.029539527	No	
+row_4	SLC7A11	SLC7A11	solute carrier family 7, (cationic amino acid transporter, y+ system) member 11	422	0.5743363499641418	0.040904254	No	
+row_5	PIK3R1	PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (p85 alpha)	1139	0.3232280910015106	0.0029042957	No	
+row_6	ATP1B2	ATP1B2	ATPase, Na+/K+ transporting, beta 2 polypeptide	1237	0.30589559674263	0.010106616	No	
+row_7	PIK3CA	PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide	1541	0.26410651206970215	0.0022658512	No	
+row_8	SOS1	SOS1	son of sevenless homolog 1 (Drosophila)	2357	0.18962092697620392	-0.04296355	No	
+row_9	SLC7A6	SLC7A6	solute carrier family 7 (cationic amino acid transporter, y+ system), member 6	2591	0.17299219965934753	-0.04569259	No	
+row_10	YES1	YES1	v-yes-1 Yamaguchi sarcoma viral oncogene homolog 1	2857	0.15681757032871246	-0.050758414	No	
+row_11	PIK3CB	PIK3CB	phosphoinositide-3-kinase, catalytic, beta polypeptide	3154	0.13900476694107056	-0.058088005	No	
+row_12	SLC7A10	SLC7A10	solute carrier family 7, (neutral amino acid transporter, y+ system) member 10	3954	0.10135400295257568	-0.10214901	No	
+row_13	ITGAV	ITGAV	integrin, alpha V (vitronectin receptor, alpha polypeptide, antigen CD51)	4043	0.09799817204475403	-0.094289474	No	
+row_14	BSG	BSG	basigin (Ok blood group)	4813	0.06786837428808212	-0.13615973	No	
+row_15	SRC	SRC	v-src sarcoma (Schmidt-Ruppin A-2) viral oncogene homolog (avian)	6392	0.01149530615657568	-0.23710698	No	
+row_16	FN1	FN1	fibronectin 1	6694	2.4378090165555477E-4	-0.24480169	No	
+row_17	F11R	F11R	F11 receptor	7499	-0.02865428850054741	-0.2892278	No	
+row_18	ANGPT1	ANGPT1	angiopoietin 1	7765	-0.0388605035841465	-0.29429364	Yes	
+row_19	TEK	TEK	TEK tyrosine kinase, endothelial (venous malformations, multiple cutaneous and mucosal)	7837	-0.0410178080201149	-0.2851927	Yes	
+row_20	CD58	CD58	CD58 molecule	8058	-0.04945700243115425	-0.2869724	Yes	
+row_21	PLCG1	PLCG1	phospholipase C, gamma 1	8082	-0.050528042018413544	-0.27436626	Yes	
+row_22	ATP1B3	ATP1B3	ATPase, Na+/K+ transporting, beta 3 polypeptide	8102	-0.051305945962667465	-0.261468	Yes	
+row_23	JAM2	JAM2	junctional adhesion molecule 2	8591	-0.06938041746616364	-0.28281835	Yes	
+row_24	NRAS	NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	8929	-0.08443637192249298	-0.29314193	Yes	
+row_25	SIRPA	SIRPA	signal-regulatory protein alpha	8953	-0.08518633246421814	-0.2805358	Yes	
+row_26	JAM3	JAM3	junctional adhesion molecule 3	8988	-0.08690580725669861	-0.26873294	Yes	
+row_27	GRB2	GRB2	growth factor receptor-bound protein 2	9066	-0.0901605486869812	-0.26007012	Yes	
+row_28	SLC16A1	SLC16A1	solute carrier family 16, member 1 (monocarboxylic acid transporter 1)	9340	-0.10395552217960358	-0.26572013	Yes	
+row_29	KRAS	KRAS	v-Ki-ras2 Kirsten rat sarcoma viral oncogene homolog	9347	-0.1042855978012085	-0.25187257	Yes	
+row_30	ESAM	ESAM	endothelial cell adhesion molecule	9485	-0.11092285811901093	-0.24759123	Yes	
+row_31	PPIL2	PPIL2	peptidylprolyl isomerase (cyclophilin)-like 2	9577	-0.11489276587963104	-0.23995076	Yes	
+row_32	PPIA	PPIA	peptidylprolyl isomerase A (cyclophilin A)	9614	-0.11661767214536667	-0.22829394	Yes	
+row_33	CD47	CD47	CD47 molecule	9691	-0.12034384906291962	-0.2195581	Yes	
+row_34	CAV1	CAV1	caveolin 1, caveolae protein, 22kDa	9940	-0.13267521560192108	-0.2233825	Yes	
+row_35	ITGB1	ITGB1	integrin, beta 1 (fibronectin receptor, beta polypeptide, antigen CD29 includes MDF2, MSK12)	10240	-0.14792375266551971	-0.23093118	Yes	
+row_36	ITGB3	ITGB3	integrin, beta 3 (platelet glycoprotein IIIa, antigen CD61)	10405	-0.15850040316581726	-0.22862151	Yes	
+row_37	SELL	SELL	selectin L (lymphocyte adhesion molecule 1)	10701	-0.178695410490036	-0.23587808	Yes	
+row_38	SHC1	SHC1	SHC (Src homology 2 domain containing) transforming protein 1	10757	-0.18258234858512878	-0.22560872	Yes	
+row_39	PECAM1	PECAM1	platelet/endothelial cell adhesion molecule (CD31 antigen)	10769	-0.1832244098186493	-0.21212627	Yes	
+row_40	HRAS	HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	11014	-0.20081917941570282	-0.21565858	Yes	
+row_41	LYN	LYN	v-yes-1 Yamaguchi sarcoma viral related oncogene homolog	11085	-0.2063204050064087	-0.2064846	Yes	
+row_42	SPN	SPN	sialophorin (leukosialin, CD43)	11212	-0.2177116870880127	-0.2014	Yes	
+row_43	PROS1	PROS1	protein S (alpha)	11312	-0.22610244154930115	-0.19434372	Yes	
+row_44	SELP	SELP	selectin P (granule membrane protein 140kDa, antigen CD62)	11587	-0.2513990104198456	-0.20006678	Yes	
+row_45	ATP1B1	ATP1B1	ATPase, Na+/K+ transporting, beta 1 polypeptide	11969	-0.29524415731430054	-0.21360345	Yes	
+row_46	FYN	FYN	FYN oncogene related to SRC, FGR, YES	12295	-0.3456290662288666	-0.22305077	Yes	
+row_47	ITGA5	ITGA5	integrin, alpha 5 (fibronectin receptor, alpha polypeptide)	12477	-0.3777441084384918	-0.22198252	Yes	
+row_48	ITGA3	ITGA3	integrin, alpha 3 (antigen CD49C, alpha 3 subunit of VLA-3 receptor)	12499	-0.3823432922363281	-0.20923032	Yes	
+row_49	SLC3A2	SLC3A2	solute carrier family 3 (activators of dibasic and neutral amino acid transport), member 2	12718	-0.4311451017856598	-0.210864	Yes	
+row_50	SLC16A3	SLC16A3	solute carrier family 16, member 3 (monocarboxylic acid transporter 4)	12873	-0.4707871973514557	-0.20782408	Yes	
+row_51	ANGPT2	ANGPT2	angiopoietin 2	12990	-0.5067194104194641	-0.20200923	Yes	
+row_52	ITGAM	ITGAM	integrin, alpha M (complement component 3 receptor 3 subunit)	12999	-0.5088157057762146	-0.1883077	Yes	
+row_53	ITGAL	ITGAL	integrin, alpha L (antigen CD11A (p180), lymphocyte function-associated antigen 1; alpha polypeptide)	13086	-0.5365710854530334	-0.18030211	Yes	
+row_54	GRB14	GRB14	growth factor receptor-bound protein 14	13130	-0.5515174865722656	-0.16915646	Yes	
+row_55	ITGAX	ITGAX	integrin, alpha X (complement component 3 receptor 4 subunit)	13142	-0.5562237501144409	-0.15567403	Yes	
+row_56	TREM1	TREM1	triggering receptor expressed on myeloid cells 1	13150	-0.5596762299537659	-0.14189948	Yes	
+row_57	THBD	THBD	thrombomodulin	13151	-0.5596977472305298	-0.12761377	Yes	
+row_58	MERTK	MERTK	c-mer proto-oncogene tyrosine kinase	13172	-0.572463870048523	-0.11478855	Yes	
+row_59	DOK2	DOK2	docking protein 2, 56kDa	13183	-0.5756896734237671	-0.10123308	Yes	
+row_60	SLC7A8	SLC7A8	solute carrier family 7 (cationic amino acid transporter, y+ system), member 8	13190	-0.5780324935913086	-0.08738551	Yes	
+row_61	CD48	CD48	CD48 molecule	13194	-0.580295741558075	-0.07331887	Yes	
+row_62	FCER1G	FCER1G	Fc fragment of IgE, high affinity I, receptor for; gamma polypeptide	13260	-0.6144927144050598	-0.063779764	Yes	
+row_63	SLC7A7	SLC7A7	solute carrier family 7 (cationic amino acid transporter, y+ system), member 7	13288	-0.6288837194442749	-0.051465712	Yes	
+row_64	ITGB2	ITGB2	integrin, beta 2 (complement component 3 receptor 3 and 4 subunit)	13298	-0.6340377330780029	-0.03783722	Yes	
+row_65	AMICA1	AMICA1	adhesion molecule, interacts with CXADR antigen 1	13307	-0.6380831003189087	-0.024135703	Yes	
+row_66	LCK	LCK	lymphocyte-specific protein tyrosine kinase	13476	-0.7515610456466675	-0.022118136	Yes	
+row_67	ANGPT4	ANGPT4	angiopoietin 4	13570	-0.8747918009757996	-0.0146237165	Yes	
+row_68	CD2	CD2	CD2 molecule	13583	-0.9012652635574341	-0.0012142987	Yes	
+row_69	SLC7A5	SLC7A5	solute carrier family 7 (cationic amino acid transporter, y+ system), member 5	13615	-0.9550602436065674	0.01080765	Yes	

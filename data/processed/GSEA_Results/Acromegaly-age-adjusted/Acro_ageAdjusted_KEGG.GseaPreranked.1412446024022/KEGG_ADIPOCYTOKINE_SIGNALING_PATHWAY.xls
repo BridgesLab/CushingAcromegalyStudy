@@ -1,0 +1,61 @@
+NAME	PROBE	GENE SYMBOL	GENE_TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	SLC2A4	SLC2A4	solute carrier family 2 (facilitated glucose transporter), member 4	92	1.2504265308380127	0.0099533	Yes	
+row_1	SLC2A1	SLC2A1	solute carrier family 2 (facilitated glucose transporter), member 1	353	0.6334469318389893	0.0076474044	Yes	
+row_2	ACSL1	ACSL1	acyl-CoA synthetase long-chain family member 1	521	0.5208783149719238	0.012127849	Yes	
+row_3	POMC	POMC	proopiomelanocortin (adrenocorticotropin/ beta-lipotropin/ alpha-melanocyte stimulating hormone/ beta-melanocyte stimulating hormone/ beta-endorphin)	699	0.4430183172225952	0.01587858	Yes	
+row_4	AKT1	AKT1	v-akt murine thymoma viral oncogene homolog 1	769	0.4186110496520996	0.027510222	Yes	
+row_5	ADIPOQ	ADIPOQ	adiponectin, C1Q and collagen domain containing	789	0.41346341371536255	0.04279043	Yes	
+row_6	PCK2	PCK2	phosphoenolpyruvate carboxykinase 2 (mitochondrial)	801	0.4105709195137024	0.058654416	Yes	
+row_7	IRS1	IRS1	insulin receptor substrate 1	882	0.38643157482147217	0.06948337	Yes	
+row_8	ACSL3	ACSL3	acyl-CoA synthetase long-chain family member 3	907	0.37768128514289856	0.084398724	Yes	
+row_9	PRKAA2	PRKAA2	protein kinase, AMP-activated, alpha 2 catalytic subunit	1067	0.33825767040252686	0.08946294	Yes	
+row_10	PRKAG2	PRKAG2	protein kinase, AMP-activated, gamma 2 non-catalytic subunit	1190	0.3124101161956787	0.0972271	Yes	
+row_11	CPT1B	CPT1B	carnitine palmitoyltransferase 1B (muscle)	1481	0.2715994417667389	0.092732064	Yes	
+row_12	PPARA	PPARA	peroxisome proliferative activated receptor, alpha	1975	0.2199610322713852	0.07342383	Yes	
+row_13	AKT2	AKT2	v-akt murine thymoma viral oncogene homolog 2	2183	0.20221346616744995	0.07498542	Yes	
+row_14	MAPK10	MAPK10	mitogen-activated protein kinase 10	2260	0.19654852151870728	0.08610626	Yes	
+row_15	ADIPOR2	ADIPOR2	adiponectin receptor 2	2273	0.195424884557724	0.10189728	Yes	
+row_16	IRS2	IRS2	insulin receptor substrate 2	2645	0.16958637535572052	0.09149155	Yes	
+row_17	STK11	STK11	serine/threonine kinase 11	2739	0.16353145241737366	0.101371884	Yes	
+row_18	CD36	CD36	CD36 molecule (thrombospondin receptor)	2974	0.14900344610214233	0.10096324	Yes	
+row_19	ADIPOR1	ADIPOR1	adiponectin receptor 1	3133	0.14010359346866608	0.10610043	Yes	
+row_20	ACSL4	ACSL4	acyl-CoA synthetase long-chain family member 4	3487	0.12291094660758972	0.0970082	Yes	
+row_21	RXRA	RXRA	retinoid X receptor, alpha	3593	0.11771289259195328	0.106012866	Yes	
+row_22	PRKAA1	PRKAA1	protein kinase, AMP-activated, alpha 1 catalytic subunit	3670	0.11381039023399353	0.11713371	Yes	
+row_23	RXRB	RXRB	retinoid X receptor, beta	3772	0.10897483676671982	0.12643026	Yes	
+row_24	MAPK9	MAPK9	mitogen-activated protein kinase 9	4062	0.09729369729757309	0.1220082	Yes	
+row_25	PTPN11	PTPN11	protein tyrosine phosphatase, non-receptor type 11 (Noonan syndrome 1)	4197	0.09163010865449905	0.1288967	Yes	
+row_26	TRADD	TRADD	TNFRSF1A-associated via death domain	4529	0.07831387966871262	0.12140983	Yes	
+row_27	ACACB	ACACB	acetyl-Coenzyme A carboxylase beta	4785	0.06882995367050171	0.1194688	Yes	
+row_28	NFKBIA	NFKBIA	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, alpha	4852	0.06660547852516174	0.13131936	Yes	
+row_29	IKBKG	IKBKG	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase gamma	4935	0.06265915930271149	0.14200237	Yes	
+row_30	MAPK8	MAPK8	mitogen-activated protein kinase 8	6031	0.024285197257995605	0.07876536	No	
+row_31	CAMKK2	CAMKK2	calcium/calmodulin-dependent protein kinase kinase 2, beta	6232	0.0173887200653553	0.08083775	No	
+row_32	MTOR	null	null	6407	0.011040314100682735	0.084807396	No	
+row_33	AKT3	AKT3	v-akt murine thymoma viral oncogene homolog 3 (protein kinase B, gamma)	7123	-0.014653964899480343	0.049299516	No	
+row_34	PCK1	PCK1	phosphoenolpyruvate carboxykinase 1 (soluble)	7308	-0.02134763076901436	0.052539445	No	
+row_35	RXRG	RXRG	retinoid X receptor, gamma	7743	-0.038343653082847595	0.037536528	No	
+row_36	JAK2	JAK2	Janus kinase 2 (a protein tyrosine kinase)	7855	-0.041396740823984146	0.04610337	No	
+row_37	PRKAG1	PRKAG1	protein kinase, AMP-activated, gamma 1 non-catalytic subunit	7900	-0.042845889925956726	0.059559297	No	
+row_38	PRKAB1	PRKAB1	protein kinase, AMP-activated, beta 1 non-catalytic subunit	8043	-0.04903978854417801	0.06586403	No	
+row_39	CPT1C	CPT1C	carnitine palmitoyltransferase 1C	8304	-0.05840683355927467	0.06355813	No	
+row_40	CHUK	CHUK	conserved helix-loop-helix ubiquitous kinase	8467	-0.06448819488286972	0.06840343	No	
+row_41	TNFRSF1A	TNFRSF1A	tumor necrosis factor receptor superfamily, member 1A	9001	-0.08746014535427094	0.046176348	No	
+row_42	ACSL6	ACSL6	acyl-CoA synthetase long-chain family member 6	9129	-0.09402986615896225	0.05357565	No	
+row_43	NFKB1	NFKB1	nuclear factor of kappa light polypeptide gene enhancer in B-cells 1 (p105)	9301	-0.10210379958152771	0.057764206	No	
+row_44	STAT3	STAT3	signal transducer and activator of transcription 3 (acute-phase response factor)	9365	-0.10515444725751877	0.06983368	No	
+row_45	ACSL5	ACSL5	acyl-CoA synthetase long-chain family member 5	9673	-0.11938760429620743	0.06409813	No	
+row_46	NFKBIE	NFKBIE	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon	10285	-0.1498149037361145	0.036179274	No	
+row_47	RELA	RELA	v-rel reticuloendotheliosis viral oncogene homolog A, nuclear factor of kappa light polypeptide gene enhancer in B-cells 3, p65 (avian)	10397	-0.15785694122314453	0.044746116	No	
+row_48	NFKBIB	NFKBIB	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, beta	10718	-0.1798468828201294	0.038061935	No	
+row_49	TRAF2	TRAF2	TNF receptor-associated factor 2	10937	-0.19549041986465454	0.03882084	No	
+row_50	PRKAB2	PRKAB2	protein kinase, AMP-activated, beta 2 non-catalytic subunit	11394	-0.23491764068603516	0.022212554	No	
+row_51	TNFRSF1B	TNFRSF1B	tumor necrosis factor receptor superfamily, member 1B	11735	-0.2672070264816284	0.014068946	No	
+row_52	IKBKB	IKBKB	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase beta	12020	-0.3019491136074066	0.010011738	No	
+row_53	CPT1A	CPT1A	carnitine palmitoyltransferase 1A (liver)	12154	-0.32126420736312866	0.01697321	No	
+row_54	LEP	LEP	leptin (obesity homolog, mouse)	12199	-0.32856622338294983	0.030429136	No	
+row_55	PPARGC1A	PPARGC1A	peroxisome proliferative activated receptor, gamma, coactivator 1, alpha	12218	-0.33191660046577454	0.04578232	No	
+row_56	CAMKK1	CAMKK1	calcium/calmodulin-dependent protein kinase kinase 1, alpha	12373	-0.35830092430114746	0.05121139	No	
+row_57	PRKCQ	PRKCQ	protein kinase C, theta	13203	-0.5827769637107849	0.007384774	No	
+row_58	LEPR	LEPR	leptin receptor	13584	-0.9019913077354431	-0.003677688	No	
+row_59	SOCS3	SOCS3	suppressor of cytokine signaling 3	13751	-1.6950756311416626	8.75728E-4	No	
