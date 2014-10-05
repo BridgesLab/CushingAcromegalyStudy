@@ -9,13 +9,13 @@ This script was most recently run on `r date()`.
 #for references
 library(devtools)
 require(knitcitations)
-acromegaly.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv', row.names='X')
+acromegaly.data <- read.csv('../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv', row.names='Row.names')
 ```
 
 Huo et al Dataset
 ---------------------
 
-The authors in `r citet("10.1074/jbc.M508492200")` treated 3T3-F442A adipocytes either with nothing or with HG for 0.5, 4 or 48h.  These data are in the dataset GSE2120.  I generated R code using GEO2R comparing the control and growth hormone treated samples at 48h.
+The authors in `r citet("10.1074/jbc.M508492200")` treated 3T3-F442A adipocytes either with nothing or with GH for 0.5, 4 or 48h.  These data are in the dataset GSE2120.  I generated R code using GEO2R comparing the control and growth hormone treated samples at 48h.
 
 ```{r gse2120, echo=FALSE, message=FALSE, warning=FALSE}
 # Version info: R 2.14.1, Biobase 2.15.3, GEOquery 2.23.2, limma 3.10.1
