@@ -10,8 +10,8 @@ require(knitcitations)
 bib <- read.bibtex("references.bib") #loads the bib file
 
 #load in the previously processed and annoted acromegaly analysis results
-analysis.file <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
-analysis.data <- read.csv(analysis.file, row.names='X')
+analysis.file <- "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv"
+analysis.data <- read.csv(analysis.file, row.names='Row.names')
 transcripts.file <- "../data/processed/RPKM_VSD_counts_table_Acromegaly.csv"
 transcript.counts <- read.csv(transcripts.file, row.names="X")
 #set the conditions

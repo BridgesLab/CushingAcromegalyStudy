@@ -5,8 +5,10 @@ Statistics
 ----------
 
 
-
-This file was most recently processed on ``Sun Jun  1 14:20:18 2014``.  This uses the DESeq normalized data found in ../data/processed/RPKM_VSD_counts_table_Acromegaly.csv.
+```
+## Warning: package 'knitcitations' was built under R version 3.1.1
+```
+This file was most recently processed on ``Sun Oct  5 08:14:52 2014``.  This uses the DESeq normalized data found in ../data/processed/RPKM_VSD_counts_table_Acromegaly.csv.
 
 
 Differentially Expressed Genes
@@ -26,10 +28,8 @@ To test the grouping of differentially expressed transcripts, we only examined g
 ##   2
 ```
 
-
 References
 -----------
-
 
 
 Session Information
@@ -50,14 +50,15 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] RColorBrewer_1.0-5  gplots_2.13.0       knitcitations_0.5-0
-## [4] bibtex_0.3-6        knitr_1.5          
+## [1] RColorBrewer_1.0-5  gplots_2.14.1       knitcitations_1.0-1
+## [4] knitr_1.6          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-6       caTools_1.17       evaluate_0.5.5    
-##  [4] formatR_0.10       gdata_2.13.3       gtools_3.4.0      
-##  [7] httr_0.3           KernSmooth_2.23-12 RCurl_1.95-4.1    
-## [10] stringr_0.6.2      tools_3.1.0        XML_3.98-1.1      
-## [13] xtable_1.7-3
+##  [1] bibtex_0.3-6       bitops_1.0-6       caTools_1.17.1    
+##  [4] digest_0.6.4       evaluate_0.5.5     formatR_1.0       
+##  [7] gdata_2.13.3       gtools_3.4.1       httr_0.5          
+## [10] KernSmooth_2.23-13 lubridate_1.3.3    memoise_0.2.1     
+## [13] plyr_1.8.1         Rcpp_0.11.2        RCurl_1.95-4.3    
+## [16] RefManageR_0.8.34  RJSONIO_1.3-0      stringr_0.6.2     
+## [19] tools_3.1.0        XML_3.98-1.1
 ```
-
