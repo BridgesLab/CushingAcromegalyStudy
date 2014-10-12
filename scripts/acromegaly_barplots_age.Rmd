@@ -17,8 +17,8 @@ mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
 levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
 levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
-mapping$age.cat <- cut(mapping$age, breaks=c(0,40,60,100))
-mapping$age.cat <- ifelse(mapping$age.cat=="(40,60]", "Young", "Old")
+mapping$age.cat <- cut(mapping$age, breaks=c(0,60,100))
+mapping$age.cat <- ifelse(mapping$age.cat=="(0,60]", "Young", "Old")
 
 filtered.mapping <- mapping[mapping$patient.. != 29,]
 filtered.normalized.data <- normalized.data[,colnames(normalized.data ) != mapping[mapping$patient.. == 29,]$samplename]
@@ -44,12 +44,12 @@ rpkm.age <- reshape(rpkm.data.unique, direction="long", varying=list(names(rpkm.
 rpkm.long$Age <- rpkm.age$Age
 
 
-genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6", "LEPR", "LEP", "ENPP5", "GPR64", "SLC29A1", "SLC2A13", "MAP1LC3C", "PNPLA3", "APOL4", "ARHGAP32", "ZNF217", "GTBP2", "CXCL13", "FGF17", "SLC4A1", "SERPINI2", "HLA-DPB1","HLA-DPA1HLA-DQB1","HLA-DPB1")
+genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6", "LEPR", "LEP", "ENPP5", "GPR64", "SLC29A1", "SLC2A13", "MAP1LC3C", "PNPLA3", "APOL4", "ARHGAP32", "ZNF217", "CXCL13", "FGF17", "SLC4A1", "SERPINI2", "HLA-DPB1","HLA-DPB1")
 young.sig.genes <- read.csv("../data/processed/Acro_vs_Control_Young_Sig_Genes.csv")
 young.sig.genes <- young.sig.genes[-1,-1]
 young.sig.genes <- as.character(young.sig.genes)
 
-old.sig.genes <- c("CPXM1", "SCD", "FADS2", "IGSF10")
+old.sig.genes <- c("CPXM1", "SCD", "FADS2")
 
 
 #calculate standard error
@@ -82,7 +82,7 @@ library(ggplot2)
 gene="IGF1"
 for (gene in genes.of.interest) {
   #pdf(sprintf('../figures/%s-barplot.pdf', gene))
-  
+  print(gene)
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
     #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=Age,y=mean_Expression,fill=Disease)) + 
@@ -94,15 +94,16 @@ for (gene in genes.of.interest) {
     theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank()) + 
       #scale_x_discrete(labels=gene.data$Disease) + 
-    theme(axis.line = element_line(color = 'black')) +
+    theme(axis.line = element_line(color = "black")) +
     scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../Figures/Acro_Age/Acro-Age-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste("../Figures/Acro_Age/Acro-Age-",gene,"-barplot.pdf",sep=""))
 }
 
-for (gene in young.sig.genes) {
-  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+#TOO MANY GENES IN THE Young significant genes list to be drawn
+'for (gene in young.sig.genes) {
+  #pdf(sprintf("../figures/%s-barplot.pdf"", gene))
   #print(gene)
-  if((gene!='FLJ27365') & (gene!='RP11-407P15.2'))
+  if((gene!="FLJ27365"") & (gene!="RP11-407P15.2"") & (gene!="RP11-644F5.10"))
   {
     gene.data <- young.long.cal[young.long.cal$hgnc_symbol==gene,]
     ggplot(gene.data, aes(x=Age,y=mean_Expression,fill=Disease)) + 
@@ -113,13 +114,13 @@ for (gene in young.sig.genes) {
       theme(panel.grid.minor = element_blank()) + 
       theme(panel.grid.major = element_blank()) + 
       theme(panel.border=element_blank()) + 
-      theme(axis.line = element_line(color = 'black')) +
+      theme(axis.line = element_line(color = "black")) +
       scale_colour_grey(start = 0.5, end = .9)
       
-    ggsave(filename=paste('../Figures/Acro_Age/Acro-Young-',gene,'-barplot.pdf',sep=""))
+    ggsave(filename=paste("../Figures/Acro_Age/Acro-Young-",gene,"-barplot.pdf",sep=""))
     
   }
-}
+}'
 
 for (gene in old.sig.genes) {
   #pdf(sprintf('../figures/%s-barplot.pdf', gene))
@@ -134,9 +135,9 @@ for (gene in old.sig.genes) {
     theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank()) + 
     #scale_x_discrete(labels=gene.data$Disease) + 
-    theme(axis.line = element_line(color = 'black'))+
+    theme(axis.line = element_line(color = "black"))+
     scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../Figures/Acro_Age/Acro-Old-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste("../Figures/Acro_Age/Acro-Old-",gene,"-barplot.pdf",sep=""))
 }
 
 ```
