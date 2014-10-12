@@ -88,6 +88,9 @@ Counts transformations
 rld.acromegaly <- rlogTransformation(acromegaly.cds, blind=TRUE)
 rld.cushing <- rlogTransformation(cushing.cds, blind=TRUE)
 
+plotPCA(rld.acromegaly, intgroup="group")
+dev.copy2pdf(file="figure/PCA_Acromegaly.pdf")
+
 rld.cushing.counts <- assay(rld.cushing)
 colnames(rld.cushing.counts) <- mapping$samplename[as.numeric(colnames(rld.cushing.counts))]
 rld.acromegaly.counts <- assay(rld.acromegaly)
