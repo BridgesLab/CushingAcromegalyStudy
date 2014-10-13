@@ -62,7 +62,7 @@ write.csv(annotated.igf.summary, '../data/processed/IGF1 Correlations.csv')
 ```
 
 
-```{r, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+```{r igf-scatterplot, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
 pdf('../figures/IGF1 Correlation.pdf')
 plot(igf_sample_mapping$igf1,
      t(igf.transcript.counts['ENSG00000017427',]),
@@ -125,6 +125,26 @@ for (gene in levels(summary$hgnc_symbol)) {
 library(xtable)
 print(xtable(annotated.igf.summary, digits=3), type='html')
 ``` 
+
+Do IGF-1 Levels Correlate with Age
+------------------------------------
+
+
+```{r igf-scatterplot-age, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+#get ages for patients
+age_annotated_sample_mapping <- merge(clinical_data[,c('age','initials')], igf_sample_mapping, by='initials')
+pdf('../figures/IGF1 Correlation - Age Annotated.pdf')
+plot(age_annotated_sample_mapping$igf1,
+     t(igf.transcript.counts['ENSG00000017427',age_annotated_sample_mapping$samplename]),
+     pch=19, ylab="IGF1 Expression (RPKM)",
+     xlab="IGF Levels (pg/mL)",las=1,col=age_annotated_sample_mapping$age<60,
+     xlim=c(0,max(igf_sample_mapping$igf1)), ylim=c(4,max(t(igf.transcript.counts['ENSG00000017427',]))))
+points(age_annotated_sample_mapping$igf1,t(igf.transcript.counts['ENSG00000017427',age_annotated_sample_mapping$samplename]),col=age_annotated_sample_mapping$age>=60)
+abline(lm(t(igf.transcript.counts['ENSG00000017427',])~igf_sample_mapping$igf1))
+legend('topleft', c('60 and Over','Under 60'), pch=c(1,19),bty='n')
+dev.off()
+```
+
 
 
 Session Information

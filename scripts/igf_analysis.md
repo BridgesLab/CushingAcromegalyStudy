@@ -1,13 +1,12 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Sun May 11 11:15:53 2014``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Mon Oct 13 08:57:47 2014``.
 
 
 ```
 ## Warning: column name 'X' is duplicated in the result
 ```
-
 
 We normalized the expression data, and calculated the correlation between IGF levels and transcript levels for the IGF patients only.
 
@@ -18,55 +17,67 @@ Correlation of IGF levels with IGF Related Transcripts
 
 
 
-
 ```
 ## pdf 
 ##   2
 ```
-
 
 ## Barplots
 
 
 
 
-<!-- html table generated in R 3.0.2 by xtable 1.7-3 package -->
-<!-- Sun May 11 11:16:58 2014 -->
-<TABLE border=1>
-<TR> <TH>  </TH> <TH> Row.names </TH> <TH> rsq </TH> <TH> pval </TH> <TH> estimate </TH> <TH> padj </TH> <TH> hgnc_symbol </TH>  </TR>
-  <TR> <TD align="right"> 1 </TD> <TD> ENSG00000017427 </TD> <TD align="right"> 0.622 </TD> <TD align="right"> 0.035 </TD> <TD align="right"> 0.016 </TD> <TD align="right"> 0.606 </TD> <TD> IGF1 </TD> </TR>
-  <TR> <TD align="right"> 30 </TD> <TD> ENSG00000253869 </TD> <TD align="right"> 0.519 </TD> <TD align="right"> 0.068 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.606 </TD> <TD> PIGFP1 </TD> </TR>
-  <TR> <TD align="right"> 15 </TD> <TD> ENSG00000151665 </TD> <TD align="right"> 0.472 </TD> <TD align="right"> 0.088 </TD> <TD align="right"> -0.001 </TD> <TD align="right"> 0.606 </TD> <TD> PIGF </TD> </TR>
-  <TR> <TD align="right"> 13 </TD> <TD> ENSG00000146674 </TD> <TD align="right"> 0.446 </TD> <TD align="right"> 0.101 </TD> <TD align="right"> 0.023 </TD> <TD align="right"> 0.606 </TD> <TD> IGFBP3 </TD> </TR>
-  <TR> <TD align="right"> 7 </TD> <TD> ENSG00000126246 </TD> <TD align="right"> 0.376 </TD> <TD align="right"> 0.143 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.647 </TD> <TD> IGFLR1 </TD> </TR>
-  <TR> <TD align="right"> 32 </TD> <TD> ENSG00000268879 </TD> <TD align="right"> 0.350 </TD> <TD align="right"> 0.162 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.647 </TD> <TD> IGFL1P1 </TD> </TR>
-  <TR> <TD align="right"> 17 </TD> <TD> ENSG00000163395 </TD> <TD align="right"> 0.238 </TD> <TD align="right"> 0.266 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGFN1 </TD> </TR>
-  <TR> <TD align="right"> 4 </TD> <TD> ENSG00000099869 </TD> <TD align="right"> 0.194 </TD> <TD align="right"> 0.323 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGF2-AS </TD> </TR>
-  <TR> <TD align="right"> 5 </TD> <TD> ENSG00000115457 </TD> <TD align="right"> 0.157 </TD> <TD align="right"> 0.378 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGFBP2 </TD> </TR>
-  <TR> <TD align="right"> 3 </TD> <TD> ENSG00000099769 </TD> <TD align="right"> 0.154 </TD> <TD align="right"> 0.384 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGFALS </TD> </TR>
-  <TR> <TD align="right"> 6 </TD> <TD> ENSG00000115461 </TD> <TD align="right"> 0.153 </TD> <TD align="right"> 0.385 </TD> <TD align="right"> 0.026 </TD> <TD align="right"> 0.683 </TD> <TD> IGFBP5 </TD> </TR>
-  <TR> <TD align="right"> 11 </TD> <TD> ENSG00000140443 </TD> <TD align="right"> 0.151 </TD> <TD align="right"> 0.389 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGF1R </TD> </TR>
-  <TR> <TD align="right"> 19 </TD> <TD> ENSG00000165197 </TD> <TD align="right"> 0.145 </TD> <TD align="right"> 0.400 </TD> <TD align="right"> -0.001 </TD> <TD align="right"> 0.683 </TD> <TD> FIGF </TD> </TR>
-  <TR> <TD align="right"> 24 </TD> <TD> ENSG00000197081 </TD> <TD align="right"> 0.126 </TD> <TD align="right"> 0.435 </TD> <TD align="right"> -0.001 </TD> <TD align="right"> 0.683 </TD> <TD> IGF2R </TD> </TR>
-  <TR> <TD align="right"> 16 </TD> <TD> ENSG00000159217 </TD> <TD align="right"> 0.120 </TD> <TD align="right"> 0.447 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGF2BP1 </TD> </TR>
-  <TR> <TD align="right"> 10 </TD> <TD> ENSG00000137142 </TD> <TD align="right"> 0.116 </TD> <TD align="right"> 0.455 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.683 </TD> <TD> IGFBPL1 </TD> </TR>
-  <TR> <TD align="right"> 21 </TD> <TD> ENSG00000167779 </TD> <TD align="right"> 0.048 </TD> <TD align="right"> 0.638 </TD> <TD align="right"> -0.004 </TD> <TD align="right"> 0.892 </TD> <TD> IGFBP6 </TD> </TR>
-  <TR> <TD align="right"> 26 </TD> <TD> ENSG00000204869 </TD> <TD align="right"> 0.030 </TD> <TD align="right"> 0.709 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.892 </TD> <TD> IGFL4 </TD> </TR>
-  <TR> <TD align="right"> 29 </TD> <TD> ENSG00000245067 </TD> <TD align="right"> 0.029 </TD> <TD align="right"> 0.714 </TD> <TD align="right"> -0.001 </TD> <TD align="right"> 0.892 </TD> <TD> IGFBP7-AS1 </TD> </TR>
-  <TR> <TD align="right"> 2 </TD> <TD> ENSG00000073792 </TD> <TD align="right"> 0.023 </TD> <TD align="right"> 0.744 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.892 </TD> <TD> IGF2BP2 </TD> </TR>
-  <TR> <TD align="right"> 12 </TD> <TD> ENSG00000141753 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.960 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 0.996 </TD> <TD> IGFBP4 </TD> </TR>
-  <TR> <TD align="right"> 20 </TD> <TD> ENSG00000167244 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.976 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.996 </TD> <TD> IGF2 </TD> </TR>
-  <TR> <TD align="right"> 18 </TD> <TD> ENSG00000163453 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.996 </TD> <TD align="right"> -0.000 </TD> <TD align="right"> 0.996 </TD> <TD> IGFBP7 </TD> </TR>
-  <TR> <TD align="right"> 9 </TD> <TD> ENSG00000136231 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.996 </TD> <TD align="right"> 0.000 </TD> <TD align="right"> 0.996 </TD> <TD> IGF2BP3 </TD> </TR>
-  <TR> <TD align="right"> 8 </TD> <TD> ENSG00000129965 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> INS-IGF2 </TD> </TR>
-  <TR> <TD align="right"> 14 </TD> <TD> ENSG00000146678 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFBP1 </TD> </TR>
-  <TR> <TD align="right"> 22 </TD> <TD> ENSG00000188293 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFL1 </TD> </TR>
-  <TR> <TD align="right"> 23 </TD> <TD> ENSG00000188624 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFL3 </TD> </TR>
-  <TR> <TD align="right"> 25 </TD> <TD> ENSG00000204866 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFL2 </TD> </TR>
-  <TR> <TD align="right"> 27 </TD> <TD> ENSG00000227592 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> PIGFP3 </TD> </TR>
-  <TR> <TD align="right"> 28 </TD> <TD> ENSG00000234881 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> PIGFP2 </TD> </TR>
-  <TR> <TD align="right"> 31 </TD> <TD> ENSG00000268238 </TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right"> -0.000 </TD> <TD align="right">  </TD> <TD> IGFL1P2 </TD> </TR>
-   </TABLE>
+```
+## Warning: package 'xtable' was built under R version 3.1.1
+```
+
+<!-- html table generated in R 3.1.0 by xtable 1.7-4 package -->
+<!-- Mon Oct 13 08:58:43 2014 -->
+<table border=1>
+<tr> <th>  </th> <th> Row.names </th> <th> rsq </th> <th> pval </th> <th> estimate </th> <th> padj </th> <th> hgnc_symbol </th>  </tr>
+  <tr> <td align="right"> 1 </td> <td> ENSG00000017427 </td> <td align="right"> 0.622 </td> <td align="right"> 0.035 </td> <td align="right"> 0.016 </td> <td align="right"> 0.606 </td> <td> IGF1 </td> </tr>
+  <tr> <td align="right"> 30 </td> <td> ENSG00000253869 </td> <td align="right"> 0.519 </td> <td align="right"> 0.068 </td> <td align="right"> 0.000 </td> <td align="right"> 0.606 </td> <td> PIGFP1 </td> </tr>
+  <tr> <td align="right"> 15 </td> <td> ENSG00000151665 </td> <td align="right"> 0.472 </td> <td align="right"> 0.088 </td> <td align="right"> -0.001 </td> <td align="right"> 0.606 </td> <td> PIGF </td> </tr>
+  <tr> <td align="right"> 13 </td> <td> ENSG00000146674 </td> <td align="right"> 0.446 </td> <td align="right"> 0.101 </td> <td align="right"> 0.023 </td> <td align="right"> 0.606 </td> <td> IGFBP3 </td> </tr>
+  <tr> <td align="right"> 7 </td> <td> ENSG00000126246 </td> <td align="right"> 0.376 </td> <td align="right"> 0.143 </td> <td align="right"> -0.000 </td> <td align="right"> 0.647 </td> <td> IGFLR1 </td> </tr>
+  <tr> <td align="right"> 32 </td> <td> ENSG00000268879 </td> <td align="right"> 0.350 </td> <td align="right"> 0.162 </td> <td align="right"> 0.000 </td> <td align="right"> 0.647 </td> <td> IGFL1P1 </td> </tr>
+  <tr> <td align="right"> 17 </td> <td> ENSG00000163395 </td> <td align="right"> 0.238 </td> <td align="right"> 0.266 </td> <td align="right"> -0.000 </td> <td align="right"> 0.683 </td> <td> IGFN1 </td> </tr>
+  <tr> <td align="right"> 4 </td> <td> ENSG00000099869 </td> <td align="right"> 0.194 </td> <td align="right"> 0.323 </td> <td align="right"> 0.000 </td> <td align="right"> 0.683 </td> <td> IGF2-AS </td> </tr>
+  <tr> <td align="right"> 5 </td> <td> ENSG00000115457 </td> <td align="right"> 0.157 </td> <td align="right"> 0.378 </td> <td align="right"> -0.000 </td> <td align="right"> 0.683 </td> <td> IGFBP2 </td> </tr>
+  <tr> <td align="right"> 3 </td> <td> ENSG00000099769 </td> <td align="right"> 0.154 </td> <td align="right"> 0.384 </td> <td align="right"> 0.000 </td> <td align="right"> 0.683 </td> <td> IGFALS </td> </tr>
+  <tr> <td align="right"> 6 </td> <td> ENSG00000115461 </td> <td align="right"> 0.153 </td> <td align="right"> 0.385 </td> <td align="right"> 0.026 </td> <td align="right"> 0.683 </td> <td> IGFBP5 </td> </tr>
+  <tr> <td align="right"> 11 </td> <td> ENSG00000140443 </td> <td align="right"> 0.151 </td> <td align="right"> 0.389 </td> <td align="right"> -0.000 </td> <td align="right"> 0.683 </td> <td> IGF1R </td> </tr>
+  <tr> <td align="right"> 19 </td> <td> ENSG00000165197 </td> <td align="right"> 0.145 </td> <td align="right"> 0.400 </td> <td align="right"> -0.001 </td> <td align="right"> 0.683 </td> <td> FIGF </td> </tr>
+  <tr> <td align="right"> 24 </td> <td> ENSG00000197081 </td> <td align="right"> 0.126 </td> <td align="right"> 0.435 </td> <td align="right"> -0.001 </td> <td align="right"> 0.683 </td> <td> IGF2R </td> </tr>
+  <tr> <td align="right"> 16 </td> <td> ENSG00000159217 </td> <td align="right"> 0.120 </td> <td align="right"> 0.447 </td> <td align="right"> 0.000 </td> <td align="right"> 0.683 </td> <td> IGF2BP1 </td> </tr>
+  <tr> <td align="right"> 10 </td> <td> ENSG00000137142 </td> <td align="right"> 0.116 </td> <td align="right"> 0.455 </td> <td align="right"> 0.000 </td> <td align="right"> 0.683 </td> <td> IGFBPL1 </td> </tr>
+  <tr> <td align="right"> 21 </td> <td> ENSG00000167779 </td> <td align="right"> 0.048 </td> <td align="right"> 0.638 </td> <td align="right"> -0.004 </td> <td align="right"> 0.892 </td> <td> IGFBP6 </td> </tr>
+  <tr> <td align="right"> 26 </td> <td> ENSG00000204869 </td> <td align="right"> 0.030 </td> <td align="right"> 0.709 </td> <td align="right"> -0.000 </td> <td align="right"> 0.892 </td> <td> IGFL4 </td> </tr>
+  <tr> <td align="right"> 29 </td> <td> ENSG00000245067 </td> <td align="right"> 0.029 </td> <td align="right"> 0.714 </td> <td align="right"> -0.001 </td> <td align="right"> 0.892 </td> <td> IGFBP7-AS1 </td> </tr>
+  <tr> <td align="right"> 2 </td> <td> ENSG00000073792 </td> <td align="right"> 0.023 </td> <td align="right"> 0.744 </td> <td align="right"> 0.000 </td> <td align="right"> 0.892 </td> <td> IGF2BP2 </td> </tr>
+  <tr> <td align="right"> 12 </td> <td> ENSG00000141753 </td> <td align="right"> 0.001 </td> <td align="right"> 0.960 </td> <td align="right"> 0.001 </td> <td align="right"> 0.996 </td> <td> IGFBP4 </td> </tr>
+  <tr> <td align="right"> 20 </td> <td> ENSG00000167244 </td> <td align="right"> 0.000 </td> <td align="right"> 0.976 </td> <td align="right"> -0.000 </td> <td align="right"> 0.996 </td> <td> IGF2 </td> </tr>
+  <tr> <td align="right"> 18 </td> <td> ENSG00000163453 </td> <td align="right"> 0.000 </td> <td align="right"> 0.996 </td> <td align="right"> -0.000 </td> <td align="right"> 0.996 </td> <td> IGFBP7 </td> </tr>
+  <tr> <td align="right"> 9 </td> <td> ENSG00000136231 </td> <td align="right"> 0.000 </td> <td align="right"> 0.996 </td> <td align="right"> 0.000 </td> <td align="right"> 0.996 </td> <td> IGF2BP3 </td> </tr>
+  <tr> <td align="right"> 8 </td> <td> ENSG00000129965 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> INS-IGF2 </td> </tr>
+  <tr> <td align="right"> 14 </td> <td> ENSG00000146678 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> IGFBP1 </td> </tr>
+  <tr> <td align="right"> 22 </td> <td> ENSG00000188293 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> IGFL1 </td> </tr>
+  <tr> <td align="right"> 23 </td> <td> ENSG00000188624 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> IGFL3 </td> </tr>
+  <tr> <td align="right"> 25 </td> <td> ENSG00000204866 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> IGFL2 </td> </tr>
+  <tr> <td align="right"> 27 </td> <td> ENSG00000227592 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> PIGFP3 </td> </tr>
+  <tr> <td align="right"> 28 </td> <td> ENSG00000234881 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> PIGFP2 </td> </tr>
+  <tr> <td align="right"> 31 </td> <td> ENSG00000268238 </td> <td align="right">  </td> <td align="right">  </td> <td align="right"> -0.000 </td> <td align="right">  </td> <td> IGFL1P2 </td> </tr>
+   </table>
+
+Do IGF-1 Levels Correlate with Age
+------------------------------------
+
+
+
+```
+## pdf 
+##   2
+```
 
 
 
@@ -78,8 +89,8 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.2 (2013-09-25)
-## Platform: x86_64-apple-darwin10.8.0 (64-bit)
+## R version 3.1.0 (2014-04-10)
+## Platform: x86_64-apple-darwin13.1.0 (64-bit)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -88,11 +99,14 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] xtable_1.7-3   plyr_1.8.1     reshape2_1.2.2 biomaRt_2.18.0
-## [5] knitr_1.5     
+## [1] xtable_1.7-4   plyr_1.8.1     reshape2_1.4   biomaRt_2.20.0
+## [5] knitr_1.6     
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.1 formatR_0.10   Rcpp_0.11.1    RCurl_1.95-4.1
-## [5] stringr_0.6.2  tools_3.0.2    XML_3.95-0.2
+##  [1] AnnotationDbi_1.26.0 Biobase_2.24.0       BiocGenerics_0.10.0 
+##  [4] DBI_0.3.0            evaluate_0.5.5       formatR_1.0         
+##  [7] GenomeInfoDb_1.0.2   IRanges_1.22.10      parallel_3.1.0      
+## [10] Rcpp_0.11.2          RCurl_1.95-4.3       RSQLite_0.11.4      
+## [13] stats4_3.1.0         stringr_0.6.2        tools_3.1.0         
+## [16] XML_3.98-1.1
 ```
-
