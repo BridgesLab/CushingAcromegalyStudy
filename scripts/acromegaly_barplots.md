@@ -152,7 +152,7 @@ Used Analysed DESeq results.
 ```
 
 
-The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Tue Sep 23 12:24:54 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Sun Oct 12 19:49:45 2014``.
 
 
 Session Information
