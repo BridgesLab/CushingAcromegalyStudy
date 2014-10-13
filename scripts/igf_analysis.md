@@ -1,7 +1,7 @@
 Analysis of IGF Data for Acromegaly Patients
 =============================================================
 
-These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Mon Oct 13 08:57:47 2014``.
+These data compare the IGF levels with transcriptional changes.  This file was last compiled on ``Mon Oct 13 09:41:14 2014``.
 
 
 ```
@@ -32,7 +32,7 @@ Correlation of IGF levels with IGF Related Transcripts
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-4 package -->
-<!-- Mon Oct 13 08:58:43 2014 -->
+<!-- Mon Oct 13 09:42:48 2014 -->
 <table border=1>
 <tr> <th>  </th> <th> Row.names </th> <th> rsq </th> <th> pval </th> <th> estimate </th> <th> padj </th> <th> hgnc_symbol </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> ENSG00000017427 </td> <td align="right"> 0.622 </td> <td align="right"> 0.035 </td> <td align="right"> 0.016 </td> <td align="right"> 0.606 </td> <td> IGF1 </td> </tr>
@@ -80,6 +80,12 @@ Do IGF-1 Levels Correlate with Age
 ```
 
 
+```
+## Warning: package 'car' was built under R version 3.1.1
+```
+To test if IGF-1 serum levels differ between older and younger patients, we were unable to test for normality within the older cohort because n=9.  Globally a Shapiro-Wilk test had a p-value of 0.7875 Within the younger cohort only having a p-value of 0.5791.  The age correlated with the IGF-1 levels to near significance (p=0.0531, R=-0.7002, R2=0.4903).  
+
+Separating by groups, a Levene's test had a p-value of 0.9014 so we did a Student's T-test to compare these groups (p=0.1124) and they did not significantly differ.
 
 Session Information
 -------------------
@@ -99,14 +105,14 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] xtable_1.7-4   plyr_1.8.1     reshape2_1.4   biomaRt_2.20.0
-## [5] knitr_1.6     
+## [1] car_2.0-21     xtable_1.7-4   plyr_1.8.1     reshape2_1.4  
+## [5] biomaRt_2.20.0 knitr_1.6     
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] AnnotationDbi_1.26.0 Biobase_2.24.0       BiocGenerics_0.10.0 
 ##  [4] DBI_0.3.0            evaluate_0.5.5       formatR_1.0         
-##  [7] GenomeInfoDb_1.0.2   IRanges_1.22.10      parallel_3.1.0      
-## [10] Rcpp_0.11.2          RCurl_1.95-4.3       RSQLite_0.11.4      
-## [13] stats4_3.1.0         stringr_0.6.2        tools_3.1.0         
-## [16] XML_3.98-1.1
+##  [7] GenomeInfoDb_1.0.2   IRanges_1.22.10      MASS_7.3-34         
+## [10] nnet_7.3-8           parallel_3.1.0       Rcpp_0.11.2         
+## [13] RCurl_1.95-4.3       RSQLite_0.11.4       stats4_3.1.0        
+## [16] stringr_0.6.2        tools_3.1.0          XML_3.98-1.1
 ```

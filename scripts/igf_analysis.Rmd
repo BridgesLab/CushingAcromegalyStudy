@@ -145,7 +145,14 @@ legend('topleft', c('60 and Over','Under 60'), pch=c(1,19),bty='n')
 dev.off()
 ```
 
+```{r igf-age-statistics, echo=FALSE}
+igf_age_lm <- lm(igf1~age, data=age_annotated_sample_mapping)
+library(car)
+age_annotated_sample_mapping$age.group <- age_annotated_sample_mapping$age>60
+```
+To test if IGF-1 serum levels differ between older and younger patients, we were unable to test for normality within the older cohort because n=9.  Globally a Shapiro-Wilk test had a p-value of `r shapiro.test(age_annotated_sample_mapping$igf1)$p.value` Within the younger cohort only having a p-value of `r shapiro.test(subset(age_annotated_sample_mapping, age<60)$igf1)$p.value`.  The age correlated with the IGF-1 levels to near significance (p=`r with(age_annotated_sample_mapping, cor.test(igf1,age))$p.value`, R=`r with(age_annotated_sample_mapping, cor.test(igf1,age))$estimate`, R2=`r with(age_annotated_sample_mapping, cor.test(igf1,age))$estimate^2`).  
 
+Separating by groups, a Levene's test had a p-value of `r leveneTest(igf1~age.group, data=age_annotated_sample_mapping)$"Pr(>F)"[1]` so we did a Student's T-test to compare these groups (p=`r t.test(igf1~age.group, data=age_annotated_sample_mapping, var.equal=T)$p.value`) and they did not significantly differ.
 
 Session Information
 -------------------
