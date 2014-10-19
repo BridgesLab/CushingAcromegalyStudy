@@ -711,6 +711,14 @@ Used Analysed DESeq results.
 ```
 
 ```
+## [1] "PDE3B"
+```
+
+```
+## Saving 7 x 7 in image
+```
+
+```
 ## [1] "for (gene in young.sig.genes) {\n  #pdf(sprintf(\"../figures/%s-barplot.pdf\"\", gene))\n  #print(gene)\n  if((gene!=\"FLJ27365\"\") & (gene!=\"RP11-407P15.2\"\") & (gene!=\"RP11-644F5.10\"))\n  {\n    gene.data <- young.long.cal[young.long.cal$hgnc_symbol==gene,]\n    ggplot(gene.data, aes(x=Age,y=mean_Expression,fill=Disease)) + \n      geom_bar(stat=\"identity\", position=\"dodge\", colour=\"black\") + \n      geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), position=position_dodge(0.9), width=.2) + \n      xlab(\"\") + ylab(\"mRNA Expression (RPKM)\")+ \n      theme_bw() + ggtitle(gene) + \n      theme(panel.grid.minor = element_blank()) + \n      theme(panel.grid.major = element_blank()) + \n      theme(panel.border=element_blank()) + \n      theme(axis.line = element_line(color = \"black\")) +\n      scale_colour_grey(start = 0.5, end = .9)\n      \n    ggsave(filename=paste(\"../Figures/Acro_Age/Acro-Young-\",gene,\"-barplot.pdf\",sep=\"\"))\n    \n  }\n}"
 ```
 
@@ -783,7 +791,7 @@ Used Analysed DESeq results.
 ```
 
 
-The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Sun Oct 12 20:11:18 2014``.
+The data used is in the file **../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv**.  This file was most recently processed on ``Wed Oct 15 08:36:09 2014``.
 
 
 Session Information

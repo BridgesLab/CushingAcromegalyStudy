@@ -711,6 +711,12 @@ hljs.initHighlightingOnLoad();
 <pre><code>## Saving 7 x 7 in image
 </code></pre>
 
+<pre><code>## [1] &quot;PDE3B&quot;
+</code></pre>
+
+<pre><code>## Saving 7 x 7 in image
+</code></pre>
+
 <pre><code>## [1] &quot;for (gene in young.sig.genes) {\n  #pdf(sprintf(\&quot;../figures/%s-barplot.pdf\&quot;\&quot;, gene))\n  #print(gene)\n  if((gene!=\&quot;FLJ27365\&quot;\&quot;) &amp; (gene!=\&quot;RP11-407P15.2\&quot;\&quot;) &amp; (gene!=\&quot;RP11-644F5.10\&quot;))\n  {\n    gene.data &lt;- young.long.cal[young.long.cal$hgnc_symbol==gene,]\n    ggplot(gene.data, aes(x=Age,y=mean_Expression,fill=Disease)) + \n      geom_bar(stat=\&quot;identity\&quot;, position=\&quot;dodge\&quot;, colour=\&quot;black\&quot;) + \n      geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), position=position_dodge(0.9), width=.2) + \n      xlab(\&quot;\&quot;) + ylab(\&quot;mRNA Expression (RPKM)\&quot;)+ \n      theme_bw() + ggtitle(gene) + \n      theme(panel.grid.minor = element_blank()) + \n      theme(panel.grid.major = element_blank()) + \n      theme(panel.border=element_blank()) + \n      theme(axis.line = element_line(color = \&quot;black\&quot;)) +\n      scale_colour_grey(start = 0.5, end = .9)\n      \n    ggsave(filename=paste(\&quot;../Figures/Acro_Age/Acro-Young-\&quot;,gene,\&quot;-barplot.pdf\&quot;,sep=\&quot;\&quot;))\n    \n  }\n}&quot;
 </code></pre>
 
@@ -774,7 +780,7 @@ hljs.initHighlightingOnLoad();
 ##   2
 </code></pre>
 
-<p>The data used is in the file <strong>../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv</strong>.  This file was most recently processed on <code>Sun Oct 12 20:11:18 2014</code>.</p>
+<p>The data used is in the file <strong>../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv</strong>.  This file was most recently processed on <code>Wed Oct 15 08:36:09 2014</code>.</p>
 
 <h2>Session Information</h2>
 
