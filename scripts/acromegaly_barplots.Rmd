@@ -133,20 +133,20 @@ lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPL
 
 figureXX <- c("SOCS2", "CISH")
 figureX <- c("MAPK3","MAPK7","FOS","JUN","JUNB")
-figure1A <- c("PTPN3", "PTPN4")
+ptpn_figure <- c("PTPN3", "PTPN4")
 figure1B <- c("CCNC","CCNE1","CDKN2B")
 figure1C <- c("NAP1L1","ORC2","BAG4","CAPN6")
 figure1D <- c("MAP3K5","MAPK14","MAPK13","MAPKAPK3")
 figure4A <- c("LPL","PNPLA2","LIPE","MGLL")
-figure4B <- c("ABHD5","NRIP1","ADRB1", "ADRB2", "ADRB3", "CALCRL")
+lipolysis_genes <- c("ABHD5","NRIP1","ADRB1", "ADRB2", "ADRB3")
 figure4C <- c("ACSS2","ACSS3","AACS","ACACA","ACSL3", "AGPAT9")
 figure4C_FASN <- c("FASN","AGPAT2")
-figure4D <- c("FADS1","FADS2","CYB5A")
+figure4D <- c("FADS1","FADS2")
 figure4D_SCD <- c("SCD")
 sup1E <- c("UGP2", "PYGM")
 sup2A <- c("INSR","IRS1","IRS2","AKT1","AKT2","AKT3","SLC2A4")
 sup2B <- c("STAT6","IKBKB","IL1B","IL6","MCP1","IKBKE")
-sup2C <- c("HSD11B1","HSD11B2","NR3C1","NR3C2")
+glucocorticoids <- c("HSD11B1","HSD11B2","NR3C1","NR3C2")
 figureIGF_IGFBP3 <- c("IGF1","IGFBP3")
 igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
 ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
@@ -154,8 +154,8 @@ rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 ptps <- paste("PTPN", seq(1,23), sep="")
 socs_isoforms <- paste("SOCS", seq(1,7), sep="")
 
-gene.data.name <- c('figureXX', 'figureX', 'figure1A', 'figure1B', 'figure1C', 'figure1D', 
-                    'figure4A', 'figure4B', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B', 'sup2C','igf_complex','rgs_isoforms','ags_isoforms','ptps','socs_isoforms')
+gene.data.name <- c('figureXX', 'figureX', 'figure1B', 'figure1C', 'figure1D', 
+                    'figure4A', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B','igf_complex','rgs_isoforms','ags_isoforms','ptps','socs_isoforms','ptpn_figure','lipolysis_genes','glucocorticoids')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
