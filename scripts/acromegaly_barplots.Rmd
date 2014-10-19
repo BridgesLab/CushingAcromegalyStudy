@@ -132,7 +132,7 @@ unsat_FA <- c("ELOVL5", "ELOVL6", "FADS1", "FADS2", "SCD", "HSD17B12", "ACOX1", 
 lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPLA2")
 
 figureXX <- c("SOCS2", "CISH")
-figureX <- c("MAPK3","MAPK7","FOS","JUN","JUNB")
+fos_jun <- c("FOS","JUN","JUNB")
 ptpn_figure <- c("PTPN3", "PTPN4")
 figure1B <- c("CCNC","CCNE1","CDKN2B")
 figure1C <- c("NAP1L1","ORC2","BAG4","CAPN6")
@@ -154,7 +154,7 @@ rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 ptps <- paste("PTPN", seq(1,23), sep="")
 socs_isoforms <- paste("SOCS", seq(1,7), sep="")
 
-gene.data.name <- c('figureXX', 'figureX', 'figure1B', 'figure1C', 'figure1D', 
+gene.data.name <- c('figureXX', 'fos_jun', 'figure1B', 'figure1C', 'figure1D', 
                     'figure4A', 'figure4C', 'figure4D', 'sup1E', 'sup2A', 'sup2B','igf_complex','rgs_isoforms','ags_isoforms','ptps','socs_isoforms','ptpn_figure','lipolysis_genes','glucocorticoids')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
