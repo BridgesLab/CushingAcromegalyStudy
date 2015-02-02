@@ -40,7 +40,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN")
 
 #genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
 #put the data in long format
@@ -182,9 +182,14 @@ KEGG_PYRUVATE_METABOLISM <- c('ME1','ACACA','LDHB','LDHA','DLAT','ACSS2','ACAT2'
 KEGG_STARCH_AND_SUCROSE_METABOLISM <- c('GYS2','GBE1','HK3','GYS1','UGT2B4','ENPP1','UGP2','PGM1','PYGL','PGM2L1','PYGB','AGL')
 KEGG_ALLOGRAFT_REJECTION <- c('HLA-DRB1','HLA-DMB','HLA-A','CD40','CD28','FASLG','HLA-DQA1','CD40LG','HLA-DQB1','PRF1','HLA-B','HLA-F','HLA-E','HLA-DOA','HLA-DPB1','HLA-DRA','HLA-DPA1','HLA-C')
 KEGG_BASAL_CELL_CARCINOMA <- c('WNT10A','LEF1','TP53','AXIN2','FZD10','WNT5A','FZD2','WNT9B','AXIN1','FZD3','FZD8','DVL2','PTCH2','WNT2','SMO','WNT3','APC2','WNT10B','WNT11','BMP4','WNT5B','WNT9A','WNT4')
+M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B <- c('ANLN','BUB1','ESPL1','BUB1B','TPX2','KIF11','AURKA','ZWINT','NCAPH','TTK','NUSAP1','MAD2L1','KIF2C','UBE2C','CDCA5','KIF15','BIRC5','CENPE','DLGAP5','NDC80','SMC4','PKMYT1','MPHOSPH9','RCC1','MPHOSPH6','EGF','PLK1','NEK6')
+MITOCHONDRIONsub <- c('MTCH1','TIMM10','COQ6','MRPL23','TSFM','UQCRC1','ATP5O','COX11')
 
+CALMODULIN_BINDING <- c('NRGN','RGS16','RGS2','RGS1','SPHK1','TRPV4','DAPK1','TTN','MYO9B','MYO7A','RIT1','MARCKS','MYO3A','ATPIF1')
 
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA')
+test <- c('COL11A1','PNPLA3','GDA','FCER1A','SPINT1','CD1C','CLEC10A','HLA-DPB1')
+
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','MITOCHONDRIONsub','CALMODULIN_BINDING','test')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
