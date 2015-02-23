@@ -36,7 +36,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","STBD1")
 
 
 
