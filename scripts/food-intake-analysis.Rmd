@@ -2,8 +2,16 @@
 title: "Food_intake_analysis"
 author: "Quynh Tran"
 date: "February 6, 2015"
-output: html_document
+output: 
+  html_document:
+    keep_md: yes
 ---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
 
 This analysis is to check whether the amount of food consumed by control and dexamethasone treated mice were different.
 
@@ -37,6 +45,23 @@ ggplot()+
   geom_point(data=means.sem, aes(x=Week, y=mean, group=Treatment, colour=Treatment))+
   geom_line(data=means.sem, aes(x=Week, y=mean, group=Treatment, colour=Treatment))
 ```
+
+```{r weekly-scatter}
+#rplots scatter plot
+ymax <- with(means.sem, (max(mean+sem)))
+plot <- with(subset(means.sem, Treatment=="Control"&Week<=10), plot(Week, mean, las=1, pch=19, type="l", ylim=c(0,ymax), 
+             ylab="Food Eaten Per Mouse Per Day (g)", xlab="Weeks of Dexamethasone"))
+with(subset(means.sem, Treatment=="Dex"&Week<=10), lines(Week, mean, col="red", pch=19))
+
+superpose.eb <- 
+ function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
+ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
+ length = length, ...)
+legend("bottomleft", c("Water",'Dexamethasone'), bty="n", lty=1, col=c('black','red'))
+with(subset(means.sem, Treatment=="Control"&Week<=10), superpose.eb(Week,mean,sem))
+with(subset(means.sem, Treatment=="Dex"&Week<=10), superpose.eb(Week,mean,sem, col="red"))
+```
+
 
 Statistical Analysis
 -------
