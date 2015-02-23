@@ -1,0 +1,101 @@
+---
+title: "Food_intake_analysis"
+author: "Quynh Tran"
+date: "February 6, 2015"
+output: html_document
+---
+
+This analysis is to check whether the amount of food consumed by control and dexamethasone treated mice were different.
+
+
+```{r graphs, echo=FALSE}
+data_file <- "LT Dex cohort A food intake-updated version.csv"
+food_intake <- read.csv(data_file, header=TRUE)
+ 
+library(ggplot2)
+library(plyr)
+library(reshape2)
+
+means <- ddply(food_intake, c("Treatment", "Week"), summarise,
+               mean=mean(g.mouse.day))
+means$Treatment <- as.factor(means$Treatment)
+means$Week <- as.factor(means$Week)
+means.sem <- ddply(food_intake, c("Treatment", "Week"), summarise,
+                   mean=mean(g.mouse.day), sem=sd(g.mouse.day)/sqrt(length(g.mouse.day)))
+means.sem <- transform(means.sem, lower=mean-sem, upper=mean+sem)
+
+####Bar plot####
+qplot(Treatment, g.mouse.day, data=food_intake, geom=c("boxplot", "jitter"), beside=TRUE, main="Amount of food consumed by each group of treated mice")
+
+ggplot()+
+  geom_bar(data=means.sem, aes(x=Week, y=mean, fill=Treatment), stat="identity", position="dodge") +
+  geom_errorbar(data=means.sem, aes(x=Week, ymin=upper, ymax=lower, group=Treatment), width=0.25, size=0.8, colour="blue", position=position_dodge(0.9))
+
+#######Scatter plot#####
+ggplot()+
+  geom_errorbar(data=means.sem, aes(x=Week, ymin=upper, ymax=lower, group=Treatment), width=0.2, size=0.5, colour="blue") +
+  geom_point(data=means.sem, aes(x=Week, y=mean, group=Treatment, colour=Treatment))+
+  geom_line(data=means.sem, aes(x=Week, y=mean, group=Treatment, colour=Treatment))
+```
+
+Statistical Analysis
+-------
+```{r statistical analysis, echo=FALSE}
+
+###preliminary annalysis###
+food_intake$Week <- as.factor(food_intake$Week)
+food_intake$Treatment <- as.factor(food_intake$Treatment)
+
+test.summary.table <- data.frame(row.names=levels(food_intake$Week),
+                                 shapiro.Control = rep(NA, length(levels(food_intake$Week))),
+                                 shapiro.Dex = rep(NA, length(levels(food_intake$Week))),
+                                 levene.test = rep(NA, length(levels(food_intake$Week))))
+
+week_order <- seq(0,11,1)
+library(car)
+for (param in week_order) {
+  test.summary.table[param,'shapiro.Control'] <- 
+    with(subset(food_intake, Week==param&Treatment=="Control"), shapiro.test(g.mouse.day))$p.value
+  test.summary.table[param,'shapiro.Dex'] <- 
+    with(subset(food_intake, Week==param&Treatment=="Dex"), shapiro.test(g.mouse.day))$p.value
+  test.summary.table[param,'levene.test'] <- 
+    leveneTest(g.mouse.day~Treatment, data=subset(food_intake, Week==param))$`Pr(>F)`[1]
+}
+
+test.summary.table$test <- ifelse(test.summary.table$shapiro.Control<0.05|test.summary.table$shapiro.Dex<0.05, 
+                                  "Wilcoxon Test", 
+                                  ifelse(test.summary.table$levene.test<0.05, "Welch's T-Test", "Student's T-Test"))
+
+test_output_file <- "Assumptions_Check_for_each_week.csv"
+write.csv(test.summary.table, test_output_file)
+```
+First we checked whether the data was normally distributed using a Shapiro-Wilk test. Data in each week were normally distributed (p-value > 0.05).
+We next tested, for the normally distributed data, whether the data had unequal variance. A Student's t-test for equal variance was appropriate for `r rownames(test.summary.table[test.summary.table$test == "Student's T-Test",])` based on p>.05.
+
+```{r combine table}
+#these are the measurements that should have a Student's t-test
+all.o2.student <- ddply(food_intake[food_intake$Week %in% week_order,]
+                , .(Week), summarise, pval=t.test(g.mouse.day ~ Treatment, var.equal=T)$p.value)
+
+all.o2.student$padj <- p.adjust(all.o2.student$pval, method="BH")
+
+```
+
+```{r table, results='asis', echo=FALSE} 
+library(xtable) 
+print(xtable(all.o2.student, floating=FALSE))
+``` 
+
+```{r Regression, echo=FALSE}
+with(means.sem, interaction.plot(Week, Treatment, mean,
+  ylim = c(1, 5), lty= c(1, 12), lwd = 3,
+  ylab = "mean of g.mouse.day", xlab = "Week", trace.label = "Treatment"))
+
+food.anova <- aov(mean~Treatment*Week, data=means.sem)    
+summary(food.anova)
+```
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```
