@@ -29,10 +29,6 @@ melted.data.used <- subset(melted.data, id!='29')
 melted.data.used <- droplevels(melted.data.used)
 se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
 
-#for bibliography
-library(bibtex)
-library(knitcitations)
-bib <- read.bib(file = "clinical-tests.bib")
 ```
 
 This analysis included `r as.numeric(summary(cushing.data$diagnosis)[1])-1` controls and `r as.numeric(summary(cushing.data$diagnosis)[3])` cushing patients. 
@@ -63,7 +59,7 @@ write.csv(test.summary.table, test_output_file)
 
 First we checked whether the data was normally distributed using a Shapiro-Wilk test.  If a Shapiro-Wilk Normality test had a p-value <0.05 for a measurement in either the control or the cushing cases, we did a Wilcoxon test. This was appropriate for `r rownames(test.summary.table[test.summary.table$test == 'Wilcoxon Test',])`.
 
-We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package `r citet(bib[["car"]])`.  A Welch's t-test for unequal variance was appropriate for `r rownames(test.summary.table[test.summary.table$test == "Welch's T-Test",])` based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
+We next tested, for the normally distributed data, whether the data had unequal variance.  This was done using Levene's test in the car package .  A Welch's t-test for unequal variance was appropriate for `r rownames(test.summary.table[test.summary.table$test == "Welch's T-Test",])` based on p<0.05.  In all other cases, a t-test, presuming equal variance was used.
 
 ```{r, echo=FALSE, results='asis'}
 library(xtable)
@@ -121,6 +117,55 @@ superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
 length = length, ...)
 
+pdf("../figures/Cushing - HOMA and Glucose Barplot.pdf")
+par(mfrow=c(1,3))
+#HOMA Score
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[2], `Cushing's_mean`[2]),
+             names.arg=c("Control", "Cushing's"),
+             main="HOMA Score",las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[2])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[2], `Cushing's_mean`[2]), cbind(Control_se[2], `Cushing's_se`[2])))
+
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[1], `Cushing's_mean`[1]),
+             names.arg=c("Control", "Cushing's"),
+             main="Fasting Blood Glucose",
+             ylab="Glucose (mg/dL)",las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[1])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[1], `Cushing's_mean`[1]), cbind(Control_se[1], `Cushing's_se`[1])))
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[3], `Cushing's_mean`[3]),
+             names.arg=c("Control", "Cushing's"),
+             main="Fasting Insulin",
+             ylab="Serum Insulin (pg/mL)",
+             las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[3])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[3], `Cushing's_mean`[3]), cbind(Control_se[3], `Cushing's_se`[3])))
+dev.off()
+par(mfrow=c(1,3))
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[2], `Cushing's_mean`[2]),
+             names.arg=c("Control", "Cushing's"),
+             main="HOMA Score",las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[2])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[2], `Cushing's_mean`[2]), cbind(Control_se[2], `Cushing's_se`[2])))
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[1], `Cushing's_mean`[1]),
+             names.arg=c("Control", "Cushing's"),
+             main="Fasting Blood Glucose",
+             ylab="Glucose (mg/dL)",las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[1])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[1], `Cushing's_mean`[1]), cbind(Control_se[1], `Cushing's_se`[1])))
+plot <- with(glucose.summary.table, 
+     barplot(cbind(Control_mean[3], `Cushing's_mean`[3]),
+             names.arg=c("Control", "Cushing's"),
+             main="Fasting Insulin",
+             ylab="Serum Insulin (pg/mL)",
+             las=1,
+             ylim=c(0,(`Cushing's_mean`+`Cushing's_se`)[3])))
+with(glucose.summary.table, superpose.eb(plot, cbind(Control_mean[3], `Cushing's_mean`[3]), cbind(Control_se[3], `Cushing's_se`[3])))
+dev.off()
 pdf("../figures/Cushing - HOMA Barplot.pdf")
 #HOMA Score
 plot <- with(glucose.summary.table, 
@@ -335,7 +380,7 @@ plot <- with(all.summary.table[all.summary.table$measurement=='BMI',],
              main="Body Mass Index",
              ylab="BMI (kg/cm2)",
              las=1,             col=grey.colors(2)[2],
-             ylim=c(0,35)))
+             ylim=c(0,40)))
 with(all.summary.table[all.summary.table$measurement=='BMI',], superpose.eb(plot, cbind(Control_mean, `Cushing's_mean`), cbind(Control_se, `Cushing's_se`)))
 
 
@@ -741,12 +786,6 @@ library(xtable)
 print(xtable(lipid.summary.table[order(lipid.summary.table$pval),], digits=c(rep(1,6),5,5)), type='html') 
 ``` 
 
-References
------------
-```{r, results='asis', echo=FALSE, message=FALSE}
-write.bibtex(c(car=citation("car"), base=citation("stats")), file = "clinical-tests.bib")
-bibliography("html")
-```
 
 
 
