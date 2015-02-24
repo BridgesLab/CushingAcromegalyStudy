@@ -46,7 +46,7 @@ ggplot()+
   geom_line(data=means.sem, aes(x=Week, y=mean, group=Treatment, colour=Treatment))
 ```
 
-```{r weekly-scatter}
+```{r food-intake-weekly-scatter}
 #rplots scatter plot
 ymax <- with(means.sem, (max(mean+sem)))
 plot <- with(subset(means.sem, Treatment=="Control"&Week<=10), plot(Week, mean, las=1, pch=19, type="l", ylim=c(0,ymax), 

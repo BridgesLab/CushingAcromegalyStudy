@@ -9,7 +9,7 @@ This analysis is to check whether the amount of food consumed by control and dex
 
 ![](figures/graphs-1.png) ![](figures/graphs-2.png) ![](figures/graphs-3.png) 
 
-![](figures/weekly-scatter-1.png) 
+![](figures/food-intake-weekly-scatter-1.png) 
 
 
 Statistical Analysis
@@ -21,7 +21,7 @@ We next tested, for the normally distributed data, whether the data had unequal 
 
 
 % latex table generated in R 3.1.2 by xtable 1.7-4 package
-% Mon Feb 23 15:28:44 2015
+% Tue Feb 24 13:02:42 2015
 \begin{table}[ht]
 \centering
 \begin{tabular}{rlrr}
