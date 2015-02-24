@@ -57,6 +57,7 @@ superpose.eb <-
  function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
  length = length, ...)
+
 legend("bottomleft", c("Water",'Dexamethasone'), bty="n", lty=1, col=c('black','red'))
 with(subset(means.sem, Treatment=="Control"&Week<=10), superpose.eb(Week,mean,sem))
 with(subset(means.sem, Treatment=="Dex"&Week<=10), superpose.eb(Week,mean,sem, col="red"))

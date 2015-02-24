@@ -19,6 +19,8 @@ mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+patient.data <- read.csv('../data/raw/patient_table.csv')
+ordered.patient.data <- patient.data[order(patient.data$diagnosis, patient.data$BMI),]
 
 filtered.mapping <- mapping[mapping$patient.. != 29,]
 filtered.transcript.counts <- transcript.counts[,colnames(transcript.counts) != mapping[mapping$patient.. == 29,]$samplename]
@@ -67,6 +69,18 @@ heatmap.2(log(as.matrix(diff.exprs.acromegaly)+1), scale="row", Rowv=NA, Colv=NA
 dev.copy(pdf, '../figures/Cushing - differential-expressor-heatmap-RPKM.pdf')
 dev.off()
 
+#heatmap for Cushing's patients ordered by BMI
+merged.patient.data <- merge(ordered.patient.data, mapping.acromegaly, by.x='id',by.y='patient..',all.x=F)
+ordered.merged.patient.data <- merged.patient.data[order(merged.patient.data$group, merged.patient.data$BMI),]
+diff.exprs.cushing <- diff.exprs.ordered.genes[,colnames(diff.exprs.ordered.genes) %in% mapping.acromegaly$samplename]
+ordered.diff.exprs.cushing <- diff.exprs.cushing[,c('sample12121','sample12101','sample12112','sample12119','sample12105','sample12110','sample12120','sample12104','sample12115','sample12127','sample12109','sample12117','sample12106','sample12114','sample12125','sample12118')]
+
+cushing.dendrogram <- as.dendrogram(hclust(dist(t(scale(as.matrix(diff.exprs.cushing))))))
+plot(cushing.dendrogram)
+
+heatmap.colors <- brewer.pal(11, "BrBG")
+heatmap.2(log(as.matrix(ordered.diff.exprs.cushing)+1), scale="row", Rowv=NA, Colv=NA, ColSideColors=diagnosis.colors, col=heatmap.colors, density.info="none", trace="none", margins=c(6,6))
+dev.copy(pdf, '../figures/Cushing - differential-expressor-heatmap-RPKM.pdf')
 #write it out to a final figure as well
 #pdf('../figures/differential-expressor-heatmap-RPKM.pdf')
 #heatmap.colors <- brewer.pal(11, "BrBG")
