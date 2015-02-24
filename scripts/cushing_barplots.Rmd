@@ -36,7 +36,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","STBD1")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","LEP","ADIPOQ")
 
 
 
@@ -131,14 +131,21 @@ for (gene in lipases) {
 ```{r grouped-plots, echo=FALSE, fig.show='asis' }
 insulin <- c("FASN", "TCF7L2", "SOCS2", "AKT1", "PYGM", "ACACA", "SLC2A4")
 unsat_FA <- c("ELOVL5", "ELOVL6", "FADS1", "FADS2", "SCD", "HSD17B12", "ACOX1", "HADHA", "PECR")
-lipolysis <- c("LPL", "ABHD5", "ADRB3", "ACVR1C", "PNPLA", "LIPE", "MGLL", "PNPLA2")
+lipolysis <- c("LPL", "LIPE","PNPLA2")
 
 cortisol_signaling <-  c("HSD11B1","HSD11B2","NR3C1","NR3C2")
 igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
 ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
 rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 lipid_metabolism <- c('FADS1','FADS2','DHCR24','TFCP2L1','PNPLA3','DGAT2','DHCR7','PCYT2','CYP7B1','HPGD','PLCE1','IDI1','NPC1L1','PDSS2','AGPAT2')
+ffa_synthesis <- c('FASN','AACSL4','AACSL5','ACSL1','ACSL3','ACSL4','ELOVL1','ELOVL5','ELOVL6')
+desaturases <- c('SCD','FADS1','FADS2')
 tg_synthesis <- c('ELOVL6','FASN','GPAM','DGAT2','ACACA','ACSL1','ELOVL5','ACLY','HSD17B12','ACSL4','AGPAT2','SLC25A1','GPD1','ELOVL1','ACSL3','LPIN1','AGPAT3','GK')
+ffa_esterification <- c('GPAM','GPAT1','GPD1','GPD1L','GPD2','AGPAT1','AGPAT2','AGPAT3','AGPAT4','AGPAT5','AGPAT6','AGPAT9','LPIN1','LPIN2','LPIN3','DGAT1','DGAT2')
+ffa_esterification_hi <- c('GPAM','GPAT1','GPD1','AGPAT2','DGAT2')
+steroid_biosynthesis <- c('AKR1C1','DHCR7','DHCR24','CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3','HMGCS1','NSDHL')
+insulin_signaling <- c('INSR','IRS1','IRS2','PIK3R1','FOXO1','FOXO3')
+
 carb_metabolism <- c('ALDOC','GYS2','ME1','SLC2A5','CHST4','IDH1','CHST11','HPSE','SLC25A10','ACLY','PGD','FBP1','ACO1','NNT','XYLT1','ALDOA','CHST8','UGP2','TALDO1','ST3GAL5','GYG2','GFPT1','PDHB','NANP','NEU3','GNS','FUT8','PDK3','FH','PYGB','CHIT1','CSGALNACT2','EPM2A','ACN9','ACO2','GALNT7','CHST2','MPDU1','SDHC')
 tca_citric_acid <- c('IDH2','NNT','SUCLG1','OGDH','DLD','FH','CS','ACO2','SDHC','SUCLA2','SDHB','IDH3A')
 bcaa_degradation <- c('AOX1','BCAT1','IL4I1','ACAT2','OXCT1','HMGCS1','ALDH9A1','MCCC1','ACAA2','EHHADH','DLD','ECHS1','ALDH3A2','HIBCH','DBT','ACADSB','ACADM','BCKDHB','IVD','HADHA','PCCB')
@@ -147,6 +154,7 @@ intferon_gamma <- c('SOCS1','GBP1','HLA-DRB1','HLA-A','PTPN6','B2M','PML','HLA-D
 interferon_gamma_no_b2m <- c('SOCS1','GBP1','HLA-DRB1','HLA-A','PTPN6','PML','HLA-DQA1','GBP7','IRF6','GBP5','HLA-B','OASL','IRF1','HLA-F','NCAM1','IRF3','HLA-DPB1','IRF4','IRF7','IRF9','HLA-DPA1','HLA-C')
 IRF_isoforms <- c('IRF1','IRF2','IRF3','IRF4','IRF5','IRF6','IRF7','IRF8','IRF9')
 activin <- c('ACVR1','ACVR1B','ACVR1C','ACVR2A','ACVR2B','ACVRL1','INHBA','INHBB','GREM1')
+proteosome <- c(paste("PSMD", seq(1,14), sep=""))
 
 M_PHASE_OF_MITOTIC_CELL_CYCLE <- c('ANLN','CDKN2B','BUB1','ESPL1','BUB1B','TPX2','KIF11','AURKA','ZWINT','NCAPH','TTK','NUSAP1','MAD2L1','KIF2C','UBE2C','CDCA5','KIF15','BIRC5','CENPE','DLGAP5','NDC80','SMC4','PKMYT1','MPHOSPH9','RCC1','MPHOSPH6','EGF','PLK1','NEK6')
 STEROID_BIOSYNTHETIC_PROCESS <- c('DHCR24','TFCP2L1','DHCR7','CYP7B1','NPC1L1','CYP19A1','NR0B1')
@@ -161,9 +169,9 @@ KEGG_STARCH_AND_SUCROSE_METABOLISM <- c('GYS2','GBE1','HK3','GYS1','UGT2B4','ENP
 KEGG_ALLOGRAFT_REJECTION <- c('HLA-DRB1','HLA-DMB','HLA-A','CD40','CD28','FASLG','HLA-DQA1','CD40LG','HLA-DQB1','PRF1','HLA-B','HLA-F','HLA-E','HLA-DOA','HLA-DPB1','HLA-DRA','HLA-DPA1','HLA-C')
 KEGG_BASAL_CELL_CARCINOMA <- c('WNT10A','LEF1','TP53','AXIN2','FZD10','WNT5A','FZD2','WNT9B','AXIN1','FZD3','FZD8','DVL2','PTCH2','WNT2','SMO','WNT3','APC2','WNT10B','WNT11','BMP4','WNT5B','WNT9A','WNT4')
 M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B <- c('ANLN','BUB1','ESPL1','BUB1B','TPX2','KIF11','AURKA','ZWINT','NCAPH','TTK','NUSAP1','MAD2L1','KIF2C','UBE2C','CDCA5','KIF15','BIRC5','CENPE','DLGAP5','NDC80','SMC4','PKMYT1','MPHOSPH9','RCC1','MPHOSPH6','EGF','PLK1','NEK6')
+hormones <- c('LEP','ADIPOQ')
 
-
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B')
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','hormones','ffa_synthesis','desaturases','ffa_esterification','ffa_esterification_hi','lipolysis','steroid_biosynthesis','insulin_signaling','proteosome')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
