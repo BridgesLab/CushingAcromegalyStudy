@@ -141,6 +141,7 @@ rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 lipid_metabolism <- c('FADS1','FADS2','DHCR24','TFCP2L1','PNPLA3','DGAT2','DHCR7','PCYT2','CYP7B1','HPGD','PLCE1','IDI1','NPC1L1','PDSS2','AGPAT2')
 ffa_synthesis <- c('ACACA','FASN','AACSL4','AACSL5','ACSL1','ACSL3','ACSL4','ELOVL1','ELOVL5','ELOVL6')
 desaturases <- c('SCD','FADS1','FADS2')
+desaturases_2 <- c('FADS1','FADS2','HSD17B12')
 tg_synthesis <- c('ELOVL6','FASN','GPAM','DGAT2','ACSL1','ELOVL5','ACLY','HSD17B12','ACSL4','AGPAT2','SLC25A1','GPD1','ELOVL1','ACSL3','LPIN1','AGPAT3','GK')
 ffa_esterification <- c('GPAM','GPAT1','GPD1','GPD1L','GPD2','AGPAT1','AGPAT2','AGPAT3','AGPAT4','AGPAT5','AGPAT6','AGPAT9','LPIN1','LPIN2','LPIN3','DGAT1','DGAT2')
 ffa_esterification_hi <- c('GPAM','GPAT1','GPD1','AGPAT2','DGAT2')
@@ -176,7 +177,7 @@ KEGG_BASAL_CELL_CARCINOMA <- c('WNT10A','LEF1','TP53','AXIN2','FZD10','WNT5A','F
 M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B <- c('ANLN','BUB1','ESPL1','BUB1B','TPX2','KIF11','AURKA','ZWINT','NCAPH','TTK','NUSAP1','MAD2L1','KIF2C','UBE2C','CDCA5','KIF15','BIRC5','CENPE','DLGAP5','NDC80','SMC4','PKMYT1','MPHOSPH9','RCC1','MPHOSPH6','EGF','PLK1','NEK6')
 hormones <- c('LEP','ADIPOQ')
 
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','hormones','ffa_synthesis','desaturases','ffa_esterification','ffa_esterification_hi','lipolysis','steroid_biosynthesis','insulin_signaling','proteosome','interleukins','hla_genes','hla_genes_hi','macrophage_markers')
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','hormones','ffa_synthesis','desaturases','ffa_esterification','ffa_esterification_hi','lipolysis','steroid_biosynthesis','insulin_signaling','proteosome','interleukins','hla_genes','hla_genes_hi','macrophage_markers','desaturases_2')
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
