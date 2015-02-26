@@ -26,7 +26,8 @@ filtered.normalized.cush <- filtered.normalized.data[,colnames(filtered.normaliz
 
 #get gene names for transcripts
 library(biomaRt)
-ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl")
+mart = useMart("ENSEMBL_MART_ENSEMBL", host="dec2013.archive.ensembl.org")
+ensembl = useDataset('hsapiens_gene_ensembl',mart=mart)
 gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
                    filters = 'ensembl_gene_id', values = rownames(filtered.normalized.data), mart = ensembl)
 rpkm.data <- merge(filtered.normalized.cush, gene.data, by.x='row.names', by.y='ensembl_gene_id') 
@@ -138,9 +139,9 @@ igf_complex <- c("IGF1","IGFBP3", "IGFBP5", "IGFALS")
 ags_isoforms <- c("GPSM1","GPSM2","GPSM3")
 rgs_isoforms <- paste("RGS", seq(1,22), sep="")
 lipid_metabolism <- c('FADS1','FADS2','DHCR24','TFCP2L1','PNPLA3','DGAT2','DHCR7','PCYT2','CYP7B1','HPGD','PLCE1','IDI1','NPC1L1','PDSS2','AGPAT2')
-ffa_synthesis <- c('FASN','AACSL4','AACSL5','ACSL1','ACSL3','ACSL4','ELOVL1','ELOVL5','ELOVL6')
+ffa_synthesis <- c('ACACA','FASN','AACSL4','AACSL5','ACSL1','ACSL3','ACSL4','ELOVL1','ELOVL5','ELOVL6')
 desaturases <- c('SCD','FADS1','FADS2')
-tg_synthesis <- c('ELOVL6','FASN','GPAM','DGAT2','ACACA','ACSL1','ELOVL5','ACLY','HSD17B12','ACSL4','AGPAT2','SLC25A1','GPD1','ELOVL1','ACSL3','LPIN1','AGPAT3','GK')
+tg_synthesis <- c('ELOVL6','FASN','GPAM','DGAT2','ACSL1','ELOVL5','ACLY','HSD17B12','ACSL4','AGPAT2','SLC25A1','GPD1','ELOVL1','ACSL3','LPIN1','AGPAT3','GK')
 ffa_esterification <- c('GPAM','GPAT1','GPD1','GPD1L','GPD2','AGPAT1','AGPAT2','AGPAT3','AGPAT4','AGPAT5','AGPAT6','AGPAT9','LPIN1','LPIN2','LPIN3','DGAT1','DGAT2')
 ffa_esterification_hi <- c('GPAM','GPAT1','GPD1','AGPAT2','DGAT2')
 steroid_biosynthesis <- c('AKR1C1','DHCR7','DHCR24','CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3','HMGCS1','NSDHL')
