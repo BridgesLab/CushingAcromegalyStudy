@@ -9,14 +9,14 @@ February 25, 2015
 
 
 
-Data was read from the file ../data/raw/Gastroc qPCR Summary.csv.  These data were most recently updated on Fri Feb 27 11:53:36 2015.
+Data was read from the file ../data/raw/Gastroc qPCR Summary.csv.  These data were most recently updated on Fri Feb 27 12:43:21 2015.
 
 #Analysis
 
 
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Fri Feb 27 11:53:39 2015 -->
+<!-- Fri Feb 27 12:43:24 2015 -->
 <table border=1>
 <caption align="bottom"> Pairwise statistics summary, p-values adjusted by BH </caption>
 <tr> <th>  </th> <th> shapiro-water </th> <th> shapiro-dex </th> <th> levene </th> <th> Test </th> <th> pval </th> <th> padj </th> <th> Significant </th>  </tr>
@@ -32,7 +32,9 @@ Data was read from the file ../data/raw/Gastroc qPCR Summary.csv.  These data we
 # All Genes
 
 ![](figures/gastroc-all-1.png) 
+
 # Session Information
+
 
 ```
 ## R version 3.1.2 (2014-10-31)

@@ -109,23 +109,18 @@ legend('topleft', levels(data$Treatment), bty='n', fill=grey.colors(2))
 # All Genes
 
 ```{r gastroc-all}
-
-library(reshape2)
 ymax <- with(qpcr.summary, max(norm.mean) + max (norm.se))
-plot <- barplot(as.matrix(dcast(subset(qpcr.summary, Gene %in% genes), Treatment~Gene, value.var='norm.mean')[2:(length(genes)+1)]), 
+plot <- barplot(as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.mean')[2:(length(levels(data$Gene))+1)]), 
         beside=T, las=2, ylim=c(0,ymax), ylab="Relative Expression")
 
-superpose.eb <- 
- function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
- arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
- length = length, ...)
-
 superpose.eb(plot,
-             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.mean')[2:(length(genes)+1)]),
-             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.se')[2:(length(genes)+1)]))
+             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.mean')[2:(length(levels(data$Gene))+1)]),
+             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.se')[2:(length(levels(data$Gene))+1)]))
 legend('topleft', levels(data$Treatment), bty='n', fill=grey.colors(2))
 ```
+
 # Session Information
+
 ```{r sessionInfo}
 sessionInfo()
 ```
