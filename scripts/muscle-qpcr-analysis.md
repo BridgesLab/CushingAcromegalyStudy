@@ -9,21 +9,20 @@ February 25, 2015
 
 
 
-Data was read from the file ../data/raw/Gastroc qPCR Summary.csv.  These data were most recently updated on Fri Feb 27 11:35:17 2015.
+Data was read from the file ../data/raw/Gastroc qPCR Summary.csv.  These data were most recently updated on Fri Feb 27 11:53:36 2015.
 
 #Analysis
 
 
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Fri Feb 27 11:35:20 2015 -->
+<!-- Fri Feb 27 11:53:39 2015 -->
 <table border=1>
 <caption align="bottom"> Pairwise statistics summary, p-values adjusted by BH </caption>
 <tr> <th>  </th> <th> shapiro-water </th> <th> shapiro-dex </th> <th> levene </th> <th> Test </th> <th> pval </th> <th> padj </th> <th> Significant </th>  </tr>
-  <tr> <td align="right"> Fbxo32 </td> <td align="right"> 0.541 </td> <td align="right"> 0.021 </td> <td align="right"> 0.302 </td> <td> Student </td> <td align="right"> 0.260 </td> <td align="right"> 0.303 </td> <td> FALSE </td> </tr>
-  <tr> <td align="right"> Trim63 </td> <td align="right"> 0.766 </td> <td align="right"> 0.079 </td> <td align="right"> 0.227 </td> <td> Student </td> <td align="right"> 0.247 </td> <td align="right"> 0.303 </td> <td> FALSE </td> </tr>
-  <tr> <td align="right"> Psmd1 </td> <td align="right"> 0.548 </td> <td align="right"> 0.442 </td> <td align="right"> 0.012 </td> <td> Welchs </td> <td align="right"> 0.303 </td> <td align="right"> 0.303 </td> <td> FALSE </td> </tr>
-  <tr> <td align="right"> Psmd8 </td> <td align="right"> 0.683 </td> <td align="right"> 0.969 </td> <td align="right"> 0.214 </td> <td> Student </td> <td align="right"> 0.065 </td> <td align="right"> 0.261 </td> <td> FALSE </td> </tr>
+  <tr> <td align="right"> Fbxo32 </td> <td align="right"> 0.541 </td> <td align="right"> 0.021 </td> <td align="right"> 0.302 </td> <td> Wilcoxon </td> <td align="right"> 0.200 </td> <td align="right"> 0.247 </td> <td> FALSE </td> </tr>
+  <tr> <td align="right"> Trim63 </td> <td align="right"> 0.766 </td> <td align="right"> 0.079 </td> <td align="right"> 0.227 </td> <td> Student </td> <td align="right"> 0.247 </td> <td align="right"> 0.247 </td> <td> FALSE </td> </tr>
+  <tr> <td align="right"> Psmd8 </td> <td align="right"> 0.683 </td> <td align="right"> 0.969 </td> <td align="right"> 0.214 </td> <td> Student </td> <td align="right"> 0.065 </td> <td align="right"> 0.196 </td> <td> FALSE </td> </tr>
    </table>
 
 ## Proteasomal Genes

@@ -44,7 +44,7 @@ qpcr.summary <-
 
 ```{r statistics, results='asis'}
 library(car)
-genes.of.interest <- c('Fbxo32','Trim63','Psmd1','Psmd8')
+genes.of.interest <- c('Fbxo32','Trim63','Psmd8')
 stats.summary <- data.frame()
 for (gene in genes.of.interest) {
   stats.summary[gene,'shapiro-water'] <- with(subset(data, Gene==gene&Treatment=='Water'), shapiro.test(Normalized.Expression))$p.value
@@ -54,7 +54,7 @@ for (gene in genes.of.interest) {
 
 #decision tree for the test
 for (gene in genes.of.interest){
-  if (stats.summary[gene,c('shapiro-water','shapiro-dex')] < 0.05) {
+  if (stats.summary[gene,'shapiro-dex'] < 0.05) {
     stats.summary[gene,'Test'] <- 'Wilcoxon'
   }
   else
