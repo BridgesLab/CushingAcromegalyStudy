@@ -42,6 +42,49 @@ qpcr.summary <-
          norm.se = se/mean[1])
 ```
 
+```{r statistics, results='asis'}
+library(car)
+stats.summary <- data.frame()
+for (gene in levels(data$Gene)) {
+  stats.summary[gene,'shapiro-water'] <- with(subset(data, Gene==gene&Treatment=='Water'), shapiro.test(Normalized.Expression))$p.value
+  stats.summary[gene,'shapiro-dex'] <- with(subset(data, Gene==gene&Treatment=='Dexamethasone'), shapiro.test(Normalized.Expression))$p.value
+  stats.summary[gene, 'levene'] <- leveneTest(Normalized.Expression~Treatment, data=subset(data,Gene==gene))$"Pr(>F)"[1]
+}
+
+#decision tree for the test
+for (gene in levels(data$Gene)){
+  if (stats.summary[gene,c('shapiro-water','shapiro-dex')] < 0.05) {
+    stats.summary[gene,'Test'] <- 'Wilcoxon'
+  }
+  else
+    if (stats.summary[gene,'levene'] < 0.05) {
+      stats.summary[gene,'Test'] <- 'Welchs'
+    }
+  else
+    stats.summary[gene,'Test'] <- 'Student'
+}
+
+#calculate appropriate p-value
+for (gene in levels(data$Gene)) {
+  if (stats.summary[gene,'Test'] == "Student") {
+    stats.summary[gene,'pval'] <- t.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene), var.equal=T)$p.value
+  }
+  else
+    if (stats.summary[gene,'Test'] == 'Welchs') {
+      stats.summary[gene,'pval'] <- t.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene), var.equal=F)$p.value
+  }
+  else
+    if (stats.summary[gene,'Test'] == 'Wilcoxon'){
+     stats.summary[gene,'pval'] <- wilcox.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene))$p.value 
+    }
+  }
+
+stats.summary$padj <- p.adjust(stats.summary$pval, method="BH")
+stats.summary$Significant <- stats.summary$padj < 0.05
+library(xtable)
+print(xtable(stats.summary, caption='Pairwise statistics summary, p-values adjusted by BH', digits=3), type='html')
+```
+
 ## Lipogenic Genes
 
 ```{r iwat-lipogenic-genes}
