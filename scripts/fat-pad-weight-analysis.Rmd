@@ -44,10 +44,11 @@ fat.summary <-
          IWat.se = se.iwat/1000/mean.weight*100,
          Ewat.norm = mean.ewat/1000/mean.weight*100,
          Ewat.se = se.ewat/1000/mean.weight*100)
+library(car)
 ```
 
-```{r statistics, results='asis'}
-```
+
+For IWAT, a shapiro test had a p-value of >`r min(c(with(subset(data,Treatment=="Water"), shapiro.test(Iwat/Body.Weight))$p.value,with(subset(data,Treatment=="Dexamethasone"), shapiro.test(Iwat/Body.Weight))$p.value))`.  A Levene's test had a p-value of `r leveneTest(Iwat/Body.Weight~Treatment,data=data)$"Pr(>F)"[1]` so we did a Student's *t*-test which yielded a p-value of `r t.test(Iwat/Body.Weight~Treatment,data=data, var.equal=T)$p.value`.
 
 ```{r iwat-normalized}
 ymax <- with(fat.summary, max(Ewat.norm + Ewat.se))
