@@ -1,0 +1,133 @@
+---
+title: Co-ordination Between Differentially Expressed Cushing's Genes and GRE Containing
+  Genes
+author: "Innocence Harvey and Dave Bridges"
+date: "February 23, 2015"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+
+There are datasets for genes which contain GRE's and datasets for genes which are associated with our Cushing's dataset.  We want to know which ones overlap, to get a sense of hich ones are direct targets.
+
+# Data#
+
+```{r data-download}
+#tft_url <- 'http://www.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/4.0/c3.tft.v4.0.symbols.gmt'
+tft_gmt_file <- '../data/raw/c3.tft.v4.0.symbols.gmt'
+#download.file(tft_url, destfile=tft_gmt_file, method='curl')
+#downloaded manually because needed login
+
+gre_experimental_data_file <- '../data/processed/Annotated GR Peaks - Significantly Changed.csv'
+gre.experimental.data <- read.csv(gre_experimental_data_file)
+
+cushings_data_file <- "../data/processed/Annotated Results GRCh37.74 - Cushing.csv"
+```
+
+We used the data from our Cushing's patients found in the `r cushings_data_file` file for our significant genes.  The data is obtained from the MSigDB collection for the following gene sets on `r date()`.  These data are saved in:
+
+* **Predicted TFBS** from the TRANSFAC database.  `r tft_gmt_file`.
+* **Experimental TFBS**  from the Reddy *et al.*.  `r gre_experimental_data_file`.  See *gre_annotation.Rmd* to see how this file was generated from the raw data.
+
+```{r data-munging}
+tft.data <- read.table(tft_gmt_file, sep='\n')
+library(stringr)
+tft.data <- as.data.frame(str_split_fixed(tft.data$V1, pattern='\t', n=2))
+#there are two GREs V$GRE_C and V$GR_Q6
+
+gre_elements <-c('V$GRE_C','V$GR_Q6','V$GR_Q6_01','V$GR_01')
+gre.data <- droplevels(subset(tft.data, V1 %in% gre_elements))
+gre.genes <- strsplit(as.character(gre.data$V2), '\t')
+
+gre.data.summary <- data.frame(row.names=gre_elements, 
+                               Number=as.vector(unlist(lapply(gre.genes, length))),
+                               Overlap=rep(NA, length(gre_elements)))
+unique.gre.genes <- unique(unlist(gre.genes))
+
+cushings_data <- read.csv(cushings_data_file)
+sig.cushings.genes <- droplevels(subset(cushings_data, padj < 0.05)$external_gene_id)
+```
+
+This is shown in the following venn diagram.  
+
+```{r gre-cushings-venn}
+
+
+library(venneuler)
+
+vd <- venneuler(c(Cushings=length(sig.cushings.genes),
+                TRANSFAC=length(unique.gre.genes),
+                `Cushings&TRANSFAC` = length(intersect(unique.gre.genes, sig.cushings.genes))))
+plot(vd)
+
+#what is the ratio of overlapping GRE genes in differentiation
+Cushings <- c(length(intersect(unique.gre.genes, sig.cushings.genes)), length(sig.cushings.genes))
+Total <- c(length(unique.gre.genes), 20389)
+summary.table <- rbind(Cushings, Total)
+colnames(summary.table) <- c("GRE", "Total")
+```
+
+There were `r length(sig.cushings.genes)` genes differentially expressed in our Cushing's patients adipose tissue, `r length(unique.gre.genes)` genes with GRE's and `r length(intersect(unique.gre.genes, sig.cushings.genes))` which overlapped. This much overlap is not significantly more than is expected (Fisher's Exact Test; p=`r fisher.test(summary.table)$p.value`) based on the contingency table shown below:
+
+```{r overlap-contingency, results='asis'}
+library(xtable)
+summary.table <- as.data.frame(summary.table)
+summary.table$Percent <- summary.table$GRE/summary.table$Total*100
+print(xtable(summary.table, caption = "Contingency table for overlap between GRE's and Cushing's Dependent Differentially Expressed Genes", label="tab:overlap-contingency", digits=c(0,0,0,2)), type='html')
+```
+
+The differentially expressed genes which contain TRANSFAC GREs are `r paste(intersect(unique.gre.genes, sig.cushings.genes), sep=',')`.
+
+# Experimental Data
+Based on the data in Reddy *et al.*, we identified `r length(levels(gre.experimental.data$hgnc_symbol))` genes associated with GR CHIP peaks in A549 cells.  We found that `r length(intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes))` of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Tableand in Figure below. 
+
+```{r chipseq-overlap, results='asis'}
+combined.table <- data.frame(CHIPseq=intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes), TRANSFAC=intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes) %in% unique.gre.genes)
+combined.table <- combined.table[order(combined.table$CHIPseq),]
+print(xtable(combined.table, caption = "Table showing experimentally and computationally described GREs", include.rownames=FALSE), type='html')
+```
+
+
+```{r chipseq-overlap-contingency-table}
+Cushings <- c(length(intersect(levels(gre.experimental.data$hgnc_symbol), sig.cushings.genes)), length(sig.cushings.genes))
+Total <- c(length(levels(gre.experimental.data$hgnc_symbol)), 20389)
+chipseq.summary.table <- rbind(Cushings, Total)
+colnames(chipseq.summary.table) <- c("GRE", "Total")
+```
+There were `r length(sig.cushings.genes)` genes differentially expressed in our Cushing's patients adipose tissue, `r length(levels(gre.experimental.data$hgnc_symbol))` genes with CHIPseq peaks and `r length(intersect(levels(gre.experimental.data$hgnc_symbol), sig.cushings.genes))` which overlapped. This much overlap is not significantly more than is expected (Fisher's Exact Test; p=`r fisher.test(chipseq.summary.table)$p.value`) based on the contingency table shown below:
+
+```{r chipseq-overlap-contingency, results='asis'}
+chipseq.summary.table <- as.data.frame(chipseq.summary.table)
+chipseq.summary.table$Percent <- chipseq.summary.table$GRE/chipseq.summary.table$Total*100
+print(xtable(chipseq.summary.table, caption = "Contingency table for overlap between CHIPseq peaks and Cushing's Dependent Differentially Expressed Genes", label="tab:overlap-contingency", digits=c(0,0,0,2)), type='html')
+```
+
+```{r venerable-venn}
+#install.packages("Vennerable", repos="http://R-Forge.R-project.org", type='source')
+#source("http://bioconductor.org/biocLite.R")
+#biocLite("RBGL")
+#biocLite("graph")
+library(Vennerable)
+
+Vcombined.list <- list(Cushings = sig.cushings.genes, 
+                       CHIPseq = levels(gre.experimental.data$hgnc_symbol), 
+                       TRANSFAC = unique.gre.genes)
+Venn.GRE = Venn(Vcombined.list)
+plot(Venn.GRE, doWeights = TRUE)
+```
+
+
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```
