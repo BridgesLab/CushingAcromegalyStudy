@@ -26,17 +26,24 @@ There are datasets for genes which contain GRE's and datasets for genes which ar
 tft_gmt_file <- '../data/raw/c3.tft.v4.0.symbols.gmt'
 #download.file(tft_url, destfile=tft_gmt_file, method='curl')
 #downloaded manually because needed login
-
-gre_experimental_data_file <- '../data/processed/Annotated GR Peaks - Significantly Changed.csv'
+#this file has the peaks which significantly changed with dex ../data/processed/Annotated GR Peaks - Significantly Changed.csv
+gre_experimental_data_file <- '../data/processed/Annotated GR Peaks.csv'
 gre.experimental.data <- read.csv(gre_experimental_data_file)
 
 cushings_data_file <- "../data/processed/Annotated Results GRCh37.74 - Cushing.csv"
+
+yu.experimental_data_location <- "http://s3-eu-west-1.amazonaws.com/files.figshare.com/404762/Dataset_S1.xls"
+yu.experimental_data_file <- '../data/raw/Yu CHIPseq Data.xlsx'
+download.file(yu.experimental_data_location, yu.experimental_data_file)
+library(xlsx)
+yu.data <- read.xlsx2(yu.experimental_data_file, sheetIndex=1, startRow=2)
 ```
 
 We used the data from our Cushing's patients found in the `r cushings_data_file` file for our significant genes.  The data is obtained from the MSigDB collection for the following gene sets on `r date()`.  These data are saved in:
 
 * **Predicted TFBS** from the TRANSFAC database.  `r tft_gmt_file`.
-* **Experimental TFBS**  from the Reddy *et al.*.  `r gre_experimental_data_file`.  See *gre_annotation.Rmd* to see how this file was generated from the raw data.
+* **Experimental TFBS**  from the Reddy *et al.*.  `r gre_experimental_data_file`.  See *gre_annotation.Rmd* to see how this file was generated from the raw data.  This was from A549 Cells
+* **Experimental TFBS** from the Yu *et al.*.  `r yu.experimental_data_file`.  This was generated from 3T3-L1 cells.
 
 ```{r data-munging}
 tft.data <- read.table(tft_gmt_file, sep='\n')
@@ -88,13 +95,10 @@ print(xtable(summary.table, caption = "Contingency table for overlap between GRE
 The differentially expressed genes which contain TRANSFAC GREs are `r paste(intersect(unique.gre.genes, sig.cushings.genes), sep=',')`.
 
 # Experimental Data
-Based on the data in Reddy *et al.*, we identified `r length(levels(gre.experimental.data$hgnc_symbol))` genes associated with GR CHIP peaks in A549 cells.  We found that `r length(intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes))` of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Tableand in Figure below. 
 
-```{r chipseq-overlap, results='asis'}
-combined.table <- data.frame(CHIPseq=intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes), TRANSFAC=intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes) %in% unique.gre.genes)
-combined.table <- combined.table[order(combined.table$CHIPseq),]
-print(xtable(combined.table, caption = "Table showing experimentally and computationally described GREs", include.rownames=FALSE), type='html')
-```
+## Reddy et al (A549 Cells)
+
+Based on the data in Reddy *et al.*, we identified `r length(levels(gre.experimental.data$hgnc_symbol))` genes associated with GR CHIP peaks in A549 cells.  We found that `r length(intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes))` of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Tableand in Figure below. 
 
 
 ```{r chipseq-overlap-contingency-table}
@@ -108,8 +112,39 @@ There were `r length(sig.cushings.genes)` genes differentially expressed in our 
 ```{r chipseq-overlap-contingency, results='asis'}
 chipseq.summary.table <- as.data.frame(chipseq.summary.table)
 chipseq.summary.table$Percent <- chipseq.summary.table$GRE/chipseq.summary.table$Total*100
-print(xtable(chipseq.summary.table, caption = "Contingency table for overlap between CHIPseq peaks and Cushing's Dependent Differentially Expressed Genes", label="tab:overlap-contingency", digits=c(0,0,0,2)), type='html')
+print(xtable(chipseq.summary.table, caption = "Contingency table for overlap between CHIPseq peaks from Reddy et al and Cushing's Dependent Differentially Expressed Genes", label="tab:overlap-contingency", digits=c(0,0,0,2)), type='html')
 ```
+
+## Yu et al (3T3-L1)
+
+```{r yu-munging}
+library(biomaRt)
+ensembl <- useMart('ensembl', dataset='hsapiens_gene_ensembl')
+annotation <- getBM(attributes=c('mmusculus_homolog_ensembl_gene','ensembl_gene_id'), filters='ensembl_gene_id', values=cushings_data$X, mart=ensembl)
+cushings.annotated.data <- merge(cushings_data, annotation, by.x='X', by.y='ensembl_gene_id')
+sig.cushings.annotated <- subset(cushings.annotated.data, padj<0.05)$mmusculus_homolog_ensembl_gene
+
+Cushings <- c(length(intersect(yu.data$ENSEMBLE.gene.ID, sig.cushings.annotated)), length(sig.cushings.annotated))
+Total <- c(length(levels(gre.experimental.data$hgnc_symbol)), dim(cushings.annotated.data)[1])
+yu.summary.table <- rbind(Cushings, Total)
+colnames(yu.summary.table) <- c("GRE", "Total")
+
+ensembl <- useMart('ensembl', dataset='mmusculus_gene_ensembl')
+yu.gene.names <- getBM(attributes=c('hsapiens_homolog_ensembl_gene','ensembl_gene_id'),filters='ensembl_gene_id', values=yu.data$ENSEMBLE.gene.ID, mart=ensembl)
+annotated.yu.names <- droplevels(merge(yu.gene.names, cushings_data, by.x='hsapiens_homolog_ensembl_gene', by.y='X'))[,'external_gene_id']
+```
+
+Among our Cushing's data, which is human we found `r dim(subset(cushings.annotated.data, padj<0.05))[1]` differentially expressed genes of which `r dim(subset(cushings.annotated.data, padj<0.05&mmusculus_homolog_ensembl_gene!=''))[1]` had mouse homologs.  Within those genes, `r length(intersect(sig.cushings.annotated, yu.data$ENSEMBLE.gene.ID))` had CHIPseq peaks out of a total of `r unique(length(yu.data$ENSEMBLE.gene.ID))`.  This contingency table is shown below and showed enrichment of our genes in their data set (p=`r fisher.test(yu.summary.table)$p.value`).
+
+
+```{r yu-chipseq-overlap-contingency, results='asis'}
+yu.summary.table <- as.data.frame(yu.summary.table)
+yu.summary.table$Percent <- yu.summary.table$GRE/yu.summary.table$Total*100
+print(xtable(yu.summary.table, caption = "Contingency table for overlap between CHIPseq peaks from Yu et al and Cushing's Dependent Differentially Expressed Genes", digits=c(0,0,0,2)), type='html')
+```
+
+
+# Overall Summary
 
 ```{r venerable-venn}
 #install.packages("Vennerable", repos="http://R-Forge.R-project.org", type='source')
@@ -117,14 +152,24 @@ print(xtable(chipseq.summary.table, caption = "Contingency table for overlap bet
 #biocLite("RBGL")
 #biocLite("graph")
 library(Vennerable)
-
+#need to get gene hgnc_gene names for yu data
 Vcombined.list <- list(Cushings = sig.cushings.genes, 
-                       CHIPseq = levels(gre.experimental.data$hgnc_symbol), 
-                       TRANSFAC = unique.gre.genes)
+                       CHIPseq.Reddy = levels(gre.experimental.data$hgnc_symbol), 
+                       CHIPseq.Yu = levels(annotated.yu.names)) 
+                       #TRANSFAC = unique.gre.genes)
 Venn.GRE = Venn(Vcombined.list)
 plot(Venn.GRE, doWeights = TRUE)
 ```
 
+```{r chipseq-overlap, results='asis'}
+combined.table <- data.frame(row.names=
+       unique(c(intersect(sig.cushings.genes,levels(annotated.yu.names)), intersect(sig.cushings.genes,levels(gre.experimental.data$hgnc_symbol)))))
+combined.table$Reddy <- rownames(combined.table) %in% levels(gre.experimental.data$hgnc_symbol)
+combined.table$Yu <- rownames(combined.table) %in% levels(annotated.yu.names)
+  
+combined.table <- combined.table[order(rownames(combined.table)),]
+print(xtable(combined.table, caption = "Table Differentially Expressed Genes with CHIP Peaks Identified by each Paper"), type='html')
+```
 
 
 # Session Information
