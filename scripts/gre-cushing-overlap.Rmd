@@ -98,7 +98,7 @@ The differentially expressed genes which contain TRANSFAC GREs are `r paste(inte
 
 ## Reddy et al (A549 Cells)
 
-Based on the data in Reddy *et al.*, we identified `r length(levels(gre.experimental.data$hgnc_symbol))` genes associated with GR CHIP peaks in A549 cells.  We found that `r length(intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes))` of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Tableand in Figure below. 
+Based on the data in Reddy *et al.*, we identified `r length(levels(gre.experimental.data$hgnc_symbol))` genes associated with GR CHIP peaks in A549 cells.  We found that `r length(intersect(gre.experimental.data$hgnc_symbol, sig.cushings.genes))` of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Table below. 
 
 
 ```{r chipseq-overlap-contingency-table}
@@ -124,8 +124,8 @@ annotation <- getBM(attributes=c('mmusculus_homolog_ensembl_gene','ensembl_gene_
 cushings.annotated.data <- merge(cushings_data, annotation, by.x='X', by.y='ensembl_gene_id')
 sig.cushings.annotated <- subset(cushings.annotated.data, padj<0.05)$mmusculus_homolog_ensembl_gene
 
-Cushings <- c(length(intersect(yu.data$ENSEMBLE.gene.ID, sig.cushings.annotated)), length(sig.cushings.annotated))
-Total <- c(length(levels(gre.experimental.data$hgnc_symbol)), dim(cushings.annotated.data)[1])
+Cushings <- c(length(intersect(yu.data$ENSEMBLE.gene.ID, sig.cushings.annotated)), dim(subset(cushings.annotated.data, padj<0.05&mmusculus_homolog_ensembl_gene!=''))[1])
+Total <- c(length(unique(yu.data$ENSEMBLE.gene.ID)), dim(subset(cushings.annotated.data, mmusculus_homolog_ensembl_gene!=''))[1])
 yu.summary.table <- rbind(Cushings, Total)
 colnames(yu.summary.table) <- c("GRE", "Total")
 
@@ -134,7 +134,7 @@ yu.gene.names <- getBM(attributes=c('hsapiens_homolog_ensembl_gene','ensembl_gen
 annotated.yu.names <- droplevels(merge(yu.gene.names, cushings_data, by.x='hsapiens_homolog_ensembl_gene', by.y='X'))[,'external_gene_id']
 ```
 
-Among our Cushing's data, which is human we found `r dim(subset(cushings.annotated.data, padj<0.05))[1]` differentially expressed genes of which `r dim(subset(cushings.annotated.data, padj<0.05&mmusculus_homolog_ensembl_gene!=''))[1]` had mouse homologs.  Within those genes, `r length(intersect(sig.cushings.annotated, yu.data$ENSEMBLE.gene.ID))` had CHIPseq peaks out of a total of `r unique(length(yu.data$ENSEMBLE.gene.ID))`.  This contingency table is shown below and showed enrichment of our genes in their data set (p=`r fisher.test(yu.summary.table)$p.value`).
+Among our Cushing's data, which is human we found  `r dim(subset(cushings.annotated.data, padj<0.05&mmusculus_homolog_ensembl_gene!=''))[1]` genes which had identifiable mouse homologs.  Within those genes, `r length(intersect(sig.cushings.annotated, yu.data$ENSEMBLE.gene.ID))` had CHIPseq peaks out of a total of `r length(unique(yu.data$ENSEMBLE.gene.ID))` peaks identified by Yu *et al.*.  This contingency table is shown below and showed enrichment of our genes in their data set (p=`r fisher.test(yu.summary.table)$p.value`).
 
 
 ```{r yu-chipseq-overlap-contingency, results='asis'}

@@ -11,7 +11,7 @@ There are datasets for genes which contain GRE's and datasets for genes which ar
 
 
 
-We used the data from our Cushing's patients found in the ../data/processed/Annotated Results GRCh37.74 - Cushing.csv file for our significant genes.  The data is obtained from the MSigDB collection for the following gene sets on Wed Mar 11 14:30:22 2015.  These data are saved in:
+We used the data from our Cushing's patients found in the ../data/processed/Annotated Results GRCh37.74 - Cushing.csv file for our significant genes.  The data is obtained from the MSigDB collection for the following gene sets on Thu Mar 12 11:50:40 2015.  These data are saved in:
 
 * **Predicted TFBS** from the TRANSFAC database.  ../data/raw/c3.tft.v4.0.symbols.gmt.
 * **Experimental TFBS**  from the Reddy *et al.*.  ../data/processed/Annotated GR Peaks.csv.  See *gre_annotation.Rmd* to see how this file was generated from the raw data.  This was from A549 Cells
@@ -26,7 +26,7 @@ This is shown in the following venn diagram.
 There were 473 genes differentially expressed in our Cushing's patients adipose tissue, 664 genes with GRE's and 18 which overlapped. This much overlap is not significantly more than is expected (Fisher's Exact Test; p=0.5128475) based on the contingency table shown below:
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Wed Mar 11 14:30:23 2015 -->
+<!-- Thu Mar 12 11:50:42 2015 -->
 <table border=1>
 <caption align="bottom"> Contingency table for overlap between GRE's and Cushing's Dependent Differentially Expressed Genes </caption>
 <tr> <th>  </th> <th> GRE </th> <th> Total </th> <th> Percent </th>  </tr>
@@ -41,14 +41,14 @@ The differentially expressed genes which contain TRANSFAC GREs are YARS, LUC7L3,
 
 ## Reddy et al (A549 Cells)
 
-Based on the data in Reddy *et al.*, we identified 4774 genes associated with GR CHIP peaks in A549 cells.  We found that 132 of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Tableand in Figure below. 
+Based on the data in Reddy *et al.*, we identified 4774 genes associated with GR CHIP peaks in A549 cells.  We found that 132 of these genes overlapped with the Cushings's differentially expressed genes.  These genes are shown in the Table below. 
 
 
 
 There were 473 genes differentially expressed in our Cushing's patients adipose tissue, 4774 genes with CHIPseq peaks and 132 which overlapped. This much overlap is not significantly more than is expected (Fisher's Exact Test; p=0.0836268) based on the contingency table shown below:
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Wed Mar 11 14:30:24 2015 -->
+<!-- Thu Mar 12 11:50:42 2015 -->
 <table border=1>
 <caption align="bottom"> Contingency table for overlap between CHIPseq peaks from Reddy et al and Cushing's Dependent Differentially Expressed Genes </caption>
 <tr> <th>  </th> <th> GRE </th> <th> Total </th> <th> Percent </th>  </tr>
@@ -61,16 +61,16 @@ There were 473 genes differentially expressed in our Cushing's patients adipose 
 
 
 
-Among our Cushing's data, which is human we found 504 differentially expressed genes of which 485 had mouse homologs.  Within those genes, 135 had CHIPseq peaks out of a total of 8863.  This contingency table is shown below and showed enrichment of our genes in their data set (p=0.0030974).
+Among our Cushing's data, which is human we found  485 genes which had identifiable mouse homologs.  Within those genes, 135 had CHIPseq peaks out of a total of 4725 peaks identified by Yu *et al.*.  This contingency table is shown below and showed enrichment of our genes in their data set (p=0.0362323).
 
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Wed Mar 11 14:30:34 2015 -->
+<!-- Thu Mar 12 11:50:52 2015 -->
 <table border=1>
 <caption align="bottom"> Contingency table for overlap between CHIPseq peaks from Yu et al and Cushing's Dependent Differentially Expressed Genes </caption>
 <tr> <th>  </th> <th> GRE </th> <th> Total </th> <th> Percent </th>  </tr>
-  <tr> <td align="right"> Cushings </td> <td align="right"> 135 </td> <td align="right"> 504 </td> <td align="right"> 26.79 </td> </tr>
-  <tr> <td align="right"> Total </td> <td align="right"> 4774 </td> <td align="right"> 24059 </td> <td align="right"> 19.84 </td> </tr>
+  <tr> <td align="right"> Cushings </td> <td align="right"> 135 </td> <td align="right"> 485 </td> <td align="right"> 27.84 </td> </tr>
+  <tr> <td align="right"> Total </td> <td align="right"> 4725 </td> <td align="right"> 20926 </td> <td align="right"> 22.58 </td> </tr>
    </table>
 
 
@@ -79,7 +79,7 @@ Among our Cushing's data, which is human we found 504 differentially expressed g
 ![](figures/venerable-venn-1.png) 
 
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Wed Mar 11 14:30:39 2015 -->
+<!-- Thu Mar 12 11:50:57 2015 -->
 <table border=1>
 <caption align="bottom"> Table Differentially Expressed Genes with CHIP Peaks Identified by each Paper </caption>
 <tr> <th>  </th> <th> Reddy </th> <th> Yu </th>  </tr>
