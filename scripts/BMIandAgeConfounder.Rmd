@@ -49,6 +49,7 @@ cushing.counts <- transcript.counts[,cushing.mapping$samplename]
 acromegaly.mapping$BMI1 <- cut(acromegaly.mapping$BMI, breaks=c(0,25,30,50))
 cushing.mapping$BMI1 <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
 cushing.mapping$ageSq <- cushing.mapping$age^2
+cushing.mapping$ageGroup <- cut(cushing.mapping$age, breaks=c(0,59,100))
 ```
 
 This step gets the protein coding genes only.
@@ -59,7 +60,7 @@ library(biomaRt,quietly=TRUE)
 #download gene name annotation data for results sets.
 ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
 transcriptInfo <- getBM(
-    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    attributes=c( 'ensembl_gene_id', 'hgnc_symbol'), 
     filter= 'biotype',
     values = 'protein_coding',
     mart=ensembl)
@@ -115,10 +116,10 @@ plot(age~Fitted_Values, cushing.long1, main="Obese patients")
 
 
 ###########################NOT OBESE ###############
-cushing.mapping.notObese$age1 <- cut(cushing.mapping.notObese$age, breaks=c(0,40,100))
 cushing.mapping.notObese <- cushing.mapping[cushing.mapping$BMI1=="(0,30]",]
+cushing.mapping.notObese$age1 <- cut(cushing.mapping.notObese$age, breaks=c(0,40,100))
 cushing.counts.notObese <-cushing.protein.coding[,colnames(cushing.protein.coding) %in% cushing.mapping.notObese$samplename]
-cds.cushing.notObese = DESeqDataSetFromMatrix(countData=cushing.counts.notObese, colData=cushing.mapping.notObese, design=~age+group)
+cds.cushing.notObese = DESeqDataSetFromMatrix(countData=cushing.counts.notObese, colData=cushing.mapping.notObese, design=~age1+group)
 #cushing.mapping.notObese$age1 <- relevel(cushing.mapping.notObese$age1, "(0,40]")
 cushing.cds.notObese <- DESeq(cds.cushing.notObese)
 plotMA(cushing.cds.notObese,ylim=c(-2,2),main="DESeq2 - Cushing's effect in NOT obese patients")
