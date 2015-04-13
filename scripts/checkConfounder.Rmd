@@ -44,8 +44,13 @@ cushing.mapping <- droplevels(mapping[mapping$group != "Acromegaly"&mapping$samp
 cushing.counts <- transcript.counts[,cushing.mapping$samplename]
 
 #break age into sub groups
+vars <- c("group", "age")
 acromegaly.mapping$age <- cut(acromegaly.mapping$age, breaks=c(0,40,60,100))
 cushing.mapping$age <- cut(cushing.mapping$age, breaks=c(0,40,60,100))
+
+#compare cushing's and control in the agegroup 40 to 60 only.
+cushing.mapping.age40.60 <- droplevels(cushing.mapping[cushing.mapping$age == '(40,60]', ])
+cushing.counts <- transcript.counts[,cushing.mapping.age40.60$samplename]
 ```
 
 This step gets the protein coding genes only.
@@ -56,12 +61,14 @@ library(biomaRt,quietly=TRUE)
 #download gene name annotation data for results sets.
 ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
 transcriptInfo <- getBM(
-    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    attributes=c('hgnc_symbol', 'ensembl_gene_id'), 
     filter= 'biotype',
     values = 'protein_coding',
     mart=ensembl)
 
 cushing.protein.coding <- cushing.counts[rownames(cushing.counts)%in%transcriptInfo$ensembl_gene_id,]
+#select those with the age 40-60 (6 Control, 2 Cushings)
+cushing.age40.60 <- cushing.protein.coding[cushing.protein.coding]
 acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%transcriptInfo$ensembl_gene_id,]
 
 ```
@@ -70,8 +77,8 @@ acromegaly.protein.coding <- acromegaly.counts[rownames(acromegaly.counts)%in%tr
 cds.acromegaly.age = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~age+group)
 cds.acromegaly.age$age <- relevel(cds.acromegaly.age$age, "(0,40]")
 #group is the variable of interest, so put group at the end of the design formula
-cds.cushing.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~age+group)
-cds.cushing.age$age <- relevel(cds.cushing.age$age, "(0,40]")
+cds.cushing.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping.age40.60, design=~group)
+#cds.cushing.age$age <- relevel(cds.cushing.age$age, "(0,40]")
 
 cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~BMI+group)
 
@@ -96,6 +103,8 @@ acromegaly.results.age <- results(acromegaly.cds.age)
 cushing.results.age <- results(cushing.cds.age)
 sum(acromegaly.results.age$padj<.05, na.rm=TRUE)
 sum(cushing.results.age$padj<0.05, na.rm=TRUE)
+
+write.csv(cushing.results.age, "../data/processed/cushing_results_ageGroup40to60.csv")
 
 #getting the reuslts for age as an factor variable
 acro.age.effect <- results(acromegaly.cds.age, contrast=c("age","(40.60]", "(0.40]"))
@@ -147,6 +156,8 @@ This step annotates the data tables with the official gene symbols.
 
 ```{r annotation, echo=FALSE, message=FALSE}
 cushing.age.combined <- merge(cushing.age.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
+cushing.results.age <- as.data.frame(cushing.results.age)
+cushing.age40.60 <- merge(cushing.results.age, transcriptInfo, by.x="row.names", by.y="ensembl_gene_id")
 #cushing.age.combined$external_gene_id <- transcriptInfo$external_gene_id
 acro.age.combined <- merge(acro.age.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
 
@@ -154,6 +165,7 @@ cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.na
 acro.bmi.combined <- merge(acro.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
 
 #write annotated results files.
+write.csv(cushing.age40.60, "../data/processed/Annotated_Results_Cushings_ageGroup40to60.csv")
 write.csv(cushing.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_age.csv")
 write.csv(acro.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv")
 write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_bmi.csv")
