@@ -47,9 +47,11 @@ cushing.counts <- transcript.counts[,cushing.mapping$samplename]
 vars <- c("group", "age")
 acromegaly.mapping$age <- cut(acromegaly.mapping$age, breaks=c(0,40,60,100))
 cushing.mapping$ageGroup <- cut(cushing.mapping$age, breaks=c(0,40,60,100))
+acromegaly.mapping$BMI1 <- cut(acromegaly.mapping$BMI, breaks=c(0,30,50))
 
 #compare cushing's and control in the agegroup 40 to 60 only.
 cushing.mapping.age40.60 <- droplevels(cushing.mapping[cushing.mapping$age == '(40,60]', ])
+cushing.mapping$BMI1 <- cut(cushing.mapping$BMI, breaks=c(0,30,50))
 
 #cushing.counts.age40.60 <- transcript.counts[,cushing.mapping.age40.60$samplename]
 ```
@@ -80,30 +82,44 @@ cds.acromegaly.age$age <- relevel(cds.acromegaly.age$age, "(0,40]")
 #group is the variable of interest, so put group at the end of the design formula
 cds.cushing.age4060 = DESeqDataSetFromMatrix(countData=cushing.age40.60, colData=cushing.mapping.age40.60, design=~group)
 #cds.cushing.age$age <- relevel(cds.cushing.age$age, "(0,40]")
+cds.cushing.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~age+group)
+
+#Effect of Cushing's adjusting for age
 cds.cushing.ageAll = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~ageGroup+group)
 cds.cushing.ageAll$ageGroup <- relevel(cds.cushing.ageAll$ageGroup, "(0,40]")
 
+#Effect of Age only
 cds.cushing.ageOnly = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~ageGroup)
-#cds.cushing.age$age <- relevel(cds.cushing.age$age, "(0,40]")
+cds.cushing.ageOnly$ageGroup <- relevel(cds.cushing.ageOnly$ageGroup, "(0,40]")
 
-cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~BMI+group)
-
-#group is the variable of interest, so put group at the end of the design formula
-cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~BMI+group)
+cds.acromegaly.bmi = DESeqDataSetFromMatrix(countData=acromegaly.protein.coding, colData=acromegaly.mapping, design=~BMI1+group)
 
 #group is the variable of interest, so put group at the end of the design formula
-cds.cushing.bmi.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~BMI+age+group)
+cds.cushing.bmi = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~BMI1+group)
+cds.cushing.bmi$BMI1 <- relevel(cds.cushing.bmi$BMI1, "(0,30]")
+#group is the variable of interest, so put group at the end of the design formula
+
+#Effect of Cushing's adjusting for Age and BMI
+cds.cushing.bmi.age = DESeqDataSetFromMatrix(countData=cushing.protein.coding, colData=cushing.mapping, design=~BMI1+ageGroup+group)
+cds.cushing.bmi.age$BMI1 <- relevel(cds.cushing.bmi.age$BMI1, "(0,30]")
+cds.cushing.bmi.age$ageGroup <- relevel(cds.cushing.bmi.age$ageGroup, "(0,40]")
 ```
 Full Analysis
 --------------
 
 ```{r deseq-analysis adjusting for age, echo=FALSE, dev=c('pdf','png'), message=FALSE}
 acromegaly.cds.age <- DESeq(cds.acromegaly.age)
+#age as continuous variable
+cushing.cds.age <- DESeq(cds.cushing.age)
 cushing.cds.age4060 <- DESeq(cds.cushing.age4060)
+#Effect of Cushing's adjusting for age
 cushing.cds.ageAll <- DESeq(cds.cushing.ageAll)
+#Effect of Age only
 cushing.cds.ageOnly <- DESeq(cds.cushing.ageOnly)
+
 acromegaly.cds.bmi <- DESeq(cds.acromegaly.bmi)
 cushing.cds.bmi <- DESeq(cds.cushing.bmi)
+#Effect of Cushing's adjusting for Age and BMI
 cushing.cds.bmi.age <- DESeq(cds.cushing.bmi.age)
 
 plotMA(acromegaly.cds.age,ylim=c(-2,2),main="DESeq2 - Acromegaly adjusting for age")
@@ -116,9 +132,14 @@ plotMA(cushing.cds.bmi.age,ylim=c(-2,2),main="DESeq2 - Cushing adjusting for BMI
 
 
 acromegaly.results.age <- results(acromegaly.cds.age)
+cushing.results.age1 <- results(cushing.cds.age) #this returns the cushing's vs control p-value
+cushing.results.age2 <- results(cushing.cds.age, name="age")
 cushing.results.age4060 <- results(cushing.cds.age4060)
-cushing.results.ageAll <- results(cushing.cds.ageAll)
+#Effect of Cushing's adjusting for age
+cushing.results.age <- results(cushing.cds.ageAll)
+#Effect of Age only
 cushing.results.ageOnly <- results(cushing.cds.ageOnly)
+#Effect of Cushing's adjusting for Age and BMI
 cushing.results.bmi.age <- results(cushing.cds.bmi.age)
 sum(acromegaly.results.age$padj<.05, na.rm=TRUE)
 sum(cushing.results.age$padj<0.05, na.rm=TRUE)
@@ -126,7 +147,27 @@ sum(cushing.results.age$padj<0.05, na.rm=TRUE)
 write.csv(cushing.results.age4060, "../data/processed/cushing_results_ageGroup4060.csv")
 write.csv(cushing.results.ageAll, "../data/processed/cushing_results_ageAllGroups.csv")
 write.csv(cushing.results.ageOnly, "../data/processed/Age_effect_in_Cushings.csv")
-write.csv(cushing.results.bmi.age, "../data/processed/cushing_resuls_BMI_Age.csv")
+write.csv(cushing.results.bmi.age, "../data/processed/cushing_results_BMI_Age.csv")
+
+
+#Effect of Cushing's adjusting for Age and BMI
+resultsNames(cushing.cds.bmi.age)
+cushing.results.bmi.age <- results(cushing.cds.bmi.age)
+cush.results.bmi.midAge<- results(cushing.cds.bmi.age, contrast=c("ageGroup", ".40.60.", ".0.40."))
+cush.results.bmi.oldAge<- results(cushing.cds.bmi.age, contrast=c("ageGroup", ".60.100.", ".0.40."))
+cushing.midage.group.combined <- merge(cushing.results.bmi.age, cush.results.bmi.midAge, by.x="row.names", by.y="row.names")
+
+
+
+#cushing.notObese.combine <- cushing.group.notObese[order(cushing.group.notObese$padj, na.last=TRUE),]
+
+
+colnames(cushing.notObese.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.notObese.combined)[2:7])
+colnames(cushing.notObese.combined)[8:13]<-gsub("y","Age", colnames(cushing.notObese.combined[8:13]))
+
+cushing.notObese.combined <- cushing.notObese.combined[order(cushing.notObese.combined$padj.CushingvsControl, na.last=TRUE),]
+write.csv(cushing.notObese.combined, "../data/processed/cushing_results_NOT_Obese_Age_adjust.csv")
+
 
 #look at the residuals in the model controlling for BMI and compare the residuals with age to see if there is any association
 cushing.fitted <- assays(cushing.cds.bmi)[["mu"]]
