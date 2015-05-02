@@ -157,16 +157,17 @@ cush.results.bmi.midAge<- as.data.frame(results(cushing.cds.bmi.age, contrast=c(
 cush.results.bmi.oldAge<- as.data.frame(results(cushing.cds.bmi.age, contrast=c("ageGroup", ".60.100.", ".0.40.")))
 cushing.midage.group.combined <- merge(cushing.results.bmi.age, cush.results.bmi.midAge, by.x="row.names", by.y="row.names")
 cushing.midage.group.combine2 <- merge(cushing.midage.group.combined,cush.results.bmi.oldAge,by.x="Row.names", by.y="row.names" )
-
-
-#cushing.notObese.combine <- cushing.group.notObese[order(cushing.group.notObese$padj, na.last=TRUE),]
+cush.results.bmi.Obese<- as.data.frame(results(cushing.cds.bmi.age, contrast=c("BMI1", ".30.50.", ".0.30.")))
 
 colnames(cushing.midage.group.combine2)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.midage.group.combine2)[2:7])
 colnames(cushing.midage.group.combine2)[8:13]<-gsub("y","Age.MidvsYoung", colnames(cushing.midage.group.combine2[8:13]))
 colnames(cushing.midage.group.combine2)[14:19]<-paste(colnames(cushing.midage.group.combine2[14:19]),".Age.OldvsYoung",  sep="")
 
-cushing.notObese.combined <- cushing.notObese.combined[order(cushing.notObese.combined$padj.CushingvsControl, na.last=TRUE),]
-write.csv(cushing.notObese.combined, "../data/processed/cushing_results_NOT_Obese_Age_adjust.csv")
+
+cushing.midage.group.combine3 <- merge(cushing.midage.group.combine2,cush.results.bmi.Obese,by.x="Row.names", by.y="row.names" )
+colnames(cushing.midage.group.combine3)[20:25]<-paste(colnames(cushing.midage.group.combine3[20:25]),".BMI.ObesevsNotObese",  sep="")
+
+write.csv(cushing.midage.group.combine3, "../data/processed/cushing_results_BMI_Age_adjusted.csv")
 
 
 #look at the residuals in the model controlling for BMI and compare the residuals with age to see if there is any association
