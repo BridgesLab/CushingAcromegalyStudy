@@ -152,18 +152,18 @@ write.csv(cushing.results.bmi.age, "../data/processed/cushing_results_BMI_Age.cs
 
 #Effect of Cushing's adjusting for Age and BMI
 resultsNames(cushing.cds.bmi.age)
-cushing.results.bmi.age <- results(cushing.cds.bmi.age)
-cush.results.bmi.midAge<- results(cushing.cds.bmi.age, contrast=c("ageGroup", ".40.60.", ".0.40."))
-cush.results.bmi.oldAge<- results(cushing.cds.bmi.age, contrast=c("ageGroup", ".60.100.", ".0.40."))
+cushing.results.bmi.age <- as.data.frame(results(cushing.cds.bmi.age))
+cush.results.bmi.midAge<- as.data.frame(results(cushing.cds.bmi.age, contrast=c("ageGroup", ".40.60.", ".0.40.")))
+cush.results.bmi.oldAge<- as.data.frame(results(cushing.cds.bmi.age, contrast=c("ageGroup", ".60.100.", ".0.40.")))
 cushing.midage.group.combined <- merge(cushing.results.bmi.age, cush.results.bmi.midAge, by.x="row.names", by.y="row.names")
-
+cushing.midage.group.combine2 <- merge(cushing.midage.group.combined,cush.results.bmi.oldAge,by.x="Row.names", by.y="row.names" )
 
 
 #cushing.notObese.combine <- cushing.group.notObese[order(cushing.group.notObese$padj, na.last=TRUE),]
 
-
-colnames(cushing.notObese.combined)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.notObese.combined)[2:7])
-colnames(cushing.notObese.combined)[8:13]<-gsub("y","Age", colnames(cushing.notObese.combined[8:13]))
+colnames(cushing.midage.group.combine2)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.midage.group.combine2)[2:7])
+colnames(cushing.midage.group.combine2)[8:13]<-gsub("y","Age.MidvsYoung", colnames(cushing.midage.group.combine2[8:13]))
+colnames(cushing.midage.group.combine2)[14:19]<-paste(colnames(cushing.midage.group.combine2[14:19]),".Age.OldvsYoung",  sep="")
 
 cushing.notObese.combined <- cushing.notObese.combined[order(cushing.notObese.combined$padj.CushingvsControl, na.last=TRUE),]
 write.csv(cushing.notObese.combined, "../data/processed/cushing_results_NOT_Obese_Age_adjust.csv")
