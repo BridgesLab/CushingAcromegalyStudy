@@ -147,8 +147,6 @@ sum(cushing.results.age$padj<0.05, na.rm=TRUE)
 write.csv(cushing.results.age4060, "../data/processed/cushing_results_ageGroup4060.csv")
 write.csv(cushing.results.ageAll, "../data/processed/cushing_results_ageAllGroups.csv")
 write.csv(cushing.results.ageOnly, "../data/processed/Age_effect_in_Cushings.csv")
-write.csv(cushing.results.bmi.age, "../data/processed/cushing_results_BMI_Age.csv")
-
 
 #Effect of Cushing's adjusting for Age and BMI
 resultsNames(cushing.cds.bmi.age)
@@ -162,45 +160,82 @@ cush.results.bmi.Obese<- as.data.frame(results(cushing.cds.bmi.age, contrast=c("
 colnames(cushing.midage.group.combine2)[2:7]<- gsub("x","CushingvsControl", colnames(cushing.midage.group.combine2)[2:7])
 colnames(cushing.midage.group.combine2)[8:13]<-gsub("y","Age.MidvsYoung", colnames(cushing.midage.group.combine2[8:13]))
 colnames(cushing.midage.group.combine2)[14:19]<-paste(colnames(cushing.midage.group.combine2[14:19]),".Age.OldvsYoung",  sep="")
-
+sum(cushing.results.bmi.age$padj<0.05, na.rm=TRUE)
 
 cushing.midage.group.combine3 <- merge(cushing.midage.group.combine2,cush.results.bmi.Obese,by.x="Row.names", by.y="row.names" )
 colnames(cushing.midage.group.combine3)[20:25]<-paste(colnames(cushing.midage.group.combine3[20:25]),".BMI.ObesevsNotObese",  sep="")
 
 write.csv(cushing.midage.group.combine3, "../data/processed/cushing_results_BMI_Age_adjusted.csv")
 
-
+################################
 #look at the residuals in the model controlling for BMI and compare the residuals with age to see if there is any association
 cushing.fitted <- assays(cushing.cds.bmi)[["mu"]]
 fitted.common.scale = t( t( cushing.fitted) / sizeFactors(cushing.cds.bmi) )
 cushing.residuals <- counts(cushing.cds.bmi, normalized=TRUE) - fitted.common.scale
+pdf(file="figure/Residual_BMI_Controlled_vs_Fitted.pdf")
 plot(cushing.fitted, cushing.residuals, main="Cushing-Fitted vs Residuals ", xlab="Fitted", ylab="Residuals", pch=19)
+dev.off()
 
-cushing.counts.fitted <- cbind(cushing.protein.coding, cushing.fitted)
-cushing.counts.fitted <- cushing.counts.fitted[17:32]
-cushing.counts <- cushing.counts.fitted[complete.cases(cushing.counts.fitted),]
-cushing.long1 <- reshape(cushing.counts.fitted, direction="long", 
+cushing.counts.residuals <- cbind(cushing.protein.coding, cushing.residuals)
+cushing.counts.residuals <- cushing.counts.residuals[17:32]
+cushing.counts <- cushing.counts.residuals[complete.cases(cushing.counts.residuals),]
+cushing.long1 <- reshape(cushing.counts, direction="long", 
                            ids=rownames(cushing.counts), idvar="Genes",
-                           varying=colnames(cushing.counts), v.names="Fitted_Values",
+                           varying=colnames(cushing.counts), v.names="Residuals",
                            timevar="Disease",times=cushing.mapping$group)
 
 cushing.long2 <- reshape(cushing.counts, direction="long", 
                            ids=rownames(cushing.counts), idvar="Genes",
-                           varying=colnames(cushing.counts), v.names="Fitted_Values",
-                           timevar="Age",times=cushing.mapping.notObese$age)
+                           varying=colnames(cushing.counts), v.names="Residuals",
+                           timevar="Age",times=cushing.mapping$age)
 cushing.residuals.sub <- cushing.residuals[complete.cases(cushing.residuals),]
-cushing.residuals.long <- melt(cushing.residuals.sub, value.name="Residuals", variable.name=cushing.mapping.obese$samplename, id.vars="row.names")
+library(reshape)
+cushing.residuals.long <- melt(cushing.residuals.sub, v.name="Residuals", variable.name=cushing.mapping$samplename, id.vars="row.names")
 cushing.residuals.long$Age <- cushing.long2$Age
 cushing.residuals.long$Disease <- cushing.long1$Disease
-cushing.long1$Age <-cushing.long2$Age
+names(cushing.residuals.long)[3] <- "Residuals"
+#cushing.long1$Age <-cushing.long2$Age
+pdf(file="figure/Residual_BMI_Controlled_vs_Disease.pdf")
+plot(Residuals~Disease, cushing.residuals.long, main="Residual in the model controlled for BMI vs Disease")
+dev.off()
+jpeg(file="figure/Residual_BMI_Controlled_vs_Age.jpeg")
+plot(Residuals~Age, cushing.residuals.long, main="Residual in the model controlled for BMI vs Age", ylim=c(-20000, 20000))
+dev.off()
+#################################
 
+################################
+#look at the residuals in the model controlling for both BMI and age
+cushing.fitted.bmi.age <- assays(cushing.cds.bmi.age)[["mu"]]
+fitted.common.scale.bmi.age = t( t( cushing.fitted) / sizeFactors(cushing.cds.bmi.age) )
+cushing.residuals.bmi.age <- counts(cushing.cds.bmi.age, normalized=TRUE) - fitted.common.scale.bmi.age
+plot(cushing.fitted.bmi.age, cushing.residuals.bmi.age, main="Cushing-Fitted vs Residuals ", xlab="Fitted", ylab="Residuals", pch=19)
+plot(density(cushing.residuals.bmi.age))
+cushing.counts.residuals.bmi.age <- cbind(cushing.protein.coding, cushing.residuals.bmi.age)
+cushing.counts.residuals.bmi.age <- cushing.counts.residuals.bmi.age[17:32]
+cushing.counts.bmi.age <- cushing.counts.residuals.bmi.age[complete.cases(cushing.counts.residuals.bmi.age),]
+cushing.long3 <- reshape(cushing.counts.bmi.age, direction="long", 
+                           ids=rownames(cushing.counts.bmi.age), idvar="Genes",
+                           varying=colnames(cushing.counts.bmi.age), v.names="Residuals",
+                           timevar="Disease",times=cushing.mapping$group)
 
-plot(Residuals~Disease, cushing.residuals.long, main="Not Obese patients")
-plot(Residuals~Age, cushing.residuals.long, main="Not Obese Patients")
-
-
-
-
+cushing.long4 <- reshape(cushing.counts.bmi.age, direction="long", 
+                           ids=rownames(cushing.counts.bmi.age), idvar="Genes",
+                           varying=colnames(cushing.counts.bmi.age), v.names="Residuals",
+                           timevar="Age",times=cushing.mapping$age)
+cushing.residuals.sub.bmi.age <- cushing.residuals.bmi.age[complete.cases(cushing.residuals.bmi.age),]
+cushing.residuals.long1 <- melt(cushing.residuals.sub.bmi.age, v.name="Residuals", variable.name=cushing.mapping$samplename, id.vars="row.names")
+cushing.residuals.long1$Age <- cushing.long4$Age
+cushing.residuals.long1$Disease <- cushing.long3$Disease
+names(cushing.residuals.long1)[3] <- "Residuals"
+#cushing.long1$Age <-cushing.long2$Age
+plot(density(cushing.residuals.long1$Residuals), xlim=c(-5000,5000))
+pdf(file="figure/Residual_BMI_Age_Controlled_vs_Disease.pdf")
+plot(Residuals~Disease, cushing.residuals.long1, main="Residual in the model controlled for BMI and Age vs Disease")
+dev.off()
+jpeg(file="figure/Residual_BMI_Age_Controlled_vs_Age.jpeg")
+plot(Residuals~Age, cushing.residuals.long1, main="Residual in the model controlled for BMI and Age vs Age", ylim=c(-20000, 20000))
+dev.off()
+#################################
 
 
 #getting the reuslts for age as an factor variable
@@ -260,13 +295,14 @@ acro.age.combined <- merge(acro.age.combined, transcriptInfo, by.x="Row.names", 
 
 cushing.bmi.combined <- merge(cushing.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
 acro.bmi.combined <- merge(acro.bmi.combined, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
-
+cushing.bmi.age.combined<- merge(cushing.midage.group.combine3, transcriptInfo, by.x="Row.names", by.y="ensembl_gene_id")
 #write annotated results files.
 write.csv(cushing.age40.60, "../data/processed/Annotated_Results_Cushings_ageGroup40to60.csv")
 write.csv(cushing.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_age.csv")
 write.csv(acro.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv")
 write.csv(cushing.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushings_bmi.csv")
 write.csv(acro.bmi.combined, "../data/processed/Annotated_Results_GRCh37.74_Acromegaly_bmi.csv")
+write.csv(cushing.bmi.age.combined, "../data/processed/Annotated_Results_GRCh37.74_Cushing_bmi_age_adjusted.csv")
 ```
 Adjusting for age
 ----------------
