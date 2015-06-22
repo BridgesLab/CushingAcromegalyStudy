@@ -145,7 +145,7 @@ desaturases_2 <- c('FADS1','FADS2','HSD17B12')
 tg_synthesis <- c('ELOVL6','FASN','GPAM','DGAT2','ACSL1','ELOVL5','ACLY','HSD17B12','ACSL4','AGPAT2','SLC25A1','GPD1','ELOVL1','ACSL3','LPIN1','AGPAT3','GK')
 ffa_esterification <- c('GPAM','GPAT1','GPD1','GPD1L','GPD2','AGPAT1','AGPAT2','AGPAT3','AGPAT4','AGPAT5','AGPAT6','AGPAT9','LPIN1','LPIN2','LPIN3','DGAT1','DGAT2')
 ffa_esterification_hi <- c('GPAM','GPAT1','GPD1','AGPAT2','DGAT2')
-steroid_biosynthesis <- c('AKR1C1','DHCR7','DHCR24','CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3','HMGCS1','NSDHL')
+steroid_biosynthesis <- c('AKR1C1','DHCR7','DHCR24','HMGCS1', 'CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3', 'NSDHL')
 insulin_signaling <- c('INSR','IRS1','IRS2','PIK3R1','FOXO1','FOXO3')
 interleukins <- paste("IL", seq(1,50), sep="")
 hla_genes_hi <- c('HLA-A','HLA-B','HLA-DRA','HLA-DRB1','HLA-DRB5','HLA-DRB6','HLA-DQA1','HLA-DQB1')
@@ -201,6 +201,42 @@ for (name in gene.data.name){
 }
 
 ```
+
+```{r plot_with_different_axis_scale, echo=FALSE}
+LHS <- c('AKR1C1','DHCR7','DHCR24','HMGCS1')
+RHS <- c('CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3')
+
+steroid_biosynthesis <- c('AKR1C1','DHCR7','DHCR24','HMGCS1', 'CYP1A1','CYP1B1','CYP7B1','CYP17A1','CYP19A1','SRD5A1','SRD5A3')
+index <- c(rep("scale 1",2), rep("scale 2", 10), rep("scale 1", 6), rep("scale 2",4))
+
+
+require(ggplot2)
+l.gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(LHS),]
+l.gene.data$hgnc_symbol <- factor(l.gene.data$hgnc_symbol, levels=eval(LHS))
+
+r.gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(RHS),]
+r.gene.data$hgnc_symbol <- factor(r.gene.data$hgnc_symbol, levels=eval(RHS))
+
+gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(steroid_biosynthesis),]
+gene.data$hgnc_symbol <- factor(gene.data$hgnc_symbol, levels=eval(steroid_biosynthesis))
+gene.data$index <- index
+
+ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease)) + 
+geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) + 
+geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+facet_wrap(~index , scales = "free") +
+theme_bw()+ ylab("mRNA Expression (RPKM)") +xlab("")+
+theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+theme(panel.border=element_blank())+ 
+theme(axis.line = element_line(color = 'black')) +
+scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
+#guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black")) 
+
+ggsave(filename=paste('../Figures/Cushing-twocord-steroidBiosyn-barplot.pdf',sep=""))
+```
+
 
 
 The data used is in the file **`r filename`**.  This file was most recently processed on ```r date()```.
