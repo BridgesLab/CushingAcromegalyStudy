@@ -2,9 +2,9 @@
 <html>
 
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Cushingacromegalystudy : The source code for the cushing and acromegaly studies, currently ongoing" />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Cushingacromegalystudy : The source code for the cushing and acromegaly studies, currently ongoing">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -31,106 +31,66 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>
-<a name="code-and-raw-data-for-acromegaly-and-cushing-analyses" class="anchor" href="#code-and-raw-data-for-acromegaly-and-cushing-analyses"><span class="octicon octicon-link"></span></a>Code and Raw Data for Acromegaly and Cushing Analyses</h1>
+        
+
+<p><a href="http://opendefinition.org/">
+ <img alt="This material is Open Knowledge" border="0" src="http://assets.okfn.org/images/ok_buttons/ok_80x15_blue.png"></a></p>
+
+
+
+<h1>
+<a id="code-and-raw-data-for-acromegaly-and-cushing-analyses" class="anchor" href="#code-and-raw-data-for-acromegaly-and-cushing-analyses" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code and Raw Data for Acromegaly and Cushing Analyses</h1>
+
+<p>This repository contains raw data for studies done by the <a href="http://bridgeslab.uthsc.edu">Bridges Lab</a> and our collaborators on the neuroendocrine disorders Cushing's disease and Acromegaly.  This repository contains the data for several manuscripts as detailed below.  The tag column indicates the state of the dataset at the indicated time.:</p>
+
+<table>
+<thead>
+<tr>
+<th>Publication</th>
+<th>Dataset</th>
+<th>Tag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I. Hochberg, I. Harvey, Q. T. Tran, E. J. Stephenson, A. L. Barkan, A. Saltiel, W. F. Chandler, D. Bridges, Gene expression changes in subcutaneous adipose tissue due to Cushing’s disease., <em>J. Mol. Endocrinol</em>. Accepted (2015). <a href="http://dx.doi.org/10.1530/JME-15-0119">doi:10.1530/JME-15-0119</a>.</td>
+<td><a href="http://dx.doi.org/10.5281/zenodo.22193"><img src="https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg" alt="DOI"></a></td>
+<td><a href="https://github.com/BridgesLab/CushingAcromegalyStudy/releases/tag/Cushing-v1.0.0">Cushing-v1.0.0</a></td>
+</tr>
+<tr>
+<td>I. Hochberg, Q. T. Tran, A. L. Barkan, A. R. Saltiel, W. F. Chandler, D. Bridges, Gene Expression Signature in Adipose Tissue of Acromegaly Patients, PLoS One 10, e0129359 (2015). <a href="http://dx.doi.org/10.1371/journal.pone.0129359">doi:10.1371/journal.pone.0129359</a>
+</td>
+<td><a href="http://dx.doi.org/10.5281/zenodo.22192"><img src="https://zenodo.org/badge/doi/10.5281/zenodo.22192.svg" alt="DOI"></a></td>
+<td><a href="https://github.com/BridgesLab/CushingAcromegalyStudy/releases/tag/Acromegaly-v1.0.0">Acromegaly-v1.0.0</a></td>
+</tr>
+</tbody>
+</table>
 
 <p>This data was analysed at first on the mbni and felix servers to generate counts tables.  The rest of the analysis was performed locally once the counts table was generated.  See the <strong>processing</strong> folder for the code used in the generation of these alignments and counts tables.</p>
 
+<h1>
+<a id="licence" class="anchor" href="#licence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licence</h1>
+
+<p>This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: <a href="http://opendatacommons.org/licenses/by/1.0">http://opendatacommons.org/licenses/by/1.0</a>. - See more at: <a href="http://opendatacommons.org/licenses/by/#sthash.i6n4YNvv.dpuf">http://opendatacommons.org/licenses/by/#sthash.i6n4YNvv.dpuf</a></p>
+
 <h2>
-<a name="data-files" class="anchor" href="#data-files"><span class="octicon octicon-link"></span></a>Data Files</h2>
+<a id="data-files" class="anchor" href="#data-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Files</h2>
 
 <p>Data files are located in the <strong>data</strong> directory
 The raw data in this analysis is located in <strong>data/raw</strong> and is the following files:</p>
 
-<ul>
-<li>
-<strong>patient_table.csv</strong> contains the measured parameters for these patients.</li>
-<li>
-<strong>patient_legend.txt</strong> describes the units used for measurements in the patient table.</li>
-<li>
-<strong>patient_sample_mapping.csv</strong> maps the patients to their corresponding samples.</li>
-<li>
-<strong>transcript_counts_table.csv</strong> has the transcript level counts table.</li>
-<li>
-<strong>htseq_gene_counts_GRCh37.74.txt</strong> has the transcript level counts table using the new assembly</li>
-<li>
-<strong>exon_counts_table.csv</strong> has the exon level counts table.  These data has not yet been incorporated into our analysis.</li>
-<li>
-<strong>acromegaly_patient_IGF1.csv</strong> has the IGF-1 levels for the acromegaly patients.</li>
-</ul><p>Data files generated by these scripts are located in the <strong>data/processsed</strong> directory.</p>
-
 <h2>
-<a name="script-files" class="anchor" href="#script-files"><span class="octicon octicon-link"></span></a>Script Files</h2>
+<a id="script-files" class="anchor" href="#script-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Script Files</h2>
 
 <p>Script files are saved in <strong>scripts</strong> folder and were analysed in this order</p>
 
-<h3>
-<a name="deseq_analysis_outlierrmd" class="anchor" href="#deseq_analysis_outlierrmd"><span class="octicon octicon-link"></span></a>deseq_analysis_outlier.Rmd</h3>
-
-<p>This file performs the DESeq analysis both including and removing the one outlier patient who was accidentally included in the analysis.  This script takes the files <strong>data/raw/htseq_gene_counts_GRCh37.74.txt</strong> and <strong>data/raw/patient_sample_mapping.csv</strong> and generages annoted DESeq results files for both cushing and acromegaly, as well as lists of statistically significant genes.</p>
-
-<h3>
-<a name="goseq-analysisrmd" class="anchor" href="#goseq-analysisrmd"><span class="octicon octicon-link"></span></a>goseq-analysis.Rmd</h3>
-
-<p>This script searches KEGG and GO for enriched categories and pathways.  This generates a variety of Gene Ontology Analysis files and the data for Table 2.</p>
-
-<h3>
-<a name="heatmapsrmd" class="anchor" href="#heatmapsrmd"><span class="octicon octicon-link"></span></a>heatmaps.Rmd</h3>
-
-<p>This generates the heatmap used in Figure 2.</p>
-
-<h3>
-<a name="barplotsrmd" class="anchor" href="#barplotsrmd"><span class="octicon octicon-link"></span></a>barplots.Rmd</h3>
-
-<p>This script generates all the barplots used in Figures 3, 4 and Supplementary Figures 1 and 2.</p>
-
-<h3>
-<a name="acromegaly_clinical_analysisrmd" class="anchor" href="#acromegaly_clinical_analysisrmd"><span class="octicon octicon-link"></span></a>acromegaly_clinical_analysis.Rmd</h3>
-
-<p>This script analyses the clinical characteristics of the groups, generating the table for Table 1 and Figure 1.</p>
-
-<h3>
-<a name="geo_comparasonsrmd" class="anchor" href="#geo_comparasonsrmd"><span class="octicon octicon-link"></span></a>GEO_comparasons.Rmd</h3>
-
-<p>This script compares our significant genes to another similar dataset.  This set treated adipocytes with growth hormone in vitro and did microarrays after 48h of treatment.</p>
-
-<h3>
-<a name="igf_analysisrmd" class="anchor" href="#igf_analysisrmd"><span class="octicon octicon-link"></span></a>igf_analysis.Rmd</h3>
-
-<p>This takes measured IGF-1 levels from acromegaly patients and compares it to <em>IGF1</em>  expression from WAT explants.</p>
-
-<h3>
-<a name="makegseatablepy" class="anchor" href="#makegseatablepy"><span class="octicon octicon-link"></span></a>MakeGSEATable.py</h3>
-
-<p>This scripts takes the master gsea report file and output the Name, NES, NOM p-value, FDR q-value and Gene Details for all the significant gene sets.  This creates the Supplementary tables 1,2, and 3.  It also requires <em>reader.pyc</em> and <em>reader.py</em> module to run the script.</p>
-
 <h2>
-<a name="gsea-analysis" class="anchor" href="#gsea-analysis"><span class="octicon octicon-link"></span></a>GSEA Analysis</h2>
-
-<p>For analysis by GSEA which is an external java program, we prepared the input files by running the script <strong>GSEA_inputs_CushingAcromegaly.Rmd</strong>.  This used version 2.0.13 of GSEA.  The standard settings were sorting ascending by log2foldchange, with 1000 permutations of the gene set.  The input files located in data/processed were:</p>
-
-<ul>
-<li>GSEA_Acromegaly_prerank_pvalues.rnk</li>
-<li>GSEA_Cushing_prerank_pvalues.rnk</li>
-</ul><p>The expression dataset was selected from either acromegaly or cushing.  The gene sets databases tested were:</p>
-
-<ul>
-<li>For KEGG gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.kegg.v4.0.symbols.gmt</li>
-<li>For GO annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.all.v4.0.symbols.gmt</li>
-<li>For GO-BP annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.bp.v4.0.symbols.gmt</li>
-<li>For GO-MF annotations gseaftp.broadinstitute.org://pub/gsea/gene_sets/c5.mf.v4.0.symbols.gmt</li>
-<li>For transcription factors gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.tft.v4.0.symbols.gmt</li>
-<li>For miRNA gseaftp.broadinstitute.org://pub/gsea/gene_sets/c3.mir.v4.0.symbols.gmt</li>
-<li>For REACTOME gseaftp.broadinstitute.org://pub/gsea/gene_sets/c2.cp.reactome.v4.0.symbols.gmt</li>
-</ul><p>WIth the default 1000 permutations and setting collapse dataset to gene symbols to be false.  The permutation type was based on gene_set.  The remainder of the settings were the defaults, such as 1000 permutations, and excluding gene sets 500 members.</p>
-
-<h2>
-<a name="figures" class="anchor" href="#figures"><span class="octicon octicon-link"></span></a>Figures</h2>
+<a id="figures" class="anchor" href="#figures" aria-hidden="true"><span class="octicon octicon-link"></span></a>Figures</h2>
 
 <p>The figures generated for the manuscript, via the running of these scripts are in the <strong>figures</strong> directory.  These figures are modified for final publication in the <strong>manuscript</strong> folder using Adobe Illustrator CS6.</p>
 
 <h2>
-<a name="manuscript" class="anchor" href="#manuscript"><span class="octicon octicon-link"></span></a>Manuscript</h2>
+<a id="manuscript" class="anchor" href="#manuscript" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manuscript</h2>
 
 <p>The manuscript files, including the manuscript, the figures, tables and supplementary data are in the <strong>manuscript</strong> directory.  Within this directory are the files generated for uploading the raw and processed data to the Gene Expression omnibus (in the folder <strong>manuscript/GEO_submission</strong>).</p>
       </section>
@@ -140,7 +100,7 @@ The raw data in this analysis is located in <strong>data/raw</strong> and is the
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p class="copyright">Cushingacromegalystudy maintained by <a href="https://github.com/BridgesLab">BridgesLab</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
