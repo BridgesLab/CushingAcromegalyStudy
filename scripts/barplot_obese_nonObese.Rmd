@@ -1,0 +1,218 @@
+---
+title: "Barplot_obese_nonObese"
+author: "Quynh Tran"
+date: "October 21, 2015"
+output: html_document
+---
+
+This file was last compiled on ```r date()```.  Unless otherwise noted this analysis removes subject 29.
+
+Statistics
+-------------
+
+```{r data-entry, echo=FALSE, message=FALSE}
+data <- read.csv('../data/raw/patient_table.csv')
+#removed cushing data
+cushing.data <- subset(data, diagnosis %in% c("cushing's", "non secreting adenoma"), drop=TRUE)
+#reset non secreting adenoma to 
+levels(cushing.data$diagnosis)[3] <- "Control"
+levels(cushing.data$diagnosis)[2] <- "Cushing's"
+cushing.data$diagnosis <- relevel(cushing.data$diagnosis, ref = "Control")
+#set qualitative variables to logicals
+cushing.data$diabetes.diagnosis <- cushing.data$diabetes == "y"
+cushing.data$HTN.diagnosis <- cushing.data$HTN == "y"
+cushing.data$smoking.diagnosis <- cushing.data$smoking == "y"
+cushing.data$BMI.cat <- cut(cushing.data$BMI, breaks=c(0,30,50))
+cushing.data$BMI.cat <- ifelse(cushing.data$BMI.cat=="(0,30]", "Not Obese", "Obese")
+require(reshape2, quietly=T)
+require(plyr, quietly=T)
+
+melted.data.all <- melt(cushing.data, id.vars=c("id", "diagnosis", "BMI.cat"), na.rm=T, variable.name="measurement")
+melted.data <- subset(melted.data.all, !(measurement %in% c("HTN","diabetes","smoking","HTN.diagnosis","diabetes.diagnosis","smoking.diagnosis")))
+melted.data$value <- as.numeric(melted.data$value)
+#removed outlier subject 29
+melted.data.used <- subset(melted.data, id!='29')
+melted.data.used <- droplevels(melted.data.used)
+se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
+```
+
+```{r analysis, echo=FALSE}
+#for glucose homeostatic measurements
+glucose.data.vars <- c("insulin", "glucose", "HOMA.IR")
+#for clinical measurements
+clinical.data.vars <- c("height", "weight", "age", "BMI", "abdominal.circumference")
+
+#for lipidomics data
+lipid.data.vars <- c("Cer.C14", "Cer.C16", "Cer.C18", "Cer.C18.1", "Cer.C20", "Cer.C24", "Glu.Cer.C16", "Glu.Cer.C18", "Glu.Cer.C18.1")
+
+#for lipolysis measurements
+lipolysis.data.vars <- c("glycerol.no.tx","glycerol.insulin.2.nM","glycerol.iso.30.nM","glycerol.ins.iso","glycerol.ins.ctrl","glycerol.iso.ctrl","glycerol.ins.iso.iso") #"glycerol.ins.effect")  "glycerol.iso.effect") 
+
+#for liver function test
+liver.data.vars <- c("ALT", "AST")
+
+#for all measurements
+all.o1 <- ddply(melted.data.used, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+all.o1$BMI.cat <- factor(all.o1$BMI.cat)
+all.o1$measurement <- factor(all.o1$measurement)
+
+glucose.summary.table <- melted.data.used[melted.data.used$measurement %in% glucose.data.vars,]
+glucose.stat <- ddply(glucose.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+
+lipolysis.summary.table <- melted.data.used[melted.data.used$measurement %in% lipolysis.data.vars,]
+lipolysis.stat <- ddply(lipolysis.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+
+lipid.summary.table <- melted.data.used[melted.data.used$measurement %in% lipid.data.vars,]
+lipid.stat <- ddply(lipid.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+
+clinical.summary.table <- melted.data.used[melted.data.used$measurement %in% clinical.data.vars,]
+clinical.stat <- ddply(clinical.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+
+liver.summary.table <- melted.data.used[melted.data.used$measurement %in% liver.data.vars,]
+liver.stat <- ddply(liver.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
+```
+
+Graphs
+------
+
+## Barplots
+```{r barplots-cushing, echo=FALSE, warning=FALSE, message=FALSE}
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+library(ggplot2)
+for (item in glucose.data.vars) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(as.name(item))
+  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+}
+
+for (item in clinical.data.vars) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(as.name(item))
+  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+}
+
+for (item in lipid.data.vars) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(as.name(item))
+  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+}
+
+for (item in lipolysis.data.vars) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(as.name(item))
+  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+}
+
+for (item in liver.data.vars) {
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(as.name(item))
+  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+}
+
+
+####lipolysis graphs####
+ggplot(lipolysis.stat, aes(x=measurement, y=mean, fill=diagnosis))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean-se, ymax=mean+se), width=.2)+
+    facet_grid(BMI.cat~.)+
+    #theme_bw()+theme(axis.text.x=element_text(angle=90))+
+    xlab("")+ ylab("Average") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.60,.90))
+ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-lipolysis-barplot.pdf")
+
+####glucose graphs####
+ggplot(glucose.stat, aes(x=measurement, y=mean, fill=diagnosis))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean-se, ymax=mean+se), width=.2)+
+    facet_grid(BMI.cat~.)+
+    #theme_bw()+theme(axis.text.x=element_text(angle=90))+
+    xlab("")+ ylab("Average") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.60,.90))
+ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-glucosePanel-barplot.pdf")
+
+
+####clinical graphs####
+ggplot(clinical.stat, aes(x=measurement, y=mean, fill=diagnosis))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean-se, ymax=mean+se), width=.2)+
+    facet_grid(BMI.cat~.)+
+    #theme_bw()+
+    theme(axis.text.x=element_text(angle=90))+
+    xlab("")+ ylab("Average") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.60,.90))
+ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-clinicalPanel-barplot.pdf")
+
+####liver graphs####
+ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean-se, ymax=mean+se), width=.2)+
+    facet_grid(BMI.cat~.)+
+    #theme_bw()+
+    theme(axis.text.x=element_text(angle=90))+
+    xlab("")+ ylab("Average") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9) +
+    guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.60,.90))
+ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-liverPanel-barplot.pdf")
+```
+
+Session Information
+-------------------
+```{r session-info}
+sessionInfo()
+```
