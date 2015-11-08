@@ -17,7 +17,7 @@ This data was analysed at first on the mbni and felix servers to generate counts
 
 # Licence
 
-This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0. - See more at: http://opendatacommons.org/licenses/by/#sthash.i6n4YNvv.dpuf
+This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.
 
 ## Data Files
 
