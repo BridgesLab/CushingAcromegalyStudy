@@ -62,9 +62,9 @@ This step gets the protein coding genes only.
 #required packages
 library(biomaRt,quietly=TRUE)
 #download gene name annotation data for results sets.
-ensembl <- useMart("ensembl",dataset = 'hsapiens_gene_ensembl')
+ensembl <- useMart('ENSEMBL_MART_ENSEMBL', dataset = 'hsapiens_gene_ensembl', host="www.ensembl.org")
 transcriptInfo <- getBM(
-    attributes=c('external_gene_id', 'ensembl_gene_id'), 
+    attributes=c('external_gene_name', 'ensembl_gene_id'), 
     filter= 'biotype',
     values = 'protein_coding',
     mart=ensembl)
