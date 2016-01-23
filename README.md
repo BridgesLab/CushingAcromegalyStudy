@@ -10,14 +10,14 @@ This repository contains raw data for studies done by the [Bridges Lab](http://b
 
 | Publication | Dataset | Tag |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| I. Hochberg, I. Harvey, Q. T. Tran, E. J. Stephenson, A. L. Barkan, A. Saltiel, W. F. Chandler, D. Bridges, Gene expression changes in subcutaneous adipose tissue due to Cushing’s disease., *J. Mol. Endocrinol*. Accepted (2015). [doi:10.1530/JME-15-0119](http://dx.doi.org/10.1530/JME-15-0119). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.22193) | [Cushing-v1.0.0](https://github.com/BridgesLab/CushingAcromegalyStudy/releases/tag/Cushing-v1.0.0) |
+| I. Hochberg, I. Harvey, Q. T. Tran, E. J. Stephenson, A. L. Barkan, A. Saltiel, W. F. Chandler, D. Bridges, Gene expression changes in subcutaneous adipose tissue due to Cushing’s disease., *J. Mol. Endocrinol*. 55(2):81-94 (2015). [doi:10.1530/JME-15-0119](http://dx.doi.org/10.1530/JME-15-0119). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.22193) | [Cushing-v1.0.0](https://github.com/BridgesLab/CushingAcromegalyStudy/releases/tag/Cushing-v1.0.0) |
 | I. Hochberg, Q. T. Tran, A. L. Barkan, A. R. Saltiel, W. F. Chandler, D. Bridges, Gene Expression Signature in Adipose Tissue of Acromegaly Patients, PLoS One 10, e0129359 (2015). [doi:10.1371/journal.pone.0129359](http://dx.doi.org/10.1371/journal.pone.0129359) | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22192.svg)](http://dx.doi.org/10.5281/zenodo.22192) | [Acromegaly-v1.0.0](https://github.com/BridgesLab/CushingAcromegalyStudy/releases/tag/Acromegaly-v1.0.0) |
 
 This data was analysed at first on the mbni and felix servers to generate counts tables.  The rest of the analysis was performed locally once the counts table was generated.  See the **processing** folder for the code used in the generation of these alignments and counts tables.
 
 # Licence
 
-This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0. - See more at: http://opendatacommons.org/licenses/by/#sthash.i6n4YNvv.dpuf
+This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.
 
 ## Data Files
 
