@@ -1,0 +1,75 @@
+---
+title: "Combined Analysis of HFD/NCD Dexamethasone Serum Glycerol Levels"
+author: "Innocence Harvey and Dave Bridges"
+date: "September 17, 2015"
+output: pdf_document
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figure/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen=8,digits =6)
+```
+
+
+```{r data-entry}
+filename <- '2015-09-17 TG assay HFD v older chow .xlsx'
+sheetname <- 'Exported'
+library(xlsx)
+combined_data <- read.xlsx(filename, sheetName = sheetname)
+combined_data$Diet <- relevel(as.factor(combined_data$Diet), ref='Normal Chow Diet')
+combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
+
+library(dplyr)
+library(tidyr)
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+tg.summary <-
+  combined_data %>%
+  group_by(Diet, Treatment) %>%
+  summarize(Glycerol.mean = mean(Glycerol, na.rm=T),
+            Glycerol.se = se(Glycerol),
+            Glycerol.n = length(Glycerol))
+```
+This script uses the files in `r filename` and used the worksheet `r sheetname`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
+
+```{r glycerol-barplot}
+plot.data <- select(tg.summary, Diet,Treatment, Glycerol.mean) %>% spread(Diet, Glycerol.mean)
+plot.data.se <- select(tg.summary, Diet,Treatment, Glycerol.se) %>% spread(Diet, Glycerol.se)
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="Glycerol in Serum (ug/ul)",col=palette()[1:2],
+        las=1, ylim=c(0,max(tg.summary$Glycerol.mean + tg.summary$Glycerol.se)))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+# Statistics
+
+```{r statistics}
+tg.aov <- aov(Glycerol ~ Diet + Treatment + Diet:Treatment, data=combined_data)
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-glycerol}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Glycerol Levels", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table}
+kable(tg.tukey$`Diet:Treatment`, caption="Tukey's HSD tests for Serum Glycerol Levels", digits=c(2,2,2,10))
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
