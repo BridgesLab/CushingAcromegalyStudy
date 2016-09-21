@@ -1,0 +1,97 @@
+---
+title: "ITT for Dexamethasone Treated HFD-Fed Mice"
+author: "Innocence Harvey, Erin Stephenson and Dave Bridges"
+date: "February 11, 2015"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figure/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+```{r data-entry}
+hfd.filename <- 'HFD ITT Data.csv'
+hfd.itt <- read.csv(hfd.filename)
+ncd.filename <- 'NCD ITT Data.csv'
+ncd.itt <- read.csv(ncd.filename)
+
+itt.glucose <- rbind(ncd.itt,hfd.itt)
+itt.glucose$AUC <- rowSums(itt.glucose[,4:12])
+```
+
+These data were downloaded from MouseDB as experiment 543.  This document can be found in `r getwd()`.
+
+```{r analysis, dev=c('png','pdf')}
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+library(dplyr)
+itt.summary.barplots <-
+  itt.glucose %>%
+  group_by(Treatment,Diet) %>%
+  summarize(FG.mean = mean(t0),
+            FG.se = se(t0),
+            AUC.mean = mean(AUC, na.rm=T),
+            AUC.se = se(AUC))
+
+mean.na <- function(x) mean(x, na.rm=T)
+
+itt.summary.lineplots <-
+  itt.glucose %>%
+  group_by(Treatment,Diet) %>%
+  summarize_each(funs(mean.na,se), starts_with("t"))
+```
+
+```{r lineplot}
+ymax <- max(itt.summary.lineplots[,3:11])
+times <- c(0,15,30,45,60,75,90,105,120)
+plot(times, itt.summary.lineplots[3,3:11], 
+     type="l", ylim=c(0,400), las=1,
+     ylab="Blood Glucose (mg/dL)",
+     xlab="Insulin (min)")
+lines(times, itt.summary.lineplots[1,3:11], col="red")
+lines(times, itt.summary.lineplots[4,3:11], col="black", lty=2)
+lines(times, itt.summary.lineplots[2,3:11], col="red", lty=2)
+legend("topright", c("NCD - Control", "NCD - Dexamethasone", "HFD - Control", "HFD - Dexamethasone"),
+       col=c("black","red","black","red"),
+       lty=c(1,1,2,2),
+       bty="n")
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+#add error bars for water
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[3,3:11]),
+             as.numeric(itt.summary.lineplots[3,12:20]))
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[1,3:11]),
+             as.numeric(itt.summary.lineplots[1,12:20]),
+             col="red")
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[4,3:11]),
+             as.numeric(itt.summary.lineplots[4,12:20]))
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[2,3:11]),
+             as.numeric(itt.summary.lineplots[2,12:20]),
+             col="red")
+     
+```
+
+
+```{statistics-tables, results='asis'}
+library(xtable)
+print(xtable(statistics, digits=c(0,3,3,0,4,4)))
+```
+
+## Session Information
+
+```{r session-info}
+sessionInfo()
+```
