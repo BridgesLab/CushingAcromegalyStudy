@@ -32,7 +32,7 @@ filtered.normalized.cush <- filtered.normalized.data[,colnames(filtered.normaliz
 #library(biomaRt)
 #ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl")
 #gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),filters = 'ensembl_gene_id', values = rownames(filtered.normalized.data), mart = ensembl)
-annotation_output_file <- '../data/raw/Ensembl Gene Annotation.csv'
+annotation_output_file <- 'Ensembl Gene Annotation.csv'
 #write.csv(gene.data, annotation_output_file)
 gene.data <- read.csv(annotation_output_file, row.names='X')
 rpkm.data <- merge(filtered.normalized.cush, gene.data, by.x='row.names', by.y='ensembl_gene_id') 
