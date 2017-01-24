@@ -6,11 +6,17 @@ February 11, 2015
 
 
 
-These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 15:57:22 2017.
+These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 16:17:45 2017.
 
 
 
 ![](figures/itt-lineplot-1.png)<!-- -->
+
+### ITT Statistics
+
+
+
+Based on a mixed linear model testing for effects of a Diet:Treatment interaction, there is a significant interaction between Diet and Treatment during the ITT **(p=1.87576&times; 10^-8^)**.  The residuals of this model fail to meet the criteria for normality via a Shapiro-Wilk test, so normality cannot be assumed (p=1.66328&times; 10^-15^).
 
 ## Normalized to Fasting Glucose
 
@@ -73,12 +79,15 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_0.6.1  dplyr_0.5.0  knitr_1.15.1
+## [1] lme4_1.1-12    Matrix_1.2-7.1 tidyr_0.6.1    dplyr_0.5.0   
+## [5] knitr_1.15.1  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9     digest_0.6.11   rprojroot_1.1   assertthat_0.1 
-##  [5] R6_2.2.0        DBI_0.5-1       backports_1.0.4 magrittr_1.5   
-##  [9] evaluate_0.10   highr_0.6       stringi_1.1.2   lazyeval_0.2.0 
-## [13] rmarkdown_1.3   tools_3.3.0     stringr_1.1.0   yaml_2.1.14    
-## [17] htmltools_0.3.5 tibble_1.2
+##  [1] Rcpp_0.12.9     magrittr_1.5    splines_3.3.0   MASS_7.3-45    
+##  [5] lattice_0.20-34 R6_2.2.0        minqa_1.2.4     highr_0.6      
+##  [9] stringr_1.1.0   tools_3.3.0     grid_3.3.0      nlme_3.1-128   
+## [13] DBI_0.5-1       htmltools_0.3.5 yaml_2.1.14     lazyeval_0.2.0 
+## [17] assertthat_0.1  rprojroot_1.1   digest_0.6.11   tibble_1.2     
+## [21] nloptr_1.0.4    evaluate_0.10   rmarkdown_1.3   stringi_1.1.2  
+## [25] backports_1.0.4
 ```

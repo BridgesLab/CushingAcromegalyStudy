@@ -93,6 +93,21 @@ superpose.eb(times,
      
 ```
 
+### ITT Statistics
+
+```{r itt-statistics}
+library(tidyr)
+itt.lme.data <- 
+  itt.glucose %>%
+  select(-X, -AUC) %>%
+  gather(Diet, glucose, 3:11)
+library(lme4)
+itt.lmer <- lmer(glucose~Diet + Treatment + Diet:Treatment + (1|animal.id), data=itt.lme.data)
+itt.lmer.null <- lmer(glucose~Diet + Treatment + (1|animal.id), data=itt.lme.data)
+```
+
+Based on a mixed linear model testing for effects of a Diet:Treatment interaction, there is a significant interaction between Diet and Treatment during the ITT **(p=`r  anova(itt.lmer, itt.lmer.null)$"Pr(>Chisq)"[2]`)**.  The residuals of this model fail to meet the criteria for normality via a Shapiro-Wilk test, so normality cannot be assumed (p=`r shapiro.test(residuals(itt.lmer))$p.value`).
+
 ## Normalized to Fasting Glucose
 
 ```{r itt-lineplot-normalized}
