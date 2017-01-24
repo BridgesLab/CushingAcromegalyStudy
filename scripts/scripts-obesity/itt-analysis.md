@@ -6,11 +6,16 @@ February 11, 2015
 
 
 
-These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 15:45:36 2017.
+These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 15:57:22 2017.
 
 
 
 ![](figures/itt-lineplot-1.png)<!-- -->
+
+## Normalized to Fasting Glucose
+
+![](figures/itt-lineplot-normalized-1.png)<!-- -->
+
 
 ## Fasting Blood Glucose
 
