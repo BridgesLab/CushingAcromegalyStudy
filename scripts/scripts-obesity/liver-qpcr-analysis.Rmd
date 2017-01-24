@@ -1,0 +1,576 @@
+---
+title: "qPCR Analysis of HFD/Dexamethasone Livers"
+author: "Dave Bridges, Molly Carter and Innocence Harvey"
+date: "December 18, 2016"
+output:
+  html_document:
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+```
+
+# Data Entry
+
+```{r data-entry}
+datafile <- '../../data/raw/Liver qPCR Combined Well Results.csv'
+library(readr)
+qpcr.data <- read_csv(datafile, skip=11, na=c("","Undetermined"))
+```
+
+```{r analysis}
+standard <- 'Rplp0'
+
+#remove first G6pc data
+qpcr.data <- subset(qpcr.data, !(`Target Name`=="G6pc"&`Experiment Name`=="2016-12-14 160931.eds"))
+
+#use only one set of Rplp0
+qpcr.data <- subset(qpcr.data, !(`Target Name`=="Rplp0"&`Experiment Name`=="2016-12-19 153549.eds"))     
+#qpcr.data <- subset(qpcr.data, !(`Target Name`=="Rplp0"&`Experiment Name`=="2017-01-05 180005.eds"))     
+
+#remove 3041 which was high in most groups
+qpcr.data <- subset(qpcr.data, !(`Sample Name`=="3041"))
+
+#removed sample not actually loaded, this was a negative control
+remove.sample <- '2102'
+
+library(dplyr)
+library(tidyr)
+
+raw.cq <-
+  qpcr.data %>%
+  filter(`Sample Name` != remove.sample) %>%
+  group_by(`Target Name`) %>%
+  summarize(Avg.Ct = median(Cq, na.rm=T))
+raw.cq$Rel.Expression <- 2^-(raw.cq$Avg.Ct-max(raw.cq$Avg.Ct, na.rm=T))
+kable(raw.cq, caption="Median Cq Value for Each Gene Tested")
+
+clean.data <- 
+  filter(qpcr.data, `Sample Name` != remove.sample) %>%
+  select(`Sample Name`, `Biological Group Name`, `Target Name`, Cq) %>%
+  group_by(`Sample Name`, `Biological Group Name`, `Target Name`) %>%
+  summarize(Cq.mean = mean(Cq, na.rm=T)) %>%
+  mutate(DCq = Cq.mean - Cq.mean[`Target Name`==standard]) %>%
+  filter(`Target Name` != standard) %>%
+  separate(`Biological Group Name`, into="Diet", remove=F) %>%
+  separate( `Biological Group Name`, into=c("Not.Needed", "Treatment"), sep=5, remove=F, fill="left") %>%
+  select(-Not.Needed)
+clean.data$Treatment <- as.factor(clean.data$Treatment)
+clean.data$Diet <- relevel(as.factor(clean.data$Diet), ref="NCD")
+clean.data$`Biological Group Name`<- as.factor(clean.data$`Biological Group Name`)
+
+#converted into quant space
+clean.data$RQ <- 2^-clean.data$DCq
+
+#for manually checking
+#with(filter(clean.data, `Target Name`=='Fgf21') %>% arrange(`Biological Group Name`), barplot(RQ, col=Treatment, names.arg=`Sample Name`, las=2, cex.names=0.5))
+#View(filter(qpcr.data, `Target Name`=="Pck1") %>% select(Cq, `Sample Name`) %>% group_by(`Sample Name`) %>% summarize(diff=min(Cq)-max(Cq))) 
+
+analysed.data <-
+  clean.data %>%
+  group_by(`Target Name`, `Biological Group Name`) %>%
+  summarize(mean = mean(RQ, na.rm=T),
+            se = se(RQ)) %>%
+  mutate(mean.norm = mean/mean[`Biological Group Name`=="NCD"],
+         se.norm = se/mean[`Biological Group Name`=="NCD"]) %>%
+  separate(`Biological Group Name`, into="Diet", remove=F) %>%
+  separate( `Biological Group Name`, into=c("Not.Needed", "Treatment"), sep=5, remove=F, fill="left") %>%
+  select(-Not.Needed)
+analysed.data$Treatment <- as.factor(analysed.data$Treatment)
+analysed.data$Diet <- relevel(as.factor(analysed.data$Diet), ref="NCD")
+```
+
+
+# Glucose-6-Phosphatase
+
+There are three genes encoding this enzyme, *G6Pc*, *G6Pc2* and *G6Pc3*.  The first set of primers for G6Pc had multiple peaks during the dissociation curve so new primers were ordered and only this was analysed.
+
+## Glucose-6-Phosphatase
+
+```{r liver-qpcr-g6pc-barplot}
+mRNA <- "G6pc"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### G6pc Statistics
+
+```{r g6pc-stats}
+gene.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc Expresion")
+
+gene.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc Expresion, No Interaction")
+```
+
+## Glucose-6-Phosphatase Isoform 2
+
+```{r liver-qpcr-g6pc2-barplot}
+mRNA <- "G6pc2"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### G6pc2 Statistics
+
+```{r g6pc2-stats}
+gene.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc2 Expresion")
+
+gene.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc2 Expresion, No Interaction")
+```
+
+## Glucose-6-Phosphatase Isoform 3
+
+```{r liver-qpcr-g6pc3-barplot}
+mRNA <- "G6pc3"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### G6pc3 Statistics
+
+```{r g6pc3-stats}
+gene.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc3 Expresion")
+
+gene.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of G6pc3 Expresion, No Interaction")
+```
+
+## Glucose-6-Phosphatase Isoforms Combined Barplot
+
+```{r liver-qpcr-g6pc-combined-barplot}
+par(mfrow=c(1,3))
+
+for (mRNA in c("G6pc","G6pc2","G6pc3")){
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+}
+```
+
+# Phosophenolpyruvate Carboxykinase
+
+## Phosophenolpyruvate Carboxykinase 1
+
+```{r liver-qpcr-pck1-barplot}
+mRNA <- "Pck1"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Pck1 Statistics
+
+```{r liver-qpcr-pck1-stats}
+pck1.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pck1.aov)[[1]], caption="ANOVA of Pck1 Expresion")
+
+pck1.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pck1.aov)[[1]], caption="ANOVA of Pck1 Expresion, No Interaction")
+```
+
+## Phosophenolpyruvate Carboxykinase 2
+
+```{r liver-qpcr-pck2-barplot}
+mRNA <- "Pck2"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Pck2 Statistics
+
+```{r pck2-stats}
+pck1.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pck1.aov)[[1]], caption="ANOVA of Pck2 Expresion")
+
+pck1.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pck1.aov)[[1]], caption="ANOVA of Pck2 Expresion, No Interaction")
+```
+
+## PEPCK Combined Barplot
+
+```{r liver-qpcr-pck-combined-barplot}
+par(mfrow=c(1,2))
+
+for (mRNA in c("Pck1","Pck2")){
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+}
+```
+
+#Pyruvate Carboxylase
+
+```{r liver-qpcr-pcx-barplot}
+mRNA <- "Pcx"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Pcx Statistics
+
+```{r liver-qpcr-pcx-stats}
+pcx.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pcx.aov)[[1]], caption="ANOVA of Pcx Expresion")
+
+pcx.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(pcx.aov)[[1]], caption="ANOVA of Pcx Expresion, No Interaction")
+```
+
+#Hsd11b1
+
+```{r liver-qpcr-hsd11b1-barplot}
+mRNA <- "Hsd11b1"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Hsd11b1 Statistics
+
+```{r hsd-stats}
+hsd.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(hsd.aov)[[1]], caption="ANOVA of Hsd11b1 Expresion")
+
+hsd.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(hsd.aov)[[1]], caption="ANOVA of Hsd11b1 Expresion, No Interaction")
+```
+
+# Fgf21
+
+```{r liver-qpcr-fgf21-barplot}
+mRNA <- "Fgf21"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Fgf21 Statistics
+
+```{r fgf-stats}
+fgf.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(fgf.aov)[[1]], caption="ANOVA of Fgf21 Expresion")
+
+fgf.aov <- aov(RQ~Diet + Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(fgf.aov)[[1]], caption="ANOVA of Fgf21 Expresion, No Interaction")
+```
+
+# Fatty Acid Synthase
+
+```{r liver-qpcr-fasn-barplot}
+mRNA <- "Fasn"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Fasn Statistics
+
+```{r fasn-stats}
+gene.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of Fasn Expresion")
+
+gene.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of Fasn Expresion, No Interaction")
+```
+
+# Srebf1
+
+```{r liver-qpcr-srebf1-barplot}
+mRNA <- "Srebf1"
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+
+legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+```
+
+### Srebf1 Statistics
+
+```{r srebf1-stats}
+gene.aov <- aov(RQ~Diet*Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of Srebf1 Expresion")
+
+gene.aov <- aov(RQ~Diet+Treatment, data=filter(clean.data, `Target Name`==mRNA))
+kable(summary(gene.aov)[[1]], caption="ANOVA of Srebf1 Expresion, No Interaction")
+```
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```
