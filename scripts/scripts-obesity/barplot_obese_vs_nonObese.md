@@ -3,7 +3,7 @@ Quynh Tran and Dave Bridges
 October 21, 2015  
 
 
-This file was last compiled on ``Tue Jan 24 15:45:59 2017``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Tue Jan 24 16:23:42 2017``.  Unless otherwise noted this analysis removes subject 29.
 
 
 
@@ -261,7 +261,7 @@ ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     facet_grid(BMI.cat~.)+
     #theme_bw()+
     theme(axis.text.x=element_text(angle=90))+
-    xlab("")+ ylab("Average") +
+    xlab("")+ ylab("Liver Enzyme Levels (U/L)") +
     theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank())+ 
     theme(axis.line = element_line(color = 'black')) +
@@ -276,9 +276,103 @@ ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
 ```r
 #ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-liverPanel-barplot.pdf")
 ```
+## Liver Enzymes
 
-Session Information
--------------------
+### AST
+
+
+```r
+item <- 'AST'
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9)) +
+    ylab("AST Levels (U/L)") + xlab("Diagnosis") + guides(fill=guide_legend(title="BMI Category")) +
+    theme(panel.grid.minor = element_blank()) + 
+    theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.8, end = .3) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=45,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.20,.80))+
+    theme(legend.background = element_rect(fill = "transparent", colour = "transparent")) +
+    theme(panel.background = element_blank())
+```
+
+![](figures/clinical-barplots-cushing-ast-1.png)<!-- -->
+
+#### AST Statistics
+
+Did a 2-way ANOVA on the AST data
+
+
+```r
+ast.aov <- aov(value~diagnosis*BMI.cat, data=subset(melted.data.used, measurement=="AST"))
+kable(summary(ast.aov)[[1]], caption="2 Way ANOVA with interaction for AST Levels")
+```
+
+
+
+Table: 2 Way ANOVA with interaction for AST Levels
+
+                     Df     Sum Sq   Mean Sq   F value    Pr(>F)
+------------------  ---  ---------  --------  --------  --------
+diagnosis             1    436.194   436.194   5.58507   0.03204
+BMI.cat               1    164.049   164.049   2.10051   0.16783
+diagnosis:BMI.cat     1     18.678    18.678   0.23915   0.63189
+Residuals            15   1171.500    78.100        NA        NA
+
+```r
+item <- 'ALT'
+  #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
+  clinical.data <- all.o1[all.o1$measurement==item,]
+  ggplot(clinical.data, aes(x=diagnosis, y=mean, fill=BMI.cat)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9)) +
+    ylab("ALT Levels (U/L)") + xlab("Diagnosis") + guides(fill=guide_legend(title="BMI Category")) +
+    theme(panel.grid.minor = element_blank()) + 
+    theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.8, end = .3) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=45,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.20,.80))+
+    theme(legend.background = element_rect(fill = "transparent", colour = "transparent")) +
+    theme(panel.background = element_blank())
+```
+
+![](figures/clinical-barplots-cushing-alt-1.png)<!-- -->
+
+#### ALT Statistics
+
+Did a 2-way ANOVA on the ALT data
+
+
+```r
+alt.aov <- aov(value~diagnosis*BMI.cat, data=subset(melted.data.used, measurement=="ALT"))
+kable(summary(alt.aov)[[1]], caption="2 Way ANOVA with interaction for ALT Levels")
+```
+
+
+
+Table: 2 Way ANOVA with interaction for ALT Levels
+
+                     Df    Sum Sq   Mean Sq   F value    Pr(>F)
+------------------  ---  --------  --------  --------  --------
+diagnosis             1    5261.5   5261.46    7.5387   0.01502
+BMI.cat               1    2371.8   2371.76    3.3983   0.08511
+diagnosis:BMI.cat     1    1837.5   1837.53    2.6328   0.12550
+Residuals            15   10468.9    697.93        NA        NA
+
+# Session Information
+
 
 ```r
 sessionInfo()
