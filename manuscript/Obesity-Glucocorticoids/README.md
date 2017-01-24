@@ -4,3 +4,5 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 
 | Panel | Script | Figure |
 |-------|:---------------------------------:|:-----------------------------------------------------------------------------------:|
+| Figure 1A | scripts/scripts-obesity/barplot_obese_vs_nonObese.Rmd | scripts/scripts-obesity/figures/clinical-barplots-cushing-bmi-1.pdf |
+| Figure 1B | scripts/scripts-obesity/barplot_obese_vs_nonObese.Rmd | scripts/scripts-obesity/figures/clinical-barplots-cushing-homa-1.pdf |
