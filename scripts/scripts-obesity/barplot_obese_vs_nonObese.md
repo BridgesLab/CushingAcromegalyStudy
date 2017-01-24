@@ -1,99 +1,22 @@
-
----
-title: "Clinical Data for Obese vs Non-Obese"
-author: "Quynh Tran and Dave Bridges"
-date: "October 21, 2015"
-output:
-  html_document:
-    keep_md: true
-    fig_caption: true
----
-
-This file was last compiled on ```r date()```.  Unless otherwise noted this analysis removes subject 29.
-
-```{r global_options, include=FALSE}
-library(knitr)
-opts_chunk$set(fig.path='figures/',
-               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(scipen = 2, digits = 5)
+# Clinical Data for Obese vs Non-Obese
+Quynh Tran and Dave Bridges  
+October 21, 2015  
 
 
-knitr::knit_hooks$set(inline = function(x) {
-  knitr:::format_sci(x, 'md')
-})
+This file was last compiled on ``Tue Jan 24 15:45:59 2017``.  Unless otherwise noted this analysis removes subject 29.
 
-superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
-arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
-length = length, ...)
-```
+
 
 # Analysis
 
-```{r data-entry, echo=FALSE, message=FALSE}
-data <- read.csv('../../data/raw/patient_table.csv')
-#removed cushing data
-cushing.data <- subset(data, diagnosis %in% c("cushing's", "non secreting adenoma"), drop=TRUE)
-#reset non secreting adenoma to 
-levels(cushing.data$diagnosis)[3] <- "Control"
-levels(cushing.data$diagnosis)[2] <- "Cushing's"
-cushing.data$diagnosis <- relevel(cushing.data$diagnosis, ref = "Control")
-#set qualitative variables to logicals
-cushing.data$diabetes.diagnosis <- cushing.data$diabetes == "y"
-cushing.data$HTN.diagnosis <- cushing.data$HTN == "y"
-cushing.data$smoking.diagnosis <- cushing.data$smoking == "y"
-cushing.data$BMI.cat <- cut(cushing.data$BMI, breaks=c(0,30,50))
-cushing.data$BMI.cat <- ifelse(cushing.data$BMI.cat=="(0,30]", "Not Obese", "Obese")
-require(reshape2, quietly=T)
-require(plyr, quietly=T)
 
-melted.data.all <- melt(cushing.data, id.vars=c("id", "diagnosis", "BMI.cat"), na.rm=T, variable.name="measurement")
-melted.data <- subset(melted.data.all, !(measurement %in% c("HTN","diabetes","smoking","HTN.diagnosis","diabetes.diagnosis","smoking.diagnosis")))
-melted.data$value <- as.numeric(melted.data$value)
-#removed outlier subject 29
-melted.data.used <- subset(melted.data, id!='29')
-melted.data.used <- droplevels(melted.data.used)
-se <- function (x) sd(x, na.rm=T)/sqrt(length(x))
-```
 
-```{r analysis, echo=FALSE}
-#for glucose homeostatic measurements
-glucose.data.vars <- c("insulin", "glucose", "HOMA.IR")
-#for clinical measurements
-clinical.data.vars <- c("height", "weight", "age", "BMI", "abdominal.circumference")
 
-#for lipidomics data
-lipid.data.vars <- c("Cer.C14", "Cer.C16", "Cer.C18", "Cer.C18.1", "Cer.C20", "Cer.C24", "Glu.Cer.C16", "Glu.Cer.C18", "Glu.Cer.C18.1")
-
-#for lipolysis measurements
-lipolysis.data.vars <- c("glycerol.no.tx","glycerol.insulin.2.nM","glycerol.iso.30.nM","glycerol.ins.iso","glycerol.ins.ctrl","glycerol.iso.ctrl","glycerol.ins.iso.iso") #"glycerol.ins.effect")  "glycerol.iso.effect") 
-
-#for liver function test
-liver.data.vars <- c("ALT", "AST")
-
-#for all measurements
-all.o1 <- ddply(melted.data.used, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-all.o1$BMI.cat <- factor(all.o1$BMI.cat)
-all.o1$measurement <- factor(all.o1$measurement)
-
-glucose.summary.table <- melted.data.used[melted.data.used$measurement %in% glucose.data.vars,]
-glucose.stat <- ddply(glucose.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-
-lipolysis.summary.table <- melted.data.used[melted.data.used$measurement %in% lipolysis.data.vars,]
-lipolysis.stat <- ddply(lipolysis.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-
-lipid.summary.table <- melted.data.used[melted.data.used$measurement %in% lipid.data.vars,]
-lipid.stat <- ddply(lipid.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-
-clinical.summary.table <- melted.data.used[melted.data.used$measurement %in% clinical.data.vars,]
-clinical.stat <- ddply(clinical.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-
-liver.summary.table <- melted.data.used[melted.data.used$measurement %in% liver.data.vars,]
-liver.stat <- ddply(liver.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
-```
 
 ## BMI
 
-```{r clinical-barplots-cushing-bmi}
+
+```r
 library(ggplot2)
 item <- 'BMI'
   #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
@@ -114,24 +37,38 @@ item <- 'BMI'
     theme(legend.position=c(.20,.85))+
     theme(legend.background = element_rect(fill = "transparent", colour = "transparent")) +
     theme(panel.background = element_blank())
-
 ```
+
+![](figures/clinical-barplots-cushing-bmi-1.png)<!-- -->
 
 ### BMI Statistics
 
 Did a 2-way ANOVA on the BMI data
 
-```{r bmi-stats}
+
+```r
 bmi.aov <- aov(value~diagnosis*BMI.cat, data=subset(melted.data.used, measurement=="BMI"))
 kable(summary(bmi.aov)[[1]], caption="2 Way ANOVA with interaction for BMI")
 ```
 
-There was no interaction between BMI and diagnosis for HOMA-IR score **(p=`r summary(bmi.aov)[[1]]$"Pr(>F)"[3]`)**.  There was a significant effect of BMI, as expected **(p=`r summary(bmi.aov)[[1]]$"Pr(>F)"[2]`)**.  The residuals of this model pass a Shapiro-Wilk test, so normality can be assumed (p=`r shapiro.test(residuals(bmi.aov))$p.value`).
+
+
+Table: 2 Way ANOVA with interaction for BMI
+
+                     Df    Sum Sq   Mean Sq   F value    Pr(>F)
+------------------  ---  --------  --------  --------  --------
+diagnosis             1    68.506    68.506    3.0991   0.09870
+BMI.cat               1   549.548   549.548   24.8609   0.00016
+diagnosis:BMI.cat     1    40.430    40.430    1.8290   0.19628
+Residuals            15   331.574    22.105        NA        NA
+
+There was no interaction between BMI and diagnosis for HOMA-IR score **(p=0.19628)**.  There was a significant effect of BMI, as expected **(p=0.00016)**.  The residuals of this model pass a Shapiro-Wilk test, so normality can be assumed (p=0.97324).
 
 
 # Glucose Homeostasis
 
-```{r clinical-barplots-cushing-all-glucose}
+
+```r
 for (item in glucose.data.vars) {
   #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
   clinical.data <- all.o1[all.o1$measurement==item,]
@@ -147,7 +84,8 @@ for (item in glucose.data.vars) {
 
 ## HOMA Score
 
-```{r clinical-barplots-cushing-homa}
+
+```r
 item <- 'HOMA.IR'
   #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
   clinical.data <- all.o1[all.o1$measurement==item,]
@@ -167,21 +105,35 @@ item <- 'HOMA.IR'
     theme(legend.position=c(.20,.80))+
     theme(legend.background = element_rect(fill = "transparent", colour = "transparent")) +
     theme(panel.background = element_blank())
-
 ```
+
+![](figures/clinical-barplots-cushing-homa-1.png)<!-- -->
 
 ### HOMA-IR Statistics
 
 Did a 2-way ANOVA on the HOMA data
 
-```{r homa-stats}
+
+```r
 homa.aov <- aov(value~diagnosis*BMI.cat, data=subset(melted.data.used, measurement=="HOMA.IR"))
 kable(summary(homa.aov)[[1]], caption="2 Way ANOVA with interaction for HOMA-IR Score")
 ```
 
-There was a near-significant interaction between BMI and diagnosis for HOMA-IR score **(p=`r summary(homa.aov)[[1]]$"Pr(>F)"[3]`)**.  The residuals of this model fail a Shapiro-Wilk test, so normality cannot be assumed (p=`r shapiro.test(residuals(homa.aov))$p.value`).
 
-```{r clinical-barplots-cushing-all-clinical}
+
+Table: 2 Way ANOVA with interaction for HOMA-IR Score
+
+                     Df   Sum Sq   Mean Sq   F value    Pr(>F)
+------------------  ---  -------  --------  --------  --------
+diagnosis             1   44.594   44.5939    6.7777   0.02186
+BMI.cat               1   41.122   41.1223    6.2501   0.02659
+diagnosis:BMI.cat     1   28.806   28.8059    4.3781   0.05659
+Residuals            13   85.533    6.5795        NA        NA
+
+There was a near-significant interaction between BMI and diagnosis for HOMA-IR score **(p=0.05659)**.  The residuals of this model fail a Shapiro-Wilk test, so normality cannot be assumed (p=0.00195).
+
+
+```r
 for (item in clinical.data.vars) {
   #pdf(sprintf('../figures/Cushing-%s-barplot.pdf', gene))
   clinical.data <- all.o1[all.o1$measurement==item,]
@@ -232,7 +184,8 @@ for (item in liver.data.vars) {
 ```
 
 
-```{r clinical-barplots-cushing-lipolysis}
+
+```r
 ####lipolysis graphs####
 ggplot(lipolysis.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
@@ -247,6 +200,11 @@ ggplot(lipolysis.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
+```
+
+![](figures/clinical-barplots-cushing-lipolysis-1.png)<!-- -->
+
+```r
 #ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-lipolysis-barplot.pdf")
 
 ####glucose graphs####
@@ -263,6 +221,11 @@ ggplot(glucose.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
+```
+
+![](figures/clinical-barplots-cushing-lipolysis-2.png)<!-- -->
+
+```r
 #ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-glucosePanel-barplot.pdf")
 
 
@@ -281,10 +244,16 @@ ggplot(clinical.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
+```
+
+![](figures/clinical-barplots-cushing-lipolysis-3.png)<!-- -->
+
+```r
 #ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-clinicalPanel-barplot.pdf")
 ```
 
-```{r clinical-barplots-cushing-liver}
+
+```r
 ####liver graphs####
 ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
@@ -300,11 +269,40 @@ ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
+```
+
+![](figures/clinical-barplots-cushing-liver-1.png)<!-- -->
+
+```r
 #ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-liverPanel-barplot.pdf")
 ```
 
 Session Information
 -------------------
-```{r session-info}
+
+```r
 sessionInfo()
+```
+
+```
+## R version 3.3.0 (2016-05-03)
+## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+## Running under: OS X 10.12.2 (unknown)
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] ggplot2_2.2.1  plyr_1.8.4     reshape2_1.4.2 knitr_1.15.1  
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.9      assertthat_0.1   digest_0.6.11    rprojroot_1.1   
+##  [5] grid_3.3.0       gtable_0.2.0     backports_1.0.4  magrittr_1.5    
+##  [9] scales_0.4.1     evaluate_0.10    highr_0.6        stringi_1.1.2   
+## [13] lazyeval_0.2.0   rmarkdown_1.3    labeling_0.3     tools_3.3.0     
+## [17] stringr_1.1.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
+## [21] htmltools_0.3.5  tibble_1.2
 ```
