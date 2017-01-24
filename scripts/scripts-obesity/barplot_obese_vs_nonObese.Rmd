@@ -107,7 +107,7 @@ item <- 'BMI'
     theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank())+ 
     theme(axis.line = element_line(color = 'black')) +
-    scale_fill_grey(start = 0.9, end = .3) +
+    scale_fill_grey(start = 0.8, end = .3) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=45,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.20,.85))+
@@ -160,10 +160,10 @@ item <- 'HOMA.IR'
     theme(panel.grid.major = element_blank()) + 
     theme(panel.border=element_blank())+ 
     theme(axis.line = element_line(color = 'black')) +
-    scale_fill_grey(start = 0.9, end = .3) +
+    scale_fill_grey(start = 0.8, end = .3) +
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=45,hjust=.5,vjust=.5)) +
-    theme(legend.position=c(.20,.70))+
+    theme(legend.position=c(.20,.80))+
     theme(legend.background = element_rect(fill = "transparent", colour = "transparent")) +
     theme(panel.background = element_blank())
 
