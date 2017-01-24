@@ -3,9 +3,9 @@ title: "ITT for Dexamethasone Treated HFD-Fed Mice"
 author: "Innocence Harvey, Erin Stephenson and Dave Bridges"
 date: "February 11, 2015"
 output:
-html_document:
-    fig_caption: yes
-    keep_md: yes
+  html_document:
+    keep_md: true
+    fig_caption: true
 ---
 
 ```{r global_options, include=FALSE}
