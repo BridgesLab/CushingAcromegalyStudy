@@ -50,7 +50,9 @@ itt.summary.barplots <-
   summarize(FG.mean = mean(t0),
             FG.se = se(t0),
             AUC.mean = mean(AUC, na.rm=T),
-            AUC.se = se(AUC))
+            AUC.se = se(AUC),
+            n = length(t0))
+kable(itt.summary.barplots, caption="Summary Statistics for ITT")
 
 mean.na <- function(x) mean(x, na.rm=T)
 
