@@ -10,7 +10,7 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 1D | scripts/scripts-obesity/itt-analysis.Rmd | scripts/scripts-obesity/figures/itt-lineplot-1.pdf |
 | Figure 1E | scripts/scripts-obesity/itt-analysis.Rmd | scripts/scripts-obesity/figures/itt-fasting-glucose-1.pdf |
 | Figure 2A | scripts/scripts-obesity/barplot_obese_vs_nonObese.Rmd | scripts/scripts-obesity/figures/clinical-barplots-cushing-alt-1.pdf |
-| Figure 2B |  |  |
+| Figure 2B | scripts/scripts-obesity/liver-tg-analysis.Rmd | scripts/scripts-obesity/figures/liver-tg-barplot-1.pdf  |
 | Figure 2C | No Script - Images | data/processed/HFD Dex Liver Images H&E.png |
 | Figure 2D | scripts/scripts-obesity/liver-qpcr-analysis.Rmd | scripts/scripts-obesity/figures/liver-qpcr-srebf1-barplot-1.pdf |
 | Figure 2E | scripts/scripts-obesity/liver-qpcr-analysis.Rmd | scripts/scripts-obesity/figures/liver-qpcr-fasn-barplot-1.pdf |
