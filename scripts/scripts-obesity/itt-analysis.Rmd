@@ -175,6 +175,10 @@ superpose.eb(plot,
 legend("topleft", levels(barplot.data$Treatment), fill=color.scheme, bty="n")
 ```
 
+While HFD animals had a `r (filter(itt.summary.barplots, Treatment=="Water"&Diet=="HFD")$FG.mean-filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean)/filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean*100`% increase in fasting glucose when compared to NCD animals, in the presence of dexamethasone, HFD-fed animals had a `r (filter(itt.summary.barplots, Treatment=="Dexamethasone"&Diet=="HFD")$FG.mean-filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean)/filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean*100`% increase in fasting glucose relative to NCD controls not treated with dexamethasone.
+
+In the chow condition, dexamethasone caused a `r (filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean-filter(itt.summary.barplots, Treatment=="Dexamethasone"&Diet=="NCD")$FG.mean)/filter(itt.summary.barplots, Treatment=="Water"&Diet=="NCD")$FG.mean*100`% decrease in fasting glucose.
+
 ### Fasting Glucose Statistics
 
 Analysed these data by 2-way ANOVA with an interaction

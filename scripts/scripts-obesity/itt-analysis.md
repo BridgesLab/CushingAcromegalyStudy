@@ -6,7 +6,7 @@ February 11, 2015
 
 
 
-These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 16:17:45 2017.
+These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 16:59:38 2017.
 
 
 
@@ -26,6 +26,10 @@ Based on a mixed linear model testing for effects of a Diet:Treatment interactio
 ## Fasting Blood Glucose
 
 ![](figures/itt-fasting-glucose-1.png)<!-- -->
+
+While HFD animals had a 23.56355% increase in fasting glucose when compared to NCD animals, in the presence of dexamethasone, HFD-fed animals had a 121.64829% increase in fasting glucose relative to NCD controls not treated with dexamethasone.
+
+In the chow condition, dexamethasone caused a 17.64364% decrease in fasting glucose.
 
 ### Fasting Glucose Statistics
 
