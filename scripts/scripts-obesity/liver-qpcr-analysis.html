@@ -246,14 +246,49 @@ analysed.data &lt;-
   clean.data %&gt;%
   group_by(`Target Name`, `Biological Group Name`) %&gt;%
   summarize(mean = mean(RQ, na.rm=T),
-            se = se(RQ)) %&gt;%
+            se = se(RQ),
+            n = length(RQ)) %&gt;%
   mutate(mean.norm = mean/mean[`Biological Group Name`==&quot;NCD&quot;],
          se.norm = se/mean[`Biological Group Name`==&quot;NCD&quot;]) %&gt;%
   separate(`Biological Group Name`, into=&quot;Diet&quot;, remove=F) %&gt;%
   separate( `Biological Group Name`, into=c(&quot;Not.Needed&quot;, &quot;Treatment&quot;), sep=5, remove=F, fill=&quot;left&quot;) %&gt;%
   select(-Not.Needed)
 analysed.data$Treatment &lt;- as.factor(analysed.data$Treatment)
-analysed.data$Diet &lt;- relevel(as.factor(analysed.data$Diet), ref=&quot;NCD&quot;)</code></pre>
+analysed.data$Diet &lt;- relevel(as.factor(analysed.data$Diet), ref=&quot;NCD&quot;)
+
+kable(filter(analysed.data, `Target Name` == &quot;Fasn&quot;) %&gt;% ungroup() %&gt;% select(Diet,Treatment,n,-`Target Name`), caption=&quot;Number of Samples in Each Group&quot;)</code></pre>
+<table>
+<caption>Number of Samples in Each Group</caption>
+<thead>
+<tr class="header">
+<th align="left">Diet</th>
+<th align="left">Treatment</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">HFD</td>
+<td align="left"></td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">HFD</td>
+<td align="left">Dex</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">NCD</td>
+<td align="left"></td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">NCD</td>
+<td align="left">Dex</td>
+<td align="right">7</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="glucose-6-phosphatase" class="section level1">
 <h1>Glucose-6-Phosphatase</h1>

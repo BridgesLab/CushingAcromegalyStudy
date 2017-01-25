@@ -86,7 +86,8 @@ analysed.data <-
   clean.data %>%
   group_by(`Target Name`, `Biological Group Name`) %>%
   summarize(mean = mean(RQ, na.rm=T),
-            se = se(RQ)) %>%
+            se = se(RQ),
+            n = length(RQ)) %>%
   mutate(mean.norm = mean/mean[`Biological Group Name`=="NCD"],
          se.norm = se/mean[`Biological Group Name`=="NCD"]) %>%
   separate(`Biological Group Name`, into="Diet", remove=F) %>%
@@ -94,7 +95,20 @@ analysed.data <-
   select(-Not.Needed)
 analysed.data$Treatment <- as.factor(analysed.data$Treatment)
 analysed.data$Diet <- relevel(as.factor(analysed.data$Diet), ref="NCD")
+
+kable(filter(analysed.data, `Target Name` == "Fasn") %>% ungroup() %>% select(Diet,Treatment,n,-`Target Name`), caption="Number of Samples in Each Group")
 ```
+
+
+
+Table: Number of Samples in Each Group
+
+Diet   Treatment     n
+-----  ----------  ---
+HFD                  9
+HFD    Dex           5
+NCD                  6
+NCD    Dex           7
 
 
 # Glucose-6-Phosphatase
