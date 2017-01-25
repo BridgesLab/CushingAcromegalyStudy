@@ -122,6 +122,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -129,7 +130,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc-barplot-1.png)<!-- -->
@@ -189,6 +190,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -196,7 +198,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc2-barplot-1.png)<!-- -->
@@ -256,6 +258,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -263,7 +266,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc3-barplot-1.png)<!-- -->
@@ -325,6 +328,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -332,7 +336,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -361,6 +365,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
 
@@ -368,7 +373,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pck1-barplot-1.png)<!-- -->
@@ -428,6 +433,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -435,7 +441,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pck2-barplot-1.png)<!-- -->
@@ -497,6 +503,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -504,7 +511,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -531,6 +538,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
 
@@ -538,7 +546,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pcx-barplot-1.png)<!-- -->
@@ -598,6 +606,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -605,7 +614,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-hsd11b1-barplot-1.png)<!-- -->
@@ -665,6 +674,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -672,7 +682,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-fgf21-barplot-1.png)<!-- -->
@@ -732,6 +742,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -739,7 +750,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-fasn-barplot-1.png)<!-- -->
@@ -799,6 +810,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -806,7 +818,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-srebf1-barplot-1.png)<!-- -->

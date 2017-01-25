@@ -25,6 +25,8 @@ superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 
   
 se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+color.scheme <- c('black','red')
 ```
 
 # Data Entry
@@ -122,6 +124,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -129,7 +132,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc Statistics
@@ -162,6 +165,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -169,7 +173,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc2 Statistics
@@ -202,6 +206,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -209,7 +214,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc3 Statistics
@@ -244,6 +249,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -251,7 +257,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -277,6 +283,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
 
@@ -284,7 +291,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pck1 Statistics
@@ -317,6 +324,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -324,7 +332,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pck2 Statistics
@@ -359,6 +367,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -366,7 +375,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -390,6 +399,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4], na.rm=T)))
 
@@ -397,7 +407,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pcx Statistics
@@ -430,6 +440,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -437,7 +448,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Hsd11b1 Statistics
@@ -470,6 +481,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -477,7 +489,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Fgf21 Statistics
@@ -510,6 +522,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -517,7 +530,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Fasn Statistics
@@ -550,6 +563,7 @@ plot.data.se <-
 plot <- barplot(as.matrix(plot.data[3:4]),
                 beside=T, las=1,
                 main=mRNA,
+                col=color.scheme,
                 ylab="Relative Expression",
                 ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
 
@@ -557,7 +571,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=grey.colors(2), bty="n")
+legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Srebf1 Statistics
