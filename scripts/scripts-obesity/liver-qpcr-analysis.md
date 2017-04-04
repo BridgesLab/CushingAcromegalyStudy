@@ -871,6 +871,43 @@ Diet          1    0.002     0.002      1.75    0.198
 Treatment     1    0.000     0.000      0.13    0.722
 Residuals    24    0.030     0.001        NA       NA
 
+# Gluconeogenic Gene Summary
+This used the higher expressed isoforms (*G6pc2*, *Pck2*, *Pcx*)
+
+
+```r
+par(mfrow=c(1,3))
+
+for (mRNA in c("Pcx","Pck2","G6pc")){
+
+plot.data <-
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,mean.norm) %>%
+  spread(Diet,mean.norm)
+
+plot.data.se <- 
+  analysed.data %>%
+  filter(`Target Name`==mRNA) %>%
+  select(Diet,Treatment,se.norm) %>%
+  spread(Diet,se.norm)
+
+plot <- barplot(as.matrix(plot.data[3:4]),
+                beside=T, las=1,
+                main=mRNA,
+                col=color.scheme,
+                ylab="Relative Expression",
+                ylim=c(0,max(plot.data[3:4]+plot.data.se[3:4])))
+
+superpose.eb(plot,
+             as.matrix(plot.data[3:4]),
+             as.matrix(plot.data.se[3:4]))
+}
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
+```
+
+![](figures/liver-qpcr-gluconeogenesis-summary-1.png)<!-- -->
+
 # Session Information
 
 ```r
@@ -880,7 +917,7 @@ sessionInfo()
 ```
 ## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.2 (unknown)
+## Running under: OS X 10.12.3 (unknown)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -892,8 +929,8 @@ sessionInfo()
 ## [1] tidyr_0.6.1  dplyr_0.5.0  readr_1.0.0  knitr_1.15.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9     digest_0.6.11   rprojroot_1.1   assertthat_0.1 
-##  [5] R6_2.2.0        DBI_0.5-1       backports_1.0.4 magrittr_1.5   
+##  [1] Rcpp_0.12.9     digest_0.6.12   rprojroot_1.2   assertthat_0.1 
+##  [5] R6_2.2.0        DBI_0.5-1       backports_1.0.5 magrittr_1.5   
 ##  [9] evaluate_0.10   highr_0.6       stringi_1.1.2   lazyeval_0.2.0 
 ## [13] rmarkdown_1.3   tools_3.3.0     stringr_1.1.0   yaml_2.1.14    
 ## [17] htmltools_0.3.5 tibble_1.2
