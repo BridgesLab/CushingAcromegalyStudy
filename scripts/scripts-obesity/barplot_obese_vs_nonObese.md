@@ -3,7 +3,7 @@ Quynh Tran and Dave Bridges
 October 21, 2015  
 
 
-This file was last compiled on ``Tue Jan 24 16:23:42 2017``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Mon Jul 31 20:20:12 2017``.  Unless otherwise noted this analysis removes subject 29.
 
 
 
@@ -64,7 +64,6 @@ Residuals            15   331.574    22.105        NA        NA
 
 There was no interaction between BMI and diagnosis for HOMA-IR score **(p=0.19628)**.  There was a significant effect of BMI, as expected **(p=0.00016)**.  The residuals of this model pass a Shapiro-Wilk test, so normality can be assumed (p=0.97324).
 
-
 # Glucose Homeostasis
 
 
@@ -108,6 +107,8 @@ item <- 'HOMA.IR'
 ```
 
 ![](figures/clinical-barplots-cushing-homa-1.png)<!-- -->
+
+Cushing's disease resulted in a **3.35469** fold increase in HOMA-IR score in the obese subejcts but only a **1.17145** fold increase in the non-obese subjects.
 
 ### HOMA-IR Statistics
 
@@ -350,6 +351,8 @@ item <- 'ALT'
 
 ![](figures/clinical-barplots-cushing-alt-1.png)<!-- -->
 
+Cushing's disease resulted in a **2.84051** fold increase in ALT levels in the obese subejcts but only a **1.38614** fold increase in the non-obese subjects.
+
 #### ALT Statistics
 
 Did a 2-way ANOVA on the ALT data
@@ -381,7 +384,7 @@ sessionInfo()
 ```
 ## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.2 (unknown)
+## Running under: OS X 10.12.6 (unknown)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -393,10 +396,10 @@ sessionInfo()
 ## [1] ggplot2_2.2.1  plyr_1.8.4     reshape2_1.4.2 knitr_1.15.1  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9      assertthat_0.1   digest_0.6.11    rprojroot_1.1   
-##  [5] grid_3.3.0       gtable_0.2.0     backports_1.0.4  magrittr_1.5    
-##  [9] scales_0.4.1     evaluate_0.10    highr_0.6        stringi_1.1.2   
-## [13] lazyeval_0.2.0   rmarkdown_1.3    labeling_0.3     tools_3.3.0     
-## [17] stringr_1.1.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
-## [21] htmltools_0.3.5  tibble_1.2
+##  [1] Rcpp_0.12.10     digest_0.6.12    rprojroot_1.2    grid_3.3.0      
+##  [5] gtable_0.2.0     backports_1.0.5  magrittr_1.5     scales_0.4.1    
+##  [9] evaluate_0.10    highr_0.6        stringi_1.1.3    lazyeval_0.2.0  
+## [13] rmarkdown_1.6    labeling_0.3     tools_3.3.0      stringr_1.2.0   
+## [17] munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2 htmltools_0.3.5 
+## [21] tibble_1.3.0
 ```

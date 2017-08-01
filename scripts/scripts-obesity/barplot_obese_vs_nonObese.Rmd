@@ -128,7 +128,6 @@ kable(summary(bmi.aov)[[1]], caption="2 Way ANOVA with interaction for BMI")
 
 There was no interaction between BMI and diagnosis for HOMA-IR score **(p=`r summary(bmi.aov)[[1]]$"Pr(>F)"[3]`)**.  There was a significant effect of BMI, as expected **(p=`r summary(bmi.aov)[[1]]$"Pr(>F)"[2]`)**.  The residuals of this model pass a Shapiro-Wilk test, so normality can be assumed (p=`r shapiro.test(residuals(bmi.aov))$p.value`).
 
-
 # Glucose Homeostasis
 
 ```{r clinical-barplots-cushing-all-glucose}
@@ -169,6 +168,8 @@ item <- 'HOMA.IR'
     theme(panel.background = element_blank())
 
 ```
+
+Cushing's disease resulted in a **`r subset(clinical.data, BMI.cat=='Obese')$mean[2]/subset(clinical.data, BMI.cat=='Obese')$mean[1]`** fold increase in HOMA-IR score in the obese subejcts but only a **`r subset(clinical.data, BMI.cat=='Not Obese')$mean[2]/subset(clinical.data, BMI.cat=='Not Obese')$mean[1]`** fold increase in the non-obese subjects.
 
 ### HOMA-IR Statistics
 
@@ -359,6 +360,8 @@ item <- 'ALT'
     theme(panel.background = element_blank())
 
 ```
+
+Cushing's disease resulted in a **`r subset(clinical.data, BMI.cat=='Obese')$mean[2]/subset(clinical.data, BMI.cat=='Obese')$mean[1]`** fold increase in ALT levels in the obese subejcts but only a **`r subset(clinical.data, BMI.cat=='Not Obese')$mean[2]/subset(clinical.data, BMI.cat=='Not Obese')$mean[1]`** fold increase in the non-obese subjects.
 
 #### ALT Statistics
 
