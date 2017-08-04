@@ -49,6 +49,7 @@ itt.summary.barplots <-
   group_by(Treatment,Diet) %>%
   summarize(FG.mean = mean(t0),
             FG.se = se(t0),
+            FG.sd = sd(t0,na.rm=T),
             AUC.mean = mean(AUC, na.rm=T),
             AUC.se = se(AUC),
             n = length(t0))
@@ -192,6 +193,27 @@ kable(summary(fg.aov)[[1]], caption="2 Way ANOVA for Fasting Glucose")
 
 The residuals from this ANOVA can **not** be assumed to be normally distributed as they fail a Shapiro-Wilk test (p=`r shapiro.test(residuals(fg.aov))$p.value`).
 
+#### Fasting Glucose Power Analysis
+
+```{r fasting-glucose-power}
+effect.size.glucose <- subset(itt.summary.barplots, Treatment=='Dexamethasone'&Diet=='HFD')$FG.mean - subset(itt.summary.barplots, Treatment=='Water'&Diet=='NCD')$FG.mean
+typical.sd <- mean(itt.summary.barplots$FG.sd)
+effect.size.d <- effect.size.glucose/typical.sd
+
+library(pwr)
+n.pwr <- pwr.t.test(d = 0.5*effect.size.d,
+           power=0.8,
+           sig.level = 0.05)
+
+power.pwr <- pwr.t.test(d = 0.5*effect.size.d,
+           n=8,
+           sig.level = 0.05)
+```
+
+We estimate an effect size (from NCD/Water to HFD/Dexamethasone) of `r effect.size.glucose` (or `r effect.size.d` standard deviations).
+
+In order to detect 50% of this effect size (an decrease of `r 0.5*effect.size.glucose`mg/dL or a Cohen's d of `r 0.5*effect.size.d`) with knockout, we require at least `r n.pwr$n` animals.  With eight animals per group, we calculate that we will have a statistical power of `r power.pwr$power`. 
+ 
 ## Area Under Curve During ITT
 
 ```{r itt-auc-barplot}

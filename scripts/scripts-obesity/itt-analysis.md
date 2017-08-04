@@ -6,17 +6,17 @@ February 11, 2015
 
 
 
-These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Tue Jan 24 17:16:21 2017.
+These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Fri Aug  4 12:05:13 2017.
 
 
 Table: Summary Statistics for ITT
 
-Treatment       Diet    FG.mean     FG.se   AUC.mean    AUC.se    n
---------------  -----  --------  --------  ---------  --------  ---
-Dexamethasone   NCD      118.25    5.5475     613.75    31.813   12
-Dexamethasone   HFD      318.25   35.3986    2768.83   335.628   12
-Water           NCD      143.58    7.3283     608.62    53.526   12
-Water           HFD      177.42   12.3622     584.14    56.221   12
+Treatment       Diet    FG.mean     FG.se     FG.sd   AUC.mean    AUC.se    n
+--------------  -----  --------  --------  --------  ---------  --------  ---
+Dexamethasone   NCD      118.25    5.5475    19.217     613.75    31.813   12
+Dexamethasone   HFD      318.25   35.3986   122.624    2768.83   335.628   12
+Water           NCD      143.58    7.3283    25.386     608.62    53.526   12
+Water           HFD      177.42   12.3622    42.824     584.14    56.221   12
 
 ![](figures/itt-lineplot-1.png)<!-- -->
 
@@ -55,6 +55,14 @@ Residuals         44   196728     4471.1        NA        NA
 
 The residuals from this ANOVA can **not** be assumed to be normally distributed as they fail a Shapiro-Wilk test (p=0.0013).
 
+#### Fasting Glucose Power Analysis
+
+
+
+We estimate an effect size (from NCD/Water to HFD/Dexamethasone) of 174.66667 (or 3.32617 standard deviations).
+
+In order to detect 50% of this effect size (an decrease of 87.33333mg/dL or a Cohen's d of 1.66308) with knockout, we require at least 6.78472 animals.  With eight animals per group, we calculate that we will have a statistical power of 0.87097. 
+ 
 ## Area Under Curve During ITT
 
 ![](figures/itt-auc-barplot-1.png)<!-- -->
@@ -82,7 +90,7 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 ```
 ## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.2 (unknown)
+## Running under: OS X 10.12.6 (unknown)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -91,15 +99,15 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] lme4_1.1-12    Matrix_1.2-7.1 tidyr_0.6.1    dplyr_0.5.0   
-## [5] knitr_1.15.1  
+## [1] pwr_1.2-1    lme4_1.1-12  Matrix_1.2-8 tidyr_0.6.1  dplyr_0.5.0 
+## [6] knitr_1.15.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9     magrittr_1.5    splines_3.3.0   MASS_7.3-45    
-##  [5] lattice_0.20-34 R6_2.2.0        minqa_1.2.4     stringr_1.1.0  
-##  [9] highr_0.6       tools_3.3.0     grid_3.3.0      nlme_3.1-128   
-## [13] DBI_0.5-1       htmltools_0.3.5 yaml_2.1.14     lazyeval_0.2.0 
-## [17] assertthat_0.1  rprojroot_1.1   digest_0.6.11   tibble_1.2     
-## [21] nloptr_1.0.4    evaluate_0.10   rmarkdown_1.3   stringi_1.1.2  
-## [25] backports_1.0.4
+##  [1] Rcpp_0.12.10    magrittr_1.5    splines_3.3.0   MASS_7.3-45    
+##  [5] lattice_0.20-35 R6_2.2.0        minqa_1.2.4     stringr_1.2.0  
+##  [9] highr_0.6       tools_3.3.0     grid_3.3.0      nlme_3.1-131   
+## [13] DBI_0.6-1       htmltools_0.3.5 yaml_2.1.14     lazyeval_0.2.0 
+## [17] assertthat_0.1  rprojroot_1.2   digest_0.6.12   tibble_1.3.0   
+## [21] nloptr_1.0.4    evaluate_0.10   rmarkdown_1.6   stringi_1.1.3  
+## [25] backports_1.0.5
 ```
