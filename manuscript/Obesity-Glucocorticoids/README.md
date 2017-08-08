@@ -16,3 +16,6 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 2C | No Script - Images | data/processed/HFD Dex Liver Images H&E.png |
 | Figure 2D | scripts/scripts-obesity/liver-qpcr-analysis.Rmd | scripts/scripts-obesity/figures/liver-qpcr-srebf1-barplot-1.pdf |
 | Figure 2E | scripts/scripts-obesity/liver-qpcr-analysis.Rmd | scripts/scripts-obesity/figures/liver-qpcr-fasn-barplot-1.pdf |
+| Figure 3A | scripts/scripts-obesity/body-composition-analysis.Rmd | 
+| Figure 3B | scripts/scripts-obesity/body-composition-analysis.Rmd |
+| Figure 3C | scripts/scripts-obesity/body-composition-analysis.Rmd |
