@@ -1,0 +1,537 @@
+---
+title: "Analysis of Glucose Clamp Data"
+author: "Nathan Qi, Innocence Harvey and Dave Bridges"
+date: "April 7, 2017"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  htmin_notebook: toc:yes
+  htmin_document:
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+library(tidyr)
+library(dplyr)
+
+color.scheme <- c("black","red")
+```
+
+# Data Entry
+
+```{r data-entry}
+datafile <- '../../data/raw/Glucose Clamp Data.csv'
+library(readr)
+clamp.data.raw <- read_csv(datafile)
+clamp.data.raw$Treatment <- relevel(as.factor(clamp.data.raw$Treatment), ref="Water")
+clamp.data.raw$Status <- if_else(clamp.data.raw$Time < 0, "Basal", "Insulin")
+
+mean.na <- function(x) mean(x, na.rm=T)
+clamp.data <-
+  filter(clamp.data.raw, Time<0|Time>=80)%>%
+  group_by(Animal, Treatment, Status) %>%
+  summarize_each(funs=funs(mean.na,se))
+
+clamp.data.time <-
+  clamp.data.raw %>%
+  group_by(Animal, Treatment, Time) %>%
+  summarize_each(funs=funs(mean.na,se))
+
+clamp.data.summary <-
+  clamp.data %>%
+  group_by(Treatment, Status) %>%
+  summarize_each(funs=funs(mean.na,se))
+
+clamp.data.time.summary <-
+  clamp.data.time %>%
+  group_by(Treatment, Time) %>%
+  summarize_each(funs=funs(mean.na,se))
+
+clamp.data.summary <-
+  clamp.data.summary %>%
+  rename(HGP = HGP_mean.na_mean.na) %>%
+  rename(HGP.se = HGP_mean.na_se) %>%
+  rename(sHGP = sHGP_mean.na_mean.na) %>%
+  rename(sHGP.se = sHGP_mean.na_se) %>%
+  rename(Gtr = Gtr_mean.na_mean.na) %>%
+  rename(Gtr.se = Gtr_mean.na_se) %>%
+  rename(GIR = GIR_mean.na_mean.na) %>%
+  rename(GIR.se = GIR_mean.na_se) %>%
+  rename(Insulin = Insulin_mean.na_mean.na) %>%
+  rename(Insulin.se = Insulin_mean.na_se) %>%
+  rename(Glucose = Glucose_mean.na_mean.na) %>%
+  rename(Glucose.se = Glucose_mean.na_se) %>%
+  rename(Insulin.Clearance = `Ins-Clearance_mean.na_mean.na`) %>%
+  rename(Insulin.Clearance.se = `Ins-Clearance_mean.na_se`) %>%
+  rename(Glycolysis = Glycolysis_mean.na_mean.na) %>%
+  rename(Glycolysis.se = Glycolysis_mean.na_se) %>%
+  rename(Glycogen = Glycogen_mean.na_mean.na) %>%
+  rename(Glycogen.se = Glycogen_mean.na_se)
+
+clamp.data.time.summary <-
+  clamp.data.time.summary %>%
+  rename(Glucose = Glucose_mean.na_mean.na) %>%
+  rename(Glucose.se = Glucose_mean.na_se) %>%
+  rename(GIR = `GIR (mg/kg/min)_mean.na_mean.na`) %>%
+  rename(GIR.se = `GIR (mg/kg/min)_mean.na_se`) %>%
+  select(Time, Glucose, Glucose.se, GIR, GIR.se)
+```
+
+This analysis uses the averages and errors calculated first by animal, then averaged across groups.  The clamp data is the average clamped values.
+
+# Glucose Levels During Clamp
+
+Glucose levels were kept the same between groups throughout the experiment, as expected.
+
+```{r glucose-time-course}
+ymax <- with(clamp.data.time.summary, max(Glucose+Glucose.se, na.rm=T))
+
+with(filter(clamp.data.time.summary, Treatment=="Water"),
+     plot(Time,Glucose, las=1, pch=19,
+          type="l", ylim=c(0,ymax),
+          xlab="Insulin Phase (min)",
+          ylab="Glucose (mg/dL)",main="Glucose During Clamp"))
+with(filter(clamp.data.time.summary, Treatment=="Dexamethasone"),
+     lines(Time,Glucose, col="red"))
+
+with(filter(clamp.data.time.summary, Treatment=="Water"),
+     superpose.eb(Time,Glucose,Glucose.se))
+with(filter(clamp.data.time.summary, Treatment=="Dexamethasone"),
+     superpose.eb(Time,Glucose,Glucose.se, col="red"))
+
+legend("bottomleft", levels(clamp.data.time.summary$Treatment), lty=1, col=c("black","red"), bty="n")
+```
+
+
+During the clamp, the goal is to keep glucose constant between 120 and 130 mg/dL throughout the experiment.  There was a drop in glucose levels shortly after the insulin phase started (time 0).  The following is a linear model of Glucose levels vs time, after 80 minutes showing that there was a significant effects of treatment on Glucose levels in this timeframe.  The dexamethasone treated group had lower blood glucose during this phase.
+
+
+```{r glucose-clamp-stats}
+glucose.clamp.lm <- lm(Glucose~Time+Treatment, data=subset(clamp.data.time.summary, Time >80))
+library(broom)
+kable(tidy(glucose.clamp.lm), caption="Linear model of Glucose levels at the end of the clamp phase")
+```
+
+# Glucose Infusion Rate
+
+This only matters under insulin infusion conditions, wherein glucose levels are decreasing due to 1) suppression of endogenous production and 2) increased clearance.  As such this can be thought of as a GTT such that if insulin requires more glucose infusion, that indicates more insulin sensitivity. "Glucose infusion was reduced XXX in the HFD-Dex p=XXX.""
+
+```{r gir-barplot-hfd}
+gir.data <- 
+  select(clamp.data.summary, Treatment, Status, GIR) %>%
+  filter(Status=="Insulin")
+
+gir.data.se <- 
+  select(clamp.data.summary, Treatment, Status, GIR.se) %>%
+  filter(Status=="Insulin")
+
+ymax <- max(gir.data[3]+max(gir.data.se[3]))
+
+plot <- barplot(gir.data$GIR,
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Glucose Infusion Rate",
+        names.arg = levels(clamp.data$Treatment),
+        ylab="Glucose Infusion Rate (mg/kg/min)")
+
+superpose.eb(plot,
+             gir.data$GIR,
+             gir.data.se$GIR.se)
+```
+
+For the dexamethasone group, there was an average of `r  (gir.data$GIR[1]-gir.data$GIR[2])/ gir.data$GIR[1]*100`% reduction in glucose infusion rates.
+
+```{r gir-stats}
+library(car)
+kable(filter(clamp.data, Status=="Insulin") %>% select(`GIR_mean.na`) %>% group_by(Treatment) %>% summarize(Shapiro=shapiro.test(`GIR_mean.na`)$p.value), caption="Shapiro-Wilk Tests for Glucose Infusion Rates")
+
+gir.levene <- leveneTest(`GIR_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Insulin") %>% select(`GIR_mean.na`, Status))
+
+gir.t.test <- t.test(`GIR_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Insulin") %>% select(`GIR_mean.na`, Status))
+
+kable(glance(gir.t.test),
+      caption="Summary of t-tests for glucose infusion rates")
+```
+
+Shapiro-Wilk tests showed that the two groups could be presumed to have equal variance, and Levene's test showed that we can assume equal variance (p=`r gir.levene$"Pr(>F)"[1]`) so Student's *t*-tests were used to obtain a p-value of **`r gir.t.test$p.value`**.
+
+This is the time course for GIR over the experiment
+
+```{r gir-time-course}
+ymax <- with(clamp.data.time.summary, max(GIR+GIR.se, na.rm=T))
+
+with(filter(clamp.data.time.summary, Treatment=="Water"),
+     plot(Time,GIR, las=1, pch=19,
+          type="l", ylim=c(0,ymax),
+          ylab="Glucose Infusion Rate (mg/kg/min)",main="Glucose Infusion Rate During Clamp"))
+with(filter(clamp.data.time.summary, Treatment=="Dexamethasone"),
+     lines(Time,GIR, col="red"))
+
+with(filter(clamp.data.time.summary, Treatment=="Water"),
+     superpose.eb(Time,GIR,GIR.se))
+with(filter(clamp.data.time.summary, Treatment=="Dexamethasone"),
+     superpose.eb(Time,GIR,GIR.se, col="red"))
+legend("topleft", levels(clamp.data.time.summary$Treatment), lty=1, col=c("black","red"), bty="n")
+```
+
+
+# Hepatic Glucose Production
+
+This is calculated by subtracting the Glucose turnover rates from the glucose infusion rates:
+
+\[ HGP = GIR - Gtr \]
+
+Importantly at baseline (when glucose is not changing), the glucose infusion rate is by definition zero and $Gtr = GIR$.  When insulin is added, the glucose infusion rate increases to match glucose clearance (to maintain euglycemia).  Now all three variables have values.'Reduced XXX in the dex but only xx in the control p=XXX'
+
+
+## Glucose Production in HFD
+
+```{r hgp-barplot-hfd}
+hgp.data <- 
+  select(clamp.data.summary, Treatment, Status, HGP) %>%
+  spread(Status, HGP)
+
+hgp.data.se <- 
+  select(clamp.data.summary, Treatment, Status, HGP.se) %>%
+  spread(Status, HGP.se)
+
+ymax <- max(hgp.data[2:3]+max(hgp.data.se[2:3]))
+
+plot <- barplot(as.matrix(hgp.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Endogenous Glucose Production",
+        ylab="Glucose Production (mg/kg/min)")
+
+legend("topright", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(hgp.data[2:3]),
+             as.matrix(hgp.data.se[2:3]))
+```
+
+Endogenous glucose production was `r (hgp.data[2,'Basal']-hgp.data[1,'Basal'])/hgp.data[1,'Basal']*100` percent higher in the dexamethasone-treated group in the basal condition.  Under insulin stimulated conditions, endogenous glucose production was increased from nearly zero to `r hgp.data[2,'Insulin']` mg/kg/min (a `r (hgp.data[2,'Insulin']-hgp.data[1,'Insulin'])/hgp.data[1,'Insulin']*100` fold increase). A Shapiro-Wilk test showed that these groups were normally distributed:
+
+```{r hgp-stats}
+kable(filter(clamp.data %>% select(`HGP_mean.na`, Status) %>% group_by(Treatment, Status) %>% summarize(Shapiro=shapiro.test(`HGP_mean.na`)$p.value)), caption="Shapiro-Wilk Tests for Basal HGP")
+
+hgp.levene.basal <- leveneTest(`HGP_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Basal") %>% select(`HGP_mean.na`, Status))
+hgp.levene.insulin <- leveneTest(`HGP_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Insulin") %>% select(`HGP_mean.na`, Status))
+
+hgp.t.test.basal <- t.test(`HGP_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Basal") %>% select(`HGP_mean.na`, Status))
+hgp.t.test.insulin <- t.test(`HGP_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Insulin") %>% select(`HGP_mean.na`, Status))
+
+kable(
+  rbind(Basal=glance(hgp.t.test.basal),
+      Insulin=glance(hgp.t.test.insulin)),
+      caption="Summary of t-tests for endogenous glucose production")
+```
+
+A Levene's test showed that both Basal (p=`r hgp.levene.basal$"Pr(>F)"[1]`) and Insulin phase EGP (p=`r hgp.levene.insulin$"Pr(>F)"[1]`) can be presumed to have equal variance.  Therefore a Student's *t*-test was used for both comparasons.
+
+## Suppression of Hepatic Glucose Output
+
+Percent reductions in glucose output relative to basal were calculated for each mouse using the averaged HGP values >80 minutes
+
+```{r egp-suppression-barplot-hfd}
+egp.suppression.data <- 
+  select(clamp.data.summary, Treatment, Status, sHGP) %>%
+  filter(Status=="Insulin")
+
+egp.suppression.data.se <- 
+  select(clamp.data.summary, Treatment, Status, sHGP.se) %>%
+  filter(Status=="Insulin")
+
+ymax <- max(egp.suppression.data[3]+max(egp.suppression.data.se[3]))
+
+plot <- barplot(egp.suppression.data$sHGP,
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Suppression of Glucose Production",
+        names.arg = levels(clamp.data$Treatment),
+        ylab="Suppression of Glucose Production (Percent of Basal)")
+
+superpose.eb(plot,
+             egp.suppression.data$sHGP,
+             egp.suppression.data.se$sHGP.se)
+```
+
+For the water group, there was an average of `r egp.suppression.data$sHGP[1]`% reduction in glucose production, but this was only `r egp.suppression.data$sHGP[2]`% reduction in the dexamethasone treated group.
+
+```{r shgp-stats}
+kable(filter(clamp.data, Status=="Insulin") %>% select(`sHGP_mean.na`) %>% group_by(Treatment) %>% summarize(Shapiro=shapiro.test(`sHGP_mean.na`)$p.value), caption="Shapiro-Wilk Tests for Suppression of HGP")
+
+shgp.levene <- leveneTest(`sHGP_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Insulin") %>% select(`sHGP_mean.na`, Status))
+
+shgp.t.test <- t.test(`sHGP_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Insulin") %>% select(`sHGP_mean.na`, Status))
+
+kable(glance(shgp.t.test),
+      caption="Summary of t-tests for suppression of endogenous glucose production")
+```
+
+Shapiro-Wilk tests showed that the two groups could be presumed to have equal variance, and Levene's test showed that we can assume equal variance (p=`r shgp.levene$"Pr(>F)"[1]`) so Student's *t*-tests were used to obtain a p-value of **`r shgp.t.test$p.value`**.
+
+# Glucose Turnover
+
+This is calculated by the rate of tracer infusion divided by the specific activity of the tracer.  It should increase with insulin and represents the glucose that is taken up by the body.  At the basal level this is equal to the HGP since the GIR is zero.
+
+Glucose turnover is significantly higher in HFD dex vs. controls (p=0.0262) during the basal period (not in the presence of insulin); however, this difference goes away during the clamp.
+
+## Glucose Turnover on HFD
+
+```{r gtr-barplot-hfd}
+gtr.data <- 
+  select(clamp.data.summary, Treatment, Status, Gtr) %>%
+  spread(Status, Gtr)
+
+gtr.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Gtr.se) %>%
+  spread(Status, Gtr.se)
+
+ymax <- max(gtr.data[2:3]+max(gtr.data.se[2:3]))
+
+plot <- barplot(as.matrix(gtr.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        ylab="Glucose Turnover (mg/kg/min)")
+
+legend("topleft", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(gtr.data[2:3]),
+             as.matrix(gtr.data.se[2:3]))
+```
+
+```{r gtr-barplot-hfd-insulin}
+gtr.data <- 
+  select(clamp.data.summary, Treatment, Status, Gtr) %>%
+  filter(Status=="Insulin")
+
+gtr.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Gtr.se) %>%
+  filter(Status=="Insulin")
+
+ymax <- max(gtr.data[3]+max(gtr.data.se[3]))
+
+plot <- barplot(gtr.data$Gtr,
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Glucose Turnover Rate \nDuring Insulin Phase ",
+        names.arg = levels(clamp.data$Treatment),
+        ylab="Glucose Turnover Rate (mg/kg/min)")
+
+superpose.eb(plot,
+             gtr.data$Gtr,
+             gtr.data.se$Gtr.se)
+```
+
+For the dexamethasone group, there was a `r  (gtr.data$Gtr[1]-gtr.data$Gtr[2])/gtr.data$Gtr[1]*100`% reduction in glucose turnover during the insulin phase.
+
+```{r gtr-stats}
+kable(filter(clamp.data, Status=="Insulin") %>% select(`Gtr_mean.na`) %>% group_by(Treatment) %>% summarize(Shapiro=shapiro.test(`Gtr_mean.na`)$p.value), caption="Shapiro-Wilk Tests for glucose turnover during the insulin phase")
+
+gtr.levene <- leveneTest(`Gtr_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Insulin") %>% select(`Gtr_mean.na`, Status))
+
+gtr.t.test <- t.test(`Gtr_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Insulin") %>% select(`Gtr_mean.na`, Status))
+
+kable(glance(gtr.t.test),
+      caption="Summary of t-tests for glucose turnover during the insulin phase")
+```
+
+Shapiro-Wilk tests showed that the two groups could be presumed to have equal variance, and Levene's test showed that we can assume equal variance (p=`r gtr.levene$"Pr(>F)"[1]`) so Student's *t*-tests were used to obtain a p-value of **`r gtr.t.test$p.value`**.
+
+# Insulin and Glucose Levels During the Clamp
+
+## Insulin levels
+
+Insulin levels were significantly higher in the basal period in the dex-treated mice (p=0.0001) there was no difference between the groups during the clamp.
+
+```{r insulin-barplot-hfd}
+insulin.data <- 
+  select(clamp.data.summary, Treatment, Status, Insulin) %>%
+  spread(Status, Insulin)
+
+insulin.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Insulin.se) %>%
+  spread(Status, Insulin.se)
+
+ymax <- max(insulin.data[2:3]+max(insulin.data.se[2:3]))
+
+plot <- barplot(as.matrix(insulin.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Insulin Levels",
+        ylab="Insulin (uU/mL)")
+
+legend("topleft", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(insulin.data[2:3]),
+             as.matrix(insulin.data.se[2:3]))
+```
+
+## Insulin Clearance Rates
+
+There was no difference in insulin clearance between the groups
+
+```{r insulin-clearance-barplot-hfd}
+insulin.clr.data <- 
+  select(clamp.data.summary, Treatment, Status, Insulin.Clearance) %>%
+  filter(Status=="Basal")
+
+insulin.clr.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Insulin.Clearance.se) %>%
+  filter(Status=="Basal")
+
+ymax <- max(insulin.clr.data[3]+max(insulin.clr.data.se[3]))
+
+plot <- barplot(insulin.clr.data$Insulin.Clearance,
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Insulin Clearance Rate",
+        names.arg = levels(clamp.data$Treatment),
+        ylab="Insulin Clearance Rate (mL/kg LBM/min)")
+
+superpose.eb(plot,
+             insulin.clr.data$Insulin.Clearance,
+             insulin.clr.data.se$Insulin.Clearance.se)
+```
+
+For the dexamethasone group, there was only a `r  (insulin.clr.data$Insulin.Clearance[1]-insulin.clr.data$Insulin.Clearance[2])/insulin.clr.data$Insulin.Clearance[1]*100`% reduction in glucose infusion rates.
+
+```{r insulin-clearance-stats}
+kable(filter(clamp.data, Status=="Basal") %>% select(`Ins-Clearance_mean.na`) %>% group_by(Treatment) %>% summarize(Shapiro=shapiro.test(`Ins-Clearance_mean.na`)$p.value), caption="Shapiro-Wilk Tests for insulin clearance rates")
+
+ins.clr.levene <- leveneTest(`Ins-Clearance_mean.na`~Treatment, data=clamp.data %>% filter(Status=="Basal") %>% select(`Ins-Clearance_mean.na`, Status))
+
+ins.clr.t.test <- t.test(`Ins-Clearance_mean.na`~Treatment, var.equal=T, data=clamp.data %>% filter(Status=="Basal") %>% select(`Ins-Clearance_mean.na`, Status))
+
+kable(glance(ins.clr.t.test),
+      caption="Summary of t-tests for insulin clearance rates")
+```
+
+Shapiro-Wilk tests showed that the two groups could be presumed to have equal variance, and Levene's test showed that we can assume equal variance (p=`r ins.clr.levene$"Pr(>F)"[1]`) so Student's *t*-tests were used to obtain a p-value of **`r ins.clr.t.test$p.value`**.
+
+## Glucose Levels
+
+Glucose was kept similar between the groups throughout the experiment
+
+```{r glucose-barplot-hfd}
+glucose.data <- 
+  select(clamp.data.summary, Treatment, Status, Glucose) %>%
+  spread(Status, Glucose)
+
+glucose.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Glucose.se) %>%
+  spread(Status, Glucose.se)
+
+ymax <- max(glucose.data[2:3]+max(glucose.data.se[2:3]))
+
+plot <- barplot(as.matrix(glucose.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Glucose Levels",
+        ylab="Glucose (mg/dL)")
+
+legend("topright", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(glucose.data[2:3]),
+             as.matrix(glucose.data.se[2:3]))
+```
+
+# 2-Deoxyglucose Uptake in Tissues
+
+## Inguinal Adipose Tissue
+
+Need to make new tables for glucose uptake data
+
+# Glucose Disposal Metabolism
+
+## Glycolysis
+
+```{r glycolysis-barplot-hfd}
+glycolysis.data <- 
+  select(clamp.data.summary, Treatment, Status, Glycolysis) %>%
+  spread(Status, Glycolysis)
+
+glycolysis.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Glycolysis.se) %>%
+  spread(Status, Glycolysis.se)
+
+ymax <- max(glycolysis.data[2:3]+max(glycolysis.data.se[2:3]))
+
+plot <- barplot(as.matrix(glycolysis.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Glycolysis Rates",
+        ylab="Glycolysis Rate (mg/kg/min)")
+
+legend("topright", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(glycolysis.data[2:3]),
+             as.matrix(glycolysis.data.se[2:3]))
+```
+
+## Glycogen Synthesis Rate
+
+```{r glycogen-barplot-hfd}
+glycogen.data <- 
+  select(clamp.data.summary, Treatment, Status, Glycogen) %>%
+  spread(Status, Glycogen)
+
+glycogen.data.se <- 
+  select(clamp.data.summary, Treatment, Status, Glycogen.se) %>%
+  spread(Status, Glycogen.se)
+
+ymax <- max(glycogen.data[2:3]+max(glycogen.data.se[2:3]))
+
+plot <- barplot(as.matrix(glycogen.data[2:3]),
+        beside=T, las=1,
+        ylim=c(0,ymax),
+        col=color.scheme,
+        main="Glycogen Synthesis",
+        ylab="Glycogen Synthesis Rate (mg/kg/min)")
+
+legend("topleft", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
+
+superpose.eb(plot,
+             as.matrix(glycogen.data[2:3]),
+             as.matrix(glycogen.data.se[2:3]))
+```
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```
