@@ -1,0 +1,215 @@
+---
+title: "Food Intake Analysis of NCD/HFD Dexamethasone Treated Animals"
+author: "Dave Bridges and Innocence Harvey"
+date: "2017-08-08"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('black', 'red')
+```
+
+# Purpose
+
+To test whether food intake is different betwen NCD and HFD animals treated with dexamethasone or water.
+
+# Experimental Details
+
+We monitored weekly food intake, at the cage level throughout the experiment
+
+# Raw Data
+
+Describe your raw data files, including what the columns mean (and what units they are in).
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/HFD and NCD Food Intake Data.csv' #make this a separate line, you can use any variable you want
+data <- read_csv(filename,
+                 col_types=cols(Diet=col_factor(levels=c("Chow","HFD")),
+                                  Treatment=col_factor(levels=c("Control","Dex"))))
+
+#relabel factors for consistency
+library(forcats)
+data <- mutate(data, Diet = fct_recode(Diet, "NCD" = "Chow"))
+data <- mutate(data, Treatment = fct_recode(Treatment, "Water" = "Control"))
+data <- mutate(data, Treatment = fct_recode(Treatment, "Dexamethasone" = "Dex"))
+
+#calculated per cage caloric content
+
+hfd.kcal.g <- 4.73
+ncd.kcal.g <- 2.91
+
+data <- 
+  data %>%
+  mutate(Food.kcal = if_else(Diet=="HFD",
+                                      `g/mouse/day`*hfd.kcal.g,
+                                      `g/mouse/day`*ncd.kcal.g))
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+
+summary.data <-
+  data %>%
+  group_by(Week,Treatment,Diet) %>%
+  summarize(Food.per.week.g = mean(`g/mouse/day`),
+            Food.per.week.g.se = se(`g/mouse/day`)) %>%
+  mutate(Food.per.week.kcal = if_else(Diet=="HFD",
+                                      Food.per.week.g*hfd.kcal.g,
+                                      Food.per.week.g*ncd.kcal.g)) %>% 
+  mutate(Food.per.week.kcal.se = if_else(Diet=="HFD",
+                                      Food.per.week.g.se*hfd.kcal.g,
+                                      Food.per.week.g.se*ncd.kcal.g))
+```
+
+We converted NCD and HFD in grams to kcal by these factors
+
+```{r conversion}
+conversion.table <- tibble(Diet=c("NCD","HFD"),`Calories per gram`=c(ncd.kcal.g,hfd.kcal.g))
+kable(conversion.table, caption="Energy Density of Diets")
+```
+
+## Weekly Data
+
+```{r weekly-food-intake}
+library(ggplot2)
+ggplot(summary.data, aes(x=Week,y=Food.per.week.kcal)) +
+  geom_point(aes(color=Treatment)) +
+  geom_line(aes(color=Treatment)) +
+  geom_errorbar(aes(ymin=Food.per.week.kcal-Food.per.week.kcal.se, ymax=Food.per.week.kcal+Food.per.week.kcal.se ,color=Treatment)) +
+  facet_grid(.~Diet) + 
+  labs(y="Food Intake (kcal/week)") +
+  ylim(0,15)
+```
+
+## Analysis on the Aggregate
+
+```{r overall-food-intake}
+summary.data.cage <-
+  data %>%
+  group_by(Cage,Diet,Treatment) %>%
+  summarize(Food.per.week.g = mean(`g/mouse/day`),
+            Food.per.week.g.se = se(`g/mouse/day`)) %>%
+  mutate(Food.per.week.kcal = if_else(Diet=="HFD",
+                                      Food.per.week.g*hfd.kcal.g,
+                                      Food.per.week.g*ncd.kcal.g)) %>% 
+  mutate(Food.per.week.kcal.se = if_else(Diet=="HFD",
+                                      Food.per.week.g.se*hfd.kcal.g,
+                                      Food.per.week.g.se*ncd.kcal.g))
+
+summary.data.agg <-
+  summary.data.cage %>%
+  group_by(Diet,Treatment) %>%
+  summarize(Food.mean = mean(Food.per.week.kcal),
+            Food.se = se(Food.per.week.kcal))
+
+plot.data <- 
+  summary.data.agg %>%
+  select(Diet,Treatment,Food.mean) %>%
+  spread(Diet, Food.mean)
+
+
+plot.data.se  <- 
+  summary.data.agg %>%
+  select(Diet,Treatment,Food.se) %>%
+  spread(Diet, Food.se)
+
+ymax <- max(as.matrix(plot.data[2:3]) + as.matrix(plot.data.se[2:3]))
+
+plot <-  barplot(as.matrix(plot.data[2:3]),
+             las=1, beside=T,
+             col=color.scheme,
+             ylim=c(0,ymax),
+             ylab="Food Intake (kcal/animal/week)")
+
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+legend("topleft", levels(summary.data.agg$Treatment), bty="n", fill=color.scheme)
+```
+
+### Aggregate Food Intake Statistics
+
+To analyse these data, we first aggregated the average food intake per cage, assuming this did not change over time.
+
+```{r agg-anova}
+agg.fi <- aov(`g/mouse/day`~Diet + Treatment + Diet:Treatment, data=data)
+library(broom)
+
+kable(tidy(agg.fi), caption="Two-way ANOVA with Interaction for aggregated food intake.")
+```
+
+Based on this ANOVA there was a significant interaction between diet and treatment, with HFD/Dexamethasone animals eating less food than HFD/Water animals.  We further analysed this via pairwiwse tests.
+
+```{r food-intake-pairwise}
+shapiro.results <-
+  summary.data.cage %>%
+  group_by(Diet,Treatment) %>%
+  summarise(Shapiro = shapiro.test(`Food.per.week.kcal`)$p.value)
+
+kable(shapiro.results, caption="Shapiro-Wilk test results for food intake groups")
+```
+
+Based on these tests, normality could be assumed for eachg group.
+
+```{r food-intake-levene}
+library(car)
+
+levene.ncd <- leveneTest(`Food.kcal` ~ Treatment, data=filter(data, Diet=="NCD"))
+levene.hfd <- leveneTest(`Food.kcal` ~ Treatment, data=filter(data, Diet=="HFD"))
+```
+Based on Levene's tests, HFD (p=`r levene.hfd$"Pr(>F)"[1]`) and NCD (p=`r levene.ncd$"Pr(>F)"[1]`) could be assumed to have equal variance.
+
+We therefore performed Student's *t*-tests with the following results
+
+```{r students-t-tests}
+ncd.t.test <- t.test(`Food.kcal` ~ Treatment, data=filter(data, Diet=="NCD"), var.equal=T)
+hfd.t.test <- t.test(`Food.kcal` ~ Treatment, data=filter(data, Diet=="HFD"), var.equal=T)
+
+kable(rbind(NCD=tidy(ncd.t.test),HFD=tidy(hfd.t.test)), caption="Pairwise Student's t-test for the effects of dexamethasone on food intake")
+```
+
+The effects were significant in both cases, with HFD animals eating slightly more food (`r (filter(summary.data.agg, Diet=="HFD")$Food.mean[2]-filter(summary.data.agg, Diet=="HFD")$Food.mean[1])/filter(summary.data.agg, Diet=="HFD")$Food.mean[1]*100`% increase) and NCD animals eating slightly less (`r (filter(summary.data.agg, Diet=="NCD")$Food.mean[2]-filter(summary.data.agg, Diet=="NCD")$Food.mean[1])/filter(summary.data.agg, Diet=="NCD")$Food.mean[1]*100`% decrease) food on a per calorie basis.
+
+# Interpretation
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
