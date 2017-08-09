@@ -97,7 +97,7 @@
 This script generates figures from the tissue weights found in
 ../../data/raw/HFD and Chow Tissue Weights.csv. This file is located in
 /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity
-and was most recently updated on Tue Aug 8 19:28:21 2017.
+and was most recently updated on Tue Aug 8 20:00:50 2017.
 
 \section{Number of Animals}\label{number-of-animals}
 
@@ -136,10 +136,12 @@ Diet & Treatment & iWAT\_mean.na & eWAT\_mean.na & TS\_mean.na &
 Quad\_mean.na\tabularnewline
 \midrule
 \endhead
-NCD & Water & 141 & 187 & 163 & 240\tabularnewline
-NCD & Dexamethasone & 111 & 173 & 144 & 198\tabularnewline
-HFD & Water & 841 & 1136 & 191 & 242\tabularnewline
-HFD & Dexamethasone & 287 & 464 & 127 & 140\tabularnewline
+NCD & Water & 140.9750 & 187.1125 & 163.3750 & 240.0250\tabularnewline
+NCD & Dexamethasone & 111.0625 & 173.1875 & 144.5000 &
+197.8250\tabularnewline
+HFD & Water & 840.7545 & 1136.3773 & 190.6905 & 241.7727\tabularnewline
+HFD & Dexamethasone & 286.8000 & 464.1000 & 127.4417 &
+139.5000\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -151,12 +153,95 @@ HFD & Dexamethasone & 287 & 464 & 127 & 140\tabularnewline
 
 \includegraphics{figures/adipose-weight-barplot-1.png}
 
-\section{Analysis of Adipose Tissue
+\subsection{Analysis of Adipose Tissue
 Weights}\label{analysis-of-adipose-tissue-weights}
 
 We observed reductions in both iWAT and eWAT with HFD/Dexamethasone.
-This included a 65.888 reduction in iWAT mass and a 59.16 reduction in
-eWAT mass.
+
+\subsubsection{Inguinal Adipose Tissue}\label{inguinal-adipose-tissue}
+
+This included a 65.8877848\% reduction in iWAT mass in the HFD mice. A
+Shapiro-Wilk test of the iWAT values had a p-value of
+\textgreater{}0.0621229, so normality could be assumed. To test for
+equal variance, Levene's tests were performed.
+
+The p-value from the Levene's test were 0.0041061 for HFD. Based on this
+a Welch's \emph{t} test was performed with a p-value of
+\textbf{4.4777019× 10\textsuperscript{-7}}.
+
+For NCD the Levene's test had a p-value of and 0.2829918, so equal
+variance could be assumed. Based on this, a Student's \emph{t}-test had
+a p-value of \textbf{0.4967434} for NCD.
+
+There was only a 21.2183011\% reduction in iWAT mass in the NCD mice.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates
+there was a significant interaction between diet and treatment:
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Two Way ANOVA with Interaction between treatment and
+diet.}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 3579646.8 & 3579646.80 & 65.49123 & 0.00e+00\tabularnewline
+Group & 1 & 1400297.4 & 1400297.44 & 25.61906 & 5.20e-06\tabularnewline
+Diet:Group & 1 & 983744.2 & 983744.15 & 17.99804 &
+8.73e-05\tabularnewline
+Residuals & 54 & 2951554.4 & 54658.42 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+The p-value for the interaction was \textbf{8.7281221×
+10\textsuperscript{-5}}. The residuals of this model, passed through a
+Shapiro-Wilk test had a p-value of 0.0015701, so normality could not be
+assumed.
+
+\subsubsection{Epididimal Adipose
+Tissue}\label{epididimal-adipose-tissue}
+
+This included a 59.1596901\% reduction in eWAT mass in the HFD mice.
+
+There was only a 7.4420469\% reduction in eWAT mass in the NCD mice.
+
+The p-value from the Levene's test were 0.0298476 for HFD. Based on this
+a Welch's \emph{t} test was performed with a p-value of
+\textbf{3.7377627× 10\textsuperscript{-14}}.
+
+For NCD the Levene's test had a p-value of and 0.8965011, so equal
+variance could be assumed. Based on this, a Student's \emph{t}-test had
+a p-value of \textbf{0.5452112} for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates
+there was a significant interaction between diet and treatment:
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Two Way ANOVA with Interaction between treatment and
+diet.}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 6924250 & 6924250.12 & 342.62891 & 0\tabularnewline
+Group & 1 & 2055412 & 2055411.62 & 101.70682 & 0\tabularnewline
+Diet:Group & 1 & 1455533 & 1455532.97 & 72.02335 & 0\tabularnewline
+Residuals & 54 & 1091296 & 20209.18 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+The p-value for the interaction was \textbf{1.6294353×
+10\textsuperscript{-11}}. The residuals of this model, passed through a
+Shapiro-Wilk test had a p-value of 0.0049698, so normality could not be
+assumed.
 
 \section{Session Information}\label{session-information}
 
@@ -172,14 +257,24 @@ eWAT mass.
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] forcats_0.2.0 readr_1.1.0   dplyr_0.5.0   tidyr_0.6.1   knitr_1.15.1 
+## [1] broom_0.4.2   car_2.1-4     forcats_0.2.0 readr_1.1.0   dplyr_0.5.0  
+## [6] tidyr_0.6.1   knitr_1.15.1 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.10    digest_0.6.12   rprojroot_1.2   assertthat_0.1 
-##  [5] R6_2.2.0        DBI_0.6-1       backports_1.0.5 magrittr_1.5   
-##  [9] evaluate_0.10   highr_0.6       stringi_1.1.3   lazyeval_0.2.0 
-## [13] rmarkdown_1.6   tools_3.3.0     stringr_1.2.0   hms_0.3        
-## [17] yaml_2.1.14     htmltools_0.3.5 tibble_1.3.0
+##  [1] Rcpp_0.12.10       nloptr_1.0.4       highr_0.6         
+##  [4] plyr_1.8.4         tools_3.3.0        digest_0.6.12     
+##  [7] lme4_1.1-12        evaluate_0.10      tibble_1.3.0      
+## [10] nlme_3.1-131       lattice_0.20-35    mgcv_1.8-17       
+## [13] Matrix_1.2-8       psych_1.7.3.21     DBI_0.6-1         
+## [16] yaml_2.1.14        parallel_3.3.0     SparseM_1.76      
+## [19] stringr_1.2.0      MatrixModels_0.4-1 hms_0.3           
+## [22] rprojroot_1.2      nnet_7.3-12        grid_3.3.0        
+## [25] R6_2.2.0           foreign_0.8-67     rmarkdown_1.6     
+## [28] minqa_1.2.4        reshape2_1.4.2     magrittr_1.5      
+## [31] backports_1.0.5    htmltools_0.3.5    MASS_7.3-45       
+## [34] splines_3.3.0      assertthat_0.1     pbkrtest_0.4-7    
+## [37] mnormt_1.5-5       quantreg_5.29      stringi_1.1.3     
+## [40] lazyeval_0.2.0
 \end{verbatim}
 
 

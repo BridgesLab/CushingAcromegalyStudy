@@ -16,7 +16,6 @@ output:
 library(knitr)
 opts_chunk$set(fig.path='figures/',
                echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(scipen = 2, digits = 3)
 
 
 knitr::knit_hooks$set(inline = function(x) {
@@ -158,9 +157,69 @@ superpose.eb(plot,
 
 ```
 
-# Analysis of Adipose Tissue Weights
+## Analysis of Adipose Tissue Weights
 
-We observed reductions in both iWAT and eWAT with HFD/Dexamethasone.  This included a `r  (filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$iWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]*100` reduction in iWAT mass and a `r  (filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$eWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]*100` reduction in eWAT mass.
+We observed reductions in both iWAT and eWAT with HFD/Dexamethasone.  
+
+### Inguinal Adipose Tissue
+
+This included a `r  (filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$iWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]*100`% reduction in iWAT mass in the HFD mice.  A Shapiro-Wilk test of the iWAT values had a p-value of >`r min(summary.data$iWAT_shapiro.p)`, so normality could be assumed.  To test for equal variance, Levene's tests were performed.
+
+```{r iwat-levene}
+library(car)
+levene.hfd.iwat <- leveneTest(iWAT ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.iwat <- leveneTest(iWAT ~ Group, data = filter(data, Diet=="NCD"))
+```
+The p-value from the Levene's test were `r levene.hfd.iwat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(iWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.iwat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(iWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+
+There was only a `r  (filter(summary.data, Diet=="NCD")$iWAT_mean.na[1]-filter(summary.data, Diet=="NCD")$iWAT_mean.na[2])/filter(summary.data, Diet=="NCD")$iWAT_mean.na[1]*100`% reduction in iWAT mass in the NCD mice.
+
+```{r iwat-anova}
+iwat.aov.int <- aov(iWAT ~ Diet + Group + Diet:Group, data=data)
+iwat.aov <- aov(iWAT ~ Diet + Group, data=data)
+```
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r iwat-anova-results}
+library(broom)
+kable(tidy(iwat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(iwat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(iwat.aov.int))$p.value`, so normality could not be assumed.
+
+### Epididimal Adipose Tissue
+
+This included a `r  (filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$eWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]*100`% reduction in eWAT mass in the HFD mice.
+
+There was only a `r  (filter(summary.data, Diet=="NCD")$eWAT_mean.na[1]-filter(summary.data, Diet=="NCD")$eWAT_mean.na[2])/filter(summary.data, Diet=="NCD")$eWAT_mean.na[1]*100`% reduction in eWAT mass in the NCD mice.
+
+
+```{r ewat-anova}
+ewat.aov.int <- aov(eWAT ~ Diet + Group + Diet:Group, data=data)
+ewat.aov <- aov(eWAT ~ Diet + Group, data=data)
+```
+
+```{r ewat-levene}
+library(car)
+levene.hfd.ewat <- leveneTest(eWAT ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.ewat <- leveneTest(eWAT ~ Group, data = filter(data, Diet=="NCD"))
+```
+
+The p-value from the Levene's test were `r levene.hfd.ewat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.ewat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r ewat-anova-results}
+kable(tidy(ewat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(ewat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ewat.aov.int))$p.value`, so normality could not be assumed.
 
 # Session Information
 ```{r sessionInfo}
