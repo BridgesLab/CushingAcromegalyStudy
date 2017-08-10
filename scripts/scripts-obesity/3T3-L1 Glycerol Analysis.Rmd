@@ -1,0 +1,145 @@
+---
+title: "Analysis of Glycerol Levels in 3T3-L1 Adipocytes"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-10'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To determine the effects of adipocyte differentiation, and glucocorticoid treatment on glycerol released to the media in 3T3-L1 Cells
+
+# Experimental Details
+
+Cells were differentiated and treated with dexamethasone for a total of 15 days
+
+# Raw Data
+
+These are the summary glycerol levels from three independent experiments.
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/3T3-L1 Adipocyte Glycerol Assay.csv' #make this a separate line, you can use any variable you want
+data <- read_csv(filename, col_types = cols(
+  Group = col_factor(levels=c("Pre-Adipocytes", "Mature Adipocytes", "Mature Adipocytes + Dexamethasone"))
+))
+library(forcats)
+data <- data %>%
+  mutate(Group = fct_recode(Group, "Mature Adipocytes \n+ Dexamethasone" = "Mature Adipocytes + Dexamethasone")) %>%
+  group_by(Experiment) %>%
+  #normalized each experiment so that mature adipocytes == 1
+  mutate(Glycerol.norm = Glycerol/Glycerol[Group=="Mature Adipocytes"]) 
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+summary.data <-
+  data %>%
+  group_by(Group) %>%
+  summarize(Glycerol.mean = mean(Glycerol),
+            Glycerol.se = se(Glycerol))
+```
+
+```{r glycerol-barplot}
+ymax <- with(summary.data, max(Glycerol.mean+Glycerol.se))
+
+plot <- with(summary.data,
+             barplot(Glycerol.mean,
+                     las=1, ylab="Glycerol in Media (Relative Units)",
+                     names.arg=Group,
+                     ylim=c(0,ymax)))
+
+
+superpose.eb(plot,
+             summary.data$Glycerol.mean,
+             summary.data$Glycerol.se)
+```
+
+
+## Normalized Values
+
+We normalized each experiment such that the mature adipocytes glycerol levels were equal to one.
+
+```{r normalization}
+normalized.summary.data <-
+  data %>%
+  group_by(Group) %>%
+  summarize(Glycerol.mean = mean(Glycerol.norm),
+            Glycerol.se = se(Glycerol.norm))
+```
+
+```{r glycerol-normalized-barplot}
+ymax <- with(normalized.summary.data, max(Glycerol.mean+Glycerol.se))
+
+plot <- with(normalized.summary.data,
+             barplot(Glycerol.mean,
+                     las=1, ylab="Glycerol in Media (Relative Units)",
+                     names.arg=Group,
+                     ylim=c(0,ymax)))
+
+
+superpose.eb(plot,
+             normalized.summary.data$Glycerol.mean,
+             normalized.summary.data$Glycerol.se)
+```
+
+## Statistics
+
+We observed a **`r mean(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Glycerol.norm-1)*100`%** increase in glycerol in the media with dexamethasone.
+
+For the normalized data, we did a Shapiro-Wilk test on the Mature Adipocytes with Dexamethasone group.  This had a p-value of `r shapiro.test(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Glycerol.norm)$p.value` so normality could be assumed.  We therefore did a one-way *t*-test which yielded a p-value of **`r t.test(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Glycerol.norm, mu=1)$p.value`**.
+
+In terms of the pre-adipocytes, we observed a **`r (1-mean(subset(data, Group=="Pre-Adipocytes")$Glycerol.norm))*100`%** decrease in glycerol in the. For this, we did a Shapiro-Wilk test on the Pre-Adipocytes group.  There were only two replicates for pre-adipocytes, so we just assumed normality.  We did a one-way *t*-test which yielded a p-value of **`r t.test(subset(data, Group=="Pre-Adipocytes")$Glycerol.norm, mu=1)$p.value`**.
+
+# Interpretation
+
+Both differentiation and dexamethasone increased glycerol release.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
+# References
+
+If needed, using Rmarkdown citation tools (see this link for more information: http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
