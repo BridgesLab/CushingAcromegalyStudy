@@ -20,3 +20,5 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 3B | scripts/scripts-obesity/body-composition-analysis.Rmd | scripts/scripts-obesity/figures/fat-mass-scatterplot-1
 | Figure 3C | scripts/scripts-obesity/tissue-weight-analysis.Rmd | scripts/scripts-obesity/figures/adipose-weight-barplot-1
 | Figure 3D | scripts/scripts-obesity/food-intake-analysis.Rmd | scripts/scripts-obesity/figures/overall-food-intake-1
+| Figure 4A |  | 
+| Figure 4B | scripts/scripts-obesity/3T3-L1 Glycerol Analysis.Rmd | scripts/scripts-obesity/figures/glycerol-normalized-barplot-1
