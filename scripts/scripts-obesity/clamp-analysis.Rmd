@@ -3,14 +3,16 @@ title: "Analysis of Glucose Clamp Data"
 author: "Nathan Qi, Innocence Harvey and Dave Bridges"
 date: "April 7, 2017"
 output:
+  html_document:
+    toc: yes
+  htmin_notebook: toc:yes
+  htmin_document:
+    keep_md: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
     number_sections: yes
     toc: yes
-  htmin_notebook: toc:yes
-  htmin_document:
-    keep_md: yes
 ---
 
 ```{r global_options, include=FALSE}
