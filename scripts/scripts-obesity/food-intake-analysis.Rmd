@@ -1,8 +1,11 @@
 ---
 title: "Food Intake Analysis of NCD/HFD Dexamethasone Treated Animals"
 author: "Dave Bridges and Innocence Harvey"
-date: "2017-08-08"
+date: '2017-08-08'
 output:
+  html_document:
+    toc: yes
+    keep_md: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
