@@ -3,10 +3,9 @@ title: "Analysis of Tissue Weights from HFD/Dexamethasone Studies"
 author: "Innocence Harvey and Dave Bridges"
 date: "April 7, 2017"
 output:
-  pdf_document:
-    highlight: tango
-    keep_tex: yes
+  html_document:
     toc: yes
+    keep_md: yes
   htmin_notebook: toc:yes
   htmin_document:
     keep_md: yes
