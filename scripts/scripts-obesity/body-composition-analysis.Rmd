@@ -2,7 +2,10 @@
 title: "Combined Analysis of HFD/NCD Dexamethasone Treatment"
 author: "Innocence Harvey and Dave Bridges"
 date: "April 1, 2015"
-output: pdf_document
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
 ---
 
 ```{r global_options, include=FALSE}
