@@ -1,0 +1,134 @@
+---
+title: "Analysis of Gene Expression in 3T3-L1 Adipocytes"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-11'
+output:
+  html_document:
+    keep_md: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To determine the effects of adipocyte differentiation, and glucocorticoid treatment on *Pnpla2* gene expression in 3T3-L1 Cells
+
+# Experimental Details
+
+Cells were differentiated and treated with dexamethasone for a total of 15 days.  
+
+## Methods
+
+* qPCR was performed as described in http://bridgeslab.sph.umich.edu/protocols/index.php?title=QPCR&oldid=1252
+
+For qPCR the normalization gene was *Actb*.
+
+# Raw Data
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/3T3-L1 Gene Expression Summary.csv' #make this a separate line, you can use any variable you want
+data <- read_csv(filename, col_types = cols(
+  Group = col_factor(levels=c("Pre-Adipocytes", "Mature Adipocytes", "Mature Adipocytes + Dexamethasone"))
+))
+library(forcats)
+data <- data %>%
+  mutate(Group = fct_recode(Group, "Mature Adipocytes \n+ Dexamethasone" = "Mature Adipocytes + Dexamethasone")) %>%
+  group_by(Experiment) %>%
+  #normalized each experiment so that mature adipocytes == 1
+  mutate(Pnpla2.norm = Pnpla2/Pnpla2[Group=="Mature Adipocytes"]) 
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+summary.data <-
+  data %>%
+  group_by(Group) %>%
+  summarize(Pnpla2.mean = mean(Pnpla2),
+            Pnpla2.se = se(Pnpla2),
+            n = length(Pnpla2))
+
+#kable(summary.data, caption="Summarized Data")
+```
+
+These are the summary *Pnpla2* levels from `r summary.data$n[1]` independent experiments.
+
+## Normalized Values
+
+We normalized each experiment such that the mature adipocytes Pnpla2 levels were equal to one.
+
+```{r normalization}
+normalized.summary.data <-
+  data %>%
+  group_by(Group) %>%
+  summarize(Pnpla2.mean = mean(Pnpla2.norm),
+            Pnpla2.se = se(Pnpla2.norm))
+```
+
+```{r Pnpla2-normalized-barplot}
+ymax <- with(normalized.summary.data, max(Pnpla2.mean+Pnpla2.se))
+
+plot <- with(normalized.summary.data,
+             barplot(Pnpla2.mean,
+                     las=1, ylab="Pnpla2 mRNA Expression (Relative Units)",
+                     names.arg=Group,
+                     ylim=c(0,ymax)))
+
+
+superpose.eb(plot,
+             normalized.summary.data$Pnpla2.mean,
+             normalized.summary.data$Pnpla2.se)
+```
+
+## Statistics
+
+We observed a **`r mean(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Pnpla2.norm)`** fold increase in *Pnpla2* with dexamethasone.
+
+For the normalized data, we did a Shapiro-Wilk test on the Mature Adipocytes with Dexamethasone group.  This had a p-value of `r shapiro.test(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Pnpla2.norm)$p.value` so normality could be assumed.  We therefore did a one-way *t*-test which yielded a p-value of **`r t.test(subset(data, Group=="Mature Adipocytes \n+ Dexamethasone")$Pnpla2.norm, mu=1)$p.value`**.
+
+In terms of the pre-adipocytes, we observed a **`r (1-mean(subset(data, Group=="Pre-Adipocytes")$Pnpla2.norm))*100`%** decrease in Pnpla2 in the. For this, we did a Shapiro-Wilk test on the Pre-Adipocytes group. For the pre-adipocyte group there was only an n of 2 so normality was presumed.  We did a one-way *t*-test which yielded a p-value of **`r t.test(subset(data, Group=="Pre-Adipocytes")$Pnpla2.norm, mu=1)$p.value`**.
+
+# Interpretation
+
+Both differentiation and dexamethasone increased *Pnpla2* expression
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
