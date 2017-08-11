@@ -26,4 +26,4 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 4D |  | 
 | Figure 4E | scripts/scripts-obesity/NCD Lipolysis Analysis.Rmd | scripts/scripts-obesity/figures/dexamethasone-glycerol-ncd-1
 | Figure 4F | scripts/scripts-obesity/NCD Lipolytic Gene Expression Analysis.Rmd | scripts/scripts-obesity/figures/dexamethasone-ncd-pnpla2-barplot-1
-
+| Figure 5A | scripts/scripts-obesity/combined-glycerol-analysis.Rmd | scripts/scripts-obesity/figures/ncd-hfd-glycerol-barplot-1
