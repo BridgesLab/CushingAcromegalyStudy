@@ -1,0 +1,102 @@
+---
+title: "Lipolytic Gene Expression Analysis for NCD-Fed Animals"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-11'
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Raw Data
+
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- '../../data/raw/NCD iWAT Gene Expression.xlsx' #make this a separate line, you can use any variable you want
+data <- read_excel(filename, sheet = 'Sheet1')
+data$Treatment <- relevel(as.factor(data$Treatment), ref="Water")
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+Started by just analysing *Pnpla2* expression
+
+```{r analysis}
+pnpla2.data <-
+  data %>%
+  filter(Target == 'Pnpla2') %>%
+  select(Treatment, `Relative Expression`) %>%
+  mutate(Normalized.Expression =`Relative Expression`/mean(`Relative Expression`[Treatment=='Water']))
+
+pnpla2.data.summary <-
+  pnpla2.data %>%
+  group_by(Treatment) %>%
+  summarize(Expression.mean = mean(Normalized.Expression),
+            Expression.se = se(Normalized.Expression),
+            n = length(Normalized.Expression),
+            Shapiro = shapiro.test(Normalized.Expression)$p.value)
+
+kable(pnpla2.data.summary, caption="Summary Statistics for Pnpla2 Expression")
+library(car)
+```
+
+```{r dexamethasone-ncd-pnpla2-barplot}
+ymax <- with(pnpla2.data.summary, max(Expression.mean+Expression.se))
+
+plot <- with(pnpla2.data.summary,
+             barplot(Expression.mean,
+                     las=1,
+                     names.arg=Treatment,
+                     ylab="Pnpla2 mRNA Expression (Relative Units)",
+                     ylim=c(0,ymax)))
+
+superpose.eb(plot,
+             pnpla2.data.summary$Expression.mean,
+             pnpla2.data.summary$Expression.se)
+```
+
+
+## Statistics
+
+Based on Shapiro-Wilk tests normality could be assumed (p>`r min(pnpla2.data.summary$Shapiro)`).  We therefore did a Levene's test, which had a p-value of `r leveneTest(Normalized.Expression~Treatment, data=pnpla2.data)$"Pr(>F)"[1]`.  Therefore we could assume equal variance.  A Student's *t*-test had a p-value of **`r t.test(Normalized.Expression~Treatment, data=pnpla2.data)$p.value`**.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
