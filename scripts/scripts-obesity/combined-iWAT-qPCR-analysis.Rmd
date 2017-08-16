@@ -71,7 +71,7 @@ plot.data <- filter(qpcr.summary, Gene=='Pnpla2') %>% select(Food,Treatment, Nor
 plot.data.se <- filter(qpcr.summary, Gene=='Pnpla2') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
 
 plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
-        ylab="Relative Expression",
+        ylab="Pnpla2 mRNA Expression (Relative Units)",
         main='Pnpla2',col=palette()[1:2],
         las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
 
