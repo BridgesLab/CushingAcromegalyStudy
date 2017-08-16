@@ -33,4 +33,5 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
 | Supplementary Figure 1C | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
 | Supplementary Figure 1D | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
-| Supplementary Figure 1F | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/insulin-clearance-barplot-hfd-1 |
+| Supplementary Figure 1E | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/clamp-glucose-timecourse-1.pdf |
+| Supplementary Figure 1F | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/insulin-clearance-barplot-hfd-1.pdf |

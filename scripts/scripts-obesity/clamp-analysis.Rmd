@@ -533,6 +533,33 @@ superpose.eb(plot,
              as.matrix(glycogen.data.se[2:3]))
 ```
 
+# Time Course Data
+
+```{r time-course-data-entry}
+tc.filename <- '../../data/raw/Glucose Clamp Timecourse Data.csv'
+tc.data <- read_csv(tc.filename, col_types = cols(Treatment=col_factor(levels=c("Water","Dexamethasone"))))
+```
+
+## Glucose over time
+
+```{r clamp-glucose-timecourse}
+ymax <- with(tc.data, max(Glucose + Error))
+plot <- with(tc.data %>% filter(Treatment=="Water"),
+     plot(Time,Glucose, pch=18,
+          ylim=c(0,ymax),
+          ylab="Glucose (mg/dL)",
+          xlab="Time (min)",
+          las=1, type="l"))
+
+with(tc.data %>% filter(Treatment=="Dexamethasone"),
+     lines(Time,Glucose, col=color.scheme[2]))
+
+with(tc.data %>% filter(Treatment=="Water"), superpose.eb(Time, Glucose, Error))
+with(tc.data %>% filter(Treatment=="Dexamethasone"), superpose.eb(Time, Glucose, Error,col=color.scheme[2]))
+```
+
+The time course data can be found in `r tc.filename`.
+
 # Session Information
 ```{r sessionInfo}
 sessionInfo()
