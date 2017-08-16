@@ -47,6 +47,8 @@ sheetname <- 'Sheet2'
 library(xlsx)
 combined_data <- read.xlsx(filename, sheetName = sheetname, startRow = 37)
 combined_data$Food <- relevel(as.factor(combined_data$Food), ref='NCD')
+library(forcats)
+combined_data$Food <- fct_recode(combined_data$Food, "Normal Chow Diet"="NCD", "High Fat Diet"="HFD" )
 combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
 
 library(dplyr)
@@ -55,7 +57,7 @@ se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
 qpcr.summary <-
   subset(combined_data, Gene != 'NA') %>%
   group_by(Gene) %>%
-  mutate(Rel.values = Norm.values/mean(Norm.values[Food=="NCD"&Treatment=="Water"])) %>%
+  mutate(Rel.values = Norm.values/mean(Norm.values[Food=="Normal Chow Diet"&Treatment=="Water"])) %>%
   group_by(Gene,Food, Treatment) %>%
   summarize(Norm.values.mean = mean(Rel.values, na.rm=T),
             Norm.values.se = se(Rel.values),
