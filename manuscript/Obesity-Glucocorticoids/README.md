@@ -24,11 +24,12 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 4A | scripts/scripts-obesity/3T3-L1 Blot Quantification | scripts/scripts-obesity/figures/3T3-L1-ATGL-quantification-1.pdf |
 | Figure 4B | scripts/scripts-obesity/3T3-L1 Glycerol Analysis.Rmd | scripts/scripts-obesity/figures/glycerol-normalized-barplot-1.pdf |
 | Figure 4C | scripts/scripts-obesity/3T3-L1 Gene Expression.Rmd | scripts/scripts-obesity/figures/Pnpla2-normalized-barplot-1.pdf |
-| Figure 4D | 
+| Figure 4D | scripts/scripts-obesity/iwat-hfd-atgl-blot-analysis.Rmd | scripts/scripts-obesity/figures/
 | Figure 4E | scripts/scripts-obesity/NCD Lipolysis Analysis.Rmd | scripts/scripts-obesity/figures/dexamethasone-glycerol-ncd-1.pdf
 | Figure 4F | scripts/scripts-obesity/NCD Lipolytic Gene Expression Analysis.Rmd | scripts/scripts-obesity/figures/dexamethasone-ncd-pnpla2-barplot-1.pdf |
 | Figure 5A | scripts/scripts-obesity/combined-glycerol-analysis.Rmd | scripts/scripts-obesity/figures/ncd-hfd-glycerol-barplot-1.pdf |
 | Figure 5B | scripts/scripts-obesity/combined-iWAT-qPCR-analysis.Rmd | scripts/scripts-obesity/figures/iwat-pnpla2-barplot-1.pdf |
+| Figure 5C | scripts/scripts-obesity/iwat-hfd-atgl-blot-analysis.Rmd | scripts/scripts-obesity/figures/atgl-wat-barplot-1.pdf |
 | Supplementary Figure 1A | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-1.pdf |
 | Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
 | Supplementary Figure 1C | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
