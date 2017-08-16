@@ -31,4 +31,6 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 5A | scripts/scripts-obesity/combined-iWAT-qPCR-analysis.Rmd | scripts/scripts-obesity/figures/iwat-pnpla2-barplot-1.pdf |
 | Supplementary Figure 1A | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-1.pdf |
 | Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
+| Supplementary Figure 1C | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
+| Supplementary Figure 1D | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf |
 | Supplementary Figure 1F | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/insulin-clearance-barplot-hfd-1 |
