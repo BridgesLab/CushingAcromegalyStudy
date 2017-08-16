@@ -1,0 +1,101 @@
+---
+title: "Analysis of Triglycerides from Dexamethasone Exposed 3T3-L1 Adipocytes"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-16'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+# Raw Data
+
+Describe your raw data files, including what the columns mean (and what units they are in).
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- '../../data/raw/3T3-L1 Cellular Triglyceride Levels.xlsx' #make this a separate line, you can use any variable you want
+data <- read_excel(filename, sheet="exported")
+
+data$Treatment <- as.factor(data$Treatment)
+library(forcats)
+data$Treatment <- fct_relevel(data$Treatment, "Pre-Adipocytes")
+
+data <- data %>% mutate(Treatment = fct_recode(Treatment, "Mature Adipocytes \n+ Dexamethasone" = "Mature Adipocytes + Dexamethasone"))
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+summary <-
+  data %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric, funs(mean,se,length))
+
+kable(summary, caption="Summary for cellular triglyceride levels")
+```
+
+Dexamethasone treatment caused a **`r  (summary$mean[2]-summary$mean[3])/summary$mean[2]*100`**% reduction in cellular triglyceride levels in 3T3-L1 adipocytes.
+
+```{r 3T3-L1-TG-Levels}
+plot <- with(summary, barplot(mean,
+                              las=1,
+                              names.arg=Treatment,
+                              ylim=c(0,max(mean+se)),
+                              ylab="Triglyceride Levels (ug/well)"))
+
+superpose.eb(plot,summary$mean, summary$se)
+```
+
+## Statistics
+
+Need third replicate to do statistics
+
+# Interpretation
+
+Dexamethasone lowers cellular triglyceride levels
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
