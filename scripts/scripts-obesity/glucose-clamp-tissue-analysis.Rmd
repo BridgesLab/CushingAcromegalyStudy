@@ -1,0 +1,161 @@
+---
+title: "Analysis of 2DG Uptake from HFD Glucose Clamp Tissues"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-16'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+#options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('black', 'red')
+```
+
+# Purpose
+
+# Experimental Details
+
+Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis.  This might include specifics not in the general protocol such as cell lines, treatment doses etc.
+
+# Raw Data
+
+The input data is extracted glucose uptake (nmol/g/min) from the clamp datafiles.
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/Clamp HFD tissue uptake data.csv' #make this a separate line, you can use any variable you want
+data <- read_csv(filename, col_types = cols(
+  Treatment = col_factor(levels=c("Water","Dexamethasone")),
+  ID = col_factor(levels=NULL)
+))
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+
+summary <-
+  data %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric, funs(mean,se))
+
+kable(select(summary, Treatment, ends_with('mean')))
+shapiro.p <- function(x) shapiro.test(x)$p.value
+shapiro.summary <-
+    data %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric, shapiro.p)
+```
+
+## Adipose and Muscle Tissue
+
+```{r clamp-glucose-uptake-adipose-muscle}
+plot.data <- select(summary, Treatment, vWAT_mean, scWAT_mean, Gastroc_mean)
+plot.data.se <- select(summary, Treatment, vWAT_se, scWAT_se, Gastroc_se)
+
+
+ymax <- max(plot.data[2:4]) + max(plot.data.se[2:4])
+plot <- barplot(as.matrix(plot.data[2:4]), beside=T,
+                las=1,ylab="2-DG Uptake (nmol/g/min)",
+                col=color.scheme,
+                ylim=c(0,ymax),
+                names.arg=c("eWAT","iWAT","Gastroc."))
+
+superpose.eb(plot,
+             as.matrix(plot.data[2:4]),
+             as.matrix(plot.data.se[2:4]))
+legend("topleft", levels(summary$Treatment), bty="n", fil=color.scheme)
+```
+
+## Statistics
+
+```{r statistics}
+library(car)
+
+kable(shapiro.summary, caption="Shapiro-Wilk Tests")
+```
+
+### Epididymal WAT
+
+There was a **`r (summary$vWAT_mean[1]-summary$vWAT_mean[2])/summary$vWAT_mean[1]*100`**% decreasein eWAT glucose uptake.  These data could be assumed to be normally distributed (p=`r min(shapiro.summary$vWAT)`).  A Levene's test showed the data could be assumed to have equal variation (p=`r leveneTest(vWAT~Treatment, data=data)$"Pr(>F)"[1]`) so a Student's *t*-test was done, which had a p-value of **`r t.test(vWAT~Treatment, data=data, var.equal=T)$p.value`**.
+
+### Inguinal WAT
+
+There was a **`r (summary$scWAT_mean[1]-summary$scWAT_mean[2])/summary$scWAT_mean[1]*100`**% decrease in iWAT glucose uptake.  These data could not be assumed to be normally so Mann-Whitney test was done, which had a p-value of **`r wilcox.test(scWAT~Treatment, data=data)$p.value`**.
+
+### Gastrocnemieus
+
+There was a **`r (summary$Gastroc_mean[1]-summary$Gastroc_mean[2])/summary$Gastroc_mean[1]*100`**% decrease in gastrocnemius glucose uptake.  These data could not be assumed to be normally so Mann-Whitney test was done, which had a p-value of **`r wilcox.test(Gastroc~Treatment, data=data)$p.value`**.
+
+### Heart
+
+There was a **`r (summary$Heart_mean[1]-summary$Heart_mean[2])/summary$Heart_mean[1]*100`**% decreasein heart glucose uptake.  These data could be assumed to be normally distributed (p=`r min(shapiro.summary$Heart)`).  A Levene's test showed the data could be assumed to have equal variation (p=`r leveneTest(Heart~Treatment, data=data)$"Pr(>F)"[1]`) so a Student's *t*-test was done, which had a p-value of **`r t.test(Heart~Treatment, data=data, var.equal=T)$p.value`**.
+
+### Brown Adipose Tissue
+
+There was a **`r (summary$BAT_mean[1]-summary$BAT_mean[2])/summary$BAT_mean[1]*100`**% decreasein BAT glucose uptake.  These data could be assumed to be normally distributed (p=`r min(shapiro.summary$BAT)`).  A Levene's test showed the data could be assumed to have equal variation (p=`r leveneTest(BAT~Treatment, data=data)$"Pr(>F)"[1]`) so a Student's *t*-test was done, which had a p-value of **`r t.test(BAT~Treatment, data=data, var.equal=T)$p.value`**.
+
+
+```{r clamp-glucose-uptake-heart-bat}
+plot.data <- select(summary, Treatment, Heart_mean, BAT_mean)
+plot.data.se <- select(summary, Treatment, Heart_se, BAT_se)
+
+
+ymax <- max(plot.data[2:3]) + max(plot.data.se[2:3])
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T,
+                las=1,ylab="2-DG Uptake (nmol/g/min)",
+                col=color.scheme,
+                ylim=c(0,ymax),
+                names.arg=c("Heart","BAT"))
+
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+legend("topright", levels(summary$Treatment), bty="n", fil=color.scheme)
+```
+
+# Interpretation
+
+Reduced glucose uptake in 
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
+# References
+
+If needed, using Rmarkdown citation tools (see this link for more information: http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)

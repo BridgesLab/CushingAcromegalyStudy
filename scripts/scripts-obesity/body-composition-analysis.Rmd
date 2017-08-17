@@ -1,0 +1,282 @@
+---
+title: "Combined Analysis of HFD/NCD Dexamethasone Treatment"
+author: "Innocence Harvey and Dave Bridges"
+date: "April 1, 2015"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+
+```{r data-entry}
+input_ncd_file <- '../../data/raw/Normal Chow Diet Body Composition Data.csv'
+ncd_data <- read.csv(input_ncd_file)
+ncd_data$Diet <- rep("Normal Chow Diet", dim(ncd_data)[1])
+ncd_data$Time <- ncd_data$age - 152
+input_hfd_file <- '../../data/raw/High Fat Diet Body Composition Data.csv'
+hfd_data <- read.csv(input_hfd_file)
+hfd_data$Diet <- rep("High Fat Diet", dim(hfd_data)[1])
+hfd_data$Time <- hfd_data$age - 158
+combined_data <- rbind(hfd_data[,colnames(ncd_data)], ncd_data)
+combined_data$Diet <- relevel(as.factor(combined_data$Diet), ref='Normal Chow Diet')
+
+#remove ITT
+combined_data <- droplevels(subset(combined_data, experiment.feeding_state=='fed'&assay.assay!='Grip Strength (4 Paw)'))
+combined_data$Weight <- as.numeric(as.character(combined_data$values))/1000
+
+start <- -5
+library(dplyr)
+library(tidyr)
+weight.data <-
+  subset(combined_data, Time>=-5) %>%
+  select(assay.assay,animal.id,Time,Treatment,Diet,Weight) %>%
+    distinct(animal.id,assay.assay,Time, .keep_all=TRUE) %>%
+  spread(assay.assay, Weight) %>%
+  rename(Total.Fat.Mass = `Total Fat Mass`,
+         Body.Weight = `Body Weight`,
+         Lean.Mass = `Lean Mass`) %>%
+  mutate(Percent.Fat.Mass = Total.Fat.Mass/Body.Weight*100)
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+weight.summary <-
+  weight.data[complete.cases(weight.data),] %>%
+  group_by(Diet, Treatment, Time) %>%
+  summarize(Body.Weight.mean = mean(Body.Weight, na.rm=T),
+            Body.Weight.se = se(Body.Weight),
+            Lean.Mass.mean = mean(Lean.Mass, na.rm=T),
+            Lean.Mass.se = se(Lean.Mass),
+            Total.Fat.Mass.mean = mean(Total.Fat.Mass, na.rm=T),
+            Total.Fat.Mass.se = se(Total.Fat.Mass),
+            Percent.Fat.Mass.mean = mean(Percent.Fat.Mass, na.rm=T),
+            Percent.Fat.Mass.se = se(Percent.Fat.Mass))
+```
+This script uses the files in `r input_ncd_file` and `r input_hfd_file`.  These data are located in `r getwd()` and this script was most recently run on `r date()`.
+
+# Body Weights
+
+```{r weights-scatterplot}
+ymin <- min(weight.summary$Body.Weight.mean, na.rm=T) - min(weight.summary$Body.Weight.se, na.rm=T)
+ymax <- max(weight.summary$Body.Weight.mean, na.rm=T) + max(weight.summary$Body.Weight.se, na.rm=T)
+plot <- with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     plot(Time, Body.Weight.mean,ylab="Body Weight (g)",
+          ylim=c(ymin,ymax), xlim=c(start,max(combined_data$Time)),
+          xlab='Time (days)', pch=19, lty=1, type='l',col='black',
+                        las=1))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Body.Weight.mean, lty=1, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     lines(Time, Body.Weight.mean, lty=2, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Body.Weight.mean, lty=2, col='red'))
+
+superpose.eb <- 
+ function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
+ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
+ length = length, ...)
+
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     superpose.eb(Time, Body.Weight.mean, Body.Weight.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Body.Weight.mean, Body.Weight.se, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     superpose.eb(Time, Body.Weight.mean, Body.Weight.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Body.Weight.mean, Body.Weight.se, col='red'))
+
+# legend("topleft", c('NCD - Water','NCD - Dex','HFD - Water','HFD-Dex'), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n', cex=1)
+
+#statistics
+library(lme4)
+weight.lme <- lmer(Body.Weight~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
+weight.lme.null <- lmer(Body.Weight~Time + (1|animal.id), data=weight.data, REML=F)
+```
+
+
+# Lean Mass
+
+```{r lean-mass-scatterplot}
+ymin <- min(weight.summary$Lean.Mass.mean, na.rm=T) - min(weight.summary$Lean.Mass.se, na.rm=T)
+ymax <- max(weight.summary$Lean.Mass.mean, na.rm=T) + max(weight.summary$Lean.Mass.se, na.rm=T)
+plot <- with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     plot(Time, Lean.Mass.mean,ylab="Lean Mass (g)",
+          ylim=c(ymin,ymax), xlim=c(start,max(combined_data$Time)),
+          xlab='Time (days)', pch=19, lty=1, type='l',col='black',
+                        las=1))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Lean.Mass.mean, lty=1, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     lines(Time, Lean.Mass.mean, lty=2, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Lean.Mass.mean, lty=2, col='red'))
+
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='red'))
+
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='red'))
+
+# legend("topleft", c('NCD - Water','NCD - Dex','HFD - Water','HFD-Dex'), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n', cex=1)
+lean.lme <- lmer(Lean.Mass~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
+lean.lme.null <- lmer(Lean.Mass~Time + (1|animal.id), data=weight.data, REML=F)
+```
+
+# Fat Mass
+
+```{r fat-mass-scatterplot}
+ymin <- min(weight.summary$Total.Fat.Mass.mean, na.rm=T) - min(weight.summary$Total.Fat.Mass.se, na.rm=T)
+ymax <- max(weight.summary$Total.Fat.Mass.mean, na.rm=T) + max(weight.summary$Total.Fat.Mass.se, na.rm=T)
+plot <- with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     plot(Time, Total.Fat.Mass.mean,ylab="Total Fat Mass (g)",
+          ylim=c(ymin,ymax), xlim=c(start,max(combined_data$Time)),
+          xlab='Time (days)', pch=19, lty=1, type='l',col='black',
+                        las=1))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Total.Fat.Mass.mean, lty=1, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     lines(Time, Total.Fat.Mass.mean, lty=2, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Total.Fat.Mass.mean, lty=2, col='red'))
+
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     superpose.eb(Time, Total.Fat.Mass.mean, Total.Fat.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Total.Fat.Mass.mean, Total.Fat.Mass.se, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     superpose.eb(Time, Total.Fat.Mass.mean, Total.Fat.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Total.Fat.Mass.mean, Total.Fat.Mass.se, col='red'))
+
+#statistics
+fat.lme <- lmer(Total.Fat.Mass~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
+fat.lme.null <- lmer(Total.Fat.Mass~Time + (1|animal.id), data=weight.data, REML=F)
+```
+
+
+# Percent Fat Mass
+
+```{r percent-fat-mass-scatterplot}
+ymin <- min(weight.summary$Percent.Fat.Mass.mean, na.rm=T) - min(weight.summary$Percent.Fat.Mass.se, na.rm=T)
+ymax <- max(weight.summary$Percent.Fat.Mass.mean, na.rm=T) + max(weight.summary$Percent.Fat.Mass.se, na.rm=T)
+plot <- with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     plot(Time, Percent.Fat.Mass.mean,ylab="Percent Fat Mass (g)",
+          ylim=c(ymin,ymax), xlim=c(start,max(combined_data$Time)),
+          xlab='Time (days)', pch=19, lty=1, type='l',col='black',
+                        las=1))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Percent.Fat.Mass.mean, lty=1, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     lines(Time, Percent.Fat.Mass.mean, lty=2, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     lines(Time, Percent.Fat.Mass.mean, lty=2, col='red'))
+
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Water"),
+     superpose.eb(Time, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="Normal Chow Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col='red'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Water"),
+     superpose.eb(Time, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col='black'))
+with(subset(weight.summary, 
+            Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
+     superpose.eb(Time, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col='red'))
+
+pct.fat.lme <- lmer(Percent.Fat.Mass~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
+pct.fat.lme.null <- lmer(Percent.Fat.Mass~Time + (1|animal.id), data=weight.data, REML=F)
+```
+
+
+# Diagnostics Plots
+
+## Normality Plots
+
+```{r diagnostic-qqplots}
+par(mfrow=c(2,2))
+qqnorm(residuals(weight.lme), main="Body Weight", las=1, pch=19, cex=0.1)
+qqline(residuals(weight.lme), lty=2, col='red')
+qqnorm(residuals(lean.lme), main="Lean Mass", las=1, pch=19, cex=0.1)
+qqline(residuals(lean.lme), lty=2, col='red')
+qqnorm(residuals(fat.lme), main="Total Fat Mass", las=1, pch=19, cex=0.1)
+qqline(residuals(fat.lme), lty=2, col='red')
+qqnorm(residuals(pct.fat.lme), main="Percent Fat Mass", las=1, pch=19, cex=0.1)
+qqline(residuals(pct.fat.lme), lty=2, col='red')
+
+
+#check residuals for each model
+residual.data <- data.frame(Body.Weight = shapiro.test(residuals(weight.lme))$p.value,
+                            Lean.Mass = shapiro.test(residuals(lean.lme))$p.value,
+                            Fat.Mass = shapiro.test(residuals(fat.lme))$p.value,
+                            Percent.Fat.Mass = shapiro.test(residuals(pct.fat.lme))$p.value)
+```
+
+## Residual Plots
+
+```{r diagnostic-residual-plots}
+par(mfrow=c(2,2))
+plot(fitted(weight.lme), residuals(weight.lme), main="Body Weight", las=1, pch=19, cex=0.1, ylab="Residuals", xlab="Fitted Values")
+abline(h=0, lty=2, col='red')
+plot(fitted(lean.lme), residuals(lean.lme), main="Lean Mass",las=1, pch=19, cex=0.1, ylab="Residuals", xlab="Fitted Values")
+abline(h=0, lty=2, col='red')
+plot(fitted(fat.lme), residuals(fat.lme), main="Total Fat Mass", las=1, pch=19, cex=0.1, ylab="Residuals", xlab="Fitted Values")
+abline(h=0, lty=2, col='red')
+plot(fitted(pct.fat.lme), residuals(pct.fat.lme), main="Percent Fat Mass", las=1, pch=19, cex=0.1, ylab="Residuals", xlab="Fitted Values")
+abline(h=0, lty=2, col='red')
+````
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

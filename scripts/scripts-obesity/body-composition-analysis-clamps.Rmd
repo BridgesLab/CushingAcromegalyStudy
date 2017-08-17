@@ -1,0 +1,382 @@
+---
+title: "Body Composition Analysis of High Fat Diet/Dexamethasone Time Course Experiments"
+author: "Innocence Harvey and Dave Bridges"
+date: "April 5, 2017"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, messWeek=FALSE,dev=c('png','pdf'))
+options(scipen = 9, digits = 5)
+
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+palette(c("black", "red"))
+```
+
+# Data Entry
+This was from combined weights over several measurements of C57BL/6J mice placed on a chow or high fat diet.  Some animals may appear multiple times in this analysis.  Data is downloaded  from the mousedb website.  This includes only fed weights.
+
+```{r data-entry}
+raw_data_file <- "../../data/raw/MMPC MRI Data.csv"
+
+data <- read.csv(raw_data_file)
+data$Diet <- relevel(data$Diet, ref='NCD')
+data$Treatment <- relevel(data$Treatment, ref='Water')
+
+library(dplyr)
+library(tidyr)
+weight.data <-
+  data %>%
+  mutate(Percent.Fat.Mass = Total.Fat.Mass/Body.Weight*100)
+#convert column names to real names
+colnames(weight.data) <- make.names(colnames(weight.data))
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+combined.summary <-
+  weight.data %>%
+  group_by(Week,Diet,Treatment) %>%
+  summarise(Body.Weight.mean = mean(Body.Weight, na.rm=T),
+            Body.Weight.se = se(Body.Weight),
+            Total.Fat.Mass.mean = mean(Total.Fat.Mass, na.rm=T),
+            Total.Fat.Mass.se = se(Total.Fat.Mass),
+            Lean.Mass.mean = mean(Lean.Mass, na.rm=T),
+            Lean.Mass.se = se(Lean.Mass),
+            Percent.Fat.Mass.mean = mean(Percent.Fat.Mass, na.rm=T),
+            Percent.Fat.Mass.se = se(Percent.Fat.Mass))
+
+```
+
+Data was downloaded from MouseDB then aand the data is saved as `r raw_data_file`.  These data are located in `r getwd()` and was most recently updated on `r date()`.
+
+# Body Weights
+
+```{r clamp-weights-scatterplot}
+ymin = min(weight.data$Body.Weight, na.rm=T)
+ymax = max(weight.data$Body.Weight, na.rm=T)
+
+with(subset(weight.data, Diet == levels(Diet)[1]&Treatment==levels(Treatment)[1]), 
+     plot(Week, Body.Weight,
+                       col=palette()[1],
+                       ylab="Body Weight (g)",
+                       xlab='Week (days)',
+                       ylim=c(ymin,ymax),
+                        las=1, pch=19))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[1]), 
+     points(Week, Body.Weight, col=palette()[1], pch=19))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[2]), 
+     points(Week, Body.Weight, col=palette()[2], pch=0))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[2]), 
+     points(Week, Body.Weight, col=palette()[2], pch=0))
+
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Body.Weight)), col=palette()[1])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Body.Weight)), col=palette()[1],lty=2)
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Body.Weight)), col=palette()[2])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Body.Weight)), col=palette()[2],lty=2)
+
+legend("topleft", do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       lty=c(1,2,1,2), col=palette()[c(1,1,2,2)], bty='n', cex=1)
+```
+
+```{r clamp-weights-lineplot}
+yaxes <- with(combined.summary, 
+              c(min(Body.Weight.mean, na.rm=T)-max(Body.Weight.se, na.rm=T), 
+               c(max(Body.Weight.mean, na.rm=T)+max(Body.Weight.se, na.rm=T))))
+plot <- with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+             plot(Week, Body.Weight.mean, type="l", ylim=yaxes,
+                  las=1, ylab="Body Weight (g)", col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+             lines(Week, Body.Weight.mean, col=palette()[1], lty=2))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+             lines(Week, Body.Weight.mean, col=palette()[2]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+             lines(Week, Body.Weight.mean, col=palette()[2], lty=2))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+             superpose.eb(Week, Body.Weight.mean, Body.Weight.se, col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+             superpose.eb(Week, Body.Weight.mean, Body.Weight.se, col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+             superpose.eb(Week, Body.Weight.mean, Body.Weight.se, col=palette()[2]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+             superpose.eb(Week, Body.Weight.mean, Body.Weight.se, col=palette()[2]))
+
+legend("bottomleft", do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       lty=c(1,1,2,2), col=palette()[c(1,2,1,2)], bty='n', cex=1)
+```
+
+
+```{r clamp-diagnostics-body-weight}
+#statistics
+library(lme4)
+weight.cd.hpd.lme <- lmer(Body.Weight ~ Week * Diet * Treatment + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+weight.cd.hpd.lme.null <- lmer(Body.Weight ~ Week *Diet + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+#using 
+library(influence.ME)
+infl <- influence(weight.cd.hpd.lme, group='animal.id')
+par(mfrow=c(1,3))
+plot(density(residuals(weight.cd.hpd.lme)), las=1)
+plot(fitted(weight.cd.hpd.lme),residuals(weight.cd.hpd.lme),  
+     ylab="Residuals", xlab="Fitted Values (g)", pch=19, las=1)
+abline(h=0, lty=2, col='red')
+barplot(cooks.distance(infl), las=2, names.arg=rownames(cooks.distance(infl)), 
+         beside=T, ylab="Cook's Distance", col='grey')
+```
+
+Based on linear fixed effects models, allowing for uncorrelated intercepts and slopes for the animals, within the water group, the High Protein Diet animals gained `r fixef(weight.cd.hpd.lme)['Week:DietHigh Protein Diet']*7`g  weight per week, or `r fixef(weight.cd.hpd.lme)['Week:DietHigh Protein Diet']*7*12`g over the experiment.  This is a `r fixef(weight.cd.hpd.lme)['Week:DietHigh Protein Diet']/fixef(weight.cd.hpd.lme)['Week']*100`% change in body weight gain.  This effect was significant with a p-value of `r anova(weight.cd.hpd.lme, weight.cd.hpd.lme.null)$"Pr(>Chisq)"[2]`.  The residuals of this model **did not meet** the presumption of normality via a Shapiro-Wilk test (p=`r shapiro.test(residuals(weight.cd.hpd.lme))$p.value`).
+
+
+# Lean Mass
+
+```{r clamp-lean-mass-scatterplot}
+ymin = min(weight.data$Lean.Mass, na.rm=T)
+ymax = max(weight.data$Lean.Mass, na.rm=T)
+
+with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1])
+     , plot(Week, Lean.Mass,
+                       col=palette()[1],
+                      ylim=c(ymin,ymax),
+                       ylab="Total Lean Mass (g)",
+                       xlab='Week (days)',
+                        las=1, pch=19))
+with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+     points(Week, Lean.Mass, col=palette()[1], pch=19))
+with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+     points(Week, Lean.Mass, col=palette()[2], pch=0))
+with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+     points(Week, Lean.Mass, col=palette()[2], pch=0))
+
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Lean.Mass)), col=palette()[1])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Lean.Mass)), col=palette()[1], lty=2)
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Lean.Mass)), col=palette()[2])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Lean.Mass)), col=palette()[2], lty=2)
+
+legend("topleft", do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       lty=c(1,2,1,2),, col=palette()[c(1,1,2,2)], bty='n', cex=1)
+```
+
+
+```{r clamp-lean-mass-lineplot}
+yaxes <- with(combined.summary, 
+              c(min(Lean.Mass.mean, na.rm=T)-max(Lean.Mass.se, na.rm=T), 
+               c(max(Lean.Mass.mean, na.rm=T)+max(Lean.Mass.se, na.rm=T))))
+plot <- with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+             plot(Week, Lean.Mass.mean, type="l", ylim=yaxes,
+                  las=1, ylab="Total Lean Mass (g)", col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+             lines(Week, Lean.Mass.mean, col=palette()[1], lty=2))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+             lines(Week, Lean.Mass.mean, col=palette()[2]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+             lines(Week, Lean.Mass.mean, col=palette()[2], lty=2))
+
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet==levels(Diet)[1]), 
+             superpose.eb(Week, Lean.Mass.mean, Lean.Mass.se, col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[1]&Diet==levels(Diet)[2]), 
+             superpose.eb(Week, Lean.Mass.mean, Lean.Mass.se, col=palette()[1]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet==levels(Diet)[1]), 
+             superpose.eb(Week, Lean.Mass.mean, Lean.Mass.se, col=palette()[2]))
+with(subset(combined.summary, 
+                    Treatment==levels(Treatment)[2]&Diet==levels(Diet)[2]), 
+             superpose.eb(Week, Lean.Mass.mean, Lean.Mass.se, col=palette()[2]))
+
+legend("bottomleft", 
+        do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       col=palette()[c(1,1,2,2)], lty=c(1,2,1,2), bty='n')
+
+#statistics
+library(lme4)
+lean.lme <- lmer(Lean.Mass~Week*Diet + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+lean.lme.null <- lmer(Lean.Mass~Week + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+```
+
+# Fat Mass
+
+```{r clamp-fat-mass-scatterplot}
+with(subset(weight.data, Diet == levels(Diet)[1]&Treatment==levels(Treatment)[1]), 
+     plot(Week, Total.Fat.Mass,
+                       col=palette()[1],
+                       ylab="Total Fat Mass (g)",
+                       ylim=c(0,max(weight.data$Total.Fat.Mass, na.rm=T)),
+                       xlab='Week (days)',
+                        las=1, pch=19))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[1]), 
+     points(Week, Total.Fat.Mass, col=palette()[1], pch=19))
+with(subset(weight.data, Diet == levels(Diet)[1]&Treatment==levels(Treatment)[2]), 
+     points(Week, Total.Fat.Mass, col=palette()[2], pch=0))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[2]), 
+     points(Week, Total.Fat.Mass, col=palette()[2], pch=0))
+
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Total.Fat.Mass)), col=palette()[1])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Total.Fat.Mass)), col=palette()[1], lty=2)
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Total.Fat.Mass)), col=palette()[2])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Total.Fat.Mass)), col=palette()[2], lty=2)
+
+
+legend("topleft", 
+        do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       col=palette()[c(1,1,2,2)], lty=c(1,2,1,2), bty='n', cex=1)
+```
+
+```{r clamp-fat-mass-lineplot}
+yaxes <- with(combined.summary, 
+              c(min(Total.Fat.Mass.mean, na.rm=T)-max(Total.Fat.Mass.se, na.rm=T), 
+               c(max(Total.Fat.Mass.mean, na.rm=T)+max(Total.Fat.Mass.se, na.rm=T))))
+plot <- with(subset(combined.summary, 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]),
+             plot(Week, Total.Fat.Mass.mean, type="l", ylim=yaxes,
+                  las=1, ylab="Total Fat Mass (g)", col=palette()[1]))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]),
+             lines(Week, Total.Fat.Mass.mean, col=palette()[1], lty=2))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]),
+             lines(Week, Total.Fat.Mass.mean, col=palette()[2]))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]),
+             lines(Week, Total.Fat.Mass.mean, col=palette()[2], lty=2))
+
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]),
+             superpose.eb(Week, Total.Fat.Mass.mean, Total.Fat.Mass.se, col=palette()[1]))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]),
+             superpose.eb(Week, Total.Fat.Mass.mean, Total.Fat.Mass.se, col=palette()[1]))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]),
+             superpose.eb(Week, Total.Fat.Mass.mean, Total.Fat.Mass.se, col=palette()[2]))
+with(subset(combined.summary, 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]),
+             superpose.eb(Week, Total.Fat.Mass.mean, Total.Fat.Mass.se, col=palette()[2]))
+
+legend("left", 
+        do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       col=palette()[c(1,1,2,2)], lty=c(1,2,1,2), bty='n')
+
+#statistics
+library(lme4)
+fat.lme <- lmer(Total.Fat.Mass~Week*Diet + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+fat.lme.null <- lmer(Total.Fat.Mass~Week + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+```
+
+
+# Percent Fat Mass
+
+```{r clamp-percent-fat-mass-scatterplot}
+with(subset(weight.data, Diet == levels(Diet)[1]&Treatment==levels(Treatment)[1]), 
+plot(Week, Percent.Fat.Mass,
+                       col=Treatment,
+                       ylab="Percent Fat Mass",
+                       xlab='Week (days)',
+                        ylim=c(0,max(weight.data$Percent.Fat.Mass, na.rm=T)),
+                        las=1, pch=19))
+
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[1]), 
+     points(Week, Percent.Fat.Mass, col=palette()[1], pch=19))
+with(subset(weight.data, Diet == levels(Diet)[1]&Treatment==levels(Treatment)[2]), 
+     points(Week, Percent.Fat.Mass, col=palette()[2], pch=0))
+with(subset(weight.data, Diet == levels(Diet)[2]&Treatment==levels(Treatment)[2]), 
+     points(Week, Percent.Fat.Mass, col=palette()[2], pch=0))
+
+
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Percent.Fat.Mass)), col=palette()[1])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Percent.Fat.Mass)), col=palette()[1], lty=2)
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]), 
+           loess.smooth(Week,Percent.Fat.Mass)), col=palette()[2])
+lines(with(subset(weight.data, Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]), 
+           loess.smooth(Week,Percent.Fat.Mass)), col=palette()[2], lty=2)
+
+legend("topleft", 
+        do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       col=palette()[c(1,1,2,2)], lty=c(1,2,1,2), bty='n', cex=1)
+
+```
+
+```{r clamp-percent-fat-mass-lineplot}
+yaxes <- with(combined.summary, 
+              c(min(Percent.Fat.Mass.mean, na.rm=T)-max(Percent.Fat.Mass.se, na.rm=T), 
+               c(max(Percent.Fat.Mass.mean, na.rm=T)+max(Percent.Fat.Mass.se, na.rm=T))))
+plot <- with(subset(combined.summary, Week<12& 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]),
+             plot(Week, Percent.Fat.Mass.mean, type="l", ylim=yaxes,
+                  las=1, ylab="Percent Fat Mass", col=palette()[1]))
+with(subset(combined.summary, Week<12& 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]),
+             lines(Week, Percent.Fat.Mass.mean, col=palette()[1], lty=2))
+with(subset(combined.summary, Week<12& 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]),
+             lines(Week, Percent.Fat.Mass.mean, col=palette()[2]))
+with(subset(combined.summary, Week<12& 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]),
+             lines(Week, Percent.Fat.Mass.mean, col=palette()[2], lty=2))
+
+with(subset(combined.summary,Week<12& 
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[1]),
+             superpose.eb(Week, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col=palette()[1]))
+with(subset(combined.summary, Week<12&  
+             Treatment==levels(Treatment)[1]&Diet == levels(Diet)[2]),
+             superpose.eb(Week, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col=palette()[1]))
+with(subset(combined.summary,Week<12& 
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[1]),
+             superpose.eb(Week, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col=palette()[2]))
+with(subset(combined.summary, Week<12&  
+             Treatment==levels(Treatment)[2]&Diet == levels(Diet)[2]),
+             superpose.eb(Week, Percent.Fat.Mass.mean, Percent.Fat.Mass.se, col=palette()[2]))
+
+legend("topleft", 
+        do.call(paste, expand.grid(levels(weight.data$Diet),'-',levels(weight.data$Treatment))),
+       col=palette()[c(1,1,2,2)], lty=c(1,2,1,2), bty='n')
+
+
+pct.fat.lme <- lmer(Percent.Fat.Mass~Week*Diet + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+pct.fat.lme.null <- lmer(Percent.Fat.Mass~Week + (1|animal.id) + (Week-1|animal.id), data=weight.data, REML=F)
+```
+
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```
+

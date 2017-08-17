@@ -1,0 +1,102 @@
+---
+title: "Analysis of Dexaethasone Treated Mice for Grip Strength"
+author: "Innocence Harvey and Dave Bridges"
+date: "February 25, 2015"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+# Data Entry
+This was from one cohort of C57BL6/J mice which were tested at week 3 for grip strength (4 paw).
+
+```{r data-entry}
+data_file <- '../data/raw/Grip Data.csv'
+grip.data <- read.csv(data_file)
+#set the treatment
+grip.data$Treatment <- relevel(grip.data$Treatment, ref='Water')
+```
+
+Data was read from the file `r data_file`.  These data are saved in `r getwd()`.
+
+# Grip Strength Analysis
+```{r grip-data-analysis}
+library(plyr)
+s <- strsplit(as.character(grip.data$values), split = ",")
+grip.data <- cbind(grip.data, as.data.frame(rbind.fill.matrix(lapply(s, t))))
+grip.data$V1 <- as.numeric(as.character(grip.data$`1`))
+grip.data$V2 <- as.numeric(as.character(grip.data$`2`))
+grip.data$V3 <- as.numeric(as.character(grip.data$`3`))
+grip.data$V4 <- as.numeric(as.character(grip.data$`4`))
+grip.data$V5 <- as.numeric(as.character(grip.data$`5`))
+grip.data$Grip.Average <- rowMeans(grip.data[,c('V1','V2','V3','V4','V5')], na.rm=T)/1000
+grip.data$Grip.Median <-  apply(grip.data[,c('V1','V2','V3','V4','V5')], 1, function(x) median(x, na.rm=T))/1000
+```
+
+
+```{r scatter-plot-grip-mean}
+library(dplyr)
+#for levenes tests
+library(car)
+mean.levene <- leveneTest(Grip.Average~Treatment, data=grip.data)
+median.levene <- leveneTest(Grip.Median~Treatment, data=grip.data)
+
+mean.student <- t.test(Grip.Average~Treatment, data=grip.data, var.equal=T)
+median.student <- t.test(Grip.Median~Treatment, data=grip.data, var.equal=T)
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+grip.summary <- grip.data %.%
+  group_by(age, Treatment) %.%
+  summarise(Average = mean(Grip.Average, na.rm=T),
+    Average.sd = sd(Grip.Average, na.rm=T),
+    Average.se = se(Grip.Average),
+    Median = mean(Grip.Median, na.rm=T),
+    Median.sd = sd(Grip.Median, na.rm=T),
+    Median.se = se(Grip.Median),
+    n = length(Grip.Average),
+    Average.shapiro = shapiro.test(Grip.Average)$p.value,
+    Median.shapiro = shapiro.test(Grip.Median)$p.value)
+
+superpose.eb <- 
+ function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
+ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
+ length = length, ...)
+
+ymax <- max(grip.summary$Average + grip.summary$Average.se)
+plot <- with(subset(grip.summary, Treatment=="Water"), plot(age, Average, ylim=c(0,ymax), 
+                                                            las=1,pch=19,type="l",
+                                   ylab="Grip Strength (N)", main="Averaged Values"))
+with(subset(grip.summary, Treatment=="Dexamethasone"), lines(age, Average, col='red'))
+with(subset(grip.summary, Treatment=="Water"), superpose.eb(age, Average, Average.se))
+with(subset(grip.summary, Treatment=="Dexamethasone"), superpose.eb(age, Average, Average.se, col='red'))
+legend("bottomleft", c("Water","Dexamethasone"), lty=1, col=c('black','red'), bty='n')
+```
+
+
+Based on Shapiro Wilk Tests  we can assume the data are normally distributed (p>`r min(grip.summary[,c('Average.shapiro', 'Median.shapiro')])`.  To test for equal variance we did a Levene's test (p=`r mean.levene$"Pr(>F)"[1]` for mean and p=`r median.levene$"Pr(>F)"[1]` for median grip), so in both cases we can assume equal variance.
+
+We therefore did Student's *t*-Tests and found that in the case of mean grip, we saw a `r (1-grip.summary$Average[2]/grip.summary$Average[1])*100`% reduction in grip strength (p=`r mean.student$p.value` and for median grip, we saw a `r (1-grip.summary$Median[2]/grip.summary$Median[1])*100`% reduction in grip strength (p=`r median.student$p.value`).
+
+```{r scatter-plot-grip-median}
+ymax <- max(grip.summary$Median + grip.summary$Median.se)
+plot <- with(subset(grip.summary, Treatment=="Water"), plot(age, Median, ylim=c(0,ymax), 
+                                                            las=1,pch=19,type="l",
+                                   ylab="Grip Strength (N)", main="Median Values"))
+with(subset(grip.summary, Treatment=="Dexamethasone"), lines(age, Median, col='red'))
+with(subset(grip.summary, Treatment=="Water"), superpose.eb(age, Median, Median.se))
+with(subset(grip.summary, Treatment=="Dexamethasone"), superpose.eb(age, Median, Median.se, col='red'))
+legend("bottomleft", c("Water","Dexamethasone"), lty=1, col=c('black','red'), bty='n')
+```
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```

@@ -1,0 +1,348 @@
+---
+title: "Combined Analysis of HFD/NCD Dexamethasone Adipose qPCR results"
+author: "Innocence Harvey and Dave Bridges"
+date: "July 3, 2015"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+```{r data-entry}
+filename <- '../../data/raw/iWAT Combined qPCR Analysis.xlsx'
+sheetname <- 'Sheet2'
+library(xlsx)
+combined_data <- read.xlsx(filename, sheetName = sheetname, startRow = 37)
+combined_data$Food <- relevel(as.factor(combined_data$Food), ref='NCD')
+library(forcats)
+combined_data$Food <- fct_recode(combined_data$Food, "Normal Chow Diet"="NCD", "High Fat Diet"="HFD" )
+combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
+
+library(dplyr)
+library(tidyr)
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+qpcr.summary <-
+  subset(combined_data, Gene != 'NA') %>%
+  group_by(Gene) %>%
+  mutate(Rel.values = Norm.values/mean(Norm.values[Food=="Normal Chow Diet"&Treatment=="Water"])) %>%
+  group_by(Gene,Food, Treatment) %>%
+  summarize(Norm.values.mean = mean(Rel.values, na.rm=T),
+            Norm.values.se = se(Rel.values),
+            Norm.values.n = length(Rel.values))
+```
+
+This script uses the files in `r filename` and used the worksheet `r sheetname`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
+
+# Pnpla2
+
+```{r iwat-pnpla2-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Pnpla2') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Pnpla2') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Pnpla2 mRNA Expression (Relative Units)",
+        main='Pnpla2',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Pnpla2
+
+```{r statistics-pnpla2}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Pnpla2"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`):
+
+```{r aov-table-pnpla2}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Pnpla2 Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-pnpla2}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Pnpla2 Expression", digits=c(2,2,2,10))
+```
+
+# Hsd11b1
+
+```{r iwat-Hsd11b1-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Hsd11b1') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Hsd11b1') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Hsd11b1',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Hsd11b1
+
+```{r statistics-Hsd11b1}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Hsd11b1"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was not quite significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`):
+
+```{r aov-table-Hsd11b1}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Hsd11b1 Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Hsd11b1}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Hsd11b1 Expression", digits=c(2,2,2,10))
+```
+
+# Lipe
+
+```{r iwat-Lipe-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Lipe') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Lipe') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Lipe',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Lipe
+
+```{r statistics-Lipe}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Lipe"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-Lipe}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Lipe Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Lipe}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Lipe Expression", digits=c(2,2,2,10))
+```
+
+
+# Lpl
+
+```{r iwat-Lpl-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Lpl') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Lpl') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Lpl',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Lpl
+
+```{r statistics-Lpl}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Lpl"))
+tg.aov.no.int <- aov(Norm.values ~ Food + Treatment, data=subset(combined_data, Gene=="Lpl"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was not significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+The ANOVA results are:
+
+```{r aov-table-Lpl}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Lpl Expression", digits=c(2,2,2,2,5))
+kable(summary(tg.aov.no.int)[[1]], caption="ANOVA for Lpl Expression, No Interaction Term", digits=c(2,2,2,2,5))
+```
+
+# IL6
+
+```{r iwat-il6-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Il6') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Il6') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Il6',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - IL6
+
+```{r statistics-il6}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Il6"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-Il6}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Il6 Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Il6}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Il6 Expression", digits=c(2,2,2,10))
+```
+
+# Nr3c1
+
+```{r iwat-Nr3c1-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Nr3c1') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Nr3c1') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Nr3c1',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topright", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Nr3c1
+
+```{r statistics-Nr3c1}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Nr3c1"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-Nr3c1}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Nr3c1 Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Nr3c1}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Nr3c1 Expression", digits=c(2,2,2,10))
+```
+
+# Ucp1
+
+```{r iwat-Ucp1-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Ucp1') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Ucp1') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Ucp1',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Ucp1
+
+```{r statistics-Ucp1}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Ucp1"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-Ucp1}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Ucp1 Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Ucp1}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Ucp1 Expression", digits=c(2,2,2,10))
+```
+
+# Foxo3
+
+```{r iwat-Foxo3-barplot}
+plot.data <- filter(qpcr.summary, Gene=='Foxo3') %>% select(Food,Treatment, Norm.values.mean) %>% spread(Food, Norm.values.mean)
+plot.data.se <- filter(qpcr.summary, Gene=='Foxo3') %>% select(Food,Treatment, Norm.values.se) %>% spread(Food, Norm.values.se)
+
+plot <- barplot(as.matrix(plot.data[3:4]), beside=T, 
+        ylab="Relative Expression",
+        main='Foxo3',col=palette()[1:2],
+        las=1, ylim=c(0,max(plot.data[3:4] + plot.data.se[3:4])))
+
+superpose.eb(plot, as.matrix(plot.data[3:4]), as.matrix(plot.data.se[3:4]))
+legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
+```
+
+## Statistics - Foxo3
+
+```{r statistics-Foxo3}
+tg.aov <- aov(Norm.values ~ Food + Treatment + Food:Treatment, data=subset(combined_data, Gene=="Foxo3"))
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant (p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`).
+
+```{r aov-table-Foxo3}
+kable(summary(tg.aov)[[1]], caption="ANOVA for Lipe Expression", digits=c(2,2,2,2,5))
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table-Foxo3}
+kable(tg.tukey$`Food:Treatment`, caption="Tukey's HSD tests for Foxo3 Expression", digits=c(2,2,2,10))
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

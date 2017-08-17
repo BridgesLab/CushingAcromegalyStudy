@@ -2,19 +2,47 @@
 title: "Combined Analysis of HFD/NCD Dexamethasone Serum Glycerol Levels"
 author: "Innocence Harvey and Dave Bridges"
 date: "September 17, 2015"
-output: pdf_document
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
 ---
 
 ```{r global_options, include=FALSE}
 library(knitr)
-opts_chunk$set(fig.path='figure/',
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
                echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(scipen=8,digits =6)
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
 ```
 
 
 ```{r data-entry}
-filename <- '2015-09-17 TG assay HFD v older chow .xlsx'
+filename <- '../../data/raw/HFD vs Chow Glycerol Assay.xlsx'
 sheetname <- 'Exported'
 library(xlsx)
 combined_data <- read.xlsx(filename, sheetName = sheetname)
@@ -33,7 +61,7 @@ tg.summary <-
 ```
 This script uses the files in `r filename` and used the worksheet `r sheetname`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
 
-```{r glycerol-barplot}
+```{r ncd-hfd-glycerol-barplot}
 plot.data <- select(tg.summary, Diet,Treatment, Glycerol.mean) %>% spread(Diet, Glycerol.mean)
 plot.data.se <- select(tg.summary, Diet,Treatment, Glycerol.se) %>% spread(Diet, Glycerol.se)
 
@@ -48,6 +76,8 @@ superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
 legend("topleft", levels(combined_data$Treatment), fill=palette()[1:2], bty="n")
 ```
+
+We observed a `r (filter(tg.summary, Diet=="Normal Chow Diet")$Glycerol.mean[2]-filter(tg.summary, Diet=="Normal Chow Diet")$Glycerol.mean[1])/filter(tg.summary, Diet=="Normal Chow Diet")$Glycerol.mean[2]*100`% increase in glycerol levels in the chow mice, but a `r filter(tg.summary, Diet=="High Fat Diet")$Glycerol.mean[2]/filter(tg.summary, Diet=="High Fat Diet")$Glycerol.mean[1]` fold increase in the HFD animals.
 
 # Statistics
 

@@ -1,0 +1,126 @@
+---
+title: "Analysis of Gastroc mRNA Transcripts"
+author: "Innocence Harvey and Dave Bridges"
+date: "February 25, 2015"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+# Data Entry
+
+
+```{r data-entry}
+data_file <- '../data/raw/Gastroc qPCR Summary.csv'
+data <- read.csv(data_file)
+#set the treatment
+data$Treatment <- relevel(data$Treatment, ref='Water')
+```
+
+Data was read from the file `r data_file`.  These data were most recently updated on `r date()`.
+
+#Analysis
+
+```{r analysis}
+library(dplyr)
+qpcr.summary <- 
+  data %>%
+  group_by(Gene,Treatment) %>%
+  summarise(mean = mean(Normalized.Expression),
+            se = sd(Normalized.Expression)/sqrt(length(Normalized.Expression)),
+            n = length(Normalized.Expression),
+            shapiro = shapiro.test(Normalized.Expression)$p.value) %>%
+  mutate(norm.mean = mean/mean[1],
+         norm.se = se/mean[1])
+```
+
+```{r statistics, results='asis'}
+library(car)
+genes.of.interest <- c('Fbxo32','Trim63','Psmd8')
+stats.summary <- data.frame()
+for (gene in genes.of.interest) {
+  stats.summary[gene,'shapiro-water'] <- with(subset(data, Gene==gene&Treatment=='Water'), shapiro.test(Normalized.Expression))$p.value
+  stats.summary[gene,'shapiro-dex'] <- with(subset(data, Gene==gene&Treatment=='Dexamethasone'), shapiro.test(Normalized.Expression))$p.value
+  stats.summary[gene, 'levene'] <- leveneTest(Normalized.Expression~Treatment, data=subset(data,Gene==gene))$"Pr(>F)"[1]
+}
+
+#decision tree for the test
+for (gene in genes.of.interest){
+  if (stats.summary[gene,'shapiro-dex'] < 0.05) {
+    stats.summary[gene,'Test'] <- 'Wilcoxon'
+  }
+  else
+    if (stats.summary[gene,'levene'] < 0.05) {
+      stats.summary[gene,'Test'] <- 'Welchs'
+    }
+  else
+    stats.summary[gene,'Test'] <- 'Student'
+}
+
+#calculate appropriate p-value
+for (gene in genes.of.interest) {
+  if (stats.summary[gene,'Test'] == "Student") {
+    stats.summary[gene,'pval'] <- t.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene), var.equal=T)$p.value
+  }
+  else
+    if (stats.summary[gene,'Test'] == 'Welchs') {
+      stats.summary[gene,'pval'] <- t.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene), var.equal=F)$p.value
+  }
+  else
+    if (stats.summary[gene,'Test'] == 'Wilcoxon'){
+     stats.summary[gene,'pval'] <- wilcox.test(Normalized.Expression~Treatment, data=subset(data,Gene==gene))$p.value 
+    }
+  }
+
+stats.summary$padj <- p.adjust(stats.summary$pval, method="BH")
+stats.summary$Significant <- stats.summary$padj < 0.05
+library(xtable)
+print(xtable(stats.summary, caption='Pairwise statistics summary, p-values adjusted by BH', digits=3), type='html')
+```
+
+## Proteasomal Genes
+
+```{r gastroc-proteasome}
+genes <- genes.of.interest
+library(reshape2)
+ymax <- with(subset(qpcr.summary, Gene %in% genes), max(norm.mean) + max (norm.se))
+plot <- barplot(as.matrix(dcast(subset(qpcr.summary, Gene %in% genes), Treatment~Gene, value.var='norm.mean')[2:(length(genes)+1)]), 
+        beside=T, las=2, ylim=c(0,ymax), ylab="Relative Expression")
+
+superpose.eb <- 
+ function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
+ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
+ length = length, ...)
+
+superpose.eb(plot,
+             as.matrix(dcast(subset(qpcr.summary, Gene %in% genes), Treatment~Gene, value.var='norm.mean')[2:(length(genes)+1)]),
+             as.matrix(dcast(subset(qpcr.summary, Gene %in% genes), Treatment~Gene, value.var='norm.se')[2:(length(genes)+1)]))
+legend('topleft', levels(data$Treatment), bty='n', fill=grey.colors(2))
+```
+
+# All Genes
+
+```{r gastroc-all}
+ymax <- with(qpcr.summary, max(norm.mean) + max (norm.se))
+plot <- barplot(as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.mean')[2:(length(levels(data$Gene))+1)]), 
+        beside=T, las=2, ylim=c(0,ymax), ylab="Relative Expression")
+
+superpose.eb(plot,
+             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.mean')[2:(length(levels(data$Gene))+1)]),
+             as.matrix(dcast(qpcr.summary, Treatment~Gene, value.var='norm.se')[2:(length(levels(data$Gene))+1)]))
+legend('topleft', levels(data$Treatment), bty='n', fill=grey.colors(2))
+```
+
+# Session Information
+
+```{r sessionInfo}
+sessionInfo()
+```

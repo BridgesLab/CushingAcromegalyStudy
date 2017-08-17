@@ -1,0 +1,209 @@
+---
+title: "Weight Analysis of Dexamethasone Treated C57BL/6J Mice"
+author: "Innocence Harvey and Dave Bridges"
+date: "February 23, 2015"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+# Data Entry
+This was from combined weights over several measurements of C57BL/6J Mice on treated with dexamethasone.  Some animals may appear multiple times in this analysis.  Data is downloaded in csv format from the mousedb website.  This includes only fed weights.  These mice were treated with 10 mg/kg/day starting at 70 days of age.
+
+```{r data-entry}
+raw_data_file <- "../data/raw/Body Composition Data.csv"
+
+#uncomment to update
+data.dex <- read.csv(raw_data_file, row.names='X')
+data.dex$Treatment <- relevel(data.dex$Treatment, ref='Water')
+data.dex$age.from.start <- data.dex$age - 70
+#reorder by age
+data.dex <- data.dex[order(data.dex$age),]
+#removed sick mouse 425
+data.dex <- subset(data.dex, animal.MouseID != 425)
+```
+
+Data was downloaded from MouseDB then aand the data is saved as `r raw_data_file`.  These data  was most recently updated on `r date()`.
+
+# Body Weights
+
+```{r weights-scatterplot}
+weight.data <- subset(data.dex, assay.assay=="Body Weight")
+weight.data$Weight <- as.numeric(as.character(weight.data$values))/1000 #in g
+
+with(weight.data, plot(age, Weight,
+                       col=Treatment,
+                       ylab="Body Weight (g)",
+                       xlab='Age (days)',
+                        las=1, pch=19))
+
+se <- function(x) sd(x)/sqrt(length(x))
+library(dplyr)
+weight.dt <- tbl_dt(weight.data)
+weight.summary <- weight.dt %>%
+    group_by(age, age.from.start, Treatment) %>%
+    summarize(
+      average=mean(Weight), 
+      sd=sd(Weight), 
+      se=se(Weight), 
+      n=length(Weight))
+
+with(subset(weight.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
+with(subset(weight.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
+
+yvals <- with(weight.summary, c(min(average-sd), max(average+sd)))
+plot <- with(subset(weight.summary, Treatment=='Water'), plot(age.from.start,average, 
+                                                      type="l", ylim=yvals, xlim=c(0,77),
+                                                      las=1, ylab="Body Weight (g)", xlab="Dexamethasone Treatment (d)",
+                                                      col=palette()[1]))
+with(subset(weight.summary, Treatment=='Dexamethasone'), lines(age.from.start,average, col=palette()[2]))
+
+superpose.eb <- 
+ function (x, y, ebl, ebu = ebl, length = 0.08, ...) 
+ arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3, 
+ length = length, ...)
+
+with(subset(weight.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
+with(subset(weight.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
+```
+
+# Lean Mass
+
+```{r lean-mass-scatterplot}
+lean.mass.data <- subset(data.dex, assay.assay=="Lean Mass")
+lean.mass.data$Weight <- as.numeric(as.character(lean.mass.data$values))/1000 #in g
+
+with(lean.mass.data, plot(age, Weight,
+                       col=Treatment,
+                      ylab="Lean Mass (g)",
+                       xlab='Age (days)',
+                        las=1, pch=19))
+
+lean.mass.dt <- tbl_dt(lean.mass.data)
+lean.mass.summary <- lean.mass.dt %>%
+    group_by(age, age.from.start, Treatment) %>%
+    summarize(
+      average=mean(Weight), 
+      sd=sd(Weight), 
+      se=se(Weight), 
+      n=length(Weight))
+
+with(subset(lean.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
+with(subset(lean.mass.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
+
+yvals <- with(lean.mass.summary, c(min(average-sd), max(average+sd)))
+plot <- with(subset(lean.mass.summary, Treatment=='Water'), plot(age.from.start,average, 
+                                                      type="l", ylim=yvals, xlim=c(0,77),
+                                                      las=1, ylab="Lean Mass (g)", xlab="Dexamethasone Treatment (d)",
+                                                      col=palette()[1]))
+with(subset(lean.mass.summary, Treatment=='Dexamethasone'), lines(age.from.start,average, col=palette()[2]))
+
+with(subset(lean.mass.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
+with(subset(lean.mass.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
+```
+
+# Fat Mass
+
+```{r fat-mass-scatterplot}
+fat.mass.data <- subset(data.dex, assay.assay=="Total Fat Mass")
+fat.mass.data$Weight <- as.numeric(as.character(fat.mass.data$values))/1000 #in g
+
+with(fat.mass.data, plot(age, Weight,
+                       col=Treatment,
+                       ylab="Fat Mass (g)",
+                       xlab='Age (days)',
+                        las=1, pch=19))
+
+fat.mass.dt <- tbl_dt(fat.mass.data)
+fat.mass.summary <- fat.mass.dt %>%
+    group_by(age, age.from.start, Treatment) %>%
+    summarize(
+      average=mean(Weight), 
+      sd=sd(Weight), 
+      se=se(Weight), 
+      n=length(Weight))
+
+with(subset(fat.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
+with(subset(fat.mass.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
+
+yvals <- with(fat.mass.summary, c(min(average-sd), max(average+sd)))
+plot <- with(subset(fat.mass.summary, Treatment=='Water'), plot(age.from.start,average, 
+                                                      type="l", ylim=yvals, xlim=c(0,77),
+                                                      las=1, ylab="Fat Mass (g)", xlab="Dexamethasone Treatment (d)",
+                                                      col=palette()[1]))
+with(subset(fat.mass.summary, Treatment=='Dexamethasone'), lines(age.from.start,average, col=palette()[2]))
+
+with(subset(fat.mass.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
+with(subset(fat.mass.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
+```
+
+```{r pct-fat-mass-scatterplot}
+pct.fat.mass.data <- merge(
+  weight.data[,c('animal.MouseID','Weight','age','age.from.start','Treatment')], 
+  fat.mass.data[,c('animal.MouseID','Weight','age','age.from.start','Treatment')],
+  by=c('age','age.from.start','animal.MouseID','Treatment'))
+pct.fat.mass.data$Pct.Fat.Mass <- pct.fat.mass.data$Weight.y/pct.fat.mass.data$Weight.x*100
+
+with(pct.fat.mass.data, plot(age, Pct.Fat.Mass,
+                       col=Treatment,
+                       ylab="Percent Fat Mass",
+                       xlab='Age (days)',
+                        las=1, pch=19))
+
+pct.fat.mass.dt <- tbl_dt(pct.fat.mass.data)
+pct.fat.mass.summary <- pct.fat.mass.dt %>%
+    group_by(age, age.from.start, Treatment) %>%
+    summarize(
+      average=mean(Pct.Fat.Mass), 
+      sd=sd(Pct.Fat.Mass), 
+      se=se(Pct.Fat.Mass), 
+      n=length(Pct.Fat.Mass))
+pct.fat.mass.summary <- pct.fat.mass.summary[order(pct.fat.mass.summary$age),]
+
+with(subset(pct.fat.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
+with(subset(pct.fat.mass.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
+
+yvals <- with(pct.fat.mass.summary, c(min(average-sd), max(average+sd)))
+plot <- with(subset(pct.fat.mass.summary, Treatment=='Water'), plot(age.from.start,average, 
+                                                      type="l", ylim=yvals, xlim=c(0,77),
+                                                      las=1, ylab="Percent Fat Mass", xlab="Dexamethasone Treatment (d)",
+                                                      col=palette()[1]))
+with(subset(pct.fat.mass.summary, Treatment=='Dexamethasone'), lines(age.from.start,average, col=palette()[2]))
+
+with(subset(pct.fat.mass.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
+with(subset(pct.fat.mass.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
+```
+
+```{r pct-fat-mass-scatterplot-smooth}
+with(pct.fat.mass.data, plot(age.from.start, Pct.Fat.Mass,
+                       col=Treatment,
+                       ylab="Percent Fat Mass",
+                       xlab='Dexamethasone Treatment (days)',
+                       xlim=c(0,max(age)-70),
+                        las=1, pch=19))
+
+#repeated measures model
+library(lme4)
+fat.mass.lme <- lmer(Pct.Fat.Mass ~ age.from.start + Treatment + age.from.start:Treatment + (1|animal.MouseID), data=subset(pct.fat.mass.data, age>69))
+fat.mass.lme.null <- lmer(Pct.Fat.Mass ~ age.from.start + Treatment + (1|animal.MouseID), data=subset(pct.fat.mass.data, age>69))
+
+abline(a=fixef(fat.mass.lme)['(Intercept)'], b=fixef(fat.mass.lme)['age.from.start'], col=palette()[1])
+abline(a=fixef(fat.mass.lme)['(Intercept)'], b=fixef(fat.mass.lme)['age.from.start']+fixef(fat.mass.lme)['age.from.start:TreatmentDexamethasone'], col=palette()[2])
+
+legend('topleft', levels(data.dex$Treatment), col=palette()[1:2], bty='n', pch=19, lty=1)
+```
+
+Based on a linear mixed effects model, the p-value for an effect of Dexamethasone on the rate of change in percent fat mass was `r anova(fat.mass.lme, fat.mass.lme.null)$"Pr(>Chisq)"[2]` (Chi-squared=`r anova(fat.mass.lme, fat.mass.lme.null)$"Chisq"[2]`) with an increase of `r fixef(fat.mass.lme)['age.from.start:TreatmentDexamethasone']*7`\% per week.  To test for normality in this model we did a Shapiro-Wilk test and found that the did not meet this assumption `r shapiro.test(residuals(fat.mass.lme))$p.value`.
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```

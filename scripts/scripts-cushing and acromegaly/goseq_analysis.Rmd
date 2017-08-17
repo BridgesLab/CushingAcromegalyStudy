@@ -1,0 +1,130 @@
+GOSeq of DESeq Data for Acromegaly and Cushing's Patients
+=============================================================
+
+This script was most recently run on `r date()`.  This script searches KEGG and GO for enriched categories and pathways.
+
+
+```{r goseq-setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitcitations, quietly=TRUE) #for generation of citations
+library(goseq, quietly=TRUE)
+library(GO.db, quietly=TRUE)
+library(KEGG.db, quietly=TRUE)
+write.bibtex(c('base',names(sessionInfo()$otherPkgs)), file = "references.bib", append=T, create_key=F) #writes references to bibtex file
+bib <- read.bibtex("../references.bib") #loads the bib file
+acromegaly.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv', row.names='X')
+cushing.data <- read.csv('../data/processed/Annotated Results GRCh37.74 - Cushing.csv', row.names='X')
+
+acromegaly.genes=as.integer(acromegaly.data$padj<.05)
+names(acromegaly.genes) = rownames(acromegaly.data)
+#first order the genes so significant ones are on the top
+ordered.acromegaly.genes <- sort(acromegaly.genes, decreasing=T)
+#then remove duplicate names
+analysed.genes.acromegaly <- ordered.acromegaly.genes[unique(names(ordered.acromegaly.genes))]
+
+cushing.genes=as.integer(cushing.data$padj<.05)
+names(cushing.genes) = rownames(cushing.data)
+#first order the genes so significant ones are on the top
+ordered.cushing.genes <- sort(cushing.genes, decreasing=T)
+#then remove duplicate names
+analysed.genes.cushing <- ordered.cushing.genes[unique(names(ordered.cushing.genes))]
+```
+
+To analyse these, we used the goseq package `r citep(bib[[c("goseq")]])`, using the wallenius approximation to determine
+significantly enriched GO `r citep("10.1038/75556")` or KEGG `r citep("10.1093/nar/gkr988")` terms.  
+
+This analysis uses the GO database updated with the datestamp `r GO_dbInfo()[GO_dbInfo()$name=='GOSOURCEDATE',]$value` downloaded from `r GO_dbInfo()[GO_dbInfo()$name=='GOSOURCEURL',]$value`.  The KEGG database was downloaded from `r KEGG_dbInfo()[KEGG_dbInfo()$name=='KEGGSOURCEURL',]$value` with a datestamp of `r KEGG_dbInfo()[KEGG_dbInfo()$name=='KEGGSOURCEDATE',]$value`.
+
+This analysis included the `r table(cushing.data$padj<.05)[2]` significant cushing transcripts (`r length(unique(cushing.data[cushing.data$padj<.05,]$external_gene_id))` genes) and the `r table(acromegaly.data$padj<.05)[2]` significant acromegaly transcripts (`r length(unique(acromegaly.data[acromegaly.data$padj<.05,]$external_gene_id))` genes).  We did not separate upregulated genes from downregulated genes in this analysis.
+
+```{r goseq-analysis, dev=c('png','pdf'), echo=FALSE, fig.show='asis', message=FALSE}
+pwf.cushing <- nullp(analysed.genes.cushing,"hg19","ensGene")
+pwf.acromegaly  <- nullp(analysed.genes.acromegaly,"hg19","ensGene")
+
+go.mapping <- as.data.frame(GOTERM)
+kegg.mapping <- as.data.frame(KEGGPATHID2NAME)
+
+GO.wall.cushing.mf <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("GO:MF"))
+GO.wall.cushing.mf$padj <- p.adjust(GO.wall.cushing.mf$over_represented_pvalue, method="BH")
+annotated.GO.cushing.mf <- merge(GO.wall.cushing.mf, go.mapping, by.x='category', by.y=2, all.x=T)
+annotated.GO.cushing.mf.unique <- annotated.GO.cushing.mf[!(duplicated(annotated.GO.cushing.mf$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.cushing.mf.unique <- annotated.GO.cushing.mf.unique[order(annotated.GO.cushing.mf.unique$padj),]
+write.csv(annotated.GO.cushing.mf.unique, '../data/processed/Cushing GO Analysis - MF.csv')
+
+GO.wall.cushing.bp <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("GO:BP"))
+GO.wall.cushing.bp$padj <- p.adjust(GO.wall.cushing.bp$over_represented_pvalue, method="BH")
+annotated.GO.cushing.bp <- merge(GO.wall.cushing.bp, go.mapping, by.x='category', by.y=2, all.x=T)
+annotated.GO.cushing.bp.unique <- annotated.GO.cushing.bp[!(duplicated(annotated.GO.cushing.bp$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.cushing.bp.unique <- annotated.GO.cushing.bp.unique[order(annotated.GO.cushing.bp.unique$padj),]
+write.csv(annotated.GO.cushing.bp.unique, '../data/processed/Cushing GO Analysis - BP.csv')
+
+GO.wall.cushing.kegg <- goseq(pwf.cushing,"hg19","ensGene", test.cats=c("KEGG"))
+GO.wall.cushing.kegg$padj <- p.adjust(GO.wall.cushing.kegg$over_represented_pvalue, method="BH")
+annotated.GO.cushing.kegg <- merge(GO.wall.cushing.kegg, kegg.mapping, by.x='category', by.y='path_id', all.x=T)
+annotated.GO.cushing.kegg.unique <- annotated.GO.cushing.kegg[!(duplicated(annotated.GO.cushing.kegg$category)),c('category','numDEInCat','numInCat','padj','path_name')]
+annotated.GO.cushing.kegg.unique <- annotated.GO.cushing.kegg.unique[order(annotated.GO.cushing.kegg.unique$padj),]
+write.csv(annotated.GO.cushing.kegg.unique, '../data/processed/Cushing GO Analysis - KEGG.csv')
+
+GO.wall.acromegaly.mf <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("GO:MF"))
+GO.wall.acromegaly.mf$padj <- p.adjust(GO.wall.acromegaly.mf$over_represented_pvalue, method="BH")
+annotated.GO.acromegaly.mf <- merge(GO.wall.acromegaly.mf, go.mapping, by.x='category', by.y=2, all.x=T)
+annotated.GO.acromegaly.mf.unique <- annotated.GO.acromegaly.mf[!(duplicated(annotated.GO.acromegaly.mf$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.acromegaly.mf.unique <- annotated.GO.acromegaly.mf.unique[order(annotated.GO.acromegaly.mf.unique$padj),]
+write.csv(annotated.GO.acromegaly.mf.unique, '../data/processed/Acromegaly GO Analysis - MF.csv')
+
+GO.wall.acromegaly.bp <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("GO:BP"))
+GO.wall.acromegaly.bp$padj <- p.adjust(GO.wall.acromegaly.bp$over_represented_pvalue, method="BH")
+annotated.GO.acromegaly.bp <- merge(GO.wall.acromegaly.bp, go.mapping, by.x='category', by.y=2, all.x=T)
+annotated.GO.acromegaly.bp.unique <- annotated.GO.acromegaly.bp[!(duplicated(annotated.GO.acromegaly.bp$category)),c('category','numDEInCat','numInCat','padj','Term')]
+annotated.GO.acromegaly.bp.unique <- annotated.GO.acromegaly.bp.unique[order(annotated.GO.acromegaly.bp.unique$padj),]
+write.csv(annotated.GO.acromegaly.bp.unique, '../data/processed/Acromegaly GO Analysis - BP.csv')
+
+GO.wall.acromegaly.kegg <- goseq(pwf.acromegaly,"hg19","ensGene", test.cats=c("KEGG"))
+GO.wall.acromegaly.kegg$padj <- p.adjust(GO.wall.acromegaly.kegg$over_represented_pvalue, method="BH")
+annotated.GO.acromegaly.kegg <- merge(GO.wall.acromegaly.kegg, kegg.mapping, by.x='category', by.y='path_id', all.x=T)
+annotated.GO.acromegaly.kegg.unique <- annotated.GO.acromegaly.kegg[!(duplicated(annotated.GO.acromegaly.kegg$category)),c('category','numDEInCat','numInCat','padj','path_name')]
+annotated.GO.acromegaly.kegg.unique <- annotated.GO.acromegaly.kegg.unique[order(annotated.GO.acromegaly.kegg.unique$padj),]
+write.csv(annotated.GO.acromegaly.kegg.unique, '../data/processed/Acromegaly GO Analysis - KEGG.csv')
+```
+
+Significantly different terms and pathways
+----------------------------------------------
+
+### Cushing Significant Processes
+
+For cushing, we found `r dim(annotated.GO.cushing.mf.unique[annotated.GO.cushing.mf.unique$padj<0.05,])[1]` significantly different GO terms for molecular function, `r dim(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,])[1]` significantly different GO terms for biological processes and `r dim(annotated.GO.cushing.kegg.unique[annotated.GO.cushing.kegg.unique$padj<0.05,])[1]` significantly different KEGG pathways.
+
+```{r data-table-cushing, ,echo=FALSE, results='asis'}
+library(xtable)
+
+print(xtable(annotated.GO.cushing.bp.unique[annotated.GO.cushing.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Acromegaly Patients"), type='html')
+
+print(xtable(annotated.GO.cushing.mf.unique[annotated.GO.cushing.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Acromegaly Patients"), type='html')
+
+print(xtable(annotated.GO.cushing.kegg.unique[annotated.GO.cushing.kegg.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="KEGG Pathways Enriched in Acromegaly Patients"), type='html')
+```
+
+### Acromegaly Significant Processes
+
+For acromegaly, we found `r dim(annotated.GO.acromegaly.mf.unique[annotated.GO.acromegaly.mf.unique$padj<0.05,])[1]` significantly different GO terms for molecular function, `r dim(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,])[1]` significantly different GO terms for biological processes and `r dim(annotated.GO.acromegaly.kegg.unique[annotated.GO.acromegaly.kegg.unique$padj<0.05,])[1]` significantly different KEGG pathways.
+
+```{r data-table-acromegaly, ,echo=FALSE, results='asis'}
+print(xtable(annotated.GO.acromegaly.bp.unique[annotated.GO.acromegaly.bp.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Biological Processes Enriched in Acromegaly Patients"), type='html')
+
+print(xtable(annotated.GO.acromegaly.mf.unique[annotated.GO.acromegaly.mf.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="Molecular Functions Enriched in Acromegaly Patients"), type='html')
+
+print(xtable(annotated.GO.acromegaly.kegg.unique[annotated.GO.acromegaly.kegg.unique$padj<0.05,], digits=c(0,0,0,0,5,0), caption="KEGG Pathways Enriched in Acromegaly Patients"), type='html')
+```
+
+Bibiography
+------------
+```{r bibliography, echo=FALSE, results='asis'}
+bibliography("html") 
+```
+
+Session Information
+-------------------
+
+For the R session, the package versions were:
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,226 @@
+---
+title: "Analysis of Tissue Weights from HFD/Dexamethasone Studies"
+author: "Innocence Harvey and Dave Bridges"
+date: "April 7, 2017"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  htmin_notebook: toc:yes
+  htmin_document:
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+library(tidyr)
+library(dplyr)
+
+color.scheme <- c("black","red")
+```
+
+# Data Entry
+
+```{r data-entry}
+datafile <- '../../data/raw/HFD and Chow Tissue Weights.csv'
+library(readr)
+data <- read_csv(datafile)
+library(forcats)
+
+#set reference levels
+data$Treatment <- relevel(as.factor(data$Group), ref="Control")
+data$Diet <- relevel(as.factor(data$Diet), ref="Chow")
+data$Status <- relevel(as.factor(data$Status), ref="Fasted")
+
+#recoded factor names
+data$Treatment <- fct_recode(data$Treatment, "Water" = "Control") 
+data$Treatment <- fct_recode(data$Treatment, "Dexamethasone" = "Dex") 
+data$Diet <- fct_recode(data$Diet, "NCD" = "Chow") 
+```
+
+This script generates figures from the tissue weights found in `r datafile`.  This file is located in `r getwd()` and was most recently updated on `r date()`.
+
+# Number of Animals
+
+```{r n-calculation}
+summary.data.numbers <-
+  data %>%
+  group_by(Status, Diet, Treatment) %>%
+  summarize(Number=length(iWAT))
+
+kable(summary.data.numbers, caption="Number of mice in each group")
+```
+
+# Summary Data
+
+The remainder of this analysis is only for Fasted animals
+
+```{r analysis}
+mean.na <- function(x) mean(x, na.rm=T)
+shapiro.p <- function(x) shapiro.test(x)$p.value
+
+summary.data <-
+  filter(data, Status=="Fasted") %>%
+  group_by(Diet, Treatment) %>%
+  select(iWAT,eWAT,TS,Quad) %>%
+  summarize_each(funs(mean.na,se, shapiro.p))
+
+kable(select(summary.data, Treatment, ends_with('mean.na')), caption="Averaged Values")
+```
+
+# Muscle Barplots
+
+```{r muscle-weight-barplot}
+
+par(mfrow=c(1,2))
+plot.data <- summary.data %>% select(Treatment, Quad_mean.na) %>% spread(Diet, Quad_mean.na) 
+plot.data.se <- summary.data %>% select(Treatment, Quad_se) %>% spread(Diet, Quad_se)
+
+ymax <- max(plot.data[2:3]+max(plot.data.se[2:3]))
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T, las=1,
+                col=color.scheme,
+                ylim=c(0,ymax),
+                ylab="Tissue Weight (mg)",
+                main="Quadriceps")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+#for TS muscle
+
+plot.data <- summary.data %>% select(Treatment, TS_mean.na) %>% spread(Diet, TS_mean.na) 
+plot.data.se <- summary.data %>% select(Treatment, TS_se) %>% spread(Diet, TS_se)
+
+ymax <- max(plot.data[2:3]+max(plot.data.se[2:3]))
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T, las=1,
+                col=color.scheme,
+                ylim=c(0,ymax),
+                ylab="Tissue Weight (mg)",
+                main="Triceps surae")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+```
+
+# Adipose Barplots
+
+```{r adipose-weight-barplot}
+
+par(mfrow=c(1,2))
+plot.data <- summary.data %>% select(Treatment, iWAT_mean.na) %>% spread(Diet, iWAT_mean.na) 
+plot.data.se <- summary.data %>% select(Treatment, iWAT_se) %>% spread(Diet, iWAT_se)
+
+ymax <- max(plot.data[2:3]+max(plot.data.se[2:3]))
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T, las=1,
+                col=color.scheme,
+                ylim=c(0,ymax),
+                ylab="Tissue Weight (mg)",
+                main="Inguinal Adipose Tissue")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+#for TS muscle
+
+plot.data <- summary.data %>% select(Treatment, eWAT_mean.na) %>% spread(Diet, eWAT_mean.na) 
+plot.data.se <- summary.data %>% select(Treatment, eWAT_se) %>% spread(Diet, eWAT_se)
+
+ymax <- max(plot.data[2:3]+max(plot.data.se[2:3]))
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T, las=1,
+                col=color.scheme,
+                ylab="Tissue Weight (mg)",
+                ylim=c(0,ymax),
+                main="Epididymal Adipose Tissue")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+```
+
+## Analysis of Adipose Tissue Weights
+
+We observed reductions in both iWAT and eWAT with HFD/Dexamethasone.  
+
+### Inguinal Adipose Tissue
+
+This included a `r  (filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$iWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$iWAT_mean.na[1]*100`% reduction in iWAT mass in the HFD mice.  A Shapiro-Wilk test of the iWAT values had a p-value of >`r min(summary.data$iWAT_shapiro.p)`, so normality could be assumed.  To test for equal variance, Levene's tests were performed.
+
+```{r iwat-levene}
+library(car)
+levene.hfd.iwat <- leveneTest(iWAT ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.iwat <- leveneTest(iWAT ~ Group, data = filter(data, Diet=="NCD"))
+```
+The p-value from the Levene's test were `r levene.hfd.iwat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(iWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.iwat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(iWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+
+There was only a `r  (filter(summary.data, Diet=="NCD")$iWAT_mean.na[1]-filter(summary.data, Diet=="NCD")$iWAT_mean.na[2])/filter(summary.data, Diet=="NCD")$iWAT_mean.na[1]*100`% reduction in iWAT mass in the NCD mice.
+
+```{r iwat-anova}
+iwat.aov.int <- aov(iWAT ~ Diet + Group + Diet:Group, data=data)
+iwat.aov <- aov(iWAT ~ Diet + Group, data=data)
+```
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r iwat-anova-results}
+library(broom)
+kable(tidy(iwat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(iwat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(iwat.aov.int))$p.value`, so normality could not be assumed.
+
+### Epididimal Adipose Tissue
+
+This included a `r  (filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]-filter(summary.data, Diet=="HFD")$eWAT_mean.na[2])/filter(summary.data, Diet=="HFD")$eWAT_mean.na[1]*100`% reduction in eWAT mass in the HFD mice.
+
+There was only a `r  (filter(summary.data, Diet=="NCD")$eWAT_mean.na[1]-filter(summary.data, Diet=="NCD")$eWAT_mean.na[2])/filter(summary.data, Diet=="NCD")$eWAT_mean.na[1]*100`% reduction in eWAT mass in the NCD mice.
+
+
+```{r ewat-anova}
+ewat.aov.int <- aov(eWAT ~ Diet + Group + Diet:Group, data=data)
+ewat.aov <- aov(eWAT ~ Diet + Group, data=data)
+```
+
+```{r ewat-levene}
+library(car)
+levene.hfd.ewat <- leveneTest(eWAT ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.ewat <- leveneTest(eWAT ~ Group, data = filter(data, Diet=="NCD"))
+```
+
+The p-value from the Levene's test were `r levene.hfd.ewat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.ewat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r ewat-anova-results}
+kable(tidy(ewat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(ewat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ewat.aov.int))$p.value`, so normality could not be assumed.
+
+# Session Information
+```{r sessionInfo}
+sessionInfo()
+```

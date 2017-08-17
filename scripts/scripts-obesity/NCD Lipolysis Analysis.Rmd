@@ -1,0 +1,171 @@
+---
+title: "Analysis of Lipolysis in Dexamethasone Treated Mice"
+author: "Innocence Harvey and Dave Bridges"
+date: "July 10, 2015"
+output:
+  html_document:
+    keep_md: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+```{r data-entry}
+filename <- '../../data/raw/NCD Glycerol and TG Assays.xlsx'
+library(readxl)
+data <- read_excel(filename, sheet=2)
+
+library(forcats)
+
+#renamed factors and columns
+data <- 
+  data %>%
+  mutate(Group = fct_recode(Group, "Water" = "Control")) %>%
+  mutate(Group = fct_recode(Group, "Dexamethasone" = "Dex"))
+```
+
+These data are located in `r getwd()` and was most recently updated on `r date()`.  This script imports data from the file `r filename`
+
+# Glycerol Analysis
+
+```{r dexamethasone-glycerol-ncd}
+#remove TG columns
+glycerol.data <- data[,!(grepl('TG', colnames(data)))]
+
+#generate summary statistics
+
+glycerol.summary.means <-
+  glycerol.data %>%
+  group_by(Group) %>%
+  summarize(Fed = mean(Basal.Glycerol, na.rm=T),
+            Isoproterenol = mean(Isoproterenol.Glycerol, na.rm=T),
+            Fasted = mean(Fasted.Glycerol, na.rm=T))
+
+glycerol.summary.se <-
+  glycerol.data %>%
+  group_by(Group) %>%
+  summarize(Fed = se(Basal.Glycerol),
+            Isoproterenol = se(Isoproterenol.Glycerol),
+            Fasted = se(Fasted.Glycerol))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+#make the barplot
+#figure out the yaxis limit
+ymax <- max(glycerol.summary.means[2:4]) + max(glycerol.summary.se[2:4])
+plot <- barplot(as.matrix(glycerol.summary.means[2:4]), beside=T, las=1, ylab="Glycerol Levels (ug/uL)",
+        ylim=c(0,ymax))
+#add legend
+legend("topleft", levels(glycerol.summary.means$Group), fill=grey.colors(2), bty="n")
+#add error bars
+superpose.eb(plot,
+             as.matrix(glycerol.summary.means[2:4]),
+             as.matrix(glycerol.summary.se[2:4]))
+```
+
+## Relative Effects of Dexamethasone
+
+```{r dexamethasone-glycerol-ncd-relative}
+#normalized all data to the controls
+glycerol.data$Fed.Norm <- glycerol.data$Basal.Glycerol/glycerol.summary.means$Fed[1]
+glycerol.data$Fasted.Norm <- glycerol.data$Fasted.Glycerol/glycerol.summary.means$Fasted[1]
+glycerol.data$Isoproterenol.Norm <- glycerol.data$Isoproterenol.Glycerol/glycerol.summary.means$Isoproterenol[1]
+
+#recalculated averages
+glycerol.summary.means.norm <-
+  glycerol.data %>%
+  group_by(Group) %>%
+  summarize(Fed = mean(Fed.Norm, na.rm=T),
+            Isoproterenol = mean(Isoproterenol.Norm, na.rm=T),
+            Fasted = mean(Fasted.Norm, na.rm=T))
+
+glycerol.summary.se.norm <-
+  glycerol.data %>%
+  group_by(Group) %>%
+  summarize(Fed = se(Fed.Norm),
+            Isoproterenol = se(Isoproterenol.Norm),
+            Fasted = se(Fasted.Norm))
+kable(glycerol.summary.means.norm, caption="Fold change with dexamethasone")
+
+#make the barplot
+#figure out the yaxis limit
+ymax <- max(glycerol.summary.means.norm[2:4]) + max(glycerol.summary.se.norm[2:4])
+plot <- barplot(as.matrix(glycerol.summary.means.norm[2:4]), beside=T, las=1, ylab="Relative Glycerol Levels",
+        ylim=c(0,ymax))
+#add legend
+legend("topright", levels(glycerol.summary.means.norm$Group), fill=grey.colors(2), bty="n")
+#add error bars
+superpose.eb(plot,
+             as.matrix(glycerol.summary.means.norm[2:4]),
+             as.matrix(glycerol.summary.se.norm[2:4]))
+```
+
+
+## Glycerol Statistics
+
+### Effects of Dexamethasone 
+
+Pairwise statistical tests, checking for the effects of dexamethasone are shown below.
+
+```{r dexamethasone-effects}
+#did pairwise tests for effects of dex on each condition
+dex.stats <- data.frame(row.names=colnames(glycerol.data)[3:5])
+
+library(car)
+#shapiro wilk tests
+shapiro.test.p <- function(x) shapiro.test(x)$p.value
+
+shapiro.results <-
+  glycerol.data %>%
+  select(-ends_with('Norm')) %>%
+  group_by(Group) %>%
+  summarise_if(is.numeric, shapiro.test.p)
+  
+  
+kable(shapiro.results, caption="Shapiro-Wilk Tests for Each Group")
+```
+
+All Shapiro-Wilk tests were >0.05 so normality could be assumed for each group (p>`r min(shapiro.results %>% summarize_if(is.numeric,min))`).  We next performed Levene's tests, the results of which were:
+
+* Basal Glycerol p=`r leveneTest(Basal.Glycerol ~ Group, data=glycerol.data)$"Pr(>F)"[1]`, equal variance assumed, Student's *t*-test **p=`r t.test(Basal.Glycerol ~ Group, data=glycerol.data, var.equal=T)$p.value`**.
+* Fasted Glycerol p=`r leveneTest(Fasted.Glycerol ~ Group, data=glycerol.data)$"Pr(>F)"[1]`, equal variance assumed, Student's *t*-test **p=`r t.test(Fasted.Glycerol ~ Group, data=glycerol.data, var.equal=T)$p.value`**.
+* Isoproterenol-Stimulated Glycerol p=`r leveneTest(Isoproterenol.Glycerol ~ Group, data=glycerol.data)$"Pr(>F)"[1]`, equal variance assumed, Student's *t*-test **p=`r t.test(Isoproterenol.Glycerol ~ Group, data=glycerol.data, var.equal=T)$p.value`**.
+
+# Session Information
+```{r sessionInfo, results='asis'}
+toLatex(sessionInfo())
+```

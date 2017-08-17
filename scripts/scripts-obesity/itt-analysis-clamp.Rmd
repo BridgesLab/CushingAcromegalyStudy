@@ -1,0 +1,233 @@
+---
+title: "ITT for Dexamethasone Treated HFD-Fed Mice at the MMPC"
+author: "Innocence Harvey, Melanie Schmitt, Nathan Qi and Dave Bridges"
+date: "April 5, 2017"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+length = length, ...)
+
+color.scheme <- c('black','red')
+```
+
+```{r data-entry}
+itt.data <- '../../data/raw/mmpc-itt-data.csv'
+
+itt.glucose <- read.csv(itt.data)
+itt.glucose$AUC <- rowSums(itt.glucose[,5:11])
+
+itt.glucose$Treatment <- relevel(as.factor(itt.glucose$TREATMENT), ref="Water")
+itt.glucose$Diet <- relevel(as.factor(itt.glucose$DIET), ref="NCD")
+```
+
+This document can be found in `r getwd()`.  It reads from the file `r itt.data` and this script was most recently run on `r date()`.
+
+```{r analysis}
+
+library(dplyr)
+itt.summary.barplots <-
+  itt.glucose %>%
+  group_by(Treatment,Diet) %>%
+  summarize(FG.mean = mean(X0),
+            FG.se = se(X0),
+            AUC.mean = mean(AUC, na.rm=T),
+            AUC.se = se(AUC))
+
+mean.na <- function(x) mean(x, na.rm=T)
+
+itt.summary.lineplots <-
+  itt.glucose %>%
+  group_by(Treatment,Diet) %>%
+  summarize_each(funs(mean.na,se), starts_with("X"))
+```
+
+```{r itt-lineplot}
+ymax <- max(itt.summary.lineplots[,3:9])
+times <- c(0,15,30,45,60,75,90)
+plot(times, itt.summary.lineplots[3,3:9], 
+     type="l", ylim=c(0,300), las=1,
+     ylab="Blood Glucose (mg/dL)",
+     xlab="Insulin (min)",
+     col=color.scheme[2])
+lines(times, itt.summary.lineplots[1,3:9], col=color.scheme[1])
+lines(times, itt.summary.lineplots[4,3:9], col=color.scheme[2], lty=2)
+lines(times, itt.summary.lineplots[2,3:9], col=color.scheme[1], lty=2)
+legend("topright", c("NCD - Control", "NCD - Dexamethasone", "HFD - Control", "HFD - Dexamethasone"),
+       col=c(color.scheme[1],color.scheme[2],color.scheme[1],color.scheme[2]),
+       lty=c(1,1,2,2),
+       bty="n")
+
+#add error bars for water
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[3,3:9]),
+             as.numeric(itt.summary.lineplots[3,10:16]),
+             col=color.scheme[2])
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[1,3:9]),
+             as.numeric(itt.summary.lineplots[1,10:16]))
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[4,3:9]),
+             as.numeric(itt.summary.lineplots[4,10:16]),
+             col=color.scheme[2])
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[2,3:9]),
+             as.numeric(itt.summary.lineplots[2,10:16]))
+     
+```
+
+### ITT Statistics
+
+```{r itt-statistics}
+library(tidyr)
+itt.lme.data <- 
+  itt.glucose %>%
+  select(-AUC,-DIET, -TREATMENT) %>%
+  gather(Diet, glucose, 3:9)
+library(lme4)
+itt.lmer <- lmer(glucose~Diet + Treatment + Diet:Treatment + (1|MOUSE.ID), data=itt.lme.data)
+itt.lmer.null <- lmer(glucose~Diet + Treatment + (1|MOUSE.ID), data=itt.lme.data)
+```
+
+Based on a mixed linear model testing for effects of a Diet:Treatment interaction, there is a significant interaction between Diet and Treatment during the ITT **(p=`r  anova(itt.lmer, itt.lmer.null)$"Pr(>Chisq)"[2]`)**.  The residuals of this model fail to meet the criteria for normality via a Shapiro-Wilk test, so normality cannot be assumed (p=`r shapiro.test(residuals(itt.lmer))$p.value`).
+
+## Normalized to Fasting Glucose
+
+```{r itt-lineplot-normalized}
+times <- c(0,15,30,45,60,75,90)
+plot(times, itt.summary.lineplots[3,3:9]/as.numeric(itt.summary.lineplots[3,3])*100, 
+     type="l", ylim=c(0,105), las=1,
+     ylab="Blood Glucose (% of Fasting Glucose)",
+     xlab="Insulin (min)", 
+     lty=1, col=color.scheme[2])
+lines(times, itt.summary.lineplots[1,3:9]/as.numeric(itt.summary.lineplots[1,3])*100, col=color.scheme[1])
+lines(times, itt.summary.lineplots[4,3:9]/as.numeric(itt.summary.lineplots[4,3])*100, col=color.scheme[2], lty=2)
+lines(times, itt.summary.lineplots[2,3:9]/as.numeric(itt.summary.lineplots[2,3])*100, col=color.scheme[1], lty=2)
+legend("topright", c("NCD - Control", "NCD - Dexamethasone", "HFD - Control", "HFD - Dexamethasone"),
+       col=c(color.scheme[1],color.scheme[2],color.scheme[1],color.scheme[2]),
+       lty=c(1,1,2,2),
+       bty="n")
+
+#add error bars for water
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[3,3:9]/as.numeric(itt.summary.lineplots[3,3])*100),
+             as.numeric(itt.summary.lineplots[3,10:16]/as.numeric(itt.summary.lineplots[3,3])*100),
+             col=color.scheme[2])
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[1,3:9]/as.numeric(itt.summary.lineplots[1,3])*100),
+             as.numeric(itt.summary.lineplots[1,10:16]/as.numeric(itt.summary.lineplots[1,3])*100))
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[4,3:9]/as.numeric(itt.summary.lineplots[4,3])*100),
+             as.numeric(itt.summary.lineplots[4,10:16]/as.numeric(itt.summary.lineplots[4,3])*100),
+             col=color.scheme[2])
+superpose.eb(times,
+             as.numeric(itt.summary.lineplots[2,3:9]/as.numeric(itt.summary.lineplots[2,3])*100),
+             as.numeric(itt.summary.lineplots[2,10:16]/as.numeric(itt.summary.lineplots[2,3])*100))
+     
+```
+
+
+## Fasting Blood Glucose
+
+```{r itt-fasting-glucose}
+library(tidyr)
+itt.summary.barplots$Treatment <- relevel(itt.summary.barplots$Treatment, ref="Water")
+itt.summary.barplots$Diet <- relevel(itt.summary.barplots$Diet, ref="NCD")
+
+barplot.data <- 
+  itt.summary.barplots %>%
+  select(Treatment,Diet, FG.mean) %>%
+  spread(Diet, FG.mean)
+
+barplot.data.se <- 
+  itt.summary.barplots %>%
+  select(Treatment,Diet, FG.se) %>%
+  spread(Diet, FG.se)
+
+
+ymax <- max(itt.summary.barplots$FG.mean + itt.summary.barplots$FG.se)
+plot <- barplot(as.matrix(barplot.data[2:3]),
+                beside=T, las=1,
+                ylab=("Fasting Glucose (mg/dL)"),
+                col=c(color.scheme[1],color.scheme[2]),
+                ylim=c(0,ymax))
+
+superpose.eb(plot,
+             as.matrix(barplot.data[2:3]),
+             as.matrix(barplot.data.se[2:3]))
+
+legend("topleft", levels(barplot.data$Treatment), fill=color.scheme, bty="n")
+```
+
+### Fasting Glucose Statistics
+
+Analysed these data by 2-way ANOVA with an interaction
+
+```{r fasting-glucose-statistics}
+fg.aov <- aov(X0 ~ Treatment + Diet + Treatment:Diet, data=itt.glucose)
+kable(summary(fg.aov)[[1]], caption="2 Way ANOVA for Fasting Glucose")
+```
+
+The residuals from this ANOVA can **not** be assumed to be normally distributed as they fail a Shapiro-Wilk test (p=`r shapiro.test(residuals(fg.aov))$p.value`).
+
+## Area Under Curve During ITT
+
+```{r itt-auc-barplot}
+barplot.data <- 
+  itt.summary.barplots %>%
+  select(Treatment,Diet, AUC.mean) %>%
+  spread(Diet, AUC.mean)
+
+barplot.data.se <- 
+  itt.summary.barplots %>%
+  select(Treatment,Diet, AUC.se) %>%
+  spread(Diet, AUC.se)
+
+
+ymax <- max(itt.summary.barplots$AUC.mean + itt.summary.barplots$AUC.se)
+plot <- barplot(as.matrix(barplot.data[2:3]),
+                beside=T, las=1,
+                ylab=("Area Under Curve of ITT"),
+                col=c(color.scheme[1],color.scheme[2]),
+                ylim=c(0,ymax))
+
+superpose.eb(plot,
+             as.matrix(barplot.data[2:3]),
+             as.matrix(barplot.data.se[2:3]))
+
+legend("topleft", levels(barplot.data$Treatment), fill=color.scheme, bty="n")
+```
+
+### AUC Statistics
+
+Analysed these data by 2-way ANOVA with an interaction
+
+```{r auc-statistics}
+auc.aov <- aov(AUC ~ Treatment + Diet + Treatment:Diet, data=itt.glucose)
+kable(summary(auc.aov)[[1]], caption="2 Way ANOVA for Area Under Curve of ITT")
+```
+
+The residuals from this ANOVA can **not** be assumed to be normally distributed as they fail a Shapiro-Wilk test (p=`r shapiro.test(residuals(auc.aov))$p.value`).
+
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

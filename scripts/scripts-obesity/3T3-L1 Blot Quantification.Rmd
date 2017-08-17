@@ -1,0 +1,105 @@
+---
+title: "Quantification of protein levels from 3T3-L1 Adipocytes"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-16'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+    number_sections: no
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Mature 3T3-L1 adipocytes were treated with dexamethasone for 48h.
+
+# Raw Data
+
+The input data is the quantified band intensities.
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/3T3-L1 Blot Quantification.csv' #make this a separate line, you can use any variable you want
+data <- read_csv(filename, col_types = cols(Treatment=col_factor(levels=c("Vehicle","Dexamethasone")),
+                                            Experiment=col_factor(levels=NULL)))
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r analysis}
+blot.data <-
+  data %>%
+  group_by(Experiment) %>%
+  mutate(Normalized.Levels = ATGL/GAPDH) %>%
+  mutate(Relative.Levels = Normalized.Levels/Normalized.Levels[Treatment=="Vehicle"])
+
+kable(blot.data, caption="Raw and normalized data")
+
+blot.summary <-
+  select(blot.data, Treatment, Relative.Levels) %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric, funs(mean,se,length))
+
+kable(blot.summary, caption="Summary data")
+```
+
+```{r 3T3-L1-ATGL-quantification}
+plot <- with(blot.summary, barplot(mean,
+                names.arg=Treatment,
+                las=1,
+                ylab="ATGL Protein Levels (Relative Units)",
+                ylim=c(0, max(mean+se))))
+
+with(blot.summary,superpose.eb(plot,mean,se))
+```
+
+## Statistics
+
+The relative data were not normally distributed via Shapiro-Wilk test (p=`r shapiro.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels)$p.value`), so we did a Wilcoxon Rank sum test relative 1.  This yielded a p-value of **`r wilcox.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels, mu=1)$p.value`**
+
+# Interpretation
+
+ATGL levels were higher, though this did not reach statistical significance.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

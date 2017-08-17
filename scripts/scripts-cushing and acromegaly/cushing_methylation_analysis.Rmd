@@ -1,0 +1,188 @@
+Analysis of Methylation Data from Cushing's Study
+=============================================================
+
+This file was last compiled on ```r date()```.
+
+```{r data entry, echo=FALSE, warning=FALSE}
+library(xlsx)
+methylation.data.file <- '../data/raw/Summary Table of Cushings Relative Control Methylation Jan 6 2013.xlsx'
+methylation.data <- read.xlsx2(methylation.data.file, sheetIndex=1,startRow=2)
+methylation.data$Average.Beta.Control <- as.numeric(as.character(methylation.data$Average.Beta.Control))
+methylation.data$Average.Beta.Cushings <- as.numeric(as.character(methylation.data$Average.Beta.Cushings))
+methylation.data$DiffScore.Cushings <- as.numeric(as.character(methylation.data$DiffScore.Cushings))
+methylation.data$Delta.Beta.Cushings <- as.numeric(as.character(methylation.data$Delta.Beta.Cushings))
+
+expression.data.file <- '../data/processed/Annotated Results GRCh37.74 - Cushing.csv'
+expression.data <- read.csv(expression.data.file)
+DE <- expression.data[!is.na(expression.data$padj),]
+DE <- DE[DE$padj<0.05,]
+
+combined.data <- merge(expression.data, methylation.data,
+                       by.x='external_gene_id',
+                       by.y='Gene.Symbol')
+combined.data$Delta.Beta.Cushings <- as.numeric(combined.data$Delta.Beta.Cushings)
+combined.data$DiffScore.Cushings <- as.numeric(combined.data$DiffScore.Cushings)
+
+#add variable to indicate DE or DM (differentially expressed or methylated)
+combined.data$DE <- ifelse(combined.data$padj<0.05, 1, 0)
+combined.data$DE <- factor(combined.data$DE)
+combined.data$DM <- ifelse(is.na(combined.data$Delta.Beta.Cushings),0,1)
+
+```
+
+The methylation is in `r methylation.data.file` wherea se we used `r expression.data.file` for the relative expression.
+
+Statistics
+---------
+
+Tested the predictive value on the delta-beta value on the fold change.
+
+```{r methylation-all-gene-plots, dev=c('png','pdf'), echo=FALSE}
+lm.fit.tss1500 <- lm(2^log2FoldChange~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
+summary(lm.fit.tss1500)
+par(mfrow=c(2,2))
+plot(lm.fit.tss1500,main="Before transformation")
+shapiro.test(lm.fit.tss1500$residuals)
+#since the residuals were not normally distributed, perform box-cox transformation
+library(MASS)
+par(mfrow=c(1,1))
+bc <- boxcox(lm.fit.tss1500)
+lambda <- bc$x[which.max(bc$y)]
+#refit the model 
+lm.fit.tss1500 <- lm(log2FoldChange^lambda~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',])
+summary(lm.fit.tss1500)
+par(mfrow=c(2,2))
+plot(lm.fit.tss1500, main="After Box-Cox transformation")
+shapiro.test(lm.fit.tss1500$residuals)
+
+
+lm.fit.tss200 <- lm(log2FoldChange~Delta.Beta.Cushings, data=combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',])
+summary(lm.fit.tss200)
+plot(lm.fit.tss200, main="No Transformation")
+shapiro.test(lm.fit.tss200$residuals)
+#in the above model, the row 871 appeared to be an outlier, so removed this row and the residuals were normally distributed.
+data_tss200 <- combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',]
+subset_tss200<-data_tss200[rownames(data_tss200)!=836,]
+lm.fit.tss200.subset <- lm(log2FoldChange~Delta.Beta.Cushings, data=subset_tss200)
+summary(lm.fit.tss200.subset)
+plot(lm.fit.tss200.subset, main="After removing row ID 836")
+shapiro.test(lm.fit.tss200.subset$residuals)
+```
+
+Test if differentially methlation predicts foldchange for differentially expressed genes.
+-----------------------
+To test this, we took a subset of genes that are differentially expressed from the differentially methylated set.
+
+```{r ,echo=FALSE,warning=FALSE}
+combined.data.DE <-combined.data[combined.data$padj<0.05,]
+combined.data.DE <-combined.data.DE[!(is.na(combined.data.DE$padj)),]
+
+plot(combined.data.DE$Delta.Beta.Cushings, combined.data.DE$padj)
+plot(combined.data.DE$Delta.Beta.Cushings, combined.data.DE$log2FoldChange)
+
+lm.fit.tss1500.DE <- lm(log2FoldChange~Delta.Beta.Cushings, data=combined.data.DE[combined.data.DE$UCSC_REFGENE_GROUP=='TSS1500',])
+summary(lm.fit.tss1500.DE)
+par(mfrow=c(2,2))
+plot(lm.fit.tss1500.DE)
+shapiro.test(lm.fit.tss1500.DE$residuals)
+```
+
+
+Are Differentially Methylated Genes More Likely to Be Differentially Expressed?
+---------------------------------------------------------------------------------
+
+To test this, we asked whether the genes with a significantly different methylation pattern had a significantly different expression pattern.  We then compared this to a randomly sampled set of genes from the same expression set.  We then repeated this analysis 1000 times for each of the hypo and hyper expressed genes, and tested how often the chi-squared test led to a significant result.
+
+```{r diff-expression, echo=FALSE, warning=FALSE}
+num_DE_DM <- nrow(combined.data.DE)
+num_notDE_DM <- length(unique(methylation.data$Gene.Symbol))-nrow(combined.data.DE)
+num_DE_notDM <- nrow(DE) - num_DE_DM
+num_notDE_notDM <- nrow(expression.data)-nrow(DE)-num_notDE_DM
+contigency.table <- as.table(rbind(c(num_DE_DM, num_DE_notDM ), c(num_notDE_DM, num_notDE_notDM)))
+dimnames(contigency.table) <- list(DExpressed = c("Yes","No"),
+                    DMethyl = c("Yes", "No"))
+library(gmodels)
+CrossTable(contigency.table)
+Xsq <- chisq.test(contigency.table)
+Xsq
+Xsq$observed   # observed counts (same as contigency.table)
+Xsq$expected   # expected counts under the null
+```
+
+The Chi-sq p-value is `r Xsq$p.value`, indicating that there is no relationship between methylation and expression.
+
+```{r Statisics-continue}
+
+hypermethylated.genes <- levels(droplevels(combined.data[combined.data$Delta.Beta.Cushings>0,]$external_gene_id))
+hypomethylated.genes <- levels(droplevels(combined.data[combined.data$Delta.Beta.Cushings<0,]$external_gene_id))
+
+
+old.warn <- options()$warn
+options(warn = -1)
+hyper.bootstrap <- rep(NA,1000)
+for (n in seq(1,1000)){
+  hyper.diff.expressors <- table(subset(expression.data, external_gene_id%in%hypermethylated.genes)$padj < 0.05)
+  hyper.null.set <- sample(expression.data$external_gene_id, length(hypermethylated.genes), replace=F)
+  hyper.null <- table(subset(expression.data, external_gene_id%in%hyper.null.set )$padj < 0.05)
+  hyper.bootstrap[n] <- try(chisq.test(hyper.diff.expressors, p=hyper.null, rescale.p=T)$p.value, silent=T)
+}
+table(hyper.bootstrap < 0.05)
+
+hypo.bootstrap <- rep(NA,1000)
+for (n in seq(1,1000)){
+  hypo.diff.expressors <- table(subset(expression.data, external_gene_id%in%hypomethylated.genes)$padj < 0.05)
+  hypo.null.set <- sample(expression.data$external_gene_id, length(hypomethylated.genes), replace=F)
+  hypo.null <- table(subset(expression.data, external_gene_id%in%hypo.null.set )$padj < 0.05)
+  hypo.bootstrap[n] <- try(chisq.test(hypo.diff.expressors, p=hypo.null, rescale.p=T)$p.value, silent=T)
+}
+table(hypo.bootstrap < 0.05)
+options(warn = old.warn)
+```
+
+Figures
+----------
+
+```{r methylation-significant-genes, dev=c('png','pdf'), echo=FALSE, fig.show='asis'}
+with(combined.data, plot(Delta.Beta.Cushings,log2FoldChange
+                         , pch=19, cex=0.1,
+                         col=UCSC_REFGENE_GROUP,
+                         main="All Methylation Sites"))
+legend("topleft", levels(combined.data$UCSC_REFGENE_GROUP), pch=19, cex=1, bty="n",
+       col=palette()[1:6])
+
+with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS200',], 
+     plot(Delta.Beta.Cushings,2^log2FoldChange,
+                         pch=19, cex=0.1,
+                         main="Only TSS200"))
+
+with(combined.data[combined.data$UCSC_REFGENE_GROUP=='TSS1500',], 
+     plot(Delta.Beta.Cushings,2^log2FoldChange,
+                       pch=19, cex=0.1,
+                         main="Only TSS1500"))
+
+```
+
+How Many Genes were Differentially Methylated
+----------------------------------------------
+
+```{r differentially-methylated, echo=FALSE}
+hypomethylated.data <- droplevels(subset(methylation.data, Delta.Beta.Cushings<0))
+hypermethylated.data <- droplevels(subset(methylation.data, Delta.Beta.Cushings>0))
+
+hypomethylated_genes_file <- '../data/processed/Cushings Hypomethylated Genes.txt'
+write(levels(hypomethylated.data$Gene.Symbol), hypomethylated_genes_file)
+
+hypermethylated_genes_file <- '../data/processed/Cushings Hypermethylated Genes.txt'
+write(levels(hypermethylated.data$Gene.Symbol), hypermethylated_genes_file)
+```
+
+There was `r length(levels(methylation.data$Gene.Symbol))` that had differential methylation including `r length(levels(hypomethylated.data$Gene.Symbol))` hypomethylated genes and `r length(levels(hypermethylated.data$Gene.Symbol))` hypermethylated genes.  There was also `r length(intersect(levels(hypermethylated.data$Gene.Symbol),levels(hypomethylated.data$Gene.Symbol)))` genes which were hypomethylated in one location and hypermethylated in another.  These genes are written to a files named `r hypomethylated_genes_file` and `r hypermethylated_genes_file`.
+
+The `r length(unique(as.character(subset(combined.data, padj<0.05)$external_gene_id)))` genes which were differentially methylated **and** differentially expressed were `r unique(as.character(subset(combined.data, padj<0.05)$external_gene_id))`.
+
+
+Session Information
+-------------------
+```{r session-info}
+sessionInfo()
+```

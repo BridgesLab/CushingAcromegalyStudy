@@ -1,0 +1,56 @@
+Summary of Age-Corrected Effects
+========================================================
+
+```{r data-entry, echo=FALSE}
+input_file <- '../data/processed/Annotated_Results_GRCh37.74_Acromegaly_age.csv'
+age_data <- read.csv(input_file)
+
+all_sig <- unique(c(levels(droplevels(subset(age_data, padj<0.05)$external_gene_id)), levels(droplevels(subset(age_data, padj_AcrovsCon_0.60<0.05)$external_gene_id)), levels(droplevels(subset(age_data, padj_AcrovsCon_60.100<0.05)$external_gene_id))))
+```
+
+This analysis uses as an input the age-adjusted analysis, found in `r input_file`.  This script was most recently run on `r date()`.  
+
+Number of Significantly Different Genes
+----------------------------------------
+
+After adjusting for age there were `r length(subset(age_data, padj<0.05)$external_gene_id)` significantly different genes.  This includes `r length(subset(age_data, padj<0.05&log2FoldChange>0)$external_gene_id)` upregulated genes and `r length(subset(age_data, padj<0.05&log2FoldChange<0)$external_gene_id)` downregulated genes.
+
+
+There were also `r length(subset(age_data, padj_AcrovsCon_0.60<0.05)$external_gene_id)` significantly different genes in the 40-60 year old cohort and `r length(subset(age_data, padj_AcrovsCon_60.100<0.05)$external_gene_id)` genes in the 60+ cohort.  All together this includes `r length(all_sig)`.  
+
+Age-Dependent Effects
+-----------------------
+
+```{r age-effects, echo=FALSE}
+sig.data <- subset(age_data, padj<0.05)
+se <- function(x) sd(x)/sqrt(length(x))
+```
+
+Amongst the significantly different genes, the absolute value of the fold change of the under 60 patients was `r mean(2^abs(sig.data$log2FC_AcrovsCon_0.60))` +/- `r se(2^abs(sig.data$log2FC_AcrovsCon_0.60))` wheras for the older patients it was `r mean(2^abs(sig.data$log2FC_AcrovsCon_60.100))` +/- `r se(2^abs(sig.data$log2FC_AcrovsCon_60.100))`.  This means that in general the younger cohort gene expression changes were `r mean(2^abs(sig.data$log2FC_AcrovsCon_0.60)/2^abs(sig.data$log2FC_AcrovsCon_60.100))` +/- `r se(2^abs(sig.data$log2FC_AcrovsCon_0.60)/2^abs(sig.data$log2FC_AcrovsCon_60.100))` fold larger.
+
+```{r older-vs-younger, dev=c('png','pdf'), echo=FALSE}
+plot(     sig.data$log2FC_AcrovsCon_0.60,
+          sig.data$log2FC_AcrovsCon_60.100,  
+     pch=18, las=1, main="Log Fold Change for Significantly Different Genes",
+     ylab="Over 60", 
+     xlab="Under 60")
+
+abline(a=0,b=1, lty=1)
+abline(h=0,v=0, lty=2)
+
+
+age.comp.lm <- lm(log2FC_AcrovsCon_60.100~log2FC_AcrovsCon_0.60 -1 , data=sig.data)
+abline(age.comp.lm, col='red',lty=2)
+
+legend('topleft',c('Identity','Best Fit'), col=c('black','red'), bty='n', lty=c(1,2))
+```
+
+These data were not normally distributed by Shapiro-Wilk test (`r shapiro.test(2^abs(sig.data$log2FC_AcrovsCon_0.60))$p.value` and `r shapiro.test(2^abs(sig.data$log2FC_AcrovsCon_60.100))$p.value`), so we did a Wilcoxon test between these groups and found that they were significantly different `r wilcox.test(2^abs(sig.data$log2FC_AcrovsCon_60.100), 2^abs(sig.data$log2FC_AcrovsCon_0.60))$p.value`.
+
+
+Session Information
+-------------------
+```{r session-info, echo=FALSE}
+sessionInfo()
+```
+

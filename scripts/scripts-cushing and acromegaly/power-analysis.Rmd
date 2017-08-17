@@ -1,0 +1,73 @@
+Retrospective Power Analysis
+========================================================
+
+This script calculates the statisitcal power for this type of data
+
+```{r setup, echo=FALSE}
+input_file <- "../data/processed/RPKM_counts_Cushing_GRCh37.74.csv"
+rpkm.table <- read.csv(input_file, row.names='X')
+sample_mapping_filename <- "../data/raw/patient_sample_mapping.csv"
+mapping <- read.csv(sample_mapping_filename)
+
+mapping$samplename <- paste("sample", mapping$sample.., sep="")
+mapping$group <- relevel(mapping$group, ref="non-functioning")
+levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
+
+filtered.mapping <- mapping[mapping$patient.. != 29,]
+filtered.rpkm <- rpkm.table[,colnames(rpkm.table) != mapping[mapping$patient.. == 29,]$samplename]
+
+control.samples <- filtered.mapping$samplename[filtered.mapping$group=='Control']
+cushing.samples <- filtered.mapping$samplename[filtered.mapping$group=='Cushing\'s']
+```
+
+This uses the counts table in `r input_file` and was most recently run on `r date()`.
+
+```{r error-calculation, echo=FALSE}
+
+#calculate the coefficient variation (CV) for the Control samples
+control.rpkm <- filtered.rpkm[,colnames(filtered.rpkm)%in%control.samples]
+
+dup.means <- rowMeans(control.rpkm)
+dup.sd <- apply(control.rpkm, 1, function(x) sd(x))
+#calculate the CV
+dup.rel.error <- dup.sd/dup.means
+write.table(as.data.frame(dup.rel.error), '../data/processed/control_coefficient_variation.txt', sep="\t")
+cv <- read.table('../data/processed/control_coefficient_variation.txt')
+#remove genes that have NA coefficient variation
+cv <- cv[!(is.na(cv$dup.rel.error)),]
+median(cv)
+
+####cushing's samples CV
+cushing.rpkm <- filtered.rpkm[,colnames(filtered.rpkm)%in%cushing.samples]
+cushing.dup.means <- rowMeans(cushing.rpkm)
+cushing.dup.sd <- apply(cushing.rpkm, 1, function(x) sd(x))
+#calculate the CV
+cushing.dup.rel.error <- cushing.dup.sd/cushing.dup.means
+write.table(as.data.frame(cushing.dup.rel.error), '../data/processed/cushing_coefficient_variation.txt', sep="\t")
+cushing.cv <- read.table('../data/processed/cushing_coefficient_variation.txt')
+#remove genes that have NA coefficient variation
+cushing.cv <- cushing.cv[!(is.na(cushing.cv$cushing.dup.rel.error)),]
+median(cushing.cv)
+
+#calculate sample size 
+library(RNASeqPower)
+#length(cushing.samples)-1 because we don't have the sequenced file for sample 12128.
+power<- rnapower(depth=10, cv=median(cv), cv2=median(cushing.cv), alpha=0.05, n=length(control.samples), n2=length(cushing.samples)-1, effect=1.5)
+
+````
+
+We have **`r power`** power in detecting the target effect size of 1.5 (50% change in expression). The arguments are as follow:
+(a) average depth of coverage is 10
+(b) sample size in the control group is `r length(control.samples)` 
+(c) sample size in the Cushing's group is `r length(cushing.samples)-1` 
+(d) biological coefficient of variant in the control is `r median(cv)`
+(e) biological coefficient of variant in the Cushing's is `r median(cushing.cv)`
+(f) alpha = 0.05
+
+
+
+Session Information
+-------------------
+```{r session-info}
+sessionInfo()
+```
