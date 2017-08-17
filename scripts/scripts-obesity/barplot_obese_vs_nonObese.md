@@ -3,7 +3,7 @@ Quynh Tran and Dave Bridges
 October 21, 2015  
 
 
-This file was last compiled on ``Mon Jul 31 20:20:12 2017``.  Unless otherwise noted this analysis removes subject 29.
+This file was last compiled on ``Thu Aug 17 09:11:01 2017``.  Unless otherwise noted this analysis removes subject 29.
 
 
 
@@ -12,6 +12,14 @@ This file was last compiled on ``Mon Jul 31 20:20:12 2017``.  Unless otherwise n
 
 
 
+Table: Subjects in each group
+
+diagnosis   BMI.cat       n
+----------  ----------  ---
+Control     Not Obese     5
+Control     Obese         6
+Cushing's   Not Obese     3
+Cushing's   Obese         5
 
 ## BMI
 
@@ -393,13 +401,13 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_2.2.1  plyr_1.8.4     reshape2_1.4.2 knitr_1.15.1  
+## [1] ggplot2_2.2.1  plyr_1.8.4     reshape2_1.4.2 knitr_1.17    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.10     digest_0.6.12    rprojroot_1.2    grid_3.3.0      
-##  [5] gtable_0.2.0     backports_1.0.5  magrittr_1.5     scales_0.4.1    
-##  [9] evaluate_0.10    highr_0.6        stringi_1.1.3    lazyeval_0.2.0  
-## [13] rmarkdown_1.6    labeling_0.3     tools_3.3.0      stringr_1.2.0   
-## [17] munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2 htmltools_0.3.5 
-## [21] tibble_1.3.0
+##  [1] Rcpp_0.12.12     digest_0.6.12    rprojroot_1.2    grid_3.3.0      
+##  [5] gtable_0.2.0     backports_1.1.0  magrittr_1.5     scales_0.4.1    
+##  [9] evaluate_0.10.1  highr_0.6        rlang_0.1.2      stringi_1.1.5   
+## [13] lazyeval_0.2.0   rmarkdown_1.6    labeling_0.3     tools_3.3.0     
+## [17] stringr_1.2.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
+## [21] htmltools_0.3.6  tibble_1.3.3
 ```

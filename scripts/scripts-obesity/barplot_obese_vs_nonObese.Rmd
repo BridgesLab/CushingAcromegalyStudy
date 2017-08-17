@@ -75,6 +75,9 @@ all.o1 <- ddply(melted.data.used, .(diagnosis, BMI.cat, measurement), summarise,
 all.o1$BMI.cat <- factor(all.o1$BMI.cat)
 all.o1$measurement <- factor(all.o1$measurement)
 
+n.stat <- ddply(subset(melted.data.used, measurement=='BMI'), .(diagnosis, BMI.cat), summarise, n = length(value))
+kable(n.stat, caption="Subjects in each group")
+
 glucose.summary.table <- melted.data.used[melted.data.used$measurement %in% glucose.data.vars,]
 glucose.stat <- ddply(glucose.summary.table, .(diagnosis, BMI.cat, measurement), summarise, mean = mean(value), se=se(value))
 
