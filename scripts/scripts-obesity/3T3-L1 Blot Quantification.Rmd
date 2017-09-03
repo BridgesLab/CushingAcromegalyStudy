@@ -6,7 +6,6 @@ output:
   html_document:
     toc: yes
     keep_md: yes
-    number_sections: no
   pdf_document:
     highlight: tango
     keep_tex: yes
@@ -67,7 +66,7 @@ These data can be found in `r getwd()` in a file named `r filename`.  This scrip
 blot.data <-
   data %>%
   group_by(Experiment) %>%
-  mutate(Normalized.Levels = ATGL/GAPDH) %>%
+  mutate(Normalized.Levels = ATGL.Revert/Revert) %>%
   mutate(Relative.Levels = Normalized.Levels/Normalized.Levels[Treatment=="Vehicle"])
 
 kable(blot.data, caption="Raw and normalized data")
@@ -90,13 +89,15 @@ plot <- with(blot.summary, barplot(mean,
 with(blot.summary,superpose.eb(plot,mean,se))
 ```
 
+These data were normalized to total protein stain (Revert) but GAPDH levels were determined as well.
+
 ## Statistics
 
-The relative data were not normally distributed via Shapiro-Wilk test (p=`r shapiro.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels)$p.value`), so we did a Wilcoxon Rank sum test relative 1.  This yielded a p-value of **`r wilcox.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels, mu=1)$p.value`**
+The relative data could be assumed to be normally distributed via Shapiro-Wilk test (p=`r shapiro.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels)$p.value`), so we did a one-way *t*-test relative to a value of 1.  This yielded a p-value of **`r t.test(filter(blot.data, Treatment=="Dexamethasone")$Relative.Levels, mu=1)$p.value`**
 
 # Interpretation
 
-ATGL levels were higher, though this did not reach statistical significance.
+ATGL levels were significantly higher in 3T3-L1 adipocytes after dexamethasone treatment.
 
 # Session Information
 

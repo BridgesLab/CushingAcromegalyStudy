@@ -16,40 +16,42 @@ The input data is the quantified band intensities.
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Blot Quantification.csv.  This script was most recently updated on Wed Aug 16 14:55:42 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Blot Quantification.csv.  This script was most recently updated on Sun Sep  3 07:10:51 2017.
 
 # Analysis
 
 
 Table: Raw and normalized data
 
-Treatment           ATGL    GAPDH  Experiment    Normalized.Levels   Relative.Levels
---------------  --------  -------  -----------  ------------------  ----------------
-Vehicle           318500   855000  1                         0.373              1.00
-Vehicle           327000   945500  2                         0.346              1.00
-Dexamethasone    1170000   803000  1                         1.457              3.91
-Dexamethasone    1333333   929000  2                         1.435              4.15
-Vehicle            12900    44600  3                         0.289              1.00
-Dexamethasone      35800     7230  3                         4.952             17.12
+Treatment           ATGL    GAPDH  Experiment    ATGL.Revert    Revert   Normalized.Levels   Relative.Levels
+--------------  --------  -------  -----------  ------------  --------  ------------------  ----------------
+Vehicle           318500   855000  1                    6505   2815000               0.002              1.00
+Vehicle           327000   945500  2                    4820   2735000               0.002              1.00
+Dexamethasone    1170000   803000  1                   19600   2450000               0.008              3.46
+Dexamethasone    1333333   929000  2                   21300   2370000               0.009              5.10
+Vehicle            12900    44600  3                   12900     84700               0.152              1.00
+Dexamethasone      35800     7230  3                   35800     61900               0.578              3.80
 
 
 
 Table: Summary data
 
-Treatment        mean     se   length
---------------  -----  -----  -------
-Vehicle          1.00   0.00        3
-Dexamethasone    8.39   4.36        3
+Treatment        mean      se   length
+--------------  -----  ------  -------
+Vehicle          1.00   0.000        3
+Dexamethasone    4.12   0.499        3
 
 ![](figures/3T3-L1-ATGL-quantification-1.png)<!-- -->
 
+These data were normalized to total protein stain (Revert) but GAPDH levels were determined as well.
+
 ## Statistics
 
-The relative data were not normally distributed via Shapiro-Wilk test (p=0.03), so we did a Wilcoxon Rank sum test relative 1.  This yielded a p-value of **0.25**
+The relative data could be assumed to be normally distributed via Shapiro-Wilk test (p=0.373), so we did a one-way *t*-test relative to a value of 1.  This yielded a p-value of **0.025**
 
 # Interpretation
 
-ATGL levels were higher, though this did not reach statistical significance.
+ATGL levels were significantly higher in 3T3-L1 adipocytes after dexamethasone treatment.
 
 # Session Information
 
