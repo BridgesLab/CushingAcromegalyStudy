@@ -84,11 +84,15 @@ plot <- with(summary, barplot(mean,
                               ylab="Triglyceride Levels (ug/well)"))
 
 superpose.eb(plot,summary$mean, summary$se)
+library(car)
 ```
 
 ## Statistics
 
-Need third replicate to do statistics
+For evaluating the effects of dexamethasone, we observed that dexamethasone reduced TG levels by **`r (summary$mean[2]-summary$mean[3])/summary$mean[2]*100`%**.
+
+
+To test for significance, we first did a Shapiro-Wilk test on the two groups.  This yielded p-value of `r shapiro.test(filter(data, Treatment=='Mature Adipocytes')$TG)$p.value` for the Mature Adipocytes and `r shapiro.test(filter(data, Treatment=='Mature Adipocytes \n+ Dexamethasone')$TG)$p.value` for the cells treated with Dexamethasone.  Based on the assumptions of normality we next did a Levene's test, which yielded a p-value of `r leveneTest(TG~Treatment, data = filter(data, Treatment!='Pre-Adipocytes'))$"Pr(>F)"[1]`.  This means we can assume equal variance and therefore did a Student's *t*-test.  This had a p-value of **`r t.test(TG~Treatment, data = filter(data, Treatment!='Pre-Adipocytes'))$p.value`**.
 
 # Interpretation
 
