@@ -71,6 +71,16 @@ summary <-
   group_by(Treatment) %>%
   summarize_if(is.numeric, funs(mean,se,length))
 
+data.norm <-
+  data %>%
+  group_by(Experiment) %>%
+  mutate(TG = TG/TG[Treatment=="Mature Adipocytes"]) 
+
+summary.norm <-
+  data.norm %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric, funs(mean,se,length))
+
 kable(summary, caption="Summary for cellular triglyceride levels")
 ```
 
@@ -87,12 +97,35 @@ superpose.eb(plot,summary$mean, summary$se)
 library(car)
 ```
 
+### Normalized Values
+
+```{r 3T3-L1-TG-Levels-normalized}
+plot <- with(summary.norm, barplot(mean,
+                              las=1,
+                              names.arg=Treatment,
+                              ylim=c(0,max(mean+se)),
+                              ylab="Triglyceride Levels (ug/well)"))
+
+superpose.eb(plot,summary.norm$mean, summary.norm$se)
+
+kable(summary.norm, caption="Normalized values")
+```
+
 ## Statistics
+
+### Absolute Values
 
 For evaluating the effects of dexamethasone, we observed that dexamethasone reduced TG levels by **`r (summary$mean[2]-summary$mean[3])/summary$mean[2]*100`%**.
 
 
 To test for significance, we first did a Shapiro-Wilk test on the two groups.  This yielded p-value of `r shapiro.test(filter(data, Treatment=='Mature Adipocytes')$TG)$p.value` for the Mature Adipocytes and `r shapiro.test(filter(data, Treatment=='Mature Adipocytes \n+ Dexamethasone')$TG)$p.value` for the cells treated with Dexamethasone.  Based on the assumptions of normality we next did a Levene's test, which yielded a p-value of `r leveneTest(TG~Treatment, data = filter(data, Treatment!='Pre-Adipocytes'))$"Pr(>F)"[1]`.  This means we can assume equal variance and therefore did a Student's *t*-test.  This had a p-value of **`r t.test(TG~Treatment, data = filter(data, Treatment!='Pre-Adipocytes'))$p.value`**.
+
+### Normalized Values
+
+For evaluating the effects of dexamethasone, after normalizing to each experiment's control, we observed that dexamethasone reduced TG levels by **`r (summary.norm$mean[2]-summary.norm$mean[3])/summary.norm$mean[2]*100`%**.
+
+
+To test for significance, we first did a Shapiro-Wilk test on the two groups.  This yielded p-value of `r shapiro.test(filter(data.norm, Treatment=='Mature Adipocytes \n+ Dexamethasone')$TG)$p.value` for the cells treated with Dexamethasone.  We therefore did a One-way *t*-test.  This had a p-value of **`r t.test(filter(data.norm, Treatment=='Mature Adipocytes \n+ Dexamethasone')$TG, mu=1)$p.value`**.
 
 # Interpretation
 

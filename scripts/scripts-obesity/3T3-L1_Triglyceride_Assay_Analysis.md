@@ -14,7 +14,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Cellular Triglyceride Levels.xlsx.  This script was most recently updated on Mon Sep  4 13:51:16 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Cellular Triglyceride Levels.xlsx.  This script was most recently updated on Mon Sep  4 14:36:59 2017.
 
 # Analysis
 
@@ -32,12 +32,34 @@ Dexamethasone treatment caused a **51.612**% reduction in cellular triglyceride 
 
 ![](figures/3T3-L1-TG-Levels-1.png)<!-- -->
 
+### Normalized Values
+
+![](figures/3T3-L1-TG-Levels-normalized-1.png)<!-- -->
+
+Table: Normalized values
+
+Treatment                               mean      se   length
+-----------------------------------  -------  ------  -------
+Pre-Adipocytes                        -0.075   0.047        2
+Mature Adipocytes                      1.000   0.000        3
+Mature Adipocytes 
++ Dexamethasone     0.476   0.038        3
+
 ## Statistics
+
+### Absolute Values
 
 For evaluating the effects of dexamethasone, we observed that dexamethasone reduced TG levels by **51.612%**.
 
 
 To test for significance, we first did a Shapiro-Wilk test on the two groups.  This yielded p-value of 0.761 for the Mature Adipocytes and 0.803 for the cells treated with Dexamethasone.  Based on the assumptions of normality we next did a Levene's test, which yielded a p-value of 0.491.  This means we can assume equal variance and therefore did a Student's *t*-test.  This had a p-value of **0.138**.
+
+### Normalized Values
+
+For evaluating the effects of dexamethasone, after normalizing to each experiment's control, we observed that dexamethasone reduced TG levels by **52.398%**.
+
+
+To test for significance, we first did a Shapiro-Wilk test on the two groups.  This yielded p-value of 0.873 for the cells treated with Dexamethasone.  We therefore did a One-way *t*-test.  This had a p-value of **0.005**.
 
 # Interpretation
 
