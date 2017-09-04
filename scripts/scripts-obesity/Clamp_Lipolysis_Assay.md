@@ -17,7 +17,7 @@ This includes calculated levels for glycerol, triglycerides and non-esterified f
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/Analyzed Clamp glycerol_TG_NEFA data.xlsx.  This script was most recently updated on Fri Sep  1 14:09:13 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/Analyzed Clamp glycerol_TG_NEFA data.xlsx.  This script was most recently updated on Mon Sep  4 18:15:13 2017.
 
 # Analysis
 
@@ -65,7 +65,7 @@ For insulin-suppressed NEFA levels, we observed a **153.8970146** percent increa
 
 #### Insulin Suppression Statistics
 
-For relative insulin suppression of NEFA levels, we observed a **32.852772** percent reduction in insulin suppression of NEFA levels with dexamethasone.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=9.8595803&times; 10^-4^).  To test for equal variance we used Levene's test, which for insulin-suppressed NEFA levels had a p-value of 0.168005.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **0.0579513**.
+For relative insulin suppression of NEFA levels, we observed a **32.852772** percent reduction in insulin suppression of NEFA levels with dexamethasone.  We observed a 71.01346 percent suppression with insulin in the control group, and a 47.6835699 percent suppression in the dexamethasone treated group.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=9.8595803&times; 10^-4^).  To test for equal variance we used Levene's test, which for insulin-suppressed NEFA levels had a p-value of 0.168005.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **0.0579513**.
 
 # Triglyceride Levels
 
@@ -110,7 +110,7 @@ sessionInfo()
 ## 
 ## other attached packages:
 ## [1] car_2.1-5    broom_0.4.2  bindrcpp_0.2 readxl_1.0.0 dplyr_0.7.2 
-## [6] tidyr_0.6.3  knitr_1.17  
+## [6] tidyr_0.7.1  knitr_1.17  
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.12       nloptr_1.0.4       cellranger_1.1.0  
@@ -123,8 +123,9 @@ sessionInfo()
 ## [22] stringr_1.2.0      MatrixModels_0.4-1 rprojroot_1.2     
 ## [25] grid_3.3.0         nnet_7.3-12        glue_1.1.1        
 ## [28] R6_2.2.2           foreign_0.8-69     rmarkdown_1.6     
-## [31] minqa_1.2.4        reshape2_1.4.2     magrittr_1.5      
-## [34] backports_1.1.0    htmltools_0.3.6    MASS_7.3-47       
-## [37] splines_3.3.0      assertthat_0.2.0   pbkrtest_0.4-7    
-## [40] mnormt_1.5-5       quantreg_5.33      stringi_1.1.5
+## [31] minqa_1.2.4        purrr_0.2.3        reshape2_1.4.2    
+## [34] magrittr_1.5       backports_1.1.0    htmltools_0.3.6   
+## [37] MASS_7.3-47        splines_3.3.0      assertthat_0.2.0  
+## [40] pbkrtest_0.4-7     mnormt_1.5-5       quantreg_5.33     
+## [43] stringi_1.1.5
 ```
