@@ -14,7 +14,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Cellular Triglyceride Levels.xlsx.  This script was most recently updated on Mon Sep  4 14:36:59 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/3T3-L1 Cellular Triglyceride Levels.xlsx.  This script was most recently updated on Mon Sep  4 14:38:44 2017.
 
 # Analysis
 

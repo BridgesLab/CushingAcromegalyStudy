@@ -104,7 +104,7 @@ plot <- with(summary.norm, barplot(mean,
                               las=1,
                               names.arg=Treatment,
                               ylim=c(0,max(mean+se)),
-                              ylab="Triglyceride Levels (ug/well)"))
+                              ylab="Triglyceride Levels (Relative Units)"))
 
 superpose.eb(plot,summary.norm$mean, summary.norm$se)
 
