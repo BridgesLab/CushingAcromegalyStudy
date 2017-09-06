@@ -144,7 +144,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc-barplot-1.png)<!-- -->
@@ -212,7 +212,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc2-barplot-1.png)<!-- -->
@@ -280,7 +280,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-g6pc3-barplot-1.png)<!-- -->
@@ -350,7 +350,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -387,7 +387,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pck1-barplot-1.png)<!-- -->
@@ -455,7 +455,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pck2-barplot-1.png)<!-- -->
@@ -525,7 +525,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -560,7 +560,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-pcx-barplot-1.png)<!-- -->
@@ -628,7 +628,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-hsd11b1-barplot-1.png)<!-- -->
@@ -696,7 +696,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-fgf21-barplot-1.png)<!-- -->
@@ -764,7 +764,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-fasn-barplot-1.png)<!-- -->
@@ -832,7 +832,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ![](figures/liver-qpcr-srebf1-barplot-1.png)<!-- -->
@@ -917,7 +917,7 @@ sessionInfo()
 ```
 ## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.3 (unknown)
+## Running under: OS X 10.12.6 (unknown)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -926,12 +926,13 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_0.6.1  dplyr_0.5.0  readr_1.0.0  knitr_1.15.1
+## [1] bindrcpp_0.2 tidyr_0.7.1  dplyr_0.7.2  readr_1.1.1  knitr_1.17  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9     digest_0.6.12   rprojroot_1.2   assertthat_0.1 
-##  [5] R6_2.2.0        DBI_0.5-1       backports_1.0.5 magrittr_1.5   
-##  [9] evaluate_0.10   highr_0.6       stringi_1.1.2   lazyeval_0.2.0 
-## [13] rmarkdown_1.3   tools_3.3.0     stringr_1.1.0   yaml_2.1.14    
-## [17] htmltools_0.3.5 tibble_1.2
+##  [1] Rcpp_0.12.12     bindr_0.1        magrittr_1.5     hms_0.3         
+##  [5] tidyselect_0.2.0 R6_2.2.2         rlang_0.1.2      stringr_1.2.0   
+##  [9] highr_0.6        tools_3.3.0      htmltools_0.3.6  yaml_2.1.14     
+## [13] rprojroot_1.2    digest_0.6.12    assertthat_0.2.0 tibble_1.3.3    
+## [17] purrr_0.2.3      glue_1.1.1       evaluate_0.10.1  rmarkdown_1.6   
+## [21] stringi_1.1.5    backports_1.1.0  pkgconfig_2.0.1
 ```
