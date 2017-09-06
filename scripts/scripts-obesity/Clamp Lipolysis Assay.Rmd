@@ -1,0 +1,244 @@
+---
+title: "Analysis of Lipolysis Data from Glucose Clamp Studies"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-29'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+#options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('black', 'red')
+```
+
+# Purpose
+
+To determine baseline and lipid-suppressed markers of lipolysis.
+
+# Experimental Details
+
+
+# Raw Data
+
+This includes calculated levels for glycerol, triglycerides and non-esterified fatty acids for only the HFD animals.  
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- '../../data/raw/Analyzed Clamp glycerol_TG_NEFA data.xlsx' #make this a separate line, you can use any variable you want
+data <- read_excel(filename)
+data$ID <- as.factor(data$ID)
+data$Treatment <- relevel(as.factor(data$Treatment), ref="Water")
+```
+
+These data can be found in `r getwd()` in a file named `r filename`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r summary}
+summary.data <-
+  data %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric,funs(mean,se))
+
+shapiro.p <- function(x) shapiro.test(x)$p.value  
+
+shapiro.results <- 
+  data %>%
+  group_by(Treatment) %>%
+  summarize_if(is.numeric,shapiro.p)
+
+kable(data %>% group_by(Treatment) %>% count, caption="Number of mice in each group.")
+```
+
+## Glycerol Levels
+
+```{r glycerol-absolute}
+ymax <- with(summary.data,max(Basal.glycerol_mean+Basal.glycerol_se))
+plot <- with(summary.data, barplot(cbind(Basal.glycerol_mean, Insulin.glycerol_mean),
+             beside=T,
+             las=1,
+             col=color.scheme,
+             names.arg=c("Basal","Insulin"),
+             ylim=c(0,ymax),
+             ylab="Serum Glycerol Levels (ug/mL)"))
+
+with(summary.data, superpose.eb(plot,
+                                cbind(Basal.glycerol_mean, Insulin.glycerol_mean),
+                                cbind(Basal.glycerol_se, Insulin.glycerol_se)))
+
+legend("topright", levels(data$Treatment), bty="n", fill=color.scheme)
+```
+
+#### Glycerol Statistics
+
+```{r stats}
+library(broom)
+library(car)
+```
+
+For basal glycerol levels, we observed a **`r with(summary.data, (Basal.glycerol_mean[2]-Basal.glycerol_mean[1])/Basal.glycerol_mean[1])*100`** percent increase in glycerol levels with dexamethasone.  The data could be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Basal.glycerol)`).  To test for equal variance we used Levene's test, which for basal glycerol levels had a p-value of `r leveneTest(Basal.glycerol~Treatment, data=data)$"Pr(>F)"[1]`.  Based on unequal variance we did a Welch's *t*-test which had a p-value of **`r t.test(Basal.glycerol~Treatment, data=data, var.equal=F)$p.value`**.
+
+For insulin-suppressed glycerol levels, we observed a **`r with(summary.data, (Insulin.glycerol_mean[2]-Insulin.glycerol_mean[1])/Insulin.glycerol_mean[1])*100`** percent increase in glycerol levels with dexamethasone.  The data could be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Insulin.glycerol)`).  To test for equal variance we used Levene's test, which for insulin-suppressed glycerol levels had a p-value of `r leveneTest(Insulin.glycerol~Treatment, data=data)$"Pr(>F)"[1]`.  Based on equal variance we did a Student's *t*-test which had a p-value of **`r t.test(Insulin.glycerol~Treatment, data=data, var.equal=T)$p.value`**.
+
+### Suppression by Insulin
+
+```{r glycerol-suppression}
+suppression.data <- 
+  data %>%
+  mutate(Glycerol.suppression = (Basal.glycerol-Insulin.glycerol)/Basal.glycerol*100,
+         NEFA.suppression = (Basal.NEFA-Insulin.NEFA)/Basal.NEFA*100,
+         TG.suppression =  (Basal.tg-Insulin.tg)/Basal.tg*100)
+
+suppression.summary.data <-
+  suppression.data %>%
+  group_by(Treatment) %>%
+  select(ends_with('suppression')) %>%
+  summarize_each(funs(mean,se,shapiro.p))
+  
+plot <- with(suppression.summary.data, 
+             barplot(Glycerol.suppression_mean,
+                     las=1,
+                     col=color.scheme,
+                     names.arg=Treatment,
+                     ylim=c(0,max(Glycerol.suppression_mean+Glycerol.suppression_se)),
+                     ylab="Insulin Suppression of Glycerol Levels (%)"))
+
+superpose.eb(plot,
+             suppression.summary.data$Glycerol.suppression_mean,
+             suppression.summary.data$Glycerol.suppression_se)
+```
+
+#### Glycerol Suppression Statistics
+
+For relative insulin suppression of Glycerol levels, we observed a **`r with(suppression.summary.data, (Glycerol.suppression_mean[1]-Glycerol.suppression_mean[2])/Glycerol.suppression_mean[1])*100`** percent reduction in insulin suppression of Glycerol levels with dexamethasone.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(suppression.summary.data$Glycerol.suppression_shapiro.p)`).  To test for equal variance we used Levene's test, which for insulin-suppressed Glycerol levels had a p-value of `r leveneTest(Glycerol.suppression~Treatment, data=suppression.data)$"Pr(>F)"[1]`.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **`r wilcox.test(Glycerol.suppression~Treatment, data=suppression.data)$p.value`**.
+
+## Non-Esterified Fatty Acid Levels
+
+```{r nefa-absolute}
+ymax <- with(summary.data,max(Basal.NEFA_mean+Basal.NEFA_se))
+plot <- with(summary.data, barplot(cbind(Basal.NEFA_mean, Insulin.NEFA_mean),
+             beside=T,
+             las=1,
+             col=color.scheme,
+             names.arg=c("Basal","Insulin"),
+             ylim=c(0,ymax),
+             ylab="Serum NEFA Levels (mEq/mL)"))
+
+with(summary.data, superpose.eb(plot,
+                                cbind(Basal.NEFA_mean, Insulin.NEFA_mean),
+                                cbind(Basal.NEFA_se, Insulin.NEFA_se)))
+
+legend("topright", levels(data$Treatment), bty="n", fill=color.scheme)
+```
+
+#### NEFA Statistics
+
+For basal NEFA levels, we observed a **`r with(summary.data, (Basal.NEFA_mean[2]-Basal.NEFA_mean[1])/Basal.NEFA_mean[1])*100`** percent increase in NEFA levels with dexamethasone.  The data could be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Basal.NEFA)`).  To test for equal variance we used Levene's test, which for basal NEFA levels had a p-value of `r leveneTest(Basal.NEFA~Treatment, data=data)$"Pr(>F)"[1]`.  Based on equal variance we did a Student's *t*-test which had a p-value of **`r t.test(Basal.NEFA~Treatment, data=data, var.equal=T)$p.value`**.
+
+For insulin-suppressed NEFA levels, we observed a **`r with(summary.data, (Insulin.NEFA_mean[2]-Insulin.NEFA_mean[1])/Insulin.NEFA_mean[1])*100`** percent increase in NEFA levels with dexamethasone.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Insulin.NEFA)`).  To test for equal variance we used Levene's test, which for insulin-suppressed NEFA levels had a p-value of `r leveneTest(Insulin.NEFA~Treatment, data=data)$"Pr(>F)"[1]`.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **`r wilcox.test(Insulin.NEFA~Treatment, data=data)$p.value`**.
+
+### Suppression by Insulin
+
+```{r nefa-suppression}
+plot <- with(suppression.summary.data, 
+             barplot(NEFA.suppression_mean,
+                     las=1,
+                     col=color.scheme,
+                     names.arg=Treatment,
+                     ylim=c(0,max(NEFA.suppression_mean+NEFA.suppression_se)),
+                     ylab="Insulin Suppression of NEFA Levels (%)"))
+
+superpose.eb(plot,
+             suppression.summary.data$NEFA.suppression_mean,
+             suppression.summary.data$NEFA.suppression_se)
+```
+
+#### Insulin Suppression Statistics
+
+For relative insulin suppression of NEFA levels, we observed a **`r with(suppression.summary.data, (NEFA.suppression_mean[1]-NEFA.suppression_mean[2])/NEFA.suppression_mean[1])*100`** percent reduction in insulin suppression of NEFA levels with dexamethasone.  We observed a `r suppression.summary.data$NEFA.suppression_mean[1]` percent suppression with insulin in the control group, and a `r suppression.summary.data$NEFA.suppression_mean[2]` percent suppression in the dexamethasone treated group.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(suppression.summary.data$NEFA.suppression_shapiro.p)`).  To test for equal variance we used Levene's test, which for insulin-suppressed NEFA levels had a p-value of `r leveneTest(NEFA.suppression~Treatment, data=suppression.data)$"Pr(>F)"[1]`.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **`r wilcox.test(NEFA.suppression~Treatment, data=suppression.data)$p.value`**.
+
+# Triglyceride Levels
+
+```{r tg-absolute}
+ymax <- with(summary.data,max(Basal.tg_mean+Basal.tg_se))
+plot <- with(summary.data, barplot(cbind(Basal.tg_mean, Insulin.tg_mean),
+             beside=T,
+             las=1,
+             col=color.scheme,
+             names.arg=c("Basal","Insulin"),
+             ylim=c(0,ymax),
+             ylab="Serum Triglyceride Levels (mEq/mL)"))
+
+with(summary.data, superpose.eb(plot,
+                                cbind(Basal.tg_mean, Insulin.tg_mean),
+                                cbind(Basal.tg_se, Insulin.tg_se)))
+
+legend("topright", levels(data$Treatment), bty="n", fill=color.scheme)
+```
+
+#### Triglyceride Statistics
+
+For basal triglyceride levels, we observed a **`r with(summary.data, (Basal.tg_mean[2]-Basal.tg_mean[1])/Basal.tg_mean[1])*100`** percent increase in triglyceride levels with dexamethasone.  The data could be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Basal.tg)`).  To test for equal variance we used Levene's test, which for basal triglyceride levels had a p-value of `r leveneTest(Basal.tg~Treatment, data=data)$"Pr(>F)"[1]`.  Based on equal variance we did a Student's *t*-test which had a p-value of **`r t.test(Basal.tg~Treatment, data=data, var.equal=T)$p.value`**.
+
+For insulin-suppressed triglyceride levels, we observed a **`r with(summary.data, (Insulin.tg_mean[2]-Insulin.tg_mean[1])/Insulin.tg_mean[1])*100`** percent increase in triglyceride levels with dexamethasone.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(shapiro.results$Insulin.tg)`).  To test for equal variance we used Levene's test, which for insulin-suppressed triglyceride levels had a p-value of `r leveneTest(Insulin.tg~Treatment, data=data)$"Pr(>F)"[1]`.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **`r wilcox.test(Insulin.tg~Treatment, data=data)$p.value`**.
+
+### Suppression by Insulin
+
+```{r tg-suppression}
+plot <- with(suppression.summary.data, 
+             barplot(TG.suppression_mean,
+                     las=1,
+                     col=color.scheme,
+                     names.arg=Treatment,
+                     ylim=c(0,max(TG.suppression_mean+TG.suppression_se)),
+                     ylab="Insulin Suppression of Triglyceride Levels (%)"))
+
+superpose.eb(plot,
+             suppression.summary.data$TG.suppression_mean,
+             suppression.summary.data$TG.suppression_se)
+```
+
+#### Insulin Suppression Statistics
+
+For relative insulin suppression of TG levels, we observed a **`r with(suppression.summary.data, (TG.suppression_mean[2]-TG.suppression_mean[1])/TG.suppression_mean[1])*100`** percent increase in insulin suppression of TG levels with dexamethasone.  The data could not be assumed to have a normal distribution from a Shapiro-Wilk test (p=`r min(suppression.summary.data$TG.suppression_shapiro.p)`).  To test for equal variance we used Levene's test, which for insulin-suppressed TG levels had a p-value of `r leveneTest(TG.suppression~Treatment, data=suppression.data)$"Pr(>F)"[1]`.  Based on a lack of normality we did a Mann-Whitney test which had a p-value of **`r wilcox.test(TG.suppression~Treatment, data=suppression.data)$p.value`**.
+
+
+# Interpretation
+
+We observed significant increases in glycerol and NEFA levels with dexamethasone.  In terms of insulin responsiveness, the differences in insulin suppression of lipolysis markers were not statistically significant, though there was a trend towards insulin resistance.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

@@ -135,7 +135,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc Statistics
@@ -176,7 +176,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc2 Statistics
@@ -217,7 +217,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### G6pc3 Statistics
@@ -260,7 +260,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -294,7 +294,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pck1 Statistics
@@ -335,7 +335,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pck2 Statistics
@@ -378,7 +378,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topright", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topright", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 }
 ```
 
@@ -410,7 +410,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Pcx Statistics
@@ -451,7 +451,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Hsd11b1 Statistics
@@ -492,7 +492,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Fgf21 Statistics
@@ -533,7 +533,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Fasn Statistics
@@ -574,7 +574,7 @@ superpose.eb(plot,
              as.matrix(plot.data[3:4]),
              as.matrix(plot.data.se[3:4]))
 
-legend("topleft", c("Control","Dexamethasone"), fill=color.scheme, bty="n")
+legend("topleft", c("Water","Dexamethasone"), fill=color.scheme, bty="n")
 ```
 
 ### Srebf1 Statistics

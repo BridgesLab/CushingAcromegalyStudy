@@ -15,7 +15,7 @@ Normal Chow Diet   Dexamethasone         0.609654      0.090098            8
 High Fat Diet      Water                17.902117     12.681950            8
 High Fat Diet      Dexamethasone       111.993689     12.532765           12
 
-This script uses the files in ../../data/raw/Liver TG hfd and chow dex.csv. These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Wed Jan 25 13:41:17 2017.
+This script uses the files in ../../data/raw/Liver TG hfd and chow dex.csv. These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Wed Sep  6 15:53:47 2017.
 
 ![](figures/liver-tg-barplot-1.png)<!-- -->
 
@@ -44,7 +44,7 @@ Residuals         32   29740.7     929.396        NA         NA
 ```
 ## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.2 (unknown)
+## Running under: OS X 10.12.6 (unknown)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -53,13 +53,14 @@ Residuals         32   29740.7     929.396        NA         NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_0.6.1    dplyr_0.5.0    xlsx_0.5.7     xlsxjars_0.6.1
-## [5] rJava_0.9-8    knitr_1.15.1  
+## [1] bindrcpp_0.2   tidyr_0.7.1    dplyr_0.7.2    xlsx_0.5.7    
+## [5] xlsxjars_0.6.1 rJava_0.9-8    knitr_1.17    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.9     assertthat_0.1  digest_0.6.11   rprojroot_1.1  
-##  [5] R6_2.2.0        DBI_0.5-1       backports_1.0.4 magrittr_1.5   
-##  [9] evaluate_0.10   highr_0.6       stringi_1.1.2   lazyeval_0.2.0 
-## [13] rmarkdown_1.3   tools_3.3.0     stringr_1.1.0   yaml_2.1.14    
-## [17] htmltools_0.3.5 tibble_1.2
+##  [1] Rcpp_0.12.12     bindr_0.1        magrittr_1.5     tidyselect_0.2.0
+##  [5] R6_2.2.2         rlang_0.1.2      stringr_1.2.0    highr_0.6       
+##  [9] tools_3.3.0      htmltools_0.3.6  yaml_2.1.14      rprojroot_1.2   
+## [13] digest_0.6.12    assertthat_0.2.0 tibble_1.3.3     purrr_0.2.3     
+## [17] glue_1.1.1       evaluate_0.10.1  rmarkdown_1.6    stringi_1.1.5   
+## [21] backports_1.1.0  pkgconfig_2.0.1
 ```
