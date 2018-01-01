@@ -18,7 +18,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/HFD and NCD Food Intake Data.csv.  This script was most recently updated on Thu Aug 10 17:22:27 2017.
+These data can be found in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/HFD and NCD Food Intake Data.csv.  This script was most recently updated on Mon Dec 18 10:05:56 2017.
 
 # Analysis
 
@@ -97,9 +97,9 @@ sessionInfo()
 ```
 
 ```
-## R version 3.3.0 (2016-05-03)
+## R version 3.3.1 (2016-06-21)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## Running under: OS X 10.11.6 (El Capitan)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -108,24 +108,23 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] car_2.1-5     broom_0.4.2   ggplot2_2.2.1 bindrcpp_0.2  forcats_0.2.0
-## [6] readr_1.1.1   dplyr_0.7.2   tidyr_0.6.3   knitr_1.17   
+## [1] car_2.1-4     broom_0.4.2   ggplot2_2.1.0 bindrcpp_0.2  forcats_0.2.0
+## [6] readr_1.0.0   dplyr_0.7.4   tidyr_0.6.0   knitr_1.14   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.12       nloptr_1.0.4       highr_0.6         
-##  [4] plyr_1.8.4         bindr_0.1          tools_3.3.0       
-##  [7] lme4_1.1-13        digest_0.6.12      evaluate_0.10.1   
-## [10] tibble_1.3.3       gtable_0.2.0       nlme_3.1-131      
-## [13] lattice_0.20-35    mgcv_1.8-18        pkgconfig_2.0.1   
-## [16] rlang_0.1.2        Matrix_1.2-10      psych_1.7.5       
-## [19] yaml_2.1.14        parallel_3.3.0     SparseM_1.77      
-## [22] stringr_1.2.0      MatrixModels_0.4-1 hms_0.3           
-## [25] nnet_7.3-12        rprojroot_1.2      grid_3.3.0        
-## [28] glue_1.1.1         R6_2.2.2           foreign_0.8-69    
-## [31] rmarkdown_1.6      minqa_1.2.4        reshape2_1.4.2    
-## [34] magrittr_1.5       splines_3.3.0      MASS_7.3-47       
-## [37] backports_1.1.0    scales_0.4.1       htmltools_0.3.6   
-## [40] pbkrtest_0.4-7     assertthat_0.2.0   mnormt_1.5-5      
-## [43] colorspace_1.3-2   quantreg_5.33      labeling_0.3      
-## [46] stringi_1.1.5      lazyeval_0.2.0     munsell_0.4.3
+##  [1] Rcpp_0.12.7        nloptr_1.0.4       formatR_1.4       
+##  [4] highr_0.6          plyr_1.8.4         bindr_0.1         
+##  [7] tools_3.3.1        lme4_1.1-12        digest_0.6.10     
+## [10] evaluate_0.9       tibble_1.3.4       gtable_0.2.0      
+## [13] nlme_3.1-128       lattice_0.20-34    mgcv_1.8-15       
+## [16] pkgconfig_2.0.1    rlang_0.1.4        Matrix_1.2-7.1    
+## [19] psych_1.7.5        yaml_2.1.13        parallel_3.3.1    
+## [22] SparseM_1.74       stringr_1.1.0      MatrixModels_0.4-1
+## [25] grid_3.3.1         nnet_7.3-12        glue_1.2.0        
+## [28] R6_2.1.3           foreign_0.8-67     rmarkdown_1.0     
+## [31] minqa_1.2.4        reshape2_1.4.1     magrittr_1.5      
+## [34] splines_3.3.1      scales_0.4.0       htmltools_0.3.5   
+## [37] MASS_7.3-45        pbkrtest_0.4-6     assertthat_0.1    
+## [40] mnormt_1.5-5       colorspace_1.2-6   quantreg_5.29     
+## [43] labeling_0.3       stringi_1.1.2      munsell_0.4.3
 ```
