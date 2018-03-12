@@ -2,6 +2,7 @@
 title: "Analysis of Water and Dexamethasone Intake in NCD/HFD Mice"
 author: "Innocence Harvey and Dave Bridges"
 date: "March 5, 2018"
+bibliography: "references.bib"
 output:
   html_document:
     highlight: tango
@@ -41,6 +42,11 @@ library(dplyr)
 
 # sets maize and blue color scheme
 color.scheme <- c('#00274c', '#ffcb05')
+
+# for knitcitations
+library("knitcitations")
+cleanbib()
+options("citation_format" = "pandoc")
 ```
 
 # Purpose
@@ -234,8 +240,34 @@ The HFD animals had **`r filter(aggregated.data, Treatment=="Dexamethasone")[2,'
 
 Once normalized to body weight, the HFD animals had **`r (filter(aggregated.norm.data, Treatment=="Dexamethasone")[2,'Agg.Intake.mean']-filter(aggregated.norm.data, Treatment=="Dexamethasone")[1,'Agg.Intake.mean'])/filter(aggregated.norm.data, Treatment=="Dexamethasone")[1,'Agg.Intake.mean']*100`%** higher dexamethasone intake.
 
+## Relationship to Human Doses
+
+```{r citations-human-dose}
+mouse.human.conversion <- 12.3
+```
+
+In general, according to `r citet('10.4103/0976-0105.177703')` we can predict that we should divide the mouse dose by `r mouse.human.conversion` to get an equivalent human dose.
+
+```{r human-conversion}
+human.data <- 
+  aggregated.norm.data %>%
+  mutate(Human.dose = Agg.Intake.mean/mouse.human.conversion*1000) %>% #converting mg/kg/day to ug/kg/day
+  select(Diet,Treatment,Human.dose)
+
+
+kable(human.data, caption = "Effective human dose in ug/kg/day")
+```
+
+For a 70 kg human that is an effective dose range of **`r human.data$Human.dose[1]*70`** to **`r human.data$Human.dose[3]*70`** mg
+
 # Session Information
 
 ```{r session-information, echo=T}
 sessionInfo()
+```
+
+# References
+
+```{r references, echo=FALSE, message=FALSE}
+write.bibtex(file="references.bib")
 ```

@@ -2,6 +2,7 @@
 title: "Analysis of Water and Dexamethasone Intake in NCD/HFD Mice"
 author: "Innocence Harvey and Dave Bridges"
 date: "March 5, 2018"
+bibliography: "references.bib"
 output:
   html_document:
     highlight: tango
@@ -31,7 +32,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Mon Mar 12 12:46:00 2018**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Mon Mar 12 13:07:21 2018**.
 
 # Analysis
 
@@ -86,6 +87,24 @@ The HFD animals had **2.09** fold more fluid intake than the NCD animals over th
 
 Once normalized to body weight, the HFD animals had **22.009%** higher dexamethasone intake.
 
+## Relationship to Human Doses
+
+
+
+In general, according to @Nair_2016 we can predict that we should divide the mouse dose by 12.3 to get an equivalent human dose.
+
+
+Table: Effective human dose in ug/kg/day
+
+Diet               Treatment        Human.dose
+-----------------  --------------  -----------
+Normal Chow Diet   Dexamethasone          63.8
+Normal Chow Diet   Water                   0.0
+High Fat Diet      Dexamethasone          77.9
+High Fat Diet      Water                   0.0
+
+For a 70 kg human that is an effective dose range of **4468.022** to **5451.379** mg
+
 # Session Information
 
 
@@ -109,16 +128,26 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_2.2.1 bindrcpp_0.2  forcats_0.2.0 readr_1.1.1   dplyr_0.7.4  
-## [6] tidyr_0.7.2   knitr_1.17   
+## [1] ggplot2_2.2.1       bindrcpp_0.2        forcats_0.2.0      
+## [4] readr_1.1.1         knitcitations_1.0.9 dplyr_0.7.4        
+## [7] tidyr_0.7.2         knitr_1.17         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.14     bindr_0.1        magrittr_1.5     hms_0.4.0       
-##  [5] munsell_0.4.3    colorspace_1.3-2 R6_2.2.2         rlang_0.1.4     
-##  [9] highr_0.6        plyr_1.8.4       stringr_1.2.0    tools_3.4.2     
-## [13] grid_3.4.2       gtable_0.2.0     htmltools_0.3.6  lazyeval_0.2.1  
-## [17] yaml_2.1.15      rprojroot_1.2    digest_0.6.12    assertthat_0.2.0
-## [21] tibble_1.3.4     reshape2_1.4.2   purrr_0.2.4      glue_1.2.0      
-## [25] evaluate_0.10.1  rmarkdown_1.8    labeling_0.3     stringi_1.1.6   
-## [29] compiler_3.4.2   scales_0.5.0     backports_1.1.1  pkgconfig_2.0.1
+##  [1] Rcpp_0.12.14       highr_0.6          compiler_3.4.2    
+##  [4] plyr_1.8.4         bindr_0.1          tools_3.4.2       
+##  [7] digest_0.6.12      jsonlite_1.5       lubridate_1.7.1   
+## [10] evaluate_0.10.1    tibble_1.3.4       gtable_0.2.0      
+## [13] pkgconfig_2.0.1    rlang_0.1.4        bibtex_0.4.2      
+## [16] curl_3.0           yaml_2.1.15        RefManageR_0.14.20
+## [19] stringr_1.2.0      httr_1.3.1         xml2_1.1.1        
+## [22] hms_0.4.0          rprojroot_1.2      grid_3.4.2        
+## [25] glue_1.2.0         R6_2.2.2           rmarkdown_1.8     
+## [28] reshape2_1.4.2     purrr_0.2.4        magrittr_1.5      
+## [31] backports_1.1.1    scales_0.5.0       htmltools_0.3.6   
+## [34] assertthat_0.2.0   colorspace_1.3-2   labeling_0.3      
+## [37] stringi_1.1.6      lazyeval_0.2.1     munsell_0.4.3
 ```
+
+# References
+
+

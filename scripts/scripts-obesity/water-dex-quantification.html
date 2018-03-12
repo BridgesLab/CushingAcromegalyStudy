@@ -163,8 +163,11 @@ $(document).ready(function () {
 <li><a href="#normalized-intake---weekly-analysis"><span class="toc-section-number">5.1</span> Normalized Intake - Weekly Analysis</a></li>
 <li><a href="#normalized-intake---averaged-analysis"><span class="toc-section-number">5.2</span> Normalized Intake - Averaged Analysis</a></li>
 </ul></li>
-<li><a href="#interpretation"><span class="toc-section-number">6</span> Interpretation</a></li>
+<li><a href="#interpretation"><span class="toc-section-number">6</span> Interpretation</a><ul>
+<li><a href="#relationship-to-human-doses"><span class="toc-section-number">6.1</span> Relationship to Human Doses</a></li>
+</ul></li>
 <li><a href="#session-information"><span class="toc-section-number">7</span> Session Information</a></li>
+<li><a href="#references">References</a></li>
 </ul>
 </div>
 
@@ -178,7 +181,7 @@ $(document).ready(function () {
 <div id="raw-data" class="section level1">
 <h1><span class="header-section-number">3</span> Raw Data</h1>
 <p>The input file contains tracked water and dexamethasone amounts per week. The data includes the staring and ending volumes each week and a calculation of animals per week.</p>
-<p>These data can be found in <strong>/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity</strong> in a file named <strong>no file found</strong>. This script was most recently updated on <strong>Mon Mar 12 12:46:00 2018</strong>.</p>
+<p>These data can be found in <strong>/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity</strong> in a file named <strong>no file found</strong>. This script was most recently updated on <strong>Mon Mar 12 13:07:21 2018</strong>.</p>
 </div>
 <div id="analysis" class="section level1">
 <h1><span class="header-section-number">4</span> Analysis</h1>
@@ -286,6 +289,43 @@ $(document).ready(function () {
 <h1><span class="header-section-number">6</span> Interpretation</h1>
 <p>The HFD animals had <strong>2.09</strong> fold more fluid intake than the NCD animals over the course of the experiment.</p>
 <p>Once normalized to body weight, the HFD animals had <strong>22.009%</strong> higher dexamethasone intake.</p>
+<div id="relationship-to-human-doses" class="section level2">
+<h2><span class="header-section-number">6.1</span> Relationship to Human Doses</h2>
+<p>In general, according to <span class="citation">Nair and Jacob (2016)</span> we can predict that we should divide the mouse dose by 12.3 to get an equivalent human dose.</p>
+<table>
+<caption>Effective human dose in ug/kg/day</caption>
+<thead>
+<tr class="header">
+<th align="left">Diet</th>
+<th align="left">Treatment</th>
+<th align="right">Human.dose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Normal Chow Diet</td>
+<td align="left">Dexamethasone</td>
+<td align="right">63.8</td>
+</tr>
+<tr class="even">
+<td align="left">Normal Chow Diet</td>
+<td align="left">Water</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">High Fat Diet</td>
+<td align="left">Dexamethasone</td>
+<td align="right">77.9</td>
+</tr>
+<tr class="even">
+<td align="left">High Fat Diet</td>
+<td align="left">Water</td>
+<td align="right">0.0</td>
+</tr>
+</tbody>
+</table>
+<p>For a 70 kg human that is an effective dose range of <strong>4468.022</strong> to <strong>5451.379</strong> mg</p>
+</div>
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">7</span> Session Information</h1>
@@ -305,18 +345,32 @@ $(document).ready(function () {
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_2.2.1 bindrcpp_0.2  forcats_0.2.0 readr_1.1.1   dplyr_0.7.4  
-## [6] tidyr_0.7.2   knitr_1.17   
+## [1] ggplot2_2.2.1       bindrcpp_0.2        forcats_0.2.0      
+## [4] readr_1.1.1         knitcitations_1.0.9 dplyr_0.7.4        
+## [7] tidyr_0.7.2         knitr_1.17         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.14     bindr_0.1        magrittr_1.5     hms_0.4.0       
-##  [5] munsell_0.4.3    colorspace_1.3-2 R6_2.2.2         rlang_0.1.4     
-##  [9] highr_0.6        plyr_1.8.4       stringr_1.2.0    tools_3.4.2     
-## [13] grid_3.4.2       gtable_0.2.0     htmltools_0.3.6  lazyeval_0.2.1  
-## [17] yaml_2.1.15      rprojroot_1.2    digest_0.6.12    assertthat_0.2.0
-## [21] tibble_1.3.4     reshape2_1.4.2   purrr_0.2.4      glue_1.2.0      
-## [25] evaluate_0.10.1  rmarkdown_1.8    labeling_0.3     stringi_1.1.6   
-## [29] compiler_3.4.2   scales_0.5.0     backports_1.1.1  pkgconfig_2.0.1</code></pre>
+##  [1] Rcpp_0.12.14       highr_0.6          compiler_3.4.2    
+##  [4] plyr_1.8.4         bindr_0.1          tools_3.4.2       
+##  [7] digest_0.6.12      jsonlite_1.5       lubridate_1.7.1   
+## [10] evaluate_0.10.1    tibble_1.3.4       gtable_0.2.0      
+## [13] pkgconfig_2.0.1    rlang_0.1.4        bibtex_0.4.2      
+## [16] curl_3.0           yaml_2.1.15        RefManageR_0.14.20
+## [19] stringr_1.2.0      httr_1.3.1         xml2_1.1.1        
+## [22] hms_0.4.0          rprojroot_1.2      grid_3.4.2        
+## [25] glue_1.2.0         R6_2.2.2           rmarkdown_1.8     
+## [28] reshape2_1.4.2     purrr_0.2.4        magrittr_1.5      
+## [31] backports_1.1.1    scales_0.5.0       htmltools_0.3.6   
+## [34] assertthat_0.2.0   colorspace_1.3-2   labeling_0.3      
+## [37] stringi_1.1.6      lazyeval_0.2.1     munsell_0.4.3</code></pre>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-Nair_2016">
+<p>Nair, AnroopB, and Shery Jacob. 2016. “A Simple Practice Guide for Dose Conversion Between Animals and Human.” <em>Journal of Basic and Clinical Pharmacy</em> 7 (2). Medknow: 27. doi:<a href="https://doi.org/10.4103/0976-0105.177703">10.4103/0976-0105.177703</a>.</p>
+</div>
+</div>
 </div>
 
 
