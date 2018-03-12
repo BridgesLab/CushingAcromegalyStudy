@@ -1,0 +1,241 @@
+---
+title: "Analysis of Water and Dexamethasone Intake in NCD/HFD Mice"
+author: "Innocence Harvey and Dave Bridges"
+date: "March 5, 2018"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+```{r dex-conc}
+dex.conc <- 3.78 #ug/mL based on 0.054g/L and 70mg/g of dex powder
+```
+
+Dexamethasone was dissolved in water at a concentration of `r dex.conc` ug/mL and animals were given *ad libitum* access.  Water bottle volumes were determined weekly.
+
+# Raw Data
+
+The input file contains tracked water and dexamethasone amounts per week.  The data includes the staring and ending volumes each week and a calculation of animals per week.
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/Dex and Water Intake NCD HFD.csv' #make this a separate line, you can use any variable you want
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- 
+  read_csv(filename, col_types = cols(
+  `CAGE ID` = col_factor(levels=NULL),
+  WEEK = col_integer(),
+  TREATMENT = col_factor(levels=NULL),
+  DIET = col_factor(levels=c("NCD","HFD")),
+  `NUMBER OF ANIMALS IN CAGE` = col_double(),
+  `START ML` = col_double(),
+  `END ML` = col_double(),
+  `WEEKLY AMOUNT CONSUMED` = col_double(),
+  COHORT = col_factor(levels=NULL),
+  `ML/ANIMAL/DAY` = col_double(),
+  X11 = col_character()
+))
+
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+## Weekly Analysis
+
+```{r weekly-lineplot}
+library(forcats)
+exp.data <-
+  exp.data %>%
+  mutate(Dexamethasone = ifelse(TREATMENT=="DEX", `ML/ANIMAL/DAY`*dex.conc, 0)) %>%
+  mutate(Diet = fct_recode(DIET, "Normal Chow Diet" = "NCD", "High Fat Diet" = "HFD"),
+         Treatment = fct_recode(TREATMENT, "Water"="WATER", "Dexamethasone" = "DEX"))
+
+library(ggplot2)
+
+p <- ggplot(exp.data, aes(y=`ML/ANIMAL/DAY`, x=WEEK))
+p + geom_point(aes(col=Diet)) +
+  facet_grid(~Treatment) +
+  geom_smooth(method="loess", aes(col=Diet)) +
+  labs(y="Fluid Intake (mL/day/mouse)", title="Total Water Consumption")
+
+
+weekly.summary.data <-
+  exp.data %>%
+  group_by(Diet, Treatment, WEEK) %>%
+  summarize(Intake.mean = mean(Dexamethasone),
+            Intake.se = se(Dexamethasone)) 
+  
+  
+ymax <- with(weekly.summary.data, max(Intake.mean + Intake.se))
+plot <- with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"),
+     plot(WEEK,Intake.mean,
+            pch=19,
+            type="l",
+            las=1,
+          col="red",
+          lty=2,
+          ylim=c(0,ymax),
+            ylab="Dexamethasone Intake (ug/day/mouse)",
+            xlab="Weeks of Dexamethasone Treatment"))
+
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"),lines(WEEK, Intake.mean, col="red",lty=1))
+
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"), superpose.eb(WEEK,Intake.mean,Intake.se, col="red"))
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"), superpose.eb(WEEK,Intake.mean,Intake.se, col="red"))
+
+legend("topleft", c("Normal Chow Diet","High Fat Diet"), lty=c(1,2), bty="n", col="red")
+```
+
+## Average Analysis
+
+```{r average-lineplot}
+aggregated.data <- 
+  exp.data %>%
+  group_by(`CAGE ID`, Diet,Treatment) %>%
+  summarize(Intake = mean(Dexamethasone)) %>%
+  group_by(Diet, Treatment) %>%
+  summarize(Intake.mean = mean(Intake),
+            Intake.se = se(Intake),
+            n = length(Intake)) 
+kable(aggregated.data, caption="Average dexamethasone intake per group, averaged accross the experiment")
+
+agg.data.ymax <- with(aggregated.data, max(Intake.mean+Intake.se))
+
+plot <- with(filter(aggregated.data, Treatment=="Dexamethasone"),
+             barplot(Intake.mean,
+                     las=1,
+                     xlab="Diet",
+                     ylim=c(0,agg.data.ymax),
+                     names.arg=c("Normal Chow Diet","High Fat Diet"),
+                     ylab="Dexamethasone Intake (ug/mouse/day"))
+
+with(filter(aggregated.data, Treatment=="Dexamethasone"),superpose.eb(plot, Intake.mean, Intake.se))
+```
+
+# Normalization to Body Weight
+
+```{r bw-data-entry}
+input_file_bw <- '../../data/processed/Summarized Body Composition Data.csv'
+body.comp.data <- read_csv(input_file_bw,
+                           col_types = cols(Diet=col_factor(levels=NULL),
+                                            Treatment=col_factor(levels=NULL)))
+#converted days to weeks
+
+body.comp.data <-
+  body.comp.data %>%
+  filter(Time>=0) %>%
+  mutate(Week = round(Time/7)+1)
+```
+
+Loaded body summary composition data from `r input_file_bw`.  Divided the average weekly intakes by the average weekly body weights.
+
+```{r combined-data}
+combined.bc.data <-
+  body.comp.data %>%
+  full_join(weekly.summary.data, by=c("Treatment"="Treatment","Diet"="Diet","Week"="WEEK")) %>%
+  mutate(Intake.norm.mean = Intake.mean/Body.Weight.mean,
+         Intake.norm.se = Intake.se/Body.Weight.mean) %>%
+  select(Diet,Treatment,Week,Body.Weight.mean, Intake.mean,Intake.se,Intake.norm.mean, Intake.norm.se)
+```
+
+
+## Normalized Intake - Weekly Analysis
+
+```{r weekly-normalized-intake}
+ymax <- with(combined.bc.data, max(Intake.norm.mean + Intake.norm.se,na.rm=T))
+plot <- with(filter(combined.bc.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"),
+     plot(Week,Intake.norm.mean,
+            pch=19,
+            type="l",
+            las=1,
+          col="red",
+          lty=2,
+          ylim=c(0,ymax),
+            ylab="Dexamethasone Intake (mg/kg/day)",
+            xlab="Weeks of Dexamethasone Treatment"))
+
+with(filter(combined.bc.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"),lines(Week, Intake.norm.mean, col="red",lty=1))
+
+with(filter(combined.bc.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"), superpose.eb(Week,Intake.norm.mean,Intake.norm.se, col="red"))
+with(filter(combined.bc.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"), superpose.eb(Week,Intake.norm.mean,Intake.norm.se, col="red"))
+
+legend("topleft", c("Normal Chow Diet","High Fat Diet"), lty=c(1,2), bty="n", col="red")
+```
+
+## Normalized Intake - Averaged Analysis
+
+```{r average-normalized-lineplot}
+aggregated.norm.data <- 
+  combined.bc.data %>%
+  group_by(Diet, Treatment) %>%
+  summarize(Agg.Intake.mean = mean(Intake.norm.mean,na.rm=T),
+            Agg.Intake.se = mean(Intake.norm.se,na.rm=T)) 
+kable(aggregated.norm.data, caption="Average dexamethasone intake per group normalized by body weight, averaged accross the experiment")
+
+agg.data.ymax <- with(aggregated.norm.data, max(Agg.Intake.mean+Agg.Intake.se, na.rm=T))
+
+plot <- with(filter(aggregated.norm.data, Treatment=="Dexamethasone"),
+             barplot(Agg.Intake.mean,
+                     las=1,
+                     xlab="Diet",
+                     ylim=c(0,agg.data.ymax),
+                     names.arg=c("Normal Chow Diet","High Fat Diet"),
+                     ylab="Dexamethasone Intake (mg/kg/day)"))
+
+with(filter(aggregated.norm.data, Treatment=="Dexamethasone"),superpose.eb(plot, Agg.Intake.mean, Agg.Intake.se))
+```
+
+# Interpretation
+
+The HFD animals had **`r filter(aggregated.data, Treatment=="Dexamethasone")[2,'Intake.mean']/filter(aggregated.data, Treatment=="Dexamethasone")[1,'Intake.mean']`** fold more fluid intake than the NCD animals over the course of the experiment.  
+
+Once normalized to body weight, the HFD animals had **`r (filter(aggregated.norm.data, Treatment=="Dexamethasone")[2,'Agg.Intake.mean']-filter(aggregated.norm.data, Treatment=="Dexamethasone")[1,'Agg.Intake.mean'])/filter(aggregated.norm.data, Treatment=="Dexamethasone")[1,'Agg.Intake.mean']*100`%** higher dexamethasone intake.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
