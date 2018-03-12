@@ -56,8 +56,11 @@ weight.summary <-
             Total.Fat.Mass.se = se(Total.Fat.Mass),
             Percent.Fat.Mass.mean = mean(Percent.Fat.Mass, na.rm=T),
             Percent.Fat.Mass.se = se(Percent.Fat.Mass))
+
+output_file <- '../../data/processed/Summarized Body Composition Data.csv'
+write.csv(weight.summary, output_file)
 ```
-This script uses the files in `r input_ncd_file` and `r input_hfd_file`.  These data are located in `r getwd()` and this script was most recently run on `r date()`.
+This script uses the files in `r input_ncd_file` and `r input_hfd_file`.  These data are located in `r getwd()` and this script was most recently run on `r date()`.  These data were written out in summary format to the file `r output_file`.
 
 # Body Weights
 
