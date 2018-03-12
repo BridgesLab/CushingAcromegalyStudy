@@ -258,7 +258,7 @@ human.data <-
 kable(human.data, caption = "Effective human dose in ug/kg/day")
 ```
 
-For a 70 kg human that is an effective dose range of **`r human.data$Human.dose[1]*70`** to **`r human.data$Human.dose[3]*70`** mg
+For a 70 kg human that is an effective dose range of **`r human.data$Human.dose[1]*70/1000`** to **`r human.data$Human.dose[3]*70/1000`** mg
 
 # Session Information
 
