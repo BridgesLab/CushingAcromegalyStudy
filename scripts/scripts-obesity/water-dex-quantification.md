@@ -32,7 +32,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Mon Mar 12 13:07:21 2018**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Mon Mar 12 13:22:28 2018**.
 
 # Analysis
 
@@ -103,7 +103,7 @@ Normal Chow Diet   Water                   0.0
 High Fat Diet      Dexamethasone          77.9
 High Fat Diet      Water                   0.0
 
-For a 70 kg human that is an effective dose range of **4468.022** to **5451.379** mg
+For a 70 kg human that is an effective dose range of **4.468** to **5.451** mg
 
 # Session Information
 
