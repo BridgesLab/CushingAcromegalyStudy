@@ -298,7 +298,6 @@ ymax <- with(dex.summary.data, max(Dex.mean+Dex.se))
 plot <- with(dex.summary.data, barplot(Dex.mean,
         ylim=c(0,ymax),
         las=1,
-        col=c("black","red"),
         ylab="Serum Dexamethasone (ng/mL)",
         names.arg=c("Normal Chow Diet","High Fat Diet")))
 
