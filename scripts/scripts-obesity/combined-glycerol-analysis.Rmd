@@ -44,8 +44,8 @@ color.scheme <- c('#00274c', '#ffcb05')
 ```{r data-entry}
 filename <- '../../data/raw/HFD vs Chow Glycerol Assay.xlsx'
 sheetname <- 'Exported'
-library(xlsx)
-combined_data <- read.xlsx(filename, sheetName = sheetname)
+library(readxl)
+combined_data <- read_excel(filename, sheet= sheetname)
 combined_data$Diet <- relevel(as.factor(combined_data$Diet), ref='Normal Chow Diet')
 combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
 
