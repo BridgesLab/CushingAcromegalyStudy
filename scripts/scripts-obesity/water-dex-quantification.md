@@ -32,7 +32,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Mon Mar 12 13:22:28 2018**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Tue Mar 20 14:48:01 2018**.
 
 # Analysis
 
@@ -104,6 +104,29 @@ High Fat Diet      Dexamethasone          77.9
 High Fat Diet      Water                   0.0
 
 For a 70 kg human that is an effective dose range of **4.468** to **5.451** mg
+
+# Serum Dexamethasone Assay
+
+This assay was done by the pharmacokinetics core at UM and values were reported.  BLC indicated below cutoff, these values were assumed to be zero for this analysis
+
+
+
+The dexamethasone quantification data is found in ../../data/raw/dexamethasone-quantification.csv.
+
+![](figures/dex-boxplot-1.png)<!-- -->
+
+
+Table: Summary Data for Dexamethasone Levels
+
+Diet    Dex.mean   Dex.se   Dex.shapiro
+-----  ---------  -------  ------------
+NCD         1.61    0.666         0.017
+HFD        12.22    3.686         0.223
+
+![](figures/dex-barplot-1.png)<!-- -->
+
+We observed a 7.585 fold increase in serum dexamethasone levels in the High Fat Diet fed animals.  Based on Shapiro-Wilk tests, we cannot assume normality, so we did a Mann Whitney test, which yielded a p-value of 0.031.
+
 
 # Session Information
 

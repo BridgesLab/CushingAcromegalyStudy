@@ -260,6 +260,54 @@ kable(human.data, caption = "Effective human dose in ug/kg/day")
 
 For a 70 kg human that is an effective dose range of **`r human.data$Human.dose[1]*70/1000`** to **`r human.data$Human.dose[3]*70/1000`** mg
 
+# Serum Dexamethasone Assay
+
+This assay was done by the pharmacokinetics core at UM and values were reported.  BLC indicated below cutoff, these values were assumed to be zero for this analysis
+
+```{r dex-data-entry}
+dex.filename <- "../../data/raw/dexamethasone-quantification.csv"
+dex.data <- read_csv(dex.filename,
+                     col_types=cols(
+  ID = col_factor(levels=NULL),
+  Diet = col_factor(levels=NULL),
+  Treatment = col_factor(levels=NULL),
+  Dexamethasone = col_double()
+))
+```
+
+The dexamethasone quantification data is found in `r dex.filename`.
+
+```{r dex-boxplot}
+p <- ggplot(filter(dex.data, Treatment=="Dexamethasone"),
+            aes(y=Dexamethasone,x=Diet))
+
+p + geom_boxplot(aes(col=Diet)) +
+  geom_jitter(aes(col=Diet)) 
+```
+
+```{r dex-barplot}
+dex.summary.data <-
+  filter(dex.data, Treatment == "Dexamethasone") %>%
+  group_by(Diet) %>%
+  summarize(Dex.mean = mean(Dexamethasone, na.rm=T),
+            Dex.se = se(Dexamethasone),
+            Dex.shapiro = shapiro.test(Dexamethasone)$p.value)
+kable(dex.summary.data, caption="Summary Data for Dexamethasone Levels")
+
+ymax <- with(dex.summary.data, max(Dex.mean+Dex.se))
+plot <- with(dex.summary.data, barplot(Dex.mean,
+        ylim=c(0,ymax),
+        las=1,
+        col=c("black","red"),
+        ylab="Serum Dexamethasone (ng/mL)",
+        names.arg=c("Normal Chow Diet","High Fat Diet")))
+
+superpose.eb(plot, dex.summary.data$Dex.mean, dex.summary.data$Dex.se)
+```
+
+We observed a `r dex.summary.data$Dex.mean[2]/dex.summary.data$Dex.mean[1]` fold increase in serum dexamethasone levels in the High Fat Diet fed animals.  Based on Shapiro-Wilk tests, we cannot assume normality, so we did a Mann Whitney test, which yielded a p-value of `r wilcox.test(Dexamethasone~Diet, data = filter(dex.data, Treatment == "Dexamethasone"))$p.value`.
+
+
 # Session Information
 
 ```{r session-information, echo=T}
