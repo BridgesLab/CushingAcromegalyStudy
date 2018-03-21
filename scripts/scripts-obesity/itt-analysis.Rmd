@@ -208,11 +208,15 @@ n.pwr <- pwr.t.test(d = 0.5*effect.size.d,
 power.pwr <- pwr.t.test(d = 0.5*effect.size.d,
            n=8,
            sig.level = 0.05)
+
+power.d <- pwr.t.test(power=0.8,
+           n=8,
+           sig.level = 0.05)
 ```
 
 We estimate an effect size (from NCD/Water to HFD/Dexamethasone) of `r effect.size.glucose` (or `r effect.size.d` standard deviations).
 
-In order to detect 50% of this effect size (an decrease of `r 0.5*effect.size.glucose`mg/dL or a Cohen's d of `r 0.5*effect.size.d`) with knockout, we require at least `r n.pwr$n` animals.  With eight animals per group, we calculate that we will have a statistical power of `r power.pwr$power`. 
+In order to detect 50% of this effect size (an decrease of `r 0.5*effect.size.glucose`mg/dL or a Cohen's d of `r 0.5*effect.size.d`) with knockout, we require at least `r n.pwr$n` animals.  With eight animals per group, we calculate that we will have a statistical power of `r power.pwr$power`. Alternately with eight aninmals per group, we can detect effect sizes of at  `r power.d$d*typical.sd` with 80% power.
  
 ## Area Under Curve During ITT
 

@@ -1,12 +1,18 @@
-# ITT for Dexamethasone Treated HFD-Fed Mice
-Innocence Harvey, Erin Stephenson and Dave Bridges  
-February 11, 2015  
+---
+title: "ITT for Dexamethasone Treated HFD-Fed Mice"
+author: "Innocence Harvey, Erin Stephenson and Dave Bridges"
+date: "February 11, 2015"
+output:
+  html_document:
+    keep_md: true
+    fig_caption: true
+---
 
 
 
 
 
-These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Fri Aug  4 12:05:13 2017.
+These data were found in the files ../../data/raw/HFD ITT Data.csv and ../../data/raw/NCD ITT Data.csv.  This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  This scipt was mst recently run on Wed Mar 21 11:16:28 2018.
 
 
 Table: Summary Statistics for ITT
@@ -61,7 +67,7 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 
 We estimate an effect size (from NCD/Water to HFD/Dexamethasone) of 174.66667 (or 3.32617 standard deviations).
 
-In order to detect 50% of this effect size (an decrease of 87.33333mg/dL or a Cohen's d of 1.66308) with knockout, we require at least 6.78472 animals.  With eight animals per group, we calculate that we will have a statistical power of 0.87097. 
+In order to detect 50% of this effect size (an decrease of 87.33333mg/dL or a Cohen's d of 1.66308) with knockout, we require at least 6.78472 animals.  With eight animals per group, we calculate that we will have a statistical power of 0.87097. Alternately with eight aninmals per group, we can detect effect sizes of at  79.11852 with 80% power.
  
 ## Area Under Curve During ITT
 
@@ -88,9 +94,13 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 
 
 ```
-## R version 3.3.0 (2016-05-03)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## R version 3.4.2 (2017-09-28)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.3
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -99,15 +109,16 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] pwr_1.2-1    lme4_1.1-12  Matrix_1.2-8 tidyr_0.6.1  dplyr_0.5.0 
-## [6] knitr_1.15.1
+## [1] pwr_1.2-1     lme4_1.1-14   Matrix_1.2-12 tidyr_0.7.2   bindrcpp_0.2 
+## [6] dplyr_0.7.4   knitr_1.17   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.10    magrittr_1.5    splines_3.3.0   MASS_7.3-45    
-##  [5] lattice_0.20-35 R6_2.2.0        minqa_1.2.4     stringr_1.2.0  
-##  [9] highr_0.6       tools_3.3.0     grid_3.3.0      nlme_3.1-131   
-## [13] DBI_0.6-1       htmltools_0.3.5 yaml_2.1.14     lazyeval_0.2.0 
-## [17] assertthat_0.1  rprojroot_1.2   digest_0.6.12   tibble_1.3.0   
-## [21] nloptr_1.0.4    evaluate_0.10   rmarkdown_1.6   stringi_1.1.3  
-## [25] backports_1.0.5
+##  [1] Rcpp_0.12.14     bindr_0.1        magrittr_1.5     MASS_7.3-47     
+##  [5] splines_3.4.2    tidyselect_0.2.3 lattice_0.20-35  R6_2.2.2        
+##  [9] rlang_0.1.4      minqa_1.2.4      stringr_1.2.0    highr_0.6       
+## [13] tools_3.4.2      grid_3.4.2       nlme_3.1-131     htmltools_0.3.6 
+## [17] yaml_2.1.15      assertthat_0.2.0 rprojroot_1.2    digest_0.6.12   
+## [21] tibble_1.3.4     nloptr_1.0.4     purrr_0.2.4      glue_1.2.0      
+## [25] evaluate_0.10.1  rmarkdown_1.8    stringi_1.1.6    compiler_3.4.2  
+## [29] backports_1.1.1  pkgconfig_2.0.1
 ```
