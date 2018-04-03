@@ -181,7 +181,8 @@ Loaded body summary composition data from `r input_file_bw`.  Divided the averag
 ```{r combined-data}
 combined.bc.data <-
   body.comp.data %>%
-  full_join(weekly.summary.data, by=c("Treatment"="Treatment","Diet"="Diet","Week"="WEEK")) %>%
+  right_join(weekly.summary.data, by=c("Treatment"="Treatment","Diet"="Diet","Week"="WEEK")) %>%
+  distinct(Diet,Treatment,Week,.keep_all=T) %>%
   mutate(Intake.norm.mean = Intake.mean/Body.Weight.mean,
          Intake.norm.se = Intake.se/Body.Weight.mean) %>%
   select(Diet,Treatment,Week,Body.Weight.mean, Intake.mean,Intake.se,Intake.norm.mean, Intake.norm.se)

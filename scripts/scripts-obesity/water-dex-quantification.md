@@ -32,7 +32,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Tue Mar 20 17:12:03 2018**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Tue Apr  3 15:50:46 2018**.
 
 # Analysis
 
@@ -50,7 +50,7 @@ Diet               Treatment        Intake.mean   Intake.se    n
 Normal Chow Diet   Water                    0.0        0.00    3
 Normal Chow Diet   Dexamethasone           21.1        1.02    3
 High Fat Diet      Water                    0.0        0.00    3
-High Fat Diet      Dexamethasone           44.1        2.60    5
+High Fat Diet      Dexamethasone           40.5        1.82    5
 
 ![](figures/average-lineplot-1.png)<!-- -->
 
@@ -76,16 +76,16 @@ Diet               Treatment        Agg.Intake.mean   Agg.Intake.se
 -----------------  --------------  ----------------  --------------
 Normal Chow Diet   Dexamethasone              0.785           0.062
 Normal Chow Diet   Water                      0.000           0.000
-High Fat Diet      Dexamethasone              0.958           0.083
+High Fat Diet      Dexamethasone              1.158           0.093
 High Fat Diet      Water                      0.000           0.000
 
 ![](figures/average-normalized-lineplot-1.png)<!-- -->
 
 # Interpretation
 
-The HFD animals had **2.09** fold more fluid intake than the NCD animals over the course of the experiment.  
+The HFD animals had **1.923** fold more fluid intake than the NCD animals over the course of the experiment.  
 
-Once normalized to body weight, the HFD animals had **22.009%** higher dexamethasone intake.
+Once normalized to body weight, the HFD animals had **47.444%** higher dexamethasone intake.
 
 ## Relationship to Human Doses
 
@@ -100,10 +100,10 @@ Diet               Treatment        Human.dose
 -----------------  --------------  -----------
 Normal Chow Diet   Dexamethasone          63.8
 Normal Chow Diet   Water                   0.0
-High Fat Diet      Dexamethasone          77.9
+High Fat Diet      Dexamethasone          94.1
 High Fat Diet      Water                   0.0
 
-For a 70 kg human that is an effective dose range of **4.468** to **5.451** mg
+For a 70 kg human that is an effective dose range of **4.468** to **6.588** mg
 
 # Serum Dexamethasone Assay
 
