@@ -1,0 +1,285 @@
+---
+title: "Combined Analysis of HFD/NCD Dexamethasone WAT ATGL Levels"
+author: "Innocence Harvey and Dave Bridges"
+date: "February 11, 2016"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('black', 'red')
+
+library(ggplot2)
+#sets default theme
+theme_set(theme_bw())
+```
+
+
+```{r data-entry}
+filename <- '../../data/processed/Lipolysis iWAT Tissue Blot Data.csv'
+library(readr)
+combined_data <- read_csv(filename)
+combined_data$Diet <- relevel(as.factor(combined_data$Diet), ref='NCD')
+combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Control')
+
+#relabeled factors
+library(forcats)
+combined_data$Treatment <- fct_recode(combined_data$Treatment, "Water" = "Control") 
+combined_data$Diet <- fct_recode(combined_data$Diet, "Normal Chow Diet" = "NCD") 
+combined_data$Diet <- fct_recode(combined_data$Diet, "High Fat Diet" = "HFD") 
+
+shapiro.p <- function(x) shapiro.test(x)$p.value
+mean.na <- function(x) mean(x, na.rm=T)
+ 
+blot.data <-
+  combined_data %>%
+  mutate(ATGL.norm = ATGL/Revert,
+         CGI58.norm = Adhb/Revert,
+         HSL.norm = Hsl/Revert,
+         Perlipin.norm = Perilipin/Revert,
+         pPerilipin.norm = pPerilipin/Perilipin,
+         pHSL_563.norm = `pHsl 563`/Hsl,
+         pHSL_660.norm = `pHsl 660`/Hsl) %>%
+  select(Diet,Treatment, ends_with('norm')) %>%
+  mutate(ATGL.rel=ATGL.norm/mean(ATGL.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         HSL.rel=HSL.norm/mean(HSL.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         CGI58.rel=CGI58.norm/mean(CGI58.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         Perlipin.rel=Perlipin.norm/mean(Perlipin.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         pHSL_563.rel=pHSL_563.norm/mean(pHSL_563.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         pHSL_660.rel=pHSL_660.norm/mean(pHSL_660.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T),
+         pPerilipin.rel=pPerilipin.norm/mean(pPerilipin.norm[Diet=="Normal Chow Diet"&Treatment=="Water"],na.rm=T)) 
+
+blot.summary <-
+  blot.data %>%
+  group_by(Diet, Treatment) %>% 
+  select(-ends_with('norm')) %>%
+  summarize_if(is.numeric, funs(mean.na,se,length))
+
+blot.summary %>% select(ends_with('mean.na'),Treatment) %>% 
+  rename(ATGL = ATGL.rel_mean.na, 
+         HSL = HSL.rel_mean.na, 
+         CGI58= CGI58.rel_mean.na,
+         Perilipin=Perlipin.rel_mean.na,
+         pHSL_563=pHSL_563.rel_mean.na,
+         pHSL_660=pHSL_660.rel_mean.na,
+         pPerilipin=pPerilipin.rel_mean.na) %>% 
+  gather(Protein,Levels,-Diet,-Treatment) %>% 
+  kable(caption="Normalized Average Levels")
+```
+
+
+This script uses the files in `r filename`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
+
+# ATGL
+
+```{r atgl-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,ATGL.rel_mean.na) %>% spread(Diet,ATGL.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,ATGL.rel_se) %>% spread(Diet,ATGL.rel_se)
+
+ymax <- 3
+
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="ATGL (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$ATGL.rel_mean.na[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$ATGL.rel_mean.na[4]/blot.summary$ATGL.rel_mean.na[3]` fold increase in HFD animals.
+
+## ATGL Statistics
+
+```{r atgl-statistics}
+tg.aov <- aov(ATGL.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+library(broom)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for ATGL Levels")
+```
+
+# HSL
+
+```{r hsl-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,HSL.rel_mean.na) %>% spread(Diet,HSL.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,HSL.rel_se) %>% spread(Diet,HSL.rel_se)
+
+ymax <- 1.2
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="HSL (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$HSL.rel_mean.na[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$HSL.rel_mean.na[4]/blot.summary$HSL.rel_mean.na[3]` fold increase in HFD animals.
+
+## HSL Statistics
+
+```{r hsl-statistics}
+tg.aov <- aov(HSL.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for HSL Levels")
+```
+
+# pHSL-563
+
+```{r hsl-563-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,pHSL_563.rel_mean.na) %>% spread(Diet,pHSL_563.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,pHSL_563.rel_se) %>% spread(Diet,pHSL_563.rel_se)
+
+ymax <- 2.2
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="pHSL-Ser 563 (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$pHSL_563.rel_mean.na[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$pHSL_563.rel_mean.na[4]/blot.summary$pHSL_563.rel_mean.na[3]` fold increase in HFD animals.
+
+## pHSL-563 Statistics
+
+```{r hsl-563-statistics}
+tg.aov <- aov(pHSL_563.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for HSL pSer 563 Levels")
+```
+
+# pHSL-660
+
+```{r hsl-660-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,pHSL_660.rel_mean.na) %>% spread(Diet,pHSL_660.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,pHSL_660.rel_se) %>% spread(Diet,pHSL_660.rel_se)
+
+ymax <- 2.2
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="pHSL-Ser 660 (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$pHSL_660.rel_mean.na[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$pHSL_660.rel_mean.na[4]/blot.summary$pHSL_660.rel_mean.na[3]` fold increase in HFD animals.
+
+## pHSL-660 Statistics
+
+```{r hsl-660-statistics}
+tg.aov <- aov(pHSL_660.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for HSL pSer 563 Levels")
+```
+
+# Perilipin
+
+```{r perilipin-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,Perlipin.rel_mean.na) %>% spread(Diet,Perlipin.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,Perlipin.rel_se) %>% spread(Diet,Perlipin.rel_se)
+
+ymax <- 8
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="Total Perilipin (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+## Perilipin Statistics
+
+```{r perilipin-statistics}
+tg.aov <- aov(Perlipin.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for Total Perilipin Levels")
+```
+
+# pPerilipin
+
+```{r p-perilipin-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,pPerilipin.rel_mean.na) %>% spread(Diet,pPerilipin.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,pPerilipin.rel_se) %>% spread(Diet,pPerilipin.rel_se)
+
+ymax <- 1.2
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="pPerilipin (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+## pPerilipin Statistics
+
+```{r p-perilipin-statistics}
+tg.aov <- aov(pPerilipin.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for Perilipin Phosphorylation Levels")
+```
+
+# ADRB5 or CGI-58
+
+```{r cgi58-wat-barplot}
+plot.data <- blot.summary %>% select(Diet,Treatment,CGI58.rel_mean.na) %>% spread(Diet,CGI58.rel_mean.na)
+plot.data.se <- blot.summary %>% select(Diet,Treatment,CGI58.rel_se) %>% spread(Diet,CGI58.rel_se)
+
+ymax <- 1.5
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="CGI-58 (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+#legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$CGI58.rel_mean.na[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$CGI58.rel_mean.na[4]/blot.summary$CGI58.rel_mean.na[3]` fold increase in HFD animals.
+
+## CGI-58 Statistics
+
+```{r cgi58-statistics}
+tg.aov <- aov(CGI58.rel ~ Diet + Treatment + Diet:Treatment, data=blot.data)
+kable(tidy(tg.aov), caption="2-Way ANOVA with Interaction for CGI-58 Levels")
+```
+
+
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
