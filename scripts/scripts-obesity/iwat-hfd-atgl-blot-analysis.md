@@ -1,6 +1,18 @@
-# Combined Analysis of HFD/NCD Dexamethasone WAT ATGL Levels
-Innocence Harvey and Dave Bridges  
-February 11, 2016  
+---
+title: "Combined Analysis of HFD/NCD Dexamethasone WAT ATGL Levels"
+author: "Innocence Harvey and Dave Bridges"
+date: "February 11, 2016"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+    number_sections: no
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
 
 
 
@@ -16,7 +28,7 @@ High Fat Diet      Water            1.10   0.166        6       0.990
 High Fat Diet      Dexamethasone    2.63   0.317        5       0.290
 
 
-This script uses the files in ../../data/raw/HFD vs NCD ATGL Blot Quantification.csv. These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Sun Sep  3 07:33:26 2017.
+This script uses the files in ../../data/raw/HFD vs NCD ATGL Blot Quantification.csv. These data are located in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Sat Apr 21 10:36:40 2018.
 
 ![](figures/atgl-wat-barplot-1.png)<!-- -->
 
@@ -56,9 +68,13 @@ High Fat Diet:Dexamethasone-Normal Chow Diet:Dexamethasone    1.087    0.158   2
 
 
 ```
-## R version 3.3.0 (2016-05-03)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## R version 3.4.3 (2017-11-30)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: OS X El Capitan 10.11.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -67,14 +83,15 @@ High Fat Diet:Dexamethasone-Normal Chow Diet:Dexamethasone    1.087    0.158   2
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] bindrcpp_0.2  tidyr_0.6.3   dplyr_0.7.2   forcats_0.2.0 readr_1.1.1  
-## [6] knitr_1.17   
+## [1] bindrcpp_0.2  tidyr_0.8.0   dplyr_0.7.4   forcats_0.3.0 readr_1.1.1  
+## [6] knitr_1.20   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.12     assertthat_0.2.0 digest_0.6.12    rprojroot_1.2   
-##  [5] R6_2.2.2         backports_1.1.0  magrittr_1.5     evaluate_0.10.1 
-##  [9] highr_0.6        rlang_0.1.2      stringi_1.1.5    rmarkdown_1.6   
-## [13] tools_3.3.0      stringr_1.2.0    glue_1.1.1       hms_0.3         
-## [17] yaml_2.1.14      pkgconfig_2.0.1  htmltools_0.3.6  bindr_0.1       
-## [21] tibble_1.3.3
+##  [1] Rcpp_0.12.15     bindr_0.1        magrittr_1.5     hms_0.4.1       
+##  [5] tidyselect_0.2.3 R6_2.2.2         rlang_0.2.0      highr_0.6       
+##  [9] stringr_1.3.0    tools_3.4.3      htmltools_0.3.6  yaml_2.1.16     
+## [13] rprojroot_1.3-2  digest_0.6.15    assertthat_0.2.0 tibble_1.4.2    
+## [17] purrr_0.2.4      glue_1.2.0       evaluate_0.10.1  rmarkdown_1.8   
+## [21] stringi_1.1.6    compiler_3.4.3   pillar_1.1.0     backports_1.1.2 
+## [25] pkgconfig_2.0.1
 ```

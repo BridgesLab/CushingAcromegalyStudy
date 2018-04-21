@@ -53,7 +53,7 @@ High Fat Diet      Water           pPerilipin     0.310
 High Fat Diet      Dexamethasone   pPerilipin     0.458
 
 
-This script uses the files in ../../data/processed/Lipolysis iWAT Tissue Blot Data.csv. These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Sun Apr  8 16:45:20 2018.
+This script uses the files in ../../data/processed/Lipolysis iWAT Tissue Blot Data.csv. These data are located in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Sat Apr 21 10:37:21 2018.
 
 # ATGL
 
@@ -183,9 +183,9 @@ Residuals         19   3.932    0.207          NA        NA
 
 
 ```
-## R version 3.4.4 (2018-03-15)
+## R version 3.4.3 (2017-11-30)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.3
+## Running under: OS X El Capitan 10.11.6
 ## 
 ## Matrix products: default
 ## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
@@ -198,18 +198,18 @@ Residuals         19   3.932    0.207          NA        NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.4.3   bindrcpp_0.2  forcats_0.2.0 readr_1.1.1   ggplot2_2.2.1
-## [6] dplyr_0.7.4   tidyr_0.7.2   knitr_1.17   
+## [1] broom_0.4.4   bindrcpp_0.2  forcats_0.3.0 readr_1.1.1   ggplot2_2.2.1
+## [6] dplyr_0.7.4   tidyr_0.8.0   knitr_1.20   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.14     compiler_3.4.4   plyr_1.8.4       highr_0.6       
-##  [5] bindr_0.1        tools_3.4.4      digest_0.6.12    evaluate_0.10.1 
-##  [9] tibble_1.3.4     gtable_0.2.0     nlme_3.1-131.1   lattice_0.20-35 
-## [13] pkgconfig_2.0.1  rlang_0.1.4      psych_1.7.8      parallel_3.4.4  
-## [17] yaml_2.1.15      stringr_1.2.0    hms_0.4.0        rprojroot_1.2   
-## [21] grid_3.4.4       tidyselect_0.2.3 glue_1.2.0       R6_2.2.2        
-## [25] foreign_0.8-69   rmarkdown_1.8    reshape2_1.4.2   purrr_0.2.4     
-## [29] magrittr_1.5     backports_1.1.1  scales_0.5.0     htmltools_0.3.6 
-## [33] mnormt_1.5-5     assertthat_0.2.0 colorspace_1.3-2 stringi_1.1.6   
-## [37] lazyeval_0.2.1   munsell_0.4.3
+##  [1] Rcpp_0.12.15     pillar_1.1.0     compiler_3.4.3   plyr_1.8.4      
+##  [5] highr_0.6        bindr_0.1        tools_3.4.3      digest_0.6.15   
+##  [9] evaluate_0.10.1  tibble_1.4.2     gtable_0.2.0     nlme_3.1-131    
+## [13] lattice_0.20-35  pkgconfig_2.0.1  rlang_0.2.0      psych_1.8.3.3   
+## [17] parallel_3.4.3   yaml_2.1.16      stringr_1.3.0    hms_0.4.1       
+## [21] rprojroot_1.3-2  grid_3.4.3       tidyselect_0.2.3 glue_1.2.0      
+## [25] R6_2.2.2         foreign_0.8-69   rmarkdown_1.8    reshape2_1.4.3  
+## [29] purrr_0.2.4      magrittr_1.5     backports_1.1.2  scales_0.5.0    
+## [33] htmltools_0.3.6  mnormt_1.5-5     assertthat_0.2.0 colorspace_1.3-2
+## [37] stringi_1.1.6    lazyeval_0.2.1   munsell_0.4.3
 ```
