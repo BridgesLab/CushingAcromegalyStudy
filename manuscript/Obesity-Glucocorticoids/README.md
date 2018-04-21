@@ -32,10 +32,8 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 5D | No Script - Images | data/processed/ATGL Blot Summary.ai |***
 | Figure 5E | scripts/scripts-obesity/iwat-hfd-atgl-blot-analysis.Rmd | scripts/scripts-obesity/figures/atgl-wat-barplot-1.pdf |
 | Supplementary Figure 1A | scripts/scripts-obesity/itt-analysis.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-1.pdf |
-
-------| Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-1.pdf | --------called same thing as non clamp itit so figures overwright
-------| Supplementary Figure 1C | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/itt-fasting-glucose-1.pdf | -------same as above
-
+| Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-clamp-1.pdf | 
+| Supplementary Figure 1C | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/itt-fasting-glucose-clamp-1.pdf | 
 | Supplementary Figure 1D | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/figures/clamp-lean-mass-lineplot-1.pdf |
 | Supplementary Figure 1E | scripts/scripts-obesity/body-composition-analysis-clamps.Rmd | scripts/scripts-obesity/clamp-fat-mass-lineplot-1.pdf |
 | Supplementary Figure 1F | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/clamp-glucose-timecourse-1.pdf |

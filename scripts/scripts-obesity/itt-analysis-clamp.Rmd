@@ -58,7 +58,7 @@ itt.summary.lineplots <-
   summarize_each(funs(mean.na,se), starts_with("X"))
 ```
 
-```{r itt-lineplot}
+```{r itt-lineplot-clamp}
 ymax <- max(itt.summary.lineplots[,3:9])
 times <- c(0,15,30,45,60,75,90)
 plot(times, itt.summary.lineplots[3,3:9], 
@@ -109,7 +109,7 @@ Based on a mixed linear model testing for effects of a Diet:Treatment interactio
 
 ## Normalized to Fasting Glucose
 
-```{r itt-lineplot-normalized}
+```{r itt-lineplot-normalized-clamp}
 times <- c(0,15,30,45,60,75,90)
 plot(times, itt.summary.lineplots[3,3:9]/as.numeric(itt.summary.lineplots[3,3])*100, 
      type="l", ylim=c(0,105), las=1,
@@ -145,7 +145,7 @@ superpose.eb(times,
 
 ## Fasting Blood Glucose
 
-```{r itt-fasting-glucose}
+```{r itt-fasting-glucose-clamp}
 library(tidyr)
 itt.summary.barplots$Treatment <- relevel(itt.summary.barplots$Treatment, ref="Water")
 itt.summary.barplots$Diet <- relevel(itt.summary.barplots$Diet, ref="NCD")

@@ -13,11 +13,11 @@ output:
 
 
 
-This document can be found in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity.  It reads from the file ../../data/raw/mmpc-itt-data.csv and this script was most recently run on Sat Apr 21 00:05:56 2018.
+This document can be found in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity.  It reads from the file ../../data/raw/mmpc-itt-data.csv and this script was most recently run on Sat Apr 21 10:11:30 2018.
 
 
 
-![](figures/itt-lineplot-1.png)<!-- -->
+![](figures/itt-lineplot-clamp-1.png)<!-- -->
 
 ### ITT Statistics
 
@@ -27,12 +27,12 @@ Based on a mixed linear model testing for effects of a Diet:Treatment interactio
 
 ## Normalized to Fasting Glucose
 
-![](figures/itt-lineplot-normalized-1.png)<!-- -->
+![](figures/itt-lineplot-normalized-clamp-1.png)<!-- -->
 
 
 ## Fasting Blood Glucose
 
-![](figures/itt-fasting-glucose-1.png)<!-- -->
+![](figures/itt-fasting-glucose-clamp-1.png)<!-- -->
 
 ### Fasting Glucose Statistics
 
