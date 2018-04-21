@@ -1,12 +1,19 @@
-# ITT for Dexamethasone Treated HFD-Fed Mice at the MMPC
-Innocence Harvey, Melanie Schmitt, Nathan Qi and Dave Bridges  
-April 5, 2017  
+---
+title: "ITT for Dexamethasone Treated HFD-Fed Mice at the MMPC"
+author: "Innocence Harvey, Melanie Schmitt, Nathan Qi and Dave Bridges"
+date: "April 5, 2017"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
 
 
 
 
 
-This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity.  It reads from the file ../../data/raw/mmpc-itt-data.csv and this script was most recently run on Wed Aug 16 11:27:09 2017.
+This document can be found in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity.  It reads from the file ../../data/raw/mmpc-itt-data.csv and this script was most recently run on Sat Apr 21 00:05:56 2018.
 
 
 
@@ -16,7 +23,7 @@ This document can be found in /Users/davebrid/Documents/GitHub/CushingAcromegaly
 
 
 
-Based on a mixed linear model testing for effects of a Diet:Treatment interaction, there is a significant interaction between Diet and Treatment during the ITT **(p=1.8935007&times; 10^-4^)**.  The residuals of this model fail to meet the criteria for normality via a Shapiro-Wilk test, so normality cannot be assumed (p=6.3716137&times; 10^-14^).
+Based on a mixed linear model testing for effects of a Diet:Treatment interaction, there is a significant interaction between Diet and Treatment during the ITT **(p=0.0180343)**.  The residuals of this model fail to meet the criteria for normality via a Shapiro-Wilk test, so normality cannot be assumed (p=2.4019467&times; 10^-10^).
 
 ## Normalized to Fasting Glucose
 
@@ -68,9 +75,13 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 
 
 ```
-## R version 3.3.0 (2016-05-03)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## R version 3.4.3 (2017-11-30)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: OS X El Capitan 10.11.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -79,15 +90,16 @@ The residuals from this ANOVA can **not** be assumed to be normally distributed 
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] lme4_1.1-13   Matrix_1.2-10 tidyr_0.6.3   bindrcpp_0.2  dplyr_0.7.2  
-## [6] knitr_1.17   
+## [1] lme4_1.1-15   Matrix_1.2-12 tidyr_0.8.0   bindrcpp_0.2  dplyr_0.7.4  
+## [6] knitr_1.20   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.12     bindr_0.1        magrittr_1.5     MASS_7.3-47     
-##  [5] splines_3.3.0    lattice_0.20-35  R6_2.2.2         rlang_0.1.2     
-##  [9] minqa_1.2.4      highr_0.6        stringr_1.2.0    tools_3.3.0     
-## [13] grid_3.3.0       nlme_3.1-131     htmltools_0.3.6  yaml_2.1.14     
-## [17] assertthat_0.2.0 rprojroot_1.2    digest_0.6.12    tibble_1.3.3    
-## [21] nloptr_1.0.4     glue_1.1.1       evaluate_0.10.1  rmarkdown_1.6   
-## [25] stringi_1.1.5    backports_1.1.0  pkgconfig_2.0.1
+##  [1] Rcpp_0.12.15     bindr_0.1        magrittr_1.5     MASS_7.3-47     
+##  [5] splines_3.4.3    tidyselect_0.2.3 lattice_0.20-35  R6_2.2.2        
+##  [9] rlang_0.2.0      minqa_1.2.4      highr_0.6        stringr_1.3.0   
+## [13] tools_3.4.3      grid_3.4.3       nlme_3.1-131     htmltools_0.3.6 
+## [17] yaml_2.1.16      assertthat_0.2.0 rprojroot_1.3-2  digest_0.6.15   
+## [21] tibble_1.4.2     nloptr_1.0.4     purrr_0.2.4      glue_1.2.0      
+## [25] evaluate_0.10.1  rmarkdown_1.8    stringi_1.1.6    compiler_3.4.3  
+## [29] pillar_1.1.0     backports_1.1.2  pkgconfig_2.0.1
 ```
