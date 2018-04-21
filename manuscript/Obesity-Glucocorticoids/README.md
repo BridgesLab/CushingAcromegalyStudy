@@ -29,7 +29,7 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Figure 5A | scripts/scripts-obesity/combined-glycerol-analysis.Rmd | scripts/scripts-obesity/figures/ncd-hfd-glycerol-barplot-1.pdf |
 | Figure 5B | scripts/scripts-obesity/Clamp Lipolysis Assay.Rmd | nefa-absolute-1.pdf
 | Figure 5C | scripts/scripts-obesity/combined-iWAT-qPCR-analysis.Rmd | scripts/scripts-obesity/figures/iwat-pnpla2-barplot-1.pdf |
-| Figure 5D | No Script - Images | data/processed/ATGL Blot Summary.ai |***
+| Figure 5D | No Script - Images | data/processed/ATGL Blot Summary.png |
 | Figure 5E | scripts/scripts-obesity/iwat-hfd-atgl-blot-analysis-revert.Rmd | scripts/scripts-obesity/figures/atgl-wat-barplot-1.pdf |
 | Supplementary Figure 1A | scripts/scripts-obesity/itt-analysis.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-1.pdf |
 | Supplementary Figure 1B | scripts/scripts-obesity/itt-analysis-clamp.Rmd | scripts/scripts-obesity/figures/itt-lineplot-normalized-clamp-1.pdf | 
@@ -40,5 +40,5 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 | Supplementary Figure 1G | scripts/scripts-obesity/clamp-analysis.Rmd | scripts/scripts-obesity/figures/insulin-clearance-barplot-hfd-1.pdf |
 | Supplementary Figure 1H | scripts/scripts-obesity/glucose-clamp-tissue-analysis.Rmd | scripts/scripts-obesity/figures/clamp-glucose-uptake-adipose-muscle-1.pdf |
 | Supplementary Figure 1I | scripts/scripts-obesity/glucose-clamp-tissue-analysis.Rmd | scripts/scripts-obesity/figures/clamp-glucose-uptake-heart-bat-1.pdf
-| Supplementary Figure 2A | No Script - Images | data/processed/HSL-blot.ai |***
-| Supplementary Figure 2B | 
+| Supplementary Figure 2A | No Script - Images | data/processed/HSL-blot.png |
+| Supplementary Figure 2B | scripts/scripts-obesity/iwat-hfd-atgl-blot-analysis-revert.Rmd | scripts/scripts-obesity/figures/hsl-wat-barplot-1.pdf, hsl-563-wat-barplot-1.pdf, hsl-660-wat-barplot-1.pdf |
