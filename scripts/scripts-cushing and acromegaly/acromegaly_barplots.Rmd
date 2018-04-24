@@ -4,12 +4,12 @@ Barplot Analysis of Acromegaly Results
 Used Analysed DESeq results.
 
 ```{r file-input, echo=FALSE, warning=FALSE}
-filename <- "../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
-deseq.filename <- "../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
+filename <- "../../data/processed/RPKM_counts_Acromegaly_GRCh37.74.csv"
+deseq.filename <- "../../data/processed/Annotated Results GRCh37.74 - Acromegaly.csv"
 #read in the file
 normalized.data <- read.csv(filename, row.names='X')
 deseq.data <- read.csv(deseq.filename, row.names='X')
-mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
+mapping <- read.csv("../../data/raw/patient_sample_mapping.csv")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
 levels(mapping$group) <- c("Control", "Acromegaly","Cushing's")
@@ -33,7 +33,7 @@ rpkm.data.unique <- rpkm.data[!duplicated(rpkm.data$hgnc_symbol),]
 rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
-genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6", "LEPR", "LEP", "ENPP5", "GPR64", "SLC29A1", "SLC2A13", "MAP1LC3C", "PNPLA3", "APOL4", "ARHGAP32", "ZNF217", "CXCL13", "FGF17", "SLC4A1", "SERPINI2", "HLA-DPB1","HLA-DPA1","HLA-DQB1","HLA-DPB1","JUN","FOS","FAM47E-STBD1","STBD1")
+genes.of.interest <- c("IGF1", "IGFBP3", "IGFBP5","IGFALS","CISH", "SOCS2", "ADRB3", "TSHR", "TCF7L2", "PYGM","HSD11B1","LPL","PGM3","NR3C1","MVP", "SCD", "APOL4", "PTPN3", "PTPN4","CCNE1","CCNG1", "CDKN2B", "CDKN2B-AS1", "NAP1L1","ORC2", "PDGFD", "RARB","PGRMC1","SCDP1","SCP2", "MAP3K5","MAPK13","MAPKAPK3","MATN2","MFAP4","MMRN2", "NRIP1","MMD","ABHD5","LEPR","ACVR1C","GFPT1","CYB5A","AVPR1A","PTGER3","PDE3B","FADS2","LIPE","PNPLA2", "MGLL","AKT1", "AKT2","AKT3", "INSR", "IRS1", "IRS2", "IRS4", "SLC2A4", "PIK3R1","BAG4","CAPN6","G0S2","PPARG", "PPARA","SERPINA6", "LEPR", "LEP", "ENPP5", "GPR64", "SLC29A1", "SLC2A13", "MAP1LC3C", "PNPLA3", "APOL4", "ARHGAP32", "ZNF217", "CXCL13", "FGF17", "SLC4A1", "SERPINI2", "HLA-DPB1","HLA-DPA1","HLA-DQB1","HLA-DPB1","JUN","FOS","FAM47E-STBD1","STBD1")
 
 
 
@@ -64,11 +64,11 @@ rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$hgnc_symbol), rev(rpkm.lo
 library(reshape2)
 library(ggplot2)
 for (gene in genes.of.interest) {
-  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  #pdf(sprintf('../../figures/%s-barplot.pdf', gene))
   gene.data <- goi.long.cal[goi.long.cal$Genes==gene,]
-  #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+  #pdf(paste('../../figures/',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=rev(Disease),y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Disease) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
 }
 
 ```
@@ -102,16 +102,16 @@ ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position="top")
 
-ggsave("../figures/Acromegaly-all-lipases-RPKM.pdf")
+ggsave("../../data/figures/Acromegaly-all-lipases-RPKM.pdf")
 
 ```
 
 ```{r draw lipase genes, echo=FALSE, fig.show='asis',  warning=FALSE}
 #draw each lipase gene
 for (gene in lipases) {
-  #pdf(sprintf('../figures/Acromegaly-%s-barplot.pdf', gene))
+  #pdf(sprintf('../../figures/Acromegaly-%s-barplot.pdf', gene))
   gene.data <- lipase.cal[lipase.cal$Genes==gene,]
-  #pdf(paste('../figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
+  #pdf(paste('../../figures/Acromegaly-',gene,'-barplot.pdf',sep=""))
   ggplot(gene.data, aes(x=Disease,y=mean_Expression)) + 
     geom_bar(stat="identity", col="black") + 
     geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2) + 
@@ -122,7 +122,7 @@ for (gene in lipases) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../figures/Acromegaly-lipase-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Acromegaly-lipase-',gene,'-barplot.pdf',sep=""))
 }
 ```
 
@@ -176,7 +176,7 @@ for (name in gene.data.name){
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
-  ggsave(filename=paste('../Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Acromegaly-', name, '-barplot.pdf',sep=""))
 }
 
 gene.data.name <- c('figure4C', 'figure4C_FASN','figure4D_SCD', 'figure4D')
@@ -238,11 +238,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
   
-pdf('../Figures/Acromegaly_FASN_Combined.pdf')
+pdf('../../data/Figures/Acromegaly_FASN_Combined.pdf')
 multiplot(plot_figure4C,plot_figure4C_FASN, cols=2)
 dev.off()
 
-pdf('../Figures/Acromegaly_SCD_Combined.pdf')
+pdf('../../data/Figures/Acromegaly_SCD_Combined.pdf')
 multiplot(plot_figure4D_SCD,plot_figure4D, cols=2)
 dev.off()
 ```
