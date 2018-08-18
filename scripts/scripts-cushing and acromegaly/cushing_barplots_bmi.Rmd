@@ -4,13 +4,13 @@ Barplot Analysis of Cushing Results
 Used Analysed DESeq results.  There was no sequence data for sample 12128 and we removed the control patient id 29 due to his missing the exclusion criteria.
 
 ```{r file-input, echo=FALSE, warning=FALSE}
-filename <- "../data/processed/RPKM_counts_Cushing_GRCh37.74.csv"
-deseq.filename <- "../data/processed/Annotated_Results_Cushings_NotObese_and_Obese.csv"
+filename <- "../../data/processed/RPKM_counts_Cushing_GRCh37.74.csv"
+deseq.filename <- "../../data/processed/Annotated_Results_Cushings_NotObese_and_Obese.csv"
 #read in the file
 normalized.data <- read.csv(filename, row.names='X')
 deseq.data <- read.csv(deseq.filename, row.names='X')
-sample_mapping <- read.csv("../data/raw/patient_sample_mapping.csv")
-patient_info <- read.csv("../data/raw/patient_table.csv")
+sample_mapping <- read.csv("../../data/raw/patient_sample_mapping.csv")
+patient_info <- read.csv("../../data/raw/patient_table.csv")
 mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
 mapping$group <- relevel(mapping$group, ref="non-functioning")
@@ -32,7 +32,7 @@ filtered.normalized.cush <- filtered.normalized.data[,colnames(filtered.normaliz
 #library(biomaRt)
 #ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl")
 #gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),filters = 'ensembl_gene_id', values = rownames(filtered.normalized.data), mart = ensembl)
-annotation_output_file <- '../data/raw/Ensembl Gene Annotation.csv'
+annotation_output_file <- '../../data/raw/Ensembl Gene Annotation.csv'
 #write.csv(gene.data, annotation_output_file)
 gene.data <- read.csv(annotation_output_file, row.names='X')
 rpkm.data <- merge(filtered.normalized.cush, gene.data, by.x='row.names', by.y='ensembl_gene_id') 
@@ -42,7 +42,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","STBD1", "HSD11B1")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","STBD1", "HSD11B1","LEP")
 
 #genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
 #put the data in long format
@@ -77,7 +77,7 @@ for (gene in genes.of.interest) {
   ggplot(gene.data, aes(x=BMI,y=mean_Expression, fill=Disease)) + 
     geom_bar(stat="identity", position="dodge") + 
     geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), position=position_dodge(0.9),width=.2) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$BMI) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
-  ggsave(filename=paste('../Figures/Cushing_BMI/Cushing-BMI-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-',gene,'-barplot.pdf',sep=""))
 }
 
 ```
@@ -111,7 +111,7 @@ ggplot(lipase.cal, aes(x=Genes, y=mean_Expression, fill=Disease))+
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
 
-ggsave("../Figures/Cushing_BMI/Cushing-BMI-all-lipases-RPKM.pdf")
+ggsave("../../data/Figures/Cushing_BMI/Cushing-BMI-all-lipases-RPKM.pdf")
 
 ```
 
@@ -132,7 +132,7 @@ for (gene in lipases) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../Figures/Cushing_BMI/Cushing-BMI-lipase-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-lipase-',gene,'-barplot.pdf',sep=""))
 }
 #draw each gene in the obese.sig.genes list
 for (gene in obese.sig.genes) {
@@ -149,7 +149,7 @@ for (gene in obese.sig.genes) {
     theme(panel.border=element_blank()) + 
     theme(axis.line = element_line(color = 'black'))
   
-  ggsave(filename=paste('../Figures/Cushing_BMI/Cushing-Obese-',gene,'-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-Obese-',gene,'-barplot.pdf',sep=""))
 }
 ```
 
@@ -193,7 +193,8 @@ KEGG_LYSOSOME <- c('ACP5','LAPTM5','SLC11A1','LIPA','CTSH','CTSS','LAMP3','CTSC'
 KEGG_LYSOSOME_high <- c('CTSB','CTSD','CTSZ','CTSK','CTSS','LAPTM4A','LAPTM4B','LAPTM5','LAMP1','LAMP2','NPC1','NPC2','LGMN','LIPA','M6PR','TPP1','PPT1')
 ATP_SYNTHASE <- c('ATP6V1A','ATP6V1B2','ATP6V1B2','ATP6V1C1','ATP6V1C2','ATP6V1D','ATP6V1E1','ATP6V1E2','ATP6V1F','ATP6V1G1','ATP6V1G2','ATP6V1G3','ATP6V1H')
 
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','KEGG_BASAL_CELL_CARCINOMA','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','MITOCHONDRIONsub','CALMODULIN_BINDING','KEGG_LYSOSOME','KEGG_LYSOSOME_high','ATP_SYNTHASE')
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','MITOCHONDRIONsub','CALMODULIN_BINDING','KEGG_LYSOSOME','KEGG_LYSOSOME_high','ATP_SYNTHASE')
+
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
   gene.data <- rpkm.long.cal[rpkm.long.cal$hgnc_symbol%in%eval(as.name(name)),]
@@ -202,7 +203,7 @@ for (name in gene.data.name){
   ggplot(gene.data, aes(x=hgnc_symbol, y=mean_Expression, fill=Disease))+ 
     #this line together with show_guide=F and the element_rect=black get rid of the slash in legend box
     geom_bar(stat="identity", width=.8, position=position_dodge(width=.8)) +
-    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show.legend=F) +
     geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
     facet_grid(BMI~.)+
     theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
@@ -214,7 +215,7 @@ for (name in gene.data.name){
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.3,vjust=.3)) +
     theme(legend.position=c(.60,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
     
-  ggsave(filename=paste('../Figures/Cushing_BMI/Cushing-BMI-', name, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', name, '-barplot.pdf',sep=""))
 }
 
 ```
