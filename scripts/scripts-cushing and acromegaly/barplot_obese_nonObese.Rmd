@@ -11,7 +11,7 @@ Statistics
 -------------
 
 ```{r data-entry, echo=FALSE, message=FALSE}
-data <- read.csv('../data/raw/patient_table.csv')
+data <- read.csv('../../data/raw/patient_table.csv')
 #removed cushing data
 cushing.data <- subset(data, diagnosis %in% c("cushing's", "non secreting adenoma"), drop=TRUE)
 #reset non secreting adenoma to 
@@ -91,7 +91,7 @@ for (item in glucose.data.vars) {
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
     ggtitle(as.name(item))
-  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
 }
 
 for (item in clinical.data.vars) {
@@ -103,7 +103,7 @@ for (item in clinical.data.vars) {
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
     ggtitle(as.name(item))
-  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
 }
 
 for (item in lipid.data.vars) {
@@ -115,7 +115,7 @@ for (item in lipid.data.vars) {
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
     ggtitle(as.name(item))
-  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
 }
 
 for (item in lipolysis.data.vars) {
@@ -127,7 +127,7 @@ for (item in lipolysis.data.vars) {
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
     ggtitle(as.name(item))
-  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
 }
 
 for (item in liver.data.vars) {
@@ -139,7 +139,7 @@ for (item in liver.data.vars) {
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
     ggtitle(as.name(item))
-  ggsave(filename=paste('../Figures/Cushing_clinical_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
+  ggsave(filename=paste('../../data/Figures/Cushing_BMI/Cushing-BMI-', item, '-barplot.pdf',sep=""))
 }
 
 
@@ -157,7 +157,7 @@ ggplot(lipolysis.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
-ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-lipolysis-barplot.pdf")
+ggsave("../../data/Figures/Cushing_BMI/Cushing-BMI-lipolysis-barplot.pdf")
 
 ####glucose graphs####
 ggplot(glucose.stat, aes(x=measurement, y=mean, fill=diagnosis))+
@@ -173,7 +173,7 @@ ggplot(glucose.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
-ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-glucosePanel-barplot.pdf")
+ggsave("../../data/Figures/Cushing_BMI/Cushing-BMI-glucosePanel-barplot.pdf")
 
 
 ####clinical graphs####
@@ -191,7 +191,7 @@ ggplot(clinical.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
-ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-clinicalPanel-barplot.pdf")
+ggsave("../../data/Figures/Cushing_BMI/Cushing-BMI-clinicalPanel-barplot.pdf")
 
 ####liver graphs####
 ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
@@ -208,7 +208,7 @@ ggplot(liver.stat, aes(x=measurement, y=mean, fill=diagnosis))+
     guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
     theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
     theme(legend.position=c(.60,.90))
-ggsave("../Figures/Cushing_clinical_BMI/Cushing-BMI-liverPanel-barplot.pdf")
+ggsave("../../data/Figures/Cushing_BMI/Cushing-BMI-liverPanel-barplot.pdf")
 ```
 
 Session Information
