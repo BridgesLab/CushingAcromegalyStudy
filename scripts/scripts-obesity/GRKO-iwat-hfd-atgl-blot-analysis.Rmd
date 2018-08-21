@@ -1,0 +1,116 @@
+---
+title: "Analysis of Male HFD WT/GRKO Water/Dexamethasone WAT ATGL Levels"
+author: "Innocence Harvey and Dave Bridges"
+date: "July 17, 2018"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+    number_sections: no
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+```
+
+
+```{r data-entry}
+filename <- '../../data/raw/aGRKO HFD Male IWAT Westerns.csv'
+library(readr)
+combined_data <- read_csv(filename)
+combined_data$Genotype <- relevel(as.factor(combined_data$Genotype), ref='WildType')
+combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
+
+#relabeled factors
+library(forcats)
+combined_data$Treatment <- fct_recode(combined_data$Treatment, "Water" = "Control") 
+combined_data$Genotype <- fct_recode(combined_data$Genotype, "WildType" = "WT") 
+combined_data$Genotype <- fct_recode(combined_data$Genotype, "Knockout" = "aGRKO") 
+
+library(dplyr)
+library(tidyr)
+ se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+ shapiro.p <- function(x) shapiro.test(x)$p.value
+ 
+blot.data <-
+  combined_data %>%
+  mutate(ATGL.norm = ATGL/Revert) %>%
+  select(Genotype,Treatment,ATGL.norm) %>%
+  mutate(Relative.Levels=ATGL.norm/mean(ATGL.norm[Genotype=="WildType"&Treatment=="Water"])) 
+
+blot.summary <-
+  blot.data %>%
+  group_by(Genotype, Treatment) %>% 
+  select(-ATGL.norm) %>%
+  summarize_if(is.numeric, funs(mean,se,length,shapiro.p))
+
+kable(blot.summary, caption="Blot summary values")
+```
+
+
+This script uses the files in `r filename`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
+
+```{r atgl-wat-barplot}
+plot.data <- blot.summary %>% select(Genotype,Treatment,mean) %>% spread(Genotype,mean)
+plot.data.se <- blot.summary %>% select(Genotype,Treatment,se) %>% spread(Genotype,se)
+
+ymax <- with(blot.summary, max(mean+se))
+
+
+plot <- barplot(as.matrix(plot.data[2:3]), beside=T, 
+        ylab="ATGL Protein Levels (Relative Units)",col=palette()[1:2],
+        las=1, ylim=c(0,ymax))
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+superpose.eb(plot, as.matrix(plot.data[2:3]), as.matrix(plot.data.se[2:3]))
+legend("topleft", levels(combined_data$Treatment), fill=palette(), bty="n")
+```
+
+Blots were normalized to total protein (Revert) staining.  We observed a `r blot.summary$mean[2]` fold increase in NCD animals due to dexamethasone and a `r blot.summary$mean[4]/blot.summary$mean[3]` fold increase in HFD animals.
+
+# Statistics
+
+```{r statistics}
+tg.aov <- aov(Relative.Levels ~ Genotype + Treatment + Genotype:Treatment, data=blot.data)
+tg.tukey <- TukeyHSD(tg.aov)
+```
+
+From a two-way ANOVA with an interaction, the interaction term was significant **p=`r summary(tg.aov)[[1]]$"Pr(>F)"[3]`**:
+
+```{r aov-table-Lipe}
+kable(summary(tg.aov)[[1]], caption="ANOVA for WAT ATGL Levels")
+```
+
+Tukey's tests (pairwise  comparasons are):
+
+```{r tukey-table}
+kable(tg.tukey$`Genotype:Treatment`, caption="Tukey's HSD tests for iWAT ATGL Levels")
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
