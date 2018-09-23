@@ -11,8 +11,28 @@ output:
 
 ```{r global_options, include=FALSE}
 library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
                echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(car)
 ```
 
 # Data Entry
@@ -47,6 +67,7 @@ with(weight.data, plot(age, Weight,
 
 se <- function(x) sd(x)/sqrt(length(x))
 library(dplyr)
+shapiro.p <- function(x) shapiro.test(x)$p.value
 
 weight.summary <- weight.data %>%
     group_by(age, age.from.start, Treatment) %>%
@@ -54,7 +75,8 @@ weight.summary <- weight.data %>%
       average=mean(Weight), 
       sd=sd(Weight), 
       se=se(Weight), 
-      n=length(Weight))
+      n=length(Weight),
+      shapiro.p=shapiro.p(Weight))
 
 with(subset(weight.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
 with(subset(weight.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
@@ -75,6 +97,30 @@ with(subset(weight.summary, Treatment=="Water"), superpose.eb(age.from.start,ave
 with(subset(weight.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
 ```
 
+## Body Weight Statistics
+
+```{r body-weight-statistics}
+library(ggplot2)
+ggplot(data = subset(weight.data, age>69),
+       aes(y=Weight,
+       x=age.from.start,
+       col=Treatment)) +
+  geom_smooth()
+
+#repeated measures model
+library(lme4)
+weight.lme <- lmer(Weight ~ age.from.start + Treatment + age.from.start:Treatment + (1|animal.MouseID), data=subset(weight.data, age>69))
+weight.lme.null <- lmer(Weight ~ age.from.start + Treatment + (1|animal.MouseID), data=subset(weight.data, age>69))
+```
+
+```{r body-weight-endpoint}
+kable(weight.summary %>% filter(age==147), caption="Summary statistics for body weight at endpoint")
+```
+
+At the end of the study, there was a `r (subset(weight.summary, age==147)$average[1]-subset(weight.summary, age==147)$average[2])/subset(weight.summary, age==147)$average[1]*100` % decrease in body weight **(p=`r t.test(Weight~Treatment, data=weight.data %>% filter(age==147), var.equal=T)$p.value`)** from a Student's *t*-test.  A levene's test has a p-value of `r leveneTest(Weight~Treatment, data=weight.data %>% filter(age==147))$"Pr(>F)"[1]`.
+
+Based on a linear mixed effects model, the p-value for an effect of Dexamethasone on the rate of change in body weight was `r anova(weight.lme, weight.lme.null)$"Pr(>Chisq)"[2]` (Chi-squared=`r anova(weight.lme, weight.lme.null)$"Chisq"[2]`) with an increase of `r fixef(weight.lme)['age.from.start:TreatmentDexamethasone']*7`\% per week.  To test for normality in this model we did a Shapiro-Wilk test and found that the did not meet this assumption `r shapiro.test(residuals(weight.lme))$p.value`.
+
 # Lean Mass
 
 ```{r lean-mass-scatterplot}
@@ -94,7 +140,8 @@ lean.mass.summary <- lean.mass.data %>%
       average=mean(Weight), 
       sd=sd(Weight), 
       se=se(Weight), 
-      n=length(Weight))
+      n=length(Weight),
+      shapiro.p=shapiro.p(Weight))
 
 with(subset(lean.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
 with(subset(lean.mass.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
@@ -109,6 +156,12 @@ with(subset(lean.mass.summary, Treatment=='Dexamethasone'), lines(age.from.start
 with(subset(lean.mass.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
 with(subset(lean.mass.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
 ```
+
+```{r lean-mass-endpoint}
+kable(lean.mass.summary %>% filter(age==147), caption="Summary statistics for lean mass at endpoint")
+```
+
+At the end of the study, there was a `r (subset(lean.mass.summary, age==147)$average[1]-subset(lean.mass.summary, age==147)$average[2])/subset(lean.mass.summary, age==147)$average[1]*100` % decrease in fat-free mass **(p=`r t.test(Weight~Treatment, data=lean.mass.data %>% filter(age==147), var.equal=T)$p.value`)** from a Student's *t*-test.  A levene's test has a p-value of `r leveneTest(Weight~Treatment, data=lean.mass.data %>% filter(age==147))$"Pr(>F)"[1]`.
 
 # Fat Mass
 
@@ -128,7 +181,8 @@ fat.mass.summary <- fat.mass.data %>%
       average=mean(Weight), 
       sd=sd(Weight), 
       se=se(Weight), 
-      n=length(Weight))
+      n=length(Weight),
+      shapiro.p=shapiro.p(Weight))
 
 with(subset(fat.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
 with(subset(fat.mass.summary, Treatment=='Dexamethasone'), lines(age, average, col=palette()[2]))
@@ -143,6 +197,13 @@ with(subset(fat.mass.summary, Treatment=='Dexamethasone'), lines(age.from.start,
 with(subset(fat.mass.summary, Treatment=="Water"), superpose.eb(age.from.start,average,se,col=palette()[1]))
 with(subset(fat.mass.summary, Treatment=="Dexamethasone"), superpose.eb(age.from.start,average,se,col=palette()[2]))
 ```
+
+```{r fat-mass-endpoint}
+kable(fat.mass.summary %>% filter(age==147), caption="Summary statistics for fat mass at endpoint")
+```
+
+At the end of the study, there was a `r (subset(fat.mass.summary, age==147)$average[2]-subset(fat.mass.summary, age==147)$average[1])/subset(fat.mass.summary, age==147)$average[1]*100` % increase in fat mass **(p=`r t.test(Weight~Treatment, data=fat.mass.data %>% filter(age==147), var.equal=T)$p.value`)** from a Student's *t*-test.  A levene's test has a p-value of `r leveneTest(Weight~Treatment, data=fat.mass.data %>% filter(age==147))$"Pr(>F)"[1]`
+
 
 ```{r pct-fat-mass-scatterplot}
 pct.fat.mass.data <- merge(
@@ -163,7 +224,8 @@ pct.fat.mass.summary <- pct.fat.mass.data %>%
       average=mean(Pct.Fat.Mass), 
       sd=sd(Pct.Fat.Mass), 
       se=se(Pct.Fat.Mass), 
-      n=length(Pct.Fat.Mass))
+      n=length(Pct.Fat.Mass),
+      shapiro.p = shapiro.p(Pct.Fat.Mass))
 pct.fat.mass.summary <- pct.fat.mass.summary[order(pct.fat.mass.summary$age),]
 
 with(subset(pct.fat.mass.summary, Treatment=='Water'), lines(age, average, col=palette()[1]))
@@ -188,8 +250,6 @@ with(pct.fat.mass.data, plot(age.from.start, Pct.Fat.Mass,
                        xlim=c(0,max(age)-70),
                         las=1, pch=19))
 
-#repeated measures model
-library(lme4)
 fat.mass.lme <- lmer(Pct.Fat.Mass ~ age.from.start + Treatment + age.from.start:Treatment + (1|animal.MouseID), data=subset(pct.fat.mass.data, age>69))
 fat.mass.lme.null <- lmer(Pct.Fat.Mass ~ age.from.start + Treatment + (1|animal.MouseID), data=subset(pct.fat.mass.data, age>69))
 
@@ -199,7 +259,14 @@ abline(a=fixef(fat.mass.lme)['(Intercept)'], b=fixef(fat.mass.lme)['age.from.sta
 legend('topleft', levels(data.dex$Treatment), col=palette()[1:2], bty='n', pch=19, lty=1)
 ```
 
-Based on a linear mixed effects model, the p-value for an effect of Dexamethasone on the rate of change in percent fat mass was `r anova(fat.mass.lme, fat.mass.lme.null)$"Pr(>Chisq)"[2]` (Chi-squared=`r anova(fat.mass.lme, fat.mass.lme.null)$"Chisq"[2]`) with an increase of `r fixef(fat.mass.lme)['age.from.start:TreatmentDexamethasone']*7`\% per week.  To test for normality in this model we did a Shapiro-Wilk test and found that the did not meet this assumption `r shapiro.test(residuals(fat.mass.lme))$p.value`.
+Based on a linear mixed effects model, the p-value for an effect of Dexamethasone on the rate of change in percent fat mass was `r anova(fat.mass.lme, fat.mass.lme.null)$"Pr(>Chisq)"[2]` (Chi-squared=`r anova(fat.mass.lme, fat.mass.lme.null)$"Chisq"[2]`) with an increase of `r fixef(fat.mass.lme)['age.from.start:TreatmentDexamethasone']*7`\% per week.  To test for normality in this model we did a Shapiro-Wilk test and found that the did not meet this assumption `r shapiro.test(residuals(fat.mass.lme))$p.value`.  
+
+```{r pct-fat-mass-endpoint}
+kable(pct.fat.mass.summary %>% filter(age==147), caption="Summary statistics for percent fat mass at endpoint")
+
+```
+
+At the end of the study, there was a `r (subset(pct.fat.mass.summary, age==147)$average[2]-subset(pct.fat.mass.summary, age==147)$average[1])/subset(pct.fat.mass.summary, age==147)$average[1]*100` % increase in fat mass **(p=`r t.test(Pct.Fat.Mass~Treatment, data=pct.fat.mass.data %>% filter(age==147), var.equal=T)$p.value`)** from a Student's *t*-test.  A levene's test has a p-value of `r leveneTest(Pct.Fat.Mass~Treatment, data=pct.fat.mass.data %>% filter(age==147))$"Pr(>F)"[1]`
 
 # Session Information
 ```{r sessionInfo}
