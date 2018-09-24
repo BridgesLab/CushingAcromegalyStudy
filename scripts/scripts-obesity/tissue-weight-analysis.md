@@ -17,7 +17,7 @@ output:
 
 
 
-This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 15:24:24 2018.
+This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 15:29:15 2018.
 
 # Number of Animals
 
@@ -124,9 +124,9 @@ The p-value for the interaction was **1.6294353&times; 10^-11^**.  The residuals
 
 
 
-The p-value from the Levene's test were 0.3496128 for HFD.  Based on this a Welch's *t* test was performed with a p-value of **3.7377627&times; 10^-14^**.  
+The p-value from the Levene's test were 0.3496128 for HFD.  Based on this a Student's *t* test was performed with a p-value of **9.2083744&times; 10^-14^**.  
 
-For NCD the Levene's test had a p-value of and  0.2678086, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **0.5452112** for NCD.
+For NCD the Levene's test had a p-value of and  0.2678086, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **1.1220172&times; 10^-4^** for NCD.
 
 Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
 
@@ -148,9 +148,9 @@ The p-value for the interaction was **1.500917&times; 10^-5^**.  The residuals o
 
 
 
-The p-value from the Levene's test were 0.6748082 for HFD.  Based on this a Welch's *t* test was performed with a p-value of **3.7377627&times; 10^-14^**.  
+The p-value from the Levene's test were 0.6748082 for HFD.  Based on this a Student's *t* test was performed with a p-value of **3.8429279&times; 10^-8^**.  
 
-For NCD the Levene's test had a p-value of and  0.1872348, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **0.5452112** for NCD.
+For NCD the Levene's test had a p-value of and  0.1872348, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **0.0153856** for NCD.
 
 Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
 
