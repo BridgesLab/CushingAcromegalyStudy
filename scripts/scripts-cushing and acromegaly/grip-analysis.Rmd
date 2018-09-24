@@ -11,15 +11,28 @@ output:
 
 ```{r global_options, include=FALSE}
 library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
                echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
 ```
 
 # Data Entry
 This was from one cohort of C57BL6/J mice which were tested at week 3 for grip strength (4 paw).
 
 ```{r data-entry}
-data_file <- '../data/raw/Grip Data.csv'
+data_file <- '../../data/raw/Grip Data.csv'
 grip.data <- read.csv(data_file)
 #set the treatment
 grip.data$Treatment <- relevel(grip.data$Treatment, ref='Water')
@@ -53,8 +66,8 @@ mean.student <- t.test(Grip.Average~Treatment, data=grip.data, var.equal=T)
 median.student <- t.test(Grip.Median~Treatment, data=grip.data, var.equal=T)
 
 se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
-grip.summary <- grip.data %.%
-  group_by(age, Treatment) %.%
+grip.summary <- grip.data %>%
+  group_by(age, Treatment) %>%
   summarise(Average = mean(Grip.Average, na.rm=T),
     Average.sd = sd(Grip.Average, na.rm=T),
     Average.se = se(Grip.Average),
@@ -83,7 +96,7 @@ legend("bottomleft", c("Water","Dexamethasone"), lty=1, col=c('black','red'), bt
 
 Based on Shapiro Wilk Tests  we can assume the data are normally distributed (p>`r min(grip.summary[,c('Average.shapiro', 'Median.shapiro')])`.  To test for equal variance we did a Levene's test (p=`r mean.levene$"Pr(>F)"[1]` for mean and p=`r median.levene$"Pr(>F)"[1]` for median grip), so in both cases we can assume equal variance.
 
-We therefore did Student's *t*-Tests and found that in the case of mean grip, we saw a `r (1-grip.summary$Average[2]/grip.summary$Average[1])*100`% reduction in grip strength (p=`r mean.student$p.value` and for median grip, we saw a `r (1-grip.summary$Median[2]/grip.summary$Median[1])*100`% reduction in grip strength (p=`r median.student$p.value`).
+We therefore did Student's *t*-Tests and found that in the case of mean grip, at the end of the experiment we saw a `r with(subset(grip.summary, age=='158'), (Average[1]-Average[2])/Average[1])*100`% reduction in grip strength (p=`r mean.student$p.value`) and for median grip, we saw a `r with(subset(grip.summary, age=='158'), (Median[1]-Median[2])/Median[1])*100`% reduction in grip strength (p=`r median.student$p.value`).
 
 ```{r scatter-plot-grip-median}
 ymax <- max(grip.summary$Median + grip.summary$Median.se)
