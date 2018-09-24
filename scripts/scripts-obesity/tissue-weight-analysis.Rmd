@@ -220,6 +220,56 @@ kable(tidy(ewat.aov.int), caption="Two Way ANOVA with Interaction between treatm
 
 The p-value for the interaction was **`r tidy(ewat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ewat.aov.int))$p.value`, so normality could not be assumed.
 
+## Muscle Statistics
+
+### Quadriceps Statistics
+
+```{r quad-anova}
+ewat.aov.int <- aov(Quad ~ Diet + Group + Diet:Group, data=data)
+ewat.aov <- aov(Quad ~ Diet + Group, data=data)
+```
+
+```{r quad-levene}
+levene.hfd.ewat <- leveneTest(Quad ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.ewat <- leveneTest(Quad ~ Group, data = filter(data, Diet=="NCD"))
+```
+
+The p-value from the Levene's test were `r levene.hfd.ewat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.ewat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r quad-anova-results}
+kable(tidy(ewat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(ewat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ewat.aov.int))$p.value`, so normality could not be assumed.
+
+### Triceps Surae Statistics
+
+```{r ts-anova}
+ewat.aov.int <- aov(TS ~ Diet + Group + Diet:Group, data=data)
+ewat.aov <- aov(TS ~ Diet + Group, data=data)
+```
+
+```{r ts-levene}
+levene.hfd.ewat <- leveneTest(TS ~ Group, data = filter(data, Diet=="HFD"))
+levene.ncd.ewat <- leveneTest(TS ~ Group, data = filter(data, Diet=="NCD"))
+```
+
+The p-value from the Levene's test were `r levene.hfd.ewat$"Pr(>F)"[1]` for HFD.  Based on this a Welch's *t* test was performed with a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="HFD"), var.equal=F)$p.value`**.  
+
+For NCD the Levene's test had a p-value of and  `r levene.ncd.ewat$"Pr(>F)"[1]`, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **`r t.test(eWAT ~ Group, data = filter(data, Diet=="NCD"), var.equal=F)$p.value`** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+```{r ts-anova-results}
+kable(tidy(ewat.aov.int), caption="Two Way ANOVA with Interaction between treatment and diet.")
+```
+
+The p-value for the interaction was **`r tidy(ewat.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ewat.aov.int))$p.value`, so normality could not be assumed.
+
 # Session Information
 ```{r sessionInfo}
 sessionInfo()

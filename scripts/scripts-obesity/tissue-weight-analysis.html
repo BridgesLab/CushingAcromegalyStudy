@@ -138,6 +138,10 @@ $(document).ready(function () {
 <li><a href="#inguinal-adipose-tissue">Inguinal Adipose Tissue</a></li>
 <li><a href="#epididimal-adipose-tissue">Epididimal Adipose Tissue</a></li>
 </ul></li>
+<li><a href="#muscle-statistics">Muscle Statistics</a><ul>
+<li><a href="#quadriceps-statistics">Quadriceps Statistics</a></li>
+<li><a href="#triceps-surae-statistics">Triceps Surae Statistics</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#session-information">Session Information</a></li>
 </ul>
@@ -145,7 +149,7 @@ $(document).ready(function () {
 
 <div id="data-entry" class="section level1">
 <h1>Data Entry</h1>
-<p>This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv. This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 10:48:50 2018.</p>
+<p>This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv. This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 15:24:24 2018.</p>
 </div>
 <div id="number-of-animals" class="section level1">
 <h1>Number of Animals</h1>
@@ -371,6 +375,117 @@ $(document).ready(function () {
 </tbody>
 </table>
 <p>The p-value for the interaction was <strong>1.6294353× 10<sup>-11</sup></strong>. The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 0.0049698, so normality could not be assumed.</p>
+</div>
+</div>
+<div id="muscle-statistics" class="section level2">
+<h2>Muscle Statistics</h2>
+<div id="quadriceps-statistics" class="section level3">
+<h3>Quadriceps Statistics</h3>
+<p>The p-value from the Levene’s test were 0.3496128 for HFD. Based on this a Welch’s <em>t</em> test was performed with a p-value of <strong>3.7377627× 10<sup>-14</sup></strong>.</p>
+<p>For NCD the Levene’s test had a p-value of and 0.2678086, so equal variance could be assumed. Based on this, a Student’s <em>t</em>-test had a p-value of <strong>0.5452112</strong> for NCD.</p>
+<p>Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:</p>
+<table>
+<caption>Two Way ANOVA with Interaction between treatment and diet.</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">sumsq</th>
+<th align="right">meansq</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Diet</td>
+<td align="right">1</td>
+<td align="right">1736.884</td>
+<td align="right">1736.8838</td>
+<td align="right">3.356417</td>
+<td align="right">0.0724607</td>
+</tr>
+<tr class="even">
+<td align="left">Group</td>
+<td align="right">1</td>
+<td align="right">80825.177</td>
+<td align="right">80825.1770</td>
+<td align="right">156.189509</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">Diet:Group</td>
+<td align="right">1</td>
+<td align="right">11714.471</td>
+<td align="right">11714.4710</td>
+<td align="right">22.637469</td>
+<td align="right">0.0000150</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">54</td>
+<td align="right">27943.999</td>
+<td align="right">517.4815</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>The p-value for the interaction was <strong>1.500917× 10<sup>-5</sup></strong>. The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 0.4281909, so normality could not be assumed.</p>
+</div>
+<div id="triceps-surae-statistics" class="section level3">
+<h3>Triceps Surae Statistics</h3>
+<p>The p-value from the Levene’s test were 0.6748082 for HFD. Based on this a Welch’s <em>t</em> test was performed with a p-value of <strong>3.7377627× 10<sup>-14</sup></strong>.</p>
+<p>For NCD the Levene’s test had a p-value of and 0.1872348, so equal variance could be assumed. Based on this, a Student’s <em>t</em>-test had a p-value of <strong>0.5452112</strong> for NCD.</p>
+<p>Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:</p>
+<table>
+<caption>Two Way ANOVA with Interaction between treatment and diet.</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">sumsq</th>
+<th align="right">meansq</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Diet</td>
+<td align="right">1</td>
+<td align="right">2323.916</td>
+<td align="right">2323.9158</td>
+<td align="right">4.403715</td>
+<td align="right">0.0406426</td>
+</tr>
+<tr class="even">
+<td align="left">Group</td>
+<td align="right">1</td>
+<td align="right">28745.921</td>
+<td align="right">28745.9206</td>
+<td align="right">54.472209</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">Diet:Group</td>
+<td align="right">1</td>
+<td align="right">5215.614</td>
+<td align="right">5215.6144</td>
+<td align="right">9.883351</td>
+<td align="right">0.0027316</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">53</td>
+<td align="right">27969.011</td>
+<td align="right">527.7172</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>The p-value for the interaction was <strong>0.0027316</strong>. The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 2.3935765× 10<sup>-5</sup>, so normality could not be assumed.</p>
 </div>
 </div>
 </div>

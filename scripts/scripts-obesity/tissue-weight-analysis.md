@@ -17,7 +17,7 @@ output:
 
 
 
-This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 10:48:50 2018.
+This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 15:24:24 2018.
 
 # Number of Animals
 
@@ -115,6 +115,56 @@ Diet:Group     1   1455533   1455532.97    72.02335         0
 Residuals     54   1091296     20209.18          NA        NA
 
 The p-value for the interaction was **1.6294353&times; 10^-11^**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 0.0049698, so normality could not be assumed.
+
+## Muscle Statistics
+
+### Quadriceps Statistics
+
+
+
+
+
+The p-value from the Levene's test were 0.3496128 for HFD.  Based on this a Welch's *t* test was performed with a p-value of **3.7377627&times; 10^-14^**.  
+
+For NCD the Levene's test had a p-value of and  0.2678086, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **0.5452112** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+
+Table: Two Way ANOVA with Interaction between treatment and diet.
+
+term          df       sumsq       meansq    statistic     p.value
+-----------  ---  ----------  -----------  -----------  ----------
+Diet           1    1736.884    1736.8838     3.356417   0.0724607
+Group          1   80825.177   80825.1770   156.189509   0.0000000
+Diet:Group     1   11714.471   11714.4710    22.637469   0.0000150
+Residuals     54   27943.999     517.4815           NA          NA
+
+The p-value for the interaction was **1.500917&times; 10^-5^**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 0.4281909, so normality could not be assumed.
+
+### Triceps Surae Statistics
+
+
+
+
+
+The p-value from the Levene's test were 0.6748082 for HFD.  Based on this a Welch's *t* test was performed with a p-value of **3.7377627&times; 10^-14^**.  
+
+For NCD the Levene's test had a p-value of and  0.1872348, so equal variance could be assumed.  Based on this, a Student's *t*-test had a p-value of **0.5452112** for NCD.
+
+Based on a 2-way ANOVA with Diet and Group as the interacting covariates there was a significant interaction between diet and treatment:
+
+
+Table: Two Way ANOVA with Interaction between treatment and diet.
+
+term          df       sumsq       meansq   statistic     p.value
+-----------  ---  ----------  -----------  ----------  ----------
+Diet           1    2323.916    2323.9158    4.403715   0.0406426
+Group          1   28745.921   28745.9206   54.472209   0.0000000
+Diet:Group     1    5215.614    5215.6144    9.883351   0.0027316
+Residuals     53   27969.011     527.7172          NA          NA
+
+The p-value for the interaction was **0.0027316**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 2.3935765&times; 10^-5^, so normality could not be assumed.
 
 # Session Information
 
