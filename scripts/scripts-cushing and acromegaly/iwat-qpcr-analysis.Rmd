@@ -19,7 +19,7 @@ opts_chunk$set(fig.path='figures/',
 
 
 ```{r data-entry}
-data_file <- '../data/raw/iWAT qPCR Summary.csv'
+data_file <- '../..//data/raw/iWAT qPCR Summary.csv'
 data <- read.csv(data_file)
 #set the treatment
 data$Treatment <- relevel(data$Treatment, ref='Water')
