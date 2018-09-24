@@ -278,6 +278,73 @@ plot(fitted(pct.fat.lme), residuals(pct.fat.lme), main="Percent Fat Mass", las=1
 abline(h=0, lty=2, col='red')
 ````
 
+#  Endpoint Analysis
+
+```{r endpoint-analyses}
+endpoint.data <-
+  weight.data %>%
+  na.omit %>%
+  arrange(desc(Time)) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  filter(Time>25)
+
+
+endpoint.summary <-
+  endpoint.data %>%
+  select(-Time) %>%
+  group_by(Diet,Treatment) %>%
+  summarize_at(vars(Body.Weight:Percent.Fat.Mass), funs(mean,se))
+
+kable(endpoint.summary %>% select(Treatment, ends_with('mean')), caption="Endpoint summary data.")
+```
+
+## Endpoint Barplots
+
+```{r endpoint.barplots}
+library(gridExtra)
+library(ggplot2)
+
+
+bw <- ggplot(endpoint.summary,
+       aes(y=Body.Weight_mean,
+           ymin=Body.Weight_mean-Body.Weight_se,
+           ymax=Body.Weight_mean+Body.Weight_se,
+           x=Diet,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Body Weight (g)", x="")
+
+lm <- ggplot(endpoint.summary,
+       aes(y=Lean.Mass_mean,
+           ymin=Lean.Mass_mean-Lean.Mass_se,
+           ymax=Lean.Mass_mean+Lean.Mass_se,
+           x=Diet,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Fat-Free Mass (g)", x="")
+
+fm <- ggplot(endpoint.summary,
+       aes(y=Total.Fat.Mass_mean,
+           ymin=Total.Fat.Mass_mean-Total.Fat.Mass_se,
+           ymax=Total.Fat.Mass_mean+Total.Fat.Mass_se,
+           x=Diet,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Total Fat Mass (g)",
+       x="Diet")
+
+grid.arrange(bw,lm,fm, ncol=1)
+
+library(broom)
+tidy(aov(Body.Weight~Diet*Treatment, data=endpoint.data)) %>% kable(caption="ANOVA of endpoint Body Weights")
+tidy(aov(Lean.Mass~Diet*Treatment, data=endpoint.data)) %>% kable(caption="ANOVA of endpoint Fat-Free Mass")
+tidy(aov(Total.Fat.Mass~Diet*Treatment, data=endpoint.data)) %>% kable(caption="ANOVA of endpoint Fat Mass")
+
+```
+
 # Session Information
 
 ```{r session-info}

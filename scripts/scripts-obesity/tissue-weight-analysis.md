@@ -1,6 +1,15 @@
-# Analysis of Tissue Weights from HFD/Dexamethasone Studies
-Innocence Harvey and Dave Bridges  
-April 7, 2017  
+---
+title: "Analysis of Tissue Weights from HFD/Dexamethasone Studies"
+author: "Innocence Harvey and Dave Bridges"
+date: "April 7, 2017"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  htmin_notebook: toc:yes
+  htmin_document:
+    keep_md: yes
+---
 
 
 
@@ -8,7 +17,7 @@ April 7, 2017
 
 
 
-This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Thu Aug 10 17:24:28 2017.
+This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 10:48:50 2018.
 
 # Number of Animals
 
@@ -110,9 +119,13 @@ The p-value for the interaction was **1.6294353&times; 10^-11^**.  The residuals
 # Session Information
 
 ```
-## R version 3.3.0 (2016-05-03)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## R version 3.5.0 (2018-04-23)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -121,22 +134,23 @@ The p-value for the interaction was **1.6294353&times; 10^-11^**.  The residuals
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.4.2   car_2.1-5     bindrcpp_0.2  forcats_0.2.0 readr_1.1.1  
-## [6] dplyr_0.7.2   tidyr_0.6.3   knitr_1.17   
+## [1] broom_0.5.0    car_3.0-2      carData_3.0-1  bindrcpp_0.2.2
+## [5] forcats_0.3.0  readr_1.1.1    dplyr_0.7.6    tidyr_0.8.1   
+## [9] knitr_1.20    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.12       plyr_1.8.4         nloptr_1.0.4      
-##  [4] highr_0.6          bindr_0.1          tools_3.3.0       
-##  [7] digest_0.6.12      lme4_1.1-13        evaluate_0.10.1   
-## [10] tibble_1.3.3       nlme_3.1-131       lattice_0.20-35   
-## [13] mgcv_1.8-18        pkgconfig_2.0.1    rlang_0.1.2       
-## [16] psych_1.7.5        Matrix_1.2-10      yaml_2.1.14       
-## [19] parallel_3.3.0     SparseM_1.77       stringr_1.2.0     
-## [22] MatrixModels_0.4-1 hms_0.3            rprojroot_1.2     
-## [25] nnet_7.3-12        grid_3.3.0         glue_1.1.1        
-## [28] R6_2.2.2           foreign_0.8-69     rmarkdown_1.6     
-## [31] minqa_1.2.4        reshape2_1.4.2     magrittr_1.5      
-## [34] backports_1.1.0    htmltools_0.3.6    MASS_7.3-47       
-## [37] splines_3.3.0      mnormt_1.5-5       assertthat_0.2.0  
-## [40] pbkrtest_0.4-7     quantreg_5.33      stringi_1.1.5
+##  [1] zip_1.0.0         Rcpp_0.12.18      plyr_1.8.4       
+##  [4] cellranger_1.1.0  pillar_1.3.0      compiler_3.5.0   
+##  [7] highr_0.7         bindr_0.1.1       tools_3.5.0      
+## [10] digest_0.6.16     lattice_0.20-35   nlme_3.1-137     
+## [13] evaluate_0.11     tibble_1.4.2      pkgconfig_2.0.2  
+## [16] rlang_0.2.2       openxlsx_4.1.0    curl_3.2         
+## [19] yaml_2.2.0        haven_1.1.2       rio_0.5.10       
+## [22] stringr_1.3.1     hms_0.4.2         grid_3.5.0       
+## [25] rprojroot_1.3-2   tidyselect_0.2.4  glue_1.3.0       
+## [28] data.table_1.11.4 R6_2.2.2          readxl_1.1.0     
+## [31] foreign_0.8-71    rmarkdown_1.10    purrr_0.2.5      
+## [34] magrittr_1.5      backports_1.1.2   htmltools_0.3.6  
+## [37] abind_1.4-5       assertthat_0.2.0  stringi_1.2.4    
+## [40] crayon_1.3.4
 ```
