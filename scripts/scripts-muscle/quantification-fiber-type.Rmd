@@ -1,0 +1,232 @@
+---
+title: "Quantification of fiber size from NADH/NBT Staining"
+author: "Laura Gunder"
+date: "January 2, 2018"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- 'NADH NBT CSA Data.csv' #make this a separate line, you can use any variable you want
+#this loads whatever the file is into a dataframe called exp.data if it exists
+if(filename %in% dir()){
+  exp.data <- read_csv(filename, col_types=cols(
+  `Mouse ID` = col_factor(levels=NULL),
+  CSA = col_double(),
+  Color = col_factor(levels=NULL),
+  Diet = col_factor(levels=c('NCD','HFD')),
+  Treatment = col_factor(levels=c('Water','Dex'))
+))
+}
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+First created averages per animal
+
+```{r animal-grouping}
+animal.data <- 
+  exp.data %>%
+  group_by(`Mouse ID`, Color, Diet, Treatment) %>%
+  summarize(Average.CSA = mean(CSA),
+            SE.CSA = se(CSA),
+            Cells.Counted = length(CSA)) 
+
+composition.data <-
+  animal.data %>%
+  select(`Mouse ID`, Color, Diet, Treatment, Cells.Counted) %>%
+  group_by(`Mouse ID`, Color, Diet, Treatment) %>%
+  spread(key=Color,value=Cells.Counted) %>%
+  mutate(Percent.Dark = Dark/(Dark + Medium + Light) *100)
+```
+
+```{r CSA-boxplot, fig.cap="Muscle fiber cross-sectional area by staining density"}
+library(ggplot2)
+ggplot(data=animal.data, aes(y=Average.CSA,x=Diet)) +
+  geom_boxplot(aes(fill=Treatment)) +
+  geom_jitter(position=position_dodge(width=0.75),aes(group=Treatment)) +
+  expand_limits(y = 0) +
+  facet_grid(~Color) +
+  labs(y="Cross-Sectional Area",
+       title="Cross-Sectional Area by Staining Density",
+       subtitle="Each dot represents the average CSA per mouse")
+
+```
+
+
+
+```{r summary}
+summary.data <-
+  animal.data %>%
+  group_by(Diet,Treatment,Color) %>%
+  summarize(CSA = mean(Average.CSA),
+            CSA.se = se(Average.CSA),
+            n = length(Average.CSA),
+            Shapiro = shapiro.test(Average.CSA)$p.value)
+
+
+kable(summary.data, caption="Summarized data accross animals")
+```
+
+## Cross-Sectional Area
+
+```{r fiber-type-CSA-barplot, fig.cap="Barplot of muscle fiber cross-sectional area by staining density."}
+ggplot(data=summary.data, aes(y=CSA,
+                             x=Diet,
+                             ymin=CSA-CSA.se,
+                             ymax=CSA+CSA.se)) +
+  geom_bar(aes(fill=Treatment), stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y = 0) +
+  facet_grid(~Color) +
+  labs(y="Cross-Sectional Area",
+       title="Cross-Sectional Area by Staining Density",
+       subtitle="Each dot represents the average CSA per mouse")
+```
+
+```{r fiber-type-CSA-barplot-2, fig.cap="Barplot of muscle fiber cross-sectional area by staining density."}
+ggplot(data=summary.data, aes(y=CSA,
+                             x=Diet,
+                             ymin=CSA-CSA.se,
+                             ymax=CSA+CSA.se)) +
+  geom_bar(aes(fill=Treatment), stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y = 0) +
+  facet_grid(~Color) +
+  labs(y="Fiber Cross-Sectional Area",
+       title="Fiber Cross-Sectional Area by NADH/NBT Staining Density") +
+  scale_fill_manual(values=c("black","red")) +
+  theme_light() +
+  theme(legend.position = 'none',
+        axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        legend.title=element_blank())
+```
+
+## Percent of Fibers
+
+```{r fiber-type-composition-barplot, fig.cap="Barplot of muscle fiber composition by staining density."}
+composition.data %>%
+  group_by(Diet,Treatment) %>%
+  summarize(Mean = mean(Percent.Dark),
+            Error = se(Percent.Dark)) %>%
+ggplot(aes(y=Mean,
+           x=Diet,
+           ymin=Mean-Error,
+           ymax=Mean+Error)) +
+  geom_bar(aes(fill=Treatment), stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y = 0) +
+  labs(y="Percent of Oxidative Muscle Fibers",
+       title="Percent of Oxidative Muscle Fibers") +
+  scale_fill_manual(values=c("black","red")) +
+  theme_light() +
+  theme(legend.position = 'none',
+        axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        legend.title=element_blank())
+```
+
+# Statistics
+
+First pairwise hypothesis testing was done to look at reductions in fiber size due to dexamethasone treatment.
+
+```{r statistics}
+library(car)
+
+animal.data %>%
+  group_by(Color,Diet) %>%
+  summarize(
+    Levene = leveneTest(Average.CSA~Treatment)$"Pr(>F)"[1],
+    Student = t.test(Average.CSA~Treatment, var.equal=T)$p.value,
+    Welch = t.test(Average.CSA~Treatment, var.equal=F)$p.value) %>%
+  kable(caption="Pairwise statistical tests for effects of dex treatment in each group")
+
+library(lme4)
+library(lmerTest)
+```
+
+## Mixed linear models
+
+Overall and fiber-type specific mixed linear models were generated using the animal as the random effect and looking at hte interaction between diet and treatment.
+
+```{r mixed-linear models}
+csa.lme <- lmer(CSA ~ Color * Treatment * Diet + (1|`Mouse ID`), data=exp.data)
+coef(summary(csa.lme)) %>% kable(caption="Coefficient table for mixed linear model.")
+#anova(csa.lme, type="III") %>% kable(caption="Type III ANOVA table from overall mixed linear model of dark stained muscle fibers.") 
+#as.data.frame(ls_means(csa.lme, pairwise=T))[,c(3,9)] %>% kable(caption="Pairwise tests of factors from mixed linear model.")
+
+csa.lme.dark <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Dark"))
+coef(summary(csa.lme.dark)) %>% kable(caption="Coefficient table for mixed linear model.")
+anova(csa.lme.dark, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of dark stained muscle fibers.") 
+
+csa.lme.med <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Medium"))
+coef(summary(csa.lme.med)) %>% kable(caption="Coefficient table for mixed linear model of medium stained muscle fibers.")
+#anova(csa.lme.med, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of medium stained muscle fibers.") 
+
+csa.lme.light <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Light"))
+coef(summary(csa.lme.light)) %>% kable(caption="Coefficient table for mixed linear model of light stained muscle fibers.")
+#anova(csa.lme.light, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of light stained muscle fibers.") 
+```
+
+
+# Interpretation
+
+## Dark Fibers
+
+There was a **`r with(subset(summary.data, Diet=="NCD"&Color=="Dark"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in NCD animals and a **`r with(subset(summary.data, Diet=="HFD"&Color=="Dark"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in HFD fed animals.  
+
+## Medium Fibers
+
+There was a **`r with(subset(summary.data, Diet=="NCD"&Color=="Medium"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in NCD animals and a **`r with(subset(summary.data, Diet=="HFD"&Color=="Medium"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in HFD fed animals.
+
+## Light Fibers
+
+There was a **`r with(subset(summary.data, Diet=="NCD"&Color=="Light"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in NCD animals and a **`r with(subset(summary.data, Diet=="HFD"&Color=="Light"), (CSA[1]-CSA[2])/CSA[1])*100`%** reduction in fiber CSA in HFD fed animals.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
