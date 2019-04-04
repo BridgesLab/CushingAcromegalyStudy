@@ -199,7 +199,7 @@ coef(summary(csa.lme)) %>% kable(caption="Coefficient table for mixed linear mod
 
 csa.lme.dark <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Dark"))
 coef(summary(csa.lme.dark)) %>% kable(caption="Coefficient table for mixed linear model.")
-anova(csa.lme.dark, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of dark stained muscle fibers.") 
+#anova(csa.lme.dark, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of dark stained muscle fibers.") 
 
 csa.lme.med <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Medium"))
 coef(summary(csa.lme.med)) %>% kable(caption="Coefficient table for mixed linear model of medium stained muscle fibers.")

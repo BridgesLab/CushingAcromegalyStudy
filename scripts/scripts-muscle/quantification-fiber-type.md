@@ -20,7 +20,7 @@ output:
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **NADH NBT CSA Data.csv**.  This script was most recently updated on **Thu Apr  4 09:06:03 2019**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **NADH NBT CSA Data.csv**.  This script was most recently updated on **Thu Apr  4 09:07:00 2019**.
 
 # Analysis
 
@@ -108,16 +108,6 @@ Table: Coefficient table for mixed linear model.
 TreatmentDex                -305         77.1    9.22     -3.96      0.003
 DietHFD                     -306         73.7    8.09     -4.16      0.003
 TreatmentDex:DietHFD         455        103.6    7.54      4.40      0.003
-
-
-
-Table: Type III ANOVA table from mixed linear model of dark stained muscle fibers.
-
-                   Sum Sq   Mean Sq   NumDF   DenDF   F value   Pr(>F)
----------------  --------  --------  ------  ------  --------  -------
-Treatment          303621    303621       1    7.54      2.26    0.174
-Diet               309429    309429       1    7.54      2.30    0.170
-Treatment:Diet    2599583   2599583       1    7.54     19.32    0.003
 
 
 
