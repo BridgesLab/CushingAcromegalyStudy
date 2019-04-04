@@ -157,10 +157,15 @@ with(subset(weight.summary,
             Diet=="High Fat Diet"&Treatment=="Dexamethasone"),
      superpose.eb(Time, Lean.Mass.mean, Lean.Mass.se, col='red'))
 
-# legend("topleft", c('NCD - Water','NCD - Dex','HFD - Water','HFD-Dex'), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n', cex=1)
-lean.lme <- lmer(Lean.Mass~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
-lean.lme.null <- lmer(Lean.Mass~Time + (1|animal.id), data=weight.data, REML=F)
+library(lmerTest)
+legend("bottomleft", c('NCD - Water','NCD - Dex','HFD - Water','HFD - Dex'), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n', cex=1)
+lean.lme <- lmer(Lean.Mass~Time*Treatment*Diet + (1|animal.id), data=weight.data, REML=F)
+lean.lme.null <- lmer(Lean.Mass~Time*Treatment + (1|animal.id), data=weight.data, REML=F)
+
+coef(summary(lean.lme)) %>% kable(caption="Coefficients from mixed linear model of the interaction of time of dexamethasoen/water with Diet and Treatment")
 ```
+
+A Chi-squared test between models with time and treatment interacting, with a model where diet modifies the rate of lean mass loss yielded a p-value of `r anova(lean.lme, lean.lme.null)$"Pr(>Chisq)"[2]`.
 
 # Fat Mass
 
