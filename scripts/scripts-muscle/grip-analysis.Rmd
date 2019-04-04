@@ -1,0 +1,159 @@
+
+---
+title: "Analysis of Dexaethasone Treated Mice for Grip Strength for HFD Animals"
+author: "Innocence Harvey and Dave Bridges"
+date: "April 17, 2015"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+# Data Entry 
+This was from one cohort of C57BL6/J mice which were tested at week 3 for grip strength (4 paw).
+
+```{r data-entry}
+ncd_data_file <- 'NCD Grip Data.csv'
+ncd_data <- read.csv(ncd_data_file) %>% mutate(Diet="NCD")
+
+hfd_data_file <- 'HFD Grip Data.csv'
+hfd_data <- read.csv(hfd_data_file) %>% mutate(Diet="HFD")
+
+all.data <- bind_rows(ncd_data, hfd_data)
+
+#get just grip data
+grip.data <- droplevels(subset(all.data, assay.assay=="Grip Strength (4 Paw)"))
+grip.data$Treatment <- relevel(grip.data$Treatment, ref='Water')
+grip_export_file = "Combined Grip Data.csv"
+write.csv(grip.data, grip_export_file)
+```
+
+Data was read from the file`r ncd_data_file` and `r hfd_data_file` and re-exported as `r grip_export_file`.  These data are saved in `r getwd()`.
+
+
+# Grip Strength Analysis
+
+```{r grip-data-analysis}
+library(plyr)
+s <- strsplit(as.character(grip.data$values), split = ",")
+grip.data <- cbind(grip.data, as.data.frame(rbind.fill.matrix(lapply(s, t))))
+grip.data$V1 <- as.numeric(as.character(grip.data$`1`))
+grip.data$V2 <- as.numeric(as.character(grip.data$`2`))
+grip.data$V3 <- as.numeric(as.character(grip.data$`3`))
+grip.data$V4 <- as.numeric(as.character(grip.data$`4`))
+grip.data$V5 <- as.numeric(as.character(grip.data$`5`))
+grip.data$Grip.Average <- rowMeans(grip.data[,c('V1','V2','V3','V4','V5')], na.rm=T)/1000
+grip.data$Grip.Median <-  apply(grip.data[,c('V1','V2','V3','V4','V5')], 1, function(x) median(x, na.rm=T))/1000
+grip.data <- grip.data %>%  mutate(Weeks = case_when(
+  Diet=="NCD" ~ round((age-149)/7),
+  Diet=="HFD" ~ round((age-161)/7)))
+```
+
+
+```{r scatter-plot-grip-mean}
+library(dplyr)
+#for levenes tests
+library(car)
+mean.levene <- leveneTest(Grip.Average~Treatment, data=grip.data)
+median.levene <- leveneTest(Grip.Median~Treatment, data=grip.data)
+
+mean.student <- t.test(Grip.Average~Treatment, data=grip.data, var.equal=T)
+median.student <- t.test(Grip.Median~Treatment, data=grip.data, var.equal=T)
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+grip.summary <- grip.data %>%
+  group_by(Weeks, Treatment, Diet) %>%
+  dplyr::select(Grip.Average,Grip.Median) %>%
+  dplyr::summarise(Average = mean(Grip.Average, na.rm=T),
+    Average.sd = sd(Grip.Average, na.rm=T),
+    Average.se = se(Grip.Average),
+    Median = mean(Grip.Median, na.rm=T),
+    Median.sd = sd(Grip.Median, na.rm=T),
+    Median.se = se(Grip.Median),
+    n = length(Grip.Average),
+    Average.shapiro = shapiro.test(Grip.Average)$p.value,
+    Median.shapiro = shapiro.test(Grip.Median)$p.value)
+
+
+ymax <- max(grip.summary$Average + grip.summary$Average.se)
+plot <- with(subset(grip.summary, Treatment=="Water"&Diet=="NCD"), plot(Weeks, Average, ylim=c(0,ymax), 
+                                                            las=1,pch=19,type="l",
+                                                            xlim=c(-1,6),
+                                                            ylab="Grip Strength (N)"))
+with(subset(grip.summary, Treatment=="Dexamethasone"&Diet=="NCD"), lines(Weeks, Average, col='red'))
+with(subset(grip.summary, Treatment=="Water"&Diet=="HFD"), lines(Weeks, Average, col='black',lty=2))
+with(subset(grip.summary, Treatment=="Dexamethasone"&Diet=="HFD"), lines(Weeks, Average, col='red',lty=2))
+# error bars
+with(subset(grip.summary, Treatment=="Water"&Diet=="NCD"), superpose.eb(Weeks, Average, Average.se))
+with(subset(grip.summary, Treatment=="Dexamethasone"&Diet=="NCD"), superpose.eb(Weeks, Average, Average.se, col='red'))
+with(subset(grip.summary, Treatment=="Water"&Diet=="HFD"), superpose.eb(Weeks, Average, Average.se))
+with(subset(grip.summary, Treatment=="Dexamethasone"&Diet=="HFD"), superpose.eb(Weeks, Average, Average.se, col='red'))
+legend("bottomleft", c("NCD - Water","NCD - Dexamethasone","HFD - Water","HFD - Dexamethasone"), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n')
+
+grip.summary.ep <- filter(grip.summary, Weeks %in% c(0,5))
+ymax <- max(grip.summary.ep$Average + grip.summary.ep$Average.se)
+plot <- with(subset(grip.summary.ep, Treatment=="Water"&Diet=="NCD"), plot(Weeks, Average, ylim=c(0,ymax), 
+                                                            las=1,pch=19,type="l",
+                                                            ylab="Grip Strength (N)",
+                                                            xlab="Weeks of Dexamethasone"))
+with(subset(grip.summary.ep, Treatment=="Dexamethasone"&Diet=="NCD"), lines(Weeks, Average, col='red'))
+with(subset(grip.summary.ep, Treatment=="Water"&Diet=="HFD"), lines(Weeks, Average, col='black',lty=2))
+with(subset(grip.summary.ep, Treatment=="Dexamethasone"&Diet=="HFD"), lines(Weeks, Average, col='red',lty=2))
+# error bars
+with(subset(grip.summary.ep, Treatment=="Water"&Diet=="NCD"), superpose.eb(Weeks, Average, Average.se))
+with(subset(grip.summary.ep, Treatment=="Dexamethasone"&Diet=="NCD"), superpose.eb(Weeks, Average, Average.se, col='red'))
+with(subset(grip.summary.ep, Treatment=="Water"&Diet=="HFD"), superpose.eb(Weeks, Average, Average.se))
+with(subset(grip.summary.ep, Treatment=="Dexamethasone"&Diet=="HFD"), superpose.eb(Weeks, Average, Average.se, col='red'))
+legend("bottomleft", c("NCD - Water","NCD - Dexamethasone","HFD - Water","HFD - Dexamethasone"), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n')
+```
+
+
+```{r summary-table}
+
+kable(grip.summary, caption="Summarized Values for Grip Strength", label="tab:summary-statistics", digits=3)
+library(broom)
+aov(Grip.Average ~ Diet * Treatment, data=grip.data %>% filter(Weeks==5)) %>% tidy() %>% kable(caption="ANOVA for Grip strength after 3 weeks of treatment")
+```
+
+
+
+
+```{r sessionInfo}
+sessionInfo()
+```
