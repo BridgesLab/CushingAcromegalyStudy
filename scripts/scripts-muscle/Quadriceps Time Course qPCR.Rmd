@@ -1,0 +1,324 @@
+---
+title: "Effects of Dexamethasone on NCD/HFD Mouse Quadriceps"
+author: "Laura Gunder and Dave Bridges"
+date: "January 8, 2018"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('black', 'red')
+
+library(ggplot2)
+#sets default theme
+theme_set(theme_bw())
+
+#to change colors use
+#scale_color_manual(values = color.scheme)
+#scale_fill_manual(values = color.scheme)
+```
+
+# Purpose
+to examine the molecular effects of dexamethasone at varying lengths of treatment on obese and non-obese mice 
+
+
+# Experimental Details
+
+
+The relevant protocols used were:
+
+* RNA Purification, a modified version of http://bridgeslab.sph.umich.edu/protocols/index.php?title=Preparation_of_RNA_Samples_from_Mouse_Tissues&oldid=1359
+* cDNA Synthesis, used 2 ug then diluted cDNA 5X prior to qPCR: http://bridgeslab.sph.umich.edu/protocols/index.php?title=First_Strand_cDNA_Synthesis_(AB_Kit)&oldid=1242
+* qPCR: http://bridgeslab.sph.umich.edu/protocols/index.php?title=QPCR&oldid=1252
+
+
+# Raw Data
+
+```{r datafiles}
+sample.mapping.file <- 'sample-key.csv'
+run.1.file <- 'Well Results New.csv'
+```
+
+The sample mapping is found in `r sample.mapping.file` and the qPCR data can be found in `r run.1.file`.  This analysis can be found in `r getwd()` and was most recently run on `r date()`.
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+#first define the columns in the sample key
+sample.cols <- cols(
+  Mouse = col_factor(levels=NULL),
+  Diet = col_factor(levels=c("NCD","HFD")),
+  Time = col_integer()
+)
+
+sample.mapping <- read_csv(sample.mapping.file,
+                           col_types = sample.cols) #manually defining NA values as N/A from input file
+#load qPCR result files
+run.1.data <- read_csv(file=run.1.file, skip=12,
+                       col_types = cols(
+                         Cq = col_double(),
+                         `Target Name` = col_factor(levels=NULL),
+                         `Sample Name` = col_factor(levels=NULL)
+                       ))
+
+
+#combinedinto a single data frame
+
+combined.data <- run.1.data
+
+#indicate unreliable data and remove if necessary
+
+bad.samples <- c(2625,2618,2636,2642) # did not amplify
+bad.wells.1 <- c('J1','J6','J7','J9','J11','J12','G7','D13','D16','A15','C24','C17','J10','B21') 
+bad.wells.2 <- c('P6','G5','G7','G4','G1','G2','G8','G3','J10','O21')
+bad.wells.3 <- c('G7','P16','M13','P15')
+bad.wells.4 <- c('B3','G2','F20','C1','C3','C2','C4','F3','H23','G10','E7','F14','G4','F24','G3','E15','D1','G16','F1','G12','D8')
+bad.wells.5 <- c('A9')
+#outlier technical replicates
+
+combined.data.clean <- filter(combined.data, 
+                              !(`Experiment Name`=='2017-12-13 lcg.eds'&Well%in%bad.wells.1))
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-01-10 195156.eds'&Well%in%bad.wells.2)) #F3
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-01-17 182258.eds'&Well%in%bad.wells.3))
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-07-09 LG.eds'&Well%in%bad.wells.4))
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-07-16 lg.eds'&Well%in%bad.wells.5))
+#F3
+
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-01-10 195156.eds'&`Target Name`=='Pgk1'))
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-07-09 lg.eds'&`Target Name`=='Foxo3'))
+
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-01-10 195156.eds'&`Target Name`=='Foxo3'))
+
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-01-17 182258.eds'&`Target Name`=='Foxo1'))
+
+combined.data.clean <- filter(combined.data.clean, 
+                              !(`Experiment Name`=='2018-07-09 lg.eds'&`Target Name`=='GDF15'))
+
+#add in fifth plate
+#comment out GDF15 from all plates except 1 (see code in 118) 2018-07-09 LG.eds and new plate
+#comment out Foxo3 from all plates except 1 (see code in 118) 2018-07-09 LG.eds earlier and new plate
+
+combined.data.clean <- filter(combined.data.clean, !(`Sample Name`%in%bad.samples))
+
+#merge qPCR results into single dataset
+qpcr.data <- 
+  full_join(x=combined.data.clean, y=sample.mapping, by=c("Sample Name"="Mouse")) %>% # joining tables by sample column
+  select(`Experiment Name`,`Sample Name`,Well,`Target Name`,Cq,Time,Diet) #removed extra columns we didnt need
+
+#combine technical replicates
+qpcr.results <-
+  qpcr.data %>%
+  group_by(`Experiment Name`,`Sample Name`, `Target Name`, Time, Diet) %>%
+  summarize(Ct.mean = mean(Cq, na.rm=T),
+            Ct.min = min(Cq, na.rm=T),
+            Ct.max = max(Cq, na.rm=T)) %>%
+  mutate(Ct.range = Ct.max-Ct.min)
+
+qpcr.results.all <-
+  qpcr.data %>%
+  group_by( `Target Name`) %>%
+  summarize(Ct.mean = mean(Cq, na.rm=T),
+            Ct.min = min(Cq, na.rm=T),
+            Ct.max = max(Cq, na.rm=T)) %>%
+  mutate(Ct.range = Ct.max-Ct.min)
+
+#kable(filter(qpcr.results, Ct.range>1) %>% filter(`Target Name` != 'Foxo1') %>% arrange(desc(Ct.range)), caption="Samples where Ct range between technical replicates exceeds 1")
+
+#filter(qpcr.data, `Sample Name`==2645&`Target Name`=="GDF15")
+```
+
+
+We removed the samples `r paste(bad.samples, collapse=",")` from the dataset because they did not amplify.  We removed wells `r paste(bad.wells.1, collapse=",")` in the first experiment and `r paste(bad.wells.2, collapse=",")` in the second experiment because they were outliers relative to the other technical replicates. 
+
+# Analysis
+
+```{r qpcr-analysis}
+control.gene <- 'Pgk1'
+control.time <- 0
+control.diet <- "NCD"
+
+all.samples.rplp0 <- as.character(filter(qpcr.results, `Target Name`==control.gene)$`Sample Name`)
+
+sample.results <-
+  filter(qpcr.results, `Sample Name` %in% all.samples.rplp0) %>%
+  mutate(Quant = 2^-Ct.mean) %>%
+  group_by(`Sample Name`) %>%
+  mutate(Quant.norm = Quant/Quant[`Target Name`==control.gene]) %>%
+  group_by(`Target Name`) %>%
+  mutate(Rel.norm = Quant.norm/mean(Quant.norm[Diet==control.diet&Time==control.time], na.rm=T))
+
+summary.results <-
+  sample.results %>%
+  group_by(`Target Name`, Diet,Time) %>%
+  summarize(Expression=mean(Rel.norm, na.rm=T),
+            Expression.se = se(Rel.norm)) 
+
+output_file <- "Analysed Control Gene Data.csv"
+write_csv(summary.results, output_file)
+```
+
+All mRNA levels were adjusted to **`r control.gene`**, then normalized to **`r control.diet`** at time **`r control.time`**.  Summarized data was written out to `r output_file`.
+
+# Foxo1 versus Foxo3a
+
+```{r foxo-comp}
+foxo.data <-
+  sample.results %>%
+  filter(`Target Name` %in% c('Foxo1','Foxo3')) %>%
+  group_by(`Target Name`) %>%
+  summarize(Ct = mean(Ct.mean, na.rm=T)) %>%
+  mutate(DCt = Ct-Ct[`Target Name`=='Foxo1']) %>%
+  mutate(Quant = 2^-DCt)
+
+kable(foxo.data, caption="Relative amplification of Foxo1 and Foxo3")
+```
+
+# Plots of changes in gene expression
+
+```{r qpcr-lineplot-all-points}
+library(ggplot2)
+p <- ggplot(filter(sample.results,`Target Name` != 'GDF15'),
+            aes(y=Rel.norm, x=Time))
+p + geom_smooth(aes(color=Diet), se=F) +
+  geom_point(aes(color=Diet)) +
+  labs(y="Relative Expression",x="Time (days of Dexamethasone)") +
+  facet_grid(~`Target Name`) +
+  scale_color_manual(values = color.scheme) +
+  scale_fill_manual(values = color.scheme)
+```
+
+```{r qpcr-lineplot-all}
+p <- ggplot(summary.results,
+            aes(y=Expression, x=Time, ymin=Expression - Expression.se, ymax=Expression + Expression.se,))
+p + geom_line(aes(color=Diet)) + 
+  geom_errorbar(aes(color=Diet)) +
+  labs(y="Relative Expression",x="Time (days of Dexamethasone)") +
+  facet_grid(~`Target Name`)  + 
+  scale_color_manual(values = color.scheme) +
+  scale_fill_manual(values = color.scheme)
+```
+
+```{r qpcr-lineplot-atrogenes}
+p <- ggplot(filter(summary.results, `Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63')),
+            aes(y=Expression, x=Time, ymin=Expression - Expression.se, ymax=Expression + Expression.se,))
+p + geom_line(aes(color=Diet)) + 
+  geom_errorbar(aes(color=Diet)) +
+  labs(y="Relative Expression",x="Time (days of Dexamethasone)") +
+  facet_grid(~`Target Name`) + 
+  scale_color_manual(values = color.scheme) +
+  scale_fill_manual(values = color.scheme)
+
+```
+
+## Statistics
+
+### Baseline Effects of Diet
+
+First tested if there was an effect at baseline for expression of *Trim63* and *Fbxo32*.  
+
+```{r baseline}
+library(car)
+
+baseline.stats <- 
+  sample.results %>%
+  filter(`Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63','GDF15')) %>%
+  filter(Time==0) %>%
+  group_by(`Target Name`) %>%
+  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"])/mean(Rel.norm[Diet=="NCD"]),
+            Shapiro.p = min(shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
+                            shapiro.test(Rel.norm[Diet=="NCD"])$p.value),
+            Levene.p = leveneTest(Rel.norm~Diet)$"Pr(>F)"[1],
+            Wilcox.p = wilcox.test(Rel.norm~Diet, var.equal=T)$p.value,
+            Welch.p = t.test(Rel.norm~Diet, var.equal=F)$p.value,
+            Student.p = t.test(Rel.norm~Diet, var.equal=T)$p.value)
+
+kable(baseline.stats, caption="Pairwise statistics for baseline effects of diet.")
+
+```
+
+### Effects of Dexamethasone Over Time
+
+First did pairwise tests at each time point.
+
+```{r dex-time-stats}
+dex.stats <- 
+  sample.results %>%
+  filter(`Target Name` %in% c('Nr3c1','Foxo3','Fbxo32','Trim63')) %>%
+  filter(Time!=0) %>%
+  group_by(Time,`Target Name`) %>%
+  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"])/mean(Rel.norm[Diet=="NCD"]),
+            Shapiro.p.HFD = shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
+            Shaprio.p.NCD = shapiro.test(Rel.norm[Diet=="NCD"])$p.value,
+            Shapiro.p = min(shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
+                            shapiro.test(Rel.norm[Diet=="NCD"])$p.value),
+            Levene.p = leveneTest(Rel.norm~Diet)$"Pr(>F)"[1],
+            Wilcox.p = wilcox.test(Rel.norm~Diet, var.equal=T)$p.value,
+            Welch.p = t.test(Rel.norm~Diet, var.equal=F)$p.value,
+            Student.p = t.test(Rel.norm~Diet, var.equal=T)$p.value)
+
+kable(dex.stats, caption="Pairwise statistics for effects of diet in dexamethasone treated animals.")
+```
+
+Also analysed this with a linear model with diet and time as covariates, allowing for an interaction.  
+
+```{r time.lm}
+library(broom)
+lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Fbxo32')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Fbxo32")
+lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Trim63')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Trim63")
+lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Nr3c1')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Nr3c1")
+lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Foxo1')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo1")
+lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Foxo3')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo3")
+
+```
+
+# Interpretation
+
+None of these time courses have a significant interaction between time and diet
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
