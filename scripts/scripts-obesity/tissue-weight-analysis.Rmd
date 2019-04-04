@@ -270,6 +270,20 @@ kable(tidy(ts.aov.int), caption="Two Way ANOVA with Interaction between treatmen
 
 The p-value for the interaction was **`r tidy(ts.aov.int)$p.value[3]`**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of `r shapiro.test(residuals(ts.aov.int))$p.value`, so normality could not be assumed.
 
+## Overall Reductions in NCD/HFD
+
+```{r percent-reductions}
+summary.data %>%
+  select(ends_with('mean.na'),Treatment) %>%
+  group_by(Diet,Treatment) %>%
+  gather(key=Measure, value=Amount, -Diet, -Treatment) %>%
+  spread(Treatment,Amount) %>%
+  mutate(Reduction=Water-Dexamethasone,
+         Percent.Reduction=Reduction/Water*100) %>%
+    arrange(Measure,Diet) %>%
+  kable(caption="Absolute and Relative Decreases with Dexamethasone") 
+```
+
 # Session Information
 ```{r sessionInfo}
 sessionInfo()
