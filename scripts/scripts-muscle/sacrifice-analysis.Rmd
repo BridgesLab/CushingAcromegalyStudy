@@ -1,0 +1,451 @@
+---
+title: "Analysis of data from HFD mice on dexamethasone"
+author: "Laura Gunder and Dave Bridges"
+date: "January 10th, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis.  This might include specifics not in the general protocol such as cell lines, Treatment doses etc.
+
+# Raw Data
+
+Describe your raw data files, including what the columns mean (and what units they are in).
+
+```{r data-input}
+omit<-c(6013,7187)
+
+library(readxl) #loads the readr package
+filename <- 'data HFD DEX.xlsx' #make this a separate line, you can use any variable you want
+library(forcats)
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+filename <- 'HFD Dex Muscle Testing Data.xlsx'
+  exp.data <- read_excel(filename, sheet = 'Sheet1') %>%
+    mutate(`Mouse ID` = as.factor(`Mouse ID`),
+           Treatment = fct_recode(as.factor(Treatment), "Dexamethasone"="Dex"), #rename for consistency
+           Diet = as.factor(Diet),
+           Sex = as.factor(Sex)) %>%
+    mutate(Treatment = relevel(Treatment, ref="Water")) %>% #make water the reference
+    mutate(Diet = relevel(Diet, ref="NCD")) %>% #make NCD the reference
+    rename(CSA = `CSA of Gastroc (mm^2)`,
+           Weight = `Body Mass (mg)`,
+           MouseID = `Mouse ID`,
+           Gastroc = `Gastroc Muscle Mass (mg)`,
+           Fat.Mass = `Final Fat mass (mg)`,
+           FBG = `Fasting Blood Glucose (mg/dL)`) %>%
+    filter(!(MouseID %in% omit))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+We removed mouse 6013 double-checked nerve when done with muscle and 7179 slipped at 100hz for muscle stim, could not get higher force after that
+
+# Number of Measurements
+
+```{r number-of-measurements}
+exp.data %>%
+  group_by(Sex,Diet,Treatment) %>%
+  na.omit %>%
+  count %>%
+  kable(caption="Number of animals at sacrifice")
+```
+
+Generated summary data for each measurement
+
+```{r summary-data}
+shapiro.p <- function(x) shapiro.test(x)$p.value
+mean.n <- function(x) mean(x, na.rm=T)
+
+summary.data <-
+  exp.data %>%
+  group_by(Sex,Diet, Treatment) %>%
+  summarize_if(is.numeric, .funs=funs(mean.n,se))
+```
+
+## Fat Mass
+
+```{r fat-mass-barplot}
+ggplot(data=summary.data,
+       aes(y=Fat.Mass_mean.n/1000,
+           ymin=(Fat.Mass_mean.n-Fat.Mass_se)/1000,
+           ymax=(Fat.Mass_mean.n+Fat.Mass_se)/1000,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Total Fat Mass (g)")
+
+library(broom)
+
+aov(`Fat.Mass` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Fat Mass")
+```
+
+```{r fat-mass-boxplot}
+
+ggplot(data=exp.data,
+       aes(y=Fat.Mass/1000,
+           x=Diet,
+           fill=Treatment)) +
+         geom_boxplot(beside=T, width=0.75, position='dodge') +
+  geom_point(position=position_dodge(width=0.75)) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Total Fat Mass (g)") 
+```
+
+## Blood Glucose
+significant for FBG
+diet is conditional on treatment, significant interaction between diet and treatment 
+It tests whether the average treatment effect is the different for each diet, the respective diets.
+effect of the treatment (difference between treated and control) differs between NCD and HFD
+
+```{r glucose-barplot}
+ggplot(data=summary.data,
+       aes(y=FBG_mean.n,
+           ymin=FBG_mean.n-FBG_se,
+           ymax=FBG_mean.n+FBG_se,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+         scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Fasting Blood Glucose (mg/dL)")
+
+aov(`FBG` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of FBG")
+```
+
+## Gastrocnemius Weight
+
+```{r gastroc-barplot}
+ggplot(data=summary.data,
+       aes(y=Gastroc_mean.n,
+           ymin=Gastroc_mean.n-Gastroc_se,
+           ymax=Gastroc_mean.n+Gastroc_se,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+          scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Average Gastrocnemius Weight (mg)")
+library(broom)
+aov(`Gastroc` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Gastroc Weights")
+```
+
+The gastroc weights are reduced **`r with(subset(summary.data, Diet=="NCD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the NCD animals and **`r with(subset(summary.data, Diet=="HFD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the HFD animals.
+
+```{r gastroc-boxplot}
+ggplot(data=exp.data,
+       aes(y=Gastroc,
+           x=Diet,
+           fill=Treatment)) +
+         geom_boxplot(beside=T, width=0.75, position='dodge') +
+  geom_point(position=position_dodge(width=0.75)) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Average Gastrocnemius Weight (mg)") 
+library(broom)
+aov(`Gastroc` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Gastroc Weights")
+```
+
+## Cross-Sectional Area
+
+```{r csa-barplot}
+ggplot(data=summary.data,
+       aes(y=CSA_mean.n,
+           ymin=CSA_mean.n-CSA_se,
+           ymax=CSA_mean.n+CSA_se,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+          scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Cross-sectional area (mm^2)")
+library(broom)
+aov(`CSA` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of CSA")
+
+```
+
+The whole muscle cross-sectional areas are reduced **`r with(subset(summary.data, Diet=="NCD"), (CSA_mean.n[1]-CSA_mean.n[2])/CSA_mean.n[1])*100`%** in the NCD animals and **`r with(subset(summary.data, Diet=="HFD"), (CSA_mean.n[1]-CSA_mean.n[2])/CSA_mean.n[1])*100`%** in the HFD animals.
+
+```{r csa-boxplot}
+ggplot(data=exp.data,
+       aes(y=CSA,
+           x=Diet,
+           fill=Treatment)) +
+         geom_boxplot(beside=T, width=0.75, position='dodge') +
+  geom_point(position=position_dodge(width=0.75)) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Cross-sectional area (mm^2)") 
+library(broom)
+aov(`CSA` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of CSA")
+```
+
+## Force
+
+### Force - Muscle
+#Explanation
+not significant for force generated by muscle stimulation
+diet is not conditional on treatment, no significant interaction between diet and treatment 
+It tests whether the average treatment effect is the different for each diet, the respective diets.
+effect of the treatment (difference between treated and control) doesnt significantly differs between NCD and HFD
+
+```{r force-muscle-barplot}
+ggplot(data=summary.data,
+       aes(y=`Po-Muscle (mN)_mean.n`,
+           ymin=`Po-Muscle (mN)_mean.n`-`Po-Muscle (mN)_se`,
+           ymax=`Po-Muscle (mN)_mean.n`+`Po-Muscle (mN)_se`,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Force")
+
+ggplot(data=summary.data,
+       aes(y=`Po-Muscle (mN)_mean.n`,
+           ymin=`Po-Muscle (mN)_mean.n`-`Po-Muscle (mN)_se`,
+           ymax=`Po-Muscle (mN)_mean.n`+`Po-Muscle (mN)_se`,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  expand_limits(y=0) +
+  labs(y="Muscle Force (mN)") +
+  scale_fill_manual(values=c("gray23","mediumpurple2")) +
+  theme_light() +
+  theme(legend.position = 'none',
+        axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        legend.title=element_blank())
+
+plot.data <- summary.data %>% ungroup() %>% select(Diet,Treatment,`Po-Muscle (mN)_mean.n`) %>% spread(key="Diet",value="Po-Muscle (mN)_mean.n")
+plot.data.se <- summary.data %>% ungroup() %>% select(Diet,Treatment,`Po-Muscle (mN)_se`) %>% spread(key="Diet",value="Po-Muscle (mN)_se")
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T,
+                col=c('black','red'),
+                las=1,
+                ylim=c(0,6500),
+                ylab="Muscle Force (mN)")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+library(broom)
+aov(`Po-Muscle (mN)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Muscle force measurements")
+```
+
+
+
+
+```{r force-muscle-boxplot}
+ggplot(data=exp.data,
+       aes(y=`Po-Muscle (mN)`,
+           x=Diet,
+           fill=Treatment)) +
+         geom_boxplot(beside=T, width=0.75, position='dodge') +
+  geom_point(position=position_dodge(width=0.75)) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Force (mN)") 
+
+library(broom)
+aov(`Po-Muscle (mN)` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Muscle force measurements")
+
+```
+
+
+
+### Force - Nerve
+#Interpretation
+significant for force generated by nerve stimulation
+diet is conditional on treatment, significant interaction between diet and treatment 
+It tests whether the average treatment effect is the different for each diet, the respective diets.
+effect of the treatment (difference between treated and control) differs between NCD and HFD
+
+```{r force-nerve-barplot}
+ggplot(data=summary.data,
+       aes(y=`Po-Nerve (mN)_mean.n`,
+           ymin=`Po-Nerve (mN)_mean.n`-`Po-Nerve (mN)_se`,
+           ymax=`Po-Nerve (mN)_mean.n`+`Po-Nerve (mN)_se`,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Force (mN)",
+       title="Nerve Stimulation")
+
+library(broom)
+aov(`Po-Nerve (mN)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Nerve force measurements")
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T,
+                col=c('black','red'),
+                las=1,
+                ylim=c(0,6500),
+                ylab="Nerve Force (mN)")
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+```
+
+legend("topright",c("Water","Dexamethasone"), fill=c('gray23','mediumpurple2'),bty="n")
+
+
+```{r force-nerve-boxplot}
+ggplot(data=exp.data,
+       aes(y=`Po-Nerve (mN)`,
+           x=Diet,
+           fill=Treatment)) + 
+         geom_boxplot(beside=T, width=0.75, position='dodge') +
+  geom_point(position=position_dodge(width=0.75)) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Force",
+       title="Nerve Stimulation") 
+library(broom)
+aov(`Po-Nerve (mN)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Nerve force measurements")
+```
+
+## Overall Reductions in NCD/HFD
+
+```{r percent-reductions}
+summary.data %>%
+  select(ends_with('mean.n'),Treatment) %>%
+  group_by(Diet,Treatment,Sex) %>%
+  gather(key=Measure, value=Amount, -Sex, -Diet, -Treatment) %>%
+  spread(Treatment,Amount) %>%
+  mutate(Reduction=Water-Dexamethasone,
+         Percent.Reduction=Reduction/Water*100) %>%
+    arrange(Measure,Diet) %>%
+  kable(caption="Absolute and Relative Decreases with Dexamethasone") 
+```
+
+
+### Force versus CSA
+
+```{r force-csa-musle}
+ggplot(data=exp.data,
+       aes(y=`Po-Muscle (mN)`,
+           x=CSA)) +
+  geom_smooth(method='lm') +
+  geom_point(aes(color=Treatment, shape=Diet, size=Fat.Mass/1000)) +
+  scale_color_manual(name="Treatment",values=c("black","red")) +
+  expand_limits(y=0,x=10) +
+  scale_shape_manual(values = c(17,15)) +
+  scale_size(name="Total Fat Mass") +
+  labs(y='Force Muscle (mN)',
+       x=bquote('Cross-Sectional Area'~(mm^2)),
+       title="Muscle Stimulation")
+```
+
+```{r force-csa-nerve}
+ggplot(data=exp.data,
+       aes(y=`Po-Nerve (mN)`,
+           x=CSA)) +
+  geom_smooth(method='lm') +
+  geom_point(aes(color=Treatment, shape=Diet, size=Fat.Mass/1000)) +
+  scale_color_manual(name="Treatment",values=c("black","red")) +
+    expand_limits(y=0,x=10) +
+  scale_shape_manual(values = c(17,15)) +
+  scale_size(name="Total Fat Mass") +
+  labs(y='Force Muscle (mN)',
+       x=bquote('Cross-Sectional Area'~(mm^2)),
+       title="Nerve Stimulation")
+
+library(broom)
+lm(`Po-Muscle (mN)` ~ CSA, data=exp.data) %>% tidy() %>% kable(caption="Linear model regressing against cross-sectional area")
+lm(`Po-Muscle (mN)` ~ CSA, data=exp.data) %>% glance() %>% kable(caption="Linear model regressing against cross-sectional area, showing fit")
+lm(`Po-Muscle (mN)` ~ CSA + Treatment, data=exp.data) %>% tidy() %>% kable(caption="Linear model including dexamethasone treatment as a covariate")
+lm(`Po-Muscle (mN)` ~ CSA + Treatment, data=exp.data) %>% glance() %>% kable(caption="Linear model including dexamethasone treatment as a covariate, showing fit")
+
+
+```
+
+# Interpretation
+
+A brief summary of what the interpretation of these results were there's
+is not a significant interaction between diet and treatment on generated force by stimulating muscle or nerve. 
+
+
+Changes in force are proportional to changes in CSA. CSA is the determining factor in strength as measured by force generated through stimulation of nerve and muscle in gastroc.
+force versus cross-sectional-understand whether muscle strength will decline in proportion only to the size. 
+reitterated- look at SPo or specific force
+If muscle strength is reduced primary due to neuropathy, perhaps secondary to diabetes in these mice, we will identify this by comparing neuronal to direct muscle stimulation
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
+# References
+
+If needed, using Rmarkdown citation tools (see this link for more information: http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
