@@ -69,7 +69,7 @@ These data can be found in `r getwd()` in a file named `r filename`.  This scrip
 summary <-
   data %>%
   group_by(Treatment) %>%
-  summarize_if(is.numeric, funs(mean,se))
+  summarize_if(is.numeric, funs(mean,se,sd))
 
 kable(select(summary, Treatment, ends_with('mean')))
 shapiro.p <- function(x) shapiro.test(x)$p.value

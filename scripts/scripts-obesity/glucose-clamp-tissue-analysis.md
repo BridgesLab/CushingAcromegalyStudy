@@ -1,6 +1,17 @@
-# Analysis of 2DG Uptake from HFD Glucose Clamp Tissues
-Innocence Harvey and Dave Bridges  
-2017-08-16  
+---
+title: "Analysis of 2DG Uptake from HFD Glucose Clamp Tissues"
+author: "Innocence Harvey and Dave Bridges"
+date: '2017-08-16'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
 
 
 
@@ -16,7 +27,7 @@ The input data is extracted glucose uptake (nmol/g/min) from the clamp datafiles
 
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/Clamp HFD tissue uptake data.csv.  This script was most recently updated on Wed Aug 16 17:41:11 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/Clamp HFD tissue uptake data.csv.  This script was most recently updated on Thu Sep 12 09:18:21 2019.
 
 # Analysis
 
@@ -75,9 +86,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.3.0 (2016-05-03)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.12.6 (unknown)
+## R version 3.5.0 (2018-04-23)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS  10.14.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -86,23 +101,23 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] car_2.1-5    bindrcpp_0.2 readr_1.1.1  dplyr_0.7.2  tidyr_0.6.3 
-## [6] knitr_1.17  
+## [1] car_3.0-3        carData_3.0-2    readr_1.3.1      dplyr_0.8.3     
+## [5] tidyr_0.8.3.9000 knitr_1.23      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.12       bindr_0.1          magrittr_1.5      
-##  [4] splines_3.3.0      hms_0.3            MASS_7.3-47       
-##  [7] lattice_0.20-35    R6_2.2.2           rlang_0.1.2       
-## [10] minqa_1.2.4        stringr_1.2.0      highr_0.6         
-## [13] tools_3.3.0        parallel_3.3.0     grid_3.3.0        
-## [16] pbkrtest_0.4-7     nnet_7.3-12        nlme_3.1-131      
-## [19] mgcv_1.8-18        quantreg_5.33      MatrixModels_0.4-1
-## [22] htmltools_0.3.6    lme4_1.1-13        yaml_2.1.14       
-## [25] rprojroot_1.2      digest_0.6.12      assertthat_0.2.0  
-## [28] tibble_1.3.3       Matrix_1.2-10      nloptr_1.0.4      
-## [31] glue_1.1.1         evaluate_0.10.1    rmarkdown_1.6     
-## [34] stringi_1.1.5      backports_1.1.0    SparseM_1.77      
-## [37] pkgconfig_2.0.1
+##  [1] zip_2.0.2         Rcpp_1.0.1        cellranger_1.1.0 
+##  [4] pillar_1.4.2      compiler_3.5.0    highr_0.8        
+##  [7] forcats_0.4.0     tools_3.5.0       zeallot_0.1.0    
+## [10] digest_0.6.20     evaluate_0.14     tibble_2.1.3     
+## [13] pkgconfig_2.0.2   rlang_0.4.0       openxlsx_4.1.0.1 
+## [16] curl_3.3          yaml_2.2.0        haven_2.1.0      
+## [19] xfun_0.7          rio_0.5.16        stringr_1.4.0    
+## [22] vctrs_0.2.0       hms_0.4.2         tidyselect_0.2.5 
+## [25] glue_1.3.1        data.table_1.12.2 R6_2.4.0         
+## [28] readxl_1.3.1      foreign_0.8-71    rmarkdown_1.13   
+## [31] purrr_0.3.2       magrittr_1.5      backports_1.1.4  
+## [34] htmltools_0.3.6   abind_1.4-5       assertthat_0.2.1 
+## [37] stringi_1.4.3     crayon_1.3.4
 ```
 
 # References
