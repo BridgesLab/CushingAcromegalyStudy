@@ -1,6 +1,17 @@
-# Food Intake Analysis of NCD/HFD Dexamethasone Treated Animals
-Dave Bridges and Innocence Harvey  
-2017-08-08  
+---
+title: "Food Intake Analysis of NCD/HFD Dexamethasone Treated Animals"
+author: "Dave Bridges and Innocence Harvey"
+date: '2017-08-08'
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
 
 
 
@@ -18,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in /Users/iharvey/Desktop/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/HFD and NCD Food Intake Data.csv.  This script was most recently updated on Mon Dec 18 10:05:56 2017.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity in a file named ../../data/raw/HFD and NCD Food Intake Data.csv.  This script was most recently updated on Thu Sep 12 15:26:15 2019.
 
 # Analysis
 
@@ -39,6 +50,16 @@ HFD                  4.73
 ![](figures/weekly-food-intake-1.png)<!-- -->
 
 ## Analysis on the Aggregate
+
+
+Table: Summary statistics for aggregated weekly food intake
+
+Diet   Treatment        Food.mean   Food.se   Food.sd
+-----  --------------  ----------  --------  --------
+NCD    Water                 11.1     0.435     0.753
+NCD    Dexamethasone         10.1     0.472     0.818
+HFD    Water                 13.5     0.431     0.746
+HFD    Dexamethasone         15.0     0.440     0.985
 
 ![](figures/overall-food-intake-1.png)<!-- -->
 
@@ -97,9 +118,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.3.1 (2016-06-21)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.11.6 (El Capitan)
+## R version 3.5.0 (2018-04-23)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS  10.14.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -108,23 +133,26 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] car_2.1-4     broom_0.4.2   ggplot2_2.1.0 bindrcpp_0.2  forcats_0.2.0
-## [6] readr_1.0.0   dplyr_0.7.4   tidyr_0.6.0   knitr_1.14   
+## [1] car_3.0-3        carData_3.0-2    broom_0.5.2      ggplot2_3.1.1   
+## [5] forcats_0.4.0    readr_1.3.1      dplyr_0.8.3      tidyr_0.8.3.9000
+## [9] knitr_1.23      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.7        nloptr_1.0.4       formatR_1.4       
-##  [4] highr_0.6          plyr_1.8.4         bindr_0.1         
-##  [7] tools_3.3.1        lme4_1.1-12        digest_0.6.10     
-## [10] evaluate_0.9       tibble_1.3.4       gtable_0.2.0      
-## [13] nlme_3.1-128       lattice_0.20-34    mgcv_1.8-15       
-## [16] pkgconfig_2.0.1    rlang_0.1.4        Matrix_1.2-7.1    
-## [19] psych_1.7.5        yaml_2.1.13        parallel_3.3.1    
-## [22] SparseM_1.74       stringr_1.1.0      MatrixModels_0.4-1
-## [25] grid_3.3.1         nnet_7.3-12        glue_1.2.0        
-## [28] R6_2.1.3           foreign_0.8-67     rmarkdown_1.0     
-## [31] minqa_1.2.4        reshape2_1.4.1     magrittr_1.5      
-## [34] splines_3.3.1      scales_0.4.0       htmltools_0.3.5   
-## [37] MASS_7.3-45        pbkrtest_0.4-6     assertthat_0.1    
-## [40] mnormt_1.5-5       colorspace_1.2-6   quantreg_5.29     
-## [43] labeling_0.3       stringi_1.1.2      munsell_0.4.3
+##  [1] zip_2.0.2         Rcpp_1.0.1        cellranger_1.1.0 
+##  [4] pillar_1.4.2      compiler_3.5.0    highr_0.8        
+##  [7] plyr_1.8.4        tools_3.5.0       zeallot_0.1.0    
+## [10] digest_0.6.20     lattice_0.20-38   nlme_3.1-140     
+## [13] evaluate_0.14     tibble_2.1.3      gtable_0.3.0     
+## [16] pkgconfig_2.0.2   rlang_0.4.0       openxlsx_4.1.0.1 
+## [19] curl_3.3          yaml_2.2.0        haven_2.1.0      
+## [22] xfun_0.7          rio_0.5.16        withr_2.1.2      
+## [25] stringr_1.4.0     generics_0.0.2    vctrs_0.2.0      
+## [28] hms_0.4.2         grid_3.5.0        tidyselect_0.2.5 
+## [31] data.table_1.12.2 glue_1.3.1        R6_2.4.0         
+## [34] readxl_1.3.1      foreign_0.8-71    rmarkdown_1.13   
+## [37] purrr_0.3.2       reshape2_1.4.3    magrittr_1.5     
+## [40] backports_1.1.4   scales_1.0.0      htmltools_0.3.6  
+## [43] abind_1.4-5       assertthat_0.2.1  colorspace_1.4-1 
+## [46] labeling_0.3      stringi_1.4.3     lazyeval_0.2.2   
+## [49] munsell_0.5.0     crayon_1.3.4
 ```

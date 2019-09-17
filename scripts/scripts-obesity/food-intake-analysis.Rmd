@@ -136,7 +136,10 @@ summary.data.agg <-
   summary.data.cage %>%
   group_by(Diet,Treatment) %>%
   summarize(Food.mean = mean(Food.per.week.kcal),
-            Food.se = se(Food.per.week.kcal))
+            Food.se = se(Food.per.week.kcal),
+            Food.sd = sd(Food.per.week.kcal))
+
+kable(summary.data.agg, caption="Summary statistics for aggregated weekly food intake")
 
 plot.data <- 
   summary.data.agg %>%

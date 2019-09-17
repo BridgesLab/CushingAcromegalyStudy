@@ -12,7 +12,7 @@ output:
 
 
 
-This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Thu Apr  4 09:39:48 2019.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
+This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Thu Sep 12 15:23:26 2019.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
 
 # Body Weights
 
@@ -27,16 +27,16 @@ Table: Coefficients from mixed linear model of the interaction of time of dexame
 
                                            Estimate   Std. Error          df       t value    Pr(>|t|)
 --------------------------------------  -----------  -----------  ----------  ------------  ----------
-(Intercept)                              24.4795309    0.5294003    51.25712    46.2401118   0.0000000
-Time                                     -0.0693685    0.0055325   302.95081   -12.5383950   0.0000000
-TreatmentWater                            2.1446927    0.7495919    51.50367     2.8611472   0.0060857
-DietHigh Fat Diet                         0.1979265    0.7462057    50.58464     0.2652438   0.7918996
-Time:TreatmentWater                       0.0825803    0.0079460   303.00906    10.3926384   0.0000000
-Time:DietHigh Fat Diet                   -0.0663224    0.0078919   303.04816    -8.4038949   0.0000000
-TreatmentWater:DietHigh Fat Diet         -1.5048021    1.0558381    50.68818    -1.4252205   0.1602224
-Time:TreatmentWater:DietHigh Fat Diet     0.0736833    0.0110138   303.04178     6.6901174   0.0000000
+(Intercept)                              24.4795309    0.5293877    51.26107    46.2412131   0.0000000
+Time                                     -0.0693685    0.0055325   302.94959   -12.5383458   0.0000000
+TreatmentWater                            2.1446930    0.7495741    51.50766     2.8612155   0.0060844
+DietHigh Fat Diet                         0.1979264    0.7461878    50.58850     0.2652502   0.7918946
+Time:TreatmentWater                       0.0825803    0.0079461   303.00785    10.3925965   0.0000000
+Time:DietHigh Fat Diet                   -0.0663224    0.0078919   303.04695    -8.4038617   0.0000000
+TreatmentWater:DietHigh Fat Diet         -1.5048023    1.0558128    50.69206    -1.4252549   0.1602120
+Time:TreatmentWater:DietHigh Fat Diet     0.0736834    0.0110138   303.04056     6.6900923   0.0000000
 
-A Chi-squared test between models with time and treatment interacting, with a model where diet modifies the rate of lean mass loss yielded a p-value of 6.3198413\times 10^{-14}.
+A Chi-squared test between models with time and treatment interacting, with a model where diet modifies the rate of lean mass loss yielded a p-value of 6.3198415\times 10^{-14}.
 
 # Fat Mass
 
@@ -69,6 +69,17 @@ Normal Chow Diet   Dexamethasone            26.01667         22.25250           
 Normal Chow Diet   Water                    30.55833         27.14500              2.776667                9.188361
 High Fat Diet      Dexamethasone            30.37500         19.92250              9.251667               30.379430
 High Fat Diet      Water                    40.75000         25.96333             14.075000               34.151367
+
+
+
+Table: Endpoint summary data for standard deviations.
+
+Diet               Treatment        Body.Weight_sd   Lean.Mass_sd   Total.Fat.Mass_sd   Percent.Fat.Mass_sd
+-----------------  --------------  ---------------  -------------  ------------------  --------------------
+Normal Chow Diet   Dexamethasone          2.034178       1.793727           0.9075354              3.121467
+Normal Chow Diet   Water                  2.326315       2.562437           0.7699390              2.891866
+High Fat Diet      Dexamethasone          2.110633       1.314016           1.1741909              2.496570
+High Fat Diet      Water                  3.977322       1.932343           3.6359105              6.359877
 
 ## Endpoint Barplots
 
@@ -111,7 +122,7 @@ Residuals         44   176.16496     4.003749          NA          NA
 ```
 ## R version 3.5.0 (2018-04-23)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.2
+## Running under: macOS  10.14.6
 ## 
 ## Matrix products: default
 ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
@@ -124,23 +135,24 @@ Residuals         44   176.16496     4.003749          NA          NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] broom_0.5.1    ggplot2_3.1.0  gridExtra_2.3  lmerTest_3.0-1
-##  [5] lme4_1.1-19    Matrix_1.2-15  bindrcpp_0.2.2 tidyr_0.8.2   
-##  [9] dplyr_0.7.8    knitr_1.21    
+## [1] broom_0.5.2      ggplot2_3.1.1    gridExtra_2.3    lmerTest_3.1-0  
+## [5] lme4_1.1-21      Matrix_1.2-17    tidyr_0.8.3.9000 dplyr_0.8.3     
+## [9] knitr_1.23      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.0        highr_0.7         plyr_1.8.4       
-##  [4] pillar_1.3.1      compiler_3.5.0    nloptr_1.2.1     
-##  [7] bindr_0.1.1       tools_3.5.0       digest_0.6.18    
-## [10] evaluate_0.12     tibble_2.0.0      nlme_3.1-137     
-## [13] gtable_0.2.0      lattice_0.20-38   pkgconfig_2.0.2  
-## [16] rlang_0.3.1       yaml_2.2.0        xfun_0.4         
-## [19] withr_2.1.2       stringr_1.3.1     generics_0.0.2   
-## [22] grid_3.5.0        tidyselect_0.2.5  glue_1.3.0       
-## [25] R6_2.3.0          rmarkdown_1.11    minqa_1.2.4      
-## [28] purrr_0.2.5       magrittr_1.5      backports_1.1.3  
-## [31] scales_1.0.0      htmltools_0.3.6   splines_3.5.0    
-## [34] MASS_7.3-51.1     assertthat_0.2.0  colorspace_1.3-2 
-## [37] numDeriv_2016.8-1 labeling_0.3      stringi_1.2.4    
-## [40] lazyeval_0.2.1    munsell_0.5.0     crayon_1.3.4
+##  [1] Rcpp_1.0.1          highr_0.8           plyr_1.8.4         
+##  [4] pillar_1.4.2        compiler_3.5.0      nloptr_1.2.1       
+##  [7] tools_3.5.0         boot_1.3-22         zeallot_0.1.0      
+## [10] digest_0.6.20       evaluate_0.14       tibble_2.1.3       
+## [13] nlme_3.1-140        gtable_0.3.0        lattice_0.20-38    
+## [16] pkgconfig_2.0.2     rlang_0.4.0         yaml_2.2.0         
+## [19] xfun_0.7            withr_2.1.2         stringr_1.4.0      
+## [22] generics_0.0.2      vctrs_0.2.0         grid_3.5.0         
+## [25] tidyselect_0.2.5    glue_1.3.1          R6_2.4.0           
+## [28] rmarkdown_1.13      minqa_1.2.4         purrr_0.3.2        
+## [31] magrittr_1.5        scales_1.0.0        backports_1.1.4    
+## [34] htmltools_0.3.6     splines_3.5.0       MASS_7.3-51.4      
+## [37] assertthat_0.2.1    colorspace_1.4-1    numDeriv_2016.8-1.1
+## [40] labeling_0.3        stringi_1.4.3       lazyeval_0.2.2     
+## [43] munsell_0.5.0       crayon_1.3.4
 ```

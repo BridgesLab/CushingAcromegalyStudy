@@ -298,9 +298,11 @@ endpoint.summary <-
   endpoint.data %>%
   select(-Time) %>%
   group_by(Diet,Treatment) %>%
-  summarize_at(vars(Body.Weight:Percent.Fat.Mass), funs(mean,se))
+  summarize_at(vars(Body.Weight:Percent.Fat.Mass), funs(mean,se,sd))
 
 kable(endpoint.summary %>% select(Treatment, ends_with('mean')), caption="Endpoint summary data.")
+
+kable(endpoint.summary %>% select(Treatment, ends_with('sd')), caption="Endpoint summary data for standard deviations.")
 ```
 
 ## Endpoint Barplots
