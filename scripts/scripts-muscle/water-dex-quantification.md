@@ -31,7 +31,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:31:42 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:50:58 2020**.
 
 # Analysis
 
@@ -57,9 +57,9 @@ Table: Average fluid intake per group, averaged accross the experiment
 
 Diet               Treatment        Intake.mean   Intake.se    n
 -----------------  --------------  ------------  ----------  ---
-Normal Chow Diet   Water                  11.42        2.79    3
+Normal Chow Diet   Water                   9.25        3.05    2
 Normal Chow Diet   Dexamethasone           5.94        1.55    4
-Normal Chow Diet   NA                     13.36          NA    1
+High Fat Diet      Water                  15.75          NA    1
 High Fat Diet      Dexamethasone           8.99        1.88    5
 NA                 NA                      6.87        1.74    6
 

@@ -3,15 +3,12 @@ title: "Effects of Dexamethasone on NCD/HFD Mouse Quadriceps"
 author: "Laura Gunder and Dave Bridges"
 date: "January 8, 2018"
 output:
-  html_document:
-    highlight: tango
-    keep_md: yes
-    number_sections: yes
-    toc: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
     number_sections: no
+    toc: yes
+  html_document:
     toc: yes
 ---
 
@@ -44,7 +41,7 @@ color.scheme <- c('black', 'red')
 
 library(ggplot2)
 #sets default theme
-theme_set(theme_bw())
+theme_set(theme_classic())
 
 #to change colors use
 #scale_color_manual(values = color.scheme)
@@ -52,6 +49,7 @@ theme_set(theme_bw())
 ```
 
 # Purpose
+
 to examine the molecular effects of dexamethasone at varying lengths of treatment on obese and non-obese mice 
 
 
@@ -65,18 +63,20 @@ The relevant protocols used were:
 * qPCR: http://bridgeslab.sph.umich.edu/protocols/index.php?title=QPCR&oldid=1252
 
 
+There is two cohorts of mice from this, run separately on different qPCR runs.
+
 # Raw Data
 
 ```{r datafiles}
-sample.mapping.file <- 'sample-key.csv'
-run.1.file <- 'Well Results New.csv'
+sample.mapping.file <- '../../data/raw/Time Course Sample Key.csv'
+run.1.file <- '../../data/raw/Time Course Quadriceps qPCR - Combined Well Results.csv'
 ```
 
-The sample mapping is found in `r sample.mapping.file` and the qPCR data can be found in `r run.1.file`.  This analysis can be found in `r getwd()` and was most recently run on `r date()`.
+The sample mapping is found in `r sample.mapping.file` and the qPCR data can be found in `r run.1.file``.  This analysis can be found in `r getwd()` and was most recently run on `r date()`.
 
 ```{r data-input}
 library(readr) #loads the readr package
-#load sample mapping file
+
 #first define the columns in the sample key
 sample.cols <- cols(
   Mouse = col_factor(levels=NULL),
@@ -86,58 +86,45 @@ sample.cols <- cols(
 
 sample.mapping <- read_csv(sample.mapping.file,
                            col_types = sample.cols) #manually defining NA values as N/A from input file
-#load qPCR result files
-run.1.data <- read_csv(file=run.1.file, skip=12,
-                       col_types = cols(
-                         Cq = col_double(),
-                         `Target Name` = col_factor(levels=NULL),
-                         `Sample Name` = col_factor(levels=NULL)
-                       ))
 
-
-#combinedinto a single data frame
-
-combined.data <- run.1.data
+combined.data <- read_csv(run.1.file, col_types = cols(
+  Well = col_factor(levels=NULL),
+  `Experiment Name` = col_factor(levels=NULL),
+  `Sample Name` = col_factor(levels=NULL),
+  `Target Name` = col_factor(levels=NULL),
+  Cq = col_double()
+))
 
 #indicate unreliable data and remove if necessary
 
-bad.samples <- c(2625,2618,2636,2642) # did not amplify
-bad.wells.1 <- c('J1','J6','J7','J9','J11','J12','G7','D13','D16','A15','C24','C17','J10','B21') 
-bad.wells.2 <- c('P6','G5','G7','G4','G1','G2','G8','G3','J10','O21')
-bad.wells.3 <- c('G7','P16','M13','P15')
-bad.wells.4 <- c('B3','G2','F20','C1','C3','C2','C4','F3','H23','G10','E7','F14','G4','F24','G3','E15','D1','G16','F1','G12','D8')
-bad.wells.5 <- c('A9')
-#outlier technical replicates
+bad.samples <- c()#c(2625,2618,2636,2642) # did not amplify
 
+
+ #outlier technical replicates
+ bad.wells.1 <- c('J1','J6','J7','J9','J11','J12','G7','D13','D16','A15','C24','C17','J10','B21') 
+ bad.wells.2 <- c('P6','G5','G7','G4','G1','G2','G8','G3','J10','O21','A14','B22','A20','C4','A7','B15','E7','A17','C1')
+ bad.wells.3 <- c('G7','P16','M13','P15')
+ bad.wells.4 <- c('B3','G2','F20','C1','C3','C2','C4','F3','H23','G10','E7','F14','G4','F24','G3','E15','D1','G16','F1','G12','D8')
+ bad.wells.5 <- c('A9')
+
+ 
 combined.data.clean <- filter(combined.data, 
-                              !(`Experiment Name`=='2017-12-13 lcg.eds'&Well%in%bad.wells.1))
+                               !(`Experiment Name`=='2017-12-13 lcg.eds'&Well%in%bad.wells.1))
 combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-01-10 195156.eds'&Well%in%bad.wells.2)) #F3
+                               !(`Experiment Name`=='2018-01-10 195156.eds'&Well%in%bad.wells.2)) #F3
 combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-01-17 182258.eds'&Well%in%bad.wells.3))
+                               !(`Experiment Name`=='2018-01-17 182258.eds'&Well%in%bad.wells.3))
 combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-07-09 LG.eds'&Well%in%bad.wells.4))
+                               !(`Experiment Name`=='2018-07-09 LG.eds'&Well%in%bad.wells.4))
 combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-07-16 lg.eds'&Well%in%bad.wells.5))
-#F3
+                               !(`Experiment Name`=='2018-07-16 lg.eds'&Well%in%bad.wells.5))
+# removing entire subsets of amplicons
+combined.data.clean <- filter(combined.data.clean, 
+                               !(`Experiment Name`=='2018-01-10 195156.eds'&`Target Name`=='Pgk1'&`Sample Name` %in% c(2633,2644,2636,2642,2647,2627,2624,2621,2631,2646,2639))) #removed because amplicication between two experiment did not match for Pgk1
 
 combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-01-10 195156.eds'&`Target Name`=='Pgk1'))
-combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-07-09 lg.eds'&`Target Name`=='Foxo3'))
+                               !(`Experiment Name`=='2018-01-17 182258.eds'&`Target Name`=='Foxo1')) #no Foxo1 amplification in any sample
 
-combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-01-10 195156.eds'&`Target Name`=='Foxo3'))
-
-combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-01-17 182258.eds'&`Target Name`=='Foxo1'))
-
-combined.data.clean <- filter(combined.data.clean, 
-                              !(`Experiment Name`=='2018-07-09 lg.eds'&`Target Name`=='GDF15'))
-
-#add in fifth plate
-#comment out GDF15 from all plates except 1 (see code in 118) 2018-07-09 LG.eds and new plate
-#comment out Foxo3 from all plates except 1 (see code in 118) 2018-07-09 LG.eds earlier and new plate
 
 combined.data.clean <- filter(combined.data.clean, !(`Sample Name`%in%bad.samples))
 
@@ -163,13 +150,30 @@ qpcr.results.all <-
             Ct.max = max(Cq, na.rm=T)) %>%
   mutate(Ct.range = Ct.max-Ct.min)
 
-#kable(filter(qpcr.results, Ct.range>1) %>% filter(`Target Name` != 'Foxo1') %>% arrange(desc(Ct.range)), caption="Samples where Ct range between technical replicates exceeds 1")
+kable(filter(qpcr.results, Ct.range>1) %>% 
+         arrange(desc(Ct.range)), caption="Samples where Ct range between technical replicates exceeds 1")
 
-#filter(qpcr.data, `Sample Name`==2645&`Target Name`=="GDF15")
+#filter(qpcr.data, `Sample Name`==2626&`Target Name`=="Foxo3")
+
+#filter(qpcr.data, `Experiment Name`=='2018-07-16 lg.eds'&`Target Name`=="Foxo1") %>% View
+ 
+ qpcr.data %>%
+   group_by(Diet,Time) %>%
+   distinct(`Sample Name`,.keep_all = T) %>%
+   count %>%
+   kable(caption="Number of samples for qPCR analysis")
 ```
 
 
-We removed the samples `r paste(bad.samples, collapse=",")` from the dataset because they did not amplify.  We removed wells `r paste(bad.wells.1, collapse=",")` in the first experiment and `r paste(bad.wells.2, collapse=",")` in the second experiment because they were outliers relative to the other technical replicates. 
+We removed several wells  due to technical outliers:
+
+* `r paste(bad.wells.1, collapse=",")` in the first experiment.
+* `r paste(bad.wells.2, collapse=",")` in the second experiment.
+* `r paste(bad.wells.3, collapse=",")` in the third experiment.
+* `r paste(bad.wells.4, collapse=",")` in the fourth experiment.
+* `r paste(bad.wells.5, collapse=",")` in the fifth experiment.
+
+We also removed one entire amplification, Foxo1 from the third experiment as none of those samples amplified
 
 # Analysis
 
@@ -183,19 +187,40 @@ all.samples.rplp0 <- as.character(filter(qpcr.results, `Target Name`==control.ge
 sample.results <-
   filter(qpcr.results, `Sample Name` %in% all.samples.rplp0) %>%
   mutate(Quant = 2^-Ct.mean) %>%
+  ungroup() %>%
+  mutate(`Sample Name` = as.factor(`Sample Name`)) %>%
   group_by(`Sample Name`) %>%
   mutate(Quant.norm = Quant/Quant[`Target Name`==control.gene]) %>%
   group_by(`Target Name`) %>%
-  mutate(Rel.norm = Quant.norm/mean(Quant.norm[Diet==control.diet&Time==control.time], na.rm=T))
+  mutate(Rel.norm = Quant.norm/mean(Quant.norm[Diet==control.diet&Time==control.time], na.rm=T)) 
+  #filter(!(`Target Name`=='Foxo3'&`Sample Name` %in% c('2642','2636'))) %>% #c('2641','8723','2646','2634'))) %>%
+  #filter(!(`Target Name`=="Foxo1"&`Sample Name` %in% c('2636','2642','2634'))) 
+  #filter(!(`Target Name`=="Nr3c1"&`Sample Name` %in% c('2642'))) %>%
+  #filter(!(`Target Name`=="Trim63"&`Sample Name` %in% c('2642','2644','2634')))
+
+
 
 summary.results <-
   sample.results %>%
   group_by(`Target Name`, Diet,Time) %>%
   summarize(Expression=mean(Rel.norm, na.rm=T),
-            Expression.se = se(Rel.norm)) 
+            Expression.se = se(Rel.norm),
+            n = length(Rel.norm)) 
 
 output_file <- "Analysed Control Gene Data.csv"
 write_csv(summary.results, output_file)
+
+# check biological variances
+# summary.results %>%
+#   filter(Expression.se/Expression>0.5) %>%
+#   arrange(`Target Name`,-Expression.se) %>%
+#   kable
+# 
+# sample.results %>%
+#   filter(`Target Name`=='Trim63', Time ==7, Diet=="NCD") %>%
+#   select(Time,Diet,`Sample Name`,Rel.norm,`Experiment Name`) %>%
+#   kable
+
 ```
 
 All mRNA levels were adjusted to **`r control.gene`**, then normalized to **`r control.diet`** at time **`r control.time`**.  Summarized data was written out to `r output_file`.
@@ -216,7 +241,7 @@ kable(foxo.data, caption="Relative amplification of Foxo1 and Foxo3")
 
 # Plots of changes in gene expression
 
-```{r qpcr-lineplot-all-points}
+```{r lineplot-all-points}
 library(ggplot2)
 p <- ggplot(filter(sample.results,`Target Name` != 'GDF15'),
             aes(y=Rel.norm, x=Time))
@@ -228,7 +253,7 @@ p + geom_smooth(aes(color=Diet), se=F) +
   scale_fill_manual(values = color.scheme)
 ```
 
-```{r qpcr-lineplot-all}
+```{r lineplot-all}
 p <- ggplot(summary.results,
             aes(y=Expression, x=Time, ymin=Expression - Expression.se, ymax=Expression + Expression.se,))
 p + geom_line(aes(color=Diet)) + 
@@ -239,7 +264,7 @@ p + geom_line(aes(color=Diet)) +
   scale_fill_manual(values = color.scheme)
 ```
 
-```{r qpcr-lineplot-atrogenes}
+```{r lineplot-atrogenes}
 p <- ggplot(filter(summary.results, `Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63')),
             aes(y=Expression, x=Time, ymin=Expression - Expression.se, ymax=Expression + Expression.se,))
 p + geom_line(aes(color=Diet)) + 
@@ -248,6 +273,20 @@ p + geom_line(aes(color=Diet)) +
   facet_grid(~`Target Name`) + 
   scale_color_manual(values = color.scheme) +
   scale_fill_manual(values = color.scheme)
+
+gene.list <- c('Fbxo32','Trim63','Foxo1','Foxo3')
+ggplot(summary.results %>% 
+         filter(`Target Name` %in% gene.list) %>%
+         mutate(Target = factor(`Target Name`, levels=gene.list)) %>%
+         filter(Time <=7),
+            aes(y=Expression, x=Time, ymin=Expression - Expression.se, ymax=Expression + Expression.se,)) +
+  geom_line(aes(color=Diet)) + 
+  geom_errorbar(aes(color=Diet)) +
+  labs(y="Relative Expression",x="Time (days of Dexamethasone)") +
+  facet_grid(~Target) + 
+  scale_color_manual(values = color.scheme) +
+  scale_fill_manual(values = color.scheme) +
+  theme(legend.position=c(0.9,0.8))
 
 ```
 
@@ -265,7 +304,7 @@ baseline.stats <-
   filter(`Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63','GDF15')) %>%
   filter(Time==0) %>%
   group_by(`Target Name`) %>%
-  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"])/mean(Rel.norm[Diet=="NCD"]),
+  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"],na.rm=T)/mean(Rel.norm[Diet=="NCD"],na.rm=T),
             Shapiro.p = min(shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
                             shapiro.test(Rel.norm[Diet=="NCD"])$p.value),
             Levene.p = leveneTest(Rel.norm~Diet)$"Pr(>F)"[1],
@@ -284,8 +323,7 @@ First did pairwise tests at each time point.
 ```{r dex-time-stats}
 dex.stats <- 
   sample.results %>%
-  filter(`Target Name` %in% c('Nr3c1','Foxo3','Fbxo32','Trim63')) %>%
-  filter(Time!=0) %>%
+  filter(`Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63')) %>%
   group_by(Time,`Target Name`) %>%
   summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"])/mean(Rel.norm[Diet=="NCD"]),
             Shapiro.p.HFD = shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
@@ -297,18 +335,20 @@ dex.stats <-
             Welch.p = t.test(Rel.norm~Diet, var.equal=F)$p.value,
             Student.p = t.test(Rel.norm~Diet, var.equal=T)$p.value)
 
-kable(dex.stats, caption="Pairwise statistics for effects of diet in dexamethasone treated animals.")
+kable(dex.stats, caption="Pairwise statistics for effects of diet in dexamethasone treated animals.") 
+
+#sample.results %>% filter(`Target Name`=='Trim63' & Time == '3') %>% arrange(Diet) %>% select(Rel.norm, `Sample Name`,Diet)
 ```
 
-Also analysed this with a linear model with diet and time as covariates, allowing for an interaction.  
+Also analysed this with a linear model with diet and time as covariates, allowing for an interaction.  Since time and effect were nonlinear with respect to each other, used time as a factor, allowing for each time point to be treated independently.
 
 ```{r time.lm}
 library(broom)
-lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Fbxo32')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Fbxo32")
-lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Trim63')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Trim63")
-lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Nr3c1')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Nr3c1")
-lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Foxo1')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo1")
-lm(Rel.norm ~ Diet * Time, data=filter(sample.results, `Target Name`=='Foxo3')) %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo3")
+lm(Rel.norm ~ Diet * as.factor(Time), data=filter(sample.results, `Target Name`=='Fbxo32')) %>% anova %>% tidy %>% kable(caption="Linear model for effects of time and diet on Fbxo32")
+lm(Rel.norm ~ Diet * as.factor(Time), data=filter(sample.results, `Target Name`=='Trim63')) %>% anova %>% tidy %>% kable(caption="Linear model for effects of time and diet on Trim63")
+lm(Rel.norm ~ Diet * as.factor(Time), data=filter(sample.results, `Target Name`=='Nr3c1')) %>% anova %>% tidy %>% kable(caption="Linear model for effects of time and diet on Nr3c1")
+lm(Rel.norm ~ Diet * as.factor(Time), data=filter(sample.results, `Target Name`=='Foxo1')) %>% anova %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo1")
+lm(Rel.norm ~ Diet * as.factor(Time), data=filter(sample.results, `Target Name`=='Foxo3')) %>% anova %>% tidy %>% kable(caption="Linear model for effects of time and diet on Foxo3")
 
 ```
 
