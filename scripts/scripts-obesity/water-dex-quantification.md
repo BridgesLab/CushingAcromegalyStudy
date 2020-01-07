@@ -32,9 +32,11 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Tue Apr  3 15:50:46 2018**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:25:17 2020**.
 
 # Analysis
+
+This analysis only includes water/dex intake data from the Harvey et al studies, the dataset includes data from the Gunder et al studies but those are filtered out.
 
 ## Weekly Analysis
 
@@ -48,8 +50,8 @@ Table: Average dexamethasone intake per group, averaged accross the experiment
 Diet               Treatment        Intake.mean   Intake.se    n
 -----------------  --------------  ------------  ----------  ---
 Normal Chow Diet   Water                    0.0        0.00    3
-Normal Chow Diet   Dexamethasone           21.1        1.02    3
-High Fat Diet      Water                    0.0        0.00    3
+Normal Chow Diet   Dexamethasone           22.8        1.87    4
+High Fat Diet      Water                    0.0        0.00    4
 High Fat Diet      Dexamethasone           40.5        1.82    5
 
 ![](figures/average-lineplot-1.png)<!-- -->
@@ -74,7 +76,7 @@ Table: Average dexamethasone intake per group normalized by body weight, average
 
 Diet               Treatment        Agg.Intake.mean   Agg.Intake.se
 -----------------  --------------  ----------------  --------------
-Normal Chow Diet   Dexamethasone              0.785           0.062
+Normal Chow Diet   Dexamethasone              0.796           0.065
 Normal Chow Diet   Water                      0.000           0.000
 High Fat Diet      Dexamethasone              1.158           0.093
 High Fat Diet      Water                      0.000           0.000
@@ -83,9 +85,9 @@ High Fat Diet      Water                      0.000           0.000
 
 # Interpretation
 
-The HFD animals had **1.923** fold more fluid intake than the NCD animals over the course of the experiment.  
+The HFD animals had **1.778** fold more fluid intake than the NCD animals over the course of the experiment.  
 
-Once normalized to body weight, the HFD animals had **47.444%** higher dexamethasone intake.
+Once normalized to body weight, the HFD animals had **45.466%** higher dexamethasone intake.
 
 ## Relationship to Human Doses
 
@@ -98,12 +100,12 @@ Table: Effective human dose in ug/kg/day
 
 Diet               Treatment        Human.dose
 -----------------  --------------  -----------
-Normal Chow Diet   Dexamethasone          63.8
+Normal Chow Diet   Dexamethasone          64.7
 Normal Chow Diet   Water                   0.0
 High Fat Diet      Dexamethasone          94.1
 High Fat Diet      Water                   0.0
 
-For a 70 kg human that is an effective dose range of **4.468** to **6.588** mg
+For a 70 kg human that is an effective dose range of **4.529** to **6.588** mg
 
 # Serum Dexamethasone Assay
 
@@ -136,13 +138,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.4.2 (2017-09-28)
+## R version 3.5.0 (2018-04-23)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.3
+## Running under: macOS  10.15.2
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -151,24 +153,26 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_2.2.1       bindrcpp_0.2        forcats_0.2.0      
-## [4] readr_1.1.1         knitcitations_1.0.9 dplyr_0.7.4        
-## [7] tidyr_0.7.2         knitr_1.17         
+## [1] ggplot2_3.1.1       forcats_0.4.0       readr_1.3.1        
+## [4] knitcitations_1.0.9 dplyr_0.8.3         tidyr_0.8.3.9000   
+## [7] knitr_1.23         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.14       highr_0.6          compiler_3.4.2    
-##  [4] plyr_1.8.4         bindr_0.1          tools_3.4.2       
-##  [7] digest_0.6.12      jsonlite_1.5       lubridate_1.7.1   
-## [10] evaluate_0.10.1    tibble_1.3.4       gtable_0.2.0      
-## [13] pkgconfig_2.0.1    rlang_0.1.4        bibtex_0.4.2      
-## [16] curl_3.0           yaml_2.1.15        RefManageR_0.14.20
-## [19] stringr_1.2.0      httr_1.3.1         xml2_1.1.1        
-## [22] hms_0.4.0          rprojroot_1.2      grid_3.4.2        
-## [25] glue_1.2.0         R6_2.2.2           rmarkdown_1.8     
-## [28] reshape2_1.4.2     purrr_0.2.4        magrittr_1.5      
-## [31] backports_1.1.1    scales_0.5.0       htmltools_0.3.6   
-## [34] assertthat_0.2.0   colorspace_1.3-2   labeling_0.3      
-## [37] stringi_1.1.6      lazyeval_0.2.1     munsell_0.4.3
+##  [1] Rcpp_1.0.1        highr_0.8         pillar_1.4.2     
+##  [4] compiler_3.5.0    plyr_1.8.4        tools_3.5.0      
+##  [7] zeallot_0.1.0     digest_0.6.20     jsonlite_1.6     
+## [10] lubridate_1.7.4   evaluate_0.14     tibble_2.1.3     
+## [13] gtable_0.3.0      pkgconfig_2.0.2   rlang_0.4.0      
+## [16] bibtex_0.4.2      curl_3.3          yaml_2.2.0       
+## [19] xfun_0.7          withr_2.1.2       RefManageR_1.2.12
+## [22] stringr_1.4.0     httr_1.4.0        xml2_1.2.0       
+## [25] vctrs_0.2.0       hms_0.4.2         grid_3.5.0       
+## [28] tidyselect_0.2.5  glue_1.3.1        R6_2.4.0         
+## [31] rmarkdown_1.13    reshape2_1.4.3    purrr_0.3.2      
+## [34] magrittr_1.5      scales_1.0.0      backports_1.1.4  
+## [37] htmltools_0.4.0   assertthat_0.2.1  colorspace_1.4-1 
+## [40] labeling_0.3      stringi_1.4.3     lazyeval_0.2.2   
+## [43] munsell_0.5.0     crayon_1.3.4
 ```
 
 # References

@@ -89,12 +89,15 @@ These data can be found in **`r getwd()`** in a file named **`r ifelse(filename 
 
 # Analysis
 
+This analysis only includes water/dex intake data from the Harvey et al studies, the dataset includes data from the Gunder et al studies but those are filtered out.
+
 ## Weekly Analysis
 
 ```{r weekly-lineplot}
 library(forcats)
 exp.data <-
   exp.data %>%
+  filter(!(COHORT %in% c('LG','TC'))) %>% #filtered out TC and Gunder data to keep in line with 
   mutate(Dexamethasone = ifelse(TREATMENT=="DEX", `ML/ANIMAL/DAY`*dex.conc, 0)) %>%
   mutate(Diet = fct_recode(DIET, "Normal Chow Diet" = "NCD", "High Fat Diet" = "HFD"),
          Treatment = fct_recode(TREATMENT, "Water"="WATER", "Dexamethasone" = "DEX"))
