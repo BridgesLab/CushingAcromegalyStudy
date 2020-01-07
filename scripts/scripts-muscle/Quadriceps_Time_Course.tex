@@ -164,7 +164,7 @@ The sample mapping is found in ../../data/raw/Time Course Sample Key.csv
 and the qPCR data can be found in ../../data/raw/Time Course Quadriceps
 qPCR - Combined Well Results.csv`. This analysis can be found in
 /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle
-and was most recently run on Tue Jan 7 16:00:56 2020.
+and was most recently run on Tue Jan 7 16:23:54 2020.
 
 \begin{longtable}[]{@{}lllrlrrrr@{}}
 \caption{Samples where Ct range between technical replicates exceeds
@@ -253,8 +253,6 @@ Ct.min & Ct.max & Ct.range\tabularnewline
 1.25\tabularnewline
 2018-07-16 lg.eds & 2646 & GDF15 & 3 & HFD & 33.3 & 32.6 & 33.9 &
 1.22\tabularnewline
-2018-07-16 lg.eds & 2636 & GDF15 & 7 & NCD & 31.5 & 30.9 & 32.2 &
-1.21\tabularnewline
 2018-07-16 lg.eds & 2637 & GDF15 & 7 & NCD & 30.0 & 29.3 & 30.3 &
 1.03\tabularnewline
 \bottomrule
@@ -306,8 +304,7 @@ experiment as none of those samples amplified
 \section{Analysis}\label{analysis}
 
 All mRNA levels were adjusted to \textbf{Pgk1}, then normalized to
-\textbf{NCD} at time \textbf{0}. Summarized data was written out to
-Analysed Control Gene Data.csv.
+\textbf{NCD} at time \textbf{0}.
 
 \section{Foxo1 versus Foxo3a}\label{foxo1-versus-foxo3a}
 
@@ -321,8 +318,8 @@ Target Name & Ct & DCt & Quant\tabularnewline
 Target Name & Ct & DCt & Quant\tabularnewline
 \midrule
 \endhead
-Foxo1 & 24.4 & 0.000 & 1.00\tabularnewline
-Foxo3 & 24.2 & -0.187 & 1.14\tabularnewline
+Foxo1 & 24.5 & 0.000 & 1.000\tabularnewline
+Foxo3 & 24.7 & 0.262 & 0.834\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -359,9 +356,9 @@ Student.p\tabularnewline
 Fbxo32 & 0.896 & 0.005 & 0.574 & 0.138 & 0.752 & 0.739\tabularnewline
 Trim63 & 1.450 & 0.306 & 0.515 & 0.731 & 0.452 & 0.431\tabularnewline
 Foxo1 & 1.415 & 0.088 & 0.989 & 0.229 & 0.565 & 0.560\tabularnewline
-Foxo3 & 1.739 & 0.033 & 0.606 & 0.056 & 0.090 & 0.070\tabularnewline
+Foxo3 & 1.784 & 0.075 & 0.440 & 0.181 & 0.226 & 0.187\tabularnewline
 Nr3c1 & 1.441 & 0.238 & 0.602 & 0.629 & 0.528 & 0.545\tabularnewline
-GDF15 & 0.701 & 0.001 & 0.564 & 0.878 & 0.610 & 0.606\tabularnewline
+GDF15 & 0.518 & 0.011 & 0.538 & 0.886 & 0.587 & 0.574\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -383,45 +380,45 @@ Time & Target Name & HFD.Effect & Shapiro.p.HFD & Shaprio.p.NCD &
 Shapiro.p & Levene.p & Wilcox.p & Welch.p & Student.p\tabularnewline
 \midrule
 \endhead
-0 & Fbxo32 & NaN & 0.005 & 0.098 & 0.005 & 0.574 & 0.138 & 0.752 &
+0 & Fbxo32 & 0.896 & 0.005 & 0.098 & 0.005 & 0.574 & 0.138 & 0.752 &
 0.739\tabularnewline
-0 & Trim63 & NaN & 0.306 & 0.385 & 0.306 & 0.515 & 0.731 & 0.452 &
+0 & Trim63 & 1.450 & 0.306 & 0.385 & 0.306 & 0.515 & 0.731 & 0.452 &
 0.431\tabularnewline
-0 & Foxo1 & NaN & 0.119 & 0.088 & 0.088 & 0.989 & 0.229 & 0.565 &
+0 & Foxo1 & 1.415 & 0.119 & 0.088 & 0.088 & 0.989 & 0.229 & 0.565 &
 0.560\tabularnewline
-0 & Foxo3 & NaN & 0.043 & 0.033 & 0.033 & 0.606 & 0.056 & 0.090 &
-0.070\tabularnewline
-0 & Nr3c1 & NaN & 0.630 & 0.238 & 0.238 & 0.602 & 0.629 & 0.528 &
+0 & Foxo3 & 1.784 & 0.075 & 0.247 & 0.075 & 0.440 & 0.181 & 0.226 &
+0.187\tabularnewline
+0 & Nr3c1 & 1.441 & 0.630 & 0.238 & 0.238 & 0.602 & 0.629 & 0.528 &
 0.545\tabularnewline
-3 & Fbxo32 & NaN & 0.149 & 0.494 & 0.149 & 0.730 & 0.792 & 0.806 &
+3 & Fbxo32 & 1.091 & 0.149 & 0.494 & 0.149 & 0.730 & 0.792 & 0.806 &
 0.804\tabularnewline
-3 & Trim63 & NaN & 0.824 & 0.002 & 0.002 & 0.138 & 0.177 & 0.086 &
+3 & Trim63 & 3.471 & 0.824 & 0.002 & 0.002 & 0.138 & 0.177 & 0.086 &
 0.096\tabularnewline
-3 & Foxo1 & NaN & 0.213 & 0.370 & 0.213 & 0.203 & 0.057 & 0.181 &
+3 & Foxo1 & 1.946 & 0.213 & 0.370 & 0.213 & 0.203 & 0.057 & 0.181 &
 0.203\tabularnewline
-3 & Foxo3 & NaN & 0.023 & 0.000 & 0.000 & 0.909 & 0.068 & 0.570 &
-0.551\tabularnewline
-3 & Nr3c1 & NaN & 0.466 & 0.678 & 0.466 & 0.241 & 0.114 & 0.062 &
+3 & Foxo3 & 0.714 & 0.596 & 0.002 & 0.002 & 0.494 & 0.792 & 0.593 &
+0.546\tabularnewline
+3 & Nr3c1 & 3.116 & 0.466 & 0.678 & 0.466 & 0.241 & 0.114 & 0.062 &
 0.063\tabularnewline
-7 & Fbxo32 & 1.81 & 0.378 & 0.557 & 0.378 & 0.020 & 0.128 & 0.070 &
-0.052\tabularnewline
-7 & Trim63 & 1.05 & 0.180 & 0.423 & 0.180 & 0.933 & 0.805 & 0.913 &
-0.913\tabularnewline
-7 & Foxo1 & 0.78 & 0.004 & 0.003 & 0.003 & 0.852 & 1.000 & 0.854 &
-0.854\tabularnewline
-7 & Foxo3 & 2.24 & 0.000 & 0.000 & 0.000 & 0.543 & 0.088 & 0.486 &
-0.482\tabularnewline
-7 & Nr3c1 & 1.12 & 0.002 & 0.141 & 0.002 & 0.948 & 0.686 & 0.878 &
-0.877\tabularnewline
-14 & Fbxo32 & 1.11 & 0.982 & 0.572 & 0.572 & 0.627 & 0.902 & 0.705 &
+7 & Fbxo32 & 1.672 & 0.506 & 0.824 & 0.506 & 0.026 & 0.180 & 0.114 &
+0.088\tabularnewline
+7 & Trim63 & 1.008 & 0.133 & 0.209 & 0.133 & 0.890 & 0.818 & 0.988 &
+0.988\tabularnewline
+7 & Foxo1 & 1.025 & 0.772 & 0.650 & 0.650 & 0.986 & 1.000 & 0.968 &
+0.968\tabularnewline
+7 & Foxo3 & 1.588 & 0.464 & 0.302 & 0.302 & 0.139 & 0.132 & 0.101 &
+0.092\tabularnewline
+7 & Nr3c1 & 0.614 & 0.434 & 0.078 & 0.078 & 0.359 & 0.700 & 0.584 &
+0.553\tabularnewline
+14 & Fbxo32 & 1.107 & 0.982 & 0.572 & 0.572 & 0.627 & 0.902 & 0.705 &
 0.705\tabularnewline
-14 & Trim63 & 1.49 & 0.701 & 0.024 & 0.024 & 0.582 & 0.318 & 0.407 &
+14 & Trim63 & 1.488 & 0.701 & 0.024 & 0.024 & 0.582 & 0.318 & 0.407 &
 0.407\tabularnewline
-14 & Foxo1 & 2.60 & 0.046 & 0.391 & 0.046 & 0.319 & 0.886 & 0.413 &
+14 & Foxo1 & 2.604 & 0.046 & 0.391 & 0.046 & 0.319 & 0.886 & 0.413 &
 0.383\tabularnewline
-14 & Foxo3 & 1.70 & 0.000 & 0.677 & 0.000 & 0.348 & 0.401 & 0.263 &
-0.254\tabularnewline
-14 & Nr3c1 & 1.43 & 0.376 & 0.273 & 0.273 & 0.910 & 0.343 & 0.371 &
+14 & Foxo3 & 1.251 & 0.592 & 0.499 & 0.499 & 0.883 & 0.710 & 0.408 &
+0.408\tabularnewline
+14 & Nr3c1 & 1.433 & 0.376 & 0.273 & 0.273 & 0.910 & 0.343 & 0.371 &
 0.370\tabularnewline
 \bottomrule
 \end{longtable}
@@ -442,10 +439,10 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 12.0 & 11.98 & 3.69 & 0.061\tabularnewline
-as.factor(Time) & 3 & 95.6 & 31.88 & 9.82 & 0.000\tabularnewline
-Diet:as.factor(Time) & 3 & 15.4 & 5.14 & 1.58 & 0.206\tabularnewline
-Residuals & 44 & 142.8 & 3.25 & NA & NA\tabularnewline
+Diet & 1 & 7.16 & 7.16 & 2.587 & 0.115\tabularnewline
+as.factor(Time) & 3 & 78.71 & 26.24 & 9.478 & 0.000\tabularnewline
+Diet:as.factor(Time) & 3 & 8.25 & 2.75 & 0.993 & 0.405\tabularnewline
+Residuals & 42 & 116.26 & 2.77 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -460,10 +457,10 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 27.7 & 27.73 & 2.93 & 0.094\tabularnewline
-as.factor(Time) & 3 & 121.6 & 40.55 & 4.29 & 0.010\tabularnewline
-Diet:as.factor(Time) & 3 & 29.9 & 9.95 & 1.05 & 0.379\tabularnewline
-Residuals & 44 & 416.2 & 9.46 & NA & NA\tabularnewline
+Diet & 1 & 26.6 & 26.58 & 2.70 & 0.108\tabularnewline
+as.factor(Time) & 3 & 106.5 & 35.50 & 3.60 & 0.021\tabularnewline
+Diet:as.factor(Time) & 3 & 30.8 & 10.26 & 1.04 & 0.384\tabularnewline
+Residuals & 42 & 413.7 & 9.85 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -478,10 +475,10 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 1.028 & 1.028 & 2.208 & 0.151\tabularnewline
-as.factor(Time) & 3 & 0.856 & 0.285 & 0.613 & 0.614\tabularnewline
-Diet:as.factor(Time) & 3 & 0.437 & 0.146 & 0.313 & 0.816\tabularnewline
-Residuals & 22 & 10.239 & 0.465 & NA & NA\tabularnewline
+Diet & 1 & 0.711 & 0.711 & 1.951 & 0.178\tabularnewline
+as.factor(Time) & 3 & 1.766 & 0.589 & 1.616 & 0.217\tabularnewline
+Diet:as.factor(Time) & 3 & 0.848 & 0.283 & 0.775 & 0.521\tabularnewline
+Residuals & 20 & 7.286 & 0.364 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -496,10 +493,10 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 0.98 & 0.98 & 0.004 & 0.948\tabularnewline
-as.factor(Time) & 3 & 1228.02 & 409.34 & 1.801 & 0.177\tabularnewline
-Diet:as.factor(Time) & 3 & 34.56 & 11.52 & 0.051 & 0.985\tabularnewline
-Residuals & 22 & 5001.61 & 227.35 & NA & NA\tabularnewline
+Diet & 1 & 3.842 & 3.842 & 2.315 & 0.144\tabularnewline
+as.factor(Time) & 3 & 0.709 & 0.236 & 0.142 & 0.933\tabularnewline
+Diet:as.factor(Time) & 3 & 1.496 & 0.499 & 0.300 & 0.825\tabularnewline
+Residuals & 20 & 33.199 & 1.660 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -514,10 +511,10 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 124.2 & 124.2 & 1.272 & 0.263\tabularnewline
-as.factor(Time) & 3 & 399.8 & 133.3 & 1.364 & 0.260\tabularnewline
-Diet:as.factor(Time) & 3 & 83.8 & 27.9 & 0.286 & 0.835\tabularnewline
-Residuals & 74 & 7226.9 & 97.7 & NA & NA\tabularnewline
+Diet & 1 & 2.66 & 2.66 & 0.796 & 0.377\tabularnewline
+as.factor(Time) & 3 & 33.17 & 11.05 & 3.307 & 0.029\tabularnewline
+Diet:as.factor(Time) & 3 & 9.61 & 3.20 & 0.959 & 0.421\tabularnewline
+Residuals & 42 & 140.39 & 3.34 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 

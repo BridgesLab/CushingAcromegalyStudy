@@ -97,7 +97,7 @@ combined.data <- read_csv(run.1.file, col_types = cols(
 
 #indicate unreliable data and remove if necessary
 
-bad.samples <- c()#c(2625,2618,2636,2642) # did not amplify
+bad.samples <- c(2636,2642) # did not amplify
 
 
  #outlier technical replicates
@@ -192,7 +192,8 @@ sample.results <-
   group_by(`Sample Name`) %>%
   mutate(Quant.norm = Quant/Quant[`Target Name`==control.gene]) %>%
   group_by(`Target Name`) %>%
-  mutate(Rel.norm = Quant.norm/mean(Quant.norm[Diet==control.diet&Time==control.time], na.rm=T)) 
+  mutate(Rel.norm = Quant.norm/mean(Quant.norm[Diet==control.diet&Time==control.time], na.rm=T)) %>%
+  distinct(`Sample Name`,.keep_all = T)
   #filter(!(`Target Name`=='Foxo3'&`Sample Name` %in% c('2642','2636'))) %>% #c('2641','8723','2646','2634'))) %>%
   #filter(!(`Target Name`=="Foxo1"&`Sample Name` %in% c('2636','2642','2634'))) 
   #filter(!(`Target Name`=="Nr3c1"&`Sample Name` %in% c('2642'))) %>%
@@ -207,9 +208,6 @@ summary.results <-
             Expression.se = se(Rel.norm),
             n = length(Rel.norm)) 
 
-output_file <- "Analysed Control Gene Data.csv"
-write_csv(summary.results, output_file)
-
 # check biological variances
 # summary.results %>%
 #   filter(Expression.se/Expression>0.5) %>%
@@ -223,7 +221,7 @@ write_csv(summary.results, output_file)
 
 ```
 
-All mRNA levels were adjusted to **`r control.gene`**, then normalized to **`r control.diet`** at time **`r control.time`**.  Summarized data was written out to `r output_file`.
+All mRNA levels were adjusted to **`r control.gene`**, then normalized to **`r control.diet`** at time **`r control.time`**.  
 
 # Foxo1 versus Foxo3a
 
@@ -286,7 +284,7 @@ ggplot(summary.results %>%
   facet_grid(~Target) + 
   scale_color_manual(values = color.scheme) +
   scale_fill_manual(values = color.scheme) +
-  theme(legend.position=c(0.9,0.8))
+  theme(legend.position=c(0.75,0.8))
 
 ```
 
@@ -325,7 +323,7 @@ dex.stats <-
   sample.results %>%
   filter(`Target Name` %in% c('Nr3c1','Foxo1','Foxo3','Fbxo32','Trim63')) %>%
   group_by(Time,`Target Name`) %>%
-  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"])/mean(Rel.norm[Diet=="NCD"]),
+  summarize(HFD.Effect = mean(Rel.norm[Diet=="HFD"],na.rm=T)/mean(Rel.norm[Diet=="NCD"],na.rm=T),
             Shapiro.p.HFD = shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
             Shaprio.p.NCD = shapiro.test(Rel.norm[Diet=="NCD"])$p.value,
             Shapiro.p = min(shapiro.test(Rel.norm[Diet=="HFD"])$p.value,
@@ -337,7 +335,7 @@ dex.stats <-
 
 kable(dex.stats, caption="Pairwise statistics for effects of diet in dexamethasone treated animals.") 
 
-#sample.results %>% filter(`Target Name`=='Trim63' & Time == '3') %>% arrange(Diet) %>% select(Rel.norm, `Sample Name`,Diet)
+#sample.results %>% filter(Time == '3') %>% arrange(`Target Name`,Diet) %>% select(Rel.norm, `Sample Name`,Diet) %>% kable
 ```
 
 Also analysed this with a linear model with diet and time as covariates, allowing for an interaction.  Since time and effect were nonlinear with respect to each other, used time as a factor, allowing for each time point to be treated independently.
