@@ -88,6 +88,8 @@ These data can be found in **`r getwd()`** in a file named **`r ifelse(filename 
 
 # Analysis
 
+While the input file contains data from both Harvey *et al* and Gunder *et al* studies, this script filters out to only show the Gunder et al studies.
+
 ## Weekly Analysis
 
 ```{r weekly-lineplot}
@@ -95,7 +97,7 @@ library(forcats)
 exp.data <-
   exp.data %>%
   #filter(WEEK<=2) %>%
-  filter(COHORT %in% c('LG','TC')) %>%
+  filter(COHORT %in% c('LG','TC')) %>% #only includes data from Gunder et al studies
   mutate(Dexamethasone = ifelse(TREATMENT=="DEX", `ML/ANIMAL/DAY`*dex.conc, 0)) %>%
   rename(Fluid=`ML/ANIMAL/DAY`) %>%
   mutate(Diet = fct_recode(DIET, "Normal Chow Diet" = "NCD", "High Fat Diet" = "HFD"),
@@ -117,7 +119,7 @@ weekly.summary.data <-
             Intake.se = se(Dexamethasone)) 
   
   
-ymax <- with(weekly.summary.data, max(Intake.mean + Intake.se, na.rm=T))
+ymax <- with(weekly.summary.data, max(Intake.mean,na.rm=T) + max(Intake.se, na.rm=T))
 plot <- with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"),
      plot(WEEK,Intake.mean,
             pch=19,

@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **HFD Dex Muscle Testing Data.xlsx**.  This script was most recently updated on **Mon Apr 15 09:19:31 2019**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:37:22 2020**.
 
 # Analysis
 
@@ -292,7 +292,7 @@ sessionInfo()
 ```
 ## R version 3.5.0 (2018-04-23)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.2
+## Running under: macOS  10.15.2
 ## 
 ## Matrix products: default
 ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
@@ -305,20 +305,21 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.1    bindrcpp_0.2.2 forcats_0.3.0  readxl_1.2.0  
-## [5] ggplot2_3.1.0  dplyr_0.7.8    tidyr_0.8.2    knitr_1.21    
+## [1] broom_0.5.2      forcats_0.4.0    readxl_1.3.1     ggplot2_3.1.1   
+## [5] dplyr_0.8.3      tidyr_0.8.3.9000 knitr_1.23      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.0       pillar_1.3.1     compiler_3.5.0   cellranger_1.1.0
-##  [5] plyr_1.8.4       highr_0.7        bindr_0.1.1      tools_3.5.0     
-##  [9] digest_0.6.18    lattice_0.20-38  nlme_3.1-137     evaluate_0.12   
-## [13] tibble_2.0.0     gtable_0.2.0     pkgconfig_2.0.2  rlang_0.3.1     
-## [17] yaml_2.2.0       xfun_0.4         withr_2.1.2      stringr_1.3.1   
-## [21] generics_0.0.2   grid_3.5.0       tidyselect_0.2.5 glue_1.3.0      
-## [25] R6_2.3.0         rmarkdown_1.11   purrr_0.2.5      reshape2_1.4.3  
-## [29] magrittr_1.5     backports_1.1.3  scales_1.0.0     htmltools_0.3.6 
-## [33] assertthat_0.2.0 colorspace_1.3-2 labeling_0.3     stringi_1.2.4   
-## [37] lazyeval_0.2.1   munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.1       pillar_1.4.2     compiler_3.5.0   cellranger_1.1.0
+##  [5] plyr_1.8.4       highr_0.8        tools_3.5.0      zeallot_0.1.0   
+##  [9] digest_0.6.20    lattice_0.20-38  nlme_3.1-140     evaluate_0.14   
+## [13] tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.2  rlang_0.4.0     
+## [17] yaml_2.2.0       xfun_0.7         withr_2.1.2      stringr_1.4.0   
+## [21] generics_0.0.2   vctrs_0.2.0      grid_3.5.0       tidyselect_0.2.5
+## [25] glue_1.3.1       R6_2.4.0         rmarkdown_1.13   purrr_0.3.2     
+## [29] reshape2_1.4.3   magrittr_1.5     ellipsis_0.2.0.1 backports_1.1.4 
+## [33] scales_1.0.0     htmltools_0.4.0  assertthat_0.2.1 colorspace_1.4-1
+## [37] labeling_0.3     stringi_1.4.3    lazyeval_0.2.2   munsell_0.5.0   
+## [41] crayon_1.3.4
 ```
 
 # References

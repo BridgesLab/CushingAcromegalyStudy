@@ -31,9 +31,11 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:23:00 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:31:42 2020**.
 
 # Analysis
+
+While the input file contains data from both Harvey *et al* and Gunder *et al* studies, this script filters out to only show the Gunder et al studies.
 
 ## Weekly Analysis
 

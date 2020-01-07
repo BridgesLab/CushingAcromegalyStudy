@@ -58,11 +58,10 @@ Describe your raw data files, including what the columns mean (and what units th
 omit<-c(6013,7187)
 
 library(readxl) #loads the readr package
-filename <- 'data HFD DEX.xlsx' #make this a separate line, you can use any variable you want
 library(forcats)
 
 #this loads whatever the file is into a dataframe called exp.data if it exists
-filename <- 'HFD Dex Muscle Testing Data.xlsx'
+filename <- '../../data/raw/HFD Dex Muscle Testing Data.xlsx'
   exp.data <- read_excel(filename, sheet = 'Sheet1') %>%
     mutate(`Mouse ID` = as.factor(`Mouse ID`),
            Treatment = fct_recode(as.factor(Treatment), "Dexamethasone"="Dex"), #rename for consistency
