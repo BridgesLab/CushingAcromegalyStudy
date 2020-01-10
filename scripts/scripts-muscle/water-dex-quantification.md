@@ -31,7 +31,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Fri Jan 10 11:40:47 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Fri Jan 10 11:54:05 2020**.
 
 # Analysis
 
@@ -75,6 +75,7 @@ Treatment     1   121.51   121.51       5.326     0.034
 Diet          1     1.72     1.72       0.075     0.787
 Residuals    17   387.84    22.81          NA        NA
 
+There was a 35.573% decrease in fluid intake in the dexamethasone treated mice relative to the water treated mice (p=0.034).
 
 ## Dexamethasone Intake
 

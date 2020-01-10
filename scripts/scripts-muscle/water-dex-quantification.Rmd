@@ -156,10 +156,13 @@ aggregated.fluid.data <-
 kable(aggregated.fluid.data, caption="Average fluid intake per group, averaged accross the experiment")
 
 library(broom)
-aov(Fluid ~ Treatment * Diet, data=exp.data %>% filter(WEEK<=2)) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, with an interaction")
+aov(Fluid ~ Treatment * Diet, data=exp.data %>% filter(WEEK<=2) ) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, with an interaction")
 aov(Fluid ~ Treatment + Diet, data=exp.data %>% filter(WEEK<=2)) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, no interaction")
+
+fluid.lm <- lm(Fluid ~ Treatment + Diet, data=exp.data %>% filter(WEEK<=2)) 
 ```
 
+There was a `r -coef(fluid.lm)[2]/coef(fluid.lm)[1]*100`% decrease in fluid intake in the dexamethasone treated mice relative to the water treated mice (p=`r fluid.lm %>% summary %>% tidy %>% pull(p.value) %>% nth(2)`).
 
 ## Dexamethasone Intake
 
