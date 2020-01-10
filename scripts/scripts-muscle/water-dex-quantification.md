@@ -31,7 +31,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Fri Jan 10 11:32:43 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Fri Jan 10 11:40:47 2020**.
 
 # Analysis
 
@@ -41,16 +41,7 @@ While the input file contains data from both Harvey *et al* and Gunder *et al* s
 
 ![](figures/weekly-lineplot-1.png)<!-- -->![](figures/weekly-lineplot-2.png)<!-- -->
 
-## Average Analysis
-
-
-Table: Average dexamethasone intake per group, averaged accross the experiment
-
-Diet               Treatment        Intake.mean   Intake.se   Shapiro    n
------------------  --------------  ------------  ----------  --------  ---
-Normal Chow Diet   Dexamethasone           35.0       11.26     0.644    5
-High Fat Diet      Dexamethasone           32.4        6.51     0.188    5
-
+## Fluid Intake
 
 
 Table: Average fluid intake per group, averaged accross the experiment
@@ -64,7 +55,36 @@ High Fat Diet      Dexamethasone           8.58       1.721     0.188    5
 NA                 NA                      6.87       1.742     0.828    6
 
 
-# Dexamethasone Intake
+
+Table: Two-way ANOVA for the effects of treatment and diet on fluid intake, with an interaction
+
+term              df    sumsq   meansq   statistic   p.value
+---------------  ---  -------  -------  ----------  --------
+Treatment          1   121.51   121.51       5.268     0.036
+Diet               1     1.72     1.72       0.075     0.788
+Treatment:Diet     1    18.77    18.77       0.814     0.380
+Residuals         16   369.07    23.07          NA        NA
+
+
+
+Table: Two-way ANOVA for the effects of treatment and diet on fluid intake, no interaction
+
+term         df    sumsq   meansq   statistic   p.value
+----------  ---  -------  -------  ----------  --------
+Treatment     1   121.51   121.51       5.326     0.034
+Diet          1     1.72     1.72       0.075     0.787
+Residuals    17   387.84    22.81          NA        NA
+
+
+## Dexamethasone Intake
+
+
+Table: Average dexamethasone intake per group, averaged accross the experiment
+
+Diet               Treatment        Intake.mean   Intake.se   Shapiro    n
+-----------------  --------------  ------------  ----------  --------  ---
+Normal Chow Diet   Dexamethasone           35.0       11.26     0.644    5
+High Fat Diet      Dexamethasone           32.4        6.51     0.188    5
 
 ![](figures/dexamethasone-intake-1.png)<!-- -->
 
@@ -107,20 +127,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] broom_0.5.2         car_3.0-3           carData_3.0-2      
+##  [1] car_3.0-3           carData_3.0-2       broom_0.5.2        
 ##  [4] ggplot2_3.1.1       forcats_0.4.0       readr_1.3.1        
 ##  [7] knitcitations_1.0.9 dplyr_0.8.3         tidyr_0.8.3.9000   
 ## [10] knitr_1.23         
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] tidyselect_0.2.5  xfun_0.7          purrr_0.3.2      
-##  [4] reshape2_1.4.3    lattice_0.20-38   haven_2.1.0      
-##  [7] generics_0.0.2    colorspace_1.4-1  vctrs_0.2.0      
+##  [4] reshape2_1.4.3    haven_2.1.0       lattice_0.20-38  
+##  [7] colorspace_1.4-1  vctrs_0.2.0       generics_0.0.2   
 ## [10] htmltools_0.4.0   yaml_2.2.0        rlang_0.4.0      
 ## [13] pillar_1.4.2      foreign_0.8-71    glue_1.3.1       
 ## [16] withr_2.1.2       readxl_1.3.1      plyr_1.8.4       
-## [19] stringr_1.4.0     munsell_0.5.0     gtable_0.3.0     
-## [22] cellranger_1.1.0  zip_2.0.2         evaluate_0.14    
+## [19] stringr_1.4.0     cellranger_1.1.0  munsell_0.5.0    
+## [22] gtable_0.3.0      zip_2.0.2         evaluate_0.14    
 ## [25] labeling_0.3      rio_0.5.16        curl_3.3         
 ## [28] highr_0.8         Rcpp_1.0.1        backports_1.1.4  
 ## [31] scales_1.0.0      jsonlite_1.6      abind_1.4-5      

@@ -139,9 +139,31 @@ with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="Normal Chow D
 legend("topleft", c("Normal Chow Diet","High Fat Diet"), lty=c(1,2), bty="n", col="red")
 ```
 
-## Average Analysis
+## Fluid Intake
 
 ```{r average-lineplot}
+aggregated.fluid.data <- 
+  exp.data %>%
+  filter(WEEK<=2) %>%
+  #filter(COHORT %in% c('LG','TC')) %>%
+  group_by(`CAGE ID`, Diet,Treatment) %>%
+  summarize(Intake = mean(Fluid, na.rm=T)) %>%
+  group_by(Diet, Treatment) %>%
+  summarize(Intake.mean = mean(Intake, na.rm=T),
+            Intake.se = se(Intake),
+            Shapiro = shapiro.test(Intake)$p.value,
+            n = length(Intake)) 
+kable(aggregated.fluid.data, caption="Average fluid intake per group, averaged accross the experiment")
+
+library(broom)
+aov(Fluid ~ Treatment * Diet, data=exp.data %>% filter(WEEK<=2)) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, with an interaction")
+aov(Fluid ~ Treatment + Diet, data=exp.data %>% filter(WEEK<=2)) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, no interaction")
+```
+
+
+## Dexamethasone Intake
+
+```{r dexamethasone-intake}
 aggregated.data <- 
   exp.data %>%
   filter(WEEK<=2) %>%
@@ -156,25 +178,6 @@ aggregated.data <-
             n = length(Intake)) 
 kable(aggregated.data, caption="Average dexamethasone intake per group, averaged accross the experiment")
 
-
-aggregated.fluid.data <- 
-  exp.data %>%
-  filter(WEEK<=2) %>%
-  #filter(COHORT %in% c('LG','TC')) %>%
-  group_by(`CAGE ID`, Diet,Treatment) %>%
-  summarize(Intake = mean(Fluid, na.rm=T)) %>%
-  group_by(Diet, Treatment) %>%
-  summarize(Intake.mean = mean(Intake, na.rm=T),
-            Intake.se = se(Intake),
-            Shapiro = shapiro.test(Intake)$p.value,
-            n = length(Intake)) 
-kable(aggregated.fluid.data, caption="Average fluid intake per group, averaged accross the experiment")
-```
-
-
-# Dexamethasone Intake
-
-```{r dexamethasone-intake}
 agg.data.ymax <- with(aggregated.data, max(Intake.mean+Intake.se, na.rm=T))
 
 plot <- with(filter(aggregated.data, Treatment=="Dexamethasone"),
@@ -183,7 +186,7 @@ plot <- with(filter(aggregated.data, Treatment=="Dexamethasone"),
                      xlab="Diet",
                      ylim=c(0,agg.data.ymax),
                      names.arg=c("Normal Chow Diet","High Fat Diet"),
-                     ylab="Dexamethasone Intake (ug/mouse/day"))
+                     ylab="Dexamethasone Intake (ug/mouse/day)"))
 
 with(filter(aggregated.data, Treatment=="Dexamethasone"),superpose.eb(plot, Intake.mean, Intake.se))
 
