@@ -31,7 +31,7 @@ The input file contains tracked water and dexamethasone amounts per week.  The d
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan  7 11:50:58 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Fri Jan 10 11:32:43 2020**.
 
 # Analysis
 
@@ -48,29 +48,32 @@ Table: Average dexamethasone intake per group, averaged accross the experiment
 
 Diet               Treatment        Intake.mean   Intake.se   Shapiro    n
 -----------------  --------------  ------------  ----------  --------  ---
-Normal Chow Diet   Dexamethasone           22.5        5.85     0.610    4
-High Fat Diet      Dexamethasone           34.0        7.10     0.226    5
+Normal Chow Diet   Dexamethasone           35.0       11.26     0.644    5
+High Fat Diet      Dexamethasone           32.4        6.51     0.188    5
 
 
 
 Table: Average fluid intake per group, averaged accross the experiment
 
-Diet               Treatment        Intake.mean   Intake.se    n
------------------  --------------  ------------  ----------  ---
-Normal Chow Diet   Water                   9.25        3.05    2
-Normal Chow Diet   Dexamethasone           5.94        1.55    4
-High Fat Diet      Water                  15.75          NA    1
-High Fat Diet      Dexamethasone           8.99        1.88    5
-NA                 NA                      6.87        1.74    6
+Diet               Treatment        Intake.mean   Intake.se   Shapiro    n
+-----------------  --------------  ------------  ----------  --------  ---
+Normal Chow Diet   Water                  11.72       3.035     0.819    3
+Normal Chow Diet   Dexamethasone           9.27       2.979     0.644    5
+High Fat Diet      Water                  15.92       0.984     0.112    4
+High Fat Diet      Dexamethasone           8.58       1.721     0.188    5
+NA                 NA                      6.87       1.742     0.828    6
 
-![](figures/average-lineplot-1.png)<!-- -->
+
+# Dexamethasone Intake
+
+![](figures/dexamethasone-intake-1.png)<!-- -->
 
 Table: Levene's test
 
 term     df   statistic   p.value
 ------  ---  ----------  --------
-group     1       0.046     0.837
-          7          NA        NA
+group     1        1.01     0.343
+          8          NA        NA
 
 
 
@@ -78,7 +81,7 @@ Table: Student's t-test
 
  estimate1   estimate2   statistic   p.value   parameter   conf.low   conf.high  method              alternative 
 ----------  ----------  ----------  --------  ----------  ---------  ----------  ------------------  ------------
-      22.5          34       -1.21     0.267           7      -34.1        11.1  Two Sample t-test   two.sided   
+        35        32.4         0.2     0.846           8      -27.4        32.6  Two Sample t-test   two.sided   
 
 
 # Session Information

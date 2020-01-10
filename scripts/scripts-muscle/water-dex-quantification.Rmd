@@ -166,10 +166,15 @@ aggregated.fluid.data <-
   group_by(Diet, Treatment) %>%
   summarize(Intake.mean = mean(Intake, na.rm=T),
             Intake.se = se(Intake),
-            #Shapiro = shapiro.test(Intake)$p.value,
+            Shapiro = shapiro.test(Intake)$p.value,
             n = length(Intake)) 
 kable(aggregated.fluid.data, caption="Average fluid intake per group, averaged accross the experiment")
+```
 
+
+# Dexamethasone Intake
+
+```{r dexamethasone-intake}
 agg.data.ymax <- with(aggregated.data, max(Intake.mean+Intake.se, na.rm=T))
 
 plot <- with(filter(aggregated.data, Treatment=="Dexamethasone"),
