@@ -6,12 +6,12 @@ output:
   html_document:
     highlight: tango
     keep_md: yes
-    number_sections: yes
+    number_sections: no
     toc: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
-    number_sections: yes
+    number_sections: no
     toc: yes
 ---
 
@@ -22,14 +22,20 @@ output:
 
 
 
+# Insulin Tolerance Test
+
 ## Raw Values
+
 ![](figures/itt-raw-1.png)<!-- -->
 
 ## Normalized Values
   
 ![](figures/itt-normalized-1.png)<!-- -->
     
-![](figures/itt-fbg-1.png)<!-- -->![](figures/itt-fbg-2.png)<!-- -->
+ 
+# Fasting Blood Glucose
+
+![](figures/fbg-1.png)<!-- -->
 
 Table: ANOVA of FBG
 

@@ -6,12 +6,12 @@ output:
   html_document:
     highlight: tango
     keep_md: yes
-    number_sections: yes
+    number_sections: no
     toc: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
-    number_sections: yes
+    number_sections: no
     toc: yes
 ---
 
@@ -69,7 +69,10 @@ itt.summary<-itt.data%>%
             na.omit()
 ```
 
+# Insulin Tolerance Test
+
 ## Raw Values
+
 ```{r itt-raw}
 library(ggplot2)
   #Raw values
@@ -101,9 +104,10 @@ library(ggplot2)
   itt.data.normalized %>%
     group_by(treatment, diet, time)%>%
   summarize(Mean= mean(norm.glucose),
-            Error = se(norm.glucose))
+            Error = se(norm.glucose)) %>%
+    na.omit
   
-    ggplot(itt.summary, aes(y=Mean,
+    ggplot(itt.summary.norm, aes(y=Mean,
            x=time,
            ymin = Mean-Error,
           ymax = Mean+Error,
@@ -118,23 +122,10 @@ library(ggplot2)
     theme_classic()  
 ```    
     
-```{r itt-fbg}    
-ggplot(itt.summary.norm, aes(y=Mean,
-           x=time,
-           ymin = Mean-Error,
-          ymax = Mean+Error,
-          group = diet)) +
-    geom_point(aes(col=diet))+
-    geom_line(aes(col=diet))+
-    facet_grid(.~treatment)+
-    geom_errorbar(aes(col=diet), width = 0.2)+
-    scale_colour_manual(values=color.scheme)+
-    labs(y="blood glucose (% of fasting)", x= "time (minutes)")+
-    ggtitle("Blood glucose following insulin administration")+
-    theme_classic()  
-    
-    
-#fasting blood glucose
+ 
+# Fasting Blood Glucose
+
+```{r fbg}
 fasting.data<- itt.data%>%
   filter(time == 0)%>%
   group_by(diet, treatment)%>%
