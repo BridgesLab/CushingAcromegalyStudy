@@ -28,6 +28,45 @@ output:
 
 ![](figures/itt-raw-1.png)<!-- -->
 
+### ITT Statistics (Raw Values)
+
+
+Table: Chi squared test for effects of dexamethasone on NCD for absolute values
+
+term                    df   AIC   BIC   logLik   deviance   statistic   Chi.Df    p.value
+---------------------  ---  ----  ----  -------  ---------  ----------  -------  ---------
+glucose.null.lme.ncd    11   683   708     -330        661          NA       NA         NA
+glucose.trt.lme.ncd     20   630   675     -295        590        71.2        9   8.81e-12
+
+
+
+Table: ANOVA table for NCD absolute values
+
+                             Sum Sq   Mean Sq   NumDF   DenDF   F value     Pr(>F)
+--------------------------  -------  --------  ------  ------  --------  ---------
+as.factor(time)                3821       478       8      48      2.14   4.98e-02
+Treatment                      6489      6489       1       6     29.07   1.68e-03
+as.factor(time):Treatment     15422      1928       8      48      8.64   3.31e-07
+
+
+
+Table: Chi squared test for effects of dexamethasone on HFD for absolute values
+
+term                    df   AIC   BIC   logLik   deviance   statistic   Chi.Df    p.value
+---------------------  ---  ----  ----  -------  ---------  ----------  -------  ---------
+glucose.null.lme.hfd    11   700   723     -339        678          NA       NA         NA
+glucose.trt.lme.hfd     20   672   715     -316        632        45.4        9   7.66e-07
+
+
+
+Table: ANOVA table for HFD absolute values
+
+                             Sum Sq   Mean Sq   NumDF   DenDF   F value       Pr(>F)
+--------------------------  -------  --------  ------  ------  --------  -----------
+as.factor(time)               70626      8828       8      40      7.69   0.00000353
+Treatment                      5120      5120       1       5      4.46   0.08844096
+as.factor(time):Treatment     49530      6191       8      40      5.39   0.00012509
+
 ## Normalized Values
   
 ![](figures/itt-normalized-1.png)<!-- -->
@@ -42,8 +81,8 @@ Table: ANOVA of FBG
 term               df    sumsq   meansq   statistic   p.value
 ---------------  ----  -------  -------  ----------  --------
 diet                1   148455   148455        29.4         0
-treatment           1   363930   363930        72.1         0
-diet:treatment      1    99594    99594        19.7         0
+Treatment           1   363930   363930        72.1         0
+diet:Treatment      1    99594    99594        19.7         0
 Residuals         131   661587     5050          NA        NA
 
 
@@ -92,24 +131,6 @@ term                df   AIC   BIC   logLik   deviance   statistic   Chi.Df   p.
 -----------------  ---  ----  ----  -------  ---------  ----------  -------  --------
 glucose.null.lme    11   650   675     -314        628          NA       NA        NA
 glucose.diet.lme    20   641   687     -301        601        26.9        9     0.001
-
-
-
-Table: Chi squared test for effects of dexamethasone on NCD for absolute values
-
-term                df   AIC   BIC   logLik   deviance   statistic   Chi.Df   p.value
------------------  ---  ----  ----  -------  ---------  ----------  -------  --------
-glucose.null.lme    11   683   708     -330        661          NA       NA        NA
-glucose.trt.lme     20   630   675     -295        590        71.2        9         0
-
-
-
-Table: Chi squared test for effects of dexamethasone on HFD for absolute values
-
-term                df   AIC   BIC   logLik   deviance   statistic   Chi.Df   p.value
------------------  ---  ----  ----  -------  ---------  ----------  -------  --------
-glucose.null.lme    11   700   723     -339        678          NA       NA        NA
-glucose.trt.lme     20   672   715     -316        632        45.4        9         0
 
 
 

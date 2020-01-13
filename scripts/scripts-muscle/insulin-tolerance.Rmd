@@ -47,6 +47,8 @@ color.scheme <- c('#00274c', '#ffcb05')
 ```{r ITT-data}
 library(readr)
 input.data <- '../../data/raw/Muscle Study ITT.csv'
+
+library(forcats)
 itt.data<-read_csv(input.data,
                    col_types = cols(
                      ID = col_factor(levels = NULL),
@@ -54,19 +56,20 @@ itt.data<-read_csv(input.data,
                      treatment = col_factor(levels = NULL),
                      ID = col_factor(levels = NULL),
                      time = col_factor(levels = NULL),
-                     glucose = col_double()))
+                     glucose = col_double())) %>%
+  rename('Treatment'='treatment') %>%
+  mutate(Treatment = fct_recode(Treatment,'Water'='water',"Dexamethasone"='dexamethasone')) #capitalized dexamethasone and water
 
 #knitr::kable(itt.data %>% select(ID, treatment, diet))%>%distinct_()
 ```
 
 ```{r summary}
 color.scheme <- c('black','red')
-
-itt.summary<-itt.data%>%
-  group_by(treatment, diet, time)%>%
+itt.summary<-itt.data %>%
+  group_by(Treatment, diet, time)%>%
   summarize(Mean= mean(glucose),
-            Error = se(glucose))%>%
-            na.omit()
+            Error = se(glucose)) %>%
+  na.omit
 ```
 
 # Insulin Tolerance Test
@@ -76,19 +79,42 @@ itt.summary<-itt.data%>%
 ```{r itt-raw}
 library(ggplot2)
   #Raw values
-  ggplot(itt.summary, aes(y=Mean,
+itt.summary %>%
+  ggplot(aes(y=Mean,
            x=time,
            ymin = Mean-Error,
           ymax = Mean+Error,
-          group = treatment)) +
-    geom_point(aes(col=treatment))+
-    geom_line(aes(col=treatment))+
+          group = Treatment,
+          col=Treatment)) +
+    geom_point()+
+    geom_line()+
     facet_grid(.~diet)+
-    geom_errorbar(aes(col=treatment), width = 0.2)+
+    geom_errorbar(width = 0.2)+
     scale_colour_manual(values=color.scheme)+
-    labs(y="blood glucose (mg/dL)", x= "time (minutes)")+
-    ggtitle("Blood glucose following insulin administration")+
-    theme_classic()
+    labs(y="Blood Glucose (mg/dL)", x= "Insulin (minutes)")+
+    ggtitle("")+
+    expand_limits(y=0) +
+    theme_classic() +
+    theme(legend.position = c(0.25,0.75))
+```
+
+### ITT Statistics (Raw Values)
+
+```{r itt-raw-stats}
+library(lme4)
+library(broom)
+library(lmerTest)
+glucose.null.lme.ncd <- lmer(glucose ~ as.factor(time)  + (1|ID), data = itt.data %>% filter(diet=='NCD'))
+glucose.trt.lme.ncd <- lmer(glucose ~ as.factor(time)  * Treatment + (1|ID), data = itt.data %>% filter(diet=='NCD'))
+
+kable(tidy(anova(glucose.trt.lme.ncd, glucose.null.lme.ncd)), caption = "Chi squared test for effects of dexamethasone on NCD for absolute values", digits = 15)
+glucose.trt.lme.ncd %>% anova %>% kable(caption="ANOVA table for NCD absolute values", digits = 15)
+
+glucose.null.lme.hfd <- lmer(glucose ~ as.factor(time)  + (1|ID), data = itt.data %>% filter(diet=='HFD'))
+glucose.trt.lme.hfd <- lmer(glucose ~ as.factor(time)  * Treatment + (1|ID), data = itt.data %>% filter(diet=='HFD'))
+
+kable(tidy(anova(glucose.trt.lme.hfd, glucose.null.lme.hfd)), caption = "Chi squared test for effects of dexamethasone on HFD for absolute values", digits = 15)
+glucose.trt.lme.hfd %>% anova %>% kable(caption="ANOVA table for HFD absolute values", digits = 15)
 ```
 
 ## Normalized Values
@@ -102,7 +128,7 @@ library(ggplot2)
   
   itt.summary.norm <-
   itt.data.normalized %>%
-    group_by(treatment, diet, time)%>%
+    group_by(Treatment, diet, time)%>%
   summarize(Mean= mean(norm.glucose),
             Error = se(norm.glucose)) %>%
     na.omit
@@ -111,11 +137,11 @@ library(ggplot2)
            x=time,
            ymin = Mean-Error,
           ymax = Mean+Error,
-          group = treatment)) +
-    geom_point(aes(col=treatment))+
-    geom_line(aes(col=treatment))+
+          group = Treatment)) +
+    geom_point(aes(col=Treatment))+
+    geom_line(aes(col=Treatment))+
     facet_grid(.~diet)+
-    geom_errorbar(aes(col=treatment), width = 0.2)+
+    geom_errorbar(aes(col=Treatment), width = 0.2)+
     scale_colour_manual(values=color.scheme)+
     labs(y="blood glucose (mg/dL)", x= "time (minutes)")+
     ggtitle("Blood glucose following insulin administration")+
@@ -128,16 +154,16 @@ library(ggplot2)
 ```{r fasting-blood-glucose}
 fasting.data<- itt.data%>%
   filter(time == 0)%>%
-  group_by(diet, treatment)%>%
+  group_by(diet, Treatment)%>%
   select(glucose)%>%
   summarise_all(.funs = funs(mean, se))
 
-ggplot(fasting.data, aes(treatment,
+ggplot(fasting.data, aes(Treatment,
                          mean,
                          ymax = mean + se,
-                         ymin = mean - se, fill = treatment))+
+                         ymin = mean - se, fill = Treatment))+
   facet_grid(.~diet)+
-  geom_col(stat = "identity", aes(fill = treatment))+
+  geom_col(stat = "identity", aes(fill = Treatment))+
   geom_errorbar(width = 0.2)+
   scale_fill_manual(values=c('black','red'))+
   theme_classic()+
@@ -145,7 +171,7 @@ ggplot(fasting.data, aes(treatment,
   ggtitle("6 hour Fasting Blood Glucose")
 
 library(broom)
-aov(`glucose` ~ diet * treatment, data = itt.data) %>% tidy %>% kable(caption="ANOVA of FBG")
+aov(`glucose` ~ diet * Treatment, data = itt.data) %>% tidy %>% kable(caption="ANOVA of FBG")
 ```
 
 ```{r statistics}
@@ -154,9 +180,9 @@ library(broom)
 library(car)
 #shapiro test for normal distribution
 ##for pregnant animals
-filter(itt.data, diet=="NCD"&treatment=="water")$glucose %>% shapiro.test #normal
-filter(itt.data, diet=="NCD"&treatment=="dexamethasone")$glucose %>% shapiro.test#normal
-filter(itt.data, diet=="HFD")$glucose %>% shapiro.test#not normal
+filter(itt.data, diet=="NCD"&Treatment=="Water")$glucose %>% shapiro.test #normal
+filter(itt.data, diet=="NCD"&Treatment=="Dexamethasone")$glucose %>% shapiro.test#normal
+filter(itt.data, diet=="HFD")$glucose %>% shapiro.test #not normal
 
 #ggplot(filter(itt.data, diet=="HFD"), aes(glucose))+geom_histogram()#right skew to the data
 wilcox.test(glucose~diet,data= itt.data)#THIS ONE FOR stats
@@ -166,43 +192,35 @@ wilcox.test(glucose~diet,data= itt.data)#THIS ONE FOR stats
 leveneTest(glucose~diet,data= itt.data, var.equal = FALSE)$"Pr(>F)"[1]#not equal variance, use Welch's t test (var.equal = FALSE)
 
 #mixed linear modeling 
-glucose.lme <- lmer(glucose~time + treatment + diet + time:treatment + treatment:diet + (1|ID), data=itt.data)
+glucose.lme <- lmer(glucose~time + Treatment + diet + time:Treatment + Treatment:diet + (1|ID), data=itt.data)
 
-glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data %>% filter(treatment=='water'))
-glucose.diet.lme <- lmer(glucose ~ time  * diet + (1|ID), data = itt.data %>% filter(treatment=='water'))
+glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data %>% filter(Treatment=='Water'))
+glucose.diet.lme <- lmer(glucose ~ time  * diet + (1|ID), data = itt.data %>% filter(Treatment=='Water'))
+
 
 kable(tidy(anova(glucose.diet.lme, glucose.null.lme)), caption = "ANOVA")
 
-glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data %>% filter(diet=='NCD'))
-glucose.trt.lme <- lmer(glucose ~ time  * treatment + (1|ID), data = itt.data %>% filter(diet=='NCD'))
-
-kable(tidy(anova(glucose.trt.lme, glucose.null.lme)), caption = "Chi squared test for effects of dexamethasone on NCD for absolute values")
-
-glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data %>% filter(diet=='HFD'))
-glucose.trt.lme <- lmer(glucose ~ time  * treatment + (1|ID), data = itt.data %>% filter(diet=='HFD'))
-
-kable(tidy(anova(glucose.trt.lme, glucose.null.lme)), caption = "Chi squared test for effects of dexamethasone on HFD for absolute values")
 
 #for normalized data
 
 glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data.normalized %>% filter(diet=='NCD'))
-glucose.trt.lme <- lmer(glucose ~ time  * treatment + (1|ID), data = itt.data.normalized %>% filter(diet=='NCD'))
+glucose.trt.lme <- lmer(glucose ~ time  * Treatment + (1|ID), data = itt.data.normalized %>% filter(diet=='NCD'))
 
 kable(tidy(anova(glucose.trt.lme, glucose.null.lme)), caption = "Chi squared test for effects of dexamethasone on NCD for normalized values")
 
 glucose.null.lme <- lmer(glucose ~ time  + (1|ID), data = itt.data.normalized %>% filter(diet=='HFD'))
-glucose.trt.lme <- lmer(glucose ~ time  * treatment + (1|ID), data = itt.data.normalized %>% filter(diet=='HFD'))
+glucose.trt.lme <- lmer(glucose ~ time  * Treatment + (1|ID), data = itt.data.normalized %>% filter(diet=='HFD'))
 
 kable(tidy(anova(glucose.trt.lme, glucose.null.lme)), caption = "Chi squared test for effects of dexamethasone on HFD for normalized values")
 
 sigma(glucose.diet.lme)#gives the value of the standard deviation for the fixed effects model ofject specified
-glucose.null.lme.n <- lmer(norm.glucose ~ time  + (1|ID), data = itt.data.normalized %>% filter(treatment=='water'))
-glucose.diet.lme.n <- lmer(norm.glucose ~ time  * diet + (1|ID), data = itt.data.normalized %>% filter(treatment=='water'))
+glucose.null.lme.n <- lmer(norm.glucose ~ time  + (1|ID), data = itt.data.normalized %>% filter(Treatment=='Water'))
+glucose.diet.lme.n <- lmer(norm.glucose ~ time  * diet + (1|ID), data = itt.data.normalized %>% filter(Treatment=='Water'))
 
 kable(tidy(anova(glucose.diet.lme.n, glucose.null.lme.n)), caption = "ANOVA for normalized data")
 
 #fasting blood glucose
-filter(itt.data, diet =="NCD"&treatment=="water"&time==0)$glucose%>%shapiro.test#normal
+filter(itt.data, diet =="NCD"&Treatment=="Water"&time==0)$glucose%>%shapiro.test#normal
 filter(itt.data, diet=="HFD"&time==0)$glucose%>%shapiro.test#normal
 leveneTest(glucose~diet,data= itt.data, var.equal = FALSE)$"Pr(>F)"[1]#use Welch's non-equal variance
 ```
