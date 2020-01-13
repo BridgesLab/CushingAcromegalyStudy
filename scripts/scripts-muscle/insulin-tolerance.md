@@ -35,7 +35,7 @@ output:
  
 # Fasting Blood Glucose
 
-![](figures/fbg-1.png)<!-- -->
+![](figures/fasting-blood-glucose-1.png)<!-- -->
 
 Table: ANOVA of FBG
 
@@ -70,8 +70,6 @@ Residuals         131   661587     5050          NA        NA
 ## data:  .
 ## W = 0.8, p-value = 6e-07
 ```
-
-![](figures/statistics-1.png)<!-- -->
 
 ```
 ## 

@@ -125,7 +125,7 @@ library(ggplot2)
  
 # Fasting Blood Glucose
 
-```{r fbg}
+```{r fasting-blood-glucose}
 fasting.data<- itt.data%>%
   filter(time == 0)%>%
   group_by(diet, treatment)%>%
@@ -157,7 +157,8 @@ library(car)
 filter(itt.data, diet=="NCD"&treatment=="water")$glucose %>% shapiro.test #normal
 filter(itt.data, diet=="NCD"&treatment=="dexamethasone")$glucose %>% shapiro.test#normal
 filter(itt.data, diet=="HFD")$glucose %>% shapiro.test#not normal
-ggplot(filter(itt.data, diet=="HFD"), aes(glucose))+geom_histogram()#right skew to the data
+
+#ggplot(filter(itt.data, diet=="HFD"), aes(glucose))+geom_histogram()#right skew to the data
 wilcox.test(glucose~diet,data= itt.data)#THIS ONE FOR stats
 
 

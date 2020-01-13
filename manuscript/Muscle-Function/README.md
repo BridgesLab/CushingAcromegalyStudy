@@ -11,3 +11,5 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   1D     |        |       |
 |   1E     |     scripts-muscle/sacrifice-analysis   |  force-csa-nerve     |
 |   1F     |     scripts-muscle/sacrifice-analysis   |  force-csa-muscle     |
+|   4A     |     scripts-muscle/insulin-tolerance    |  fasting-blood-glucose |
+|   4B     |     scripts-muscle/insulin-tolerance    |  itt-raws |
