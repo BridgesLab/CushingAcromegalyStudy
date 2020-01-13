@@ -67,6 +67,12 @@ as.factor(time)               70626      8828       8      40      7.69   0.0000
 Treatment                      5120      5120       1       5      4.46   0.08844096
 as.factor(time):Treatment     49530      6191       8      40      5.39   0.00012509
 
+### ITT Slope Calculations
+
+Using only the first 45 minutes to see initial insulin sensitivity
+
+![](figures/itt-initial-1.png)<!-- -->
+
 ## Normalized Values
   
 ![](figures/itt-normalized-1.png)<!-- -->

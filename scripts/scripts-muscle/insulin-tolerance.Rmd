@@ -117,6 +117,35 @@ kable(tidy(anova(glucose.trt.lme.hfd, glucose.null.lme.hfd)), caption = "Chi squ
 glucose.trt.lme.hfd %>% anova %>% kable(caption="ANOVA table for HFD absolute values", digits = 15)
 ```
 
+### ITT Slope Calculations
+
+Using only the first 45 minutes to see initial insulin sensitivity
+
+```{r itt-initial}
+itt.rates <-
+  itt.data %>%
+  mutate(time = as.integer(as.character(time))) %>%
+  filter(time<=30) %>%
+  group_by(ID, Treatment,diet) %>%
+  summarize(Rate = lm(glucose~time)$coef %>% nth(2))
+
+itt.rates %>%
+  group_by(diet, Treatment)%>%
+  select(Rate)%>%
+  summarise_all(.funs = funs(mean, se)) %>%
+  ggplot(aes(Treatment,
+                         mean,
+                         ymax = mean + se,
+                         ymin = mean - se, fill = Treatment))+
+  facet_grid(.~diet)+
+  geom_col(stat = "identity", aes(fill = Treatment))+
+  geom_errorbar(width = 0.2)+
+  scale_fill_manual(values=c('black','red'))+
+  theme_classic()+
+  labs(x="Treatment",y="Rate of Change in Blood Glucose (mg/dL)",
+       subtitle="First 45 mins")
+```
+
 ## Normalized Values
   
 ```{r itt-normalized}  
