@@ -12,7 +12,7 @@ output:
 
 
 
-This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Tue Jan 21 14:51:37 2020.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
+This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Tue Jan 21 14:57:04 2020.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
 
 # Body Weights
 
@@ -137,8 +137,8 @@ Residuals         44   176.16496     4.003749          NA          NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.3    gridExtra_2.3  ggplot2_3.2.1  lmerTest_3.1-1 lme4_1.1-21   
-## [6] Matrix_1.2-18  tidyr_1.0.0    dplyr_0.8.3    knitr_1.26    
+##  [1] broom_0.5.3    gridExtra_2.3  forcats_0.4.0  ggplot2_3.2.1  lmerTest_3.1-1
+##  [6] lme4_1.1-21    Matrix_1.2-18  tidyr_1.0.0    dplyr_0.8.3    knitr_1.26    
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.3          plyr_1.8.5          highr_0.8          

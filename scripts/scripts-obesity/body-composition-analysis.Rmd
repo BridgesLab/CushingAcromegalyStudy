@@ -167,8 +167,14 @@ coef(summary(lean.lme)) %>% kable(caption="Coefficients from mixed linear model 
 
 ```{r lean-mass-ggplot, fig.cap="Lean mass changes over five weeks"}
 library(ggplot2)
+library(forcats)
 
 weight.summary %>%
+  ungroup %>%
+  mutate(Diet = fct_recode(Diet, 
+                           "Lean"="Normal Chow Diet",
+                           "Obese"="High Fat Diet")) %>%
+  mutate(Treatment = relevel(Treatment, ref="Water")) %>%
   mutate(Weeks=Time/7) %>%
   ggplot(aes(x=Weeks,
              y=Lean.Mass.mean,
