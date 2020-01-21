@@ -12,8 +12,8 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   1E     |     scripts-muscle/sacrifice-analysis   |  force-csa-nerve-1     |
 |   1F     |     scripts-muscle/sacrifice-analysis   |  force-csa-muscle-1     |
 |   2A     |        |       |
-|   2B     |        |       |
-|   2C     |        |       |
+|   2B     |     scripts-muscle/sacrifice-analysis   |  gastroc-barplot-1     |
+|   2C     |     scripts-muscle/sacrifice-analysis   |  csa-barplot-1  |
 |   2D     |        |       |
 |   2E     |        |       |
 |   2F     |        |       |
