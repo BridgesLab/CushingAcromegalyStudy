@@ -187,17 +187,21 @@ fasting.data<- itt.data%>%
   select(glucose)%>%
   summarise_all(.funs = funs(mean, se))
 
-ggplot(fasting.data, aes(Treatment,
+ggplot(fasting.data, aes(diet,
                          mean,
                          ymax = mean + se,
                          ymin = mean - se, fill = Treatment))+
-  facet_grid(.~diet)+
-  geom_col(stat = "identity", aes(fill = Treatment))+
-  geom_errorbar(width = 0.2)+
-  scale_fill_manual(values=c('black','red'))+
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
   theme_classic()+
-  labs(x="Treatment",y="Fasting Blood Glucose (mg/dL)")+
-  ggtitle("6 hour Fasting Blood Glucose")
+  labs(x="",y="Blood Glucose (mg/dL)")+
+  ggtitle("Fasting Blood Glucose") +
+  expand_limits(y=0) +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
 
 library(broom)
 aov(`glucose` ~ diet * Treatment, data = itt.data) %>% tidy %>% kable(caption="ANOVA of FBG")

@@ -121,7 +121,7 @@ Residuals         131   661587     5050          NA        NA
 ## 	Wilcoxon rank sum test with continuity correction
 ## 
 ## data:  glucose by diet
-## W = 2000, p-value = 0.001
+## W = 1524, p-value = 0.001
 ## alternative hypothesis: true location shift is not equal to 0
 ```
 
