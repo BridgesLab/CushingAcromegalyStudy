@@ -1,5 +1,5 @@
 ---
-title: "IFiber Size from H and E Staining"
+title: "Fiber Size from H and E Staining"
 author: "Laura Gunder and Dave Bridges"
 output:
   html_document:
@@ -28,7 +28,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 15:03:50 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 15:11:19 2020**.
 
 # Analysis
 
@@ -108,8 +108,8 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.2.1 broom_0.5.3   readxl_1.3.1  dplyr_0.8.3   tidyr_1.0.0  
-## [6] knitr_1.26   
+## [1] forcats_0.4.0 ggplot2_3.2.1 broom_0.5.3   readxl_1.3.1  dplyr_0.8.3  
+## [6] tidyr_1.0.0   knitr_1.26   
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.3       pillar_1.4.3     compiler_3.6.2   cellranger_1.1.0

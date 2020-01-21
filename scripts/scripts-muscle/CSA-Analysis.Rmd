@@ -1,5 +1,5 @@
 ---
-title: "IFiber Size from H and E Staining"
+title: "Fiber Size from H and E Staining"
 author: "Laura Gunder and Dave Bridges"
 output:
   html_document:
@@ -106,8 +106,10 @@ exp.summary <-
             Shapiro = shapiro.test(CSA)$p.value)
 
 kable(exp.summary, caption="Summary statistics")
-ggplot(data=exp.summary,
-       aes(y=Mean,
+library(forcats)
+exp.summary %>%
+  mutate(Diet = relevel(Diet, ref="NCD")) %>%
+       ggplot(aes(y=Mean,
            ymin=Mean-Error,
            ymax=Mean+Error,
            x=Diet,
@@ -116,8 +118,16 @@ ggplot(data=exp.summary,
   geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
    scale_fill_manual(values=c("black","red")) +
   expand_limits(y=0) +
-  labs(title="Quadriceps",
-       y="Fiber Cross-Sectional Area")
+  labs(y=bquote('Cross-Sectional Area'~(um^2)),
+       title="Gastrocnemius Fiber Type Area",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
+  
+  
 library(broom)
 aov(`CSA` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="Cross-Sectional Area")
 ```

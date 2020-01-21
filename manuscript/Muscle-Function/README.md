@@ -15,7 +15,7 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   2B     |     scripts-muscle/sacrifice-analysis   |  gastroc-barplot-1     |
 |   2C     |     scripts-muscle/sacrifice-analysis   |  csa-barplot-1  |
 |   2D     |     images, no script   |       |
-|   2E     |        |       |
+|   2E     |     scripts-muscle/CSA-analysis   |  he-csa-barplot-1     |
 |   2F     |     images, no script  |       |
 |   2G     |     scripts-muscle/quantification-fiber-type   |  fiber-type-composition-barplot-1     |
 |   2H     |     scripts-muscle/quantification-fiber-type  |  fiber-type-CSA-barplot-1     |
