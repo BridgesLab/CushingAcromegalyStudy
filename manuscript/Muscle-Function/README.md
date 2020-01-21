@@ -9,8 +9,8 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   1B     |     scripts-muscle/grip-analysis   |    grip-strength-hfd-ggplot-1   |
 |   1C     |     scripts-muscle/sacrifice-analysis    |   force-nerve-barplot-1    |
 |   1D     |     scripts-muscle/sacrifice-analysis    |   force-muscle-barplot-1   |
-|   1E     |     scripts-muscle/sacrifice-analysis   |  force-csa-nerve     |
-|   1F     |     scripts-muscle/sacrifice-analysis   |  force-csa-muscle     |
+|   1E     |     scripts-muscle/sacrifice-analysis   |  force-csa-nerve-1     |
+|   1F     |     scripts-muscle/sacrifice-analysis   |  force-csa-muscle-1     |
 |   2A     |        |       |
 |   2B     |        |       |
 |   2C     |        |       |
