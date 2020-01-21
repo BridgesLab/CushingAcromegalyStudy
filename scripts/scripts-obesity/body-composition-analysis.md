@@ -12,7 +12,7 @@ output:
 
 
 
-This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Thu Sep 12 15:23:26 2019.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
+This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Tue Jan 21 14:51:37 2020.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
 
 # Body Weights
 
@@ -35,6 +35,8 @@ Time:TreatmentWater                       0.0825803    0.0079461   303.00785    
 Time:DietHigh Fat Diet                   -0.0663224    0.0078919   303.04695    -8.4038617   0.0000000
 TreatmentWater:DietHigh Fat Diet         -1.5048023    1.0558128    50.69206    -1.4252549   0.1602120
 Time:TreatmentWater:DietHigh Fat Diet     0.0736834    0.0110138   303.04056     6.6900923   0.0000000
+
+![Lean mass changes over five weeks](figures/lean-mass-ggplot-1.png)
 
 A Chi-squared test between models with time and treatment interacting, with a model where diet modifies the rate of lean mass loss yielded a p-value of 6.3198415\times 10^{-14}.
 
@@ -120,13 +122,13 @@ Residuals         44   176.16496     4.003749          NA          NA
 
 
 ```
-## R version 3.5.0 (2018-04-23)
+## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.6
+## Running under: macOS Catalina 10.15.2
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -135,24 +137,24 @@ Residuals         44   176.16496     4.003749          NA          NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.2      ggplot2_3.1.1    gridExtra_2.3    lmerTest_3.1-0  
-## [5] lme4_1.1-21      Matrix_1.2-17    tidyr_0.8.3.9000 dplyr_0.8.3     
-## [9] knitr_1.23      
+## [1] broom_0.5.3    gridExtra_2.3  ggplot2_3.2.1  lmerTest_3.1-1 lme4_1.1-21   
+## [6] Matrix_1.2-18  tidyr_1.0.0    dplyr_0.8.3    knitr_1.26    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.1          highr_0.8           plyr_1.8.4         
-##  [4] pillar_1.4.2        compiler_3.5.0      nloptr_1.2.1       
-##  [7] tools_3.5.0         boot_1.3-22         zeallot_0.1.0      
-## [10] digest_0.6.20       evaluate_0.14       tibble_2.1.3       
-## [13] nlme_3.1-140        gtable_0.3.0        lattice_0.20-38    
-## [16] pkgconfig_2.0.2     rlang_0.4.0         yaml_2.2.0         
-## [19] xfun_0.7            withr_2.1.2         stringr_1.4.0      
-## [22] generics_0.0.2      vctrs_0.2.0         grid_3.5.0         
-## [25] tidyselect_0.2.5    glue_1.3.1          R6_2.4.0           
-## [28] rmarkdown_1.13      minqa_1.2.4         purrr_0.3.2        
-## [31] magrittr_1.5        scales_1.0.0        backports_1.1.4    
-## [34] htmltools_0.3.6     splines_3.5.0       MASS_7.3-51.4      
-## [37] assertthat_0.2.1    colorspace_1.4-1    numDeriv_2016.8-1.1
-## [40] labeling_0.3        stringi_1.4.3       lazyeval_0.2.2     
-## [43] munsell_0.5.0       crayon_1.3.4
+##  [1] Rcpp_1.0.3          plyr_1.8.5          highr_0.8          
+##  [4] pillar_1.4.3        compiler_3.6.2      nloptr_1.2.1       
+##  [7] tools_3.6.2         boot_1.3-23         zeallot_0.1.0      
+## [10] digest_0.6.23       evaluate_0.14       lifecycle_0.1.0    
+## [13] tibble_2.1.3        nlme_3.1-142        gtable_0.3.0       
+## [16] lattice_0.20-38     pkgconfig_2.0.3     rlang_0.4.2        
+## [19] yaml_2.2.0          xfun_0.12           withr_2.1.2        
+## [22] stringr_1.4.0       generics_0.0.2      vctrs_0.2.1        
+## [25] grid_3.6.2          tidyselect_0.2.5    glue_1.3.1         
+## [28] R6_2.4.1            rmarkdown_2.0       minqa_1.2.4        
+## [31] farver_2.0.1        purrr_0.3.3         magrittr_1.5       
+## [34] scales_1.1.0        backports_1.1.5     htmltools_0.4.0    
+## [37] splines_3.6.2       MASS_7.3-51.4       assertthat_0.2.1   
+## [40] colorspace_1.4-1    numDeriv_2016.8-1.1 labeling_0.3       
+## [43] stringi_1.4.5       lazyeval_0.2.2      munsell_0.5.0      
+## [46] crayon_1.3.4
 ```
