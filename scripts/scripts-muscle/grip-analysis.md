@@ -34,6 +34,17 @@ Data was read from the file../../data/raw/NCD Grip Data.csv and ../../data/raw/H
 
 ![](figures/scatter-plot-grip-mean-1.png)<!-- -->![](figures/scatter-plot-grip-mean-2.png)<!-- -->
 
+## Normal Chow Diet
+
+![Average grip strength per week on normal chow diet.](figures/grip-strength-ncd-ggplot-1.png)
+
+## High Fat Diet
+
+![Average grip strength per week after high fat diet.](figures/grip-strength-hfd-ggplot-1.png)
+
+## Both Diets Combined
+
+![Average grip strength per week.](figures/grip-strength-combined-1.png)![Average grip strength per week.](figures/grip-strength-combined-2.png)
 
 
 Table: Summarized Values for Grip Strength
@@ -94,19 +105,21 @@ Residuals         38   2.428    0.064          NA        NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.3   car_3.0-6     carData_3.0-3 plyr_1.8.5    readr_1.3.1  
-## [6] dplyr_0.8.3   tidyr_1.0.0   knitr_1.26   
+##  [1] broom_0.5.3   gridExtra_2.3 ggplot2_3.2.1 car_3.0-6     carData_3.0-3
+##  [6] plyr_1.8.5    readr_1.3.1   dplyr_0.8.3   tidyr_1.0.0   knitr_1.26   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_2.0.4         Rcpp_1.0.3        highr_0.8         cellranger_1.1.0 
-##  [5] pillar_1.4.3      compiler_3.6.2    forcats_0.4.0     tools_3.6.2      
-##  [9] zeallot_0.1.0     digest_0.6.23     lattice_0.20-38   nlme_3.1-142     
-## [13] evaluate_0.14     lifecycle_0.1.0   tibble_2.1.3      pkgconfig_2.0.3  
-## [17] rlang_0.4.2       openxlsx_4.1.4    curl_4.3          yaml_2.2.0       
-## [21] haven_2.2.0       xfun_0.12         rio_0.5.16        stringr_1.4.0    
-## [25] generics_0.0.2    vctrs_0.2.1       hms_0.5.3         grid_3.6.2       
-## [29] tidyselect_0.2.5  glue_1.3.1        data.table_1.12.8 R6_2.4.1         
-## [33] readxl_1.3.1      foreign_0.8-74    rmarkdown_2.0     purrr_0.3.3      
-## [37] magrittr_1.5      backports_1.1.5   htmltools_0.4.0   abind_1.4-5      
-## [41] assertthat_0.2.1  stringi_1.4.5     crayon_1.3.4
+##  [1] tidyselect_0.2.5  xfun_0.12         purrr_0.3.3       reshape2_1.4.3   
+##  [5] lattice_0.20-38   haven_2.2.0       colorspace_1.4-1  vctrs_0.2.1      
+##  [9] generics_0.0.2    htmltools_0.4.0   yaml_2.2.0        rlang_0.4.2      
+## [13] pillar_1.4.3      foreign_0.8-74    glue_1.3.1        withr_2.1.2      
+## [17] readxl_1.3.1      lifecycle_0.1.0   stringr_1.4.0     munsell_0.5.0    
+## [21] gtable_0.3.0      cellranger_1.1.0  zip_2.0.4         evaluate_0.14    
+## [25] labeling_0.3      rio_0.5.16        forcats_0.4.0     curl_4.3         
+## [29] highr_0.8         Rcpp_1.0.3        backports_1.1.5   scales_1.1.0     
+## [33] abind_1.4-5       farver_2.0.1      hms_0.5.3         digest_0.6.23    
+## [37] stringi_1.4.5     openxlsx_4.1.4    grid_3.6.2        tools_3.6.2      
+## [41] magrittr_1.5      lazyeval_0.2.2    tibble_2.1.3      crayon_1.3.4     
+## [45] pkgconfig_2.0.3   zeallot_0.1.0     data.table_1.12.8 assertthat_0.2.1 
+## [49] rmarkdown_2.0     R6_2.4.1          nlme_3.1-142      compiler_3.6.2
 ```

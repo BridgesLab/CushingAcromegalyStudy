@@ -41,7 +41,7 @@ library(tidyr)
 library(dplyr)
 
 # sets maize and blue color scheme
-color.scheme <- c('#00274c', '#ffcb05')
+color.scheme <- grey.colors(4)[2:3]
 ```
 
 
@@ -144,10 +144,77 @@ with(subset(grip.summary.ep, Treatment=="Dexamethasone"&Diet=="HFD"), superpose.
 legend("bottomleft", c("NCD - Water","NCD - Dexamethasone","HFD - Water","HFD - Dexamethasone"), lty=c(1,1,2,2), col=c('black','red','black','red'), bty='n')
 ```
 
+## Normal Chow Diet
+
+```{r grip-strength-ncd-ggplot, fig.cap="Average grip strength per week on normal chow diet."}
+library(ggplot2)
+
+ncd.plot <- filter(grip.summary, Diet=="NCD") %>%
+  ggplot(aes(x=Weeks, y=Average,
+             ymin=Average-Average.se,
+             ymax=Average+Average.se,
+             lty=Treatment)) + 
+  geom_line() +
+  labs(y="Grip Strength (N)",
+       x="Weeks of Dexamethasone",
+       title="Lean") +
+  geom_errorbar(width=0.5) +
+  expand_limits(y=0) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.5,0.25))
+
+ncd.plot
+```
+
+## High Fat Diet
+
+```{r grip-strength-hfd-ggplot, fig.cap="Average grip strength per week after high fat diet."}
+hfd.plot <- filter(grip.summary, Diet=="HFD") %>%
+  ggplot(aes(x=Weeks, y=Average,
+             ymin=Average-Average.se,
+             ymax=Average+Average.se,
+             lty=Treatment)) + 
+  geom_line() +
+  labs(y="Grip Strength (N)",
+       x="Weeks of Dexamethasone",
+       title="Obese") +
+  geom_errorbar(width=0.5) +
+  expand_limits(y=0) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.5,0.25))
+hfd.plot
+```
+
+## Both Diets Combined
+
+```{r grip-strength-combined, fig.cap="Average grip strength per week."}
+
+grip.summary %>%
+  ggplot(aes(x=Weeks, y=Average,
+             ymin=Average-Average.se,
+             ymax=Average+Average.se,
+             lty=Treatment)) + 
+  facet_grid(.~Diet) +
+  geom_line() +
+  labs(y="Grip Strength (N)",
+       x="Weeks of Dexamethasone") +
+  geom_errorbar(width=0.5) +
+  expand_limits(y=0) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.25,0.25))
+
+library(gridExtra)
+grid.arrange(ncd.plot,hfd.plot, nrow=1)
+```
 
 ```{r summary-table}
 
-kable(grip.summary, caption="Summarized Values for Grip Strength", label="tab:summary-statistics", digits=3)
+kable(grip.summary, caption="Summarized Values for Grip Strength"
+      
+      , label="tab:summary-statistics", digits=3)
 library(broom)
 aov(Grip.Average ~ Diet * Treatment, data=grip.data %>% filter(Weeks==5)) %>% tidy() %>% kable(caption="ANOVA for Grip strength after 3 weeks of treatment")
 ```

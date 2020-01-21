@@ -5,8 +5,8 @@ This document indicates where the raw data for each Figure panel can be found, a
 
 | Figure | Script | Image |
 |--------|--------|-------|
-|   1A     |        |       |
-|   1B     |        |       |
+|   1A     |     scripts-muscle/grip-analysis   |    grip-strength-ncd-ggplot-1   |
+|   1B     |     scripts-muscle/grip-analysis   |    grip-strength-hfd-ggplot-1   |
 |   1C     |        |       |
 |   1D     |        |       |
 |   1E     |     scripts-muscle/sacrifice-analysis   |  force-csa-nerve     |
