@@ -183,7 +183,8 @@ ggplot(data=summary.data,
           scale_fill_manual(values=c("black","red")) +
   expand_limits(y=0) +
   labs(title="Gastrocnemius Mass",
-       y="Weight (mg)") +
+       y="Weight (mg)",
+       x="") +
   scale_fill_grey() +
   scale_x_discrete(labels=c("Lean","Obese")) +
   theme_classic() +
@@ -230,7 +231,8 @@ ggplot(data=summary.data,
   expand_limits(y=0) +
   labs(y=bquote('Cross-Sectional Area'~(mm^2)),
        title="Gastrocnemius Area",
-       y="Weight (mg)") +
+       y="Weight (mg)",
+       x="") +
   scale_fill_grey() +
   scale_x_discrete(labels=c("Lean","Obese")) +
   theme_classic() +

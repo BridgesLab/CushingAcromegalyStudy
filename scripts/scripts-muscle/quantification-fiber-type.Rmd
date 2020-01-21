@@ -118,10 +118,15 @@ ggplot(data=summary.data, aes(y=CSA,
   geom_bar(aes(fill=Treatment), stat='identity', position='dodge', width=0.75) +
   geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
   expand_limits(y = 0) +
+  labs(y=bquote('Cross-Sectional Area'~(um^2)),
+       title="Gastrocnemius Fiber Type Area",
+       x="") +
   facet_grid(~Color) +
-  labs(y="Cross-Sectional Area",
-       title="Cross-Sectional Area by Staining Density",
-       subtitle="Each dot represents the average CSA per mouse")
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
 ```
 
 ```{r fiber-type-CSA-barplot-2, fig.cap="Barplot of muscle fiber cross-sectional area by staining density."}
@@ -157,14 +162,14 @@ ggplot(aes(y=Mean,
   geom_bar(aes(fill=Treatment), stat='identity', position='dodge', width=0.75) +
   geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
   expand_limits(y = 0) +
-  labs(y="Percent of Oxidative Muscle Fibers",
-       title="Percent of Oxidative Muscle Fibers") +
-  scale_fill_manual(values=c("black","red")) +
-  theme_light() +
-  theme(legend.position = 'none',
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=14),
-        legend.title=element_blank())
+  labs(y="Percent",
+       title="Percent of Oxidative Muscle Fibers",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
 ```
 
 # Statistics
