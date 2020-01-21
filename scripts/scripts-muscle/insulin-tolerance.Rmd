@@ -79,6 +79,29 @@ itt.summary<-itt.data %>%
 ```{r itt-raw}
 library(ggplot2)
   #Raw values
+library(forcats)
+itt.summary %>%
+  mutate(Diet = fct_recode(diet, "Lean"="NCD","Obese"="HFD")) %>%
+  ggplot(aes(y=Mean,
+           x=time,
+           ymin = Mean-Error,
+          ymax = Mean+Error,
+          group = Treatment,
+         color=Treatment)) +
+  geom_point(size=3) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+  facet_grid(.~Diet)+
+  scale_color_grey(name="Treatment") +
+  expand_limits(y=0,x=6) +
+  labs(x='Insulin (Minutes)',
+       y='Blood Glucose (mg/dL)') +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.15,0.75),
+        legend.text=element_text(size=12)) 
+
+
 itt.summary %>%
   ggplot(aes(y=Mean,
            x=time,
@@ -201,7 +224,8 @@ ggplot(fasting.data, aes(diet,
   scale_x_discrete(labels=c("Lean","Obese")) +
   theme_classic() +
   theme(text=element_text(size=18),
-        legend.position="bottom") 
+        legend.position=c(0.15,0.75),
+        legend.text=element_text(size=12)) 
 
 library(broom)
 aov(`glucose` ~ diet * Treatment, data = itt.data) %>% tidy %>% kable(caption="ANOVA of FBG")

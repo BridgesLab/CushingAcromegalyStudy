@@ -20,5 +20,5 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   2G     |     scripts-muscle/quantification-fiber-type   |  fiber-type-composition-barplot-1     |
 |   2H     |     scripts-muscle/quantification-fiber-type  |  fiber-type-CSA-barplot-1     |
 |   3      |        |       |
-|   4A     |     scripts-muscle/insulin-tolerance    |  fasting-blood-glucose |
-|   4B     |     scripts-muscle/insulin-tolerance    |  itt-raws |
+|   4A     |     scripts-muscle/insulin-tolerance    |  fasting-blood-glucose-1 |
+|   4B     |     scripts-muscle/insulin-tolerance    |  itt-raw-1 |

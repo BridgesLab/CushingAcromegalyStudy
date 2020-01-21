@@ -26,7 +26,7 @@ output:
 
 ## Raw Values
 
-![](figures/itt-raw-1.png)<!-- -->
+![](figures/itt-raw-1.png)<!-- -->![](figures/itt-raw-2.png)<!-- -->
 
 ### ITT Statistics (Raw Values)
 
