@@ -3,12 +3,12 @@ title: "Effects of Dexamethasone on NCD/HFD Mouse Quadriceps"
 author: "Laura Gunder and Dave Bridges"
 date: "January 8, 2018"
 output:
+  html_document:
+    toc: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
     number_sections: no
-    toc: yes
-  html_document:
     toc: yes
 ---
 
