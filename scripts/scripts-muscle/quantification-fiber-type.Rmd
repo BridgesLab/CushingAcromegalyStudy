@@ -46,17 +46,16 @@ color.scheme <- c('#00274c', '#ffcb05')
 
 ```{r data-input}
 library(readr) #loads the readr package
-filename <- 'NADH NBT CSA Data.csv' #make this a separate line, you can use any variable you want
+filename <- '../../data/raw/NADH NBT CSA Data.csv' #make this a separate line, you can use any variable you want
 #this loads whatever the file is into a dataframe called exp.data if it exists
-if(filename %in% dir()){
-  exp.data <- read_csv(filename, col_types=cols(
+exp.data <- read_csv(filename, col_types=cols(
   `Mouse ID` = col_factor(levels=NULL),
   CSA = col_double(),
   Color = col_factor(levels=NULL),
   Diet = col_factor(levels=c('NCD','HFD')),
   Treatment = col_factor(levels=c('Water','Dex'))
 ))
-}
+
 ```
 
 These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.

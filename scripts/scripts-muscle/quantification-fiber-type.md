@@ -20,7 +20,7 @@ output:
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **NADH NBT CSA Data.csv**.  This script was most recently updated on **Thu Apr  4 09:07:00 2019**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 14:21:39 2020**.
 
 # Analysis
 
@@ -154,13 +154,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.5.0 (2018-04-23)
+## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.2
+## Running under: macOS Catalina 10.15.2
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -169,27 +169,28 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] lmerTest_3.0-1 lme4_1.1-19    Matrix_1.2-15  car_3.0-2     
-##  [5] carData_3.0-2  ggplot2_3.1.0  bindrcpp_0.2.2 readr_1.3.1   
-##  [9] dplyr_0.7.8    tidyr_0.8.2    knitr_1.21    
+##  [1] lmerTest_3.1-1 lme4_1.1-21    Matrix_1.2-18  car_3.0-6      carData_3.0-3 
+##  [6] ggplot2_3.2.1  readr_1.3.1    dplyr_0.8.3    tidyr_1.0.0    knitr_1.26    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_0.2.5  xfun_0.4          reshape2_1.4.3   
-##  [4] purrr_0.2.5       splines_3.5.0     haven_2.0.0      
-##  [7] lattice_0.20-38   colorspace_1.3-2  htmltools_0.3.6  
-## [10] yaml_2.2.0        rlang_0.3.1       nloptr_1.2.1     
-## [13] pillar_1.3.1      foreign_0.8-71    glue_1.3.0       
-## [16] withr_2.1.2       readxl_1.2.0      bindr_0.1.1      
-## [19] plyr_1.8.4        stringr_1.3.1     munsell_0.5.0    
-## [22] gtable_0.2.0      cellranger_1.1.0  zip_1.0.0        
-## [25] evaluate_0.12     labeling_0.3      rio_0.5.16       
-## [28] forcats_0.3.0     curl_3.2          highr_0.7        
-## [31] Rcpp_1.0.0        scales_1.0.0      abind_1.4-5      
-## [34] hms_0.4.2         digest_0.6.18     stringi_1.2.4    
-## [37] openxlsx_4.1.0    numDeriv_2016.8-1 grid_3.5.0       
-## [40] tools_3.5.0       magrittr_1.5      lazyeval_0.2.1   
-## [43] tibble_2.0.0      crayon_1.3.4      pkgconfig_2.0.2  
-## [46] MASS_7.3-51.1     data.table_1.11.8 minqa_1.2.4      
-## [49] assertthat_0.2.0  rmarkdown_1.11    R6_2.3.0         
-## [52] nlme_3.1-137      compiler_3.5.0
+##  [1] tidyselect_0.2.5    xfun_0.12           reshape2_1.4.3     
+##  [4] purrr_0.3.3         splines_3.6.2       haven_2.2.0        
+##  [7] lattice_0.20-38     colorspace_1.4-1    vctrs_0.2.1        
+## [10] htmltools_0.4.0     yaml_2.2.0          rlang_0.4.2        
+## [13] nloptr_1.2.1        pillar_1.4.3        foreign_0.8-74     
+## [16] glue_1.3.1          withr_2.1.2         readxl_1.3.1       
+## [19] lifecycle_0.1.0     plyr_1.8.5          stringr_1.4.0      
+## [22] munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0   
+## [25] zip_2.0.4           evaluate_0.14       labeling_0.3       
+## [28] rio_0.5.16          forcats_0.4.0       curl_4.3           
+## [31] highr_0.8           Rcpp_1.0.3          scales_1.1.0       
+## [34] backports_1.1.5     abind_1.4-5         farver_2.0.1       
+## [37] hms_0.5.3           digest_0.6.23       stringi_1.4.5      
+## [40] openxlsx_4.1.4      numDeriv_2016.8-1.1 grid_3.6.2         
+## [43] tools_3.6.2         magrittr_1.5        lazyeval_0.2.2     
+## [46] tibble_2.1.3        crayon_1.3.4        pkgconfig_2.0.3    
+## [49] zeallot_0.1.0       MASS_7.3-51.4       data.table_1.12.8  
+## [52] minqa_1.2.4         assertthat_0.2.1    rmarkdown_2.0      
+## [55] boot_1.3-23         R6_2.4.1            nlme_3.1-142       
+## [58] compiler_3.6.2
 ```
