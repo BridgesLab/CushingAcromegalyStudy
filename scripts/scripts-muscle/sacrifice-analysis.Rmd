@@ -405,7 +405,23 @@ summary.data %>%
 
 ### Force versus CSA
 
-```{r force-csa-musle}
+```{r force-csa-muscle}
+ggplot(data=exp.data,
+       aes(y=`Po-Muscle (N)`,
+           x=CSA)) +
+  geom_smooth(method='lm',col='black',se=F) +
+  geom_point(aes(color=Treatment, shape=Diet), size=3) +
+  scale_color_grey(name="Treatment") +
+  scale_shape(name="Diet", labels=c("Lean","Obese")) +
+  expand_limits(y=0,x=10) +
+  labs(y='Force (N)',
+       x=bquote('Muscle Cross-Sectional Area'~(mm^2)),
+       title="Muscle Stimulation") +
+    theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.8,0.35),
+        legend.text=element_text(size=12)) 
+
 ggplot(data=exp.data,
        aes(y=`Po-Muscle (N)`,
            x=CSA)) +
@@ -417,10 +433,26 @@ ggplot(data=exp.data,
   scale_size(name="Total Fat Mass") +
   labs(y='Force Muscle (N)',
        x=bquote('Cross-Sectional Area'~(mm^2)),
-       title="Muscle Stimulation")
+       title="Muscle Stimulation") 
 ```
 
 ```{r force-csa-nerve}
+ggplot(data=exp.data,
+       aes(y=`Po-Nerve (N)`,
+           x=CSA)) +
+  geom_smooth(method='lm',color='black',se=F) +
+  geom_point(aes(color=Treatment, shape=Diet),size=3) +
+  scale_color_grey(name="Treatment") +
+  scale_shape(name="Diet", labels=c("Lean","Obese")) +
+  expand_limits(y=0,x=10) +
+  labs(y='Force (N)',
+       x=bquote('Muscle Cross-Sectional Area'~(mm^2)),
+       title="Nerve Stimulation") +
+    theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.8,0.35),
+        legend.text=element_text(size=12)) 
+
 ggplot(data=exp.data,
        aes(y=`Po-Nerve (N)`,
            x=CSA)) +

@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 12:45:02 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 13:02:11 2020**.
 
 # Analysis
 
@@ -240,9 +240,9 @@ Male   HFD    Weight_mean.n                46540.00        34266.67   12273.333 
 
 ### Force versus CSA
 
-![](figures/force-csa-musle-1.png)<!-- -->
+![](figures/force-csa-muscle-1.png)<!-- -->![](figures/force-csa-muscle-2.png)<!-- -->
 
-![](figures/force-csa-nerve-1.png)<!-- -->
+![](figures/force-csa-nerve-1.png)<!-- -->![](figures/force-csa-nerve-2.png)<!-- -->
 
 Table: Linear model regressing against cross-sectional area
 
