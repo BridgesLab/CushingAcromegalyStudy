@@ -24,7 +24,7 @@ This was from one cohort of C57BL6/J mice which were tested at week 3 for grip s
 
 
 
-Data was read from the fileNCD Grip Data.csv and HFD Grip Data.csv and re-exported as Combined Grip Data.csv.  These data are saved in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle.
+Data was read from the file../../data/raw/NCD Grip Data.csv and ../../data/raw/HFD Grip Data.csv and re-exported as ../../data/processed/Combined Grip Data.csv.  These data are saved in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle.
 
 
 # Grip Strength Analysis
@@ -79,13 +79,13 @@ Residuals         38   2.428    0.064          NA        NA
 
 
 ```
-## R version 3.5.0 (2018-04-23)
+## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.2
+## Running under: macOS Catalina 10.15.2
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -94,22 +94,19 @@ Residuals         38   2.428    0.064          NA        NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.1    bindrcpp_0.2.2 car_3.0-2      carData_3.0-2 
-## [5] plyr_1.8.4     dplyr_0.7.8    tidyr_0.8.2    knitr_1.21    
+## [1] broom_0.5.3   car_3.0-6     carData_3.0-3 plyr_1.8.5    readr_1.3.1  
+## [6] dplyr_0.8.3   tidyr_1.0.0   knitr_1.26   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_1.0.0         Rcpp_1.0.0        highr_0.7        
-##  [4] pillar_1.3.1      compiler_3.5.0    cellranger_1.1.0 
-##  [7] bindr_0.1.1       forcats_0.3.0     tools_3.5.0      
-## [10] digest_0.6.18     lattice_0.20-38   nlme_3.1-137     
-## [13] evaluate_0.12     tibble_2.0.0      pkgconfig_2.0.2  
-## [16] rlang_0.3.1       openxlsx_4.1.0    curl_3.2         
-## [19] yaml_2.2.0        haven_2.0.0       xfun_0.4         
-## [22] rio_0.5.16        stringr_1.3.1     generics_0.0.2   
-## [25] hms_0.4.2         grid_3.5.0        tidyselect_0.2.5 
-## [28] glue_1.3.0        data.table_1.11.8 R6_2.3.0         
-## [31] readxl_1.2.0      foreign_0.8-71    rmarkdown_1.11   
-## [34] purrr_0.2.5       magrittr_1.5      backports_1.1.3  
-## [37] htmltools_0.3.6   abind_1.4-5       assertthat_0.2.0 
-## [40] stringi_1.2.4     crayon_1.3.4
+##  [1] zip_2.0.4         Rcpp_1.0.3        highr_0.8         cellranger_1.1.0 
+##  [5] pillar_1.4.3      compiler_3.6.2    forcats_0.4.0     tools_3.6.2      
+##  [9] zeallot_0.1.0     digest_0.6.23     lattice_0.20-38   nlme_3.1-142     
+## [13] evaluate_0.14     lifecycle_0.1.0   tibble_2.1.3      pkgconfig_2.0.3  
+## [17] rlang_0.4.2       openxlsx_4.1.4    curl_4.3          yaml_2.2.0       
+## [21] haven_2.2.0       xfun_0.12         rio_0.5.16        stringr_1.4.0    
+## [25] generics_0.0.2    vctrs_0.2.1       hms_0.5.3         grid_3.6.2       
+## [29] tidyselect_0.2.5  glue_1.3.1        data.table_1.12.8 R6_2.4.1         
+## [33] readxl_1.3.1      foreign_0.8-74    rmarkdown_2.0     purrr_0.3.3      
+## [37] magrittr_1.5      backports_1.1.5   htmltools_0.4.0   abind_1.4-5      
+## [41] assertthat_0.2.1  stringi_1.4.5     crayon_1.3.4
 ```

@@ -49,18 +49,19 @@ color.scheme <- c('#00274c', '#ffcb05')
 This was from one cohort of C57BL6/J mice which were tested at week 3 for grip strength (4 paw).
 
 ```{r data-entry}
-ncd_data_file <- 'NCD Grip Data.csv'
+library(readr)
+ncd_data_file <- '../../data/raw/NCD Grip Data.csv'
 ncd_data <- read.csv(ncd_data_file) %>% mutate(Diet="NCD")
 
-hfd_data_file <- 'HFD Grip Data.csv'
+hfd_data_file <- '../../data/raw/HFD Grip Data.csv'
 hfd_data <- read.csv(hfd_data_file) %>% mutate(Diet="HFD")
 
 all.data <- bind_rows(ncd_data, hfd_data)
 
 #get just grip data
 grip.data <- droplevels(subset(all.data, assay.assay=="Grip Strength (4 Paw)"))
-grip.data$Treatment <- relevel(grip.data$Treatment, ref='Water')
-grip_export_file = "Combined Grip Data.csv"
+grip.data$Treatment <- relevel(as.factor(grip.data$Treatment), ref='Water')
+grip_export_file = "../../data/processed/Combined Grip Data.csv"
 write.csv(grip.data, grip_export_file)
 ```
 
