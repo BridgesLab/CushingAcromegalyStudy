@@ -33,7 +33,6 @@ color.scheme <- c('black','red')
 
 ```{r data-entry}
 filename <- '../../data/raw/Liver TG hfd and chow dex.csv'
-library(xlsx)
 combined_data <- read.csv(filename)
 combined_data$Diet <- relevel(as.factor(combined_data$Diet), ref='Normal Chow Diet')
 combined_data$Treatment <- relevel(as.factor(combined_data$Treatment), ref='Water')
@@ -46,6 +45,7 @@ tg.summary <-
   group_by(Diet, Treatment) %>%
   summarize(Liver.TG.mean = mean(Liver.TG, na.rm=T),
             Liver.TG.se = se(Liver.TG),
+            Liver.TG.sd = sd(Liver.TG),
             Liver.TG.n = length(Liver.TG))
 
 kable(tg.summary, caption="Summary Statistics for Liver Triglycerides")

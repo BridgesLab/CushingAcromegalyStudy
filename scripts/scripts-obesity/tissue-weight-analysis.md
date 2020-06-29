@@ -17,7 +17,7 @@ output:
 
 
 
-This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Mon Sep 24 15:29:15 2018.
+This script generates figures from the tissue weights found in ../../data/raw/HFD and Chow Tissue Weights.csv.  This file is located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and was most recently updated on Wed Apr  3 20:34:49 2019.
 
 # Number of Animals
 
@@ -166,12 +166,28 @@ Residuals     53   27969.011     527.7172          NA          NA
 
 The p-value for the interaction was **0.0027316**.  The residuals of this model, passed through a Shapiro-Wilk test had a p-value of 2.3935765&times; 10^-5^, so normality could not be assumed.
 
+## Overall Reductions in NCD/HFD
+
+
+Table: Absolute and Relative Decreases with Dexamethasone
+
+Diet   Measure             Water   Dexamethasone   Reduction   Percent.Reduction
+-----  -------------  ----------  --------------  ----------  ------------------
+NCD    eWAT_mean.na     187.1125        173.1875    13.92500            7.442047
+HFD    eWAT_mean.na    1136.3773        464.1000   672.27727           59.159690
+NCD    iWAT_mean.na     140.9750        111.0625    29.91250           21.218301
+HFD    iWAT_mean.na     840.7545        286.8000   553.95455           65.887785
+NCD    Quad_mean.na     240.0250        197.8250    42.20000           17.581502
+HFD    Quad_mean.na     241.7727        139.5000   102.27273           42.301184
+NCD    TS_mean.na       163.3750        144.5000    18.87500           11.553175
+HFD    TS_mean.na       190.6905        127.4417    63.24881           33.168311
+
 # Session Information
 
 ```
 ## R version 3.5.0 (2018-04-23)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.6
+## Running under: macOS  10.14.2
 ## 
 ## Matrix products: default
 ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
@@ -184,23 +200,23 @@ The p-value for the interaction was **0.0027316**.  The residuals of this model,
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.0    car_3.0-2      carData_3.0-1  bindrcpp_0.2.2
-## [5] forcats_0.3.0  readr_1.1.1    dplyr_0.7.6    tidyr_0.8.1   
-## [9] knitr_1.20    
+## [1] broom_0.5.1    car_3.0-2      carData_3.0-2  bindrcpp_0.2.2
+## [5] forcats_0.3.0  readr_1.3.1    dplyr_0.7.8    tidyr_0.8.2   
+## [9] knitr_1.21    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_1.0.0         Rcpp_0.12.18      plyr_1.8.4       
-##  [4] cellranger_1.1.0  pillar_1.3.0      compiler_3.5.0   
+##  [1] zip_1.0.0         Rcpp_1.0.0        plyr_1.8.4       
+##  [4] cellranger_1.1.0  pillar_1.3.1      compiler_3.5.0   
 ##  [7] highr_0.7         bindr_0.1.1       tools_3.5.0      
-## [10] digest_0.6.16     lattice_0.20-35   nlme_3.1-137     
-## [13] evaluate_0.11     tibble_1.4.2      pkgconfig_2.0.2  
-## [16] rlang_0.2.2       openxlsx_4.1.0    curl_3.2         
-## [19] yaml_2.2.0        haven_1.1.2       rio_0.5.10       
-## [22] stringr_1.3.1     hms_0.4.2         grid_3.5.0       
-## [25] rprojroot_1.3-2   tidyselect_0.2.4  glue_1.3.0       
-## [28] data.table_1.11.4 R6_2.2.2          readxl_1.1.0     
-## [31] foreign_0.8-71    rmarkdown_1.10    purrr_0.2.5      
-## [34] magrittr_1.5      backports_1.1.2   htmltools_0.3.6  
-## [37] abind_1.4-5       assertthat_0.2.0  stringi_1.2.4    
-## [40] crayon_1.3.4
+## [10] digest_0.6.18     lattice_0.20-38   nlme_3.1-137     
+## [13] evaluate_0.12     tibble_2.0.0      pkgconfig_2.0.2  
+## [16] rlang_0.3.1       openxlsx_4.1.0    curl_3.2         
+## [19] yaml_2.2.0        haven_2.0.0       xfun_0.4         
+## [22] rio_0.5.16        stringr_1.3.1     generics_0.0.2   
+## [25] hms_0.4.2         grid_3.5.0        tidyselect_0.2.5 
+## [28] glue_1.3.0        data.table_1.11.8 R6_2.3.0         
+## [31] readxl_1.2.0      foreign_0.8-71    rmarkdown_1.11   
+## [34] purrr_0.2.5       magrittr_1.5      backports_1.1.3  
+## [37] htmltools_0.3.6   abind_1.4-5       assertthat_0.2.0 
+## [40] stringi_1.2.4     crayon_1.3.4
 ```

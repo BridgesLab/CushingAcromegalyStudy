@@ -12,7 +12,7 @@ output:
 
 
 
-This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Mon Sep 24 10:54:07 2018.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
+This script uses the files in ../../data/raw/Normal Chow Diet Body Composition Data.csv and ../../data/raw/High Fat Diet Body Composition Data.csv.  These data are located in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-obesity and this script was most recently run on Tue Jan 21 14:57:04 2020.  These data were written out in summary format to the file ../../data/processed/Summarized Body Composition Data.csv.
 
 # Body Weights
 
@@ -22,6 +22,23 @@ This script uses the files in ../../data/raw/Normal Chow Diet Body Composition D
 # Lean Mass
 
 ![](figures/lean-mass-scatterplot-1.png)<!-- -->
+
+Table: Coefficients from mixed linear model of the interaction of time of dexamethasoen/water with Diet and Treatment
+
+                                           Estimate   Std. Error          df       t value    Pr(>|t|)
+--------------------------------------  -----------  -----------  ----------  ------------  ----------
+(Intercept)                              24.4795309    0.5293877    51.26107    46.2412131   0.0000000
+Time                                     -0.0693685    0.0055325   302.94959   -12.5383458   0.0000000
+TreatmentWater                            2.1446930    0.7495741    51.50766     2.8612155   0.0060844
+DietHigh Fat Diet                         0.1979264    0.7461878    50.58850     0.2652502   0.7918946
+Time:TreatmentWater                       0.0825803    0.0079461   303.00785    10.3925965   0.0000000
+Time:DietHigh Fat Diet                   -0.0663224    0.0078919   303.04695    -8.4038617   0.0000000
+TreatmentWater:DietHigh Fat Diet         -1.5048023    1.0558128    50.69206    -1.4252549   0.1602120
+Time:TreatmentWater:DietHigh Fat Diet     0.0736834    0.0110138   303.04056     6.6900923   0.0000000
+
+![Lean mass changes over five weeks](figures/lean-mass-ggplot-1.png)
+
+A Chi-squared test between models with time and treatment interacting, with a model where diet modifies the rate of lean mass loss yielded a p-value of 6.3198415\times 10^{-14}.
 
 # Fat Mass
 
@@ -54,6 +71,17 @@ Normal Chow Diet   Dexamethasone            26.01667         22.25250           
 Normal Chow Diet   Water                    30.55833         27.14500              2.776667                9.188361
 High Fat Diet      Dexamethasone            30.37500         19.92250              9.251667               30.379430
 High Fat Diet      Water                    40.75000         25.96333             14.075000               34.151367
+
+
+
+Table: Endpoint summary data for standard deviations.
+
+Diet               Treatment        Body.Weight_sd   Lean.Mass_sd   Total.Fat.Mass_sd   Percent.Fat.Mass_sd
+-----------------  --------------  ---------------  -------------  ------------------  --------------------
+Normal Chow Diet   Dexamethasone          2.034178       1.793727           0.9075354              3.121467
+Normal Chow Diet   Water                  2.326315       2.562437           0.7699390              2.891866
+High Fat Diet      Dexamethasone          2.110633       1.314016           1.1741909              2.496570
+High Fat Diet      Water                  3.977322       1.932343           3.6359105              6.359877
 
 ## Endpoint Barplots
 
@@ -94,13 +122,13 @@ Residuals         44   176.16496     4.003749          NA          NA
 
 
 ```
-## R version 3.5.0 (2018-04-23)
+## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.6
+## Running under: macOS Catalina 10.15.2
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -109,19 +137,24 @@ Residuals         44   176.16496     4.003749          NA          NA
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.0    ggplot2_3.0.0  gridExtra_2.3  lme4_1.1-18-1 
-## [5] Matrix_1.2-14  bindrcpp_0.2.2 tidyr_0.8.1    dplyr_0.7.6   
-## [9] knitr_1.20    
+##  [1] broom_0.5.3    gridExtra_2.3  forcats_0.4.0  ggplot2_3.2.1  lmerTest_3.1-1
+##  [6] lme4_1.1-21    Matrix_1.2-18  tidyr_1.0.0    dplyr_0.8.3    knitr_1.26    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.18     plyr_1.8.4       pillar_1.3.0     compiler_3.5.0  
-##  [5] nloptr_1.0.4     highr_0.7        bindr_0.1.1      tools_3.5.0     
-##  [9] digest_0.6.16    evaluate_0.11    tibble_1.4.2     nlme_3.1-137    
-## [13] gtable_0.2.0     lattice_0.20-35  pkgconfig_2.0.2  rlang_0.2.2     
-## [17] yaml_2.2.0       withr_2.1.2      stringr_1.3.1    rprojroot_1.3-2 
-## [21] grid_3.5.0       tidyselect_0.2.4 glue_1.3.0       R6_2.2.2        
-## [25] rmarkdown_1.10   minqa_1.2.4      purrr_0.2.5      magrittr_1.5    
-## [29] backports_1.1.2  scales_1.0.0     htmltools_0.3.6  splines_3.5.0   
-## [33] MASS_7.3-50      assertthat_0.2.0 colorspace_1.3-2 labeling_0.3    
-## [37] stringi_1.2.4    lazyeval_0.2.1   munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.3          plyr_1.8.5          highr_0.8          
+##  [4] pillar_1.4.3        compiler_3.6.2      nloptr_1.2.1       
+##  [7] tools_3.6.2         boot_1.3-23         zeallot_0.1.0      
+## [10] digest_0.6.23       evaluate_0.14       lifecycle_0.1.0    
+## [13] tibble_2.1.3        nlme_3.1-142        gtable_0.3.0       
+## [16] lattice_0.20-38     pkgconfig_2.0.3     rlang_0.4.2        
+## [19] yaml_2.2.0          xfun_0.12           withr_2.1.2        
+## [22] stringr_1.4.0       generics_0.0.2      vctrs_0.2.1        
+## [25] grid_3.6.2          tidyselect_0.2.5    glue_1.3.1         
+## [28] R6_2.4.1            rmarkdown_2.0       minqa_1.2.4        
+## [31] farver_2.0.1        purrr_0.3.3         magrittr_1.5       
+## [34] scales_1.1.0        backports_1.1.5     htmltools_0.4.0    
+## [37] splines_3.6.2       MASS_7.3-51.4       assertthat_0.2.1   
+## [40] colorspace_1.4-1    numDeriv_2016.8-1.1 labeling_0.3       
+## [43] stringi_1.4.5       lazyeval_0.2.2      munsell_0.5.0      
+## [46] crayon_1.3.4
 ```

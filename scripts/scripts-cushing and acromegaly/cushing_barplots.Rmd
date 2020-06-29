@@ -26,7 +26,7 @@ filtered.normalized.cush <- filtered.normalized.data[,colnames(filtered.normaliz
 
 #get gene names for transcripts
 library(biomaRt)
-mart = useMart("ENSEMBL_MART_ENSEMBL", host="dec2013.archive.ensembl.org")
+mart = useMart("ENSEMBL_MART_ENSEMBL")
 ensembl = useDataset('hsapiens_gene_ensembl',mart=mart)
 gene.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
                    filters = 'ensembl_gene_id', values = rownames(filtered.normalized.data), mart = ensembl)
@@ -77,7 +77,7 @@ for (gene in genes.of.interest) {
 
 ```{r cushing-lipase-barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis',  warning=FALSE}
 #missing lipb, fix showing cush/control
-lipases <- c("LPL","PNPLA2", "MGLL","LIPE", "LIPA", "LIPC", "PNLIP","LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ")
+lipases <- c("LPL","PNPLA2", "MGLL","LIPE", "LIPA", "LIPC", "PNLIP","LIPG","CEL","LIPF","LIPH", "DAGLB","DAGLA", "LIPI","LIPN","LIPM","LIPK","LIPJ",'F13A1')
 
 #lipase.data <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'),
  #                  filters = 'hgnc_symbol', values = lipases, mart = ensembl)
@@ -148,7 +148,7 @@ insulin_signaling <- c('INSR','IRS1','IRS2','PIK3R1','FOXO1','FOXO3')
 interleukins <- paste("IL", seq(1,50), sep="")
 hla_genes_hi <- c('HLA-A','HLA-B','HLA-DRA','HLA-DRB1','HLA-DRB5','HLA-DRB6','HLA-DQA1','HLA-DQB1')
 hla_genes <- c('HLA-A','HLA-B','HLAC-C','HLA-DMA','HLA-DMB','HLA-DOA','HLA-DOB','HLA-DPA1','HLA-DPA2','HLA-DPA3','HLA-DPB1','HLA-DPB2','HLA-DPB3','HLA-DRA','HLA-DRB1','HLA-DRB2','HLA-DRB3','HLA-DRB4','HLA-DRB5','HLA-DRB6','HLA-DRB7','HLA-DRB8','HLA-DRB9','HLA-DQA1','HLA-DQA2,','HLA-DQA3','HLA-DQB1','HLA-DQB2','HLA-DQB3','HLA-E','HLA-F','HLA-G')
-macrophage_markers <- c('NOS2','TNF','IL6','CXCL12','IL10','CLEC10A','ARG1')
+macrophage_markers <- c('NOS2','TNF','IL6','CXCL12','IL10','CLEC10A','ARG1','F13A1')
 
 carb_metabolism <- c('ALDOC','GYS2','ME1','SLC2A5','CHST4','IDH1','CHST11','HPSE','SLC25A10','ACLY','PGD','FBP1','ACO1','NNT','XYLT1','ALDOA','CHST8','UGP2','TALDO1','ST3GAL5','GYG2','GFPT1','PDHB','NANP','NEU3','GNS','FUT8','PDK3','FH','PYGB','CHIT1','CSGALNACT2','EPM2A','ACN9','ACO2','GALNT7','CHST2','MPDU1','SDHC')
 tca_citric_acid <- c('IDH2','NNT','SUCLG1','OGDH','DLD','FH','CS','ACO2','SDHC','SUCLA2','SDHB','IDH3A')

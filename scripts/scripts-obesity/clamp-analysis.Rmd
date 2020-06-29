@@ -63,7 +63,7 @@ clamp.data.time <-
 clamp.data.summary <-
   clamp.data %>%
   group_by(Treatment, Status) %>%
-  summarize_each(funs=funs(mean.na,se))
+  summarize_each(funs=funs(mean.na,se,sd))
 
 clamp.data.time.summary <-
   clamp.data.time %>%
@@ -74,8 +74,10 @@ clamp.data.summary <-
   clamp.data.summary %>%
   rename(HGP = HGP_mean.na_mean.na) %>%
   rename(HGP.se = HGP_mean.na_se) %>%
+  rename(HGP.sd = HGP_mean.na_sd) %>%
   rename(sHGP = sHGP_mean.na_mean.na) %>%
   rename(sHGP.se = sHGP_mean.na_se) %>%
+  rename(sHGP.sd = sHGP_mean.na_sd) %>%
   rename(Gtr = Gtr_mean.na_mean.na) %>%
   rename(Gtr.se = Gtr_mean.na_se) %>%
   rename(GIR = GIR_mean.na_mean.na) %>%
@@ -219,6 +221,10 @@ hgp.data.se <-
   select(clamp.data.summary, Treatment, Status, HGP.se) %>%
   spread(Status, HGP.se)
 
+hgp.data.sd <- 
+  select(clamp.data.summary, Treatment, Status, HGP.sd) %>%
+  spread(Status, HGP.sd)
+
 ymax <- max(hgp.data[2:3]+max(hgp.data.se[2:3]))
 
 plot <- barplot(as.matrix(hgp.data[2:3]),
@@ -233,6 +239,8 @@ legend("topright", levels(clamp.data$Treatment), bty="n", fill=color.scheme)
 superpose.eb(plot,
              as.matrix(hgp.data[2:3]),
              as.matrix(hgp.data.se[2:3]))
+
+kable(bind_cols(hgp.data, hgp.data.se) %>% select (-Treatment1), caption="Mean and SD of Hepatic glucose production")
 ```
 
 Endogenous glucose production was `r (hgp.data[2,'Basal']-hgp.data[1,'Basal'])/hgp.data[1,'Basal']*100` percent higher in the dexamethasone-treated group in the basal condition.  Under insulin stimulated conditions, endogenous glucose production was increased from nearly zero to `r hgp.data[2,'Insulin']` mg/kg/min (a `r (hgp.data[2,'Insulin']-hgp.data[1,'Insulin'])/hgp.data[1,'Insulin']*100` fold increase). A Shapiro-Wilk test showed that these groups were normally distributed:

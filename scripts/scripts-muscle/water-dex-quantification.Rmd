@@ -1,0 +1,217 @@
+---
+title: "Analysis of Water and Dexamethasone Intake in NCD/HFD Mice"
+author: "Laura Gunder and Dave Bridges"
+date: "January 6, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+
+# for knitcitations
+library("knitcitations")
+cleanbib()
+options("citation_format" = "pandoc")
+```
+
+# Purpose
+
+# Experimental Details
+
+```{r dex-conc}
+dex.conc <- 3.78 #ug/mL based on 0.054g/L and 70mg/g of dex powder
+```
+
+Dexamethasone was dissolved in water at a concentration of `r dex.conc` ug/mL and animals were given *ad libitum* access.  Water bottle volumes were determined weekly.
+
+# Raw Data
+
+The input file contains tracked water and dexamethasone amounts per week.  The data includes the staring and ending volumes each week and a calculation of animals per week.
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- '../../data/raw/Dex and Water Intake NCD HFD.csv' #make this a separate line, you can use any variable you want
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- 
+  read_csv(filename, col_types = cols(
+  `CAGE ID` = col_factor(levels=NULL),
+  WEEK = col_integer(),
+  TREATMENT = col_factor(levels=NULL),
+  DIET = col_factor(levels=c("NCD","HFD")),
+  `NUMBER OF ANIMALS IN CAGE` = col_double(),
+  `START ML` = col_double(),
+  `END ML` = col_double(),
+  `WEEKLY AMOUNT CONSUMED` = col_double(),
+  COHORT = col_factor(levels=NULL),
+  `ML/ANIMAL/DAY` = col_double(),
+  X11 = col_character()
+))
+
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+While the input file contains data from both Harvey *et al* and Gunder *et al* studies, this script filters out to only show the Gunder et al studies.
+
+## Weekly Analysis
+
+```{r weekly-lineplot}
+library(forcats)
+exp.data <-
+  exp.data %>%
+  #filter(WEEK<=2) %>%
+  filter(COHORT %in% c('LG','TC')) %>% #only includes data from Gunder et al studies
+  mutate(Dexamethasone = ifelse(TREATMENT=="DEX", `ML/ANIMAL/DAY`*dex.conc, 0)) %>%
+  rename(Fluid=`ML/ANIMAL/DAY`) %>%
+  mutate(Diet = fct_recode(DIET, "Normal Chow Diet" = "NCD", "High Fat Diet" = "HFD"),
+         Treatment = fct_recode(TREATMENT, "Water"="WATER", "Dexamethasone" = "DEX"))
+
+library(ggplot2)
+
+p <- ggplot(exp.data, aes(y=Fluid, x=WEEK))
+p + geom_point(aes(col=Diet)) +
+  facet_grid(~Treatment) +
+  geom_smooth(method="loess", aes(col=Diet)) +
+  labs(y="Fluid Intake (mL/day/mouse)", title="Total Water Consumption")
+
+
+weekly.summary.data <-
+  exp.data %>%
+  group_by(Diet, Treatment, WEEK) %>%
+  summarize(Intake.mean = mean(Dexamethasone,na.rm=T),
+            Intake.se = se(Dexamethasone)) 
+  
+  
+ymax <- with(weekly.summary.data, max(Intake.mean,na.rm=T) + max(Intake.se, na.rm=T))
+plot <- with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"),
+     plot(WEEK,Intake.mean,
+            pch=19,
+            type="l",
+            las=1,
+          col="red",
+          lty=2,
+          ylim=c(0,ymax),
+            ylab="Dexamethasone Intake (ug/day/mouse)",
+            xlab="Weeks of Dexamethasone Treatment"))
+
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"),lines(WEEK, Intake.mean, col="red",lty=1))
+
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="High Fat Diet"), superpose.eb(WEEK,Intake.mean,Intake.se, col="red"))
+with(filter(weekly.summary.data, Treatment=="Dexamethasone"&Diet=="Normal Chow Diet"), superpose.eb(WEEK,Intake.mean,Intake.se, col="red"))
+
+legend("topleft", c("Normal Chow Diet","High Fat Diet"), lty=c(1,2), bty="n", col="red")
+```
+
+## Fluid Intake
+
+```{r average-lineplot}
+aggregated.fluid.data <- 
+  exp.data %>%
+  filter(WEEK<=2) %>%
+  #filter(COHORT %in% c('LG','TC')) %>%
+  group_by(`CAGE ID`, Diet,Treatment) %>%
+  summarize(Intake = mean(Fluid, na.rm=T)) %>%
+  group_by(Diet, Treatment) %>%
+  summarize(Intake.mean = mean(Intake, na.rm=T),
+            Intake.se = se(Intake),
+            Shapiro = shapiro.test(Intake)$p.value,
+            n = length(Intake)) 
+kable(aggregated.fluid.data, caption="Average fluid intake per group, averaged accross the experiment")
+
+library(broom)
+aov(Fluid ~ Treatment * Diet, data=exp.data %>% filter(WEEK<=2) ) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, with an interaction")
+aov(Fluid ~ Treatment + Diet, data=exp.data %>% filter(WEEK<=2)) %>% tidy() %>% kable(caption="Two-way ANOVA for the effects of treatment and diet on fluid intake, no interaction")
+
+fluid.lm <- lm(Fluid ~ Treatment + Diet, data=exp.data %>% filter(WEEK<=2)) 
+```
+
+There was a `r -coef(fluid.lm)[2]/coef(fluid.lm)[1]*100`% decrease in fluid intake in the dexamethasone treated mice relative to the water treated mice (p=`r fluid.lm %>% summary %>% tidy %>% pull(p.value) %>% nth(2)`).
+
+## Dexamethasone Intake
+
+```{r dexamethasone-intake}
+aggregated.data <- 
+  exp.data %>%
+  filter(WEEK<=2) %>%
+  #filter(COHORT %in% c('LG','TC')) %>%
+  group_by(`CAGE ID`, Diet,Treatment) %>%
+  summarize(Intake = mean(Dexamethasone)) %>%
+  group_by(Diet, Treatment) %>%
+  filter(Treatment=="Dexamethasone") %>%
+  summarize(Intake.mean = mean(Intake),
+            Intake.se = se(Intake),
+            Shapiro = shapiro.test(Intake)$p.value,
+            n = length(Intake)) 
+kable(aggregated.data, caption="Average dexamethasone intake per group, averaged accross the experiment")
+
+agg.data.ymax <- with(aggregated.data, max(Intake.mean+Intake.se, na.rm=T))
+
+plot <- with(filter(aggregated.data, Treatment=="Dexamethasone"),
+             barplot(Intake.mean,
+                     las=1,
+                     xlab="Diet",
+                     ylim=c(0,agg.data.ymax),
+                     names.arg=c("Normal Chow Diet","High Fat Diet"),
+                     ylab="Dexamethasone Intake (ug/mouse/day)"))
+
+with(filter(aggregated.data, Treatment=="Dexamethasone"),superpose.eb(plot, Intake.mean, Intake.se))
+
+library(car)
+stats.data <- 
+  exp.data %>%
+  filter(WEEK<=2) %>%
+  #filter(COHORT %in% c('LG','TC')) %>%
+  group_by(`CAGE ID`, Diet,Treatment) %>%
+  summarize(Intake = mean(Dexamethasone)) %>%
+  filter(Treatment=="Dexamethasone")
+
+library(broom)
+leveneTest(Intake~Diet, data=stats.data) %>% tidy %>% kable(caption="Levene's test")
+t.test(Intake~Diet, data=stats.data, var.equal=T) %>% tidy %>% kable(caption="Student's t-test")
+```
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
+

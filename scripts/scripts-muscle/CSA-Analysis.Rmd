@@ -1,0 +1,143 @@
+---
+title: "Fiber Size from H and E Staining"
+author: "Laura Gunder and Dave Bridges"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis.  This might include specifics not in the general protocol such as cell lines, treatment doses etc.
+
+# Raw Data
+
+Describe your raw data files, including what the columns mean (and what units they are in).
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- '../../data/raw/CSA H&E Data.xlsx' #make this a separate line, you can use any variable you want
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+  exp.data <- read_excel(filename, sheet = "Sheet2")
+
+exp.data <- mutate(exp.data, Treatment = relevel(as.factor(Treatment),ref='Water'),
+                   Diet = relevel(as.factor(Diet),ref='NCD'))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+## 2x2 ANOVA with Interaction
+
+```{r anova}
+anova.result <- aov(CSA ~ Treatment * Diet, data=exp.data)
+library(broom)
+tidy(anova.result) %>% kable(caption="Two-Way ANOVA with Interaction")
+```
+
+## Boxplots
+
+```{r he-csa-boxplot}
+library(ggplot2)
+ggplot(data=exp.data,
+       aes(y=CSA,
+           x=Diet,
+           fill=Treatment)) +
+  geom_boxplot() +
+  geom_point(position=position_dodge(width=0.75),aes(group=Treatment)) +
+  expand_limits(y=0) +
+  labs(title="Quadriceps",
+       y="Cross-Sectional Area")
+library(broom)
+aov(`CSA` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="Cross-Sectional Area")
+```
+
+
+## Barplots
+
+```{r he-csa-barplot}
+
+exp.summary <-
+  exp.data %>%
+  group_by(Treatment, Diet) %>%
+  summarize(Mean = mean(CSA),
+            Error = se(CSA),
+            N = length(CSA),
+            Shapiro = shapiro.test(CSA)$p.value)
+
+kable(exp.summary, caption="Summary statistics")
+library(forcats)
+exp.summary %>%
+  mutate(Diet = relevel(Diet, ref="NCD")) %>%
+       ggplot(aes(y=Mean,
+           ymin=Mean-Error,
+           ymax=Mean+Error,
+           x=Diet,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+   scale_fill_manual(values=c("black","red")) +
+  expand_limits(y=0) +
+  labs(y=bquote('Cross-Sectional Area'~(um^2)),
+       title="Gastrocnemius Fiber Type Area",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
+  
+  
+library(broom)
+aov(`CSA` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="Cross-Sectional Area")
+```
+
+# Interpretation
+
+There was a **`r with(subset(exp.summary, Diet=="NCD"), (Mean[1]-Mean[2])/Mean[1])*100`%** reduction in fiber CSA in NCD animals and a **`r with(subset(exp.summary, Diet=="HFD"), (Mean[1]-Mean[2])/Mean[1])*100`%** reduction in fiber CSA in HFD fed animals.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
