@@ -13,7 +13,7 @@ sample_mapping <- read.csv("../../data/raw/patient_sample_mapping.csv")
 patient_info <- read.csv("../../data/raw/patient_table.csv")
 mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
-mapping$group <- relevel(mapping$group, ref="non-functioning")
+mapping$group <- relevel(as.factor(mapping$group), ref="non-functioning")
 levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
 levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
 levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
@@ -42,7 +42,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","STBD1", "HSD11B1","LEP")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","HSD11B1","LEP","TSC22D3")
 
 #genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
 #put the data in long format
@@ -192,8 +192,9 @@ CALMODULIN_BINDING <- c('NRGN','RGS16','RGS2','RGS1','SPHK1','TRPV4','DAPK1','TT
 KEGG_LYSOSOME <- c('ACP5','LAPTM5','SLC11A1','LIPA','CTSH','CTSS','LAMP3','CTSC','CTSG','DNASE2B','TCIRG1','CTSD','ATP6V0D2','GM2A','MANBA','NAPSA','HYAL1','NPC2','CTSF','CLN3','CTSZ','ATP6V0B','GAA','PPT1','LGMN','CTSB','TPP1','GUSB','AP1S2','NAGA','HEXB','SLC11A2','NEU1','ARSB','FUCA1','MAN2B1','M6PR','GGA1','IDS','LAPTM4B','CTSK','ATP6V0A1','CTNS','IGF2R','GGA2','MCOLN1','AP4B1','AP1S3','GALC','AP1S1','ATP6AP1','AP4S1','LAMP1','GNPTAB','GGA3','LAMP2','GBA','HEXA','GNPTG','PSAP','ARSA','SLC17A5','GALNS','AP1B1','NAGPA','ATP6V1H')
 KEGG_LYSOSOME_high <- c('CTSB','CTSD','CTSZ','CTSK','CTSS','LAPTM4A','LAPTM4B','LAPTM5','LAMP1','LAMP2','NPC1','NPC2','LGMN','LIPA','M6PR','TPP1','PPT1')
 ATP_SYNTHASE <- c('ATP6V1A','ATP6V1B2','ATP6V1B2','ATP6V1C1','ATP6V1C2','ATP6V1D','ATP6V1E1','ATP6V1E2','ATP6V1F','ATP6V1G1','ATP6V1G2','ATP6V1G3','ATP6V1H')
+hla_genes_hi <- c('HLA-A','HLA-B','HLA-DRA','HLA-DRB1','HLA-DRB5','HLA-DRB6','HLA-DQA1','HLA-DQB1')
 
-gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','MITOCHONDRIONsub','CALMODULIN_BINDING','KEGG_LYSOSOME','KEGG_LYSOSOME_high','ATP_SYNTHASE')
+gene.data.name <- c('igf_complex','rgs_isoforms','ags_isoforms', 'lipid_metabolism', 'tg_synthesis','carb_metabolism','cortisol_signaling','tca_citric_acid', 'bcaa_degradation','interferon_signaling','intferon_gamma','interferon_gamma_no_b2m','IRF_isoforms','activin','hla_genes_hi','M_PHASE_OF_MITOTIC_CELL_CYCLE','STEROID_BIOSYNTHETIC_PROCESS','REACTOME_TRIGLYCERIDE_BIOSYNTHESIS','KEGG_BIOSYNTHESIS_OF_UNSATURATED_FATTY_ACIDS','PROTEASOME_COMPLEX','KEGG_VALINE_LEUCINE_AND_ISOLEUCINE_DEGRADATION','KEGG_RIBOSOME','KEGG_CITRATE_CYCLE_TCA_CYCLE','KEGG_PYRUVATE_METABOLISM','KEGG_STARCH_AND_SUCROSE_METABOLISM','KEGG_ALLOGRAFT_REJECTION','M_PHASE_OF_MITOTIC_CELL_CYCLE_no_CDKN2B','MITOCHONDRIONsub','CALMODULIN_BINDING','KEGG_LYSOSOME','KEGG_LYSOSOME_high','ATP_SYNTHASE')
 
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
