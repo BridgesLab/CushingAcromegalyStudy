@@ -13,7 +13,7 @@ sample_mapping <- read.csv("../../data/raw/patient_sample_mapping.csv")
 patient_info <- read.csv("../../data/raw/patient_table.csv")
 mapping <- merge(sample_mapping, patient_info, by.x="patient..", by.y="id")
 mapping$samplename <- paste("sample", mapping$sample.., sep="")
-mapping$group <- relevel(mapping$group, ref="non-functioning")
+mapping$group <- relevel(as.factor(mapping$group), ref="non-functioning")
 levels(mapping$group)[levels(mapping$group)=="non-functioning"] <- "Control"
 levels(mapping$group)[levels(mapping$group)=="Cushing's"] <- "Cushing's"
 levels(mapping$group)[levels(mapping$group)=="acromegaly"] <- "Acromegaly"
@@ -42,7 +42,7 @@ rownames(rpkm.data.unique) <- rpkm.data.unique$hgnc_symbol
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
 #paste gene here
-genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","STBD1", "HSD11B1","LEP")
+genes.of.interest <- c("NR3C1","NR3C2","KLF5","CDKN2B","FASN","GYS1","GYS2","GBE1","HLA-DRB1","IDH1","LDHA","LDHB","PSMD8","SCD","FASN","STBD1", "HSD11B1","LEP","TSC22D3")
 
 #genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
 #put the data in long format
