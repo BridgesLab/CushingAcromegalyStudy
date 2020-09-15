@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Jan 21 14:32:25 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Sep 15 11:51:11 2020**.
 
 # Analysis
 
@@ -40,12 +40,12 @@ We removed mouse 6013 double-checked nerve when done with muscle and 7179 slippe
 
 Table: Number of animals at sacrifice
 
-Sex    Diet   Treatment         n
------  -----  --------------  ---
-Male   NCD    Water             7
-Male   NCD    Dexamethasone     8
-Male   HFD    Water             5
-Male   HFD    Dexamethasone     6
+|Sex  |Diet |Treatment     |  n|
+|:----|:----|:-------------|--:|
+|Male |NCD  |Water         |  7|
+|Male |NCD  |Dexamethasone |  8|
+|Male |HFD  |Water         |  5|
+|Male |HFD  |Dexamethasone |  6|
 
 Generated summary data for each measurement
 
@@ -57,12 +57,12 @@ Generated summary data for each measurement
 
 Table: ANOVA of Fat Mass
 
-term              df       sumsq      meansq   statistic   p.value
----------------  ---  ----------  ----------  ----------  --------
-Diet               1   658630691   658630691      103.93     0.000
-Treatment          1    16030350    16030350        2.53     0.126
-Diet:Treatment     1    36522274    36522274        5.76     0.025
-Residuals         22   139419089     6337231          NA        NA
+|term           | df|     sumsq|    meansq| statistic| p.value|
+|:--------------|--:|---------:|---------:|---------:|-------:|
+|Diet           |  1| 658630691| 658630691|    103.93|   0.000|
+|Treatment      |  1|  16030350|  16030350|      2.53|   0.126|
+|Diet:Treatment |  1|  36522274|  36522274|      5.76|   0.025|
+|Residuals      | 22| 139419089|   6337231|        NA|      NA|
 
 ![](figures/fat-mass-boxplot-1.png)<!-- -->
 
@@ -76,12 +76,12 @@ effect of the treatment (difference between treated and control) differs between
 
 Table: ANOVA of FBG
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1   64349    64349       25.02     0.000
-Treatment          1    5855     5855        2.28     0.146
-Diet:Treatment     1   13289    13289        5.17     0.033
-Residuals         22   56572     2571          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1| 64349|  64349|     25.02|   0.000|
+|Treatment      |  1|  5855|   5855|      2.28|   0.146|
+|Diet:Treatment |  1| 13289|  13289|      5.17|   0.033|
+|Residuals      | 22| 56572|   2571|        NA|      NA|
 
 ## Gastrocnemius Weight
 
@@ -89,12 +89,23 @@ Residuals         22   56572     2571          NA        NA
 
 Table: ANOVA of Gastroc Weights
 
-term              df     sumsq    meansq   statistic   p.value
----------------  ---  --------  --------  ----------  --------
-Diet               1      1.03      1.03       0.005     0.947
-Treatment          1   7796.87   7796.87      34.308     0.000
-Diet:Treatment     1   1406.09   1406.09       6.187     0.021
-Residuals         22   4999.81    227.26          NA        NA
+|term           | df|   sumsq|  meansq| statistic| p.value|
+|:--------------|--:|-------:|-------:|---------:|-------:|
+|Diet           |  1|    1.03|    1.03|     0.005|   0.947|
+|Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
+|Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
+|Residuals      | 22| 4999.81|  227.26|        NA|      NA|
+
+
+
+Table: Summary statistics for gastroc weights
+
+|Sex  |Diet |Treatment     | Gastroc_mean.n| Gastroc_se| Gastroc_sd| Rel.Error|
+|:----|:----|:-------------|--------------:|----------:|----------:|---------:|
+|Male |NCD  |Water         |            175|       3.87|       10.2|      5.86|
+|Male |NCD  |Dexamethasone |            153|       4.72|       13.3|      8.74|
+|Male |HFD  |Water         |            191|       9.11|       20.4|     10.66|
+|Male |HFD  |Dexamethasone |            139|       6.99|       17.1|     12.31|
 
 The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** in the HFD animals.
 
@@ -102,12 +113,12 @@ The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** i
 
 Table: ANOVA of Gastroc Weights
 
-term              df     sumsq    meansq   statistic   p.value
----------------  ---  --------  --------  ----------  --------
-Diet               1      1.03      1.03       0.005     0.947
-Treatment          1   7796.87   7796.87      34.308     0.000
-Diet:Treatment     1   1406.09   1406.09       6.187     0.021
-Residuals         22   4999.81    227.26          NA        NA
+|term           | df|   sumsq|  meansq| statistic| p.value|
+|:--------------|--:|-------:|-------:|---------:|-------:|
+|Diet           |  1|    1.03|    1.03|     0.005|   0.947|
+|Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
+|Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
+|Residuals      | 22| 4999.81|  227.26|        NA|      NA|
 
 ## Cross-Sectional Area
 
@@ -115,12 +126,12 @@ Residuals         22   4999.81    227.26          NA        NA
 
 Table: ANOVA of CSA
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1    0.50     0.50       0.156     0.697
-Treatment          1   95.64    95.64      29.805     0.000
-Diet:Treatment     1    8.92     8.92       2.781     0.110
-Residuals         22   70.59     3.21          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1|  0.50|   0.50|     0.156|   0.697|
+|Treatment      |  1| 95.64|  95.64|    29.805|   0.000|
+|Diet:Treatment |  1|  8.92|   8.92|     2.781|   0.110|
+|Residuals      | 22| 70.59|   3.21|        NA|      NA|
 
 The whole muscle cross-sectional areas are reduced **13.069%** in the NCD animals and **22.9%** in the HFD animals.
 
@@ -128,12 +139,12 @@ The whole muscle cross-sectional areas are reduced **13.069%** in the NCD animal
 
 Table: ANOVA of CSA
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1    0.50     0.50       0.156     0.697
-Treatment          1   95.64    95.64      29.805     0.000
-Diet:Treatment     1    8.92     8.92       2.781     0.110
-Residuals         22   70.59     3.21          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1|  0.50|   0.50|     0.156|   0.697|
+|Treatment      |  1| 95.64|  95.64|    29.805|   0.000|
+|Diet:Treatment |  1|  8.92|   8.92|     2.781|   0.110|
+|Residuals      | 22| 70.59|   3.21|        NA|      NA|
 
 ## Force
 
@@ -148,12 +159,12 @@ effect of the treatment (difference between treated and control) doesnt signific
 
 Table: ANOVA of Muscle force measurements
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1    1.10    1.103        3.95     0.059
-Treatment          1    5.98    5.983       21.41     0.000
-Diet:Treatment     1    1.65    1.645        5.89     0.024
-Residuals         22    6.15    0.279          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1|  1.10|  1.103|      3.95|   0.059|
+|Treatment      |  1|  5.98|  5.983|     21.41|   0.000|
+|Diet:Treatment |  1|  1.65|  1.645|      5.89|   0.024|
+|Residuals      | 22|  6.15|  0.279|        NA|      NA|
 
 
 
@@ -162,12 +173,12 @@ Residuals         22    6.15    0.279          NA        NA
 
 Table: ANOVA of Muscle force measurements
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1    1.10    1.103        3.95     0.059
-Treatment          1    5.98    5.983       21.41     0.000
-Diet:Treatment     1    1.65    1.645        5.89     0.024
-Residuals         22    6.15    0.279          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1|  1.10|  1.103|      3.95|   0.059|
+|Treatment      |  1|  5.98|  5.983|     21.41|   0.000|
+|Diet:Treatment |  1|  1.65|  1.645|      5.89|   0.024|
+|Residuals      | 22|  6.15|  0.279|        NA|      NA|
 
 
 
@@ -184,12 +195,12 @@ effect of the treatment (difference between treated and control) differs between
 
 Table: ANOVA of Nerve force measurements
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1   0.996    0.996        3.10     0.092
-Treatment          1   7.657    7.657       23.87     0.000
-Diet:Treatment     1   2.600    2.600        8.11     0.009
-Residuals         22   7.056    0.321          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1| 0.996|  0.996|      3.10|   0.092|
+|Treatment      |  1| 7.657|  7.657|     23.87|   0.000|
+|Diet:Treatment |  1| 2.600|  2.600|      8.11|   0.009|
+|Residuals      | 22| 7.056|  0.321|        NA|      NA|
 
 ![](figures/force-nerve-barplot-2.png)<!-- -->
 
@@ -200,42 +211,42 @@ legend("topright",c("Water","Dexamethasone"), fill=c('gray23','mediumpurple2'),b
 
 Table: ANOVA of Nerve force measurements
 
-term              df   sumsq   meansq   statistic   p.value
----------------  ---  ------  -------  ----------  --------
-Diet               1   0.996    0.996        3.10     0.092
-Treatment          1   7.657    7.657       23.87     0.000
-Diet:Treatment     1   2.600    2.600        8.11     0.009
-Residuals         22   7.056    0.321          NA        NA
+|term           | df| sumsq| meansq| statistic| p.value|
+|:--------------|--:|-----:|------:|---------:|-------:|
+|Diet           |  1| 0.996|  0.996|      3.10|   0.092|
+|Treatment      |  1| 7.657|  7.657|     23.87|   0.000|
+|Diet:Treatment |  1| 2.600|  2.600|      8.11|   0.009|
+|Residuals      | 22| 7.056|  0.321|        NA|      NA|
 
 ## Overall Reductions in NCD/HFD
 
 
 Table: Absolute and Relative Decreases with Dexamethasone
 
-Sex    Diet   Measure                         Water   Dexamethasone   Reduction   Percent.Reduction
------  -----  --------------------------  ---------  --------------  ----------  ------------------
-Male   NCD    CSA_mean.n                      21.75           18.91       2.843               13.07
-Male   HFD    CSA_mean.n                      22.81           17.58       5.223               22.90
-Male   NCD    Fat.Mass_mean.n               3154.29         3611.25    -456.964              -14.49
-Male   HFD    Fat.Mass_mean.n              15962.00        11605.00    4357.000               27.30
-Male   NCD    FBG_mean.n                     140.29          131.62       8.661                6.17
-Male   HFD    FBG_mean.n                     191.00          274.17     -83.167              -43.54
-Male   NCD    Gastroc_mean.n                 174.84          152.71      22.130               12.66
-Male   HFD    Gastroc_mean.n                 191.00          139.00      52.000               27.23
-Male   NCD    Po-Muscle (mN)_mean.n         4994.29         4463.25     531.036               10.63
-Male   HFD    Po-Muscle (mN)_mean.n         5141.00         3588.33    1552.667               30.20
-Male   NCD    Po-Muscle (N)_mean.n             4.99            4.46       0.531               10.63
-Male   HFD    Po-Muscle (N)_mean.n             5.14            3.59       1.553               30.20
-Male   NCD    Po-Nerve (mN)_mean.n          5367.14         4820.62     546.518               10.18
-Male   HFD    Po-Nerve (mN)_mean.n          5678.20         3847.33    1830.867               32.24
-Male   NCD    Po-Nerve (N)_mean.n              5.37            4.82       0.547               10.18
-Male   HFD    Po-Nerve (N)_mean.n              5.68            3.85       1.831               32.24
-Male   NCD    Spo Muscle (N/cm2)_mean.n       22.97           23.60      -0.627               -2.73
-Male   HFD    Spo Muscle (N/cm2)_mean.n       22.63           20.47       2.161                9.55
-Male   NCD    Spo Nerve (N/cm2)_mean.n        24.69           25.50      -0.813               -3.29
-Male   HFD    Spo Nerve (N/cm2)_mean.n        24.97           21.89       3.082               12.34
-Male   NCD    Weight_mean.n                31500.00        29212.50    2287.500                7.26
-Male   HFD    Weight_mean.n                46540.00        34266.67   12273.333               26.37
+|Sex  |Diet |Measure                   |    Water| Dexamethasone| Reduction| Percent.Reduction|
+|:----|:----|:-------------------------|--------:|-------------:|---------:|-----------------:|
+|Male |NCD  |CSA_mean.n                |    21.75|         18.91|     2.843|             13.07|
+|Male |HFD  |CSA_mean.n                |    22.81|         17.58|     5.223|             22.90|
+|Male |NCD  |Fat.Mass_mean.n           |  3154.29|       3611.25|  -456.964|            -14.49|
+|Male |HFD  |Fat.Mass_mean.n           | 15962.00|      11605.00|  4357.000|             27.30|
+|Male |NCD  |FBG_mean.n                |   140.29|        131.62|     8.661|              6.17|
+|Male |HFD  |FBG_mean.n                |   191.00|        274.17|   -83.167|            -43.54|
+|Male |NCD  |Gastroc_mean.n            |   174.84|        152.71|    22.130|             12.66|
+|Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|             27.23|
+|Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|             10.63|
+|Male |HFD  |Po-Muscle (mN)_mean.n     |  5141.00|       3588.33|  1552.667|             30.20|
+|Male |NCD  |Po-Muscle (N)_mean.n      |     4.99|          4.46|     0.531|             10.63|
+|Male |HFD  |Po-Muscle (N)_mean.n      |     5.14|          3.59|     1.553|             30.20|
+|Male |NCD  |Po-Nerve (mN)_mean.n      |  5367.14|       4820.62|   546.518|             10.18|
+|Male |HFD  |Po-Nerve (mN)_mean.n      |  5678.20|       3847.33|  1830.867|             32.24|
+|Male |NCD  |Po-Nerve (N)_mean.n       |     5.37|          4.82|     0.547|             10.18|
+|Male |HFD  |Po-Nerve (N)_mean.n       |     5.68|          3.85|     1.831|             32.24|
+|Male |NCD  |Spo Muscle (N/cm2)_mean.n |    22.97|         23.60|    -0.627|             -2.73|
+|Male |HFD  |Spo Muscle (N/cm2)_mean.n |    22.63|         20.47|     2.161|              9.55|
+|Male |NCD  |Spo Nerve (N/cm2)_mean.n  |    24.69|         25.50|    -0.813|             -3.29|
+|Male |HFD  |Spo Nerve (N/cm2)_mean.n  |    24.97|         21.89|     3.082|             12.34|
+|Male |NCD  |Weight_mean.n             | 31500.00|      29212.50|  2287.500|              7.26|
+|Male |HFD  |Weight_mean.n             | 46540.00|      34266.67| 12273.333|             26.37|
 
 
 ### Force versus CSA
@@ -246,36 +257,36 @@ Male   HFD    Weight_mean.n                46540.00        34266.67   12273.333 
 
 Table: Linear model regressing against cross-sectional area
 
-term           estimate   std.error   statistic   p.value
-------------  ---------  ----------  ----------  --------
-(Intercept)       0.068       0.779       0.087     0.931
-CSA               0.222       0.038       5.781     0.000
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |    0.068|     0.779|     0.087|   0.931|
+|CSA         |    0.222|     0.038|     5.781|   0.000|
 
 
 
 Table: Linear model regressing against cross-sectional area, showing fit
 
- r.squared   adj.r.squared   sigma   statistic   p.value   df   logLik    AIC    BIC   deviance   df.residual
-----------  --------------  ------  ----------  --------  ---  -------  -----  -----  ---------  ------------
-     0.582           0.565   0.509        33.4         0    2    -18.3   42.6   46.4       6.22            24
+| r.squared| adj.r.squared| sigma| statistic| p.value| df| logLik|  AIC|  BIC| deviance| df.residual| nobs|
+|---------:|-------------:|-----:|---------:|-------:|--:|------:|----:|----:|--------:|-----------:|----:|
+|     0.582|         0.565| 0.509|      33.4|       0|  1|  -18.3| 42.6| 46.4|     6.22|          24|   26|
 
 
 
 Table: Linear model including dexamethasone treatment as a covariate
 
-term                      estimate   std.error   statistic   p.value
------------------------  ---------  ----------  ----------  --------
-(Intercept)                  0.904       1.281       0.706     0.487
-CSA                          0.187       0.057       3.262     0.003
-TreatmentDexamethasone      -0.247       0.299      -0.826     0.417
+|term                   | estimate| std.error| statistic| p.value|
+|:----------------------|--------:|---------:|---------:|-------:|
+|(Intercept)            |    0.904|     1.281|     0.706|   0.487|
+|CSA                    |    0.187|     0.057|     3.262|   0.003|
+|TreatmentDexamethasone |   -0.247|     0.299|    -0.826|   0.417|
 
 
 
 Table: Linear model including dexamethasone treatment as a covariate, showing fit
 
- r.squared   adj.r.squared   sigma   statistic   p.value   df   logLik    AIC    BIC   deviance   df.residual
-----------  --------------  ------  ----------  --------  ---  -------  -----  -----  ---------  ------------
-     0.594           0.559   0.512        16.8         0    3    -17.9   43.8   48.9       6.04            23
+| r.squared| adj.r.squared| sigma| statistic| p.value| df| logLik|  AIC|  BIC| deviance| df.residual| nobs|
+|---------:|-------------:|-----:|---------:|-------:|--:|------:|----:|----:|--------:|-----------:|----:|
+|     0.594|         0.559| 0.512|      16.8|       0|  2|  -17.9| 43.8| 48.9|     6.04|          23|   26|
 
 # Interpretation
 
@@ -296,13 +307,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.6.2 (2019-12-12)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS Catalina 10.15.2
+## R version 4.0.2 (2020-06-22)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.6
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -311,21 +322,21 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.3   forcats_0.4.0 readxl_1.3.1  ggplot2_3.2.1 dplyr_0.8.3  
-## [6] tidyr_1.0.0   knitr_1.26   
+## [1] broom_0.7.0   forcats_0.5.0 readxl_1.3.1  ggplot2_3.3.2 dplyr_1.0.2  
+## [6] tidyr_1.1.2   knitr_1.29   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.3       plyr_1.8.5       pillar_1.4.3     compiler_3.6.2  
-##  [5] cellranger_1.1.0 highr_0.8        tools_3.6.2      zeallot_0.1.0   
-##  [9] digest_0.6.23    lattice_0.20-38  nlme_3.1-142     evaluate_0.14   
-## [13] lifecycle_0.1.0  tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.3 
-## [17] rlang_0.4.2      yaml_2.2.0       xfun_0.12        withr_2.1.2     
-## [21] stringr_1.4.0    generics_0.0.2   vctrs_0.2.1      grid_3.6.2      
-## [25] tidyselect_0.2.5 glue_1.3.1       R6_2.4.1         rmarkdown_2.0   
-## [29] farver_2.0.1     purrr_0.3.3      reshape2_1.4.3   magrittr_1.5    
-## [33] ellipsis_0.3.0   backports_1.1.5  scales_1.1.0     htmltools_0.4.0 
-## [37] assertthat_0.2.1 colorspace_1.4-1 labeling_0.3     stringi_1.4.5   
-## [41] lazyeval_0.2.2   munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.5       pillar_1.4.6     compiler_4.0.2   cellranger_1.1.0
+##  [5] highr_0.8        tools_4.0.2      digest_0.6.25    lattice_0.20-41 
+##  [9] nlme_3.1-149     evaluate_0.14    lifecycle_0.2.0  tibble_3.0.3    
+## [13] gtable_0.3.0     mgcv_1.8-33      pkgconfig_2.0.3  rlang_0.4.7     
+## [17] Matrix_1.2-18    yaml_2.2.1       xfun_0.16        withr_2.2.0     
+## [21] stringr_1.4.0    generics_0.0.2   vctrs_0.3.4      grid_4.0.2      
+## [25] tidyselect_1.1.0 glue_1.4.2       R6_2.4.1         rmarkdown_2.3   
+## [29] purrr_0.3.4      farver_2.0.3     magrittr_1.5     splines_4.0.2   
+## [33] scales_1.1.1     backports_1.1.9  ellipsis_0.3.1   htmltools_0.5.0 
+## [37] colorspace_1.4-1 labeling_0.3     stringi_1.4.6    munsell_0.5.0   
+## [41] crayon_1.3.4
 ```
 
 # References

@@ -105,7 +105,7 @@ mean.n <- function(x) mean(x, na.rm=T)
 summary.data <-
   exp.data %>%
   group_by(Sex,Diet, Treatment) %>%
-  summarize_if(is.numeric, .funs=funs(mean.n,se))
+  summarize_if(is.numeric, .funs=funs(mean.n,se,sd))
 ```
 
 ## Fat Mass
@@ -196,6 +196,8 @@ library(broom)
 aov(`Gastroc` ~ Diet * Treatment, data = exp.data) %>% 
   tidy %>%
   kable(caption="ANOVA of Gastroc Weights")
+
+summary.data %>% select(Diet,Treatment,Gastroc_mean.n, Gastroc_se, Gastroc_sd) %>% mutate(Rel.Error = Gastroc_sd/Gastroc_mean.n*100) %>% kable(caption="Summary statistics for gastroc weights")
 ```
 
 The gastroc weights are reduced **`r with(subset(summary.data, Diet=="NCD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the NCD animals and **`r with(subset(summary.data, Diet=="HFD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the HFD animals.
