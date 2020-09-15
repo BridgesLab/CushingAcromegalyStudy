@@ -57,7 +57,11 @@ tg.summary <-
   group_by(Diet, Treatment) %>%
   summarize(Glycerol.mean = mean(Glycerol, na.rm=T),
             Glycerol.se = se(Glycerol),
-            Glycerol.n = length(Glycerol))
+            Glycerol.sd = sd(Glycerol),
+            Glycerol.n = length(Glycerol),
+            Rel.error = Glycerol.sd/Glycerol.mean*100)
+
+kable(tg.summary, caption="Summary statistics by group")
 ```
 This script uses the files in `r filename` and used the worksheet `r sheetname`. These data are located in `r getwd()` and this script was most recently run on `r date()`.
 
