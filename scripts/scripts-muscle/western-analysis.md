@@ -19,7 +19,7 @@ output:
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **Westerns from glucose clamps.xlsx**.  This script was most recently updated on **Fri Sep 18 14:48:51 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **Westerns from glucose clamps.xlsx**.  This script was most recently updated on **Fri Sep 18 14:55:41 2020**.
 
 # Analysis for Akt Phosphorylation
 
@@ -63,7 +63,7 @@ Table: Summary statistics
 |DEX       |NCD  | 0.410| 0.065| 10|   0.001|
 |DEX       |HFD  | 0.565| 0.028| 14|   0.993|
 
-![](figures/pakt-barplot-1.png)<!-- -->
+![](figures/pakt-barplot-1.png)<!-- -->![](figures/pakt-barplot-2.png)<!-- -->
 
 # Session Information
 

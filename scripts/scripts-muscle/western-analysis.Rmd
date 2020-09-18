@@ -122,6 +122,28 @@ ggplot(data=exp.summary,
   labs(title="Quadriceps",
        y="pAkt/Akt") +
   facet_grid(.~Diet)
+
+ggplot(data=exp.summary,
+       aes(y=Mean,
+           ymin=Mean-Error,
+           ymax=Mean+Error,
+           x=Treatment,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="Quadriceps",
+       y="pAkt/Akt") +
+  facet_grid(.~Diet) +
+  expand_limits(y=0) +
+  labs(title="",
+       y="pAkt/Akt",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Water","Dexamethasone")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="none") 
 ```
 
 # Session Information
