@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 09:56:38 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:14:49 2020**.
 
 # Analysis
 
@@ -64,6 +64,28 @@ Table: ANOVA of Fat Mass
 |Diet:Treatment |  1|  36522274|  36522274|      5.76|   0.025|
 |Residuals      | 22| 139419089|   6337231|        NA|      NA|
 
+
+
+Table: Summary data for fat mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Fat.Mass    |   3154|  610|
+|Male |NCD  |Dexamethasone |Fat.Mass    |   3611|  504|
+|Male |HFD  |Water         |Fat.Mass    |  15962| 1226|
+|Male |HFD  |Dexamethasone |Fat.Mass    |  11605| 1628|
+
+
+
+Table: Summary data for percent fat mass
+
+|Sex  |Diet |Treatment     |Measurement  | mean.n|   se|
+|:----|:----|:-------------|:------------|------:|----:|
+|Male |NCD  |Water         |Pct.Fat.Mass |   9.85| 1.72|
+|Male |NCD  |Dexamethasone |Pct.Fat.Mass |  12.11| 1.24|
+|Male |HFD  |Water         |Pct.Fat.Mass |  34.16| 1.97|
+|Male |HFD  |Dexamethasone |Pct.Fat.Mass |  33.27| 3.22|
+
 ![](figures/fat-mass-boxplot-1.png)<!-- -->
 
 ## Blood Glucose
@@ -95,9 +117,6 @@ Table: ANOVA of Gastroc Weights
 |Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
 |Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
 |Residuals      | 22| 4999.81|  227.26|        NA|      NA|
-
-The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** in the HFD animals.
-
 ![](figures/gastroc-boxplot-1.png)<!-- -->
 
 Table: ANOVA of Gastroc Weights
@@ -108,6 +127,33 @@ Table: ANOVA of Gastroc Weights
 |Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
 |Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
 |Residuals      | 22| 4999.81|  227.26|        NA|      NA|
+
+### Relative Gastroc Weight
+
+![](figures/rel-gastroc-barplot-1.png)<!-- -->
+
+Table: ANOVA of Relative Gastroc Weights
+
+|term           | df|  sumsq| meansq| statistic| p.value|
+|:--------------|--:|------:|------:|---------:|-------:|
+|Diet           |  1| 11.035| 11.035|    50.351|   0.000|
+|Treatment      |  1|  0.171|  0.171|     0.781|   0.386|
+|Diet:Treatment |  1|  0.110|  0.110|     0.503|   0.486|
+|Residuals      | 22|  4.822|  0.219|        NA|      NA|
+
+
+
+Table: ANOVA of Relative Gastroc Weights with no interaction
+
+|term      | df|  sumsq| meansq| statistic| p.value|
+|:---------|--:|------:|------:|---------:|-------:|
+|Diet      |  1| 11.035| 11.035|    51.464|   0.000|
+|Treatment |  1|  0.171|  0.171|     0.799|   0.381|
+|Residuals | 23|  4.932|  0.214|        NA|      NA|
+
+The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** in the HFD animals.
+
+
 
 ## Cross-Sectional Area
 
@@ -276,28 +322,32 @@ Table: Absolute and Relative Decreases with Dexamethasone
 
 |Sex  |Diet |Measure                   |    Water| Dexamethasone| Reduction| Percent.Reduction|
 |:----|:----|:-------------------------|--------:|-------------:|---------:|-----------------:|
-|Male |NCD  |CSA_mean.n                |    21.75|         18.91|     2.843|             13.07|
-|Male |HFD  |CSA_mean.n                |    22.81|         17.58|     5.223|             22.90|
-|Male |NCD  |Fat.Mass_mean.n           |  3154.29|       3611.25|  -456.964|            -14.49|
-|Male |HFD  |Fat.Mass_mean.n           | 15962.00|      11605.00|  4357.000|             27.30|
-|Male |NCD  |FBG_mean.n                |   140.29|        131.62|     8.661|              6.17|
-|Male |HFD  |FBG_mean.n                |   191.00|        274.17|   -83.167|            -43.54|
-|Male |NCD  |Gastroc_mean.n            |   174.84|        152.71|    22.130|             12.66|
-|Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|             27.23|
-|Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|             10.63|
-|Male |HFD  |Po-Muscle (mN)_mean.n     |  5141.00|       3588.33|  1552.667|             30.20|
-|Male |NCD  |Po-Muscle (N)_mean.n      |     4.99|          4.46|     0.531|             10.63|
-|Male |HFD  |Po-Muscle (N)_mean.n      |     5.14|          3.59|     1.553|             30.20|
-|Male |NCD  |Po-Nerve (mN)_mean.n      |  5367.14|       4820.62|   546.518|             10.18|
-|Male |HFD  |Po-Nerve (mN)_mean.n      |  5678.20|       3847.33|  1830.867|             32.24|
-|Male |NCD  |Po-Nerve (N)_mean.n       |     5.37|          4.82|     0.547|             10.18|
-|Male |HFD  |Po-Nerve (N)_mean.n       |     5.68|          3.85|     1.831|             32.24|
-|Male |NCD  |Spo Muscle (N/cm2)_mean.n |    22.97|         23.60|    -0.627|             -2.73|
-|Male |HFD  |Spo Muscle (N/cm2)_mean.n |    22.63|         20.47|     2.161|              9.55|
-|Male |NCD  |Spo Nerve (N/cm2)_mean.n  |    24.69|         25.50|    -0.813|             -3.29|
-|Male |HFD  |Spo Nerve (N/cm2)_mean.n  |    24.97|         21.89|     3.082|             12.34|
-|Male |NCD  |Weight_mean.n             | 31500.00|      29212.50|  2287.500|              7.26|
-|Male |HFD  |Weight_mean.n             | 46540.00|      34266.67| 12273.333|             26.37|
+|Male |NCD  |CSA_mean.n                |    21.75|         18.91|     2.843|            13.069|
+|Male |HFD  |CSA_mean.n                |    22.81|         17.58|     5.223|            22.900|
+|Male |NCD  |Fat.Mass_mean.n           |  3154.29|       3611.25|  -456.964|           -14.487|
+|Male |HFD  |Fat.Mass_mean.n           | 15962.00|      11605.00|  4357.000|            27.296|
+|Male |NCD  |FBG_mean.n                |   140.29|        131.62|     8.661|             6.174|
+|Male |HFD  |FBG_mean.n                |   191.00|        274.17|   -83.167|           -43.543|
+|Male |NCD  |Gastroc_mean.n            |   174.84|        152.71|    22.130|            12.657|
+|Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|            27.225|
+|Male |NCD  |Gastroc.rel_mean.n        |     5.56|          5.28|     0.274|             4.939|
+|Male |HFD  |Gastroc.rel_mean.n        |     4.10|          4.09|     0.010|             0.244|
+|Male |NCD  |Pct.Fat.Mass_mean.n       |     9.85|         12.11|    -2.266|           -23.007|
+|Male |HFD  |Pct.Fat.Mass_mean.n       |    34.16|         33.27|     0.887|             2.598|
+|Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|            10.633|
+|Male |HFD  |Po-Muscle (mN)_mean.n     |  5141.00|       3588.33|  1552.667|            30.202|
+|Male |NCD  |Po-Muscle (N)_mean.n      |     4.99|          4.46|     0.531|            10.633|
+|Male |HFD  |Po-Muscle (N)_mean.n      |     5.14|          3.59|     1.553|            30.202|
+|Male |NCD  |Po-Nerve (mN)_mean.n      |  5367.14|       4820.62|   546.518|            10.183|
+|Male |HFD  |Po-Nerve (mN)_mean.n      |  5678.20|       3847.33|  1830.867|            32.244|
+|Male |NCD  |Po-Nerve (N)_mean.n       |     5.37|          4.82|     0.547|            10.183|
+|Male |HFD  |Po-Nerve (N)_mean.n       |     5.68|          3.85|     1.831|            32.244|
+|Male |NCD  |Spo Muscle (N/cm2)_mean.n |    22.97|         23.60|    -0.627|            -2.729|
+|Male |HFD  |Spo Muscle (N/cm2)_mean.n |    22.63|         20.47|     2.161|             9.546|
+|Male |NCD  |Spo Nerve (N/cm2)_mean.n  |    24.69|         25.50|    -0.813|            -3.292|
+|Male |HFD  |Spo Nerve (N/cm2)_mean.n  |    24.97|         21.89|     3.082|            12.342|
+|Male |NCD  |Weight_mean.n             | 31500.00|      29212.50|  2287.500|             7.262|
+|Male |HFD  |Weight_mean.n             | 46540.00|      34266.67| 12273.333|            26.372|
 
 
 ### Force versus CSA
