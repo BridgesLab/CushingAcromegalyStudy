@@ -319,6 +319,36 @@ superpose.eb(plot,
 
 library(broom)
 aov(`Po-Muscle (N)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Muscle force measurements")
+
+#pairwise t-tests
+exp.data %>% 
+  group_by(Treatment,Diet) %>%
+  summarize(Mean = mean(`Po-Muscle (N)`),
+            SE = se(`Po-Muscle (N)`),
+            SD = sd(`Po-Muscle (N)`),
+            n = length(`Po-Muscle (N)`),
+            shapiro =shapiro.test(`Po-Muscle (N)`)$p.value) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption='Summary statistics for muscle stimulation')
+
+library(car)
+
+bind_rows(leveneTest(`Po-Muscle (N)`~Treatment, data=exp.data %>% filter(Diet=="NCD")) %>% tidy(),
+          (leveneTest(`Po-Muscle (N)`~Treatment, data=exp.data %>% filter(Diet=="HFD")) %>% tidy())) %>%
+  kable(caption="Levene's tests for NCD and HFD respectively")
+
+exp.data %>%
+  group_by(Diet) %>%
+  summarise(
+        Student = t.test(`Po-Muscle (N)`[Treatment=="Water"],
+                         `Po-Muscle (N)`[Treatment=="Dexamethasone"],
+                         var.equal=T)$p.value,
+    Welch = t.test(`Po-Muscle (N)`[Treatment=="Water"],
+                     `Po-Muscle (N)`[Treatment=="Dexamethasone"],
+                     var.equal=F)$p.value) %>%
+  kable(caption="Pairwise significance testing for effects of dexamethasone on muscle-stimulated contraction")
+  
+
 ```
 
 
@@ -371,6 +401,34 @@ ggplot(data=summary.data,
   theme_classic() +
   theme(text=element_text(size=18),
         legend.position="bottom") 
+
+exp.data %>% 
+  group_by(Treatment,Diet) %>%
+  summarize(Mean = mean(`Po-Nerve (N)`),
+            SE = se(`Po-Nerve (N)`),
+            SD = sd(`Po-Nerve (N)`),
+            n = length(`Po-Nerve (N)`),
+            shapiro =shapiro.test(`Po-Nerve (N)`)$p.value) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption='Summary statistics for nerve stimulation')
+
+library(car)
+
+bind_rows(leveneTest(`Po-Nerve (N)`~Treatment, data=exp.data %>% filter(Diet=="NCD")) %>% tidy(),
+          (leveneTest(`Po-Nerve (N)`~Treatment, data=exp.data %>% filter(Diet=="HFD")) %>% tidy())) %>%
+  kable(caption="Levene's tests for NCD and HFD respectively for nerve stimulation")
+
+exp.data %>%
+  group_by(Diet) %>%
+  summarise(
+        Student = t.test(`Po-Nerve (N)`[Treatment=="Water"],
+                         `Po-Nerve (N)`[Treatment=="Dexamethasone"],
+                         var.equal=T)$p.value,
+    Welch = t.test(`Po-Nerve (N)`[Treatment=="Water"],
+                     `Po-Nerve (N)`[Treatment=="Dexamethasone"],
+                     var.equal=F)$p.value) %>%
+  kable(caption="Pairwise significance testing for effects of dexamethasone on nerve-stimulated contraction")
+
 
 library(broom)
 aov(`Po-Nerve (N)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Nerve force measurements")
