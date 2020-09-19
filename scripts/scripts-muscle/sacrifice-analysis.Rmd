@@ -110,6 +110,40 @@ summary.data <-
   summarize_if(is.numeric, .funs=funs(mean.n,se))
 ```
 
+## Lean Mass
+
+```{r lean-mass-barplot}
+ggplot(data=summary.data,
+       aes(y=Lean.Mass_mean.n/1000,
+           ymin=(Lean.Mass_mean.n-Lean.Mass_se)/1000,
+           ymax=(Lean.Mass_mean.n+Lean.Mass_se)/1000,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Lean Mass (g)")
+
+library(broom)
+aov(`Lean.Mass` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Lean Mass")
+
+summary.data %>% 
+  group_by(Sex,Diet,Treatment) %>%
+  select(starts_with('Lean.Mass')) %>%
+  pivot_longer(
+    cols=starts_with('Lean.Mass'),
+    names_to=c('Measurement','Type'),
+    names_pattern = "(.*)_(.*)",
+    values_to='Value') %>%
+  pivot_wider(names_from='Type',
+              values_from='Value') %>%
+  kable(caption="Summary data for lean mass")
+```
+
 ## Fat Mass
 
 ```{r fat-mass-barplot}

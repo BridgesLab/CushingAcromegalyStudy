@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:14:49 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:37:53 2020**.
 
 # Analysis
 
@@ -44,12 +44,36 @@ Table: Number of animals at sacrifice
 |:----|:----|:-------------|--:|
 |Male |NCD  |Water         |  7|
 |Male |NCD  |Dexamethasone |  8|
-|Male |HFD  |Water         |  5|
-|Male |HFD  |Dexamethasone |  6|
+|Male |HFD  |Water         |  4|
+|Male |HFD  |Dexamethasone |  5|
 
 Generated summary data for each measurement
 
 
+
+## Lean Mass
+
+![](figures/lean-mass-barplot-1.png)<!-- -->
+
+Table: ANOVA of Lean Mass
+
+|term           | df|    sumsq|   meansq| statistic| p.value|
+|:--------------|--:|--------:|--------:|---------:|-------:|
+|Diet           |  1|  1896602|  1896602|     0.751|   0.396|
+|Treatment      |  1| 56506365| 56506365|    22.386|   0.000|
+|Diet:Treatment |  1|  3813911|  3813911|     1.511|   0.233|
+|Residuals      | 20| 50482818|  2524141|        NA|      NA|
+
+
+
+Table: Summary data for lean mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Lean.Mass   |  26283|  404|
+|Male |NCD  |Dexamethasone |Lean.Mass   |  23820|  629|
+|Male |HFD  |Water         |Lean.Mass   |  27838| 1137|
+|Male |HFD  |Dexamethasone |Lean.Mass   |  23720|  292|
 
 ## Fat Mass
 
@@ -332,6 +356,8 @@ Table: Absolute and Relative Decreases with Dexamethasone
 |Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|            27.225|
 |Male |NCD  |Gastroc.rel_mean.n        |     5.56|          5.28|     0.274|             4.939|
 |Male |HFD  |Gastroc.rel_mean.n        |     4.10|          4.09|     0.010|             0.244|
+|Male |NCD  |Lean.Mass_mean.n          | 26282.86|      23820.00|  2462.857|             9.371|
+|Male |HFD  |Lean.Mass_mean.n          | 27837.50|      23720.00|  4117.500|            14.791|
 |Male |NCD  |Pct.Fat.Mass_mean.n       |     9.85|         12.11|    -2.266|           -23.007|
 |Male |HFD  |Pct.Fat.Mass_mean.n       |    34.16|         33.27|     0.887|             2.598|
 |Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|            10.633|
