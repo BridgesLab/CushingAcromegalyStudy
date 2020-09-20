@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:37:53 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:42:40 2020**.
 
 # Analysis
 
@@ -50,6 +50,30 @@ Table: Number of animals at sacrifice
 Generated summary data for each measurement
 
 
+
+## Body Weight
+
+![](figures/weight-barplot-1.png)<!-- -->
+
+Table: ANOVA of Lean Mass
+
+|term           | df|     sumsq|    meansq| statistic| p.value|
+|:--------------|--:|---------:|---------:|---------:|-------:|
+|Diet           |  1| 580659881| 580659881|      53.4|   0.000|
+|Treatment      |  1| 273204903| 273204903|      25.1|   0.000|
+|Diet:Treatment |  1| 157152286| 157152286|      14.5|   0.001|
+|Residuals      | 22| 239054083|  10866095|        NA|      NA|
+
+
+
+Table: Summary data for lean mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Weight      |  31500|  754|
+|Male |NCD  |Dexamethasone |Weight      |  29212| 1450|
+|Male |HFD  |Water         |Weight      |  46540|  980|
+|Male |HFD  |Dexamethasone |Weight      |  34267| 1615|
 
 ## Lean Mass
 
