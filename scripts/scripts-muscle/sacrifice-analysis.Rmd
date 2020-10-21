@@ -76,6 +76,8 @@ filename <- '../../data/raw/HFD Dex Muscle Testing Data.xlsx'
            Fat.Mass = `Final Fat mass (mg)`,
            FBG = `Fasting Blood Glucose (mg/dL)`) %>%
     filter(!(MouseID %in% omit)) %>%
+    mutate(Gastroc.rel = Gastroc/Weight*1000,
+           Pct.Fat.Mass = Fat.Mass/Weight*100) %>%
     mutate(`Po-Muscle (N)`=`Po-Muscle (mN)`/1000,
            `Po-Nerve (N)`=`Po-Nerve (mN)`/1000)
 ```
@@ -108,6 +110,74 @@ summary.data <-
   summarize_if(is.numeric, .funs=funs(mean.n,se,sd))
 ```
 
+## Body Weight
+
+```{r weight-barplot}
+ggplot(data=summary.data,
+       aes(y=Weight_mean.n/1000,
+           ymin=(Weight_mean.n-Weight_se)/1000,
+           ymax=(Weight_mean.n+Weight_se)/1000,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Lean Mass (g)")
+
+library(broom)
+aov(`Weight` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Lean Mass")
+
+summary.data %>% 
+  group_by(Sex,Diet,Treatment) %>%
+  select(starts_with('Weight')) %>%
+  pivot_longer(
+    cols=starts_with('Weight'),
+    names_to=c('Measurement','Type'),
+    names_pattern = "(.*)_(.*)",
+    values_to='Value') %>%
+  pivot_wider(names_from='Type',
+              values_from='Value') %>%
+  kable(caption="Summary data for lean mass")
+```
+
+## Lean Mass
+
+```{r lean-mass-barplot}
+ggplot(data=summary.data,
+       aes(y=Lean.Mass_mean.n/1000,
+           ymin=(Lean.Mass_mean.n-Lean.Mass_se)/1000,
+           ymax=(Lean.Mass_mean.n+Lean.Mass_se)/1000,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  scale_fill_manual(values=c("black","red")) +
+         facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Lean Mass (g)")
+
+library(broom)
+aov(`Lean.Mass` ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Lean Mass")
+
+summary.data %>% 
+  group_by(Sex,Diet,Treatment) %>%
+  select(starts_with('Lean.Mass')) %>%
+  pivot_longer(
+    cols=starts_with('Lean.Mass'),
+    names_to=c('Measurement','Type'),
+    names_pattern = "(.*)_(.*)",
+    values_to='Value') %>%
+  pivot_wider(names_from='Type',
+              values_from='Value') %>%
+  kable(caption="Summary data for lean mass")
+```
+
 ## Fat Mass
 
 ```{r fat-mass-barplot}
@@ -129,6 +199,30 @@ library(broom)
 aov(`Fat.Mass` ~ Diet * Treatment, data = exp.data) %>% 
   tidy %>%
   kable(caption="ANOVA of Fat Mass")
+
+summary.data %>% 
+  group_by(Sex,Diet,Treatment) %>%
+  select(starts_with('Fat.Mass')) %>%
+  pivot_longer(
+    cols=starts_with('Fat.Mass'),
+    names_to=c('Measurement','Type'),
+    names_pattern = "(.*)_(.*)",
+    values_to='Value') %>%
+  pivot_wider(names_from='Type',
+              values_from='Value') %>%
+  kable(caption="Summary data for fat mass")
+
+summary.data %>% 
+  group_by(Sex,Diet,Treatment) %>%
+  select(starts_with('Pct.Fat.Mass')) %>%
+  pivot_longer(
+    cols=starts_with('Pct.Fat.Mass'),
+    names_to=c('Measurement','Type'),
+    names_pattern = "(.*)_(.*)",
+    values_to='Value') %>%
+  pivot_wider(names_from='Type',
+              values_from='Value') %>%
+  kable(caption="Summary data for percent fat mass")
 ```
 
 ```{r fat-mass-boxplot}
@@ -199,9 +293,6 @@ aov(`Gastroc` ~ Diet * Treatment, data = exp.data) %>%
 
 summary.data %>% select(Diet,Treatment,Gastroc_mean.n, Gastroc_se, Gastroc_sd) %>% mutate(Rel.Error = Gastroc_sd/Gastroc_mean.n*100) %>% kable(caption="Summary statistics for gastroc weights")
 ```
-
-The gastroc weights are reduced **`r with(subset(summary.data, Diet=="NCD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the NCD animals and **`r with(subset(summary.data, Diet=="HFD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the HFD animals.
-
 ```{r gastroc-boxplot}
 ggplot(data=exp.data,
        aes(y=Gastroc,
@@ -218,6 +309,41 @@ aov(`Gastroc` ~ Diet * Treatment, data = exp.data) %>%
   tidy %>%
   kable(caption="ANOVA of Gastroc Weights")
 ```
+
+### Relative Gastroc Weight
+
+```{r rel-gastroc-barplot}
+ggplot(data=summary.data,
+       aes(y=Gastroc.rel_mean.n,
+           ymin=Gastroc.rel_mean.n-Gastroc.rel_se,
+           ymax=Gastroc.rel_mean.n+Gastroc.rel_se,
+           x=Diet,
+           fill=Treatment)) +
+         geom_bar(stat='identity', beside=T, width=0.75, position='dodge') +
+         geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+          scale_fill_manual(values=c("black","red")) +
+  expand_limits(y=0) +
+  labs(title="Relative Gastrocnemius Mass",
+       y="Weight (mg/g)",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Lean","Obese")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
+
+aov(Gastroc.rel ~ Diet * Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Relative Gastroc Weights")
+
+aov(Gastroc.rel ~ Diet + Treatment, data = exp.data) %>% 
+  tidy %>%
+  kable(caption="ANOVA of Relative Gastroc Weights with no interaction")
+```
+
+The gastroc weights are reduced **`r with(subset(summary.data, Diet=="NCD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the NCD animals and **`r with(subset(summary.data, Diet=="HFD"), (Gastroc_mean.n[1]-Gastroc_mean.n[2])/Gastroc_mean.n[1])*100`%** in the HFD animals.
+
+
 
 ## Cross-Sectional Area
 
@@ -321,6 +447,36 @@ superpose.eb(plot,
 
 library(broom)
 aov(`Po-Muscle (N)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Muscle force measurements")
+
+#pairwise t-tests
+exp.data %>% 
+  group_by(Treatment,Diet) %>%
+  summarize(Mean = mean(`Po-Muscle (N)`),
+            SE = se(`Po-Muscle (N)`),
+            SD = sd(`Po-Muscle (N)`),
+            n = length(`Po-Muscle (N)`),
+            shapiro =shapiro.test(`Po-Muscle (N)`)$p.value) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption='Summary statistics for muscle stimulation')
+
+library(car)
+
+bind_rows(leveneTest(`Po-Muscle (N)`~Treatment, data=exp.data %>% filter(Diet=="NCD")) %>% tidy(),
+          (leveneTest(`Po-Muscle (N)`~Treatment, data=exp.data %>% filter(Diet=="HFD")) %>% tidy())) %>%
+  kable(caption="Levene's tests for NCD and HFD respectively")
+
+exp.data %>%
+  group_by(Diet) %>%
+  summarise(
+        Student = t.test(`Po-Muscle (N)`[Treatment=="Water"],
+                         `Po-Muscle (N)`[Treatment=="Dexamethasone"],
+                         var.equal=T)$p.value,
+    Welch = t.test(`Po-Muscle (N)`[Treatment=="Water"],
+                     `Po-Muscle (N)`[Treatment=="Dexamethasone"],
+                     var.equal=F)$p.value) %>%
+  kable(caption="Pairwise significance testing for effects of dexamethasone on muscle-stimulated contraction")
+  
+
 ```
 
 
@@ -373,6 +529,34 @@ ggplot(data=summary.data,
   theme_classic() +
   theme(text=element_text(size=18),
         legend.position="bottom") 
+
+exp.data %>% 
+  group_by(Treatment,Diet) %>%
+  summarize(Mean = mean(`Po-Nerve (N)`),
+            SE = se(`Po-Nerve (N)`),
+            SD = sd(`Po-Nerve (N)`),
+            n = length(`Po-Nerve (N)`),
+            shapiro =shapiro.test(`Po-Nerve (N)`)$p.value) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption='Summary statistics for nerve stimulation')
+
+library(car)
+
+bind_rows(leveneTest(`Po-Nerve (N)`~Treatment, data=exp.data %>% filter(Diet=="NCD")) %>% tidy(),
+          (leveneTest(`Po-Nerve (N)`~Treatment, data=exp.data %>% filter(Diet=="HFD")) %>% tidy())) %>%
+  kable(caption="Levene's tests for NCD and HFD respectively for nerve stimulation")
+
+exp.data %>%
+  group_by(Diet) %>%
+  summarise(
+        Student = t.test(`Po-Nerve (N)`[Treatment=="Water"],
+                         `Po-Nerve (N)`[Treatment=="Dexamethasone"],
+                         var.equal=T)$p.value,
+    Welch = t.test(`Po-Nerve (N)`[Treatment=="Water"],
+                     `Po-Nerve (N)`[Treatment=="Dexamethasone"],
+                     var.equal=F)$p.value) %>%
+  kable(caption="Pairwise significance testing for effects of dexamethasone on nerve-stimulated contraction")
+
 
 library(broom)
 aov(`Po-Nerve (N)` ~ Diet * Treatment, data = exp.data) %>% tidy %>% kable(caption="ANOVA of Nerve force measurements")

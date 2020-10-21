@@ -204,15 +204,22 @@ coef(summary(csa.lme)) %>% kable(caption="Coefficient table for mixed linear mod
 #as.data.frame(ls_means(csa.lme, pairwise=T))[,c(3,9)] %>% kable(caption="Pairwise tests of factors from mixed linear model.")
 
 csa.lme.dark <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Dark"))
-coef(summary(csa.lme.dark)) %>% kable(caption="Coefficient table for mixed linear model.")
+coef(summary(csa.lme.dark)) %>% kable(caption="Coefficient table for mixed linear model for dark fibers.")
+
+csa.lme.dark <- lmer(CSA ~ Treatment + Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Dark"))
+coef(summary(csa.lme.dark)) %>% kable(caption="Coefficient table for mixed linear model for dark fibers with no interaction.")
 #anova(csa.lme.dark, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of dark stained muscle fibers.") 
 
 csa.lme.med <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Medium"))
 coef(summary(csa.lme.med)) %>% kable(caption="Coefficient table for mixed linear model of medium stained muscle fibers.")
+csa.lme.med <- lmer(CSA ~ Treatment + Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Medium"))
+coef(summary(csa.lme.med)) %>% kable(caption="Coefficient table for mixed linear model of medium stained muscle fibers with no interaction.")
 #anova(csa.lme.med, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of medium stained muscle fibers.") 
 
 csa.lme.light <- lmer(CSA ~ Treatment * Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Light"))
 coef(summary(csa.lme.light)) %>% kable(caption="Coefficient table for mixed linear model of light stained muscle fibers.")
+csa.lme.light <- lmer(CSA ~ Treatment + Diet + (1|`Mouse ID`), data=exp.data %>% filter(Color=="Light"))
+coef(summary(csa.lme.light)) %>% kable(caption="Coefficient table for mixed linear model of light stained muscle fibers with no interaction.", digits=5)
 #anova(csa.lme.light, type="III") %>% kable(caption="Type III ANOVA table from mixed linear model of light stained muscle fibers.") 
 ```
 

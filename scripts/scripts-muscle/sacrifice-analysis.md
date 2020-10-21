@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Tue Sep 15 11:51:11 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/scripts/scripts-muscle** in a file named **no file found**.  This script was most recently updated on **Sat Sep 19 13:42:40 2020**.
 
 # Analysis
 
@@ -44,12 +44,60 @@ Table: Number of animals at sacrifice
 |:----|:----|:-------------|--:|
 |Male |NCD  |Water         |  7|
 |Male |NCD  |Dexamethasone |  8|
-|Male |HFD  |Water         |  5|
-|Male |HFD  |Dexamethasone |  6|
+|Male |HFD  |Water         |  4|
+|Male |HFD  |Dexamethasone |  5|
 
 Generated summary data for each measurement
 
 
+
+## Body Weight
+
+![](figures/weight-barplot-1.png)<!-- -->
+
+Table: ANOVA of Lean Mass
+
+|term           | df|     sumsq|    meansq| statistic| p.value|
+|:--------------|--:|---------:|---------:|---------:|-------:|
+|Diet           |  1| 580659881| 580659881|      53.4|   0.000|
+|Treatment      |  1| 273204903| 273204903|      25.1|   0.000|
+|Diet:Treatment |  1| 157152286| 157152286|      14.5|   0.001|
+|Residuals      | 22| 239054083|  10866095|        NA|      NA|
+
+
+
+Table: Summary data for lean mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Weight      |  31500|  754|
+|Male |NCD  |Dexamethasone |Weight      |  29212| 1450|
+|Male |HFD  |Water         |Weight      |  46540|  980|
+|Male |HFD  |Dexamethasone |Weight      |  34267| 1615|
+
+## Lean Mass
+
+![](figures/lean-mass-barplot-1.png)<!-- -->
+
+Table: ANOVA of Lean Mass
+
+|term           | df|    sumsq|   meansq| statistic| p.value|
+|:--------------|--:|--------:|--------:|---------:|-------:|
+|Diet           |  1|  1896602|  1896602|     0.751|   0.396|
+|Treatment      |  1| 56506365| 56506365|    22.386|   0.000|
+|Diet:Treatment |  1|  3813911|  3813911|     1.511|   0.233|
+|Residuals      | 20| 50482818|  2524141|        NA|      NA|
+
+
+
+Table: Summary data for lean mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Lean.Mass   |  26283|  404|
+|Male |NCD  |Dexamethasone |Lean.Mass   |  23820|  629|
+|Male |HFD  |Water         |Lean.Mass   |  27838| 1137|
+|Male |HFD  |Dexamethasone |Lean.Mass   |  23720|  292|
 
 ## Fat Mass
 
@@ -63,6 +111,28 @@ Table: ANOVA of Fat Mass
 |Treatment      |  1|  16030350|  16030350|      2.53|   0.126|
 |Diet:Treatment |  1|  36522274|  36522274|      5.76|   0.025|
 |Residuals      | 22| 139419089|   6337231|        NA|      NA|
+
+
+
+Table: Summary data for fat mass
+
+|Sex  |Diet |Treatment     |Measurement | mean.n|   se|
+|:----|:----|:-------------|:-----------|------:|----:|
+|Male |NCD  |Water         |Fat.Mass    |   3154|  610|
+|Male |NCD  |Dexamethasone |Fat.Mass    |   3611|  504|
+|Male |HFD  |Water         |Fat.Mass    |  15962| 1226|
+|Male |HFD  |Dexamethasone |Fat.Mass    |  11605| 1628|
+
+
+
+Table: Summary data for percent fat mass
+
+|Sex  |Diet |Treatment     |Measurement  | mean.n|   se|
+|:----|:----|:-------------|:------------|------:|----:|
+|Male |NCD  |Water         |Pct.Fat.Mass |   9.85| 1.72|
+|Male |NCD  |Dexamethasone |Pct.Fat.Mass |  12.11| 1.24|
+|Male |HFD  |Water         |Pct.Fat.Mass |  34.16| 1.97|
+|Male |HFD  |Dexamethasone |Pct.Fat.Mass |  33.27| 3.22|
 
 ![](figures/fat-mass-boxplot-1.png)<!-- -->
 
@@ -95,20 +165,6 @@ Table: ANOVA of Gastroc Weights
 |Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
 |Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
 |Residuals      | 22| 4999.81|  227.26|        NA|      NA|
-
-
-
-Table: Summary statistics for gastroc weights
-
-|Sex  |Diet |Treatment     | Gastroc_mean.n| Gastroc_se| Gastroc_sd| Rel.Error|
-|:----|:----|:-------------|--------------:|----------:|----------:|---------:|
-|Male |NCD  |Water         |            175|       3.87|       10.2|      5.86|
-|Male |NCD  |Dexamethasone |            153|       4.72|       13.3|      8.74|
-|Male |HFD  |Water         |            191|       9.11|       20.4|     10.66|
-|Male |HFD  |Dexamethasone |            139|       6.99|       17.1|     12.31|
-
-The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** in the HFD animals.
-
 ![](figures/gastroc-boxplot-1.png)<!-- -->
 
 Table: ANOVA of Gastroc Weights
@@ -119,6 +175,33 @@ Table: ANOVA of Gastroc Weights
 |Treatment      |  1| 7796.87| 7796.87|    34.308|   0.000|
 |Diet:Treatment |  1| 1406.09| 1406.09|     6.187|   0.021|
 |Residuals      | 22| 4999.81|  227.26|        NA|      NA|
+
+### Relative Gastroc Weight
+
+![](figures/rel-gastroc-barplot-1.png)<!-- -->
+
+Table: ANOVA of Relative Gastroc Weights
+
+|term           | df|  sumsq| meansq| statistic| p.value|
+|:--------------|--:|------:|------:|---------:|-------:|
+|Diet           |  1| 11.035| 11.035|    50.351|   0.000|
+|Treatment      |  1|  0.171|  0.171|     0.781|   0.386|
+|Diet:Treatment |  1|  0.110|  0.110|     0.503|   0.486|
+|Residuals      | 22|  4.822|  0.219|        NA|      NA|
+
+
+
+Table: ANOVA of Relative Gastroc Weights with no interaction
+
+|term      | df|  sumsq| meansq| statistic| p.value|
+|:---------|--:|------:|------:|---------:|-------:|
+|Diet      |  1| 11.035| 11.035|    51.464|   0.000|
+|Treatment |  1|  0.171|  0.171|     0.799|   0.381|
+|Residuals | 23|  4.932|  0.214|        NA|      NA|
+
+The gastroc weights are reduced **12.657%** in the NCD animals and **27.225%** in the HFD animals.
+
+
 
 ## Cross-Sectional Area
 
@@ -168,6 +251,37 @@ Table: ANOVA of Muscle force measurements
 
 
 
+Table: Summary statistics for muscle stimulation
+
+|Treatment     |Diet | Mean|    SE|    SD|  n| shapiro| Rel.SD|
+|:-------------|:----|----:|-----:|-----:|--:|-------:|------:|
+|Water         |NCD  | 4.99| 0.124| 0.327|  7|   0.529|   6.55|
+|Water         |HFD  | 5.14| 0.109| 0.245|  5|   0.532|   4.76|
+|Dexamethasone |NCD  | 4.46| 0.144| 0.406|  8|   0.104|   9.10|
+|Dexamethasone |HFD  | 3.59| 0.370| 0.907|  6|   0.987|  25.26|
+
+
+
+Table: Levene's tests for NCD and HFD respectively
+
+|term  | df| statistic| p.value|
+|:-----|--:|---------:|-------:|
+|group |  1|     0.172|   0.685|
+|      | 13|        NA|      NA|
+|group |  1|     4.012|   0.076|
+|      |  9|        NA|      NA|
+
+
+
+Table: Pairwise significance testing for effects of dexamethasone on muscle-stimulated contraction
+
+|Diet | Student| Welch|
+|:----|-------:|-----:|
+|NCD  |   0.016| 0.015|
+|HFD  |   0.005| 0.007|
+
+
+
 
 ![](figures/force-muscle-boxplot-1.png)<!-- -->
 
@@ -192,6 +306,37 @@ It tests whether the average treatment effect is the different for each diet, th
 effect of the treatment (difference between treated and control) differs between NCD and HFD
 
 ![](figures/force-nerve-barplot-1.png)<!-- -->
+
+Table: Summary statistics for nerve stimulation
+
+|Treatment     |Diet | Mean|    SE|    SD|  n| shapiro| Rel.SD|
+|:-------------|:----|----:|-----:|-----:|--:|-------:|------:|
+|Water         |NCD  | 5.37| 0.116| 0.307|  7|   0.644|   5.72|
+|Water         |HFD  | 5.68| 0.195| 0.436|  5|   0.706|   7.69|
+|Dexamethasone |NCD  | 4.82| 0.153| 0.431|  8|   0.514|   8.95|
+|Dexamethasone |HFD  | 3.85| 0.384| 0.941|  6|   0.894|  24.45|
+
+
+
+Table: Levene's tests for NCD and HFD respectively for nerve stimulation
+
+|term  | df| statistic| p.value|
+|:-----|--:|---------:|-------:|
+|group |  1|      1.09|   0.315|
+|      | 13|        NA|      NA|
+|group |  1|      1.74|   0.220|
+|      |  9|        NA|      NA|
+
+
+
+Table: Pairwise significance testing for effects of dexamethasone on nerve-stimulated contraction
+
+|Diet | Student| Welch|
+|:----|-------:|-----:|
+|NCD  |   0.015| 0.014|
+|HFD  |   0.003| 0.003|
+
+
 
 Table: ANOVA of Nerve force measurements
 
@@ -225,28 +370,34 @@ Table: Absolute and Relative Decreases with Dexamethasone
 
 |Sex  |Diet |Measure                   |    Water| Dexamethasone| Reduction| Percent.Reduction|
 |:----|:----|:-------------------------|--------:|-------------:|---------:|-----------------:|
-|Male |NCD  |CSA_mean.n                |    21.75|         18.91|     2.843|             13.07|
-|Male |HFD  |CSA_mean.n                |    22.81|         17.58|     5.223|             22.90|
-|Male |NCD  |Fat.Mass_mean.n           |  3154.29|       3611.25|  -456.964|            -14.49|
-|Male |HFD  |Fat.Mass_mean.n           | 15962.00|      11605.00|  4357.000|             27.30|
-|Male |NCD  |FBG_mean.n                |   140.29|        131.62|     8.661|              6.17|
-|Male |HFD  |FBG_mean.n                |   191.00|        274.17|   -83.167|            -43.54|
-|Male |NCD  |Gastroc_mean.n            |   174.84|        152.71|    22.130|             12.66|
-|Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|             27.23|
-|Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|             10.63|
-|Male |HFD  |Po-Muscle (mN)_mean.n     |  5141.00|       3588.33|  1552.667|             30.20|
-|Male |NCD  |Po-Muscle (N)_mean.n      |     4.99|          4.46|     0.531|             10.63|
-|Male |HFD  |Po-Muscle (N)_mean.n      |     5.14|          3.59|     1.553|             30.20|
-|Male |NCD  |Po-Nerve (mN)_mean.n      |  5367.14|       4820.62|   546.518|             10.18|
-|Male |HFD  |Po-Nerve (mN)_mean.n      |  5678.20|       3847.33|  1830.867|             32.24|
-|Male |NCD  |Po-Nerve (N)_mean.n       |     5.37|          4.82|     0.547|             10.18|
-|Male |HFD  |Po-Nerve (N)_mean.n       |     5.68|          3.85|     1.831|             32.24|
-|Male |NCD  |Spo Muscle (N/cm2)_mean.n |    22.97|         23.60|    -0.627|             -2.73|
-|Male |HFD  |Spo Muscle (N/cm2)_mean.n |    22.63|         20.47|     2.161|              9.55|
-|Male |NCD  |Spo Nerve (N/cm2)_mean.n  |    24.69|         25.50|    -0.813|             -3.29|
-|Male |HFD  |Spo Nerve (N/cm2)_mean.n  |    24.97|         21.89|     3.082|             12.34|
-|Male |NCD  |Weight_mean.n             | 31500.00|      29212.50|  2287.500|              7.26|
-|Male |HFD  |Weight_mean.n             | 46540.00|      34266.67| 12273.333|             26.37|
+|Male |NCD  |CSA_mean.n                |    21.75|         18.91|     2.843|            13.069|
+|Male |HFD  |CSA_mean.n                |    22.81|         17.58|     5.223|            22.900|
+|Male |NCD  |Fat.Mass_mean.n           |  3154.29|       3611.25|  -456.964|           -14.487|
+|Male |HFD  |Fat.Mass_mean.n           | 15962.00|      11605.00|  4357.000|            27.296|
+|Male |NCD  |FBG_mean.n                |   140.29|        131.62|     8.661|             6.174|
+|Male |HFD  |FBG_mean.n                |   191.00|        274.17|   -83.167|           -43.543|
+|Male |NCD  |Gastroc_mean.n            |   174.84|        152.71|    22.130|            12.657|
+|Male |HFD  |Gastroc_mean.n            |   191.00|        139.00|    52.000|            27.225|
+|Male |NCD  |Gastroc.rel_mean.n        |     5.56|          5.28|     0.274|             4.939|
+|Male |HFD  |Gastroc.rel_mean.n        |     4.10|          4.09|     0.010|             0.244|
+|Male |NCD  |Lean.Mass_mean.n          | 26282.86|      23820.00|  2462.857|             9.371|
+|Male |HFD  |Lean.Mass_mean.n          | 27837.50|      23720.00|  4117.500|            14.791|
+|Male |NCD  |Pct.Fat.Mass_mean.n       |     9.85|         12.11|    -2.266|           -23.007|
+|Male |HFD  |Pct.Fat.Mass_mean.n       |    34.16|         33.27|     0.887|             2.598|
+|Male |NCD  |Po-Muscle (mN)_mean.n     |  4994.29|       4463.25|   531.036|            10.633|
+|Male |HFD  |Po-Muscle (mN)_mean.n     |  5141.00|       3588.33|  1552.667|            30.202|
+|Male |NCD  |Po-Muscle (N)_mean.n      |     4.99|          4.46|     0.531|            10.633|
+|Male |HFD  |Po-Muscle (N)_mean.n      |     5.14|          3.59|     1.553|            30.202|
+|Male |NCD  |Po-Nerve (mN)_mean.n      |  5367.14|       4820.62|   546.518|            10.183|
+|Male |HFD  |Po-Nerve (mN)_mean.n      |  5678.20|       3847.33|  1830.867|            32.244|
+|Male |NCD  |Po-Nerve (N)_mean.n       |     5.37|          4.82|     0.547|            10.183|
+|Male |HFD  |Po-Nerve (N)_mean.n       |     5.68|          3.85|     1.831|            32.244|
+|Male |NCD  |Spo Muscle (N/cm2)_mean.n |    22.97|         23.60|    -0.627|            -2.729|
+|Male |HFD  |Spo Muscle (N/cm2)_mean.n |    22.63|         20.47|     2.161|             9.546|
+|Male |NCD  |Spo Nerve (N/cm2)_mean.n  |    24.69|         25.50|    -0.813|            -3.292|
+|Male |HFD  |Spo Nerve (N/cm2)_mean.n  |    24.97|         21.89|     3.082|            12.342|
+|Male |NCD  |Weight_mean.n             | 31500.00|      29212.50|  2287.500|             7.262|
+|Male |HFD  |Weight_mean.n             | 46540.00|      34266.67| 12273.333|            26.372|
 
 
 ### Force versus CSA
@@ -322,21 +473,23 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.7.0   forcats_0.5.0 readxl_1.3.1  ggplot2_3.3.2 dplyr_1.0.2  
-## [6] tidyr_1.1.2   knitr_1.29   
+## [1] car_3.0-8     carData_3.0-4 broom_0.7.0   forcats_0.5.0 readxl_1.3.1 
+## [6] ggplot2_3.3.2 dplyr_1.0.2   tidyr_1.1.2   knitr_1.29   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5       pillar_1.4.6     compiler_4.0.2   cellranger_1.1.0
-##  [5] highr_0.8        tools_4.0.2      digest_0.6.25    lattice_0.20-41 
-##  [9] nlme_3.1-149     evaluate_0.14    lifecycle_0.2.0  tibble_3.0.3    
-## [13] gtable_0.3.0     mgcv_1.8-33      pkgconfig_2.0.3  rlang_0.4.7     
-## [17] Matrix_1.2-18    yaml_2.2.1       xfun_0.16        withr_2.2.0     
-## [21] stringr_1.4.0    generics_0.0.2   vctrs_0.3.4      grid_4.0.2      
-## [25] tidyselect_1.1.0 glue_1.4.2       R6_2.4.1         rmarkdown_2.3   
-## [29] purrr_0.3.4      farver_2.0.3     magrittr_1.5     splines_4.0.2   
-## [33] scales_1.1.1     backports_1.1.9  ellipsis_0.3.1   htmltools_0.5.0 
-## [37] colorspace_1.4-1 labeling_0.3     stringi_1.4.6    munsell_0.5.0   
-## [41] crayon_1.3.4
+##  [1] zip_2.0.4         Rcpp_1.0.5        pillar_1.4.6      compiler_4.0.2   
+##  [5] cellranger_1.1.0  highr_0.8         tools_4.0.2       digest_0.6.25    
+##  [9] lattice_0.20-41   nlme_3.1-149      evaluate_0.14     lifecycle_0.2.0  
+## [13] tibble_3.0.3      gtable_0.3.0      mgcv_1.8-33       pkgconfig_2.0.3  
+## [17] rlang_0.4.7       Matrix_1.2-18     openxlsx_4.1.5    curl_4.3         
+## [21] yaml_2.2.1        haven_2.3.1       xfun_0.16         rio_0.5.16       
+## [25] withr_2.2.0       stringr_1.4.0     hms_0.5.3         generics_0.0.2   
+## [29] vctrs_0.3.4       grid_4.0.2        tidyselect_1.1.0  data.table_1.13.0
+## [33] glue_1.4.2        R6_2.4.1          foreign_0.8-80    rmarkdown_2.3    
+## [37] purrr_0.3.4       farver_2.0.3      magrittr_1.5      splines_4.0.2    
+## [41] scales_1.1.1      backports_1.1.9   ellipsis_0.3.1    htmltools_0.5.0  
+## [45] abind_1.4-5       colorspace_1.4-1  labeling_0.3      stringi_1.4.6    
+## [49] munsell_0.5.0     crayon_1.3.4
 ```
 
 # References

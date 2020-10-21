@@ -1,0 +1,153 @@
+---
+title: "Analysis of muscle lysates from glucose clamps"
+author: "Laura Gunder"
+date: "August 22, 2018"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- 'Westerns from glucose clamps.xlsx' #make this a separate line, you can use any variable you want
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+if(filename %in% dir()){
+  exp.data <- read_excel(filename, sheet = "Sheet3")
+}
+
+exp.data <- 
+  exp.data %>% 
+  mutate(Treatment = relevel(as.factor(Treatment),ref='WATER'),
+                   Diet = relevel(as.factor(Diet),ref='NCD')) %>%
+  rename(pAkt = `pakt over akt`)
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis for Akt Phosphorylation
+
+## 2x2 ANOVA with Interaction
+
+```{r anova}
+anova.result <- aov(pAkt ~ Treatment * Diet, data=exp.data)
+library(broom)
+tidy(anova.result) %>% kable(caption="Two-Way ANOVA with Interaction")
+
+exp.data %>%
+  group_by(Diet) %>%
+  summarize(p.value = t.test(pAkt~Treatment, var.equal=T)$p.value) %>%
+  kable(caption="Student's t-tests, separated by diet")
+```
+
+Pairwise t-tests are for NCD 
+
+## Boxplots
+
+```{r pakt-boxplot}
+library(ggplot2)
+ggplot(data=exp.data,
+       aes(y=pAkt,
+           x=Treatment,
+           fill=Treatment)) +
+  geom_boxplot() +
+  geom_point(position=position_dodge(width=0.75),aes(group=Treatment)) +
+  expand_limits(y=0) +
+  labs(title="Quadriceps",
+       y="pAkt/Akt")  +
+  facet_grid(.~Diet)
+```
+
+
+## Barplots
+
+```{r pakt-barplot}
+
+exp.summary <-
+  exp.data %>%
+  group_by(Treatment, Diet) %>%
+  summarize(Mean = mean(pAkt),
+            Error = se(pAkt),
+            N = length(pAkt),
+            Shapiro = shapiro.test(pAkt)$p.value)
+
+kable(exp.summary, caption="Summary statistics")
+
+
+ggplot(data=exp.summary,
+       aes(y=Mean,
+           ymin=Mean-Error,
+           ymax=Mean+Error,
+           x=Treatment,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="Quadriceps",
+       y="pAkt/Akt") +
+  facet_grid(.~Diet)
+
+ggplot(data=exp.summary,
+       aes(y=Mean,
+           ymin=Mean-Error,
+           ymax=Mean+Error,
+           x=Treatment,
+           fill=Treatment)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Treatment), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="Quadriceps",
+       y="pAkt/Akt") +
+  facet_grid(.~Diet) +
+  expand_limits(y=0) +
+  labs(title="",
+       y="pAkt/Akt",
+       x="") +
+  scale_fill_grey() +
+  scale_x_discrete(labels=c("Water","Dexamethasone")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="none") 
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
