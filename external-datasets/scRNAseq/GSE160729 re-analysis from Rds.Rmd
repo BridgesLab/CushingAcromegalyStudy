@@ -1,0 +1,184 @@
+---
+title: "Re-analysis of GSE160729 adipocyte snRNAseq"
+author: "Dave Bridges"
+date: "May 27, 2021"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(tibble)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To reanalyse a single cell RNAseq study on adipocyte tissue.  
+
+# Experimental Details
+
+Savari et al used HFD-induced obesity and then did single nuclei isolation.
+
+# Raw Data
+
+Savari et al shared code and Rds friles for annotated adipocytes at https://osf.io/tsjqc/ and https://github.com/JesperGrud/snRNAseq_eWAT
+
+```{r data-input}
+input.rds.adipocytes <- 'GSE160729-eWAT_Annotated.Rds'
+
+# code modified from https://github.com/JesperGrud/snRNAseq_eWAT/blob/main/Scripts/Main_05_Adipocytes.md
+## Load libraries
+library(umap)
+library(Seurat) 
+
+
+## Import data and subset
+eWAT <- readRDS(input.rds.adipocytes)
+#Amb <- readRDS("Ambient.Rds") #cant find this file on osf
+Adipocytes <- subset(eWAT, subset = Annotation == "Adipocyte")
+```
+Loaded in the annotated Rds file from OSF, renamed as ``input.rds.adipocytes`
+
+Followed the Seurat clustering protocol https://satijalab.org/seurat/articles/pbmc3k_tutorial.html
+
+## Highly Variable Features in Adipocytes
+
+```{r GSE160729-variable-features}
+
+Adipocytes <- FindVariableFeatures(Adipocytes, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(Adipocytes), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(Adipocytes)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot2
+```
+
+
+# Scaling and Dimensional Reduction
+
+```{r GSE160729-scale-pca}
+all.genes <- rownames(Adipocytes)
+#Adipocytes <- ScaleData(Adipocytes, features = all.genes)
+#Adipocytes <- RunPCA(Adipocytes)
+
+#print(Adipocytes[["pca"]], dims = 1:5, nfeatures = 5)
+#VizDimLoadings(Adipocytes, dims = 1:2, reduction = "pca")
+DimPlot(Adipocytes, reduction = "pca")
+#DimHeatmap(Adipocytes, dims = 1, cells = 500, balanced = TRUE)
+DimHeatmap(Adipocytes, dims = 1:15, cells = 500, balanced = TRUE)
+
+Adipocytes <- JackStraw(Adipocytes, num.replicate = 100)
+Adipocytes <- ScoreJackStraw(Adipocytes, dims = 1:20)
+JackStrawPlot(Adipocytes, dims=1:15)
+ElbowPlot(Adipocytes)
+#based on this i think we should use the first 13 PCs
+clusters.used <- 3
+```
+
+## Cell Clustering
+
+```{r GSE160729-clustering}
+
+#Adipocytes <- FindNeighbors(Adipocytes, dims = 1:clusters.used)
+#Adipocytes <- FindClusters(Adipocytes, resolution = 0.3)
+#Adipocytes <- RunUMAP(Adipocytes, dims=1:clusters.used)
+DimPlot(Adipocytes, reduction='umap')
+DimPlot(Adipocytes, reduction="harmony")
+DimPlot(Adipocytes, reduction="umap", split.by = 'Diet')
+DimPlot(Adipocytes, reduction="umap", split.by = 'Subtype')
+```
+
+## Cluster Biomarkers
+
+```{r GSE160729-biomarkers}
+
+
+# Adipocytes.markers <- FindAllMarkers(Adipocytes, 
+#                                      only.pos=T,
+#                                      min.pct=0.9,
+#                                      logfc.threshold = 0.5)
+# 
+# Adipocytes.markers %>%
+#   group_by(cluster) %>%
+#   top_n(n=3, wt=avg_log2FC) %>%
+#   kable(caption="Top unique markers per cluster")
+gc.genes <- c("Adipoq","Pnpla2","Nr3c1","Hsd11b1","Angptl4","Tsc22d3","Sgk1","Lep","Acaca","Nnat")
+
+
+```
+
+# Differential Expresion
+
+```{r GSE160729-de-by-hfd}
+Idents(Adipocytes) <- Adipocytes$Diet
+Adipocyte.Diet.DE <- FindMarkers(Adipocytes, ident.1 = "LFD", ident.2 = "HFD", verbose = FALSE, min.pct=0.3)
+Adipocyte.Diet.DE %>%
+  arrange(-avg_log2FC) %>%
+  head
+
+library(rvest)
+tfs <- read_html("http://genome.gsc.riken.jp/TFdb/cdimage/htdocs/tf_list.html") %>%
+  html_table() 
+tfs <- as.data.frame(tfs[[1]])
+
+Adipocyte.Diet.DE %>%
+  rownames_to_column('Gene') %>%
+  filter(Gene %in% tfs$Symbol) %>% 
+  arrange(avg_log2FC) %>%
+  kable(caption="HFD-Differentially Expressed Transcription Factors in Adipocytes")
+
+upregulated.tf <- 
+  Adipocyte.Diet.DE %>%
+  rownames_to_column('Gene') %>%
+  filter(Gene %in% tfs$Symbol) %>% 
+  filter(avg_log2FC<0) %>%
+  arrange(-avg_log2FC) %>%
+  pull(Gene)
+  
+library(ggplot2)
+VlnPlot(Adipocytes, features=upregulated.tf, group.by="Diet", pt.size=0)
+FeaturePlot(Adipocytes, features=upregulated.tf[1:2], split.by="Diet", label.size = 2)
+```
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
