@@ -147,7 +147,12 @@ gc.genes <- c("Adipoq","Pnpla2","Nr3c1","Hsd11b1","Angptl4","Tsc22d3","Sgk1","Le
 
 ```{r GSE160729-de-by-hfd}
 Idents(Adipocytes) <- Adipocytes$Diet
-Adipocyte.Diet.DE <- FindMarkers(Adipocytes, ident.1 = "LFD", ident.2 = "HFD", verbose = FALSE, min.pct=0.3)
+Adipocyte.Diet.DE <- FindMarkers(Adipocytes, 
+                                 ident.1 = "LFD", 
+                                 ident.2 = "HFD", 
+                                 verbose = FALSE,
+                                 min.pct=0.05,
+                                 logfc.threshold = 0.1)
 Adipocyte.Diet.DE %>%
   arrange(-avg_log2FC) %>%
   head
@@ -160,8 +165,12 @@ tfs <- as.data.frame(tfs[[1]])
 Adipocyte.Diet.DE %>%
   rownames_to_column('Gene') %>%
   filter(Gene %in% tfs$Symbol) %>% 
-  arrange(avg_log2FC) %>%
-  kable(caption="HFD-Differentially Expressed Transcription Factors in Adipocytes")
+  mutate(FC = 2^-avg_log2FC) %>%
+  arrange(avg_log2FC) -> tf.de.data
+
+tf.de.data %>% kable(caption="HFD-Differentially Expressed Transcription Factors in Adipocytes")
+tf.de.file <- 'Differential Expression of Adipocyte TFs.csv'
+tf.de.data %>% write_csv(tf.de.file)
 
 upregulated.tf <- 
   Adipocyte.Diet.DE %>%
@@ -173,9 +182,44 @@ upregulated.tf <-
   
 library(ggplot2)
 VlnPlot(Adipocytes, features=upregulated.tf, group.by="Diet", pt.size=0)
+VlnPlot(Adipocytes, features=c('Zfp423','Esrrg','Sox5','Atf7ip','Klf13','Hivep2'), group.by="Diet", pt.size=0)
 FeaturePlot(Adipocytes, features=upregulated.tf[1:2], split.by="Diet", label.size = 2)
 ```
 
+# Known Pioneer Factors
+
+From experimentally proven pioneer factors in Supplementary Table 1 of Vanan *et al* (https://doi.org/10.1038/s41467-021-23630-x) 
+
+Among these papers support roles these genes
+* GR targets: Klf13, knockout can cause dex resistance in ALL, Zfp23 is increased by dex, downregulated by GRKO
+* *Esrrb* agonists synergize with dex, repression results in resistance to dex in ALL cells.
+
+
+
+```{r pioneer-factors}
+pioneer.factors <- c('Ctcf','Zbtb33','Klf4','Klf7','Rest','Zbtb14','Esr1','Esr2','Nr3c1','Gata1','Gata2','Gata3','Gata4','Gata5','Gata6','Nanog','Otx2','Pou5f1','Pax7','Sox2','Sox9','Sox17','Ets1','Ets2','Foxa1','Foxd3','Creb1','E2f1','Nfia','Nfib','Nfic','Mycn','Mycs','Nmyc2','Nfe2l1') #converted from TF names to gene names via MGI, expanded out if there were redundancies (ER, GATA, ETS,NFY,NMYC)
+
+Adipocyte.Diet.DE %>%
+  rownames_to_column('Gene') %>%
+  filter(Gene %in% pioneer.factors) %>% 
+  arrange(avg_log2FC) %>%
+  kable(caption="HFD-Differentially Expressed Pioneer Factors in Adipocytes")
+
+upregulated.pf <- 
+  Adipocyte.Diet.DE %>%
+  rownames_to_column('Gene') %>%
+  filter(Gene %in% pioneer.factors) %>% 
+  arrange(-avg_log2FC) %>%
+  pull(Gene)
+  
+library(ggplot2)
+VlnPlot(Adipocytes, features=upregulated.pf, group.by="Diet", pt.size=0)
+VlnPlot(Adipocytes, features=pioneer.factors[1:6], group.by="Diet", pt.size=0)
+VlnPlot(Adipocytes, features=pioneer.factors[7:12], group.by="Diet", pt.size=0)
+VlnPlot(Adipocytes, features=pioneer.factors[13:28], group.by="Diet", pt.size=0)
+VlnPlot(Adipocytes, features=pioneer.factors[29:35], group.by="Diet", pt.size=0)
+FeaturePlot(Adipocytes, features=upregulated.pf[1:2], split.by="Diet", label.size = 2)
+```
 
 # Session Information
 
