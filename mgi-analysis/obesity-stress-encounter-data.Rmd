@@ -48,10 +48,9 @@ bmi.data.median <-
   summarize(BMI = median(BMI,na.rm=T),
             BMI.n = length(BMI)) 
 
-
 bmi.data.complete <-
   bmi.data.median %>%
-  filter(!(is.na(BMI))) %>% # remove rows where there is no BMI data
+  filter(!(is.na(BMI)))  # remove rows where there is no BMI data
 
 bmi.data.cutoff <-
   bmi.data.complete %>%
