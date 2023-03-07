@@ -3,8 +3,9 @@
 * Include stress as a linear covariate
 * Analyse stress effect in different quantiles
 * ~Remove implausible variables (BMI)~
-* Re-arrange BMI in demographic table
-* Make prevalence percent in demographic table
+* ~Filter out BMI with NA~
+* ~Re-arrange BMI in demographic table~
+* ~Make prevalence percent in demographic table~
 * Include stress levels and BMI averages at each stress/BMI group 
 * Test for interactions between gender
 * Test for interaction between Black/other groups
@@ -22,3 +23,10 @@
 
 * Is there data on education or income
 
+
+Underweight
+Normal
+Overweight
+Class I Obese	
+Class II Obese	
+Class III Obese	

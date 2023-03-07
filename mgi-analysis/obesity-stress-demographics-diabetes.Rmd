@@ -29,7 +29,7 @@ input.file <- 'data-combined.csv'
 combined.data <- read_csv(input.file) %>% #set reference values for each group
   mutate(Race.Ethnicity = relevel(as.factor(Race.Ethnicity),ref="White")) %>%
   mutate(Gender = relevel(as.factor(Gender),ref="F")) %>%
-  mutate(BMI_cat = relevel(as.factor(BMI_cat),ref="Normal"))%>%
+  mutate(BMI_cat = factor(as.factor(BMI_cat),levels=c("Underweight","Normal","Overweight","Class I Obese","Class II Obese","Class III Obese")))%>%
   filter(!(is.na(HypertensionAny))) %>%
   filter(!(is.na(Stress))) %>%
   filter(Stress!="NA")
@@ -53,7 +53,7 @@ combined.data %>%
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
          "No"="Diabetes0")%>%
-  mutate(Prevalence=Yes/(Yes+No)) -> diabetes.race
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.race
 
 diabetes.race %>%
   ggplot(aes(y=Prevalence,x=Race.Ethnicity)) +
@@ -103,7 +103,7 @@ combined.data %>%
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
          "No"="Diabetes0") %>%
-  mutate(Prevalence=Yes/(Yes+No)) -> 
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
   diabetes.gender
 
 diabetes.gender %>%
@@ -154,7 +154,7 @@ combined.data %>%
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
          "No"="Diabetes0")%>%
-  mutate(Prevalence=Yes/(Yes+No)) -> diabetes.age
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.age
 
 
 diabetes.age %>%
@@ -208,7 +208,7 @@ combined.data %>%
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
          "No"="Diabetes0") %>%
-  mutate(Prevalence=Yes/(Yes+No)) -> diabetes.bmi
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.bmi
 
 diabetes.bmi %>%
   ggplot(aes(y=Prevalence,x=BMI_cat)) +
