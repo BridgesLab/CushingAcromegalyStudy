@@ -1,8 +1,12 @@
 ---
 title: "Association of Obesity and Stress with Diabetes with Complications"
 author: "Dave Bridges"
-format: html
-editor: visual
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 ---
 
 ## Purpose

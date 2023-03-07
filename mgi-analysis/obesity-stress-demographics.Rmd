@@ -1,8 +1,12 @@
 ---
 title: "Summary of Demographic Factors for Stress and Obesity Relationships"
 author: "Dave Bridges"
-format: html
-editor: visual
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 ---
 
 ## Purpose

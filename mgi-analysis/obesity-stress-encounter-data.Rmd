@@ -1,8 +1,12 @@
 ---
 title: "Summarizing the Encounter Level Data to Define BMI"
 author: "Dave Bridges"
-format: html
-editor: visual
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 ---
 
 ## Purpose

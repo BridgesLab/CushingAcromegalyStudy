@@ -1,8 +1,12 @@
 ---
 title: "Association of Obesity and Stress with Diabetes"
 author: "Dave Bridges"
-format: html
-editor: visual
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 ---
 
 ## Purpose
@@ -152,7 +156,6 @@ ggplot(diabetes.bmi.stress.counts,
         legend.position = c(0.1,0.85))
 ```
 
-
 ```{r diabetes-BMI-stress-sex}
 #calculating diabetes rates by bmi category and stress
 with(combined.data, table(DiabetesAny,BMI_cat,Stress,Gender)) %>% 
@@ -183,8 +186,6 @@ ggplot(diabetes.bmi.stress.counts,
         axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
         legend.position = c(0.1,0.85))
 ```
-
-
 
 ### Logistic Regressions for All Obese Categories
 

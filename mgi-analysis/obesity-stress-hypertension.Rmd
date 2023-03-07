@@ -1,7 +1,12 @@
 ---
 title: "Association of Obesity and Stress with Hypertension"
 author: "Dave Bridges"
-format: html
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 editor: visual
 ---
 
