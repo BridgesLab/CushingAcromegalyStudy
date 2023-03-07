@@ -44,18 +44,27 @@ bmi.cutoff <- 300
 
 bmi.data.median <- 
   bmi.data %>%
-  filter(!(is.na(BMI))) %>% # remove rows where there is no BMI data
   group_by(DeID_PatientID) %>%
   summarize(BMI = median(BMI,na.rm=T),
-            BMI.n = length(BMI)) %>%
+            BMI.n = length(BMI)) 
+
+
+bmi.data.complete <-
+  bmi.data.median %>%
+  filter(!(is.na(BMI))) %>% # remove rows where there is no BMI data
+
+bmi.data.cutoff <-
+  bmi.data.complete %>%
   filter(BMI<bmi.cutoff) #remove BMI under cutoff
 ```
+
+Based on this procedure we had `r nrow(bmi.data.median)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.median)-nrow(bmi.data.complete)` participants).  We then removed anyone who's median BMI was >`r bmi.cutoff`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
 
 ## Analysis of BMI
 
 ```{r bmi-analysis}
 library(ggplot2)
-bmi.data.median %>%
+bmi.data.cutoff %>%
   ggplot(aes(x=BMI)) +
   geom_density() +
   theme_classic() +
@@ -64,7 +73,7 @@ bmi.data.median %>%
         axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
         legend.position = c(0.1,0.85))
 
-bmi.data.median %>%
+bmi.data.cutoff %>%
   ggplot(aes(x=BMI)) +
   geom_histogram() +
   theme_classic() +
@@ -73,7 +82,7 @@ bmi.data.median %>%
         axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
         legend.position = c(0.1,0.85))
 
-bmi.data.median %>%
+bmi.data.cutoff %>%
   summarize(mean=mean(BMI,na.rm=T),
              min=min(BMI, na.rm=T),
              max=max(BMI,na.rm=T),
@@ -84,16 +93,16 @@ bmi.data.median %>%
 
 # Validation and Checking for Outliers
 
-We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highestand lowest BMI were
+We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highest and lowest BMI were
 
 ```{r BMI-outliers}
-bmi.data.median %>%
+bmi.data.cutoff %>%
   arrange(desc(BMI)) %>%
   select(BMI,BMI.n) %>%
   head(10) %>%
   kable(caption="Top 50 median BMI values and number of encounters")
 
-bmi.data.median %>%
+bmi.data.cutoff %>%
   arrange(BMI) %>%
   select(BMI,BMI.n) %>%
   head(10) %>%
@@ -104,7 +113,7 @@ bmi.data.median %>%
 
 ```{r output}
 output.file <- 'MedianEncounterAnthropometricsBMI.csv'
-write_csv(bmi.data.median, file=output.file)
+write_csv(bmi.data.cutoff, file=output.file)
 ```
 
 These data were written out to `r output.file`. This is the input file for the other scripts.
