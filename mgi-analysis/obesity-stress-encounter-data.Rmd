@@ -41,6 +41,7 @@ We will use the median BMI measure if there are multiple in the encounters file.
 
 ```{r bmi-measurements}
 bmi.cutoff <- 300
+bmi.lower <- 12
 
 bmi.data.median <- 
   bmi.data %>%
@@ -54,10 +55,11 @@ bmi.data.complete <-
 
 bmi.data.cutoff <-
   bmi.data.complete %>%
-  filter(BMI<bmi.cutoff) #remove BMI under cutoff
+  filter(BMI<bmi.cutoff) %>% #remove BMI under cutoff
+  filter(BMI>bmi.lower) #remove BMI above cutoff
 ```
 
-Based on this procedure we had `r nrow(bmi.data.median)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.median)-nrow(bmi.data.complete)` participants).  We then removed anyone who's median BMI was >`r bmi.cutoff`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
+Based on this procedure we had `r nrow(bmi.data.median)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.median)-nrow(bmi.data.complete)` participants).  We then removed anyone who's median BMI was >`r bmi.cutoff` or <`r bmi.lower`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
 
 ## Analysis of BMI
 
