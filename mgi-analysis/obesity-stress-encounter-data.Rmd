@@ -1,0 +1,106 @@
+---
+title: "Summarizing the Encounter Level Data to Define BMI"
+author: "Dave Bridges"
+format: html
+editor: visual
+---
+
+## Purpose
+
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+```{r input-data}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+encounters.datafile <- 'EncounterAnthropometricsBMI.csv'
+```
+
+The input data file is in `r encounters.datafile`. This includes the BMI for each patient, potentially at multiple time points. This script takes this file and pulls out just the first BMI measure
+
+```{r data-entry}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+#get encounter data
+bmi.data <- read_csv(encounters.datafile) 
+```
+
+# Defining BMI Data
+
+We will use the median BMI measure if there are multiple in the encounters file.
+
+```{r bmi-measurements}
+bmi.cutoff <- 1000
+
+bmi.data.median <- 
+  bmi.data %>%
+  filter(!(is.na(BMI))) %>% # remove rows where there is no BMI data
+  group_by(DeID_PatientID) %>%
+  summarize(BMI = median(BMI,na.rm=T),
+            BMI.n = length(BMI)) %>%
+  filter(BMI<bmi.cutoff) #remove BMI under cutoff
+```
+
+## Analysis of BMI
+
+```{r bmi-analysis}
+library(ggplot2)
+bmi.data.median %>%
+  ggplot(aes(x=BMI)) +
+  geom_density() +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+bmi.data.median %>%
+  ggplot(aes(x=BMI)) +
+  geom_histogram() +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+bmi.data.median %>%
+  summarize(mean=mean(BMI,na.rm=T),
+             min=min(BMI, na.rm=T),
+             max=max(BMI,na.rm=T),
+             sd=sd(BMI,na.rm=T),
+             n=length(BMI)) %>%
+  kable(caption="Summary statistics for the BMI measurements used in this study")
+```
+
+# Validation and Checking for Outliers
+
+We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highest BMI were
+
+```{r BMI-outliers}
+bmi.data.median %>%
+  arrange(desc(BMI)) %>%
+  select(BMI,BMI.n) %>%
+  head(50) %>%
+  kable(caption="Top 50 median BMI values and number of encounters")
+```
+
+# Output
+
+```{r output}
+output.file <- 'MedianEncounterAnthropometricsBMI.csv'
+write_csv(bmi.data.median, file=output.file)
+```
+
+These data were written out to `r output.file`. This is the input file for the other scripts.
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```

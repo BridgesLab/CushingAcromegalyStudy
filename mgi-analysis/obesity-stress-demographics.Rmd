@@ -1,0 +1,152 @@
+---
+title: "Summary of Demographic Factors for Stress and Obesity Relationships"
+author: "Dave Bridges"
+format: html
+editor: visual
+---
+
+## Purpose
+
+To define covariates for stress-obesity relationships.
+
+```{r data-entry}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+
+input.file <- 'data-combined.csv'
+combined.data <- read_csv(input.file)%>%
+  filter(!(is.na(HypertensionAny))) %>%
+  filter(!(is.na(Stress))) %>%
+  filter(Stress!="NA") %>%
+  mutate(BMI_cat= factor(BMI_cat, 
+                         levels=c("Underweight",
+                                  "Normal",
+                                  "Overweight",
+                                  'Class I Obese',
+                                  'Class II Obese',
+                                  'Class III Obese'))) %>%
+  mutate(BMI_cat.obese= factor(BMI_cat.obese, 
+                               levels=c("Underweight",
+                                        "Normal",
+                                        "Overweight",
+                                        'Obese'))) %>%
+  mutate(BMI_cat.Ob.NonOb= factor(BMI_cat.Ob.NonOb, 
+                                  levels=c("Non-Obese",
+                                           'Obese'))) %>%
+  mutate(Stress=relevel(as.factor(High.Stress),ref="Low"))
+```
+
+Loaded in the cleaned data from `r input.file`. This script can be found in `r getwd()` and was most recently run on `r date()`. This dataset has `r dim(combined.data)[1]` values.
+
+# Summary of Demographic Covariates
+
+Stratified data by stress and obesity status and summarized data
+
+# Total Participants
+
+## By Race and Ethnicity
+
+```{r counts-race-ethnicity}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Race.Ethnicity) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  knitr::kable(caption="Number of participants by all race/ethnicity")
+```
+
+### Race and Ethnicity Groupings
+
+Here is all the races currently marked as other
+
+```{r counts-race-ethnicity-groupings}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  filter(Race.Ethnicity =="Other") %>%
+  group_by(Race.Ethnicity.Code) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  knitr::kable(caption="Number of participants by race/ethnicity, grouped into the other category")
+```
+
+## By Gender
+
+```{r counts-gender}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  knitr::kable(caption="Number of participants by all gender")
+```
+
+## By Age
+
+The average age of our participants is `r mean(combined.data$age, na.rm=T)` with a standard deviation of `r sd(combined.data$age, na.rm=T)`.
+
+```{r counts-age}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Age.group) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  knitr::kable(caption="Number of participants by age group")
+```
+
+## By Body Mass Index
+
+The average BMI of our participants is `r mean(combined.data$BMI, na.rm=T)` with a standard deviation of `r sd(combined.data$BMI, na.rm=T)`.
+
+```{r counts-bmi}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(BMI_cat) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  knitr::kable(caption="Number of participants by BMI group")
+```
+
+# Stratifying by Stress and BMI
+
+Grouped by stress and BMI and tested for differences in demographic factors.
+
+```{r covariate-summary}
+combined.data %>%
+  group_by(Stress,BMI_cat.Ob.NonOb) %>%
+  count %>%
+  knitr::kable(caption="Number of participants by group")
+
+combined.data %>%
+  group_by(Stress,BMI_cat.Ob.NonOb,Gender) %>%
+  count %>%
+    filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  knitr::kable(caption="Number of participants by group and gender")
+
+combined.data %>%
+  group_by(Stress,BMI_cat.Ob.NonOb) %>%
+    filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
+                                    sd=~sd(.x,na.rm=T),
+                                    n=~length(.x)))%>%
+  knitr::kable(caption="Average BMI and age of participants by group")
+```
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```
