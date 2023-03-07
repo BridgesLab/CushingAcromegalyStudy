@@ -1,0 +1,208 @@
+---
+title: "Data Entry and Cleaning for Obesity and Stress with Diabetes"
+author: "Dave Bridges"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+# Purpose
+
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 10:55:47 2023.
+
+# Data Descriptions
+
+These data were obtained from Precision Health DataDirect, starting with 91,602 MGI Study Participants, pulled from DataDirect on 2023-01-20.
+
+
+```r
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+mgi.survey.datafile <- 'MGIPatientReportedSurveys.csv'
+demographic.datafile <- 'DemographicInfo.csv'
+comorbidity.datafile <- 'ComorbiditiesElixhauserComprehensive.csv'
+encounters.datafile <- 'MedianEncounterAnthropometricsBMI.csv'
+geolocation.datafile <- ''
+```
+
+The input data files are:
+
+-   **Survey data** is found in MGIPatientReportedSurveys.csv. This contains the data on the stress survey from the MGIPatientReportedSurveys. This is the surveys leverage PROMIS measures and includes domains of patient-reported outcomes, including pain severity, physical function, depression, anxiety, as well as life stress scales. The responses received from MGI participants.
+-   **Demographics** are found in DemographicInfo.csv. This is from the DemographicInfo table. This is full Patient View (Minus PHI). Deceased: If a patient is listed as deceased in MiChart, the date of death is provided in the DeceasedDate field. If there is a match to a patient in the Michigan Death Index (MDI), the deceased date from MDI is provided in the DeathIndexDeceasedDate field. See matching criteria in the description of the MDI view. In MDI view RDW_Deceased = 1 if there there is a deceased date in either the RDWDeceasedDate OR MDIDeceasedDate field.\
+-   **Comorbidites** are found in ComorbiditiesElixhauserComprehensive.csv. This includes diagnosis data for each patient. This is from the ComorbiditiesElixhauserComprehensive data, but we also have CharlsonComprehensive data. Relevant outcomes are: CardiacArrhythmias, ChronicPulmonaryDisease, Depression, DiabetesComplicated, DiabetesUncomplicated, HypertensionComplicated, HypertensionUncomplicated, LiverDisease, Obesity, TotalScore
+-   **Patient encounter data** is in MedianEncounterAnthropometricsBMI.csv. This includes the BMI for each patient, previously sorted to get their median BMI value. This is from the EncounterAntropometricsBMI data. This is encounter Level view that contains Height, Weight, and BMI values. If Height and Weight data exists on the specific encouter, that data is used. If not, data from the same MONTH and YEAR as the encounter is used. The MEDIAN height and weight for the encounter or month is used. A separate script (**obesity-stress-encounter-data.Rmd**) calculated the median BMI for each patient, which is run before this. Therefore this is the unique median BMI for each patient.
+-   **Socioeconomic Status** is found in `geolocation.datafile`. For SES we used GIS neighborhood affluence scores. This is census tract affluence and disadvantage metrics for respective patient addresses. These are quartile values for affluence (Mean of proportion of families with an income greater than 75k, ped3 proportion with a bachelor's degree or higher, proportion with a professional occupation from the ACS 2013-2017), disadvantage (Mean of proportion of female headed families with kids, proportion of families with public assistance income, proportion of people with income in the past 12 months below the poverty level, proportion of the 16+ civilian labor force unemployed all ACS 2013-2017), and education (Proportion with less than high school diploma, from the ACS 2013-2017)
+
+
+```r
+library(readr)
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+mgi.patient.data <- read_csv(mgi.survey.datafile) %>%
+  select(DeID_PatientID, Gender,age, 'Stress_d1') 
+
+mgi.patient.data %>%
+  summarize(All=length(Gender),
+            Gender=length(!(is.na(Gender))),
+            age=length(!(is.na(age))),
+            Stress=length(!(is.na(Stress_d1))),
+            Complete = length(!(is.na(Stress_d1))&
+                            !(is.na(age))&
+                            !(is.na(Gender)))) %>%
+  kable(caption="Number of participants with MGI survey values in the patient dataset")
+```
+
+
+
+Table: Number of participants with MGI survey values in the patient dataset
+
+|   All| Gender|   age| Stress| Complete|
+|-----:|------:|-----:|------:|--------:|
+| 62040|  62040| 62040|  62040|    62040|
+
+```r
+# For the rest of the datasets, only patients in the mgi dataset
+
+#get demographics
+demo.data <- read_csv(demographic.datafile) %>%
+  filter(DeID_PatientID %in% mgi.patient.data$DeID_PatientID)
+
+#get comorbidity data
+cm.data <- read_csv(comorbidity.datafile,na=c('99')) %>%
+  filter(DeID_PatientID %in% mgi.patient.data$DeID_PatientID)
+
+#get encounter data
+bmi.data <- read_csv(encounters.datafile) %>%
+  filter(DeID_PatientID %in% mgi.patient.data$DeID_PatientID) 
+
+#get geolocation data
+# geo.data <- read_csv(geolocation.datafile) %>%
+#   filter(DeID_PatientID %in% mgi.patient.data$DeID_PatientID) 
+```
+
+# CONSORT Diagrams
+
+There were 62040 patients with stress values in this dataset.
+
+# Defining BMI Data
+
+We will use the mean BMI measure if there are multiple in the encounters file.
+
+# Merging Data
+
+
+```r
+combined.data <- 
+  mgi.patient.data %>%
+  left_join(cm.data) %>%
+  left_join(bmi.data) %>%
+  #left_join(geo.data) %>%
+  distinct(DeID_PatientID, .keep_all=T) %>%
+  mutate(DiabetesAny=case_when(DiabetesUncomplicated==1|DiabetesComplicated==1~1,
+                               TRUE~0)) %>%
+  mutate(HypertensionAny=case_when(HypertensionUncomplicated==1|HypertensionComplicated==1~1,
+                               TRUE~0)) %>%
+  mutate(BMI_cat = case_when(BMI<18.1~"Underweight",
+                             BMI>=18.5&BMI<25~"Normal",
+                             BMI>=25&BMI<30~"Overweight",
+                             BMI>=30&BMI<35~"Class I Obese",
+                             BMI>=35&BMI<40~"Class II Obese",
+                             BMI>40~"Class III Obese")) %>%
+  mutate(BMI_cat= factor(BMI_cat, levels=c("Underweight","Normal","Overweight",
+                                           'Class I Obese','Class II Obese','Class III Obese'))) %>%
+  mutate(BMI_cat.obese = case_when(BMI<18.1~"Underweight",
+                             BMI>=18.5&BMI<25~"Normal",
+                             BMI>=25&BMI<30~"Overweight",
+                             BMI>=30~"Obese")) %>%
+  mutate(BMI_cat.obese= factor(BMI_cat.obese, levels=c("Underweight","Normal","Overweight",'Obese'))) %>%
+  mutate(BMI_cat.Ob.NonOb = case_when(BMI<30~"Non-Obese",
+                               BMI>=30~"Obese")) %>%
+  mutate(BMI_cat.Ob.NonOb= factor(BMI_cat.Ob.NonOb, levels=c("Non-Obese",'Obese'))) %>%
+  mutate(High.Stress = case_when(Stress_d1>median(Stress_d1,na.rm=T)~'High',
+                                 Stress_d1<=median(Stress_d1,na.rm=T)~'Low')) %>%
+  mutate(Stress=relevel(as.factor(High.Stress),ref="Low")) %>%
+  mutate(Stress.quartile = cut(Stress_d1,4)) %>%
+  mutate(Age.group = cut(age,
+                          breaks=c(18,30,40,50,60,70,80,90))) %>%
+  left_join(demo.data) %>%
+  mutate(Race.Ethnicity.Code = paste(RaceCode,EthnicityCode,sep="-")) %>%
+  mutate(Race.Ethnicity = case_when(Race.Ethnicity.Code %in% c('C-NonHL','C-U')~"White",
+                                    Race.Ethnicity.Code=='AA-NonHL'~"Black",
+                                    Race.Ethnicity.Code=='A-NonHL'~"Asian",
+                                    Race.Ethnicity.Code %in% c('C-HL','O-HL')~"Hispanic/Latino",
+                                    TRUE~'Other'))
+
+output.file <- 'data-combined.csv'
+write_csv(combined.data, file=output.file)
+
+combined.data %>%
+  summarize(All=length(Gender),
+            Race.Ethnicity=length(!(is.na(Race.Ethnicity))),
+            BMI=length(!(is.na(BMI))),
+            SES=length(!(is.na(BMI))),
+            DiabetesAny=length(!(is.na(DiabetesAny)))) %>%
+  kable(caption="Number of participants with key outcomes")
+```
+
+
+
+Table: Number of participants with key outcomes
+
+|   All| Race.Ethnicity|   BMI| SES| DiabetesAny|
+|-----:|--------------:|-----:|---:|-----------:|
+| 62016|          62016| 62016|   1|       62016|
+
+These data were written out to data-combined.csv. This is the input file for the other scripts.
+
+# Session Information
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 4.2.0 (2022-04-22)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## 
+## Matrix products: default
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## 
+## locale:
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] tidyr_1.2.1  dplyr_1.0.10 readr_2.1.3  knitr_1.41  
+## 
+## loaded via a namespace (and not attached):
+##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
+##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
+##  [9] jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3  tibble_3.1.8    
+## [13] pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1        DBI_1.1.3       
+## [17] parallel_4.2.0   yaml_2.3.6       xfun_0.35        fastmap_1.1.0   
+## [21] withr_2.5.0      stringr_1.5.0    generics_0.1.3   vctrs_0.5.1     
+## [25] sass_0.4.4       hms_1.1.2        bit64_4.0.5      tidyselect_1.2.0
+## [29] glue_1.6.2       R6_2.5.1         fansi_1.0.3      vroom_1.6.0     
+## [33] rmarkdown_2.18   tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3  
+## [37] ellipsis_0.3.2   htmltools_0.5.4  assertthat_0.2.1 utf8_1.2.2      
+## [41] stringi_1.7.8    cachem_1.0.6     crayon_1.5.2
+```
