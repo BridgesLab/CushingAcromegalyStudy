@@ -491,6 +491,45 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
 
+### Testing for the Interaction Between Gender and Obesity-BMI
+
+Used the final fully adjusted model to test if gender modifies the relationships between BMI and obesity on diabetes rates.  
+
+First did this by adding in a complete interaction model and comparing to the complete model.
+
+```{r gender-interaction}
+gender.int.model.null <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) 
+
+gender.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+Gender:BMI_cat.Ob.NonOb+Gender:Stress+Gender:Stress:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data) 
+
+
+anova(gender.int.model,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+
+anova(gender.int.model.null,gender.int.model) %>% tidy %>%
+  kable(caption="Chi squared test of model with and without a gender interaction term")
+```
+
+Then did this asking for gender moderation of the sex effect only in each obese category using a stratification approach
+
+```{r gender-stratification}
+glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of gender on stress in people with obesity", digits =c(0,0,0,0,0,99))
+
+glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of gender on stress in people without obesity", digits =c(0,0,0,0,0,99))
+```
+
 ## Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate
 
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a linear covariate
@@ -575,19 +614,19 @@ combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
     filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
+  summarize_at(c('BMI','age','Stress_d1'), list(mean=~mean(.x,na.rm=T),
                                     sd=~sd(.x,na.rm=T),
                                     n=~length(.x)))%>%
-  knitr::kable(caption="Average BMI and age of participants by group")
+  knitr::kable(caption="Average BMI, stress and age of participants by group")
 
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
-  summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
+  summarize_at(c('BMI','age','Stress_d1'), list(mean=~mean(.x,na.rm=T),
                                     sd=~sd(.x,na.rm=T),
                                     n=~length(.x)))%>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  knitr::kable(caption="Average BMI and age of participants by group,complete cases")
+  knitr::kable(caption="Average BMI,stress and age of participants by group,complete cases")
 ```
 
 
