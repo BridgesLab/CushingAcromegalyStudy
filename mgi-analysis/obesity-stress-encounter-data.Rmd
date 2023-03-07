@@ -40,7 +40,7 @@ bmi.data <- read_csv(encounters.datafile)
 We will use the median BMI measure if there are multiple in the encounters file.
 
 ```{r bmi-measurements}
-bmi.cutoff <- 1000
+bmi.cutoff <- 300
 
 bmi.data.median <- 
   bmi.data %>%
@@ -84,13 +84,19 @@ bmi.data.median %>%
 
 # Validation and Checking for Outliers
 
-We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highest BMI were
+We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highestand lowest BMI were
 
 ```{r BMI-outliers}
 bmi.data.median %>%
   arrange(desc(BMI)) %>%
   select(BMI,BMI.n) %>%
-  head(50) %>%
+  head(10) %>%
+  kable(caption="Top 50 median BMI values and number of encounters")
+
+bmi.data.median %>%
+  arrange(BMI) %>%
+  select(BMI,BMI.n) %>%
+  head(10) %>%
   kable(caption="Top 50 median BMI values and number of encounters")
 ```
 
