@@ -1,15 +1,11 @@
 # New Analyses
 
-* ~Include stress as a linear covariate~
 * Analyse stress effect in different quantiles
-* ~Remove implausible variables (BMI)~
-* Filter out BMI with NA
-* ~Re-arrange BMI in demographic table~
-* ~Make prevalence percent in demographic table~
-* ~Include stress levels and BMI averages at each stress/BMI group~
-* ~Test for interactions between gender~
-* ~Test for interaction between Black/other groups~
+* ~Filter out BMI with NA~
+* Do stats for stress levels and BMI averages at each stress/BMI group
+* Decide if i should include a gender:BMI term to all models
 * Stratify by stress and run demographics
+* Doublecheck values in CONSORT diagrams
 
 
 # New Data Pulls
@@ -23,11 +19,3 @@
 # Asking For Help
 
 * Is there data on education or income
-
-
-Underweight
-Normal
-Overweight
-Class I Obese	
-Class II Obese	
-Class III Obese	

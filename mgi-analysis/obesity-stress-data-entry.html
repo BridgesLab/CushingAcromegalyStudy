@@ -432,7 +432,7 @@ pre code {
 
 <div id="purpose" class="section level1">
 <h1><span class="header-section-number">1</span> Purpose</h1>
-<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar 7 10:55:47 2023.</p>
+<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar 7 15:27:14 2023.</p>
 </div>
 <div id="data-descriptions" class="section level1">
 <h1><span class="header-section-number">2</span> Data Descriptions</h1>
@@ -526,7 +526,7 @@ pre code {
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span>mgi.patient.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">left_join</span>(cm.data) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">left_join</span>(bmi.data) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">right_join</span>(bmi.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want participants with BMI values</span></a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="co">#left_join(geo.data) %&gt;%</span></a>
 <a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DiabetesAny=</span><span class="kw">case_when</span>(DiabetesUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>DiabetesComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
@@ -586,11 +586,11 @@ pre code {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">62016</td>
-<td align="right">62016</td>
-<td align="right">62016</td>
+<td align="right">62010</td>
+<td align="right">62010</td>
+<td align="right">62010</td>
 <td align="right">1</td>
-<td align="right">62016</td>
+<td align="right">62010</td>
 </tr>
 </tbody>
 </table>

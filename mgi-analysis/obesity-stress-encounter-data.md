@@ -11,7 +11,7 @@ output:
 
 ## Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 10:53:47 2023.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:24:22 2023.
 
 
 ```r
@@ -44,6 +44,7 @@ We will use the median BMI measure if there are multiple in the encounters file.
 
 ```r
 bmi.cutoff <- 300
+bmi.lower <- 12
 
 bmi.data.median <- 
   bmi.data %>%
@@ -51,17 +52,17 @@ bmi.data.median <-
   summarize(BMI = median(BMI,na.rm=T),
             BMI.n = length(BMI)) 
 
-
 bmi.data.complete <-
   bmi.data.median %>%
-  filter(!(is.na(BMI))) # remove rows where there is no BMI data
+  filter(!(is.na(BMI)))  # remove rows where there is no BMI data
 
 bmi.data.cutoff <-
   bmi.data.complete %>%
-  filter(BMI<bmi.cutoff) #remove BMI under cutoff
+  filter(BMI<bmi.cutoff) %>% #remove BMI under cutoff
+  filter(BMI>bmi.lower) #remove BMI above cutoff
 ```
 
-Based on this procedure we had 90047 participants in the initial dataset.  After removing individuals with no BMI measure we had 88956 (a loss of 1091 participants).  We then removed anyone who's median BMI was >300, a loss of 1 participants.  This resulted in a final dataset of 88955.
+Based on this procedure we had 90047 participants in the initial dataset.  After removing individuals with no BMI measure we had 88956 (a loss of 1091 participants).  We then removed anyone who's median BMI was >300 or <12, a loss of 3 participants.  This resulted in a final dataset of 88953.
 
 ## Analysis of BMI
 
@@ -109,7 +110,7 @@ Table: Summary statistics for the BMI measurements used in this study
 
 | mean|  min| max|  sd|     n|
 |----:|----:|---:|---:|-----:|
-| 29.9| 6.27| 100| 7.2| 88955|
+| 29.9| 12.3| 100| 7.2| 88953|
 
 # Validation and Checking for Outliers
 
@@ -153,18 +154,18 @@ bmi.data.cutoff %>%
 
 Table: Top 50 median BMI values and number of encounters
 
-|   BMI| BMI.n|
-|-----:|-----:|
-|  6.27|     1|
-| 11.86|     1|
-| 12.32|     1|
-| 12.46|     1|
-| 12.73|     1|
-| 12.97|     1|
-| 13.23|     1|
-| 13.59|     1|
-| 13.61|     1|
-| 13.73|     1|
+|  BMI| BMI.n|
+|----:|-----:|
+| 12.3|     1|
+| 12.5|     1|
+| 12.7|     1|
+| 13.0|     1|
+| 13.2|     1|
+| 13.6|     1|
+| 13.6|     1|
+| 13.7|     1|
+| 14.1|     1|
+| 14.1|     1|
 
 # Output
 

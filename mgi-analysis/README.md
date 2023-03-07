@@ -16,7 +16,7 @@ Ran slurm file to execute scripts in this order
 * **obesity-stress-demographics-diabetes.Rmd** to analyse demographics with respect to diabetes 
 * **obesity-stress-diabetes.Rmd** to analyse the relationships between stress, obesity and diabetes
 * **obesity-stress-diabetes-complicated.Rmd** to analyse the relationships between stress, obesity and complicated diabetes
-* ***obesity-stress-liver.Rmd** to analyse the relationships between stress, obesity and liver disease
+* **obesity-stress-liver.Rmd** to analyse the relationships between stress, obesity and liver disease
 * **obesity-stress-hypertension.Rmd** to analyse the relationships between stress, obesity and hypertension
 
 

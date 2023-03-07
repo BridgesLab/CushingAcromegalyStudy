@@ -69,7 +69,7 @@ combined.data <- read_csv(input.file)%>%
 ```
 
 ```
-## Rows: 62016 Columns: 32
+## Rows: 62010 Columns: 32
 ```
 
 ```
@@ -82,7 +82,7 @@ combined.data <- read_csv(input.file)%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 10:59:04 2023. This dataset has 39695 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:32:47 2023. This dataset has 39691 values.
 
 # Summary of Demographic Covariates
 
@@ -194,7 +194,7 @@ Table: Number of participants by all gender
 
 ## By Age
 
-The average age of our participants is 52.866 with a standard deviation of 16.527.
+The average age of our participants is 52.866 with a standard deviation of 16.526.
 
 
 ```r
@@ -271,10 +271,8 @@ Table: Number of participants by group
 |:------|:----------------|-----:|
 |Low    |Non-Obese        | 13662|
 |Low    |Obese            |  9229|
-|Low    |NA               |     1|
 |High   |Non-Obese        |  9301|
 |High   |Obese            |  7499|
-|High   |NA               |     3|
 
 ```r
 combined.data %>%
@@ -302,10 +300,10 @@ Table: Number of participants by group and gender
 
 ```r
 combined.data %>%
-  group_by(Stress,BMI_cat.Ob.NonOb) %>%
+  group_by(BMI_cat.Ob.NonOb,Stress) %>%
     filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
+  summarize_at(c('BMI','Stress_d1'), list(mean=~mean(.x,na.rm=T),
                                     sd=~sd(.x,na.rm=T),
                                     n=~length(.x)))%>%
   knitr::kable(caption="Average BMI and age of participants by group")
@@ -315,12 +313,12 @@ combined.data %>%
 
 Table: Average BMI and age of participants by group
 
-|Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| BMI_sd| age_sd| BMI_n| age_n|
-|:------|:----------------|--------:|--------:|------:|------:|-----:|-----:|
-|Low    |Non-Obese        |     25.3|     53.0|   2.98|   17.7| 13662| 13662|
-|Low    |Obese            |     36.0|     54.7|   5.72|   14.6|  9229|  9229|
-|High   |Non-Obese        |     25.1|     51.0|   3.13|   17.8|  9301|  9301|
-|High   |Obese            |     36.6|     52.6|   6.00|   14.6|  7499|  7499|
+|BMI_cat.Ob.NonOb |Stress | BMI_mean| Stress_d1_mean| BMI_sd| Stress_d1_sd| BMI_n| Stress_d1_n|
+|:----------------|:------|--------:|--------------:|------:|------------:|-----:|-----------:|
+|Non-Obese        |Low    |     25.3|           2.34|   2.98|         1.75| 13662|       13662|
+|Non-Obese        |High   |     25.1|           8.04|   3.13|         1.78|  9301|        9301|
+|Obese            |Low    |     36.0|           2.43|   5.72|         1.75|  9229|        9229|
+|Obese            |High   |     36.6|           8.16|   6.00|         1.85|  7499|        7499|
 
 # Session Information
 

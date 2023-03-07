@@ -53,14 +53,7 @@ combined.data <- read_csv(input.file, na="-99") %>%
 ```
 
 ```
-## Warning: One or more parsing issues, call `problems()` on your data frame for details,
-## e.g.:
-##   dat <- vroom(...)
-##   problems(dat)
-```
-
-```
-## Rows: 62016 Columns: 32
+## Rows: 62010 Columns: 32
 ```
 
 ```
@@ -73,7 +66,7 @@ combined.data <- read_csv(input.file, na="-99") %>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 10:59:31 2023. This dataset has 36829 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:33:23 2023. This dataset has 36826 values.
 
 
 ```r
@@ -973,10 +966,8 @@ Table: Number of participants by group
 |:------|:----------------|-----:|
 |Low    |Non-Obese        | 12701|
 |Low    |Obese            |  8576|
-|Low    |NA               |     1|
 |High   |Non-Obese        |  8582|
 |High   |Obese            |  6967|
-|High   |NA               |     2|
 
 ```r
 combined.data %>%

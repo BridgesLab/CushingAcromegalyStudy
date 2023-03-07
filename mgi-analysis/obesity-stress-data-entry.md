@@ -11,7 +11,7 @@ output:
 
 # Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 10:55:47 2023.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:27:14 2023.
 
 # Data Descriptions
 
@@ -104,7 +104,7 @@ We will use the mean BMI measure if there are multiple in the encounters file.
 combined.data <- 
   mgi.patient.data %>%
   left_join(cm.data) %>%
-  left_join(bmi.data) %>%
+  right_join(bmi.data) %>% #only want participants with BMI values
   #left_join(geo.data) %>%
   distinct(DeID_PatientID, .keep_all=T) %>%
   mutate(DiabetesAny=case_when(DiabetesUncomplicated==1|DiabetesComplicated==1~1,
@@ -159,7 +159,7 @@ Table: Number of participants with key outcomes
 
 |   All| Race.Ethnicity|   BMI| SES| DiabetesAny|
 |-----:|--------------:|-----:|---:|-----------:|
-| 62016|          62016| 62016|   1|       62016|
+| 62010|          62010| 62010|   1|       62010|
 
 These data were written out to data-combined.csv. This is the input file for the other scripts.
 

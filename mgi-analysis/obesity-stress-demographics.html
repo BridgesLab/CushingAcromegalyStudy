@@ -478,7 +478,7 @@ pre code {
 <a class="sourceLine" id="cb5-21" data-line-number="21">                                  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Non-Obese&quot;</span>,</a>
 <a class="sourceLine" id="cb5-22" data-line-number="22">                                           <span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress=</span><span class="kw">relevel</span>(<span class="kw">as.factor</span>(High.Stress),<span class="dt">ref=</span><span class="st">&quot;Low&quot;</span>))</a></code></pre></div>
-<pre><code>## Rows: 62016 Columns: 32</code></pre>
+<pre><code>## Rows: 62010 Columns: 32</code></pre>
 <pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (16): DeID_PatientID, Gender, DeID_EncounterID, BMI_cat, BMI_cat.obese, ...
@@ -486,7 +486,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar 7 10:59:04 2023. This dataset has 39695 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar 7 15:32:47 2023. This dataset has 39691 values.</p>
 </div>
 <div id="summary-of-demographic-covariates" class="section level1">
 <h1><span class="header-section-number">1</span> Summary of Demographic Covariates</h1>
@@ -717,7 +717,7 @@ pre code {
 </div>
 <div id="by-age" class="section level2">
 <h2><span class="header-section-number">2.3</span> By Age</h2>
-<p>The average age of our participants is 52.866 with a standard deviation of 16.527.</p>
+<p>The average age of our participants is 52.866 with a standard deviation of 16.526.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
@@ -848,24 +848,14 @@ pre code {
 <td align="right">9229</td>
 </tr>
 <tr class="odd">
-<td align="left">Low</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="right">9301</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">High</td>
 <td align="left">Obese</td>
 <td align="right">7499</td>
-</tr>
-<tr class="even">
-<td align="left">High</td>
-<td align="left">NA</td>
-<td align="right">3</td>
 </tr>
 </tbody>
 </table>
@@ -937,65 +927,75 @@ pre code {
 </tbody>
 </table>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(BMI_cat.Ob.NonOb,Stress) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'Stress_d1'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
 <a class="sourceLine" id="cb15-6" data-line-number="6">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
 <a class="sourceLine" id="cb15-7" data-line-number="7">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb15-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI and age of participants by group&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Average BMI and age of participants by group</caption>
+<colgroup>
+<col width="19%"></col>
+<col width="8%"></col>
+<col width="10%"></col>
+<col width="17%"></col>
+<col width="8%"></col>
+<col width="15%"></col>
+<col width="6%"></col>
+<col width="13%"></col>
+</colgroup>
 <thead>
 <tr class="header">
-<th align="left">Stress</th>
 <th align="left">BMI_cat.Ob.NonOb</th>
+<th align="left">Stress</th>
 <th align="right">BMI_mean</th>
-<th align="right">age_mean</th>
+<th align="right">Stress_d1_mean</th>
 <th align="right">BMI_sd</th>
-<th align="right">age_sd</th>
+<th align="right">Stress_d1_sd</th>
 <th align="right">BMI_n</th>
-<th align="right">age_n</th>
+<th align="right">Stress_d1_n</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Low</td>
 <td align="left">Non-Obese</td>
+<td align="left">Low</td>
 <td align="right">25.3</td>
-<td align="right">53.0</td>
+<td align="right">2.34</td>
 <td align="right">2.98</td>
-<td align="right">17.7</td>
+<td align="right">1.75</td>
 <td align="right">13662</td>
 <td align="right">13662</td>
 </tr>
 <tr class="even">
-<td align="left">Low</td>
-<td align="left">Obese</td>
-<td align="right">36.0</td>
-<td align="right">54.7</td>
-<td align="right">5.72</td>
-<td align="right">14.6</td>
-<td align="right">9229</td>
-<td align="right">9229</td>
+<td align="left">Non-Obese</td>
+<td align="left">High</td>
+<td align="right">25.1</td>
+<td align="right">8.04</td>
+<td align="right">3.13</td>
+<td align="right">1.78</td>
+<td align="right">9301</td>
+<td align="right">9301</td>
 </tr>
 <tr class="odd">
-<td align="left">High</td>
-<td align="left">Non-Obese</td>
-<td align="right">25.1</td>
-<td align="right">51.0</td>
-<td align="right">3.13</td>
-<td align="right">17.8</td>
-<td align="right">9301</td>
-<td align="right">9301</td>
+<td align="left">Obese</td>
+<td align="left">Low</td>
+<td align="right">36.0</td>
+<td align="right">2.43</td>
+<td align="right">5.72</td>
+<td align="right">1.75</td>
+<td align="right">9229</td>
+<td align="right">9229</td>
 </tr>
 <tr class="even">
-<td align="left">High</td>
 <td align="left">Obese</td>
+<td align="left">High</td>
 <td align="right">36.6</td>
-<td align="right">52.6</td>
+<td align="right">8.16</td>
 <td align="right">6.00</td>
-<td align="right">14.6</td>
+<td align="right">1.85</td>
 <td align="right">7499</td>
 <td align="right">7499</td>
 </tr>
