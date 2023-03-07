@@ -514,7 +514,7 @@ anova(gender.int.model.null,gender.int.model) %>% tidy %>%
   kable(caption="Chi squared test of model with and without a gender interaction term")
 ```
 
-Then did this asking for gender moderation of the sex effect only in each obese category using a stratification approach
+Then did this asking for gender moderation of the stress effect only in each obese category using a stratification approach
 
 ```{r gender-stratification}
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender, 
@@ -528,6 +528,60 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender,
     data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
   anova(test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of effects of gender on stress in people without obesity", digits =c(0,0,0,0,0,99))
+```
+
+### Testing for the Interaction Between Black Race and Obesity-BMI
+
+First did this by adding an interaction term to the complete model
+
+```{r race-interaction}
+race.int.model.null <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) 
+
+race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+Race.Ethnicity:BMI_cat.Ob.NonOb+Race.Ethnicity:Stress+Race.Ethnicity:Stress:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data) 
+
+race.int.model %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+
+anova(race.int.model.null,race.int.model) %>% tidy %>%
+  kable(caption="Chi squared test of model with and without a gender interaction term")
+```
+
+Then did this asking about racial moderation of the stress effect only in each obese category using a stratification approach
+
+```{r race-stratification}
+glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of race on stress in people with obesity", digits =c(0,0,0,0,0,99))
+
+glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of race on stress in people without obesity", digits =c(0,0,0,0,0,99))
+```
+
+Finally did this using only Black and White as comparator groups to simplify.
+
+```{r race-interaction-white-bw}
+race.int.model.null <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data %>% filter(Race.Ethicity %in% c("White","Black"))) 
+
+race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+Race.Ethnicity:BMI_cat.Ob.NonOb+Race.Ethnicity:Stress+Race.Ethnicity:Stress:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(Race.Ethicity %in% c("White","Black"))) 
+
+race.int.model %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covarite, using white/black race only", digits =c(0,0,0,0,0,99))
+
+anova(race.int.model.null,race.int.model) %>% tidy %>%
+  kable(caption="Chi squared test of model with and without a race interaction term, using white/black race only")
 ```
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate

@@ -1,14 +1,14 @@
 # New Analyses
 
-* Include stress as a linear covariate
+* ~Include stress as a linear covariate~
 * Analyse stress effect in different quantiles
 * ~Remove implausible variables (BMI)~
 * ~Filter out BMI with NA~
 * ~Re-arrange BMI in demographic table~
 * ~Make prevalence percent in demographic table~
-* Include stress levels and BMI averages at each stress/BMI group 
-* Test for interactions between gender
-* Test for interaction between Black/other groups
+* ~Include stress levels and BMI averages at each stress/BMI group~
+* ~Test for interactions between gender~
+* ~Test for interaction between Black/other groups~
 
 
 # New Data Pulls
