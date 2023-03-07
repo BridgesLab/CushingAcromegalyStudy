@@ -92,7 +92,7 @@ We will use the mean BMI measure if there are multiple in the encounters file.
 combined.data <- 
   mgi.patient.data %>%
   left_join(cm.data) %>%
-  left_join(bmi.data) %>%
+  right_join(bmi.data) %>% #only want participants with BMI values
   #left_join(geo.data) %>%
   distinct(DeID_PatientID, .keep_all=T) %>%
   mutate(DiabetesAny=case_when(DiabetesUncomplicated==1|DiabetesComplicated==1~1,
