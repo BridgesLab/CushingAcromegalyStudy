@@ -140,10 +140,10 @@ combined.data %>%
   knitr::kable(caption="Number of participants by group and gender")
 
 combined.data %>%
-  group_by(Stress,BMI_cat.Ob.NonOb) %>%
+  group_by(BMI_cat.Ob.NonOb,Stress) %>%
     filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
+  summarize_at(c('BMI','Stress_d1'), list(mean=~mean(.x,na.rm=T),
                                     sd=~sd(.x,na.rm=T),
                                     n=~length(.x)))%>%
   knitr::kable(caption="Average BMI and age of participants by group")
