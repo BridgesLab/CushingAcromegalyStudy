@@ -122,6 +122,55 @@ diabetes.gender %>%
                digits =c(0,2,3,2,99))
 ```
 
+## Interaction Between Gender and BMI
+
+Modelling shows a significant interaction between BMI and gender with respect to diabetes risk
+
+```{r gender-bmi-stats}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,DiabetesAny,BMI_cat.Ob.NonOb) %>%
+  count %>%
+  pivot_wider(id_cols=Gender,
+              names_from=DiabetesAny,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  diabetes.gender.bmi
+
+glm(DiabetesAny~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender, 
+    family="binomial",
+    data=combined.data) -> gender.bmi.glm
+
+gender.bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender:BMI interaction on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+gender.bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+```{r diabetes-counts-gender-bmi}
+diabetes.gender %>%
+  ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+```
+
+
 ```{r diabetes-counts-gender-stats}
 library(broom)
 glm(DiabetesAny~Gender, 
