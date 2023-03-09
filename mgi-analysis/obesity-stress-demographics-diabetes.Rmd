@@ -132,7 +132,7 @@ combined.data %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
   group_by(Gender,DiabetesAny,BMI_cat.Ob.NonOb) %>%
   count %>%
-  pivot_wider(id_cols=Gender,
+  pivot_wider(id_cols=c(Gender,BMI_cat.Ob.NonOb),
               names_from=DiabetesAny,
               values_from = n,
               names_prefix='Diabetes') %>%
@@ -158,7 +158,7 @@ gender.bmi.glm %>%
 ```
 
 ```{r diabetes-counts-gender-bmi}
-diabetes.gender %>%
+diabetes.gender.bmi %>%
   ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
   geom_bar(stat='identity',position='dodge') +
   labs(y="Percent Diabetes",

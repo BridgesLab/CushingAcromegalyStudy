@@ -671,14 +671,14 @@ subgroup.analyses %>%
   kable(caption="Stratified BMI:Stress interaction terms by race/ethnicity and gender")
 
 ggplot(subgroup.analyses, aes(y=estimate,
-                              ymin=estimate-se*1.96,
-                              ymax=estimate+se*1.96,
+                              ymin=estimate-std.error*1.96,
+                              ymax=estimate+std.error*1.96,
                               x=Group)) +
-  labs(y="Subgroup Estimate of Stress:Obesity Interaction",
-       x="")
   geom_point() +
   geom_errorbar() +
   theme_classic() +
+  labs(y="Subgroup Estimate of Stress:Obesity Interaction",
+       x="")+
   theme(text=element_text(size=16),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
