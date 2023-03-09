@@ -665,6 +665,8 @@ bind_rows(model.full %>% tidy %>% mutate(Group="All"),
           model.male  %>% tidy %>% mutate(Group="Male"),
           model.female  %>% tidy %>% mutate(Group="Female")) %>%
   filter(term=="BMI_cat.Ob.NonObObese:StressHigh") %>%
+  mutate(Group = factor(Group, levels=c("All","Female","Male",
+                                        "White","Black","Hispanic/Latino","Asian","Other"))) %>%
   select(-term) -> subgroup.analyses
 
 subgroup.analyses %>%
@@ -676,8 +678,9 @@ ggplot(subgroup.analyses, aes(y=estimate,
                               x=Group)) +
   geom_point() +
   geom_errorbar() +
+  geom_hline(yintercept=0,lty=2)+
   theme_classic() +
-  labs(y="Subgroup Estimate of Stress:Obesity Interaction",
+  labs(y="Estimate of Stress:Obesity Interaction",
        x="")+
   theme(text=element_text(size=16),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
@@ -738,6 +741,22 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
 
+## Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate
+
+Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a non-linear discrete covariate
+
+```{r obese-not-obese-logistic-regressions-linear}
+glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) -> obesity.glm4
+
+obesity.glm4 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm4,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+```
 
 
 

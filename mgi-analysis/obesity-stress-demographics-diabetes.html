@@ -424,8 +424,9 @@ pre code {
 <li><a href="#purpose"><span class="toc-section-number">0.1</span> Purpose</a></li>
 <li><a href="#by-race-and-ethnicity"><span class="toc-section-number">0.2</span> By Race and Ethnicity</a></li>
 <li><a href="#by-gender"><span class="toc-section-number">0.3</span> By Gender</a></li>
-<li><a href="#by-age"><span class="toc-section-number">0.4</span> By Age</a></li>
-<li><a href="#by-body-mass-index"><span class="toc-section-number">0.5</span> By Body Mass Index</a></li>
+<li><a href="#interaction-between-gender-and-bmi"><span class="toc-section-number">0.4</span> Interaction Between Gender and BMI</a></li>
+<li><a href="#by-age"><span class="toc-section-number">0.5</span> By Age</a></li>
+<li><a href="#by-body-mass-index"><span class="toc-section-number">0.6</span> By Body Mass Index</a></li>
 <li><a href="#summary-table"><span class="toc-section-number">1</span> Summary Table</a></li>
 <li><a href="#session-information"><span class="toc-section-number">2</span> Session Information</a></li>
 </ul>
@@ -469,7 +470,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar 7 15:32:52 2023. This dataset has 39691 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar 9 16:02:42 2023. This dataset has 39691 values.</p>
 <p>Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.</p>
 </div>
 <div id="by-race-and-ethnicity" class="section level2">
@@ -694,16 +695,147 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">library</span>(broom)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>Gender, </a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>gender.glm</a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">gender.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of gender on diabetes incidence&quot;</span>,</a>
-<a class="sourceLine" id="cb14-10" data-line-number="10">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+</div>
+<div id="interaction-between-gender-and-bmi" class="section level2">
+<h2><span class="header-section-number">0.4</span> Interaction Between Gender and BMI</h2>
+<p>Modelling shows a significant interaction between BMI and gender with respect to diabetes risk</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Gender,DiabetesAny,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span><span class="kw">c</span>(Gender,BMI_cat.Ob.NonOb),</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">              <span class="dt">names_from=</span>DiabetesAny,</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">              <span class="dt">values_from =</span> n,</a>
+<a class="sourceLine" id="cb14-9" data-line-number="9">              <span class="dt">names_prefix=</span><span class="st">'Diabetes'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Yes&quot;</span>=<span class="st">&quot;Diabetes1&quot;</span>,</a>
+<a class="sourceLine" id="cb14-11" data-line-number="11">         <span class="st">&quot;No&quot;</span>=<span class="st">&quot;Diabetes0&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Prevalence=</span>Yes<span class="op">/</span>(Yes<span class="op">+</span>No)<span class="op">*</span><span class="dv">100</span>) -&gt;<span class="st"> </span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="st">  </span>diabetes.gender.bmi</a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>Gender<span class="op">+</span>BMI_cat.Ob.NonOb<span class="op">+</span>BMI_cat.Ob.NonOb<span class="op">:</span>Gender, </a>
+<a class="sourceLine" id="cb14-16" data-line-number="16">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb14-17" data-line-number="17">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>gender.bmi.glm</a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19">gender.bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of gender:BMI interaction on diabetes incidence&quot;</span>,</a>
+<a class="sourceLine" id="cb14-23" data-line-number="23">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Binomial regression of gender:BMI interaction on diabetes incidence</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">Deviance</th>
+<th align="right">Resid..Df</th>
+<th align="right">Resid..Dev</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NULL</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">39690</td>
+<td align="right">32213</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">Gender</td>
+<td align="right">1</td>
+<td align="right">174</td>
+<td align="right">39689</td>
+<td align="right">32039</td>
+<td align="right">8.93e-40</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonOb</td>
+<td align="right">1</td>
+<td align="right">1239</td>
+<td align="right">39688</td>
+<td align="right">30800</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">Gender:BMI_cat.Ob.NonOb</td>
+<td align="right">1</td>
+<td align="right">32</td>
+<td align="right">39687</td>
+<td align="right">30767</td>
+<td align="right">1.28e-08</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">gender.bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of gender:BMI on diabetes incidence&quot;</span>, </a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Binomial regression estimates of gender:BMI on diabetes incidence</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-2.67</td>
+<td align="right">0.037</td>
+<td align="right">-71.70</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">GenderM</td>
+<td align="right">0.62</td>
+<td align="right">0.048</td>
+<td align="right">13.02</td>
+<td align="right">9.89e-39</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese</td>
+<td align="right">1.23</td>
+<td align="right">0.046</td>
+<td align="right">26.71</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">GenderM:BMI_cat.Ob.NonObObese</td>
+<td align="right">-0.35</td>
+<td align="right">0.061</td>
+<td align="right">-5.67</td>
+<td align="right">1.45e-08</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">diabetes.gender.bmi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">y=</span>Prevalence,<span class="dt">x=</span>Gender,<span class="dt">fill=</span>BMI_cat.Ob.NonOb)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">'identity'</span>,<span class="dt">position=</span><span class="st">'dodge'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Percent Diabetes&quot;</span>,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="st">  </span><span class="kw">scale_fill_grey</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">        <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">90</span>,<span class="dt">vjust=</span><span class="fl">0.5</span>,<span class="dt">hjust=</span><span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.85</span>))</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">library</span>(broom)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>Gender, </a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>gender.glm</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">gender.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of gender on diabetes incidence&quot;</span>,</a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression of gender on diabetes incidence</caption>
 <thead>
@@ -735,10 +867,10 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">gender.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of gender on diabetes incidence&quot;</span>, </a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">gender.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of gender on diabetes incidence&quot;</span>, </a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression estimates of gender on diabetes incidence</caption>
 <thead>
@@ -769,34 +901,34 @@ pre code {
 </table>
 </div>
 <div id="by-age" class="section level2">
-<h2><span class="header-section-number">0.4</span> By Age</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Age.group,DiabetesAny) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span>Age.group,</a>
-<a class="sourceLine" id="cb16-7" data-line-number="7">              <span class="dt">names_from=</span>DiabetesAny,</a>
-<a class="sourceLine" id="cb16-8" data-line-number="8">              <span class="dt">values_from =</span> n,</a>
-<a class="sourceLine" id="cb16-9" data-line-number="9">              <span class="dt">names_prefix=</span><span class="st">'Diabetes'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Yes&quot;</span>=<span class="st">&quot;Diabetes1&quot;</span>,</a>
-<a class="sourceLine" id="cb16-11" data-line-number="11">         <span class="st">&quot;No&quot;</span>=<span class="st">&quot;Diabetes0&quot;</span>)<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Prevalence=</span>Yes<span class="op">/</span>(Yes<span class="op">+</span>No)<span class="op">*</span><span class="dv">100</span>) -&gt;<span class="st"> </span>diabetes.age</a>
-<a class="sourceLine" id="cb16-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb16-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb16-15" data-line-number="15">diabetes.age <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">y=</span>Prevalence,<span class="dt">x=</span>Age.group)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">'identity'</span>,<span class="dt">position=</span><span class="st">'dodge'</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-18" data-line-number="18"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Percent Diabetes&quot;</span>,</a>
-<a class="sourceLine" id="cb16-19" data-line-number="19">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-20" data-line-number="20"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-21" data-line-number="21"><span class="st">  </span><span class="kw">scale_fill_grey</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-22" data-line-number="22"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
-<a class="sourceLine" id="cb16-23" data-line-number="23">        <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">90</span>,<span class="dt">vjust=</span><span class="fl">0.5</span>,<span class="dt">hjust=</span><span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb16-24" data-line-number="24">        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.85</span>))  </a></code></pre></div>
+<h2><span class="header-section-number">0.5</span> By Age</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Age.group,DiabetesAny) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span>Age.group,</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">              <span class="dt">names_from=</span>DiabetesAny,</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">              <span class="dt">values_from =</span> n,</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9">              <span class="dt">names_prefix=</span><span class="st">'Diabetes'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Yes&quot;</span>=<span class="st">&quot;Diabetes1&quot;</span>,</a>
+<a class="sourceLine" id="cb19-11" data-line-number="11">         <span class="st">&quot;No&quot;</span>=<span class="st">&quot;Diabetes0&quot;</span>)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Prevalence=</span>Yes<span class="op">/</span>(Yes<span class="op">+</span>No)<span class="op">*</span><span class="dv">100</span>) -&gt;<span class="st"> </span>diabetes.age</a>
+<a class="sourceLine" id="cb19-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb19-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb19-15" data-line-number="15">diabetes.age <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">y=</span>Prevalence,<span class="dt">x=</span>Age.group)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">'identity'</span>,<span class="dt">position=</span><span class="st">'dodge'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-18" data-line-number="18"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Percent Diabetes&quot;</span>,</a>
+<a class="sourceLine" id="cb19-19" data-line-number="19">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-20" data-line-number="20"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-21" data-line-number="21"><span class="st">  </span><span class="kw">scale_fill_grey</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-22" data-line-number="22"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
+<a class="sourceLine" id="cb19-23" data-line-number="23">        <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">90</span>,<span class="dt">vjust=</span><span class="fl">0.5</span>,<span class="dt">hjust=</span><span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb19-24" data-line-number="24">        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.85</span>))  </a></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAAC91BMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiosLCwtLS0vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///+hS7aYAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAbNElEQVR4nO2de3hV1ZmHtzgqXmBAKdCp0zrVqdZaNK3ScUCp2qJlJ2QwEqJmSAMRmcjF6EgRpaUjKsUhKDCUywg2AjEGKoMKCKhUq4A1FRTC3UBFASFBQ8h1/TH77HMgiTm49rrsnG+t83ufx3322c/5fi6/9ZpzW3sfhwFAGCfRAwDg64CggDQQFJAGggLSQFBAGggKSCMraOlQrcMAID6ygv62i9ZhABAfCApIA0EBaSAoIA0EBaSBoIA0EBSQBoIC0kBQQBoICkgDQQFpICggDQQFpIGggDQQFJAGggLSQFBAGghqJEPUSfR/QkAgqJFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFAUB4QNKFoFFRfUihAUCNRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRtwqCghBRt8oiQdc+mjX0dwe9nb0Th4xeETsIQSVQd2GI9iTzBV3ljn+55O6cY2xfRsGKmW5x9CgElUDdBQjalpwHGxirSC1mhTnHGZuTWeMfhaASqLsAQdtwLPo3c+iUhvR53u1ud51/GIJKoO4CBG1D/cfV3vZT97lD7hpvpym1hLG/Pv10ZrdQh2Un6i5A0Ph8NjLr8FZ3Q2Q3azZjK1JT+/QIdVh2ou4CBI1HXUlG3k72YUzQGf4xPMVLoO4CBI1D+cjBL9QydsBdyyJP8Yv9gxBUAnUXIGhbtgwafyRyW5u+wNtW+K9EIagU6i5A0DY05f2qMbo3Ja+esaLbq/07EFQCdRcgaBvK3SeWRXiP7ciY9M6StKLoYQgqgboLELQN69wohYxtm5A5alnsMASVQN0FCBoUCCqBugsQNCgQVAJ1FyBoUCCoBOouQNCgQFAJ1F2AoEGBoBKouwBBgwJBJVB3AYIGBYJKoO4CBA0KBJVA3QUIGhQIKoG6CxA0KBBUAnUXIGhQIKgE6i5A0KBAUAnUXYCgQYGgEqi7AEGDAkElUHcBggYFgkqg7gIEDQoElUDdBQgaFAgqgboLEDQoEFQCdRcgaFAgqATqLkDQoEBQCdRdgKBBgaASqLsAQYMCQSVQdwGCBgWCSqDuAgQNCgSVQN0FCBoUCCqBugsQNCgQVAJ1FyBoUCCoBOouQNCgQFAJ1F2AoEGBoBKouwBBgwJBJVB3AYIGBYJKoO4CBA0KBJVA3QUIGhQIKoG6CxA0KBBUAnUXIGhQIKgE6i5A0KBAUAnUXYCgQYGgEqi7AEGDAkElUHcBggYFgkqg7gIEDQoElUDdBQgaFAgqgboLEDQoEFQCdRcgaFAgqATqLiS7oI2bP2dN03/2H3u4dRBUAnUXklzQyp86f2JzHMfp+TdeHQSVQN2FJBd0vJOyi13Vbf0M535eHQSVQN2FJBf0ivNr2SfOWMZ6/IBXB0ElUHchyQU99ybGljmvMDbgAl4dBJVA3YUkF/QffsjYvR0+Z+yGb/DqIKgE6i4kuaC3dthe1e06xnafcy2vDoJKoO5Ckgu67oxzujr/w+ac68zh1UFQCdRdSHJBWfGVnYfVszFnjKrn1UFQCdRdSHZBo+w5wq+DoBKouwBBgwJBJVB3IekFfWngZT3YotX8OggqgboLyS7ofY4HG+GM4dZBUAnUXUhyQUucXm896bBtvZ2lvDoIKoG6C0ku6A3n7WOF3pEjnfrx6iCoBOouJLmgXW9kvqDstu68OggqgboLSS5o91tigvbrxquDoBKou5Dkgv68y1Ff0KOdbuLVQVAJ1F1IckEXO7d+7glaeQu+6gwFdReSXFCW45z1TadPZ8fl1kFQCdRdSHZB2Yu9znbOvHxuY+ujNRva1EFQCdRdSHpBGWv4uLbNg17Ljmx3uj6H/UMQVAJ1F5Jc0NllsZ3Xi1ocrX/v7uzI7Xr3+WKP4/5BCCqBugtJLqgzNbZzT+fmgx8OdN3syM4LLUeSRIKqz6B+rfQlGSPo8fz8fOf6fJ9hF7YQtLq8fHJ2ZKewoEUdBJWYQopJxgha6bSk9WqRWdmR7UP3/3pw7vRKb++jBQuyLwp1WJRQn0EIKs8pQRvLysqcsWVRdrZ+UFTQ7NRZKxdm5NYwtrRfv5/0DHVYlFCfQQgqT6vXoANOs4gpKuiqrd5mi1viH8JTvMQUUkwyStDTERU0Ss5k/waCSkwhxSTDBI2/ot4XtLK8LrKfO80/BEElppBiklmCnmZFvS/oDne5ty1PXekfgqASU0gxyShBT7eiPvoUPzV9/rpFmQ9EvwaFoBJTSDHJKEFPt6I+KmjTsoKMkQtjX4RCUIkppJhklKBYUR8P9RmEoPJgRT0X9RmEoPJgRT0X9RmEoPJgRT0X9RmEoPJgRT0X9RmEoPIEWlEfBwgqMYUUkwwTNP6K+jhAUIkppJhknKAnKhqC1EFQiSmkmGSWoHXTL+vgnHN1Mb8OgkpMIcUkowRt6OuccWm/73VwMrl1EFRiCikmGSXoY87V73s3H1zj/J5XB0ElppBiklGC9j63wr+tOA9Xt2tGfQYhqDytBO10fWynL1c/CCoxhRSTjBL06t6xnX/5Pq8OgkpMIcUkowQtOHuzf7vlnKG8OggqMYUUk4wStKr3xUVVrGrRP3bey6uDoBJTSDHJFEG7+fy94zjne//0uJFXB0ElppBikimCXvYVeHUQVGIKKSaZIqgoEFRiCikmmSnoxiW8OggqMYUUkwwTtKEywmG3c/xHNwNBJaaQYpJRgtblnR+7eNiPeXUQVGIKKSYZJehTzrf6OJcO+Nczbirn1UFQiSmkmGSUoFeffYRle/++wosreXUQVGIKKSYZJWjXHzE2/wrvlehlY3l1EFRiCikmGSVo5zTGNnU4xthdvXh1EFRiCikmGSXotd9jrLrDUsbyzufVQVCJKaSYZJSg453Rn7JLM9ixS7CaqRn1GYSg8rQStPq7zmx2n/P9ns5jvDoIKjGFFJOMEpQdmfImq+rvdBxxglcHQSWmkGKSWYJGqarn10FQiSmkmGSioEGAoBJTSDHJFEHLyr6MbE7Bq4OgElNIMckUQR3n9cjmFLw6CCoxhRSTTBF0xIjtjOU3w6uDoBJTSDHJFEFFgaASU0gxySxBT5SXcz9gigJBJaaQYpI5gjaV3HbxGY7T4eJfvNjEr4OgElNIMckYQQ/28d4adfnBVV28m76HuHUQVGIKKSaZImhtL+c7hUcje5VP/5NzTR2vDoJKTCHFJFMELXQurzp57NiVznReHQSVmEKKSaYIeq3zfvPBD5zecR/cAggqMYUUk0wRtHPXlkcvwtXtmlGfQQgqz6lvkq5vebQvvklqRn0GIag8pwRtdTWmmyFoM+ozCEHlgaBc1GcQgsoDQbmozyAEleeUoB0vaUFHCNqM+gxCUHmal9u1hlcHQSWmkGKSKYLu/wq8OggqMYUUk0wRVBQIKjGFFJMgqPGozyAElcdaQdX7TlkrfUkQNEGo952yVvqSIGiCUO87Za30JUHQBKHed8pa6UuCoAlCve+UtdKXZJSgs09er+H1Il4dBLUkyShBnamxnXvM/5UP9b5T1kpfkjGCHs/Pz3euj161YdiFEHQIaa30JRkjaGWrr+LH8OogqCVJxgjaWFZW5oyNXTpsJ7cOglqSZIygEQYsDVwHQS1JMkrQ01Gzoc0hCGpJklmCfrlyQYxWh1/L9m/2ThwyekXsEAS1JMkoQXd9N96C5fr37s6O3O7LKFgx0y2OHoSgliQZJehgp+/0eVGaD3440HWzIzuFOccZm5NZ4x+FoJYkGSVozysa2j6iurx8crZ325AesXa3u84/CkEtSTJJ0HpnWPwHzcr2NofcNd62KbWEsY8WLMi+KNRhqaPed8pa6UsySdC6834W/0G+oFtd/7181mzGlqSkpPQMdVjqqPedslb6kkwSlI068424D/IF/TAm6Az/EJ7iLUkyStDtA87OX/SqT6sH+YIecNeyyFP8Yv8QBLUkyShBT3devC9obXrkw9EK/5UoBLUmyShBJzTT6kG+oGxKXj1jRbdX+4cgqCVJRgl6OqKC7siY9M6StNhSZghqSZJFgrJtEzJHLYsdgqCWJBkm6EsDL+vBFq3m10FQS5LMEvQ+//3RCP56ZQhqS5JRgpY4vd560mHbejvchaEQ1JIkowS94bx9rNA7cqRTP14dBLUkyShBu97IfEHZbd15dRDUkiSjBO1+S0zQft14dRDUkiSjBP15l6O+oEc73cSrg6CWJBkl6GLn1s89QStvcebw6iCoJUlGCcpynLO+6fTp7LjcOghqSZJZgrIXe53tnHn53EZuHQS1JMkwQRlr+Lg2SB0EtSTJNEGbvH+OBaiDoJYkmSXo5v4/8f6G/t1Pt3PrIKglSUYJurOL05+xxh85nSt4dRDUkiSjBB3uzPVvi5yhvDoIakmSUYJedXVs58f/zKuDoJYkGSVopwGxndQLeHUQ1JIkowTt/a16/7bh29fx6iCoJUlGCTrJuSdy5aW60c4jvDoIakmSUYLWXef0HFKQ/R3nqhO8OghqSZJRgrJj4zs6jnPmvYe5dRDUkiSzBGXsxOaXNn4RoA6CWpJkkqCfXTExcB0EtSTJJEHZJf0D10FQS5KMErT0vLa/lnAaIKglSUYJur+k+5jn174egVcHQS1JMkrQ013dLg4Q1JIkowQd1wyvDoJakmSUoAJAUEuSIGiCUO87Za30JRkmKK5u17bxdieZJSiubhen8XYnGSUorm4Xr/F2JxklKK5uF6/xdicZJSiubhev8XYnGSUorm4Xr/F2JxklKK5uF6/xdicZJSiubhev8XYnGSUorm4Xr/F2J5klKK5uF6fxdicZJGjjvjqGq9u1bbzdScYIurN/R+esG7YHrYOgliSZIugnnR2no+NcsDtgHQS1JMkUQYc7N+5ie252gv7bIKglSaYIemXHT73twXO/HbAOglqSZIqg5/zQv7km6PpQCGpJkimCOjf6NzdD0DaNtzsJgiYI9b5T1kpfEgRNEOp9p6yVviQImiDU+05ZK31Jxgh6VrcIZzndovDqIKglScYI+hV4dRDUkiRTBK38Crw6CGpJkimCigJBLUmCoAlCve+UtdKXBEEThHrfKWulLwmCCkGp75S10pcEQYWg1HfKWulLgqBCUOo7Za30JUFQISj1nbJW+pIgqBCU+k5ZK31JEFQISn2nrJW+JAgqBKW+U9ZKXxIEFYJS3ylrpS/JIkF3uj7R3/GEoJYkWSToevf5Yo/j/h0IakmSRYK+0HIkENSSJIsELSxocQeCWpJkkaAP3f/rwbnTIytFd5WW5nLX3EtBqe+UtdKXZJGg2amzVi7MyK1hbElKSkrPUIZDqe+UtdKXZJGgq7Z6my1uCWO1VVWPdA1lOJT6TlkrfUkWCRolZ7J/g9egliTZI2hleV3kJneafw+CWpJkj6A73OXetjx1pX8PglqSZI+gbGr6/HWLMh+IXh4cglqSZJGgTcsKMkYujF0gHIJakmSRoK2AoJYkQVAhKPWdslb6kiCoEJT6TlkrfUkQVAhKfaeslb4kCCoEpb5T1kpfEgQVglLfKWulLwmCCkGp75S10pcEQYWg1HfKWulLgqBCUOo7Za30JUFQISj1nbJW+pIgqBCU+k5ZK31JEFQISn2nrJW+JAgqBKW+U9ZKXxIEFYJS3ylrpS8JggpBqe+UtdKXBEGFoNR3ylrpS4KgQlDqO2Wt9CVBUCEo9Z2yVvqSIKgQlPpOWSt9SRBUCEp9p6yVviQIKgSlvlPWSl8SBBWCUt8pa6UvCYIKQanvlLXSlwRBhaDUd8pa6UuCoEJQ6jtlrfQlQVAhKPWdslb6kiCoEJT6TlkrfUkQVAhKfaeslb4kCCoEpb5T1kpfEgQVglLfKWulLwmCCkGp75S10pcEQYWg1HfKWulLgqBCUOo7Za30JUFQISj1nbJW+pJItrwFOgTVODBKSZS10pdEsuUQVCTK7iSSLYegIlF2J5FsOQQVibI7iWTLIahIlN1JJFsOQUWi7E4i2XIIKhJldxLJlkNQkSi7k0i2HIKKRNmdRLLlEFQkyu4kki2HoCJRdieRbDkEFYmyO4lkyyGoSJTdSSRbDkFFouxOItlyCCoSZXcSyZZDUJEou5NIthyCikTZnUSy5RBUJMruJJIth6AiUXYnkWw5BBWJsjuJZMshqEiU3UkkWw5BRaLsTiLZcggqEmV3EsmWQ1CRKLuTSLYcgopE2Z1EsuUQVCTK7iSSLYegIlF2J5FsOQQVibI7iWTLIahIlN1JJFsOQUWi7E4i2XJJQfdOHDJ6BQS1K4lky+UE3ZdRsGKmWwxBrUoi2XI5QQtzjjM2J7MGgtqURLLlUoI2pM/ztrvddRDUpiSSLZcS9JC7xts2pZYwVrF69YiLIKgVSSRbLiXoVndD5CZrNmNLUlJSegYuBECe4IJ+GBN0BmO1VVWPdA1tSAA0E1zQA+5aFnmKX+zfC+lXPgBoTXBBa9MXeNsK/5UoBAXthMDHTFPy6hkrur3avwNBQbsgIOiOjEnvLEkrit6BoKBdEPmqc9uEzFHLYvsQFLQLxH4KEYDWQFBAGggKSANBAWkgKCANBAWkgaCANBAUkAaCAtJAUEAaWUHnXdg1OD27CTz4a+neXVfSN3roSurWU6QXX8eFPS/SlESy5d1EWp6lKCj7wxPBuTZH4MFfS/+BupKG9NWVNDJlkqakCSljNSU9cd2/60q6NU1XUlYfgQe/qCqoCNcv1JU0fJyupP9O1ZX0SkqVpqSPU/6sKYn1na8racSDupKm/0KiCIIqA0EDQlfQl8p1Jb3xrq6kv67UlVRRWqsp6YvSzzQlseXbdCW9+Y6upM2vSBS1i6AAyAJBQTvTIPRoCArak4b3pmcKFYQs6NyvQiCJ5KDsTorR8Jens1x3jFBNyIK6Q/NakuMSSCI5KLuTIjS8/4xn50N/FHwfGLagH7W6W67QLW1JJAdldxJrLJtxp5v28FPiESEL+swnre4eeIZAEslB2Z3E7nQHTlxZxd4iJ6jH8XUls2csXltNKYnkoGxOcgcuPOjdUBS0ONNNzcpKdW8vopNEclBWJy0b66b+54qjBAX9P3fO7ibGmiqK0pbxH90+SSQHZXeS9wLhhfvctDz3oGhd2ILeN+vk3pLRVJJIDsruJJ+KRfe6bsHST4WKwhY08+TPgrA/x7l8bmKSSA7K7qST7F443BV7mg9b0EcfOB7dqfvNo1SSSA7K7qQWbBdbZxW2oHsycuat2bBh7bPDMxSXNOlLIjkou5MaWyJUGfq7+H2F6a5H+pSddJJIDsrqJLclQpXtsFik4dDWjw5oWTKpL4nkoCxOKj7Jolx3kFBl+IIe3NvEjiz6/ao6PXEb89QzDkdeWh0vmTxtldjTTRwa/lLJ2JYZj5XUKAblPX5UdSwnaaoob2TH5k8qOqYcdaB0ztQ5JZuaNIzKp3y0+1uxL+PDFrR6ouvec3i4m+Hmf6EUVH8syquut1EcVOT3HI/mujm5qQ8q/nH4fLS7m72aOnhEWp7ioNysO99SSzhJ9QTXa/b49BEDc44oRs1NS3XdrFQ3920tI/tiZmqu6CkRYQs69/bSP/1q6IiDbNud85SC3pR+FdOWiKCFd2zx/oce/Jxa0pQ71zRWZzxVxz6+axb/0V87piVrhzyq/uraY97gVzcWZN9zmB0YOkMtaem/ravdP7aoYcvjA8s0DGzNXenPCf9BCFvQ4X+I/Ebdy97e4nuVgo5PcwtWeEx3vY3ioCKC/tI/ka8oXy0pa6n3BO8e8vZKhiuP6cgTqY+XqT+bDns+8mMsr2gY05j/9TY7Ur2/w4/9RnlYe8e5D+8XLwtb0EGvea+J0jd6e2szFKPWD5lcFflLqj6oiKCDV0X21t6hlpRXGlmGFllLsTKL+2DumNi2cW7u/HcVXyxkrGasxo08la5RbHlG5CeHTribGFsltgy+LTXPDsx+Q6YwbEFHPu1tyr/0NgsKVLMOjc/epEdQ72/MRP8ped4Dakkzh33G6u6KzOMjExXHFP2d8x0zBruKJ0SPfZKxt93IE8QMscXrbZMiC+y2uHu8/07Ft6Zv56TNkVsSFbagpe6syJ9PdnRVxgLlsKbS9FmrdQjqDim4P3Urq1ue/ke1pC/z75j2ysJBC199JGO74piKYzsNWxRfF7/hjvvdoMKM5TtK0l5WS1qd+ty29cNGNX7xsKu4WMR7qzX2FEKVYQva8Nwgf0APuBNUP4iJsPPeQRoE3bn+hcKHsld5T85TVV/yHVuc479tm6D67dYpQdVZPSqvmJV4g5qp+ilaUZrrjqxg+7OXKvZpYkuEKsP/HLQh8haCbTqgJ632RW1XKWGscoeGkKbKPR/sVv/EsfywhrG0ZM9bf1MPObJxWz1jjdo+BxUHpx0D0rSfoDvKPtJxsobWJJKDsjtJlPYT9CH32XG7iCWRHJTdSaK0n6AvL2SfbSaWRHJQdieJgteggDShC6pxaQ1OOzY4SZbQVzPpW1qD044NTpImbEH1La3BaccGJ8kTtqD6ltbgtGODk+QJW1B9S2tw2rHBSfKELai+pTU47djgJHnCFlTf0hqcdmxwkjyhf8ykb2kNTjs2OEmadvqgXsvSGpx2bHKSJCZ9k6T5BGYdZzDjBOawMUdQbScw6zyDGScwh405gmo7gVnnGcw4gTlsQhZ0Q3YL1KK0ncCs8wxmnMAcNiELWvPa3e7kWTHUojSewKzvDGacwBw2oT/Fb3I1fYSm8wRmbWcw4wTmsAld0LqBmgTVegKzrjOYcQJz2IT/JmmLpsWEmk9g1nMGM05gDhtz3sXrPoFZ6xnMOIE5LEwSFCQhIQv6X3tb3ts/Rf7pXl8SyUHZnaRAyIK+mzthTexLiMrXfz30TQpJJAdld5ICYT/F1yzPc3MnTJnyyHD3l6VK/wvqSyI5KLuT5An/NWjTrqXTJj46rWSH8jcb+pJIDsruJFnwJgmQBoIC0kBQQBoICkgDQQFpICggDQQFpIGggDQQFJAGggLSQFBAGggKSANBAWkgKCANBAWkgaCANBAUkAaCAtJAUEAaCApIA0EBaSAoIA0EBaSBoIA0EBSQBoIC0kBQQBoICkgDQQFpICggDQQFpIGggDQQFJDm/wEXi3B7xp6QQwAAAABJRU5ErkJggg==" /><!-- --></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">diabetes.age <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by diabetes diagnosis and age&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">diabetes.age <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by diabetes diagnosis and age&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by diabetes diagnosis and age</caption>
 <thead>
@@ -858,15 +990,15 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>Age.group, </a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>age.glm</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">age.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of age group on diabetes incidence&quot;</span>,</a>
-<a class="sourceLine" id="cb18-9" data-line-number="9">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>Age.group, </a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>age.glm</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">age.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of age group on diabetes incidence&quot;</span>,</a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression of age group on diabetes incidence</caption>
 <thead>
@@ -898,10 +1030,10 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">age.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of age group on diabetes incidence&quot;</span>, </a>
-<a class="sourceLine" id="cb19-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">age.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of age group on diabetes incidence&quot;</span>, </a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression estimates of age group on diabetes incidence</caption>
 <thead>
@@ -965,10 +1097,10 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>age, <span class="dt">data=</span>combined.data) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of age on diabetes incidence&quot;</span>, </a>
-<a class="sourceLine" id="cb20-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>age, <span class="dt">data=</span>combined.data) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of age on diabetes incidence&quot;</span>, </a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression estimates of age on diabetes incidence</caption>
 <thead>
@@ -999,33 +1131,33 @@ pre code {
 </table>
 </div>
 <div id="by-body-mass-index" class="section level2">
-<h2><span class="header-section-number">0.5</span> By Body Mass Index</h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(BMI_cat,DiabetesAny) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span>BMI_cat,</a>
-<a class="sourceLine" id="cb21-7" data-line-number="7">              <span class="dt">names_from=</span>DiabetesAny,</a>
-<a class="sourceLine" id="cb21-8" data-line-number="8">              <span class="dt">values_from =</span> n,</a>
-<a class="sourceLine" id="cb21-9" data-line-number="9">              <span class="dt">names_prefix=</span><span class="st">'Diabetes'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Yes&quot;</span>=<span class="st">&quot;Diabetes1&quot;</span>,</a>
-<a class="sourceLine" id="cb21-11" data-line-number="11">         <span class="st">&quot;No&quot;</span>=<span class="st">&quot;Diabetes0&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Prevalence=</span>Yes<span class="op">/</span>(Yes<span class="op">+</span>No)<span class="op">*</span><span class="dv">100</span>) -&gt;<span class="st"> </span>diabetes.bmi</a>
-<a class="sourceLine" id="cb21-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb21-14" data-line-number="14">diabetes.bmi <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">y=</span>Prevalence,<span class="dt">x=</span>BMI_cat)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">'identity'</span>,<span class="dt">position=</span><span class="st">'dodge'</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-17" data-line-number="17"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Percent Diabetes&quot;</span>,</a>
-<a class="sourceLine" id="cb21-18" data-line-number="18">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-19" data-line-number="19"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-20" data-line-number="20"><span class="st">  </span><span class="kw">scale_fill_grey</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-21" data-line-number="21"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
-<a class="sourceLine" id="cb21-22" data-line-number="22">        <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">90</span>,<span class="dt">vjust=</span><span class="fl">0.5</span>,<span class="dt">hjust=</span><span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb21-23" data-line-number="23">        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.85</span>))  </a></code></pre></div>
+<h2><span class="header-section-number">0.6</span> By Body Mass Index</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(BMI_cat,DiabetesAny) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span>BMI_cat,</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7">              <span class="dt">names_from=</span>DiabetesAny,</a>
+<a class="sourceLine" id="cb24-8" data-line-number="8">              <span class="dt">values_from =</span> n,</a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">              <span class="dt">names_prefix=</span><span class="st">'Diabetes'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Yes&quot;</span>=<span class="st">&quot;Diabetes1&quot;</span>,</a>
+<a class="sourceLine" id="cb24-11" data-line-number="11">         <span class="st">&quot;No&quot;</span>=<span class="st">&quot;Diabetes0&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Prevalence=</span>Yes<span class="op">/</span>(Yes<span class="op">+</span>No)<span class="op">*</span><span class="dv">100</span>) -&gt;<span class="st"> </span>diabetes.bmi</a>
+<a class="sourceLine" id="cb24-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb24-14" data-line-number="14">diabetes.bmi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-15" data-line-number="15"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">y=</span>Prevalence,<span class="dt">x=</span>BMI_cat)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">'identity'</span>,<span class="dt">position=</span><span class="st">'dodge'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Percent Diabetes&quot;</span>,</a>
+<a class="sourceLine" id="cb24-18" data-line-number="18">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-20" data-line-number="20"><span class="st">  </span><span class="kw">scale_fill_grey</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-21" data-line-number="21"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
+<a class="sourceLine" id="cb24-22" data-line-number="22">        <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">90</span>,<span class="dt">vjust=</span><span class="fl">0.5</span>,<span class="dt">hjust=</span><span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb24-23" data-line-number="23">        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.85</span>))  </a></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">diabetes.bmi <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by diabetes diagnosis and BMI category&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">diabetes.bmi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by diabetes diagnosis and BMI category&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by diabetes diagnosis and BMI category</caption>
 <thead>
@@ -1081,15 +1213,15 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>BMI_cat, </a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>bmi.glm</a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5">bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of BMI group on diabetes incidence&quot;</span>,</a>
-<a class="sourceLine" id="cb23-9" data-line-number="9">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>BMI_cat, </a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>bmi.glm</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-6" data-line-number="6"><span class="st">  </span><span class="kw">anova</span>(<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression of BMI group on diabetes incidence&quot;</span>,</a>
+<a class="sourceLine" id="cb26-9" data-line-number="9">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression of BMI group on diabetes incidence</caption>
 <thead>
@@ -1121,10 +1253,10 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of BMI group on diabetes incidence&quot;</span>, </a>
-<a class="sourceLine" id="cb24-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">bmi.glm <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of BMI group on diabetes incidence&quot;</span>, </a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression estimates of BMI group on diabetes incidence</caption>
 <thead>
@@ -1181,10 +1313,10 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>BMI, <span class="dt">data=</span>combined.data) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of BMI on diabetes incidence&quot;</span>,</a>
-<a class="sourceLine" id="cb25-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>BMI, <span class="dt">data=</span>combined.data) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span>tidy <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Binomial regression estimates of BMI on diabetes incidence&quot;</span>,</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">        <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Binomial regression estimates of BMI on diabetes incidence</caption>
 <thead>
@@ -1216,12 +1348,12 @@ pre code {
 </div>
 <div id="summary-table" class="section level1">
 <h1><span class="header-section-number">1</span> Summary Table</h1>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">rbind</span>(diabetes.race <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Race.Ethnicity&quot;</span>),</a>
-<a class="sourceLine" id="cb26-2" data-line-number="2">      diabetes.gender <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Gender&quot;</span>),</a>
-<a class="sourceLine" id="cb26-3" data-line-number="3">      diabetes.bmi <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;BMI_cat&quot;</span>),</a>
-<a class="sourceLine" id="cb26-4" data-line-number="4">      diabetes.age <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Age.group&quot;</span>)) -&gt;<span class="st"> </span>summary.table</a>
-<a class="sourceLine" id="cb26-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb26-6" data-line-number="6"><span class="kw">kable</span>(summary.table, <span class="dt">caption=</span><span class="st">&quot;Summary of demographic variables by diabetes incidence&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">rbind</span>(diabetes.race <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Race.Ethnicity&quot;</span>),</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">      diabetes.gender <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Gender&quot;</span>),</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">      diabetes.bmi <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;BMI_cat&quot;</span>),</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">      diabetes.age <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="st">&quot;Group&quot;</span>=<span class="st">&quot;Age.group&quot;</span>)) -&gt;<span class="st"> </span>summary.table</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb29-6" data-line-number="6"><span class="kw">kable</span>(summary.table, <span class="dt">caption=</span><span class="st">&quot;Summary of demographic variables by diabetes incidence&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Summary of demographic variables by diabetes incidence</caption>
 <thead>
@@ -1367,11 +1499,11 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">write_csv</span>(summary.table, <span class="st">&quot;Diabetes Demographics Table.csv&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">write_csv</span>(summary.table, <span class="st">&quot;Diabetes Demographics Table.csv&quot;</span>)</a></code></pre></div>
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">2</span> Session Information</h1>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 4.2.0 (2022-04-22)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)

@@ -63,7 +63,7 @@ combined.data <- read_csv(input.file)
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:32:57 2023. This dataset has 62010 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar  9 16:02:49 2023. This dataset has 62010 values.
 
 
 ```r
@@ -1525,12 +1525,16 @@ Table: Chi squared test of model with and without a race interaction term, using
 |     37053|      27285| NA|       NA|
 |     37050|      27282|  3|     3.53|
 
-### Stratified Analyses
+# Subgroup Analyses
 
-Stratified these analyses to get moderating estimates by racial group
+Stratified these analyses to get moderating estimates by racial group and gender
 
 
 ```r
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) -> model.full
+
 glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "White")) -> model.white
@@ -1551,27 +1555,59 @@ glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Other")) -> model.other
 
-bind_rows(model.white %>% tidy %>% mutate(Race="White"),
-          model.black  %>% tidy %>% mutate(Race="Black"),
-          model.hisp  %>% tidy %>% mutate(Race="Hispanic/Latino"),
-          model.asian %>% tidy  %>% mutate(Race="Asian"),
-          model.other  %>% tidy %>% mutate(Race="Other")) %>%
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age, 
+    family="binomial",
+    data=combined.data %>% filter(Gender == "F")) -> model.female
+
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age, 
+    family="binomial",
+    data=combined.data %>% filter(Gender == "M")) -> model.male
+
+bind_rows(model.full %>% tidy %>% mutate(Group="All"),
+          model.white %>% tidy %>% mutate(Group="White"),
+          model.black  %>% tidy %>% mutate(Group="Black"),
+          model.hisp  %>% tidy %>% mutate(Group="Hispanic/Latino"),
+          model.asian %>% tidy  %>% mutate(Group="Asian"),
+          model.other  %>% tidy %>% mutate(Group="Other"),
+          model.male  %>% tidy %>% mutate(Group="Male"),
+          model.female  %>% tidy %>% mutate(Group="Female")) %>%
   filter(term=="BMI_cat.Ob.NonObObese:StressHigh") %>%
-  select(-term) %>%
-  kable(caption="Stratified BMI:Stress interaction terms by race/ethnicity")
+  select(-term) -> subgroup.analyses
+
+subgroup.analyses %>%
+  kable(caption="Stratified BMI:Stress interaction terms by race/ethnicity and gender")
 ```
 
 
 
-Table: Stratified BMI:Stress interaction terms by race/ethnicity
+Table: Stratified BMI:Stress interaction terms by race/ethnicity and gender
 
-| estimate| std.error| statistic| p.value|Race            |
+| estimate| std.error| statistic| p.value|Group           |
 |--------:|---------:|---------:|-------:|:---------------|
+|    0.152|     0.062|     2.448|   0.014|All             |
 |    0.122|     0.066|     1.850|   0.064|White           |
 |    0.561|     0.270|     2.080|   0.038|Black           |
 |   -0.397|     0.492|    -0.807|   0.419|Hispanic/Latino |
 |    0.569|     0.695|     0.818|   0.414|Asian           |
 |    0.355|     0.346|     1.027|   0.304|Other           |
+|    0.139|     0.084|     1.661|   0.097|Male            |
+|    0.099|     0.094|     1.055|   0.291|Female          |
+
+```r
+ggplot(subgroup.analyses, aes(y=estimate,
+                              ymin=estimate-std.error*1.96,
+                              ymax=estimate+std.error*1.96,
+                              x=Group)) +
+  geom_point() +
+  geom_errorbar() +
+  theme_classic() +
+  labs(y="Subgroup Estimate of Stress:Obesity Interaction",
+       x="")+
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+![](figures/subgroup-stratified-analyses-1.png)<!-- -->
 
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate

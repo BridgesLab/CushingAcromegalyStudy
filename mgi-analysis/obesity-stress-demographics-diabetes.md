@@ -70,7 +70,7 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Tue Mar  7 15:32:52 2023. This dataset has 39691 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar  9 16:02:42 2023. This dataset has 39691 values.
 
 Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -211,6 +211,83 @@ Table: Number of participants by diabetes diagnosis and gender
 |:------|-----:|----:|----------:|
 |F      | 18389| 2474|       11.9|
 |M      | 15727| 3101|       16.5|
+
+## Interaction Between Gender and BMI
+
+Modelling shows a significant interaction between BMI and gender with respect to diabetes risk
+
+
+```r
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,DiabetesAny,BMI_cat.Ob.NonOb) %>%
+  count %>%
+  pivot_wider(id_cols=c(Gender,BMI_cat.Ob.NonOb),
+              names_from=DiabetesAny,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  diabetes.gender.bmi
+
+glm(DiabetesAny~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender, 
+    family="binomial",
+    data=combined.data) -> gender.bmi.glm
+
+gender.bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender:BMI interaction on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Binomial regression of gender:BMI interaction on diabetes incidence
+
+|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
+|:-----------------------|--:|--------:|---------:|----------:|--------:|
+|NULL                    | NA|       NA|     39690|      32213|       NA|
+|Gender                  |  1|      174|     39689|      32039| 8.93e-40|
+|BMI_cat.Ob.NonOb        |  1|     1239|     39688|      30800| 0.00e+00|
+|Gender:BMI_cat.Ob.NonOb |  1|       32|     39687|      30767| 1.28e-08|
+
+```r
+gender.bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+
+
+Table: Binomial regression estimates of gender:BMI on diabetes incidence
+
+|term                          | estimate| std.error| statistic|  p.value|
+|:-----------------------------|--------:|---------:|---------:|--------:|
+|(Intercept)                   |    -2.67|     0.037|    -71.70| 0.00e+00|
+|GenderM                       |     0.62|     0.048|     13.02| 9.89e-39|
+|BMI_cat.Ob.NonObObese         |     1.23|     0.046|     26.71| 0.00e+00|
+|GenderM:BMI_cat.Ob.NonObObese |    -0.35|     0.061|     -5.67| 1.45e-08|
+
+
+```r
+diabetes.gender.bmi %>%
+  ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+```
+
+![](figures/diabetes-counts-gender-bmi-1.png)<!-- -->
+
 
 
 ```r
