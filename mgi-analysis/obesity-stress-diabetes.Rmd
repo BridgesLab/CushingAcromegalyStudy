@@ -619,11 +619,15 @@ anova(race.int.model.null,race.int.model) %>%
   kable(caption="Chi squared test of model with and without a race interaction term, using white/black race only")
 ```
 
-### Stratified Analyses
+# Subgroup Analyses
 
-Stratified these analyses to get moderating estimates by racial group
+Stratified these analyses to get moderating estimates by racial group and gender
 
-```{r race-stratified-analyses}
+```{r subgroup-stratified-analyses}
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) -> model.full
+
 glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "White")) -> model.white
@@ -644,14 +648,39 @@ glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Other")) -> model.other
 
-bind_rows(model.white %>% tidy %>% mutate(Race="White"),
-          model.black  %>% tidy %>% mutate(Race="Black"),
-          model.hisp  %>% tidy %>% mutate(Race="Hispanic/Latino"),
-          model.asian %>% tidy  %>% mutate(Race="Asian"),
-          model.other  %>% tidy %>% mutate(Race="Other")) %>%
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age, 
+    family="binomial",
+    data=combined.data %>% filter(Gender == "F")) -> model.female
+
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age, 
+    family="binomial",
+    data=combined.data %>% filter(Gender == "M")) -> model.male
+
+bind_rows(model.full %>% tidy %>% mutate(Group="All"),
+          model.white %>% tidy %>% mutate(Group="White"),
+          model.black  %>% tidy %>% mutate(Group="Black"),
+          model.hisp  %>% tidy %>% mutate(Group="Hispanic/Latino"),
+          model.asian %>% tidy  %>% mutate(Group="Asian"),
+          model.other  %>% tidy %>% mutate(Group="Other"),
+          model.male  %>% tidy %>% mutate(Group="Male"),
+          model.female  %>% tidy %>% mutate(Group="Female")) %>%
   filter(term=="BMI_cat.Ob.NonObObese:StressHigh") %>%
-  select(-term) %>%
-  kable(caption="Stratified BMI:Stress interaction terms by race/ethnicity")
+  select(-term) -> subgroup.analyses
+
+subgroup.analyses %>%
+  kable(caption="Stratified BMI:Stress interaction terms by race/ethnicity and gender")
+
+ggplot(subgroup.analyses, aes(y=estimate,
+                              ymin=estimate-se*1.96,
+                              ymax=estimate+se*1.96,
+                              x=Group)) +
+  labs(y="Subgroup Estimate of Stress:Obesity Interaction",
+       x="")
+  geom_point() +
+  geom_errorbar() +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 ```
 
