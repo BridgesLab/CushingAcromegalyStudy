@@ -745,7 +745,7 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a non-linear discrete covariate
 
-```{r obese-not-obese-logistic-regressions-linear}
+```{r obese-not-obese-logistic-regressions-discrete}
 glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data) -> obesity.glm4

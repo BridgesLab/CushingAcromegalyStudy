@@ -439,6 +439,7 @@ pre code {
 </ul></li>
 <li><a href="#subgroup-analyses"><span class="toc-section-number">3</span> Subgroup Analyses</a><ul>
 <li><a href="#logistic-regressions-for-obesenon-obese---stress-as-linear-covariate"><span class="toc-section-number">3.1</span> Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate</a></li>
+<li><a href="#logistic-regressions-for-obesenon-obese---stress-as-discrete-covariate"><span class="toc-section-number">3.2</span> Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate</a></li>
 </ul></li>
 <li><a href="#summary-of-covariates"><span class="toc-section-number">4</span> Summary of Covariates</a></li>
 <li><a href="#session-information"><span class="toc-section-number">5</span> Session Information</a></li>
@@ -476,7 +477,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar 9 16:02:49 2023. This dataset has 62010 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar 9 16:56:28 2023. This dataset has 62010 values.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">library</span>(forcats)</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">combined.data &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
@@ -4932,10 +4933,12 @@ pre code {
 <a class="sourceLine" id="cb66-39" data-line-number="39">          model.male  <span class="op">%&gt;%</span><span class="st"> </span>tidy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Group=</span><span class="st">&quot;Male&quot;</span>),</a>
 <a class="sourceLine" id="cb66-40" data-line-number="40">          model.female  <span class="op">%&gt;%</span><span class="st"> </span>tidy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Group=</span><span class="st">&quot;Female&quot;</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb66-41" data-line-number="41"><span class="st">  </span><span class="kw">filter</span>(term<span class="op">==</span><span class="st">&quot;BMI_cat.Ob.NonObObese:StressHigh&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-42" data-line-number="42"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>term) -&gt;<span class="st"> </span>subgroup.analyses</a>
-<a class="sourceLine" id="cb66-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb66-44" data-line-number="44">subgroup.analyses <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-45" data-line-number="45"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Stratified BMI:Stress interaction terms by race/ethnicity and gender&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb66-42" data-line-number="42"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Group =</span> <span class="kw">factor</span>(Group, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;All&quot;</span>,<span class="st">&quot;Female&quot;</span>,<span class="st">&quot;Male&quot;</span>,</a>
+<a class="sourceLine" id="cb66-43" data-line-number="43">                                        <span class="st">&quot;White&quot;</span>,<span class="st">&quot;Black&quot;</span>,<span class="st">&quot;Hispanic/Latino&quot;</span>,<span class="st">&quot;Asian&quot;</span>,<span class="st">&quot;Other&quot;</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb66-44" data-line-number="44"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>term) -&gt;<span class="st"> </span>subgroup.analyses</a>
+<a class="sourceLine" id="cb66-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb66-46" data-line-number="46">subgroup.analyses <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb66-47" data-line-number="47"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Stratified BMI:Stress interaction terms by race/ethnicity and gender&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Stratified BMI:Stress interaction terms by race/ethnicity and gender</caption>
 <thead>
@@ -5012,12 +5015,13 @@ pre code {
 <a class="sourceLine" id="cb67-4" data-line-number="4">                              <span class="dt">x=</span>Group)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb67-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb67-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_errorbar</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb67-7" data-line-number="7"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb67-8" data-line-number="8"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Subgroup Estimate of Stress:Obesity Interaction&quot;</span>,</a>
-<a class="sourceLine" id="cb67-9" data-line-number="9">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb67-10" data-line-number="10"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
-<a class="sourceLine" id="cb67-11" data-line-number="11">        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">vjust =</span> <span class="fl">0.5</span>, <span class="dt">hjust=</span><span class="dv">1</span>))</a></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<a class="sourceLine" id="cb67-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">0</span>,<span class="dt">lty=</span><span class="dv">2</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb67-8" data-line-number="8"><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb67-9" data-line-number="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Estimate of Stress:Obesity Interaction&quot;</span>,</a>
+<a class="sourceLine" id="cb67-10" data-line-number="10">       <span class="dt">x=</span><span class="st">&quot;&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb67-11" data-line-number="11"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
+<a class="sourceLine" id="cb67-12" data-line-number="12">        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">vjust =</span> <span class="fl">0.5</span>, <span class="dt">hjust=</span><span class="dv">1</span>))</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <div id="logistic-regressions-for-obesenon-obese---stress-as-linear-covariate" class="section level2">
 <h2><span class="header-section-number">3.1</span> Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate</h2>
 <p>Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a linear covariate</p>
@@ -5483,14 +5487,392 @@ pre code {
 </tbody>
 </table>
 </div>
+<div id="logistic-regressions-for-obesenon-obese---stress-as-discrete-covariate" class="section level2">
+<h2><span class="header-section-number">3.2</span> Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate</h2>
+<p>Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a non-linear discrete covariate</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" data-line-number="1"><span class="kw">glm</span>(DiabetesAny<span class="op">~</span>BMI_cat.Ob.NonOb<span class="op">+</span><span class="kw">as.factor</span>(Stress_d1)<span class="op">+</span><span class="kw">as.factor</span>(Stress_d1)<span class="op">:</span>BMI_cat.Ob.NonOb<span class="op">+</span>Gender<span class="op">+</span>age<span class="op">+</span>Race.Ethnicity, </a>
+<a class="sourceLine" id="cb76-2" data-line-number="2">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb76-3" data-line-number="3">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>obesity.glm4</a>
+<a class="sourceLine" id="cb76-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb76-5" data-line-number="5">obesity.glm4 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb76-6" data-line-number="6"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb76-7" data-line-number="7"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarites&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarites</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-5.06</td>
+<td align="right">0.099</td>
+<td align="right">-50.96</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese</td>
+<td align="right">1.02</td>
+<td align="right">0.091</td>
+<td align="right">11.28</td>
+<td align="right">1.66e-29</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)1</td>
+<td align="right">-0.04</td>
+<td align="right">0.101</td>
+<td align="right">-0.39</td>
+<td align="right">6.99e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)2</td>
+<td align="right">0.04</td>
+<td align="right">0.103</td>
+<td align="right">0.36</td>
+<td align="right">7.18e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)3</td>
+<td align="right">0.12</td>
+<td align="right">0.109</td>
+<td align="right">1.06</td>
+<td align="right">2.87e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)4</td>
+<td align="right">0.07</td>
+<td align="right">0.103</td>
+<td align="right">0.66</td>
+<td align="right">5.11e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)5</td>
+<td align="right">0.15</td>
+<td align="right">0.104</td>
+<td align="right">1.43</td>
+<td align="right">1.53e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)6</td>
+<td align="right">0.25</td>
+<td align="right">0.104</td>
+<td align="right">2.40</td>
+<td align="right">1.63e-02</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)7</td>
+<td align="right">0.17</td>
+<td align="right">0.109</td>
+<td align="right">1.55</td>
+<td align="right">1.22e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)8</td>
+<td align="right">0.11</td>
+<td align="right">0.094</td>
+<td align="right">1.12</td>
+<td align="right">2.63e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)9</td>
+<td align="right">0.18</td>
+<td align="right">0.131</td>
+<td align="right">1.38</td>
+<td align="right">1.67e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)10</td>
+<td align="right">0.51</td>
+<td align="right">0.144</td>
+<td align="right">3.53</td>
+<td align="right">4.10e-04</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)11</td>
+<td align="right">0.48</td>
+<td align="right">0.185</td>
+<td align="right">2.60</td>
+<td align="right">9.33e-03</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)12</td>
+<td align="right">0.62</td>
+<td align="right">0.232</td>
+<td align="right">2.68</td>
+<td align="right">7.27e-03</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)13</td>
+<td align="right">0.32</td>
+<td align="right">0.342</td>
+<td align="right">0.93</td>
+<td align="right">3.52e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)14</td>
+<td align="right">1.31</td>
+<td align="right">0.320</td>
+<td align="right">4.08</td>
+<td align="right">4.41e-05</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)15</td>
+<td align="right">0.79</td>
+<td align="right">0.552</td>
+<td align="right">1.43</td>
+<td align="right">1.54e-01</td>
+</tr>
+<tr class="even">
+<td align="left">as.factor(Stress_d1)16</td>
+<td align="right">-0.08</td>
+<td align="right">1.043</td>
+<td align="right">-0.07</td>
+<td align="right">9.40e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">GenderM</td>
+<td align="right">0.29</td>
+<td align="right">0.031</td>
+<td align="right">9.41</td>
+<td align="right">5.11e-21</td>
+</tr>
+<tr class="even">
+<td align="left">age</td>
+<td align="right">0.04</td>
+<td align="right">0.001</td>
+<td align="right">37.72</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="odd">
+<td align="left">Race.EthnicityAsian</td>
+<td align="right">0.63</td>
+<td align="right">0.139</td>
+<td align="right">4.53</td>
+<td align="right">5.79e-06</td>
+</tr>
+<tr class="even">
+<td align="left">Race.EthnicityBlack</td>
+<td align="right">0.67</td>
+<td align="right">0.065</td>
+<td align="right">10.36</td>
+<td align="right">3.67e-25</td>
+</tr>
+<tr class="odd">
+<td align="left">Race.EthnicityHispanic/Latino</td>
+<td align="right">0.31</td>
+<td align="right">0.112</td>
+<td align="right">2.80</td>
+<td align="right">5.18e-03</td>
+</tr>
+<tr class="even">
+<td align="left">Race.EthnicityOther</td>
+<td align="right">0.08</td>
+<td align="right">0.087</td>
+<td align="right">0.89</td>
+<td align="right">3.72e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)1</td>
+<td align="right">0.01</td>
+<td align="right">0.135</td>
+<td align="right">0.11</td>
+<td align="right">9.12e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)2</td>
+<td align="right">-0.02</td>
+<td align="right">0.137</td>
+<td align="right">-0.15</td>
+<td align="right">8.80e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)3</td>
+<td align="right">-0.11</td>
+<td align="right">0.144</td>
+<td align="right">-0.79</td>
+<td align="right">4.30e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)4</td>
+<td align="right">-0.09</td>
+<td align="right">0.136</td>
+<td align="right">-0.68</td>
+<td align="right">4.99e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)5</td>
+<td align="right">-0.02</td>
+<td align="right">0.137</td>
+<td align="right">-0.13</td>
+<td align="right">9.00e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)6</td>
+<td align="right">0.03</td>
+<td align="right">0.136</td>
+<td align="right">0.22</td>
+<td align="right">8.23e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)7</td>
+<td align="right">0.21</td>
+<td align="right">0.140</td>
+<td align="right">1.52</td>
+<td align="right">1.30e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)8</td>
+<td align="right">0.13</td>
+<td align="right">0.123</td>
+<td align="right">1.06</td>
+<td align="right">2.89e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)9</td>
+<td align="right">0.21</td>
+<td align="right">0.164</td>
+<td align="right">1.27</td>
+<td align="right">2.05e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)10</td>
+<td align="right">0.06</td>
+<td align="right">0.186</td>
+<td align="right">0.30</td>
+<td align="right">7.63e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)11</td>
+<td align="right">0.05</td>
+<td align="right">0.233</td>
+<td align="right">0.22</td>
+<td align="right">8.24e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)12</td>
+<td align="right">-0.03</td>
+<td align="right">0.289</td>
+<td align="right">-0.12</td>
+<td align="right">9.07e-01</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)13</td>
+<td align="right">0.58</td>
+<td align="right">0.410</td>
+<td align="right">1.41</td>
+<td align="right">1.60e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)14</td>
+<td align="right">-0.88</td>
+<td align="right">0.466</td>
+<td align="right">-1.89</td>
+<td align="right">5.86e-02</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)15</td>
+<td align="right">-0.60</td>
+<td align="right">0.694</td>
+<td align="right">-0.86</td>
+<td align="right">3.88e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:as.factor(Stress_d1)16</td>
+<td align="right">0.82</td>
+<td align="right">1.154</td>
+<td align="right">0.71</td>
+<td align="right">4.78e-01</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="kw">anova</span>(obesity.glm4,<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>tidy <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">Deviance</th>
+<th align="right">Resid..Df</th>
+<th align="right">Resid..Dev</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NULL</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">39690</td>
+<td align="right">32213</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonOb</td>
+<td align="right">1</td>
+<td align="right">1218</td>
+<td align="right">39689</td>
+<td align="right">30995</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="odd">
+<td align="left">as.factor(Stress_d1)</td>
+<td align="right">16</td>
+<td align="right">49</td>
+<td align="right">39673</td>
+<td align="right">30947</td>
+<td align="right">3.81e-05</td>
+</tr>
+<tr class="even">
+<td align="left">Gender</td>
+<td align="right">1</td>
+<td align="right">206</td>
+<td align="right">39672</td>
+<td align="right">30741</td>
+<td align="right">1.12e-46</td>
+</tr>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">1</td>
+<td align="right">1546</td>
+<td align="right">39671</td>
+<td align="right">29195</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">Race.Ethnicity</td>
+<td align="right">4</td>
+<td align="right">119</td>
+<td align="right">39667</td>
+<td align="right">29076</td>
+<td align="right">1.08e-24</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI_cat.Ob.NonOb:as.factor(Stress_d1)</td>
+<td align="right">16</td>
+<td align="right">17</td>
+<td align="right">39651</td>
+<td align="right">29059</td>
+<td align="right">3.82e-01</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="summary-of-covariates" class="section level1">
 <h1><span class="header-section-number">4</span> Summary of Covariates</h1>
 <p>Stratified data by stress and obesity status and summarized data</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb76-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb76-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb76-4" data-line-number="4"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb78-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb78-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb78-4" data-line-number="4"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group</caption>
 <thead>
@@ -5533,12 +5915,12 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Gender) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb77-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb77-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb77-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb77-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and gender&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Gender) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb79-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb79-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb79-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb79-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and gender&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group and gender</caption>
 <thead>
@@ -5600,12 +5982,12 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb78-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb78-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb78-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb78-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb78-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and race/ethnicity&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb80-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb80-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb80-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb80-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb80-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and race/ethnicity&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group and race/ethnicity</caption>
 <thead>
@@ -5739,14 +6121,14 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb79-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb79-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb79-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>,<span class="st">'Stress_d1'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb79-6" data-line-number="6">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb79-7" data-line-number="7">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb79-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI, stress and age of participants by group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb81-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb81-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb81-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>,<span class="st">'Stress_d1'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb81-6" data-line-number="6">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb81-7" data-line-number="7">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb81-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI, stress and age of participants by group&quot;</span>)</a></code></pre></div>
 <table style="width:100%;">
 <caption>Average BMI, stress and age of participants by group</caption>
 <colgroup>
@@ -5832,14 +6214,14 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb80-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb80-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>,<span class="st">'Stress_d1'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb80-4" data-line-number="4">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb80-5" data-line-number="5">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb80-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb80-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb80-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI,stress and age of participants by group,complete cases&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb82-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb82-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>,<span class="st">'Stress_d1'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb82-4" data-line-number="4">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb82-5" data-line-number="5">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb82-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb82-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb82-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI,stress and age of participants by group,complete cases&quot;</span>)</a></code></pre></div>
 <table style="width:100%;">
 <caption>Average BMI,stress and age of participants by group,complete cases</caption>
 <colgroup>
@@ -5928,7 +6310,7 @@ pre code {
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">5</span> Session Information</h1>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 4.2.0 (2022-04-22)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
