@@ -352,7 +352,9 @@ rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
       diabetes.disadvantage %>% rename("Group"="Neighborhood"),
-      diabetes.age %>% rename("Group"="Age.group")) -> summary.table
+      diabetes.age %>% rename("Group"="Age.group")) %>%
+  mutate(Total=No+Yes) %>%
+  select(Group,Total,No,Yes,Prevalence)-> summary.table
 
 kable(summary.table, caption="Summary of demographic variables by diabetes incidence")
 write_csv(summary.table, "Diabetes Demographics Table.csv")
