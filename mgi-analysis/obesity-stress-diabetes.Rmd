@@ -224,10 +224,10 @@ glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and  gender as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
 glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity, 
@@ -236,10 +236,10 @@ glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity,
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariate", digits =c(0,0,0,0,0,99))
 ```
 
 ### Diabetes Rates by Quartiles
@@ -338,10 +338,10 @@ glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and  gender as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
 glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnicity, 
@@ -350,7 +350,7 @@ glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnic
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariates", digits =c(0,0,0,0,0,99))
@@ -439,6 +439,35 @@ ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
         legend.position = "none")
 ```
 
+# Stratified by Neighborhood Disadvantage
+
+```{r diabetes-BMI-obese-nonobese-disadvantage}
+with(combined.data, table(DiabetesAny,BMI_cat.Ob.NonOb,Stress,disadvantage13_17_qrtl)) %>% 
+  data.frame %>%
+  pivot_wider(names_from=DiabetesAny,
+              values_from = Freq) %>%
+  rename(Diabetes=`1`,
+         NonDiabetes=`0`) %>%
+  mutate(Total=Diabetes+NonDiabetes) %>%
+  mutate(Percent=Diabetes/Total*100) -> diabetes.BMI_cat.Ob.NonOb.stress.counts
+
+ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
+       aes(y=Percent,
+           x=BMI_cat.Ob.NonOb,
+           fill=Stress)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       title="Effects of Chronic Stress on Diabetes",
+       x="") +
+  facet_grid(.~disadvantage13_17_qrtl) +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = "none")
+```
+
+
 ## Logistic Regressions for Obese/Non-Obese
 
 Ran a series of logistic regressions using obese/non-obese as the categorization
@@ -474,10 +503,10 @@ glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and  gender as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
 glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
@@ -486,10 +515,22 @@ glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covariates", digits =c(0,2,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covariate", digits =c(0,0,0,0,0,99))
+
+#adding in neighborhood disadvantage
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender, race, neighborhood disadvantage as covariates", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender, race, and neighborhood disadvantage as covariates", digits =c(0,0,0,0,0,99))
 ```
 
 ### Testing for the Interaction Between Gender and Obesity-BMI
@@ -509,11 +550,11 @@ gender.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.No
 
 
 anova(gender.int.model,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covarite")
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covariate")
 
 gender.int.model %>%
   tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covarite")
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covariate")
 
 anova(gender.int.model.null,gender.int.model,test="Chisq") %>% 
   kable(caption="Chi squared test of model with and without a gender interaction term",
@@ -564,10 +605,10 @@ race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonO
     data=combined.data) 
 
 race.int.model %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covarite")
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covariate")
 
 race.int.model %>% anova %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covarite")
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covariate")
 
 anova(race.int.model.null,race.int.model) %>% 
   kable(caption="Chi squared test of model with and without a gender interaction term")
@@ -613,7 +654,7 @@ race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonO
     data=combined.data %>% filter(Race.Ethnicity %in% c("White","Black"))) 
 
 race.int.model %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covarite, using white/black race only")
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covariate, using white/black race only")
 
 anova(race.int.model.null,race.int.model) %>% 
   kable(caption="Chi squared test of model with and without a race interaction term, using white/black race only")
@@ -693,52 +734,16 @@ ggplot(subgroup.analyses, aes(y=estimate,
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a linear covariate
 
 ```{r obese-not-obese-logistic-regressions-linear}
-glm(DiabetesAny~BMI_cat.Ob.NonOb, 
-    family="binomial",
-    data=combined.data) -> obesity.glm1
-
-obesity.glm1 %>%
-  tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes", digits =c(0,2,3,2,99))
-  
-anova(obesity.glm1,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, ", digits =c(0,0,0,0,0,99))
-
-#adding in stress as a modifier
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb, 
-    family="binomial",
-    data=combined.data) -> obesity.glm2
-
-obesity.glm2 %>%
-  tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier", digits =c(0,2,3,2,99))
-  
-anova(obesity.glm2,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier", digits =c(0,0,0,0,0,99))
-
-#adding in age and gender as covariates as a modifier
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb+Gender+age, 
-    family="binomial",
-    data=combined.data) -> obesity.glm3
-
-obesity.glm3 %>%
-  tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
-  
-anova(obesity.glm3,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
-
-#adding in race and ethnicity
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier", digits =c(0,2,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate
@@ -746,18 +751,35 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a non-linear discrete covariate
 
 ```{r obese-not-obese-logistic-regressions-discrete}
-glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier", digits =c(0,2,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
-  kable(caption="Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
 
+
+## Logistic Regressions for Obese/Non-Obese - Stress as Quartile
+
+Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a quartile.
+
+```{r obese-not-obese-logistic-regressions-quartile}
+glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress.quartile)+as.factor(Stress.quartile):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm4
+
+obesity.glm4 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm4,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier", digits =c(0,0,0,0,0,99))
+```
 
 
 # Summary of Covariates
