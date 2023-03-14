@@ -243,6 +243,55 @@ glm(DiabetesAny~age, data=combined.data) %>%
         digits =c(0,2,3,2,99))
 ```
 
+## By Neighborhood Disadvantage
+
+```{r diabetes-counts-disadvantage}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(disadvantage13_17_qrtl,DiabetesAny) %>%
+  count %>%
+  pivot_wider(id_cols=disadvantage13_17_qrtl,
+              names_from=DiabetesAny,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=disadvantage13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.age %>%
+  knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
+```
+
+```{r diabetes-counts-age-stats}
+glm(DiabetesAny~disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood disadvantage group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood disadvantage group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
 ## By Body Mass Index
 
 ```{r diabetes-counts-bmi}
@@ -302,6 +351,7 @@ glm(DiabetesAny~BMI, data=combined.data) %>%
 rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
+      diabetes.disadvantage %>% rename("Group"="Neighborhood"),
       diabetes.age %>% rename("Group"="Age.group")) -> summary.table
 
 kable(summary.table, caption="Summary of demographic variables by diabetes incidence")
