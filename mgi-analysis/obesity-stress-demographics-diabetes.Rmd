@@ -275,7 +275,7 @@ diabetes.age %>%
   knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
 ```
 
-```{r diabetes-counts-age-stats}
+```{r diabetes-counts-disadvantage-stats}
 glm(DiabetesAny~disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
