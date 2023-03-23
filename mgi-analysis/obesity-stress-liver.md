@@ -55,20 +55,20 @@ combined.data <- read_csv(input.file, na="-99") %>%
 ```
 
 ```
-## Rows: 62010 Columns: 32
+## Rows: 62010 Columns: 38
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (17): DeID_PatientID, Gender, Stress_d1, DeID_EncounterID, BMI_cat, BMI_...
-## dbl (15): age, CardiacArrhythmias, ChronicPulmonaryDisease, Depression, Diab...
+## chr (21): DeID_PatientID, Gender, Stress_d1, DeID_EncounterID, affluence13_1...
+## dbl (17): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar  9 16:03:30 2023. This dataset has 36826 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Thu Mar 23 14:48:34 2023. This dataset has 36813 values.
 
 
 ```r
@@ -119,18 +119,18 @@ Table: Liver disease rates by BMI category
 
 |BMI_cat         |Gender | NonDisease| LiverDisease| Total| Percent|
 |:---------------|:------|----------:|------------:|-----:|-------:|
-|Underweight     |F      |        151|           20|   171|    11.7|
-|Normal          |F      |       4934|          512|  5446|     9.4|
-|Overweight      |F      |       4798|          560|  5358|    10.5|
-|Class I Obese   |F      |       3372|          511|  3883|    13.2|
-|Class II Obese  |F      |       2022|          295|  2317|    12.7|
-|Class III Obese |F      |       1794|          323|  2117|    15.3|
-|Underweight     |M      |         71|           15|    86|    17.4|
-|Normal          |M      |       3156|          383|  3539|    10.8|
-|Overweight      |M      |       5837|          721|  6558|    11.0|
-|Class I Obese   |M      |       3870|          519|  4389|    11.8|
-|Class II Obese  |M      |       1598|          243|  1841|    13.2|
-|Class III Obese |M      |        857|          139|   996|    14.0|
+|Underweight     |F      |        152|           28|   180|   15.56|
+|Normal          |F      |       4954|          510|  5464|    9.33|
+|Overweight      |F      |       4817|          546|  5363|   10.18|
+|Class I Obese   |F      |       3393|          500|  3893|   12.84|
+|Class II Obese  |F      |       1976|          314|  2290|   13.71|
+|Class III Obese |F      |       1774|          347|  2121|   16.36|
+|Underweight     |M      |         67|           17|    84|   20.24|
+|Normal          |M      |       3136|          392|  3528|   11.11|
+|Overweight      |M      |       5843|          719|  6562|   10.96|
+|Class I Obese   |M      |       3849|          529|  4378|   12.08|
+|Class II Obese  |M      |       1609|          231|  1840|   12.55|
+|Class III Obese |M      |        841|          146|   987|   14.79|
 
 ```r
 library(ggplot2)
@@ -179,30 +179,30 @@ Table: Liver Disease rates by BMI category
 
 |BMI_cat         |Stress |Gender | NonLiverDisease| LiverDisease| Total| Percent|
 |:---------------|:------|:------|---------------:|------------:|-----:|-------:|
-|Underweight     |Low    |F      |              79|            7|    86|    8.14|
-|Normal          |Low    |F      |            2905|          295|  3200|    9.22|
-|Overweight      |Low    |F      |            2787|          294|  3081|    9.54|
-|Class I Obese   |Low    |F      |            1797|          262|  2059|   12.72|
-|Class II Obese  |Low    |F      |            1087|          141|  1228|   11.48|
-|Class III Obese |Low    |F      |             902|          160|  1062|   15.07|
-|Underweight     |High   |F      |              72|           13|    85|   15.29|
-|Normal          |High   |F      |            2029|          217|  2246|    9.66|
-|Overweight      |High   |F      |            2011|          266|  2277|   11.68|
-|Class I Obese   |High   |F      |            1575|          249|  1824|   13.65|
-|Class II Obese  |High   |F      |             935|          154|  1089|   14.14|
-|Class III Obese |High   |F      |             892|          163|  1055|   15.45|
-|Underweight     |Low    |M      |              31|            7|    38|   18.42|
-|Normal          |Low    |M      |            1924|          214|  2138|   10.01|
-|Overweight      |Low    |M      |            3636|          453|  4089|   11.08|
-|Class I Obese   |Low    |M      |            2355|          291|  2646|   11.00|
-|Class II Obese  |Low    |M      |             926|          122|  1048|   11.64|
-|Class III Obese |Low    |M      |             464|           69|   533|   12.95|
-|Underweight     |High   |M      |              40|            8|    48|   16.67|
-|Normal          |High   |M      |            1232|          169|  1401|   12.06|
-|Overweight      |High   |M      |            2201|          268|  2469|   10.86|
-|Class I Obese   |High   |M      |            1515|          228|  1743|   13.08|
-|Class II Obese  |High   |M      |             672|          121|   793|   15.26|
-|Class III Obese |High   |M      |             393|           70|   463|   15.12|
+|Underweight     |Low    |F      |              78|           11|    89|   12.36|
+|Normal          |Low    |F      |            2937|          295|  3232|    9.13|
+|Overweight      |Low    |F      |            2801|          279|  3080|    9.06|
+|Class I Obese   |Low    |F      |            1810|          256|  2066|   12.39|
+|Class II Obese  |Low    |F      |            1067|          150|  1217|   12.32|
+|Class III Obese |Low    |F      |             902|          167|  1069|   15.62|
+|Underweight     |High   |F      |              74|           17|    91|   18.68|
+|Normal          |High   |F      |            2017|          215|  2232|    9.63|
+|Overweight      |High   |F      |            2016|          267|  2283|   11.70|
+|Class I Obese   |High   |F      |            1583|          244|  1827|   13.36|
+|Class II Obese  |High   |F      |             909|          164|  1073|   15.28|
+|Class III Obese |High   |F      |             872|          180|  1052|   17.11|
+|Underweight     |Low    |M      |              29|            6|    35|   17.14|
+|Normal          |Low    |M      |            1896|          219|  2115|   10.36|
+|Overweight      |Low    |M      |            3662|          436|  4098|   10.64|
+|Class I Obese   |Low    |M      |            2333|          307|  2640|   11.63|
+|Class II Obese  |Low    |M      |             935|          114|  1049|   10.87|
+|Class III Obese |Low    |M      |             453|           73|   526|   13.88|
+|Underweight     |High   |M      |              38|           11|    49|   22.45|
+|Normal          |High   |M      |            1240|          173|  1413|   12.24|
+|Overweight      |High   |M      |            2181|          283|  2464|   11.48|
+|Class I Obese   |High   |M      |            1516|          222|  1738|   12.77|
+|Class II Obese  |High   |M      |             674|          117|   791|   14.79|
+|Class III Obese |High   |M      |             388|           73|   461|   15.84|
 
 ```r
 ggplot(liver.disease.bmi.stress.counts,
@@ -245,12 +245,12 @@ Table: Logistic regression of obesity on liver.disease
 
 |term                   | estimate| std.error| statistic|  p.value|
 |:----------------------|--------:|---------:|---------:|--------:|
-|(Intercept)            |    -1.85|     0.182|    -10.16| 3.07e-24|
-|BMI_catNormal          |    -0.35|     0.185|     -1.91| 5.58e-02|
-|BMI_catOverweight      |    -0.27|     0.184|     -1.46| 1.44e-01|
-|BMI_catClass I Obese   |    -0.10|     0.185|     -0.56| 5.77e-01|
-|BMI_catClass II Obese  |    -0.06|     0.188|     -0.31| 7.53e-01|
-|BMI_catClass III Obese |     0.10|     0.189|      0.53| 5.95e-01|
+|(Intercept)            |    -1.58|     0.164|     -9.67| 4.12e-22|
+|BMI_catNormal          |    -0.61|     0.167|     -3.65| 2.60e-04|
+|BMI_catOverweight      |    -0.55|     0.166|     -3.30| 9.66e-04|
+|BMI_catClass I Obese   |    -0.37|     0.167|     -2.21| 2.72e-02|
+|BMI_catClass II Obese  |    -0.30|     0.170|     -1.77| 7.63e-02|
+|BMI_catClass III Obese |    -0.09|     0.171|     -0.50| 6.14e-01|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -263,8 +263,8 @@ Table: Logistic regression of obesity on liver.disease,
 
 |term    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:-------|--:|--------:|---------:|----------:|--------:|
-|NULL    | NA|       NA|     36700|      26276|       NA|
-|BMI_cat |  5|       76|     36695|      26200| 4.64e-15|
+|NULL    | NA|       NA|     36689|      26428|       NA|
+|BMI_cat |  5|      106|     36684|      26321| 2.29e-21|
 
 ```r
 #adding in stress as a modifier
@@ -283,18 +283,18 @@ Table: Logistic regression of obesity on liver.disease, with stress as a modifie
 
 |term                              | estimate| std.error| statistic|  p.value|
 |:---------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                       |    -2.06|     0.284|     -7.26| 3.74e-13|
-|BMI_catNormal                     |    -0.19|     0.288|     -0.66| 5.12e-01|
-|BMI_catOverweight                 |    -0.09|     0.286|     -0.31| 7.53e-01|
-|BMI_catClass I Obese              |     0.05|     0.287|      0.16| 8.74e-01|
-|BMI_catClass II Obese             |     0.03|     0.291|      0.09| 9.28e-01|
-|BMI_catClass III Obese            |     0.28|     0.293|      0.94| 3.46e-01|
-|StressHigh                        |     0.39|     0.370|      1.05| 2.95e-01|
-|BMI_catNormal:StressHigh          |    -0.27|     0.377|     -0.72| 4.72e-01|
-|BMI_catOverweight:StressHigh      |    -0.30|     0.375|     -0.80| 4.22e-01|
-|BMI_catClass I Obese:StressHigh   |    -0.24|     0.376|     -0.64| 5.24e-01|
-|BMI_catClass II Obese:StressHigh  |    -0.12|     0.382|     -0.31| 7.58e-01|
-|BMI_catClass III Obese:StressHigh |    -0.31|     0.384|     -0.81| 4.21e-01|
+|(Intercept)                       |    -1.84|     0.261|     -7.05| 1.84e-12|
+|BMI_catNormal                     |    -0.40|     0.265|     -1.51| 1.30e-01|
+|BMI_catOverweight                 |    -0.36|     0.264|     -1.37| 1.70e-01|
+|BMI_catClass I Obese              |    -0.16|     0.265|     -0.59| 5.55e-01|
+|BMI_catClass II Obese             |    -0.19|     0.269|     -0.69| 4.89e-01|
+|BMI_catClass III Obese            |     0.11|     0.270|      0.40| 6.88e-01|
+|StressHigh                        |     0.45|     0.336|      1.35| 1.77e-01|
+|BMI_catNormal:StressHigh          |    -0.34|     0.343|     -0.99| 3.22e-01|
+|BMI_catOverweight:StressHigh      |    -0.28|     0.341|     -0.83| 4.05e-01|
+|BMI_catClass I Obese:StressHigh   |    -0.35|     0.342|     -1.03| 3.04e-01|
+|BMI_catClass II Obese:StressHigh  |    -0.16|     0.348|     -0.45| 6.54e-01|
+|BMI_catClass III Obese:StressHigh |    -0.33|     0.350|     -0.94| 3.49e-01|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -307,10 +307,10 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     36700|      26276|       NA|
-|BMI_cat        |  5|       76|     36695|      26200| 4.64e-15|
-|Stress         |  1|       16|     36694|      26184| 5.97e-05|
-|BMI_cat:Stress |  5|        4|     36689|      26180| 5.98e-01|
+|NULL           | NA|       NA|     36689|      26428|       NA|
+|BMI_cat        |  5|      106|     36684|      26321| 2.29e-21|
+|Stress         |  1|       22|     36683|      26299| 2.33e-06|
+|BMI_cat:Stress |  5|        4|     36678|      26295| 5.04e-01|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -329,20 +329,20 @@ Table: Logistic regression of obesity on liver.disease, with stress as a modifie
 
 |term                              | estimate| std.error| statistic|  p.value|
 |:---------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                       |    -2.88|     0.291|     -9.90| 4.17e-23|
-|BMI_catNormal                     |    -0.21|     0.289|     -0.71| 4.76e-01|
-|BMI_catOverweight                 |    -0.18|     0.288|     -0.64| 5.25e-01|
-|BMI_catClass I Obese              |    -0.05|     0.289|     -0.17| 8.64e-01|
-|BMI_catClass II Obese             |    -0.05|     0.293|     -0.16| 8.75e-01|
-|BMI_catClass III Obese            |     0.25|     0.294|      0.85| 3.96e-01|
-|StressHigh                        |     0.42|     0.372|      1.13| 2.60e-01|
-|GenderM                           |    -0.03|     0.034|     -0.93| 3.52e-01|
-|age                               |     0.02|     0.001|     15.26| 1.38e-52|
-|BMI_catNormal:StressHigh          |    -0.28|     0.379|     -0.74| 4.61e-01|
-|BMI_catOverweight:StressHigh      |    -0.30|     0.377|     -0.79| 4.29e-01|
-|BMI_catClass I Obese:StressHigh   |    -0.24|     0.378|     -0.65| 5.18e-01|
-|BMI_catClass II Obese:StressHigh  |    -0.12|     0.384|     -0.30| 7.60e-01|
-|BMI_catClass III Obese:StressHigh |    -0.30|     0.386|     -0.79| 4.31e-01|
+|(Intercept)                       |    -2.61|     0.268|     -9.73| 2.28e-22|
+|BMI_catNormal                     |    -0.42|     0.267|     -1.59| 1.11e-01|
+|BMI_catOverweight                 |    -0.46|     0.266|     -1.72| 8.56e-02|
+|BMI_catClass I Obese              |    -0.25|     0.267|     -0.94| 3.48e-01|
+|BMI_catClass II Obese             |    -0.26|     0.271|     -0.95| 3.40e-01|
+|BMI_catClass III Obese            |     0.08|     0.272|      0.30| 7.66e-01|
+|StressHigh                        |     0.48|     0.338|      1.43| 1.52e-01|
+|GenderM                           |    -0.02|     0.033|     -0.61| 5.39e-01|
+|age                               |     0.02|     0.001|     14.52| 9.23e-48|
+|BMI_catNormal:StressHigh          |    -0.35|     0.345|     -1.00| 3.17e-01|
+|BMI_catOverweight:StressHigh      |    -0.28|     0.343|     -0.82| 4.14e-01|
+|BMI_catClass I Obese:StressHigh   |    -0.36|     0.344|     -1.04| 2.99e-01|
+|BMI_catClass II Obese:StressHigh  |    -0.16|     0.350|     -0.46| 6.46e-01|
+|BMI_catClass III Obese:StressHigh |    -0.33|     0.352|     -0.92| 3.55e-01|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -355,12 +355,12 @@ Table: Logistic regression of obesity on liver.disease, with stress as a modifie
 
 |term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     36700|      26276|       NA|
-|BMI_cat        |  5|       76|     36695|      26200| 4.64e-15|
-|Stress         |  1|       16|     36694|      26184| 5.97e-05|
-|Gender         |  1|        1|     36693|      26183| 4.33e-01|
-|age            |  1|      241|     36692|      25942| 2.60e-54|
-|BMI_cat:Stress |  5|        4|     36687|      25939| 6.12e-01|
+|NULL           | NA|       NA|     36689|      26428|       NA|
+|BMI_cat        |  5|      106|     36684|      26321| 2.29e-21|
+|Stress         |  1|       22|     36683|      26299| 2.33e-06|
+|Gender         |  1|        1|     36682|      26298| 2.94e-01|
+|age            |  1|      217|     36681|      26081| 3.72e-49|
+|BMI_cat:Stress |  5|        4|     36676|      26076| 4.95e-01|
 
 ```r
 #adding in race and ethnicity
@@ -379,24 +379,24 @@ Table: Logistic regression of obesity on liver.disease, with stress as a modifie
 
 |term                              | estimate| std.error| statistic|  p.value|
 |:---------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                       |    -2.80|     0.319|     -8.77| 1.77e-18|
-|BMI_catNormal                     |    -0.20|     0.289|     -0.71| 4.80e-01|
-|BMI_catOverweight                 |    -0.18|     0.288|     -0.62| 5.33e-01|
-|BMI_catClass I Obese              |    -0.05|     0.289|     -0.16| 8.75e-01|
-|BMI_catClass II Obese             |    -0.04|     0.293|     -0.14| 8.88e-01|
-|BMI_catClass III Obese            |     0.25|     0.294|      0.87| 3.86e-01|
-|StressHigh                        |     0.42|     0.372|      1.13| 2.60e-01|
-|GenderM                           |    -0.03|     0.034|     -0.89| 3.71e-01|
-|age                               |     0.02|     0.001|     15.20| 3.35e-52|
-|Race.EthnicityBlack               |    -0.09|     0.165|     -0.56| 5.74e-01|
-|Race.EthnicityHispanic/Latino     |     0.05|     0.185|      0.29| 7.72e-01|
-|Race.EthnicityOther               |    -0.33|     0.177|     -1.84| 6.64e-02|
-|Race.EthnicityWhite               |    -0.08|     0.146|     -0.56| 5.74e-01|
-|BMI_catNormal:StressHigh          |    -0.28|     0.379|     -0.74| 4.62e-01|
-|BMI_catOverweight:StressHigh      |    -0.30|     0.377|     -0.79| 4.29e-01|
-|BMI_catClass I Obese:StressHigh   |    -0.24|     0.378|     -0.65| 5.17e-01|
-|BMI_catClass II Obese:StressHigh  |    -0.12|     0.384|     -0.31| 7.59e-01|
-|BMI_catClass III Obese:StressHigh |    -0.30|     0.386|     -0.79| 4.31e-01|
+|(Intercept)                       |    -2.56|     0.299|     -8.54| 1.33e-17|
+|BMI_catNormal                     |    -0.42|     0.267|     -1.59| 1.12e-01|
+|BMI_catOverweight                 |    -0.46|     0.266|     -1.72| 8.59e-02|
+|BMI_catClass I Obese              |    -0.25|     0.267|     -0.94| 3.50e-01|
+|BMI_catClass II Obese             |    -0.26|     0.271|     -0.95| 3.41e-01|
+|BMI_catClass III Obese            |     0.08|     0.272|      0.31| 7.58e-01|
+|StressHigh                        |     0.48|     0.338|      1.43| 1.53e-01|
+|GenderM                           |    -0.02|     0.033|     -0.57| 5.68e-01|
+|age                               |     0.02|     0.001|     14.53| 7.61e-48|
+|Race.EthnicityBlack               |    -0.08|     0.166|     -0.45| 6.51e-01|
+|Race.EthnicityHispanic/Latino     |     0.22|     0.183|      1.18| 2.37e-01|
+|Race.EthnicityOther               |    -0.33|     0.178|     -1.88| 6.03e-02|
+|Race.EthnicityWhite               |    -0.06|     0.147|     -0.40| 6.89e-01|
+|BMI_catNormal:StressHigh          |    -0.34|     0.345|     -1.00| 3.19e-01|
+|BMI_catOverweight:StressHigh      |    -0.28|     0.343|     -0.81| 4.18e-01|
+|BMI_catClass I Obese:StressHigh   |    -0.36|     0.345|     -1.04| 3.00e-01|
+|BMI_catClass II Obese:StressHigh  |    -0.16|     0.350|     -0.45| 6.51e-01|
+|BMI_catClass III Obese:StressHigh |    -0.32|     0.352|     -0.92| 3.58e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -409,13 +409,13 @@ Table: Logistic regression of obesity on liver.disease, with stress as a modifie
 
 |term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     36700|      26276|       NA|
-|BMI_cat        |  5|       76|     36695|      26200| 4.64e-15|
-|Stress         |  1|       16|     36694|      26184| 5.97e-05|
-|Gender         |  1|        1|     36693|      26183| 4.33e-01|
-|age            |  1|      241|     36692|      25942| 2.60e-54|
-|Race.Ethnicity |  4|        8|     36688|      25934| 1.04e-01|
-|BMI_cat:Stress |  5|        4|     36683|      25931| 6.16e-01|
+|NULL           | NA|       NA|     36689|      26428|       NA|
+|BMI_cat        |  5|      106|     36684|      26321| 2.29e-21|
+|Stress         |  1|       22|     36683|      26299| 2.33e-06|
+|Gender         |  1|        1|     36682|      26298| 2.94e-01|
+|age            |  1|      217|     36681|      26081| 3.72e-49|
+|Race.Ethnicity |  4|       14|     36677|      26067| 8.05e-03|
+|BMI_cat:Stress |  5|        4|     36672|      26062| 4.88e-01|
 
 ### Liver Disease Rates by Quartiles
 
@@ -439,38 +439,38 @@ Table: Liver Disease Rates by BMI and Stress Quartile
 
 |BMI_cat.obese |Stress.quartile |Gender | NonDisease| LiverDisease| Total| Percent|
 |:-------------|:---------------|:------|----------:|------------:|-----:|-------:|
-|Underweight   |(-0.016,4]      |F      |         60|            6|    66|    9.09|
-|Normal        |(-0.016,4]      |F      |       2437|          243|  2680|    9.07|
-|Overweight    |(-0.016,4]      |F      |       2334|          248|  2582|    9.61|
-|Obese         |(-0.016,4]      |F      |       3156|          457|  3613|   12.65|
-|Underweight   |(12,16]         |F      |          3|            0|     3|    0.00|
-|Normal        |(12,16]         |F      |         60|            7|    67|   10.45|
-|Overweight    |(12,16]         |F      |         65|           11|    76|   14.47|
-|Obese         |(12,16]         |F      |        124|           12|   136|    8.82|
-|Underweight   |(4,8]           |F      |         65|            9|    74|   12.16|
-|Normal        |(4,8]           |F      |       1880|          197|  2077|    9.48|
-|Overweight    |(4,8]           |F      |       1850|          223|  2073|   10.76|
-|Obese         |(4,8]           |F      |       2880|          483|  3363|   14.36|
-|Underweight   |(8,12]          |F      |         23|            5|    28|   17.86|
-|Normal        |(8,12]          |F      |        557|           65|   622|   10.45|
-|Overweight    |(8,12]          |F      |        549|           78|   627|   12.44|
-|Obese         |(8,12]          |F      |       1028|          177|  1205|   14.69|
-|Underweight   |(-0.016,4]      |M      |         21|            6|    27|   22.22|
-|Normal        |(-0.016,4]      |M      |       1649|          174|  1823|    9.54|
-|Overweight    |(-0.016,4]      |M      |       3114|          400|  3514|   11.38|
-|Obese         |(-0.016,4]      |M      |       3188|          415|  3603|   11.52|
+|Underweight   |(-0.016,4]      |F      |         60|            9|    69|   13.04|
+|Normal        |(-0.016,4]      |F      |       2459|          243|  2702|    8.99|
+|Overweight    |(-0.016,4]      |F      |       2350|          230|  2580|    8.91|
+|Obese         |(-0.016,4]      |F      |       3144|          475|  3619|   13.12|
+|Underweight   |(12,16]         |F      |          2|            0|     2|    0.00|
+|Normal        |(12,16]         |F      |         64|           10|    74|   13.51|
+|Overweight    |(12,16]         |F      |         60|           12|    72|   16.67|
+|Obese         |(12,16]         |F      |        114|           19|   133|   14.29|
+|Underweight   |(4,8]           |F      |         64|           14|    78|   17.95|
+|Normal        |(4,8]           |F      |       1882|          198|  2080|    9.52|
+|Overweight    |(4,8]           |F      |       1847|          227|  2074|   10.95|
+|Obese         |(4,8]           |F      |       2877|          483|  3360|   14.38|
+|Underweight   |(8,12]          |F      |         26|            5|    31|   16.13|
+|Normal        |(8,12]          |F      |        549|           59|   608|    9.70|
+|Overweight    |(8,12]          |F      |        560|           77|   637|   12.09|
+|Obese         |(8,12]          |F      |       1008|          184|  1192|   15.44|
+|Underweight   |(-0.016,4]      |M      |         20|            5|    25|   20.00|
+|Normal        |(-0.016,4]      |M      |       1645|          177|  1822|    9.71|
+|Overweight    |(-0.016,4]      |M      |       3143|          386|  3529|   10.94|
+|Obese         |(-0.016,4]      |M      |       3169|          425|  3594|   11.82|
 |Underweight   |(12,16]         |M      |          2|            0|     2|    0.00|
-|Normal        |(12,16]         |M      |         40|            8|    48|   16.67|
-|Overweight    |(12,16]         |M      |         42|            6|    48|   12.50|
-|Obese         |(12,16]         |M      |         73|            7|    80|    8.75|
-|Underweight   |(4,8]           |M      |         37|            6|    43|   13.95|
-|Normal        |(4,8]           |M      |       1175|          154|  1329|   11.59|
-|Overweight    |(4,8]           |M      |       2216|          254|  2470|   10.28|
-|Obese         |(4,8]           |M      |       2423|          375|  2798|   13.40|
-|Underweight   |(8,12]          |M      |         11|            3|    14|   21.43|
-|Normal        |(8,12]          |M      |        292|           47|   339|   13.86|
-|Overweight    |(8,12]          |M      |        465|           61|   526|   11.60|
-|Obese         |(8,12]          |M      |        641|          104|   745|   13.96|
+|Normal        |(12,16]         |M      |         36|            7|    43|   16.28|
+|Overweight    |(12,16]         |M      |         44|            6|    50|   12.00|
+|Obese         |(12,16]         |M      |         76|            9|    85|   10.59|
+|Underweight   |(4,8]           |M      |         37|            7|    44|   15.91|
+|Normal        |(4,8]           |M      |       1167|          155|  1322|   11.72|
+|Overweight    |(4,8]           |M      |       2190|          260|  2450|   10.61|
+|Obese         |(4,8]           |M      |       2425|          368|  2793|   13.18|
+|Underweight   |(8,12]          |M      |          8|            5|    13|   38.46|
+|Normal        |(8,12]          |M      |        288|           53|   341|   15.54|
+|Overweight    |(8,12]          |M      |        466|           67|   533|   12.57|
+|Obese         |(8,12]          |M      |        629|          104|   733|   14.19|
 
 ```r
 ggplot(liver.disease.bmi.stress.quartile.counts,
@@ -513,22 +513,22 @@ Table: Liver Disease Rates by BMI and Stress
 
 |BMI_cat.obese |Stress |Gender | NonDisease| LiverDisease| Total| Percent|
 |:-------------|:------|:------|----------:|------------:|-----:|-------:|
-|Underweight   |Low    |F      |         79|            7|    86|    8.14|
-|Normal        |Low    |F      |       2905|          295|  3200|    9.22|
-|Overweight    |Low    |F      |       2787|          294|  3081|    9.54|
-|Obese         |Low    |F      |       3786|          563|  4349|   12.95|
-|Underweight   |High   |F      |         72|           13|    85|   15.29|
-|Normal        |High   |F      |       2029|          217|  2246|    9.66|
-|Overweight    |High   |F      |       2011|          266|  2277|   11.68|
-|Obese         |High   |F      |       3402|          566|  3968|   14.26|
-|Underweight   |Low    |M      |         31|            7|    38|   18.42|
-|Normal        |Low    |M      |       1924|          214|  2138|   10.01|
-|Overweight    |Low    |M      |       3636|          453|  4089|   11.08|
-|Obese         |Low    |M      |       3745|          482|  4227|   11.40|
-|Underweight   |High   |M      |         40|            8|    48|   16.67|
-|Normal        |High   |M      |       1232|          169|  1401|   12.06|
-|Overweight    |High   |M      |       2201|          268|  2469|   10.86|
-|Obese         |High   |M      |       2580|          419|  2999|   13.97|
+|Underweight   |Low    |F      |         78|           11|    89|   12.36|
+|Normal        |Low    |F      |       2937|          295|  3232|    9.13|
+|Overweight    |Low    |F      |       2801|          279|  3080|    9.06|
+|Obese         |Low    |F      |       3779|          573|  4352|   13.17|
+|Underweight   |High   |F      |         74|           17|    91|   18.68|
+|Normal        |High   |F      |       2017|          215|  2232|    9.63|
+|Overweight    |High   |F      |       2016|          267|  2283|   11.70|
+|Obese         |High   |F      |       3364|          588|  3952|   14.88|
+|Underweight   |Low    |M      |         29|            6|    35|   17.14|
+|Normal        |Low    |M      |       1896|          219|  2115|   10.36|
+|Overweight    |Low    |M      |       3662|          436|  4098|   10.64|
+|Obese         |Low    |M      |       3721|          494|  4215|   11.72|
+|Underweight   |High   |M      |         38|           11|    49|   22.45|
+|Normal        |High   |M      |       1240|          173|  1413|   12.24|
+|Overweight    |High   |M      |       2181|          283|  2464|   11.48|
+|Obese         |High   |M      |       2578|          412|  2990|   13.78|
 
 ```r
 ggplot(liver.disease.bmi.stress.gender.counts,
@@ -570,10 +570,10 @@ Table: Logistic regression of obese vs non-obese on liver disease
 
 |term                    | estimate| std.error| statistic|  p.value|
 |:-----------------------|--------:|---------:|---------:|--------:|
-|(Intercept)             |    -1.85|     0.182|    -10.16| 3.07e-24|
-|BMI_cat.obeseNormal     |    -0.35|     0.185|     -1.91| 5.58e-02|
-|BMI_cat.obeseOverweight |    -0.27|     0.184|     -1.46| 1.44e-01|
-|BMI_cat.obeseObese      |    -0.05|     0.183|     -0.26| 7.92e-01|
+|(Intercept)             |    -1.58|     0.164|     -9.67| 4.12e-22|
+|BMI_cat.obeseNormal     |    -0.61|     0.167|     -3.65| 2.60e-04|
+|BMI_cat.obeseOverweight |    -0.55|     0.166|     -3.30| 9.66e-04|
+|BMI_cat.obeseObese      |    -0.29|     0.165|     -1.75| 7.96e-02|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -586,8 +586,8 @@ Table: Logistic regression of obesity on liver disease,
 
 |term          | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:-------------|--:|--------:|---------:|----------:|--------:|
-|NULL          | NA|       NA|     36700|      26276|       NA|
-|BMI_cat.obese |  3|       65|     36697|      26211| 4.37e-14|
+|NULL          | NA|       NA|     36689|      26428|       NA|
+|BMI_cat.obese |  3|       84|     36686|      26343| 3.81e-18|
 
 ```r
 #adding in stress as a modifier
@@ -606,14 +606,14 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 
 |term                               | estimate| std.error| statistic|  p.value|
 |:----------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                        |    -2.06|     0.284|     -7.26| 3.74e-13|
-|BMI_cat.obeseNormal                |    -0.19|     0.288|     -0.66| 5.12e-01|
-|BMI_cat.obeseOverweight            |    -0.09|     0.286|     -0.31| 7.53e-01|
-|BMI_cat.obeseObese                 |     0.09|     0.286|      0.30| 7.62e-01|
-|StressHigh                         |     0.39|     0.370|      1.05| 2.95e-01|
-|BMI_cat.obeseNormal:StressHigh     |    -0.27|     0.377|     -0.72| 4.72e-01|
-|BMI_cat.obeseOverweight:StressHigh |    -0.30|     0.375|     -0.80| 4.22e-01|
-|BMI_cat.obeseObese:StressHigh      |    -0.22|     0.373|     -0.58| 5.62e-01|
+|(Intercept)                        |    -1.84|     0.261|     -7.05| 1.84e-12|
+|BMI_cat.obeseNormal                |    -0.40|     0.265|     -1.51| 1.30e-01|
+|BMI_cat.obeseOverweight            |    -0.36|     0.264|     -1.37| 1.70e-01|
+|BMI_cat.obeseObese                 |    -0.11|     0.263|     -0.42| 6.75e-01|
+|StressHigh                         |     0.45|     0.336|      1.35| 1.77e-01|
+|BMI_cat.obeseNormal:StressHigh     |    -0.34|     0.343|     -0.99| 3.22e-01|
+|BMI_cat.obeseOverweight:StressHigh |    -0.28|     0.341|     -0.83| 4.05e-01|
+|BMI_cat.obeseObese:StressHigh      |    -0.29|     0.339|     -0.84| 4.00e-01|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -626,10 +626,10 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 
 |term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     36700|      26276|       NA|
-|BMI_cat.obese        |  3|       65|     36697|      26211| 4.37e-14|
-|Stress               |  1|       17|     36696|      26194| 3.94e-05|
-|BMI_cat.obese:Stress |  3|        2|     36693|      26192| 6.20e-01|
+|NULL                 | NA|       NA|     36689|      26428|       NA|
+|BMI_cat.obese        |  3|       84|     36686|      26343| 3.81e-18|
+|Stress               |  1|       24|     36685|      26320| 1.17e-06|
+|BMI_cat.obese:Stress |  3|        1|     36682|      26319| 7.39e-01|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -648,16 +648,16 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 
 |term                               | estimate| std.error| statistic|  p.value|
 |:----------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                        |    -2.86|     0.290|     -9.83| 8.44e-23|
-|BMI_cat.obeseNormal                |    -0.20|     0.289|     -0.71| 4.80e-01|
-|BMI_cat.obeseOverweight            |    -0.18|     0.288|     -0.61| 5.39e-01|
-|BMI_cat.obeseObese                 |     0.01|     0.287|      0.05| 9.59e-01|
-|StressHigh                         |     0.42|     0.372|      1.13| 2.59e-01|
-|GenderM                            |    -0.05|     0.033|     -1.38| 1.68e-01|
-|age                                |     0.02|     0.001|     15.01| 5.93e-51|
-|BMI_cat.obeseNormal:StressHigh     |    -0.28|     0.379|     -0.74| 4.60e-01|
-|BMI_cat.obeseOverweight:StressHigh |    -0.30|     0.377|     -0.80| 4.26e-01|
-|BMI_cat.obeseObese:StressHigh      |    -0.22|     0.375|     -0.58| 5.63e-01|
+|(Intercept)                        |    -2.58|     0.268|     -9.63| 5.85e-22|
+|BMI_cat.obeseNormal                |    -0.42|     0.267|     -1.58| 1.14e-01|
+|BMI_cat.obeseOverweight            |    -0.45|     0.266|     -1.69| 9.16e-02|
+|BMI_cat.obeseObese                 |    -0.18|     0.265|     -0.68| 4.96e-01|
+|StressHigh                         |     0.48|     0.338|      1.44| 1.51e-01|
+|GenderM                            |    -0.04|     0.033|     -1.19| 2.33e-01|
+|age                                |     0.01|     0.001|     14.18| 1.14e-45|
+|BMI_cat.obeseNormal:StressHigh     |    -0.35|     0.345|     -1.00| 3.15e-01|
+|BMI_cat.obeseOverweight:StressHigh |    -0.28|     0.343|     -0.82| 4.10e-01|
+|BMI_cat.obeseObese:StressHigh      |    -0.29|     0.341|     -0.85| 3.96e-01|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -670,12 +670,12 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 
 |term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     36700|      26276|       NA|
-|BMI_cat.obese        |  3|       65|     36697|      26211| 4.37e-14|
-|Stress               |  1|       17|     36696|      26194| 3.94e-05|
-|Gender               |  1|        0|     36695|      26194| 6.69e-01|
-|age                  |  1|      233|     36694|      25961| 1.54e-52|
-|BMI_cat.obese:Stress |  3|        2|     36691|      25959| 6.18e-01|
+|NULL                 | NA|       NA|     36689|      26428|       NA|
+|BMI_cat.obese        |  3|       84|     36686|      26343| 3.81e-18|
+|Stress               |  1|       24|     36685|      26320| 1.17e-06|
+|Gender               |  1|        0|     36684|      26320| 5.94e-01|
+|age                  |  1|      207|     36683|      26113| 6.23e-47|
+|BMI_cat.obese:Stress |  3|        1|     36680|      26111| 7.15e-01|
 
 ```r
 #adding in race and ethnicity
@@ -694,20 +694,20 @@ Table: Logistic regression of obesity on liver diesease, with stress as a modifi
 
 |term                               | estimate| std.error| statistic|  p.value|
 |:----------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                        |    -2.79|     0.319|     -8.74| 2.36e-18|
-|BMI_cat.obeseNormal                |    -0.20|     0.289|     -0.70| 4.84e-01|
-|BMI_cat.obeseOverweight            |    -0.17|     0.288|     -0.60| 5.45e-01|
-|BMI_cat.obeseObese                 |     0.02|     0.287|      0.06| 9.49e-01|
-|StressHigh                         |     0.42|     0.372|      1.13| 2.60e-01|
-|GenderM                            |    -0.04|     0.033|     -1.34| 1.79e-01|
-|age                                |     0.02|     0.001|     14.96| 1.43e-50|
-|Race.EthnicityBlack                |    -0.07|     0.165|     -0.44| 6.63e-01|
-|Race.EthnicityHispanic/Latino      |     0.06|     0.185|      0.33| 7.44e-01|
-|Race.EthnicityOther                |    -0.31|     0.177|     -1.77| 7.67e-02|
-|Race.EthnicityWhite                |    -0.07|     0.146|     -0.48| 6.29e-01|
-|BMI_cat.obeseNormal:StressHigh     |    -0.28|     0.379|     -0.74| 4.60e-01|
-|BMI_cat.obeseOverweight:StressHigh |    -0.30|     0.377|     -0.80| 4.26e-01|
-|BMI_cat.obeseObese:StressHigh      |    -0.22|     0.375|     -0.58| 5.63e-01|
+|(Intercept)                        |    -2.55|     0.299|     -8.50| 1.86e-17|
+|BMI_cat.obeseNormal                |    -0.42|     0.267|     -1.58| 1.14e-01|
+|BMI_cat.obeseOverweight            |    -0.45|     0.266|     -1.69| 9.13e-02|
+|BMI_cat.obeseObese                 |    -0.18|     0.265|     -0.68| 4.96e-01|
+|StressHigh                         |     0.48|     0.338|      1.43| 1.53e-01|
+|GenderM                            |    -0.04|     0.033|     -1.15| 2.50e-01|
+|age                                |     0.02|     0.001|     14.20| 9.69e-46|
+|Race.EthnicityBlack                |    -0.05|     0.166|     -0.28| 7.77e-01|
+|Race.EthnicityHispanic/Latino      |     0.23|     0.183|      1.24| 2.17e-01|
+|Race.EthnicityOther                |    -0.32|     0.178|     -1.78| 7.55e-02|
+|Race.EthnicityWhite                |    -0.04|     0.147|     -0.29| 7.70e-01|
+|BMI_cat.obeseNormal:StressHigh     |    -0.34|     0.345|     -1.00| 3.18e-01|
+|BMI_cat.obeseOverweight:StressHigh |    -0.28|     0.343|     -0.82| 4.15e-01|
+|BMI_cat.obeseObese:StressHigh      |    -0.29|     0.341|     -0.84| 4.00e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -720,13 +720,13 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 
 |term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     36700|      26276|       NA|
-|BMI_cat.obese        |  3|       65|     36697|      26211| 4.37e-14|
-|Stress               |  1|       17|     36696|      26194| 3.94e-05|
-|Gender               |  1|        0|     36695|      26194| 6.69e-01|
-|age                  |  1|      233|     36694|      25961| 1.54e-52|
-|Race.Ethnicity       |  4|        7|     36690|      25954| 1.13e-01|
-|BMI_cat.obese:Stress |  3|        2|     36687|      25952| 6.21e-01|
+|NULL                 | NA|       NA|     36689|      26428|       NA|
+|BMI_cat.obese        |  3|       84|     36686|      26343| 3.81e-18|
+|Stress               |  1|       24|     36685|      26320| 1.17e-06|
+|Gender               |  1|        0|     36684|      26320| 5.94e-01|
+|age                  |  1|      207|     36683|      26113| 6.23e-47|
+|Race.Ethnicity       |  4|       13|     36679|      26099| 9.67e-03|
+|BMI_cat.obese:Stress |  3|        1|     36676|      26098| 7.16e-01|
 
 # Liver Disease Rates by Obese/Not Obese and Stress
 
@@ -750,14 +750,14 @@ Table: Liver Disease Rates by Obese or not and Stress
 
 |BMI_cat.Ob.NonOb |Stress |Gender | NonDisease| LiverDisease| Total| Percent|
 |:----------------|:------|:------|----------:|------------:|-----:|-------:|
-|Non-Obese        |Low    |F      |       5817|          602|  6419|    9.38|
-|Obese            |Low    |F      |       3786|          563|  4349|   12.95|
-|Non-Obese        |High   |F      |       4142|          503|  4645|   10.83|
-|Obese            |High   |F      |       3402|          566|  3968|   14.26|
-|Non-Obese        |Low    |M      |       5608|          674|  6282|   10.73|
-|Obese            |Low    |M      |       3745|          482|  4227|   11.40|
-|Non-Obese        |High   |M      |       3488|          449|  3937|   11.40|
-|Obese            |High   |M      |       2580|          419|  2999|   13.97|
+|Non-Obese        |Low    |F      |       5858|          592|  6450|    9.18|
+|Obese            |Low    |F      |       3779|          573|  4352|   13.17|
+|Non-Obese        |High   |F      |       4137|          505|  4642|   10.88|
+|Obese            |High   |F      |       3364|          588|  3952|   14.88|
+|Non-Obese        |Low    |M      |       5604|          661|  6265|   10.55|
+|Obese            |Low    |M      |       3721|          494|  4215|   11.72|
+|Non-Obese        |High   |M      |       3476|          471|  3947|   11.93|
+|Obese            |High   |M      |       2578|          412|  2990|   13.78|
 
 ```r
 ggplot(liver.disease.BMI_cat.Ob.NonOb.stress.counts,
@@ -799,8 +799,8 @@ Table: Logistic regression of obese vs non-obese on liver.disease
 
 |term                  | estimate| std.error| statistic|  p.value|
 |:---------------------|--------:|---------:|---------:|--------:|
-|(Intercept)           |    -2.15|     0.022|    -95.86| 0.00e+00|
-|BMI_cat.Ob.NonObObese |     0.25|     0.033|      7.67| 1.73e-14|
+|(Intercept)           |    -2.15|     0.022|    -95.91| 0.00e+00|
+|BMI_cat.Ob.NonObObese |     0.27|     0.033|      8.44| 3.29e-17|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -813,8 +813,8 @@ Table: Logistic regression of obese vs non-obese on liver.disease,
 
 |term             | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:----------------|--:|--------:|---------:|----------:|--------:|
-|NULL             | NA|       NA|     36825|      26376|       NA|
-|BMI_cat.Ob.NonOb |  1|       59|     36824|      26317| 1.99e-14|
+|NULL             | NA|       NA|     36812|      26527|       NA|
+|BMI_cat.Ob.NonOb |  1|       71|     36811|      26456| 3.89e-17|
 
 ```r
 #adding in stress as a modifier
@@ -833,10 +833,10 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.19|     0.030|    -74.27| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.22|     0.044|      4.90| 9.49e-07|
-|StressHigh                       |     0.11|     0.045|      2.45| 1.45e-02|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.06|     0.066|      0.92| 3.59e-01|
+|(Intercept)                      |    -2.21|     0.030|    -74.40| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     0.26|     0.044|      5.96| 2.57e-09|
+|StressHigh                       |     0.16|     0.045|      3.53| 4.20e-04|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.065|      0.13| 8.95e-01|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -849,10 +849,10 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     36825|      26376|       NA|
-|BMI_cat.Ob.NonOb        |  1|       59|     36824|      26317| 1.99e-14|
-|Stress                  |  1|       18|     36823|      26299| 2.24e-05|
-|BMI_cat.Ob.NonOb:Stress |  1|        1|     36822|      26299| 3.59e-01|
+|NULL                    | NA|       NA|     36812|      26527|       NA|
+|BMI_cat.Ob.NonOb        |  1|       71|     36811|      26456| 3.89e-17|
+|Stress                  |  1|       25|     36810|      26431| 5.94e-07|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|     36809|      26431| 8.95e-01|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -871,12 +871,12 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -3.05|     0.067|    -45.66| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.20|     0.044|      4.52| 6.14e-06|
-|StressHigh                       |     0.14|     0.046|      3.09| 2.02e-03|
-|GenderM                          |    -0.05|     0.033|     -1.44| 1.49e-01|
-|age                              |     0.02|     0.001|     15.23| 2.25e-52|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.06|     0.066|      0.95| 3.44e-01|
+|(Intercept)                      |    -3.01|     0.066|    -45.36| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     0.25|     0.044|      5.66| 1.49e-08|
+|StressHigh                       |     0.19|     0.045|      4.17| 3.08e-05|
+|GenderM                          |    -0.04|     0.033|     -1.36| 1.73e-01|
+|age                              |     0.01|     0.001|     14.28| 2.81e-46|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.066|      0.09| 9.26e-01|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -889,12 +889,12 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     36825|      26376|       NA|
-|BMI_cat.Ob.NonOb        |  1|       59|     36824|      26317| 1.99e-14|
-|Stress                  |  1|       18|     36823|      26299| 2.24e-05|
-|Gender                  |  1|        0|     36822|      26299| 5.85e-01|
-|age                     |  1|      240|     36821|      26059| 3.98e-54|
-|BMI_cat.Ob.NonOb:Stress |  1|        1|     36820|      26058| 3.44e-01|
+|NULL                    | NA|       NA|     36812|      26527|       NA|
+|BMI_cat.Ob.NonOb        |  1|       71|     36811|      26456| 3.89e-17|
+|Stress                  |  1|       25|     36810|      26431| 5.94e-07|
+|Gender                  |  1|        0|     36809|      26431| 5.94e-01|
+|age                     |  1|      210|     36808|      26221| 1.13e-47|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|     36807|      26221| 9.26e-01|
 
 ```r
 #adding in race and ethnicity
@@ -913,16 +913,16 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.99|     0.153|    -19.55| 4.04e-85|
-|BMI_cat.Ob.NonObObese            |     0.20|     0.045|      4.54| 5.63e-06|
-|StressHigh                       |     0.14|     0.046|      3.08| 2.06e-03|
-|GenderM                          |    -0.05|     0.033|     -1.41| 1.59e-01|
-|age                              |     0.02|     0.001|     15.16| 6.54e-52|
-|Race.EthnicityBlack              |    -0.06|     0.165|     -0.37| 7.09e-01|
-|Race.EthnicityHispanic/Latino    |     0.07|     0.185|      0.38| 7.07e-01|
-|Race.EthnicityOther              |    -0.31|     0.177|     -1.73| 8.34e-02|
-|Race.EthnicityWhite              |    -0.06|     0.146|     -0.40| 6.89e-01|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.06|     0.066|      0.94| 3.48e-01|
+|(Intercept)                      |    -2.98|     0.154|    -19.36| 1.59e-83|
+|BMI_cat.Ob.NonObObese            |     0.25|     0.044|      5.66| 1.54e-08|
+|StressHigh                       |     0.19|     0.045|      4.16| 3.12e-05|
+|GenderM                          |    -0.04|     0.033|     -1.32| 1.86e-01|
+|age                              |     0.02|     0.001|     14.29| 2.67e-46|
+|Race.EthnicityBlack              |    -0.04|     0.166|     -0.27| 7.88e-01|
+|Race.EthnicityHispanic/Latino    |     0.23|     0.183|      1.26| 2.07e-01|
+|Race.EthnicityOther              |    -0.32|     0.178|     -1.77| 7.63e-02|
+|Race.EthnicityWhite              |    -0.04|     0.147|     -0.25| 7.99e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.066|      0.09| 9.29e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -935,13 +935,13 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
 |:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     36825|      26376|       NA|
-|BMI_cat.Ob.NonOb        |  1|       59|     36824|      26317| 1.99e-14|
-|Stress                  |  1|       18|     36823|      26299| 2.24e-05|
-|Gender                  |  1|        0|     36822|      26299| 5.85e-01|
-|age                     |  1|      240|     36821|      26059| 3.98e-54|
-|Race.Ethnicity          |  4|        8|     36817|      26052| 1.08e-01|
-|BMI_cat.Ob.NonOb:Stress |  1|        1|     36816|      26051| 3.48e-01|
+|NULL                    | NA|       NA|     36812|      26527|       NA|
+|BMI_cat.Ob.NonOb        |  1|       71|     36811|      26456| 3.89e-17|
+|Stress                  |  1|       25|     36810|      26431| 5.94e-07|
+|Gender                  |  1|        0|     36809|      26431| 5.94e-01|
+|age                     |  1|      210|     36808|      26221| 1.13e-47|
+|Race.Ethnicity          |  4|       14|     36804|      26207| 8.88e-03|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|     36803|      26207| 9.29e-01|
 
 # Summary of Covariates
 
@@ -961,10 +961,10 @@ Table: Number of participants by group
 
 |Stress |BMI_cat.Ob.NonOb |     n|
 |:------|:----------------|-----:|
-|Low    |Non-Obese        | 12701|
-|Low    |Obese            |  8576|
-|High   |Non-Obese        |  8582|
-|High   |Obese            |  6967|
+|Low    |Non-Obese        | 12715|
+|Low    |Obese            |  8567|
+|High   |Non-Obese        |  8589|
+|High   |Obese            |  6942|
 
 ```r
 combined.data %>%
@@ -981,14 +981,14 @@ Table: Number of participants by group and gender
 
 |Stress |BMI_cat.Ob.NonOb |Gender |    n|
 |:------|:----------------|:------|----:|
-|Low    |Non-Obese        |F      | 6419|
-|Low    |Non-Obese        |M      | 6282|
-|Low    |Obese            |F      | 4349|
-|Low    |Obese            |M      | 4227|
-|High   |Non-Obese        |F      | 4645|
-|High   |Non-Obese        |M      | 3937|
-|High   |Obese            |F      | 3968|
-|High   |Obese            |M      | 2999|
+|Low    |Non-Obese        |F      | 6450|
+|Low    |Non-Obese        |M      | 6265|
+|Low    |Obese            |F      | 4352|
+|Low    |Obese            |M      | 4215|
+|High   |Non-Obese        |F      | 4642|
+|High   |Non-Obese        |M      | 3947|
+|High   |Obese            |F      | 3952|
+|High   |Obese            |M      | 2990|
 
 ```r
 combined.data %>%
@@ -1005,26 +1005,26 @@ Table: Number of participants by group and race/ethnicity
 
 |Stress |BMI_cat.Ob.NonOb |Race.Ethnicity  |     n|
 |:------|:----------------|:---------------|-----:|
-|Low    |Non-Obese        |Asian           |   299|
-|Low    |Non-Obese        |Black           |   363|
-|Low    |Non-Obese        |Hispanic/Latino |   234|
-|Low    |Non-Obese        |Other           |   393|
-|Low    |Non-Obese        |White           | 11412|
-|Low    |Obese            |Asian           |    36|
-|Low    |Obese            |Black           |   455|
-|Low    |Obese            |Hispanic/Latino |   167|
-|Low    |Obese            |Other           |   282|
-|Low    |Obese            |White           |  7636|
-|High   |Non-Obese        |Asian           |   176|
-|High   |Non-Obese        |Black           |   357|
-|High   |Non-Obese        |Hispanic/Latino |   174|
-|High   |Non-Obese        |Other           |   272|
-|High   |Non-Obese        |White           |  7603|
-|High   |Obese            |Asian           |    41|
-|High   |Obese            |Black           |   441|
-|High   |Obese            |Hispanic/Latino |   154|
-|High   |Obese            |Other           |   215|
-|High   |Obese            |White           |  6116|
+|Low    |Non-Obese        |Asian           |   302|
+|Low    |Non-Obese        |Black           |   362|
+|Low    |Non-Obese        |Hispanic/Latino |   228|
+|Low    |Non-Obese        |Other           |   401|
+|Low    |Non-Obese        |White           | 11422|
+|Low    |Obese            |Asian           |    35|
+|Low    |Obese            |Black           |   457|
+|Low    |Obese            |Hispanic/Latino |   172|
+|Low    |Obese            |Other           |   281|
+|Low    |Obese            |White           |  7622|
+|High   |Non-Obese        |Asian           |   172|
+|High   |Non-Obese        |Black           |   366|
+|High   |Non-Obese        |Hispanic/Latino |   167|
+|High   |Non-Obese        |Other           |   286|
+|High   |Non-Obese        |White           |  7598|
+|High   |Obese            |Asian           |    40|
+|High   |Obese            |Black           |   449|
+|High   |Obese            |Hispanic/Latino |   150|
+|High   |Obese            |Other           |   217|
+|High   |Obese            |White           |  6086|
 
 ```r
 combined.data %>%
@@ -1043,10 +1043,10 @@ Table: Average BMI and age of participants by group
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| BMI_sd| age_sd| BMI_n| age_n|
 |:------|:----------------|--------:|--------:|------:|------:|-----:|-----:|
-|Low    |Non-Obese        |     25.3|     53.0|   2.99|   17.7| 12701| 12701|
-|Low    |Obese            |     36.0|     54.7|   5.71|   14.6|  8576|  8576|
-|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8582|  8582|
-|High   |Obese            |     36.6|     52.6|   5.99|   14.6|  6967|  6967|
+|Low    |Non-Obese        |     25.3|     53.1|   2.98|   17.7| 12715| 12715|
+|Low    |Obese            |     36.0|     54.6|   5.71|   14.6|  8567|  8567|
+|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8589|  8589|
+|High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
 ```r
 combined.data %>%
@@ -1065,10 +1065,10 @@ Table: Average BMI and age of participants by group,complete cases
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| BMI_sd| age_sd| BMI_n| age_n|
 |:------|:----------------|--------:|--------:|------:|------:|-----:|-----:|
-|Low    |Non-Obese        |     25.3|     53.0|   2.99|   17.7| 12701| 12701|
-|Low    |Obese            |     36.0|     54.7|   5.71|   14.6|  8576|  8576|
-|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8582|  8582|
-|High   |Obese            |     36.6|     52.6|   5.99|   14.6|  6967|  6967|
+|Low    |Non-Obese        |     25.3|     53.1|   2.98|   17.7| 12715| 12715|
+|Low    |Obese            |     36.0|     54.6|   5.71|   14.6|  8567|  8567|
+|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8589|  8589|
+|High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
 # Session Information
 

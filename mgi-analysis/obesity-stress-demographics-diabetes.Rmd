@@ -351,7 +351,8 @@ glm(DiabetesAny~BMI, data=combined.data) %>%
 rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
-      diabetes.disadvantage %>% rename("Group"="Neighborhood"),
+      diabetes.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
+        mutate(Group=as.factor(Group)),
       diabetes.age %>% rename("Group"="Age.group")) %>%
   mutate(Total=No+Yes) %>%
   select(Group,Total,No,Yes,Prevalence)-> summary.table

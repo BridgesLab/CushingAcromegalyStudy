@@ -11,7 +11,7 @@ output:
 
 ## Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar  9 15:45:06 2023.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Thu Mar 23 14:29:57 2023.
 
 
 ```r
@@ -62,7 +62,7 @@ bmi.data.cutoff <-
   filter(BMI>bmi.lower) #remove BMI above cutoff
 ```
 
-Based on this procedure we had 90047 participants in the initial dataset.  After removing individuals with no BMI measure we had 88956 (a loss of 1091 participants).  We then removed anyone who's median BMI was >300 or <12, a loss of 3 participants.  This resulted in a final dataset of 88953.
+Based on this procedure we had 91598 participants in the initial dataset.  After removing individuals with no BMI measure we had 90245 (a loss of 1353 participants).  We then removed anyone who's median BMI was >300 or <12, a loss of 3 participants.  This resulted in a final dataset of 90242.
 
 ## Analysis of BMI
 
@@ -110,7 +110,7 @@ Table: Summary statistics for the BMI measurements used in this study
 
 | mean|  min| max|  sd|     n|
 |----:|----:|---:|---:|-----:|
-| 29.9| 12.3| 100| 7.2| 88953|
+| 29.8| 12.3| 100| 7.2| 90242|
 
 # Validation and Checking for Outliers
 
@@ -158,7 +158,7 @@ Table: Top 50 median BMI values and number of encounters
 |----:|-----:|
 | 12.3|     1|
 | 12.5|     1|
-| 12.7|     1|
+| 12.6|     1|
 | 13.0|     1|
 | 13.2|     1|
 | 13.6|     1|

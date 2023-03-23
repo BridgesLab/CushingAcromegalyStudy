@@ -432,7 +432,7 @@ pre code {
 
 <div id="purpose" class="section level1">
 <h1><span class="header-section-number">1</span> Purpose</h1>
-<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy and was most recently run on Thu Mar 9 15:52:25 2023.</p>
+<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Thu Mar 23 14:35:37 2023.</p>
 </div>
 <div id="data-descriptions" class="section level1">
 <h1><span class="header-section-number">2</span> Data Descriptions</h1>
@@ -447,7 +447,7 @@ pre code {
 <a class="sourceLine" id="cb1-8" data-line-number="8">demographic.datafile &lt;-<span class="st"> 'DemographicInfo.csv'</span></a>
 <a class="sourceLine" id="cb1-9" data-line-number="9">comorbidity.datafile &lt;-<span class="st"> 'ComorbiditiesElixhauserComprehensive.csv'</span></a>
 <a class="sourceLine" id="cb1-10" data-line-number="10">encounters.datafile &lt;-<span class="st"> 'MedianEncounterAnthropometricsBMI.csv'</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">geolocation.datafile &lt;-<span class="st"> ''</span></a></code></pre></div>
+<a class="sourceLine" id="cb1-11" data-line-number="11">geolocation.datafile &lt;-<span class="st"> 'GisNeighborhoodAffluence.csv'</span></a></code></pre></div>
 <p>The input data files are:</p>
 <ul>
 <li><strong>Survey data</strong> is found in MGIPatientReportedSurveys.csv. This contains the data on the stress survey from the MGIPatientReportedSurveys. This is the surveys leverage PROMIS measures and includes domains of patient-reported outcomes, including pain severity, physical function, depression, anxiety, as well as life stress scales. The responses received from MGI participants.</li>
@@ -455,7 +455,7 @@ pre code {
 </li>
 <li><strong>Comorbidites</strong> are found in ComorbiditiesElixhauserComprehensive.csv. This includes diagnosis data for each patient. This is from the ComorbiditiesElixhauserComprehensive data, but we also have CharlsonComprehensive data. Relevant outcomes are: CardiacArrhythmias, ChronicPulmonaryDisease, Depression, DiabetesComplicated, DiabetesUncomplicated, HypertensionComplicated, HypertensionUncomplicated, LiverDisease, Obesity, TotalScore</li>
 <li><strong>Patient encounter data</strong> is in MedianEncounterAnthropometricsBMI.csv. This includes the BMI for each patient, previously sorted to get their median BMI value. This is from the EncounterAntropometricsBMI data. This is encounter Level view that contains Height, Weight, and BMI values. If Height and Weight data exists on the specific encouter, that data is used. If not, data from the same MONTH and YEAR as the encounter is used. The MEDIAN height and weight for the encounter or month is used. A separate script (<strong>obesity-stress-encounter-data.Rmd</strong>) calculated the median BMI for each patient, which is run before this. Therefore this is the unique median BMI for each patient.</li>
-<li><strong>Socioeconomic Status</strong> is found in <code>geolocation.datafile</code>. For SES we used GIS neighborhood affluence scores. This is census tract affluence and disadvantage metrics for respective patient addresses. These are quartile values for affluence (Mean of proportion of families with an income greater than 75k, ped3 proportion with a bachelor’s degree or higher, proportion with a professional occupation from the ACS 2013-2017), disadvantage (Mean of proportion of female headed families with kids, proportion of families with public assistance income, proportion of people with income in the past 12 months below the poverty level, proportion of the 16+ civilian labor force unemployed all ACS 2013-2017), and education (Proportion with less than high school diploma, from the ACS 2013-2017)</li>
+<li><strong>Socioeconomic Status</strong> is found in GisNeighborhoodAffluence.csv. For SES we used GIS neighborhood affluence scores. This is census tract affluence and disadvantage metrics for respective patient addresses. These are quartile values for affluence <code>affluence13_17_qrtl</code> (Mean of proportion of families with an income greater than 75k, ped3 proportion with a bachelor’s degree or higher, proportion with a professional occupation from the ACS 2013-2017), <code>disadvantage13_17_qrtl</code> disadvantage (Mean of proportion of female headed families with kids, proportion of families with public assistance income, proportion of people with income in the past 12 months below the poverty level, proportion of the 16+ civilian labor force unemployed all ACS 2013-2017), and <code>ped1_13_17_qrtl</code> education (Proportion with less than high school diploma, from the ACS 2013-2017)</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(readr)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
@@ -510,8 +510,7 @@ pre code {
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID) </a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"></a>
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#get geolocation data</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co"># geo.data &lt;- read_csv(geolocation.datafile) %&gt;%</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#   filter(DeID_PatientID %in% mgi.patient.data$DeID_PatientID) </span></a></code></pre></div>
+<a class="sourceLine" id="cb3-16" data-line-number="16">geo.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(geolocation.datafile) </a></code></pre></div>
 </div>
 <div id="consort-diagrams" class="section level1">
 <h1><span class="header-section-number">3</span> CONSORT Diagrams</h1>
@@ -525,10 +524,10 @@ pre code {
 <h1><span class="header-section-number">5</span> Merging Data</h1>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span>mgi.patient.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">left_join</span>(cm.data) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">right_join</span>(bmi.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want participants with BMI values</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="co">#left_join(geo.data) %&gt;%</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">left_join</span>(cm.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want comorbidities for folks with mgi data</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">right_join</span>(bmi.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want mgi participants with BMI values</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">left_join</span>(geo.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want geo data for folks with mgi data</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#unique values per participant</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DiabetesAny=</span><span class="kw">case_when</span>(DiabetesUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>DiabetesComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb4-8" data-line-number="8">                               <span class="ot">TRUE</span><span class="op">~</span><span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">HypertensionAny=</span><span class="kw">case_when</span>(HypertensionUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>HypertensionComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
