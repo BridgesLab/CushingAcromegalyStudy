@@ -70,7 +70,7 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Thu Mar 23 14:47:39 2023. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Sat Mar 25 17:24:03 2023. This dataset has 39694 values.
 
 Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -236,6 +236,21 @@ glm(DiabetesAny~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender,
     family="binomial",
     data=combined.data) -> gender.bmi.glm
 
+kable(diabetes.gender.bmi, caption="Prevalence of diabetes by obesity and gender")
+```
+
+
+
+Table: Prevalence of diabetes by obesity and gender
+
+|Gender |BMI_cat.Ob.NonOb |    No|  Yes| Prevalence|
+|:------|:----------------|-----:|----:|----------:|
+|F      |Non-Obese        | 11139|  779|       6.54|
+|F      |Obese            |  7230| 1718|      19.20|
+|M      |Non-Obese        |  9812| 1245|      11.26|
+|M      |Obese            |  5923| 1848|      23.78|
+
+```r
 gender.bmi.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
@@ -426,13 +441,13 @@ Table: Binomial regression estimates of age group on diabetes incidence
 ```r
 glm(DiabetesAny~age, data=combined.data) %>% 
   tidy %>%
-  kable(caption="Binomial regression estimates of age on diabetes incidence", 
+  kable(caption="Binomial regression estimates of age (continuous) on diabetes incidence", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of age on diabetes incidence
+Table: Binomial regression estimates of age (continuous) on diabetes incidence
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
@@ -472,7 +487,7 @@ diabetes.disadvantage %>%
 ![](figures/diabetes-counts-disadvantage-1.png)<!-- -->
 
 ```r
-diabetes.age %>%
+diabetes.disadvantage %>%
   knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
 ```
 
@@ -480,16 +495,13 @@ diabetes.age %>%
 
 Table: Number of participants by diabetes neighborhood disadvantage
 
-|Age.group |   No|  Yes| Prevalence|
-|:---------|----:|----:|----------:|
-|(18,30]   | 4380|  115|       2.56|
-|(30,40]   | 4548|  284|       5.88|
-|(40,50]   | 5611|  714|      11.29|
-|(50,60]   | 7555| 1362|      15.27|
-|(60,70]   | 7325| 1847|      20.14|
-|(70,80]   | 3423| 1024|      23.03|
-|(80,90]   |  852|  235|      21.62|
-|NA        |  410|    9|       2.15|
+| disadvantage13_17_qrtl|    No|  Yes| Prevalence|
+|----------------------:|-----:|----:|----------:|
+|                      1| 12311| 1686|       12.0|
+|                      2|  8975| 1571|       14.9|
+|                      3|  6447| 1189|       15.6|
+|                      4|  3605|  736|       17.0|
+|                     NA|  2766|  408|       12.9|
 
 
 ```r
@@ -644,8 +656,7 @@ Table: Binomial regression estimates of BMI on diabetes incidence
 rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
-      diabetes.disadvantage %>% 
-        rename("Group"="disadvantage13_17_qrtl") %>%
+      diabetes.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
         mutate(Group=as.factor(Group)),
       diabetes.age %>% rename("Group"="Age.group")) %>%
   mutate(Total=No+Yes) %>%

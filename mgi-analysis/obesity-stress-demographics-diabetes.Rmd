@@ -145,6 +145,8 @@ glm(DiabetesAny~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender,
     family="binomial",
     data=combined.data) -> gender.bmi.glm
 
+kable(diabetes.gender.bmi, caption="Prevalence of diabetes by obesity and gender")
+
 gender.bmi.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
@@ -239,7 +241,7 @@ age.glm %>%
 
 glm(DiabetesAny~age, data=combined.data) %>% 
   tidy %>%
-  kable(caption="Binomial regression estimates of age on diabetes incidence", 
+  kable(caption="Binomial regression estimates of age (continuous) on diabetes incidence", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -271,7 +273,7 @@ diabetes.disadvantage %>%
         axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
         legend.position = c(0.1,0.85))  
 
-diabetes.age %>%
+diabetes.disadvantage %>%
   knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
 ```
 

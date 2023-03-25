@@ -188,7 +188,7 @@ ggplot(diabetes.bmi.stress.counts,
         legend.position = c(0.1,0.85))
 ```
 
-### Logistic Regressions for All Obese Categories
+## Logistic Regressions for All Obese Categories
 
 Ran a series of stepwise logistic regressions testing for obesity as a modifier of the effects of stress.
 
@@ -218,7 +218,7 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier", digits =c(0,0,0,0,0,99))
 
 #adding in age and gender as covariates as a modifier
-glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age, 
+glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+BMI_cat:Gender+age, 
     family="binomial",
     data=combined.data) -> obesity.glm3
 
@@ -230,7 +230,7 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
-glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+BMI_cat:Gender+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -240,6 +240,18 @@ obesity.glm4 %>%
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariate", digits =c(0,0,0,0,0,99))
+
+#adding in neighborhood
+glm(DiabetesAny~BMI_cat+Stress+Stress:BMI_cat+Gender+BMI_cat:Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates", digits =c(0,0,0,0,0,99))
 ```
 
 ### Diabetes Rates by Quartiles
@@ -303,7 +315,7 @@ ggplot(diabetes.bmi.stress.gender.counts,
         legend.position = c(0.1,0.75))
 ```
 
-## Logistic Regressions for Obese/Non-Obese
+## Logistic Regressions for Obesity Categories
 
 Ran a series of logistic regressions using the normal obesity categories not classes as the categorization
 
@@ -332,7 +344,7 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier", digits =c(0,0,0,0,0,99))
 
 #adding in age and gender as covariates as a modifier
-glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age, 
+glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+BMI_cat.obese:Gender+age, 
     family="binomial",
     data=combined.data) -> obesity.glm3
 
@@ -344,7 +356,7 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
-glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+BMI_cat.obese:Gender+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -354,6 +366,18 @@ obesity.glm4 %>%
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariates", digits =c(0,0,0,0,0,99))
+
+
+glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+BMI_cat.obese:Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates", digits =c(0,0,0,0,0,99))
 ```
 
 # Diabetes Rates by Obese/Not Obese and Stress
@@ -497,7 +521,7 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier", digits =c(0,0,0,0,0,99))
 
 #adding in age and gender as covariates as a modifier
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+BMI_cat.Ob.NonOb:Gender+age, 
     family="binomial",
     data=combined.data) -> obesity.glm3
 
@@ -509,7 +533,7 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and gender as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in race and ethnicity
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+BMI_cat.Ob.NonOb:Gender+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -521,7 +545,7 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covariate", digits =c(0,0,0,0,0,99))
 
 #adding in neighborhood disadvantage
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+BMI_cat.Ob.NonOb:Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm5
 
@@ -589,7 +613,7 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender,
   kable(caption="Logistic regression of effects of gender on stress in people without obesity")
 ```
 
-Based on this added a 
+Based on this added a Gender:BMI term to all models
 
 ### Testing for the Interaction Between Black Race and Obesity-BMI
 
@@ -645,11 +669,11 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity,
 Finally did this using only Black and White as comparator groups to simplify.
 
 ```{r race-interaction-white-bw}
-race.int.model.null <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+race.int.model.null <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity %in% c("White","Black"))) 
 
-race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+Race.Ethnicity:BMI_cat.Ob.NonOb+Race.Ethnicity:Stress+Race.Ethnicity:Stress:BMI_cat.Ob.NonOb, 
+race.int.model <- glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age+Race.Ethnicity+Race.Ethnicity:BMI_cat.Ob.NonOb+Race.Ethnicity:Stress+Race.Ethnicity:Stress:BMI_cat.Ob.NonOb, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity %in% c("White","Black"))) 
 
@@ -665,27 +689,27 @@ anova(race.int.model.null,race.int.model) %>%
 Stratified these analyses to get moderating estimates by racial group and gender
 
 ```{r subgroup-stratified-analyses}
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age+Race.Ethnicity, 
     family="binomial",
     data=combined.data) -> model.full
 
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "White")) -> model.white
 
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Black")) -> model.black
 
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Hispanic/Latino")) -> model.hisp
 
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Asian")) -> model.asian
 
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age, 
     family="binomial",
     data=combined.data %>% filter(Race.Ethnicity == "Other")) -> model.other
 
@@ -728,13 +752,16 @@ ggplot(subgroup.analyses, aes(y=estimate,
 
 ```
 
+# Sensitivity Analyses
+
+Ran a series of sensitivities analyses, for diferent groupings of BMI or stress.
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Linear Covariate
 
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a linear covariate
 
 ```{r obese-not-obese-logistic-regressions-linear}
-glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+Stress_d1+Stress_d1:BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -751,7 +778,7 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a non-linear discrete covariate
 
 ```{r obese-not-obese-logistic-regressions-discrete}
-glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress_d1)+as.factor(Stress_d1):BMI_cat.Ob.NonOb+Gender+BMI_cat.Ob.NonOb:Gender+Gender:BMI_cat.Ob.NonOb+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -769,7 +796,7 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 Ran a series of logistic regressions using obese/non-obese as the categorization, but now using stress as a quartile.
 
 ```{r obese-not-obese-logistic-regressions-quartile}
-glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress.quartile)+as.factor(Stress.quartile):BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+glm(DiabetesAny~BMI_cat.Ob.NonOb+as.factor(Stress.quartile)+as.factor(Stress.quartile):BMI_cat.Ob.NonOb+Gender+Gender:BMI_cat.Ob.NonOb+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> obesity.glm4
 
@@ -779,6 +806,23 @@ obesity.glm4 %>%
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier", digits =c(0,0,0,0,0,99))
+```
+
+## Logistic Regressions for BMI as a Continuous Variable
+
+Ran a series of logistic regressions using BMI as a linear covariate
+
+```{r bmi-continuous-stress}
+glm(DiabetesAny~BMI+Stress+Stress:BMI+Gender+Gender:BMI+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm4
+
+obesity.glm4 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of BMI as a continuous variable on diabetes.", digits =c(0,2,3,2,99))
+  
+anova(obesity.glm4,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of BMI as a continuous variable on diabetes.", digits =c(0,0,0,0,0,99))
 ```
 
 
