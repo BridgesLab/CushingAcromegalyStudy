@@ -21,6 +21,7 @@ opts_chunk$set(fig.path='figures/',
 options(scipen = 2, digits = 3)
 
 encounters.datafile <- 'EncounterAnthropometricsBMI.csv'
+encounters.datefile <- 'EncounterAll.csv'
 ```
 
 The input data file is in `r encounters.datafile`. This includes the BMI for each patient, potentially at multiple time points. This script takes this file and pulls out just the first BMI measure
@@ -32,8 +33,74 @@ library(tidyr)
 library(knitr)
 
 #get encounter data
-bmi.data <- read_csv(encounters.datafile) 
+bmi.data.raw <- read_csv(encounters.datafile) 
+encounter.data <- read_csv(encounters.datefile)
+
+library(lubridate)
+#annotating bmi data with encounters
+bmi.data <- 
+  left_join(bmi.data.raw,encounter.data,by=c('DeID_PatientID','DeID_EncounterID')) %>%
+  mutate(EncounterDate = mdy_hm(DeID_AdmitDate))%>%
+  mutate(EncounterYear = year(EncounterDate)) 
 ```
+
+# Summarizing BMI Data
+
+```{r encounter-range}
+library(ggplot2)
+
+ggplot(bmi.data,
+       aes(x=EncounterYear)) +
+  geom_bar() +
+  theme_classic() +
+  scale_fill_grey() +
+  labs(y="Encounters",
+       x="Year") +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.75))
+
+bmi.data %>%
+  group_by(EncounterYear) %>%
+  count %>%
+  kable(caption="Total Encoutners by Year")
+```
+
+## Time of Follow Up
+
+```{r encounter-followup}
+follow.up.data <-
+  bmi.data %>%
+  filter(!(is.na(EncounterDate))) %>%
+  #filter(EncounterDate>today()) %>% #implausible follow up
+  arrange(DeID_PatientID,EncounterDate) %>%
+  group_by(DeID_PatientID) %>%
+  summarize(First= first(EncounterDate),
+            Last = last(EncounterDate)) %>%
+  mutate(FollowUp = round(time_length(date(Last)-date(First),unit="years"),0),
+         FollowUpNow = round(time_length(as.Date(today()) -date(First),unit="years"),0)) 
+
+follow.up.data %>%
+  group_by(FollowUp) %>%
+  count %>% 
+  ungroup %>%
+  arrange(-FollowUp) %>%
+  mutate(cumulative = cumsum(n)) %>%
+  kable(caption="Participant follow up duration")
+
+ggplot(follow.up.data,
+       aes(x=FollowUp)) +
+  geom_bar() +
+  theme_classic() +
+  scale_fill_grey() +
+  labs(y="Participants",
+       x="Years of Follow Up") +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.75))
+```
+
+The average follow up period is `r follow.up.data %>% mean(FollowUp, na.rm=T)`.
 
 # Defining BMI Data
 
