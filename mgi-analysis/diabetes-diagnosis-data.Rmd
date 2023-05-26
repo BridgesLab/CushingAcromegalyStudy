@@ -1,0 +1,122 @@
+---
+title: "Summarizing the Diagnosis Data to Extract Diabetes Diagnoses"
+author: "Dave Bridges"
+date: "May 25, 2023"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data.  We want to separately identify type 2 diabetes diagnoses. This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+```{r input-data}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+diagnosis.datafile <- 'ClarityMedicalHistory.csv'
+encounters.datafile <- 'EncounterAll.csv'
+```
+
+The encounter datafile is in `r encounters.datafile` with the diagnosis data from ClarityMedicalHistory in thee file `r `diagnosis.datafile`. This latter file includes the participant, encounter, date, ICD lexicon (ICD9 or ICD10) the actual code and the name for the code.
+
+```{r data-entry}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(lubridate)
+
+#get diagnosis data
+diagnosis.data<- read_csv(diagnosis.datafile) %>%
+  mutate(DeID_ProblemObservationDate=ymd_hms(DeID_ProblemObservationDate))
+```
+
+For ICD10 codes (see https://edit.cms.gov/files/document/valid-icd-10-list.xlsx), all Type 2 Diabetes codes start with *E11* and include the phrase "Type 2"
+
+For ICD9 codes (see https://edit.cms.gov/files/document/valid-icd-9-list.xlsx), all type 2 diabetes codes contain the words type II and Diabetes though in different orders
+
+```{r icd-codes}
+diabetes.diagnoses.icd10 <- 
+  diagnosis.data %>%
+  filter(grepl('Type 2 diabetes', DiagnosisICDNameMapped))
+
+diabetes.diagnoses.icd9 <-
+  diagnosis.data %>%
+  filter(grepl('type II',DiagnosisICDNameMapped)) %>% #includes all diseases marked type II
+  filter(grepl('Diabetes',DiagnosisICDNameMapped)) #includes only those that contain diabetes in the name
+
+#combine the two
+diabetes.diagnoses <-
+  bind_rows(diabetes.diagnoses.icd9,
+            diabetes.diagnoses.icd10)
+
+```
+
+This generates a list of all diabetes related diagnoses for all participants.  We want to minimize this to generate a list of all participants who do or do not have a diabetes diagnosis (at any time).
+
+```{r any-diagnosis}
+#this generates a list of all participants with at least one ID
+diabetic.participants <-
+  diabetes.diagnoses %>%
+  distinct(DeID_PatientID)  
+```
+
+There was a total of `r nrow(diabetic.participants)` that we identified as having type 2 diabetes
+
+# Comparison to Elixhauser Comorbidities Index
+
+```{r data-entry-elixhauser}
+comorbidity.datafile <- 'ComorbiditiesElixhauserComprehensive.csv'
+comorbidity.data <- read_csv(comorbidity.datafile)
+
+comorbidity.diabetics <-
+  comorbidity.data %>%
+  filter(DiabetesUncomplicated=='1'|DiabetesComplicated=='1') %>%
+  distinct(DeID_PatientID)
+```
+
+From the Elixhauser data there were `r nrow(comorbidity.diabetics)` people with diabetes (either type 1 or type 2).
+
+## What percent of all elixhauser diabetic participants had type 2 diabetes?
+
+```{r comorbidity-comparison-elixhauser-incomplete}
+comorbidity.diabetics$DeID_PatientID %in% diabetic.participants$DeID_PatientID %>%
+  table %>%
+  kable(caption="Number of Elixhauser diabetics identified by charts")
+```
+
+## What percent of type 2 diabetic participants were found in Elixhauser?
+
+```{r comorbidity-comparison-elixhauser-complete}
+diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID  %>% 
+  table %>%
+  kable(caption="Number of charted diabetics identified by Elixhauser tables")
+```
+
+# Output
+
+```{r output}
+combined.data <-
+  comorbidity.data %>%
+  mutate(Type2Diabetes = case_when(DeID_PatientID %in% diabetic.participants$DeID_PatientID ~ '1',
+                                   TRUE~'0'))
+  
+output.file <- 'ComorbidityDataAnnotated.csv'
+write_csv(combined.data, file=output.file)
+```
+
+These data were written out to `r output.file`. This is the input file for the other scripts.
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```
