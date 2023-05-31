@@ -87,15 +87,32 @@ From the Elixhauser data there were `r nrow(comorbidity.diabetics)` people with 
 
 ## What percent of all elixhauser diabetic participants had type 2 diabetes?
 
-```{r comorbidity-comparison-elixhauser-incomplete}
+```{r comorbidity-comparison-elixhauser-complete}
 comorbidity.diabetics$DeID_PatientID %in% diabetic.participants$DeID_PatientID %>%
   table %>%
   kable(caption="Number of Elixhauser diabetics identified by charts")
 ```
 
+Among the participants who were elixhauser diabetic, but charted negative we expect some of these should be type I, among the remainder the charted diagnoses included the following
+
+```{r comorbidity-comparison-elixhauser-incomplete}
+comorbidity.diabetics %>%
+  filter(!(DeID_PatientID %in% diabetic.participants$DeID_PatientID)) %>%
+  distinct(DeID_PatientID) -> comorbidity.not.chart
+
+diagnosis.data %>%
+  filter(DeID_PatientID %in% comorbidity.not.chart) %>% #patients with uncharted comorbidities, but do have diabetes according to elixhauser
+  filter(grepl('[Dd]iabete[sic]',DiagnosisICDNameMapped)) %>% #contains the word diabetes or diabetic in either case
+  group_by(DiagnosisICDNameMapped) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  kable(caption="Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions")
+```
+
+
 ## What percent of type 2 diabetic participants were found in Elixhauser?
 
-```{r comorbidity-comparison-elixhauser-complete}
+```{r comorbidity-comparison-chart-complete}
 diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID  %>% 
   table %>%
   kable(caption="Number of charted diabetics identified by Elixhauser tables")

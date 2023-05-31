@@ -12,7 +12,7 @@ output:
 
 ## Purpose
 
-The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data.  We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri May 26 09:58:32 2023.
+The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data.  We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 20:46:55 2023.
 
 
 ```r
@@ -106,6 +106,31 @@ Table: Number of Elixhauser diabetics identified by charts
 |:-----|-----:|
 |FALSE |  4069|
 |TRUE  | 15856|
+
+Among the participants who were elixhauser diabetic, but charted negative we expect some of these should be type I, among the remainder the charted diagnoses included the following
+
+
+```r
+comorbidity.diabetics %>%
+  filter(!(DeID_PatientID %in% diabetic.participants$DeID_PatientID)) %>%
+  distinct(DeID_PatientID) -> comorbidity.not.chart
+
+diagnosis.data %>%
+  filter(DeID_PatientID %in% comorbidity.not.chart) %>% #patients with uncharted comorbidities, but do have diabetes according to elixhauser
+  filter(grepl('[Dd]iabete[sic]',DiagnosisICDNameMapped)) %>% #contains the word diabetes or diabetic in either case
+  group_by(DiagnosisICDNameMapped) %>%
+  count %>%
+  arrange(desc(n)) %>%
+  kable(caption="Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions")
+```
+
+
+
+Table: Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions
+
+|DiagnosisICDNameMapped |  n|
+|:----------------------|--:|
+
 
 ## What percent of type 2 diabetic participants were found in Elixhauser?
 

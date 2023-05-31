@@ -435,7 +435,7 @@ pre code {
 
 <div id="purpose" class="section level2">
 <h2><span class="header-section-number">0.1</span> Purpose</h2>
-<p>The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data. We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri May 26 09:58:32 2023.</p>
+<p>The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data. We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 20:46:55 2023.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(knitr)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">#figures made will go to directory called figures, will make them as both png and pdf files </span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">fig.path=</span><span class="st">'figures/'</span>,</a>
@@ -510,12 +510,35 @@ pre code {
 </tr>
 </tbody>
 </table>
+<p>Among the participants who were elixhauser diabetic, but charted negative we expect some of these should be type I, among the remainder the charted diagnoses included the following</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">comorbidity.diabetics <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID) -&gt;<span class="st"> </span>comorbidity.not.chart</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">diagnosis.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.not.chart) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#patients with uncharted comorbidities, but do have diabetes according to elixhauser</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'[Dd]iabete[sic]'</span>,DiagnosisICDNameMapped)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#contains the word diabetes or diabetic in either case</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw">group_by</span>(DiagnosisICDNameMapped) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(n)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions&quot;</span>)</a></code></pre></div>
+<table>
+<caption>Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions</caption>
+<thead>
+<tr class="header">
+<th align="left">DiagnosisICDNameMapped</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
 </div>
 <div id="what-percent-of-type-2-diabetic-participants-were-found-in-elixhauser" class="section level2">
 <h2><span class="header-section-number">1.2</span> What percent of type 2 diabetic participants were found in Elixhauser?</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.diabetics<span class="op">$</span>DeID_PatientID  <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>table <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of charted diabetics identified by Elixhauser tables&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.diabetics<span class="op">$</span>DeID_PatientID  <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of charted diabetics identified by Elixhauser tables&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of charted diabetics identified by Elixhauser tables</caption>
 <thead>
@@ -539,18 +562,18 @@ pre code {
 </div>
 <div id="output" class="section level1">
 <h1><span class="header-section-number">2</span> Output</h1>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">combined.data &lt;-</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>comorbidity.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Type2Diabetes =</span> <span class="kw">case_when</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">~</span><span class="st"> '1'</span>,</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">                                   <span class="ot">TRUE</span><span class="op">~</span><span class="st">'0'</span>))</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">  </a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">output.file &lt;-<span class="st"> 'ComorbidityDataAnnotated.csv'</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="kw">write_csv</span>(combined.data, <span class="dt">file=</span>output.file)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">combined.data &lt;-</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span>comorbidity.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Type2Diabetes =</span> <span class="kw">case_when</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">~</span><span class="st"> '1'</span>,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">                                   <span class="ot">TRUE</span><span class="op">~</span><span class="st">'0'</span>))</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">  </a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">output.file &lt;-<span class="st"> 'ComorbidityDataAnnotated.csv'</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw">write_csv</span>(combined.data, <span class="dt">file=</span>output.file)</a></code></pre></div>
 <p>These data were written out to ComorbidityDataAnnotated.csv. This is the input file for the other scripts.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">3</span> Session Information</h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 4.2.0 (2022-04-22)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
