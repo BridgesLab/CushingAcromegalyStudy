@@ -1,0 +1,44 @@
+---
+title: "Taiji Setup for Zhang et al Reanalysis"
+author: "Dave Bridges"
+date: "August 9, 2023"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+---
+
+# Purose
+
+The goal of this script is to prepare files for analysis via Taiji (run separately on GreatLakes)
+
+## Configuration file
+
+```{sh config}
+echo "input: "emont-input.tsv""> zhang_config.yml
+echo "output_dir: "output/"">> zhang_config.yml
+echo "assembly: "mm10"">> zhang_config.yml
+```
+
+## Input File
+
+```{r input-file}
+library(readr)
+library(dplyr)
+read_csv('Zhang-SraRunTable.txt') %>%
+  filter(Treatment=="fed") %>% #ignored fasted wt
+  mutate(type="ATAC-seq",
+         path=1,
+         format=paste(Run,"SRA",sep="\t")) %>%
+  rename(id=Run,
+         group=Genotype) %>%
+  mutate(rep=group) %>%
+  select(type,id,group,rep,path,format) %>%
+    write_tsv('zhang-input.tsv')
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
