@@ -15,7 +15,7 @@ The goal of this script is to prepare files for analysis via Taiji (run separate
 ## Configuration file
 
 ```{sh config}
-echo "input: "emont-input.tsv""> zhang_config.yml
+echo "input: "zhang-input.tsv""> zhang_config.yml
 echo "output_dir: "output/"">> zhang_config.yml
 echo "assembly: "mm10"">> zhang_config.yml
 ```

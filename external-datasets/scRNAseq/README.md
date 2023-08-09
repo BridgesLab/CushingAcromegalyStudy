@@ -16,4 +16,5 @@
 # Bulk ATACseq
 
 * Zhang *et al* http://dx.doi.org/10.1073/pnas.1806366115
+* SRP https://www.ncbi.nlm.nih.gov/sra?term=SRP142286
 
