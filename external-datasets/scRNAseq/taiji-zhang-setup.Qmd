@@ -17,7 +17,7 @@ The goal of this script is to prepare files for analysis via Taiji (run separate
 ```{sh config}
 echo "input: "zhang-input.tsv""> zhang_config.yml
 echo "output_dir: "output/"">> zhang_config.yml
-echo "assembly: "mm10"">> zhang_config.yml
+echo "assembly: "GRCm38"">> zhang_config.yml
 ```
 
 ## Input File
@@ -28,11 +28,11 @@ library(dplyr)
 read_csv('Zhang-SraRunTable.txt') %>%
   filter(Treatment=="fed") %>% #ignored fasted wt
   mutate(type="ATAC-seq",
-         path=1,
-         format=paste(Run,"SRA",sep="\t")) %>%
-  rename(id=Run,
-         group=Genotype) %>%
-  mutate(rep=group) %>%
+         rep=c(1,2,1,2),
+         path=Run,
+         format="SRA",
+         group=Genotype,
+         id=Genotype) %>%
   select(type,id,group,rep,path,format) %>%
     write_tsv('zhang-input.tsv')
 ```
