@@ -63,7 +63,7 @@ combined.data <- read_csv(input.file)
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 21:51:39 2023. This dataset has 62010 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Sep 20 14:09:30 2023. This dataset has 62010 values.
 
 
 ```r
@@ -365,10 +365,10 @@ anova(obesity.glm1,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, 
 
-|term    | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:-------|--:|--------:|---------:|----------:|-------:|
-|NULL    | NA|       NA|     61792|      52511|      NA|
-|BMI_cat |  5|     2525|     61787|      49986|       0|
+|term    | df| deviance| df.residual| residual.deviance| p.value|
+|:-------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL    | NA|       NA|       61792|             52511|      NA|
+|BMI_cat |  5|     2525|       61787|             49986|       0|
 
 ```r
 #adding in stress as a modifier
@@ -409,12 +409,12 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with stress as a modifier
 
-|term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     39559|      32202|       NA|
-|BMI_cat        |  5|     1534|     39554|      30668| 0.00e+00|
-|Stress         |  1|       42|     39553|      30626| 8.83e-11|
-|BMI_cat:Stress |  5|        6|     39548|      30620| 3.29e-01|
+|term           | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL           | NA|       NA|       39559|             32202|       NA|
+|BMI_cat        |  5|     1534|       39554|             30668| 0.00e+00|
+|Stress         |  1|       42|       39553|             30626| 8.83e-11|
+|BMI_cat:Stress |  5|        6|       39548|             30620| 3.29e-01|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -462,15 +462,15 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate
 
-|term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     39559|      32202|       NA|
-|BMI_cat        |  5|     1534|     39554|      30668| 0.00e+00|
-|Stress         |  1|       42|     39553|      30626| 8.83e-11|
-|Gender         |  1|      205|     39552|      30421| 1.81e-46|
-|age            |  1|     1564|     39551|      28857| 0.00e+00|
-|BMI_cat:Stress |  5|        6|     39546|      28850| 2.74e-01|
-|BMI_cat:Gender |  5|       19|     39541|      28831| 1.77e-03|
+|term           | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL           | NA|       NA|       39559|             32202|       NA|
+|BMI_cat        |  5|     1534|       39554|             30668| 0.00e+00|
+|Stress         |  1|       42|       39553|             30626| 8.83e-11|
+|Gender         |  1|      205|       39552|             30421| 1.81e-46|
+|age            |  1|     1564|       39551|             28857| 0.00e+00|
+|BMI_cat:Stress |  5|        6|       39546|             28850| 2.74e-01|
+|BMI_cat:Gender |  5|       19|       39541|             28831| 1.77e-03|
 
 ```r
 #adding in race and ethnicity
@@ -522,16 +522,16 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariate
 
-|term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     39559|      32202|       NA|
-|BMI_cat        |  5|     1534|     39554|      30668| 0.00e+00|
-|Stress         |  1|       42|     39553|      30626| 8.83e-11|
-|Gender         |  1|      205|     39552|      30421| 1.81e-46|
-|age            |  1|     1564|     39551|      28857| 0.00e+00|
-|Race.Ethnicity |  4|      111|     39547|      28745| 4.05e-23|
-|BMI_cat:Stress |  5|        6|     39542|      28739| 2.76e-01|
-|BMI_cat:Gender |  5|       17|     39537|      28722| 3.66e-03|
+|term           | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL           | NA|       NA|       39559|             32202|       NA|
+|BMI_cat        |  5|     1534|       39554|             30668| 0.00e+00|
+|Stress         |  1|       42|       39553|             30626| 8.83e-11|
+|Gender         |  1|      205|       39552|             30421| 1.81e-46|
+|age            |  1|     1564|       39551|             28857| 0.00e+00|
+|Race.Ethnicity |  4|      111|       39547|             28745| 4.05e-23|
+|BMI_cat:Stress |  5|        6|       39542|             28739| 2.76e-01|
+|BMI_cat:Gender |  5|       17|       39537|             28722| 3.66e-03|
 
 ```r
 #adding in neighborhood
@@ -584,17 +584,17 @@ anova(obesity.glm5,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates
 
-|term                   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                   | NA|       NA|     36392|      29765|       NA|
-|BMI_cat                |  5|     1404|     36387|      28360| 0.00e+00|
-|Stress                 |  1|       39|     36386|      28322| 5.06e-10|
-|Gender                 |  1|      192|     36385|      28129| 9.70e-44|
-|age                    |  1|     1445|     36384|      26684| 0.00e+00|
-|Race.Ethnicity         |  4|      114|     36380|      26570| 8.00e-24|
-|disadvantage13_17_qrtl |  1|       55|     36379|      26515| 1.28e-13|
-|BMI_cat:Stress         |  5|        7|     36374|      26508| 2.47e-01|
-|BMI_cat:Gender         |  5|       15|     36369|      26493| 8.77e-03|
+|term                   | df| deviance| df.residual| residual.deviance|  p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                   | NA|       NA|       36392|             29765|       NA|
+|BMI_cat                |  5|     1404|       36387|             28360| 0.00e+00|
+|Stress                 |  1|       39|       36386|             28322| 5.06e-10|
+|Gender                 |  1|      192|       36385|             28129| 9.70e-44|
+|age                    |  1|     1445|       36384|             26684| 0.00e+00|
+|Race.Ethnicity         |  4|      114|       36380|             26570| 8.00e-24|
+|disadvantage13_17_qrtl |  1|       55|       36379|             26515| 1.28e-13|
+|BMI_cat:Stress         |  5|        7|       36374|             26508| 2.47e-01|
+|BMI_cat:Gender         |  5|       15|       36369|             26493| 8.77e-03|
 
 ### Diabetes Rates by Quartiles
 
@@ -763,10 +763,10 @@ anova(obesity.glm1,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, 
 
-|term          | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:-------------|--:|--------:|---------:|----------:|-------:|
-|NULL          | NA|       NA|     61792|      52511|      NA|
-|BMI_cat.obese |  3|     2258|     61789|      50253|       0|
+|term          | df| deviance| df.residual| residual.deviance| p.value|
+|:-------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL          | NA|       NA|       61792|             52511|      NA|
+|BMI_cat.obese |  3|     2258|       61789|             50253|       0|
 
 ```r
 #adding in stress as a modifier
@@ -803,12 +803,12 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier
 
-|term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     39559|      32202|       NA|
-|BMI_cat.obese        |  3|     1401|     39556|      30801| 0.00e+00|
-|Stress               |  1|       47|     39555|      30754| 7.74e-12|
-|BMI_cat.obese:Stress |  3|        7|     39552|      30747| 7.22e-02|
+|term                 | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                 | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.obese        |  3|     1401|       39556|             30801| 0.00e+00|
+|Stress               |  1|       47|       39555|             30754| 7.74e-12|
+|BMI_cat.obese:Stress |  3|        7|       39552|             30747| 7.22e-02|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -850,15 +850,15 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age and gender as covariate
 
-|term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     39559|      32202|       NA|
-|BMI_cat.obese        |  3|     1401|     39556|      30801| 0.00e+00|
-|Stress               |  1|       47|     39555|      30754| 7.74e-12|
-|Gender               |  1|      162|     39554|      30592| 4.37e-37|
-|age                  |  1|     1460|     39553|      29132| 0.00e+00|
-|BMI_cat.obese:Stress |  3|        8|     39550|      29124| 4.16e-02|
-|BMI_cat.obese:Gender |  3|       27|     39547|      29097| 6.41e-06|
+|term                 | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                 | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.obese        |  3|     1401|       39556|             30801| 0.00e+00|
+|Stress               |  1|       47|       39555|             30754| 7.74e-12|
+|Gender               |  1|      162|       39554|             30592| 4.37e-37|
+|age                  |  1|     1460|       39553|             29132| 0.00e+00|
+|BMI_cat.obese:Stress |  3|        8|       39550|             29124| 4.16e-02|
+|BMI_cat.obese:Gender |  3|       27|       39547|             29097| 6.41e-06|
 
 ```r
 #adding in race and ethnicity
@@ -904,16 +904,16 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age, gender and race as covariates
 
-|term                 | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                 | NA|       NA|     39559|      32202|       NA|
-|BMI_cat.obese        |  3|     1401|     39556|      30801| 0.00e+00|
-|Stress               |  1|       47|     39555|      30754| 7.74e-12|
-|Gender               |  1|      162|     39554|      30592| 4.37e-37|
-|age                  |  1|     1460|     39553|      29132| 0.00e+00|
-|Race.Ethnicity       |  4|      113|     39549|      29019| 1.43e-23|
-|BMI_cat.obese:Stress |  3|        8|     39546|      29010| 4.17e-02|
-|BMI_cat.obese:Gender |  3|       25|     39543|      28985| 1.68e-05|
+|term                 | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                 | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.obese        |  3|     1401|       39556|             30801| 0.00e+00|
+|Stress               |  1|       47|       39555|             30754| 7.74e-12|
+|Gender               |  1|      162|       39554|             30592| 4.37e-37|
+|age                  |  1|     1460|       39553|             29132| 0.00e+00|
+|Race.Ethnicity       |  4|      113|       39549|             29019| 1.43e-23|
+|BMI_cat.obese:Stress |  3|        8|       39546|             29010| 4.17e-02|
+|BMI_cat.obese:Gender |  3|       25|       39543|             28985| 1.68e-05|
 
 ```r
 glm(DiabetesAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+BMI_cat.obese:Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
@@ -959,17 +959,17 @@ anova(obesity.glm5,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obesity on diabetes, with stress as a modifier and age, gender, race and neighborhood as covariates
 
-|term                   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                   | NA|       NA|     36392|      29765|       NA|
-|BMI_cat.obese          |  3|     1274|     36389|      28491| 0.00e+00|
-|Stress                 |  1|       43|     36388|      28448| 5.65e-11|
-|Gender                 |  1|      151|     36387|      28296| 8.73e-35|
-|age                    |  1|     1349|     36386|      26948| 0.00e+00|
-|Race.Ethnicity         |  4|      117|     36382|      26831| 2.94e-24|
-|disadvantage13_17_qrtl |  1|       68|     36381|      26764| 1.99e-16|
-|BMI_cat.obese:Stress   |  3|        8|     36378|      26755| 4.10e-02|
-|BMI_cat.obese:Gender   |  3|       20|     36375|      26735| 1.35e-04|
+|term                   | df| deviance| df.residual| residual.deviance|  p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                   | NA|       NA|       36392|             29765|       NA|
+|BMI_cat.obese          |  3|     1274|       36389|             28491| 0.00e+00|
+|Stress                 |  1|       43|       36388|             28448| 5.65e-11|
+|Gender                 |  1|      151|       36387|             28296| 8.73e-35|
+|age                    |  1|     1349|       36386|             26948| 0.00e+00|
+|Race.Ethnicity         |  4|      117|       36382|             26831| 2.94e-24|
+|disadvantage13_17_qrtl |  1|       68|       36381|             26764| 1.99e-16|
+|BMI_cat.obese:Stress   |  3|        8|       36378|             26755| 4.10e-02|
+|BMI_cat.obese:Gender   |  3|       20|       36375|             26735| 1.35e-04|
 
 # Diabetes Rates by Obese/Not Obese and Stress
 
@@ -1158,10 +1158,10 @@ anova(obesity.glm1,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, 
 
-|term             | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:----------------|--:|--------:|---------:|----------:|-------:|
-|NULL             | NA|       NA|     62009|      52630|      NA|
-|BMI_cat.Ob.NonOb |  1|     1988|     62008|      50643|       0|
+|term             | df| deviance| df.residual| residual.deviance| p.value|
+|:----------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL             | NA|       NA|       62009|             52630|      NA|
+|BMI_cat.Ob.NonOb |  1|     1988|       62008|             50643|       0|
 
 ```r
 #adding in stress as a modifier
@@ -1194,12 +1194,12 @@ anova(obesity.glm2,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with stress as a modifier
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     39693|      32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|     39692|      31029| 0.00e+00|
-|Stress                  |  1|       45|     39691|      30983| 1.79e-11|
-|BMI_cat.Ob.NonOb:Stress |  1|        7|     39690|      30977| 9.46e-03|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39693|             32268|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
+|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
+|BMI_cat.Ob.NonOb:Stress |  1|        7|       39690|             30977| 9.46e-03|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -1235,15 +1235,15 @@ anova(obesity.glm3,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age and gender as covariate
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     39693|      32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|     39692|      31029| 0.00e+00|
-|Stress                  |  1|       45|     39691|      30983| 1.79e-11|
-|Gender                  |  1|      194|     39690|      30790| 4.81e-44|
-|age                     |  1|     1512|     39689|      29277| 0.00e+00|
-|BMI_cat.Ob.NonOb:Stress |  1|        9|     39688|      29269| 3.13e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       31|     39687|      29238| 3.27e-08|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39693|             32268|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
+|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
+|Gender                  |  1|      194|       39690|             30790| 4.81e-44|
+|age                     |  1|     1512|       39689|             29277| 0.00e+00|
+|BMI_cat.Ob.NonOb:Stress |  1|        9|       39688|             29269| 3.13e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       31|       39687|             29238| 3.27e-08|
 
 ```r
 #adding in race and ethnicity
@@ -1283,16 +1283,16 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender and race as covariate
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     39693|      32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|     39692|      31029| 0.00e+00|
-|Stress                  |  1|       45|     39691|      30983| 1.79e-11|
-|Gender                  |  1|      194|     39690|      30790| 4.81e-44|
-|age                     |  1|     1512|     39689|      29277| 0.00e+00|
-|Race.Ethnicity          |  4|      113|     39685|      29164| 1.68e-23|
-|BMI_cat.Ob.NonOb:Stress |  1|        9|     39684|      29156| 3.31e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       28|     39683|      29127| 1.06e-07|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39693|             32268|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
+|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
+|Gender                  |  1|      194|       39690|             30790| 4.81e-44|
+|age                     |  1|     1512|       39689|             29277| 0.00e+00|
+|Race.Ethnicity          |  4|      113|       39685|             29164| 1.68e-23|
+|BMI_cat.Ob.NonOb:Stress |  1|        9|       39684|             29156| 3.31e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       28|       39683|             29127| 1.06e-07|
 
 ```r
 #adding in neighborhood disadvantage
@@ -1333,17 +1333,17 @@ anova(obesity.glm5,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender, race, and neighborhood disadvantage as covariates
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     36519|      29829|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1135|     36518|      28694| 0.00e+00|
-|Stress                  |  1|       41|     36517|      28652| 1.36e-10|
-|Gender                  |  1|      179|     36516|      28473| 7.12e-41|
-|age                     |  1|     1393|     36515|      27080| 0.00e+00|
-|Race.Ethnicity          |  4|      116|     36511|      26964| 4.11e-24|
-|disadvantage13_17_qrtl  |  1|       68|     36510|      26896| 1.39e-16|
-|BMI_cat.Ob.NonOb:Stress |  1|        8|     36509|      26887| 3.67e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       24|     36508|      26864| 1.08e-06|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       36519|             29829|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1135|       36518|             28694| 0.00e+00|
+|Stress                  |  1|       41|       36517|             28652| 1.36e-10|
+|Gender                  |  1|      179|       36516|             28473| 7.12e-41|
+|age                     |  1|     1393|       36515|             27080| 0.00e+00|
+|Race.Ethnicity          |  4|      116|       36511|             26964| 4.11e-24|
+|disadvantage13_17_qrtl  |  1|       68|       36510|             26896| 1.39e-16|
+|BMI_cat.Ob.NonOb:Stress |  1|        8|       36509|             26887| 3.67e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       24|       36508|             26864| 1.08e-06|
 
 ### Testing for the Interaction Between Gender and Obesity-BMI
 
@@ -1370,18 +1370,18 @@ anova(gender.int.model,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with gender and stress as a modifier and age, gender and race as covariate
 
-|term                           | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:------------------------------|--:|--------:|---------:|----------:|-------:|
-|NULL                           | NA|       NA|     39693|      32268|      NA|
-|BMI_cat.Ob.NonOb               |  1| 1239.733|     39692|      31029|   0.000|
-|Stress                         |  1|   45.185|     39691|      30983|   0.000|
-|Gender                         |  1|  193.757|     39690|      30790|   0.000|
-|age                            |  1| 1512.314|     39689|      29277|   0.000|
-|Race.Ethnicity                 |  4|  112.983|     39685|      29164|   0.000|
-|BMI_cat.Ob.NonOb:Stress        |  1|    8.631|     39684|      29156|   0.003|
-|BMI_cat.Ob.NonOb:Gender        |  1|   28.267|     39683|      29127|   0.000|
-|Stress:Gender                  |  1|    6.118|     39682|      29121|   0.013|
-|BMI_cat.Ob.NonOb:Stress:Gender |  1|    0.479|     39681|      29121|   0.489|
+|term                           | df| deviance| df.residual| residual.deviance| p.value|
+|:------------------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                           | NA|       NA|       39693|             32268|      NA|
+|BMI_cat.Ob.NonOb               |  1| 1239.733|       39692|             31029|   0.000|
+|Stress                         |  1|   45.185|       39691|             30983|   0.000|
+|Gender                         |  1|  193.757|       39690|             30790|   0.000|
+|age                            |  1| 1512.314|       39689|             29277|   0.000|
+|Race.Ethnicity                 |  4|  112.983|       39685|             29164|   0.000|
+|BMI_cat.Ob.NonOb:Stress        |  1|    8.631|       39684|             29156|   0.003|
+|BMI_cat.Ob.NonOb:Gender        |  1|   28.267|       39683|             29127|   0.000|
+|Stress:Gender                  |  1|    6.118|       39682|             29121|   0.013|
+|BMI_cat.Ob.NonOb:Stress:Gender |  1|    0.479|       39681|             29121|   0.489|
 
 ```r
 gender.int.model %>%
@@ -1487,14 +1487,14 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender,
 
 Table: Logistic regression of effects of gender on stress in people without obesity
 
-|term           | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:--------------|--:|--------:|---------:|----------:|-------:|
-|NULL           | NA|       NA|     22974|      13698|      NA|
-|age            |  1|   842.99|     22973|      12855|   0.000|
-|Race.Ethnicity |  4|    56.83|     22969|      12798|   0.000|
-|Stress         |  1|    13.69|     22968|      12785|   0.000|
-|Gender         |  1|    91.85|     22967|      12693|   0.000|
-|Stress:Gender  |  1|     4.27|     22966|      12689|   0.039|
+|term           | df| deviance| df.residual| residual.deviance| p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL           | NA|       NA|       22974|             13698|      NA|
+|age            |  1|   842.99|       22973|             12855|   0.000|
+|Race.Ethnicity |  4|    56.83|       22969|             12798|   0.000|
+|Stress         |  1|    13.69|       22968|             12785|   0.000|
+|Gender         |  1|    91.85|       22967|             12693|   0.000|
+|Stress:Gender  |  1|     4.27|       22966|             12689|   0.039|
 
 ```r
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender, 
@@ -1578,18 +1578,18 @@ race.int.model %>% anova %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with gender and race as a modifier and age, gender and race as covariate
 
-|term                                   | df| Deviance| Resid..Df| Resid..Dev|
-|:--------------------------------------|--:|--------:|---------:|----------:|
-|NULL                                   | NA|       NA|     39693|      32268|
-|BMI_cat.Ob.NonOb                       |  1|  1239.73|     39692|      31029|
-|Stress                                 |  1|    45.19|     39691|      30983|
-|Gender                                 |  1|   193.76|     39690|      30790|
-|age                                    |  1|  1512.31|     39689|      29277|
-|Race.Ethnicity                         |  4|   112.98|     39685|      29164|
-|BMI_cat.Ob.NonOb:Stress                |  1|     8.63|     39684|      29156|
-|BMI_cat.Ob.NonOb:Race.Ethnicity        |  4|     2.87|     39680|      29153|
-|Stress:Race.Ethnicity                  |  4|     4.41|     39676|      29148|
-|BMI_cat.Ob.NonOb:Stress:Race.Ethnicity |  4|     4.96|     39672|      29143|
+|term                                   | df| deviance| df.residual| residual.deviance|
+|:--------------------------------------|--:|--------:|-----------:|-----------------:|
+|NULL                                   | NA|       NA|       39693|             32268|
+|BMI_cat.Ob.NonOb                       |  1|  1239.73|       39692|             31029|
+|Stress                                 |  1|    45.19|       39691|             30983|
+|Gender                                 |  1|   193.76|       39690|             30790|
+|age                                    |  1|  1512.31|       39689|             29277|
+|Race.Ethnicity                         |  4|   112.98|       39685|             29164|
+|BMI_cat.Ob.NonOb:Stress                |  1|     8.63|       39684|             29156|
+|BMI_cat.Ob.NonOb:Race.Ethnicity        |  4|     2.87|       39680|             29153|
+|Stress:Race.Ethnicity                  |  4|     4.41|       39676|             29148|
+|BMI_cat.Ob.NonOb:Stress:Race.Ethnicity |  4|     4.96|       39672|             29143|
 
 ```r
 anova(race.int.model.null,race.int.model) %>% 
@@ -1620,14 +1620,14 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity,
 
 Table: Logistic regression of effects of race on stress in people with obesity
 
-|term                  | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:---------------------|--:|--------:|---------:|----------:|-------:|
-|NULL                  | NA|       NA|     16718|      17330|      NA|
-|age                   |  1|   750.62|     16717|      16580|   0.000|
-|Race.Ethnicity        |  4|    57.88|     16713|      16522|   0.000|
-|Stress                |  1|    79.25|     16712|      16443|   0.000|
-|Gender                |  1|    12.65|     16711|      16430|   0.000|
-|Race.Ethnicity:Stress |  4|     6.23|     16707|      16424|   0.182|
+|term                  | df| deviance| df.residual| residual.deviance| p.value|
+|:---------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                  | NA|       NA|       16718|             17330|      NA|
+|age                   |  1|   750.62|       16717|             16580|   0.000|
+|Race.Ethnicity        |  4|    57.88|       16713|             16522|   0.000|
+|Stress                |  1|    79.25|       16712|             16443|   0.000|
+|Gender                |  1|    12.65|       16711|             16430|   0.000|
+|Race.Ethnicity:Stress |  4|     6.23|       16707|             16424|   0.182|
 
 ```r
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity, 
@@ -1668,14 +1668,14 @@ glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity,
 
 Table: Logistic regression of effects of race on stress in people without obesity
 
-|term                  | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:---------------------|--:|--------:|---------:|----------:|-------:|
-|NULL                  | NA|       NA|     22974|      13698|      NA|
-|age                   |  1|   842.99|     22973|      12855|   0.000|
-|Race.Ethnicity        |  4|    56.83|     22969|      12798|   0.000|
-|Stress                |  1|    13.69|     22968|      12785|   0.000|
-|Gender                |  1|    91.85|     22967|      12693|   0.000|
-|Race.Ethnicity:Stress |  4|     3.15|     22963|      12690|   0.532|
+|term                  | df| deviance| df.residual| residual.deviance| p.value|
+|:---------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                  | NA|       NA|       22974|             13698|      NA|
+|age                   |  1|   842.99|       22973|             12855|   0.000|
+|Race.Ethnicity        |  4|    56.83|       22969|             12798|   0.000|
+|Stress                |  1|    13.69|       22968|             12785|   0.000|
+|Gender                |  1|    91.85|       22967|             12693|   0.000|
+|Race.Ethnicity:Stress |  4|     3.15|       22963|             12690|   0.532|
 
 ```r
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity, 
@@ -1886,17 +1886,17 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with continuous stress as a modifier
 
-|term                       | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                       | NA|       NA|     36519|      29829|       NA|
-|BMI_cat.Ob.NonOb           |  1|     1135|     36518|      28694| 0.00e+00|
-|Stress_d1                  |  1|       35|     36517|      28658| 2.67e-09|
-|Gender                     |  1|      182|     36516|      28476| 1.58e-41|
-|age                        |  1|     1423|     36515|      27052| 0.00e+00|
-|Race.Ethnicity             |  4|      116|     36511|      26936| 3.31e-24|
-|disadvantage13_17_qrtl     |  1|       64|     36510|      26873| 1.55e-15|
-|BMI_cat.Ob.NonOb:Stress_d1 |  1|        4|     36509|      26868| 4.11e-02|
-|BMI_cat.Ob.NonOb:Gender    |  1|       24|     36508|      26845| 1.11e-06|
+|term                       | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                       | NA|       NA|       36519|             29829|       NA|
+|BMI_cat.Ob.NonOb           |  1|     1135|       36518|             28694| 0.00e+00|
+|Stress_d1                  |  1|       35|       36517|             28658| 2.67e-09|
+|Gender                     |  1|      182|       36516|             28476| 1.58e-41|
+|age                        |  1|     1423|       36515|             27052| 0.00e+00|
+|Race.Ethnicity             |  4|      116|       36511|             26936| 3.31e-24|
+|disadvantage13_17_qrtl     |  1|       64|       36510|             26873| 1.55e-15|
+|BMI_cat.Ob.NonOb:Stress_d1 |  1|        4|       36509|             26868| 4.11e-02|
+|BMI_cat.Ob.NonOb:Gender    |  1|       24|       36508|             26845| 1.11e-06|
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate
 
@@ -1971,17 +1971,17 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier
 
-|term                                  | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-------------------------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                                  | NA|       NA|     36519|      29829|       NA|
-|BMI_cat.Ob.NonOb                      |  1|     1135|     36518|      28694| 0.00e+00|
-|as.factor(Stress_d1)                  | 16|       55|     36502|      28639| 3.55e-06|
-|Gender                                |  1|      182|     36501|      28457| 2.17e-41|
-|age                                   |  1|     1421|     36500|      27035| 0.00e+00|
-|Race.Ethnicity                        |  4|      117|     36496|      26918| 2.06e-24|
-|disadvantage13_17_qrtl                |  1|       63|     36495|      26855| 2.32e-15|
-|BMI_cat.Ob.NonOb:as.factor(Stress_d1) | 16|       24|     36479|      26831| 9.02e-02|
-|BMI_cat.Ob.NonOb:Gender               |  1|       24|     36478|      26807| 9.33e-07|
+|term                                  | df| deviance| df.residual| residual.deviance|  p.value|
+|:-------------------------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                                  | NA|       NA|       36519|             29829|       NA|
+|BMI_cat.Ob.NonOb                      |  1|     1135|       36518|             28694| 0.00e+00|
+|as.factor(Stress_d1)                  | 16|       55|       36502|             28639| 3.55e-06|
+|Gender                                |  1|      182|       36501|             28457| 2.17e-41|
+|age                                   |  1|     1421|       36500|             27035| 0.00e+00|
+|Race.Ethnicity                        |  4|      117|       36496|             26918| 2.06e-24|
+|disadvantage13_17_qrtl                |  1|       63|       36495|             26855| 2.32e-15|
+|BMI_cat.Ob.NonOb:as.factor(Stress_d1) | 16|       24|       36479|             26831| 9.02e-02|
+|BMI_cat.Ob.NonOb:Gender               |  1|       24|       36478|             26807| 9.33e-07|
 
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Quartile
@@ -2031,17 +2031,17 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of obese vs non-obese on diabetes, with discrete stress as a modifier
 
-|term                                        | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-------------------------------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                                        | NA|       NA|     36519|      29829|       NA|
-|BMI_cat.Ob.NonOb                            |  1|     1135|     36518|      28694| 0.00e+00|
-|as.factor(Stress.quartile)                  |  3|       44|     36515|      28649| 1.31e-09|
-|Gender                                      |  1|      182|     36514|      28467| 1.45e-41|
-|age                                         |  1|     1419|     36513|      27047| 0.00e+00|
-|Race.Ethnicity                              |  4|      118|     36509|      26930| 1.48e-24|
-|disadvantage13_17_qrtl                      |  1|       63|     36508|      26866| 1.62e-15|
-|BMI_cat.Ob.NonOb:as.factor(Stress.quartile) |  3|        9|     36505|      26857| 2.92e-02|
-|BMI_cat.Ob.NonOb:Gender                     |  1|       24|     36504|      26833| 1.21e-06|
+|term                                        | df| deviance| df.residual| residual.deviance|  p.value|
+|:-------------------------------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                                        | NA|       NA|       36519|             29829|       NA|
+|BMI_cat.Ob.NonOb                            |  1|     1135|       36518|             28694| 0.00e+00|
+|as.factor(Stress.quartile)                  |  3|       44|       36515|             28649| 1.31e-09|
+|Gender                                      |  1|      182|       36514|             28467| 1.45e-41|
+|age                                         |  1|     1419|       36513|             27047| 0.00e+00|
+|Race.Ethnicity                              |  4|      118|       36509|             26930| 1.48e-24|
+|disadvantage13_17_qrtl                      |  1|       63|       36508|             26866| 1.62e-15|
+|BMI_cat.Ob.NonOb:as.factor(Stress.quartile) |  3|        9|       36505|             26857| 2.92e-02|
+|BMI_cat.Ob.NonOb:Gender                     |  1|       24|       36504|             26833| 1.21e-06|
 
 ## Logistic Regressions for BMI as a Continuous Variable
 
@@ -2086,17 +2086,17 @@ anova(obesity.glm4,test="Chisq") %>% tidy %>%
 
 Table: Logistic regression of BMI as a continuous variable on diabetes.
 
-|term                   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                   | NA|       NA|     36519|      29829|       NA|
-|BMI                    |  1|     1260|     36518|      28568| 0.00e+00|
-|Stress                 |  1|       37|     36517|      28531| 1.05e-09|
-|Gender                 |  1|      228|     36516|      28303| 1.76e-51|
-|age                    |  1|     1516|     36515|      26788| 0.00e+00|
-|Race.Ethnicity         |  4|      113|     36511|      26675| 2.09e-23|
-|disadvantage13_17_qrtl |  1|       52|     36510|      26624| 7.06e-13|
-|BMI:Stress             |  1|        2|     36509|      26622| 1.56e-01|
-|BMI:Gender             |  1|        0|     36508|      26621| 5.11e-01|
+|term                   | df| deviance| df.residual| residual.deviance|  p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                   | NA|       NA|       36519|             29829|       NA|
+|BMI                    |  1|     1260|       36518|             28568| 0.00e+00|
+|Stress                 |  1|       37|       36517|             28531| 1.05e-09|
+|Gender                 |  1|      228|       36516|             28303| 1.76e-51|
+|age                    |  1|     1516|       36515|             26788| 0.00e+00|
+|Race.Ethnicity         |  4|      113|       36511|             26675| 2.09e-23|
+|disadvantage13_17_qrtl |  1|       52|       36510|             26624| 7.06e-13|
+|BMI:Stress             |  1|        2|       36509|             26622| 1.56e-01|
+|BMI:Gender             |  1|        0|       36508|             26621| 5.11e-01|
 
 
 # Summary of Covariates
@@ -2237,13 +2237,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.2.0 (2022-04-22)
+## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -2253,25 +2253,27 @@ sessionInfo()
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
+## time zone: America/Detroit
+## tzcode source: system (glibc)
+## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.1   ggplot2_3.4.0 forcats_0.5.2 tidyr_1.2.1   dplyr_1.0.10 
-## [6] readr_2.1.3   knitr_1.41   
+## [1] broom_1.0.5   ggplot2_3.4.3 forcats_1.0.0 tidyr_1.3.0   dplyr_1.1.3  
+## [6] readr_2.1.4   knitr_1.44   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
-##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
-##  [9] gtable_0.3.1     jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3 
-## [13] tibble_3.1.8     pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1       
-## [17] DBI_1.1.3        parallel_4.2.0   yaml_2.3.6       xfun_0.35       
-## [21] fastmap_1.1.0    withr_2.5.0      stringr_1.5.0    generics_0.1.3  
-## [25] vctrs_0.5.1      sass_0.4.4       hms_1.1.2        grid_4.2.0      
-## [29] bit64_4.0.5      tidyselect_1.2.0 glue_1.6.2       R6_2.5.1        
-## [33] fansi_1.0.3      vroom_1.6.0      rmarkdown_2.18   farver_2.1.1    
-## [37] tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3   backports_1.4.1 
-## [41] scales_1.2.1     ellipsis_0.3.2   htmltools_0.5.4  assertthat_0.2.1
-## [45] colorspace_2.0-3 labeling_0.4.2   utf8_1.2.2       stringi_1.7.8   
-## [49] munsell_0.5.0    cachem_1.0.6     crayon_1.5.2
+##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   compiler_4.3.1  
+##  [5] crayon_1.5.2     tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
+##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
+## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
+## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
+## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
+## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
+## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   grid_4.3.1      
+## [33] digest_0.6.33    vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
+## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
+## [41] colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25   purrr_1.0.2     
+## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
 ```

@@ -70,7 +70,7 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 21:51:31 2023. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Sep 20 14:09:22 2023. This dataset has 39694 values.
 
 Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -117,11 +117,11 @@ Table: Number of participants by diabetes diagnosis and race/ethnicity
 
 |Race.Ethnicity  |    No|  Yes| Prevalence|
 |:---------------|-----:|----:|----------:|
-|White           | 29966| 5355|       15.2|
+|White           | 29951| 5370|       15.2|
 |Asian           |   511|   69|       11.9|
-|Black           |  1344|  395|       22.7|
+|Black           |  1342|  397|       22.8|
 |Hispanic/Latino |   659|  119|       15.3|
-|Other           |  1087|  189|       14.8|
+|Other           |  1086|  190|       14.9|
 
 
 ```r
@@ -141,10 +141,10 @@ race.glm %>%
 
 Table: Binomial regression of ethicity on diabetes incidence
 
-|term           | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:--------------|--:|--------:|---------:|----------:|--------:|
-|NULL           | NA|       NA|     39693|      34152|       NA|
-|Race.Ethnicity |  4|       72|     39689|      34080| 1.01e-14|
+|term           | df| deviance| df.residual| residual.deviance|  p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL           | NA|       NA|       39693|             34213|       NA|
+|Race.Ethnicity |  4|       73|       39689|             34140| 5.68e-15|
 
 ```r
 race.glm %>% 
@@ -159,11 +159,11 @@ Table: Binomial regression estimates of ethicity on diabetes incidence
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |    -1.72|     0.015|   -116.07| 0.00e+00|
-|Race.EthnicityAsian           |    -0.28|     0.129|     -2.17| 3.00e-02|
-|Race.EthnicityBlack           |     0.50|     0.059|      8.41| 3.94e-17|
-|Race.EthnicityHispanic/Latino |     0.01|     0.101|      0.10| 9.17e-01|
-|Race.EthnicityOther           |    -0.03|     0.080|     -0.34| 7.33e-01|
+|(Intercept)                   |    -1.72|     0.015|   -115.98| 0.00e+00|
+|Race.EthnicityAsian           |    -0.28|     0.129|     -2.20| 2.81e-02|
+|Race.EthnicityBlack           |     0.50|     0.059|      8.48| 2.17e-17|
+|Race.EthnicityHispanic/Latino |     0.01|     0.101|      0.07| 9.44e-01|
+|Race.EthnicityOther           |    -0.02|     0.080|     -0.31| 7.60e-01|
 
 ## By Gender
 
@@ -209,8 +209,8 @@ Table: Number of participants by diabetes diagnosis and gender
 
 |Gender |    No|  Yes| Prevalence|
 |:------|-----:|----:|----------:|
-|F      | 18097| 2769|       13.3|
-|M      | 15470| 3358|       17.8|
+|F      | 18085| 2781|       13.3|
+|M      | 15464| 3364|       17.9|
 
 ## Interaction Between Gender and BMI
 
@@ -245,10 +245,10 @@ Table: Prevalence of diabetes by obesity and gender
 
 |Gender |BMI_cat.Ob.NonOb |    No|  Yes| Prevalence|
 |:------|:----------------|-----:|----:|----------:|
-|F      |Non-Obese        | 11116|  802|       6.73|
-|F      |Obese            |  6981| 1967|      21.98|
-|M      |Non-Obese        |  9782| 1275|      11.53|
-|M      |Obese            |  5688| 2083|      26.80|
+|F      |Non-Obese        | 11112|  806|       6.76|
+|F      |Obese            |  6973| 1975|      22.07|
+|M      |Non-Obese        |  9780| 1277|      11.55|
+|M      |Obese            |  5684| 2087|      26.86|
 
 ```r
 gender.bmi.glm %>% 
@@ -262,12 +262,12 @@ gender.bmi.glm %>%
 
 Table: Binomial regression of gender:BMI interaction on diabetes incidence
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     39693|      34152|       NA|
-|Gender                  |  1|      158|     39692|      33994| 3.37e-36|
-|BMI_cat.Ob.NonOb        |  1|     1720|     39691|      32274| 0.00e+00|
-|Gender:BMI_cat.Ob.NonOb |  1|       31|     39690|      32243| 2.68e-08|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39693|             34213|       NA|
+|Gender                  |  1|      156|       39692|             34057| 9.92e-36|
+|BMI_cat.Ob.NonOb        |  1|     1726|       39691|             32331| 0.00e+00|
+|Gender:BMI_cat.Ob.NonOb |  1|       31|       39690|             32300| 2.82e-08|
 
 ```r
 gender.bmi.glm %>% 
@@ -282,10 +282,10 @@ Table: Binomial regression estimates of gender:BMI on diabetes incidence
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |    -2.63|     0.037|    -71.90| 0.00e+00|
-|GenderM                       |     0.59|     0.047|     12.54| 4.34e-36|
-|BMI_cat.Ob.NonObObese         |     1.36|     0.045|     30.55| 0.00e+00|
-|GenderM:BMI_cat.Ob.NonObObese |    -0.33|     0.059|     -5.54| 2.99e-08|
+|(Intercept)                   |    -2.62|     0.036|    -71.92| 0.00e+00|
+|GenderM                       |     0.59|     0.047|     12.49| 8.67e-36|
+|BMI_cat.Ob.NonObObese         |     1.36|     0.045|     30.61| 0.00e+00|
+|GenderM:BMI_cat.Ob.NonObObese |    -0.33|     0.059|     -5.53| 3.14e-08|
 
 
 ```r
@@ -322,10 +322,10 @@ gender.glm %>%
 
 Table: Binomial regression of gender on diabetes incidence
 
-|term   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:------|--:|--------:|---------:|----------:|--------:|
-|NULL   | NA|       NA|     39693|      34152|       NA|
-|Gender |  1|      158|     39692|      33994| 3.37e-36|
+|term   | df| deviance| df.residual| residual.deviance|  p.value|
+|:------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL   | NA|       NA|       39693|             34213|       NA|
+|Gender |  1|      156|       39692|             34057| 9.92e-36|
 
 ```r
 gender.glm %>% 
@@ -340,8 +340,8 @@ Table: Binomial regression estimates of gender on diabetes incidence
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |    -1.88|     0.020|     -92.0| 0.00e+00|
-|GenderM     |     0.35|     0.028|      12.5| 5.07e-36|
+|(Intercept) |    -1.87|     0.020|     -91.9| 0.00e+00|
+|GenderM     |     0.35|     0.028|      12.4| 1.47e-35|
 
 ## By Age
 
@@ -386,12 +386,12 @@ Table: Number of participants by diabetes diagnosis and age
 
 |Age.group |   No|  Yes| Prevalence|
 |:---------|----:|----:|----------:|
-|(18,30]   | 4396|   99|       2.20|
-|(30,40]   | 4532|  300|       6.21|
-|(40,50]   | 5524|  801|      12.66|
-|(50,60]   | 7389| 1528|      17.14|
-|(60,70]   | 7110| 2062|      22.48|
-|(70,80]   | 3349| 1098|      24.69|
+|(18,30]   | 4393|  102|       2.27|
+|(30,40]   | 4529|  303|       6.27|
+|(40,50]   | 5520|  805|      12.73|
+|(50,60]   | 7388| 1529|      17.15|
+|(60,70]   | 7106| 2066|      22.52|
+|(70,80]   | 3346| 1101|      24.76|
 |(80,90]   |  854|  233|      21.43|
 |NA        |  413|    6|       1.43|
 
@@ -412,10 +412,10 @@ age.glm %>%
 
 Table: Binomial regression of age group on diabetes incidence
 
-|term      | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:---------|--:|--------:|---------:|----------:|-------:|
-|NULL      | NA|       NA|     39274|      33990|      NA|
-|Age.group |  6|     1939|     39268|      32052|       0|
+|term      | df| deviance| df.residual| residual.deviance| p.value|
+|:---------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL      | NA|       NA|       39274|             34051|      NA|
+|Age.group |  6|     1925|       39268|             32126|       0|
 
 ```r
 age.glm %>% 
@@ -430,13 +430,13 @@ Table: Binomial regression estimates of age group on diabetes incidence
 
 |term             | estimate| std.error| statistic|  p.value|
 |:----------------|--------:|---------:|---------:|--------:|
-|(Intercept)      |    -3.79|     0.102|    -37.33| 0.00e+00|
-|Age.group(30,40] |     1.08|     0.118|      9.15| 5.64e-20|
-|Age.group(40,50] |     1.86|     0.108|     17.18| 4.07e-66|
-|Age.group(50,60] |     2.22|     0.105|     21.03| 3.60e-98|
-|Age.group(60,70] |     2.56|     0.105|     24.42| 0.00e+00|
-|Age.group(70,80] |     2.68|     0.107|     24.93| 0.00e+00|
-|Age.group(80,90] |     2.49|     0.126|     19.85| 1.09e-87|
+|(Intercept)      |    -3.76|     0.100|    -37.57| 0.00e+00|
+|Age.group(30,40] |     1.06|     0.116|      9.09| 9.85e-20|
+|Age.group(40,50] |     1.84|     0.107|     17.17| 4.55e-66|
+|Age.group(50,60] |     2.19|     0.104|     21.03| 3.50e-98|
+|Age.group(60,70] |     2.53|     0.103|     24.48| 0.00e+00|
+|Age.group(70,80] |     2.65|     0.106|     25.01| 0.00e+00|
+|Age.group(80,90] |     2.46|     0.124|     19.79| 3.32e-87|
 
 ```r
 glm(Type2Diabetes~age, data=combined.data) %>% 
@@ -449,10 +449,10 @@ glm(Type2Diabetes~age, data=combined.data) %>%
 
 Table: Binomial regression estimates of age (continuous) on diabetes incidence
 
-|term        | estimate| std.error| statistic|  p.value|
-|:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |    -0.08|     0.006|     -13.5| 2.01e-41|
-|age         |     0.00|     0.000|      41.3| 0.00e+00|
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |    -0.08|     0.006|     -13.4| 1.1e-40|
+|age         |     0.00|     0.000|      41.2| 0.0e+00|
 
 ## By Neighborhood Disadvantage
 
@@ -497,10 +497,10 @@ Table: Number of participants by diabetes neighborhood disadvantage
 
 | disadvantage13_17_qrtl|    No|  Yes| Prevalence|
 |----------------------:|-----:|----:|----------:|
-|                      1| 12183| 1814|       13.0|
-|                      2|  8847| 1699|       16.1|
-|                      3|  6295| 1341|       17.6|
-|                      4|  3509|  832|       19.2|
+|                      1| 12176| 1821|       13.0|
+|                      2|  8840| 1706|       16.2|
+|                      3|  6292| 1344|       17.6|
+|                      4|  3508|  833|       19.2|
 |                     NA|  2733|  441|       13.9|
 
 
@@ -520,10 +520,10 @@ disadvantage.glm %>%
 
 Table: Binomial regression of neighborhood disadvantage group on diabetes incidence
 
-|term                   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                   | NA|       NA|     36519|      31587|       NA|
-|disadvantage13_17_qrtl |  1|      132|     36518|      31455| 1.18e-30|
+|term                   | df| deviance| df.residual| residual.deviance| p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                   | NA|       NA|       36519|             31648|      NA|
+|disadvantage13_17_qrtl |  1|      131|       36518|             31517| 2.3e-30|
 
 ```r
 disadvantage.glm %>% 
@@ -536,10 +536,10 @@ disadvantage.glm %>%
 
 Table: Binomial regression estimates of neighborhood disadvantage group on diabetes incidence
 
-|term                   | estimate| std.error| statistic| p.value|
-|:----------------------|--------:|---------:|---------:|-------:|
-|(Intercept)            |    -2.03|     0.033|     -61.1| 0.0e+00|
-|disadvantage13_17_qrtl |     0.16|     0.014|      11.6| 5.3e-31|
+|term                   | estimate| std.error| statistic|  p.value|
+|:----------------------|--------:|---------:|---------:|--------:|
+|(Intercept)            |    -2.02|     0.033|     -61.0| 0.00e+00|
+|disadvantage13_17_qrtl |     0.16|     0.014|      11.5| 1.04e-30|
 
 ## By Body Mass Index
 
@@ -584,11 +584,11 @@ Table: Number of participants by diabetes diagnosis and BMI category
 |BMI_cat         |    No|  Yes| Prevalence|
 |:---------------|-----:|----:|----------:|
 |Underweight     |   274|    9|       3.18|
-|Normal          |  9073|  575|       5.96|
-|Overweight      | 11421| 1489|      11.53|
-|Class I Obese   |  7116| 1754|      19.77|
-|Class II Obese  |  3278| 1193|      26.68|
-|Class III Obese |  2275| 1103|      32.65|
+|Normal          |  9072|  576|       5.97|
+|Overweight      | 11416| 1494|      11.57|
+|Class I Obese   |  7110| 1760|      19.84|
+|Class II Obese  |  3274| 1197|      26.77|
+|Class III Obese |  2273| 1105|      32.71|
 |NA              |   130|    4|       2.98|
 
 
@@ -608,10 +608,10 @@ bmi.glm %>%
 
 Table: Binomial regression of BMI group on diabetes incidence
 
-|term    | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:-------|--:|--------:|---------:|----------:|-------:|
-|NULL    | NA|       NA|     39559|      34093|      NA|
-|BMI_cat |  5|     2148|     39554|      31946|       0|
+|term    | df| deviance| df.residual| residual.deviance| p.value|
+|:-------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL    | NA|       NA|       39559|             34154|      NA|
+|BMI_cat |  5|     2155|       39554|             31999|       0|
 
 ```r
 bmi.glm %>% 
@@ -627,11 +627,11 @@ Table: Binomial regression estimates of BMI group on diabetes incidence
 |term                   | estimate| std.error| statistic|  p.value|
 |:----------------------|--------:|---------:|---------:|--------:|
 |(Intercept)            |    -3.42|     0.338|    -10.09| 5.89e-24|
-|BMI_catNormal          |     0.66|     0.341|      1.93| 5.40e-02|
-|BMI_catOverweight      |     1.38|     0.340|      4.06| 4.91e-05|
-|BMI_catClass I Obese   |     2.02|     0.339|      5.94| 2.90e-09|
-|BMI_catClass II Obese  |     2.41|     0.340|      7.07| 1.53e-12|
-|BMI_catClass III Obese |     2.69|     0.340|      7.91| 2.61e-15|
+|BMI_catNormal          |     0.66|     0.341|      1.93| 5.34e-02|
+|BMI_catOverweight      |     1.38|     0.340|      4.07| 4.68e-05|
+|BMI_catClass I Obese   |     2.02|     0.339|      5.95| 2.69e-09|
+|BMI_catClass II Obese  |     2.41|     0.340|      7.09| 1.39e-12|
+|BMI_catClass III Obese |     2.69|     0.340|      7.92| 2.45e-15|
 
 ```r
 glm(Type2Diabetes~BMI, data=combined.data) %>% 
@@ -671,31 +671,31 @@ Table: Summary of demographic variables by diabetes incidence
 
 |Group           | Total|    No|  Yes| Prevalence|
 |:---------------|-----:|-----:|----:|----------:|
-|White           | 35321| 29966| 5355|      15.16|
+|White           | 35321| 29951| 5370|      15.20|
 |Asian           |   580|   511|   69|      11.90|
-|Black           |  1739|  1344|  395|      22.71|
+|Black           |  1739|  1342|  397|      22.83|
 |Hispanic/Latino |   778|   659|  119|      15.30|
-|Other           |  1276|  1087|  189|      14.81|
-|F               | 20866| 18097| 2769|      13.27|
-|M               | 18828| 15470| 3358|      17.84|
+|Other           |  1276|  1086|  190|      14.89|
+|F               | 20866| 18085| 2781|      13.33|
+|M               | 18828| 15464| 3364|      17.87|
 |Underweight     |   283|   274|    9|       3.18|
-|Normal          |  9648|  9073|  575|       5.96|
-|Overweight      | 12910| 11421| 1489|      11.53|
-|Class I Obese   |  8870|  7116| 1754|      19.77|
-|Class II Obese  |  4471|  3278| 1193|      26.68|
-|Class III Obese |  3378|  2275| 1103|      32.65|
+|Normal          |  9648|  9072|  576|       5.97|
+|Overweight      | 12910| 11416| 1494|      11.57|
+|Class I Obese   |  8870|  7110| 1760|      19.84|
+|Class II Obese  |  4471|  3274| 1197|      26.77|
+|Class III Obese |  3378|  2273| 1105|      32.71|
 |NA              |   134|   130|    4|       2.98|
-|1               | 13997| 12183| 1814|      12.96|
-|2               | 10546|  8847| 1699|      16.11|
-|3               |  7636|  6295| 1341|      17.56|
-|4               |  4341|  3509|  832|      19.17|
+|1               | 13997| 12176| 1821|      13.01|
+|2               | 10546|  8840| 1706|      16.18|
+|3               |  7636|  6292| 1344|      17.60|
+|4               |  4341|  3508|  833|      19.19|
 |NA              |  3174|  2733|  441|      13.89|
-|(18,30]         |  4495|  4396|   99|       2.20|
-|(30,40]         |  4832|  4532|  300|       6.21|
-|(40,50]         |  6325|  5524|  801|      12.66|
-|(50,60]         |  8917|  7389| 1528|      17.14|
-|(60,70]         |  9172|  7110| 2062|      22.48|
-|(70,80]         |  4447|  3349| 1098|      24.69|
+|(18,30]         |  4495|  4393|  102|       2.27|
+|(30,40]         |  4832|  4529|  303|       6.27|
+|(40,50]         |  6325|  5520|  805|      12.73|
+|(50,60]         |  8917|  7388| 1529|      17.15|
+|(60,70]         |  9172|  7106| 2066|      22.52|
+|(70,80]         |  4447|  3346| 1101|      24.76|
 |(80,90]         |  1087|   854|  233|      21.43|
 |NA              |   419|   413|    6|       1.43|
 
@@ -711,13 +711,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.2.0 (2022-04-22)
+## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -727,25 +727,27 @@ sessionInfo()
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
+## time zone: America/Detroit
+## tzcode source: system (glibc)
+## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.1   ggplot2_3.4.0 tidyr_1.2.1   dplyr_1.0.10  readr_2.1.3  
-## [6] knitr_1.41   
+## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
+## [6] knitr_1.44   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
-##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
-##  [9] gtable_0.3.1     jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3 
-## [13] tibble_3.1.8     pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1       
-## [17] DBI_1.1.3        parallel_4.2.0   yaml_2.3.6       xfun_0.35       
-## [21] fastmap_1.1.0    withr_2.5.0      stringr_1.5.0    generics_0.1.3  
-## [25] vctrs_0.5.1      sass_0.4.4       hms_1.1.2        bit64_4.0.5     
-## [29] grid_4.2.0       tidyselect_1.2.0 glue_1.6.2       R6_2.5.1        
-## [33] fansi_1.0.3      vroom_1.6.0      rmarkdown_2.18   farver_2.1.1    
-## [37] tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3   backports_1.4.1 
-## [41] scales_1.2.1     ellipsis_0.3.2   htmltools_0.5.4  assertthat_0.2.1
-## [45] colorspace_2.0-3 labeling_0.4.2   utf8_1.2.2       stringi_1.7.8   
-## [49] munsell_0.5.0    cachem_1.0.6     crayon_1.5.2
+##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   crayon_1.5.2    
+##  [5] compiler_4.3.1   tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
+##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
+## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
+## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
+## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
+## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
+## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
+## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
+## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
+## [41] fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25   purrr_1.0.2     
+## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
 ```

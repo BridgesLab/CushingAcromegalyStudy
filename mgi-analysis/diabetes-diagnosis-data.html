@@ -426,7 +426,6 @@ pre code {
 <li><a href="#purpose"><span class="toc-section-number">0.1</span> Purpose</a></li>
 <li><a href="#comparison-to-elixhauser-comorbidities-index"><span class="toc-section-number">1</span> Comparison to Elixhauser Comorbidities Index</a><ul>
 <li><a href="#what-percent-of-all-elixhauser-diabetic-participants-had-type-2-diabetes"><span class="toc-section-number">1.1</span> What percent of all elixhauser diabetic participants had type 2 diabetes?</a></li>
-<li><a href="#what-percent-of-type-2-diabetic-participants-were-found-in-elixhauser"><span class="toc-section-number">1.2</span> What percent of type 2 diabetic participants were found in Elixhauser?</a></li>
 </ul></li>
 <li><a href="#output"><span class="toc-section-number">2</span> Output</a></li>
 <li><a href="#session-information"><span class="toc-section-number">3</span> Session Information</a></li>
@@ -435,7 +434,7 @@ pre code {
 
 <div id="purpose" class="section level2">
 <h2><span class="header-section-number">0.1</span> Purpose</h2>
-<p>The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data. We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 21:13:17 2023.</p>
+<p>The Elixhauser comorbidity index uses a combination of type 1 and type 2 diabetes with and without co-morbidities to generate its data. We want to separately identify type 2 diabetes diagnoses. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Sep 20 13:30:54 2023.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(knitr)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">#figures made will go to directory called figures, will make them as both png and pdf files </span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">fig.path=</span><span class="st">'figures/'</span>,</a>
@@ -452,18 +451,21 @@ pre code {
 <a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">library</span>(lubridate)</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#get diagnosis data</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">diagnosis.data&lt;-<span class="st"> </span><span class="kw">read_csv</span>(diagnosis.datafile) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DeID_ProblemObservationDate=</span><span class="kw">ymd_hms</span>(DeID_ProblemObservationDate))</a></code></pre></div>
+<a class="sourceLine" id="cb2-8" data-line-number="8">diagnosis.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(diagnosis.datafile) </a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">diagnosis.data &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="st">  </span>diagnosis.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DeID_ProblemObservationDate=</span><span class="kw">ymd_hms</span>(DeID_ProblemObservationDate))</a></code></pre></div>
 <p>For ICD10 codes (see <a href="https://edit.cms.gov/files/document/valid-icd-10-list.xlsx" class="uri">https://edit.cms.gov/files/document/valid-icd-10-list.xlsx</a>), all Type 2 Diabetes codes start with <em>E11</em> and include the phrase “Type 2”</p>
 <p>For ICD9 codes (see <a href="https://edit.cms.gov/files/document/valid-icd-9-list.xlsx" class="uri">https://edit.cms.gov/files/document/valid-icd-9-list.xlsx</a>), all type 2 diabetes codes contain the words type II and Diabetes though in different orders</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">diabetes.diagnoses.icd10 &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span>diagnosis.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'Type 2 diabetes'</span>, DiagnosisICDNameMapped))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'E11.'</span>, DiagnosisICDCodeMapped)) <span class="co">#includes all ICD10 code E11</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5">diabetes.diagnoses.icd9 &lt;-</a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">  </span>diagnosis.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'type II'</span>,DiagnosisICDNameMapped)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#includes all diseases marked type II</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'Diabetes'</span>,DiagnosisICDNameMapped)) <span class="co">#includes only those that contain diabetes in the name</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'250.'</span>,DiagnosisICDCodeMapped)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#includes ICD9 code 250.x</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'type II'</span>,DiagnosisICDNameMapped)) <span class="co">#subset of all diseases marked type II, removes type 1</span></a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#combine the two</span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11">diabetes.diagnoses &lt;-</a>
@@ -474,7 +476,7 @@ pre code {
 <a class="sourceLine" id="cb4-2" data-line-number="2">diabetic.participants &lt;-</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span>diabetes.diagnoses <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID)  </a></code></pre></div>
-<p>There was a total of 16070 that we identified as having type 2 diabetes</p>
+<p>There was a total of 16221 that we identified as having type 2 diabetes</p>
 </div>
 <div id="comparison-to-elixhauser-comorbidities-index" class="section level1">
 <h1><span class="header-section-number">1</span> Comparison to Elixhauser Comorbidities Index</h1>
@@ -485,14 +487,14 @@ pre code {
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">  </span>comorbidity.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(DiabetesUncomplicated<span class="op">==</span><span class="st">'1'</span><span class="op">|</span>DiabetesComplicated<span class="op">==</span><span class="st">'1'</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID)</a></code></pre></div>
-<p>From the Elixhauser data there were 19925 people with diabetes (either type 1 or type 2).</p>
+<p>From the Elixhauser data there were 19925 people with diabetes combining those with and without complications. This may be either type 1 or type 2.</p>
 <div id="what-percent-of-all-elixhauser-diabetic-participants-had-type-2-diabetes" class="section level2">
 <h2><span class="header-section-number">1.1</span> What percent of all elixhauser diabetic participants had type 2 diabetes?</h2>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">comorbidity.diabetics<span class="op">$</span>DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span>table <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of Elixhauser diabetics identified by charts&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of Elixhauser diabetics identified by IC9/10 codes, these could be type 1&quot;</span>)</a></code></pre></div>
 <table>
-<caption>Number of Elixhauser diabetics identified by charts</caption>
+<caption>Number of Elixhauser diabetics identified by IC9/10 codes, these could be type 1</caption>
 <thead>
 <tr class="header">
 <th align="left">.</th>
@@ -502,45 +504,19 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">FALSE</td>
-<td align="right">4069</td>
+<td align="right">3919</td>
 </tr>
 <tr class="even">
 <td align="left">TRUE</td>
-<td align="right">15856</td>
+<td align="right">16006</td>
 </tr>
 </tbody>
 </table>
-<p>Among the participants who were elixhauser diabetic, but charted negative we expect some of these should be type I, among the remainder the charted diagnoses included the following</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">comorbidity.diabetics <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID) -&gt;<span class="st"> </span>comorbidity.not.chart</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">diagnosis.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.not.chart) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#patients with uncharted comorbidities, but do have diabetes according to elixhauser</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'[Dd]iabete[sic]'</span>,DiagnosisICDNameMapped)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#contains the word diabetes or diabetic in either case</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw">group_by</span>(DiagnosisICDNameMapped) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(n)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.diabetics<span class="op">$</span>DeID_PatientID <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of ICD9/10 diabetics identified by Elixhauser.  These are perhaps false negatives in Elixhauser&quot;</span>)</a></code></pre></div>
 <table>
-<caption>Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions</caption>
-<thead>
-<tr class="header">
-<th align="left">DiagnosisICDNameMapped</th>
-<th align="right">n</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
-<div id="what-percent-of-type-2-diabetic-participants-were-found-in-elixhauser" class="section level2">
-<h2><span class="header-section-number">1.2</span> What percent of type 2 diabetic participants were found in Elixhauser?</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">%in%</span><span class="st"> </span>comorbidity.diabetics<span class="op">$</span>DeID_PatientID  <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>table <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of charted diabetics identified by Elixhauser tables&quot;</span>)</a></code></pre></div>
-<table>
-<caption>Number of charted diabetics identified by Elixhauser tables</caption>
+<caption>Number of ICD9/10 diabetics identified by Elixhauser. These are perhaps false negatives in Elixhauser</caption>
 <thead>
 <tr class="header">
 <th align="left">.</th>
@@ -550,11 +526,11 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">FALSE</td>
-<td align="right">214</td>
+<td align="right">215</td>
 </tr>
 <tr class="even">
 <td align="left">TRUE</td>
-<td align="right">15856</td>
+<td align="right">16006</td>
 </tr>
 </tbody>
 </table>
@@ -562,25 +538,25 @@ pre code {
 </div>
 <div id="output" class="section level1">
 <h1><span class="header-section-number">2</span> Output</h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">combined.data &lt;-</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span>comorbidity.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Type2Diabetes =</span> <span class="kw">case_when</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">~</span><span class="st"> '1'</span>,</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4">                                   <span class="ot">TRUE</span><span class="op">~</span><span class="st">'0'</span>))</a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">  </a>
-<a class="sourceLine" id="cb9-6" data-line-number="6">output.file &lt;-<span class="st"> 'ComorbidityDataAnnotated.csv'</span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw">write_csv</span>(combined.data, <span class="dt">file=</span>output.file)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">combined.data &lt;-</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>comorbidity.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Type2Diabetes =</span> <span class="kw">case_when</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>diabetic.participants<span class="op">$</span>DeID_PatientID <span class="op">~</span><span class="st"> '1'</span>,</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">                                   <span class="ot">TRUE</span><span class="op">~</span><span class="st">'0'</span>))</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  </a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">output.file &lt;-<span class="st"> 'ComorbidityDataAnnotated.csv'</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="kw">write_csv</span>(combined.data, <span class="dt">file=</span>output.file)</a></code></pre></div>
 <p>These data were written out to ComorbidityDataAnnotated.csv. This is the input file for the other scripts.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">3</span> Session Information</h1>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
-<pre><code>## R version 4.2.0 (2022-04-22)
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -590,25 +566,27 @@ pre code {
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
+## time zone: America/Detroit
+## tzcode source: system (glibc)
+## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] lubridate_1.9.0  timechange_0.1.1 tidyr_1.2.1      dplyr_1.0.10    
-## [5] readr_2.1.3      knitr_1.41      
+## [1] lubridate_1.9.2 tidyr_1.3.0     dplyr_1.1.3     readr_2.1.4    
+## [5] knitr_1.44     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
-##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
-##  [9] jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3  tibble_3.1.8    
-## [13] pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1        DBI_1.1.3       
-## [17] parallel_4.2.0   yaml_2.3.6       xfun_0.35        fastmap_1.1.0   
-## [21] stringr_1.5.0    generics_0.1.3   vctrs_0.5.1      sass_0.4.4      
-## [25] hms_1.1.2        bit64_4.0.5      tidyselect_1.2.0 glue_1.6.2      
-## [29] R6_2.5.1         fansi_1.0.3      vroom_1.6.0      rmarkdown_2.18  
-## [33] tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3   ellipsis_0.3.2  
-## [37] htmltools_0.5.4  assertthat_0.2.1 utf8_1.2.2       stringi_1.7.8   
-## [41] cachem_1.0.6     crayon_1.5.2</code></pre>
+##  [1] crayon_1.5.2     vctrs_0.6.3      cli_3.6.1        rlang_1.1.1     
+##  [5] xfun_0.40        purrr_1.0.2      generics_0.1.3   jsonlite_1.8.7  
+##  [9] bit_4.0.5        glue_1.6.2       htmltools_0.5.6  sass_0.4.7      
+## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
+## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
+## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   timechange_0.2.0
+## [25] pkgconfig_2.0.3  digest_0.6.33    R6_2.5.1         tidyselect_1.2.0
+## [29] utf8_1.2.3       parallel_4.3.1   vroom_1.6.3      pillar_1.9.0    
+## [33] magrittr_2.0.3   bslib_0.5.1      bit64_4.0.5      tools_4.3.1     
+## [37] cachem_1.0.8</code></pre>
 </div>
 
 

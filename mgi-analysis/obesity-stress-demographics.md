@@ -82,7 +82,7 @@ combined.data <- read_csv(input.file)%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue May 30 21:51:27 2023. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Sep 20 14:09:17 2023. This dataset has 39694 values.
 
 # Summary of Demographic Covariates
 
@@ -328,13 +328,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.2.0 (2022-04-22)
+## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -344,22 +344,24 @@ sessionInfo()
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
+## time zone: America/Detroit
+## tzcode source: system (glibc)
+## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_1.2.1  dplyr_1.0.10 readr_2.1.3  knitr_1.41  
+## [1] tidyr_1.3.0 dplyr_1.1.3 readr_2.1.4 knitr_1.44 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
-##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
-##  [9] jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3  tibble_3.1.8    
-## [13] pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1        DBI_1.1.3       
-## [17] parallel_4.2.0   yaml_2.3.6       xfun_0.35        fastmap_1.1.0   
-## [21] withr_2.5.0      stringr_1.5.0    generics_0.1.3   vctrs_0.5.1     
-## [25] sass_0.4.4       hms_1.1.2        bit64_4.0.5      tidyselect_1.2.0
-## [29] glue_1.6.2       R6_2.5.1         fansi_1.0.3      vroom_1.6.0     
-## [33] rmarkdown_2.18   tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3  
-## [37] ellipsis_0.3.2   htmltools_0.5.4  assertthat_0.2.1 utf8_1.2.2      
-## [41] stringi_1.7.8    cachem_1.0.6     crayon_1.5.2
+##  [1] crayon_1.5.2     vctrs_0.6.3      cli_3.6.1        rlang_1.1.1     
+##  [5] xfun_0.40        purrr_1.0.2      generics_0.1.3   jsonlite_1.8.7  
+##  [9] bit_4.0.5        glue_1.6.2       htmltools_0.5.6  sass_0.4.7      
+## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
+## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
+## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   pkgconfig_2.0.3 
+## [25] digest_0.6.33    R6_2.5.1         tidyselect_1.2.0 utf8_1.2.3      
+## [29] parallel_4.3.1   vroom_1.6.3      pillar_1.9.0     magrittr_2.0.3  
+## [33] bslib_0.5.1      withr_2.5.0      bit64_4.0.5      tools_4.3.1     
+## [37] cachem_1.0.8
 ```
