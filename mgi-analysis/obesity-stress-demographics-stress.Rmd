@@ -1,0 +1,473 @@
+---
+title: "Summary of Demographic Factors for Percieved Stress"
+author: "Dave Bridges"
+date: "2023-09-25"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To define covariates for stress-obesity relationships, referring to associations with the exposure (stress).
+
+```{r data-entry}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+input.file <- 'data-combined.csv'
+combined.data <- read_csv(input.file) %>% #set reference values for each group
+  mutate(Race.Ethnicity = relevel(as.factor(Race.Ethnicity),ref="White")) %>%
+  mutate(Gender = relevel(as.factor(Gender),ref="F")) %>%
+  mutate(BMI_cat = factor(as.factor(BMI_cat),levels=c("Underweight","Normal","Overweight","Class I Obese","Class II Obese","Class III Obese")))%>%
+  filter(!(is.na(HypertensionAny))) %>%
+  filter(!(is.na(Stress))) %>%
+  filter(Stress!="NA") %>%
+  mutate(Stress=case_when(Stress=="High"~1,
+                          Stress=="Low"~0))
+```
+
+Loaded in the cleaned data from `r input.file`. This script can be found in `r getwd()` and was most recently run on `r date()`. This dataset has `r dim(combined.data)[1]` values.
+
+Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
+
+## By Race and Ethnicity
+
+```{r stress-type2-counts-race-ethnicity}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Race.Ethnicity,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=Race.Ethnicity,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Stress') %>% 
+  rename("Yes"="Stress1",
+         "No"="Stress0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.race
+
+stress.race %>%
+  ggplot(aes(y=Prevalence,x=Race.Ethnicity)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+stress.race %>%
+  knitr::kable(caption="Number of participants by stress and race/ethnicity",
+               digits =c(0,2,3,2,99))
+```
+
+```{r stress-type2-counts-race-ethnicity-stats}
+library(broom)
+glm(Stress~Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) -> race.glm
+
+race.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of ethicity on stress",
+        digits =c(0,0,0,0,0,99))
+
+race.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of ethicity on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Gender
+
+```{r stress-type2-counts-gender}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=Gender,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  stress.gender
+
+stress.gender %>%
+  ggplot(aes(y=Prevalence,x=Gender)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+stress.gender %>% 
+  knitr::kable(caption="Number of participants by stress and gender",
+               digits =c(0,2,3,2,99))
+```
+
+## Interaction Between Gender and BMI
+
+Modelling shows a significant interaction between BMI and gender with respect to stress risk
+
+```{r gender-bmi-stats-type2}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,Stress,BMI_cat.Ob.NonOb) %>%
+  count %>%
+  pivot_wider(id_cols=c(Gender,BMI_cat.Ob.NonOb),
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  stress.gender.bmi
+
+glm(Stress~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender, 
+    family="binomial",
+    data=combined.data) -> gender.bmi.glm
+
+kable(stress.gender.bmi, caption="Prevalence of stress by obesity and gender")
+
+gender.bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender:BMI interaction on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+gender.bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+```{r stress-type2-counts-gender-bmi}
+stress.gender.bmi %>%
+  ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+```
+
+
+```{r stress-type2-counts-gender-stats}
+library(broom)
+glm(Stress~Gender, 
+    family="binomial",
+    data=combined.data) -> gender.glm
+
+gender.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+gender.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Age
+
+```{r stress-type2-counts-age}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Age.group,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=Age.group,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.age
+
+
+stress.age %>%
+  ggplot(aes(y=Prevalence,x=Age.group)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.age %>%
+  knitr::kable(caption="Number of participants by stress diagnosis and age")
+```
+
+```{r stress-type2-counts-age-stats}
+glm(Stress~Age.group, 
+    family="binomial",
+    data=combined.data) -> age.glm
+
+age.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of age group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+age.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of age group on stress incidence", 
+        digits =c(0,2,3,2,99))
+
+glm(Stress~age, data=combined.data) %>% 
+  tidy %>%
+  kable(caption="Binomial regression estimates of age (continuous) on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Neighborhood Disadvantage
+
+### Neighborhood Education
+
+```{r stress-type2-counts-education}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(ped1_13_17_qrtl,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=ped1_13_17_qrtl,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.disadvantage
+
+
+stress.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=ped1_13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.disadvantage %>%
+  knitr::kable(caption="Number of participants by stress neighborhood education")
+```
+
+```{r stress-type2-counts-education-stats}
+glm(Stress~ped1_13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood education group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood education group on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+### Neighborhood Affluence
+
+```{r stress-type2-counts-affluence}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(affluence13_17_qrtl,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=affluence13_17_qrtl,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.disadvantage
+
+
+stress.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=affluence13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.disadvantage %>%
+  knitr::kable(caption="Number of participants by stress neighborhood affluence")
+```
+
+```{r stress-type2-counts-affluence-stats}
+glm(Stress~affluence13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood affluence group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+### Disadvantage
+
+```{r stress-type2-counts-disadvantage}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(disadvantage13_17_qrtl,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=disadvantage13_17_qrtl,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.disadvantage
+
+
+stress.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=disadvantage13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.disadvantage %>%
+  knitr::kable(caption="Number of participants by stress neighborhood disadvantage")
+```
+
+```{r stress-type2-counts-disadvantage-stats}
+glm(Stress~disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood disadvantage group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Body Mass Index
+
+```{r stress-type2-counts-bmi}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(BMI_cat,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=BMI_cat,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.bmi
+
+stress.bmi %>%
+  ggplot(aes(y=Prevalence,x=BMI_cat)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.bmi %>%
+  knitr::kable(caption="Number of participants by stress diagnosis and BMI category")
+```
+
+```{r stress-type2-counts-bmi-stats}
+glm(Stress~BMI_cat, 
+    family="binomial",
+    data=combined.data) -> bmi.glm
+
+bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of BMI group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of BMI group on stress incidence", 
+        digits =c(0,2,3,2,99))
+
+glm(Stress~BMI, data=combined.data) %>% 
+  tidy %>%
+  kable(caption="Binomial regression estimates of BMI on stress incidence",
+        digits =c(0,2,3,2,99))
+```
+
+# Summary Table
+
+```{r summary-table}
+rbind(stress.race %>% rename("Group"="Race.Ethnicity"),
+      stress.gender %>% rename("Group"="Gender"),
+      stress.bmi %>% rename("Group"="BMI_cat"),
+      stress.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
+      mutate(Group=as.factor(Group)),
+      stress.age %>% rename("Group"="Age.group")) %>%
+  mutate(Total=No+Yes) %>%
+  select(Group,Total,No,Yes,Prevalence)-> summary.table
+
+kable(summary.table, caption="Summary of demographic variables by stress incidence")
+write_csv(summary.table, "Stress Demographics Table.csv")
+```
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```

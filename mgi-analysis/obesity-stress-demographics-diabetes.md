@@ -57,20 +57,20 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ```
 
 ```
-## Rows: 62010 Columns: 38
+## Rows: 62010 Columns: 39
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## chr (17): DeID_PatientID, Gender, DeID_EncounterID, BMI_cat, BMI_cat.obese, ...
-## dbl (21): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
+## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Sat Mar 25 17:24:03 2023. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Sep 26 17:18:46 2023. This dataset has 39694 values.
 
 Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -141,10 +141,10 @@ race.glm %>%
 
 Table: Binomial regression of ethicity on diabetes incidence
 
-|term           | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:--------------|--:|--------:|---------:|----------:|-------:|
-|NULL           | NA|       NA|     39693|      32268|      NA|
-|Race.Ethnicity |  4|       61|     39689|      32207| 1.7e-12|
+|term           | df| deviance| df.residual| residual.deviance| p.value|
+|:--------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL           | NA|       NA|       39693|             32268|      NA|
+|Race.Ethnicity |  4|       61|       39689|             32207| 1.7e-12|
 
 ```r
 race.glm %>% 
@@ -262,12 +262,12 @@ gender.bmi.glm %>%
 
 Table: Binomial regression of gender:BMI interaction on diabetes incidence
 
-|term                    | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:-----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                    | NA|       NA|     39693|      32268|       NA|
-|Gender                  |  1|      163|     39692|      32106| 3.03e-37|
-|BMI_cat.Ob.NonOb        |  1|     1261|     39691|      30845| 0.00e+00|
-|Gender:BMI_cat.Ob.NonOb |  1|       28|     39690|      30817| 9.96e-08|
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39693|             32268|       NA|
+|Gender                  |  1|      163|       39692|             32106| 3.03e-37|
+|BMI_cat.Ob.NonOb        |  1|     1261|       39691|             30845| 0.00e+00|
+|Gender:BMI_cat.Ob.NonOb |  1|       28|       39690|             30817| 9.96e-08|
 
 ```r
 gender.bmi.glm %>% 
@@ -322,10 +322,10 @@ gender.glm %>%
 
 Table: Binomial regression of gender on diabetes incidence
 
-|term   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:------|--:|--------:|---------:|----------:|--------:|
-|NULL   | NA|       NA|     39693|      32268|       NA|
-|Gender |  1|      163|     39692|      32106| 3.03e-37|
+|term   | df| deviance| df.residual| residual.deviance|  p.value|
+|:------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL   | NA|       NA|       39693|             32268|       NA|
+|Gender |  1|      163|       39692|             32106| 3.03e-37|
 
 ```r
 gender.glm %>% 
@@ -412,10 +412,10 @@ age.glm %>%
 
 Table: Binomial regression of age group on diabetes incidence
 
-|term      | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:---------|--:|--------:|---------:|----------:|-------:|
-|NULL      | NA|       NA|     39274|      32108|      NA|
-|Age.group |  6|     1647|     39268|      30461|       0|
+|term      | df| deviance| df.residual| residual.deviance| p.value|
+|:---------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL      | NA|       NA|       39274|             32108|      NA|
+|Age.group |  6|     1647|       39268|             30461|       0|
 
 ```r
 age.glm %>% 
@@ -456,15 +456,191 @@ Table: Binomial regression estimates of age (continuous) on diabetes incidence
 
 ## By Neighborhood Disadvantage
 
+### Neighborhood Education
+
 
 ```r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  group_by(disadvantage13_17_qrtl,DiabetesAny) %>%
+  group_by(ped1_13_17_qrtl,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=ped1_13_17_qrtl,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=ped1_13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+```
+
+![](figures/diabetes-type2-counts-education-1.png)<!-- -->
+
+```r
+diabetes.disadvantage %>%
+  knitr::kable(caption="Number of participants by diabetes and neighborhood education")
+```
+
+
+
+Table: Number of participants by diabetes and neighborhood education
+
+| ped1_13_17_qrtl|    No|  Yes| Prevalence|
+|---------------:|-----:|----:|----------:|
+|               1| 13476| 2035|       13.1|
+|               2| 10041| 1941|       16.2|
+|               3|  6159| 1455|       19.1|
+|               4|  1140|  273|       19.3|
+|              NA|  2733|  441|       13.9|
+
+
+```r
+glm(Type2Diabetes~ped1_13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood education group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Binomial regression of neighborhood education group on stress incidence
+
+|term            | df| deviance| df.residual| residual.deviance|  p.value|
+|:---------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL            | NA|       NA|       36519|             31648|       NA|
+|ped1_13_17_qrtl |  1|      152|       36518|             31496| 6.54e-35|
+
+```r
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood education group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+
+
+Table: Binomial regression estimates of neighborhood education group on diabetes incidence
+
+|term            | estimate| std.error| statistic|  p.value|
+|:---------------|--------:|---------:|---------:|--------:|
+|(Intercept)     |    -2.07|     0.035|     -59.7| 0.00e+00|
+|ped1_13_17_qrtl |     0.20|     0.016|      12.4| 1.95e-35|
+
+### Neighborhood Affluence
+
+
+```r
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(affluence13_17_qrtl,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=affluence13_17_qrtl,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=affluence13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+```
+
+![](figures/diabetes-type2-counts-affluence-1.png)<!-- -->
+
+```r
+diabetes.disadvantage %>%
+  knitr::kable(caption="Number of participants by diabetes and neighborhood affluence")
+```
+
+
+
+Table: Number of participants by diabetes and neighborhood affluence
+
+| affluence13_17_qrtl|    No|  Yes| Prevalence|
+|-------------------:|-----:|----:|----------:|
+|                   1|  5254| 1283|       19.6|
+|                   2|  7087| 1515|       17.6|
+|                   3|  7882| 1467|       15.7|
+|                   4| 10593| 1439|       12.0|
+|                  NA|  2733|  441|       13.9|
+
+
+```r
+glm(Type2Diabetes~affluence13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood affluence group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Binomial regression of neighborhood affluence group on diabetes incidence
+
+|term                | df| deviance| df.residual| residual.deviance|  p.value|
+|:-------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                | NA|       NA|       36519|             31648|       NA|
+|affluence13_17_qrtl |  1|      219|       36518|             31429| 1.31e-49|
+
+```r
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood affluence group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+
+
+Table: Binomial regression estimates of neighborhood affluence group on diabetes incidence
+
+|term                | estimate| std.error| statistic|  p.value|
+|:-------------------|--------:|---------:|---------:|--------:|
+|(Intercept)         |    -1.18|     0.036|     -32.2| 0.00e+00|
+|affluence13_17_qrtl |    -0.19|     0.013|     -14.8| 1.21e-49|
+
+### Disadvantage
+
+
+```r
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(disadvantage13_17_qrtl,Type2Diabetes) %>%
   count %>%
   pivot_wider(id_cols=disadvantage13_17_qrtl,
-              names_from=DiabetesAny,
+              names_from=Type2Diabetes,
               values_from = n,
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
@@ -484,28 +660,28 @@ diabetes.disadvantage %>%
         legend.position = c(0.1,0.85))  
 ```
 
-![](figures/diabetes-counts-disadvantage-1.png)<!-- -->
+![](figures/diabetes-type2-counts-disadvantage-1.png)<!-- -->
 
 ```r
 diabetes.disadvantage %>%
-  knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
+  knitr::kable(caption="Number of participants by diabetes and neighborhood disadvantage")
 ```
 
 
 
-Table: Number of participants by diabetes neighborhood disadvantage
+Table: Number of participants by diabetes and neighborhood disadvantage
 
 | disadvantage13_17_qrtl|    No|  Yes| Prevalence|
 |----------------------:|-----:|----:|----------:|
-|                      1| 12311| 1686|       12.0|
-|                      2|  8975| 1571|       14.9|
-|                      3|  6447| 1189|       15.6|
-|                      4|  3605|  736|       17.0|
-|                     NA|  2766|  408|       12.9|
+|                      1| 12176| 1821|       13.0|
+|                      2|  8840| 1706|       16.2|
+|                      3|  6292| 1344|       17.6|
+|                      4|  3508|  833|       19.2|
+|                     NA|  2733|  441|       13.9|
 
 
 ```r
-glm(DiabetesAny~disadvantage13_17_qrtl, 
+glm(Type2Diabetes~disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
 
@@ -520,10 +696,10 @@ disadvantage.glm %>%
 
 Table: Binomial regression of neighborhood disadvantage group on diabetes incidence
 
-|term                   | df| Deviance| Resid..Df| Resid..Dev|  p.value|
-|:----------------------|--:|--------:|---------:|----------:|--------:|
-|NULL                   | NA|       NA|     36519|      29829|       NA|
-|disadvantage13_17_qrtl |  1|       87|     36518|      29742| 1.22e-20|
+|term                   | df| deviance| df.residual| residual.deviance| p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                   | NA|       NA|       36519|             31648|      NA|
+|disadvantage13_17_qrtl |  1|      131|       36518|             31517| 2.3e-30|
 
 ```r
 disadvantage.glm %>% 
@@ -538,8 +714,8 @@ Table: Binomial regression estimates of neighborhood disadvantage group on diabe
 
 |term                   | estimate| std.error| statistic|  p.value|
 |:----------------------|--------:|---------:|---------:|--------:|
-|(Intercept)            |    -2.08|     0.034|    -60.66| 0.00e+00|
-|disadvantage13_17_qrtl |     0.13|     0.014|      9.37| 7.26e-21|
+|(Intercept)            |    -2.02|     0.033|     -61.0| 0.00e+00|
+|disadvantage13_17_qrtl |     0.16|     0.014|      11.5| 1.04e-30|
 
 ## By Body Mass Index
 
@@ -608,10 +784,10 @@ bmi.glm %>%
 
 Table: Binomial regression of BMI group on diabetes incidence
 
-|term    | df| Deviance| Resid..Df| Resid..Dev| p.value|
-|:-------|--:|--------:|---------:|----------:|-------:|
-|NULL    | NA|       NA|     39559|      32202|      NA|
-|BMI_cat |  5|     1534|     39554|      30668|       0|
+|term    | df| deviance| df.residual| residual.deviance| p.value|
+|:-------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL    | NA|       NA|       39559|             32202|      NA|
+|BMI_cat |  5|     1534|       39554|             30668|       0|
 
 ```r
 bmi.glm %>% 
@@ -657,7 +833,7 @@ rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
       diabetes.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
-        mutate(Group=as.factor(Group)),
+      mutate(Group=as.factor(Group)),
       diabetes.age %>% rename("Group"="Age.group")) %>%
   mutate(Total=No+Yes) %>%
   select(Group,Total,No,Yes,Prevalence)-> summary.table
@@ -685,11 +861,11 @@ Table: Summary of demographic variables by diabetes incidence
 |Class II Obese  |  4471|  3441| 1030|      23.04|
 |Class III Obese |  3378|  2452|  926|      27.41|
 |NA              |   134|   127|    7|       5.22|
-|1               | 13997| 12311| 1686|      12.04|
-|2               | 10546|  8975| 1571|      14.90|
-|3               |  7636|  6447| 1189|      15.57|
-|4               |  4341|  3605|  736|      16.95|
-|NA              |  3174|  2766|  408|      12.85|
+|1               | 13997| 12176| 1821|      13.01|
+|2               | 10546|  8840| 1706|      16.18|
+|3               |  7636|  6292| 1344|      17.60|
+|4               |  4341|  3508|  833|      19.19|
+|NA              |  3174|  2733|  441|      13.89|
 |(18,30]         |  4495|  4380|  115|       2.56|
 |(30,40]         |  4832|  4548|  284|       5.88|
 |(40,50]         |  6325|  5611|  714|      11.29|
@@ -711,13 +887,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.2.0 (2022-04-22)
+## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.4 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRblas.so
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.2.0/lib64/R/lib/libRlapack.so
+## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -727,25 +903,27 @@ sessionInfo()
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
+## time zone: America/Detroit
+## tzcode source: system (glibc)
+## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.1   ggplot2_3.4.0 tidyr_1.2.1   dplyr_1.0.10  readr_2.1.3  
-## [6] knitr_1.41   
+## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
+## [6] knitr_1.44   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9        pillar_1.8.1     bslib_0.4.1      compiler_4.2.0  
-##  [5] jquerylib_0.1.4  tools_4.2.0      bit_4.0.5        digest_0.6.30   
-##  [9] gtable_0.3.1     jsonlite_1.8.4   evaluate_0.18    lifecycle_1.0.3 
-## [13] tibble_3.1.8     pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1       
-## [17] DBI_1.1.3        parallel_4.2.0   yaml_2.3.6       xfun_0.35       
-## [21] fastmap_1.1.0    withr_2.5.0      stringr_1.5.0    generics_0.1.3  
-## [25] vctrs_0.5.1      sass_0.4.4       hms_1.1.2        bit64_4.0.5     
-## [29] grid_4.2.0       tidyselect_1.2.0 glue_1.6.2       R6_2.5.1        
-## [33] fansi_1.0.3      vroom_1.6.0      rmarkdown_2.18   farver_2.1.1    
-## [37] tzdb_0.3.0       purrr_0.3.5      magrittr_2.0.3   backports_1.4.1 
-## [41] scales_1.2.1     ellipsis_0.3.2   htmltools_0.5.4  assertthat_0.2.1
-## [45] colorspace_2.0-3 labeling_0.4.2   utf8_1.2.2       stringi_1.7.8   
-## [49] munsell_0.5.0    cachem_1.0.6     crayon_1.5.2
+##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   crayon_1.5.2    
+##  [5] compiler_4.3.1   tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
+##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
+## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
+## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
+## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
+## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
+## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
+## [33] grid_4.3.1       vroom_1.6.3      rstudioapi_0.13  hms_1.1.3       
+## [37] lifecycle_1.0.3  vctrs_0.6.3      evaluate_0.21    glue_1.6.2      
+## [41] farver_2.1.1     fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25  
+## [45] purrr_1.0.2      tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
 ```

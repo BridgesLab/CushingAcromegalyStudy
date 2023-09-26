@@ -247,14 +247,114 @@ glm(DiabetesAny~age, data=combined.data) %>%
 
 ## By Neighborhood Disadvantage
 
-```{r diabetes-counts-disadvantage}
+### Neighborhood Education
+
+```{r diabetes-type2-counts-education}
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  group_by(disadvantage13_17_qrtl,DiabetesAny) %>%
+  group_by(ped1_13_17_qrtl,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=ped1_13_17_qrtl,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=ped1_13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.disadvantage %>%
+  knitr::kable(caption="Number of participants by diabetes and neighborhood education")
+```
+
+```{r diabetes-type2-counts-education-stats}
+glm(Type2Diabetes~ped1_13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood education group on stress incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood education group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+### Neighborhood Affluence
+
+```{r diabetes-type2-counts-affluence}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(affluence13_17_qrtl,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=affluence13_17_qrtl,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=affluence13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.disadvantage %>%
+  knitr::kable(caption="Number of participants by diabetes and neighborhood affluence")
+```
+
+```{r diabetes-type2-counts-affluence-stats}
+glm(Type2Diabetes~affluence13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood affluence group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood affluence group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+### Disadvantage
+
+```{r diabetes-type2-counts-disadvantage}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(disadvantage13_17_qrtl,Type2Diabetes) %>%
   count %>%
   pivot_wider(id_cols=disadvantage13_17_qrtl,
-              names_from=DiabetesAny,
+              names_from=Type2Diabetes,
               values_from = n,
               names_prefix='Diabetes') %>%
   rename("Yes"="Diabetes1",
@@ -274,11 +374,11 @@ diabetes.disadvantage %>%
         legend.position = c(0.1,0.85))  
 
 diabetes.disadvantage %>%
-  knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
+  knitr::kable(caption="Number of participants by diabetes and neighborhood disadvantage")
 ```
 
-```{r diabetes-counts-disadvantage-stats}
-glm(DiabetesAny~disadvantage13_17_qrtl, 
+```{r stress-type2-counts-disadvantage-stats}
+glm(Type2Diabetes~disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
 
@@ -354,7 +454,7 @@ rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
       diabetes.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
-        mutate(Group=as.factor(Group)),
+      mutate(Group=as.factor(Group)),
       diabetes.age %>% rename("Group"="Age.group")) %>%
   mutate(Total=No+Yes) %>%
   select(Group,Total,No,Yes,Prevalence)-> summary.table
