@@ -1,0 +1,57 @@
+Covariate,value,mean,sd,n,kw.pval
+BMI_cat_condensed,Normal Weight,2.017857143,2.590128613,56,0.018264842
+BMI_cat_condensed,Not Reported,6.333333333,6.506407099,3,0.018264842
+BMI_cat_condensed,Obese,3.870967742,5.554229232,31,0.018264842
+BMI_cat_condensed,Overweight,5.041666667,5.103103631,24,0.018264842
+BMI_cat_condensed,Underweight,6,NA,1,0.018264842
+Misalignment_lb_5,Aligned,3.351351351,3.888845989,37,0.095848439
+Misalignment_lb_5,Overestimated,1.421052632,1.67715995,19,0.095848439
+Misalignment_lb_5,Underestimated,3.86440678,5.097185251,59,0.095848439
+Race_condensed,Not White or Caucasian,4.04,6.360555531,25,0.40247402
+Race_condensed,White or Caucasian,3.088888889,3.670852225,90,0.40247402
+ed_history_cat,No,3.144144144,4.316662951,111,0.024997885
+ed_history_cat,Yes,7.5,4.654746681,4,0.024997885
+ed_type,Anorexia Nervosa,9,4.358898944,3,0.06466469
+ed_type,Binge Eating Disorder,3,NA,1,0.06466469
+ed_type,Not Reported,3.144144144,4.316662951,111,0.06466469
+income_cat_condensed,"100,000 or less",3.694444444,4.927006883,36,0.35536004
+income_cat_condensed,"100,000 to 149,999",3.114285714,4.39766936,35,0.35536004
+income_cat_condensed,"150,000 or more",3.447368421,4.144011429,38,0.35536004
+income_cat_condensed,Prefer not to say,1,1.095445115,6,0.35536004
+marital_status,1,3.288288288,4.42182066,111,0.233069032
+marital_status,5,0,NA,1,0.233069032
+marital_status,Single,4.666666667,3.214550254,3,0.233069032
+mat_edu_cat,Bachelor's degree,2.833333333,3.64912208,30,0.988614837
+mat_edu_cat,Doctorate or professional degree,3.869565217,5.101731861,23,0.988614837
+mat_edu_cat,Master's degree,3,3.492849839,41,0.988614837
+mat_edu_cat,No College Degree,3.904761905,5.982514203,21,0.988614837
+numm_household,2,2.759259259,3.781460161,54,0.591107216
+numm_household,3,4.102564103,5.476239931,39,0.591107216
+numm_household,4,3.4,3.942443042,15,0.591107216
+numm_household,5,2.166666667,1.834847859,6,0.591107216
+numm_household,6,6,NA,1,0.591107216
+pa_cat,0 times per week,5.916666667,7.24202801,12,0.266238579
+pa_cat,1-2 times per week,2.972222222,4.17123559,36,0.266238579
+pa_cat,3-4 times per week,2.553191489,2.947427107,47,0.266238579
+pa_cat,5-7 times per week,4.05,5.020746432,20,0.266238579
+parity,0,2.696428571,3.346203509,56,0.563888339
+parity,1,3.619047619,4.493639847,42,0.563888339
+parity,2,5.153846154,7.391956821,13,0.563888339
+parity,3,3,2,3,0.563888339
+parity,5,0,NA,1,0.563888339
+smoke_secondhand_cat,No,3.18018018,4.346781878,111,0.047089653
+smoke_secondhand_cat,Yes,6.5,4.725815626,4,0.047089653
+smoking_status,No,3.295652174,4.380927389,115,NA
+,,,,,
+,,,,,
+Covariate,estimate,pval,,,
+puq.1,0.084,0.373,,,
+ga.weeks.enroll,0.039,0.681,,,
+expected.gwg.x,-0.024,0.798,,,
+mat.age,0.0056,0.953,,,
+weight.kg,0.13,0.183,,,
+BMI,0.18,0.0547,,,
+pss.total.3,0.26,0.00474,,,
+puq.total.3,0.041,0.67,,,
+GWG,0.13,0.177,,,
+ede.qs.total.3,1,0,,,

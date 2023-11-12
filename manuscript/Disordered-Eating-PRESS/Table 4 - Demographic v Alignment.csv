@@ -1,0 +1,53 @@
+name,value,Aligned,Overestimated,Underestimated
+BMI_cat_condensed,Normal Weight,17 (30.4),9 (16.1),30 (53.6)
+BMI_cat_condensed,Not Reported,1 (33.3),0 (0),2 (66.7)
+BMI_cat_condensed,Obese,11 (35.5),6 (19.4),14 (45.2)
+BMI_cat_condensed,Overweight,7 (29.2),4 (16.7),13 (54.2)
+BMI_cat_condensed,Underweight,1 (100),0 (0),0 (0)
+Race_condensed,Not White or Caucasian,12 (48),2 (8),11 (44)
+Race_condensed,White or Caucasian,25 (27.8),17 (18.9),48 (53.3)
+ed_history_cat,No,36 (32.4),18 (16.2),57 (51.4)
+ed_history_cat,Yes,1 (25),1 (25),2 (50)
+ed_type,Anorexia Nervosa,1 (33.3),1 (33.3),1 (33.3)
+ed_type,Binge Eating Disorder,0 (0),0 (0),1 (100)
+ed_type,Not Reported,36 (32.4),18 (16.2),57 (51.4)
+income_cat_condensed,"100,000 or less",12 (33.3),2 (5.6),22 (61.1)
+income_cat_condensed,"100,000 to 149,999",11 (31.4),7 (20),17 (48.6)
+income_cat_condensed,"150,000 or more",14 (36.8),8 (21.1),16 (42.1)
+income_cat_condensed,Prefer not to say,0 (0),2 (33.3),4 (66.7)
+marital_status,1,36 (32.4),18 (16.2),57 (51.4)
+marital_status,5,0 (0),1 (100),0 (0)
+marital_status,Single,1 (33.3),0 (0),2 (66.7)
+mat_edu_cat,Bachelor's degree,12 (40),5 (16.7),13 (43.3)
+mat_edu_cat,Doctorate or professional degree,7 (30.4),3 (13),13 (56.5)
+mat_edu_cat,Master's degree,14 (34.1),7 (17.1),20 (48.8)
+mat_edu_cat,No College Degree,4 (19),4 (19),13 (61.9)
+numm_household,2,18 (33.3),9 (16.7),27 (50)
+numm_household,3,12 (30.8),4 (10.3),23 (59)
+numm_household,4,3 (20),6 (40),6 (40)
+numm_household,5,3 (50),0 (0),3 (50)
+numm_household,6,1 (100),0 (0),0 (0)
+pa_cat,0 times per week,4 (33.3),2 (16.7),6 (50)
+pa_cat,1-2 times per week,9 (25),3 (8.3),24 (66.7)
+pa_cat,3-4 times per week,17 (36.2),10 (21.3),20 (42.6)
+pa_cat,5-7 times per week,7 (35),4 (20),9 (45)
+parity,0,19 (33.9),10 (17.9),27 (48.2)
+parity,1,13 (31),5 (11.9),24 (57.1)
+parity,2,3 (23.1),3 (23.1),7 (53.8)
+parity,3,2 (66.7),0 (0),1 (33.3)
+parity,5,0 (0),1 (100),0 (0)
+smoke_secondhand_cat,No,36 (32.4),19 (17.1),56 (50.5)
+smoke_secondhand_cat,Yes,1 (25),0 (0),3 (75)
+smoking_status,No,37 (32.2),19 (16.5),59 (51.3)
+,,,,
+Variable,Aligned,Overestimated,Underestimated,kw.pval
+BMI,26.72 +/- 6.74,27.77 +/- 7.75,26.78 +/- 5.76,0.879244422
+GWG,26.46 +/- 7.91,16.11 +/- 10.23,38.93 +/- 12.35,2.81E-12
+ede.qs.total.3,3.35 +/- 3.89,1.42 +/- 1.68,3.86 +/- 5.1,0.095848439
+expected.gwg.x,25.92 +/- 7.43,28.84 +/- 11.13,23.05 +/- 8.03,0.089347888
+ga.weeks.enroll,20.11 +/- 6.75,20 +/- 6.48,20.58 +/- 6.38,0.948676789
+mat.age,31.5 +/- 3.72,32.05 +/- 4.38,31.59 +/- 4.12,0.550827479
+pss.total.3,4.16 +/- 2.59,3.63 +/- 2.11,3.83 +/- 3.33,0.555316333
+puq.1,1.22 +/- 1.29,1.42 +/- 1.46,1.51 +/- 1.42,0.640490257
+puq.total.3,1.08 +/- 1.55,0.95 +/- 1.78,0.98 +/- 1.32,0.752823157
+weight.kg,70.34 +/- 18.03,75.15 +/- 20.06,72.23 +/- 15.26,0.532756594
