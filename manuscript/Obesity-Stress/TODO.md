@@ -1,5 +1,9 @@
 # Analysis
 
+- [] Calculate percentages in obesity-stress-demographics.Rmd and obesity-stress-demographics-stress.Rmd
+- [] Calculate median stress level in obesity-stress-data-entry.Rmd
+- [] Report beta coefficents as exponentiated in obesity-stress-demographics-stress.Rmd
+- [] Add diabetes prevalence to obesity-stress-demographics-stress.Rmd
 
 # Writing
 

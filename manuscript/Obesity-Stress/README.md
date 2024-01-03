@@ -3,5 +3,7 @@ The data presented in this manuscript was analysed via R scripts.  In this case 
 The table below indicates the script (R Markdown file) that was compiled for each panel, along with the raw figure.
 Figures were then modified using Adobe Illustrator CC  into the file **Figures.ai**, then exported as PNG files.
 
-| Panel | Script | Figure |
+| Panel | Script | Figure/Table |
 |-------|:---------------------------------:|:-----------------------------------------------------------------------------------:|
+| Figure 1| | Obesity-Stress-CONSORT.ai |
+| Table 1| obesity-stress-demographics-stress.Rmd | Stress Demographics Table.csv |
