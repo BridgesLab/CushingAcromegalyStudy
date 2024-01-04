@@ -38,6 +38,19 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
                           Stress=="Low"~0))
 ```
 
+# Definition of Stress
+
+Stress is defined as high or low, based on whether the participant is above or below the median value (`r median(combined.data$Stress_d1,na.rm=T)`).
+
+```{r stress-counts}
+combined.data %>%
+  group_by(Stress) %>%
+  count %>%
+  ungroup %>%
+  mutate(Pct = n/sum(n)*100)
+  kable(caption="Number of participants by high or low stress")
+```
+
 Loaded in the cleaned data from `r input.file`. This script can be found in `r getwd()` and was most recently run on `r date()`. This dataset has `r dim(combined.data)[1]` values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
@@ -87,8 +100,8 @@ race.glm %>%
         digits =c(0,0,0,0,0,99))
 
 race.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of ethicity on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of ethicity on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -157,8 +170,8 @@ gender.bmi.glm %>%
         digits =c(0,0,0,0,0,99))
 
 gender.bmi.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of gender:BMI on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -189,8 +202,8 @@ gender.glm %>%
         digits =c(0,0,0,0,0,99))
 
 gender.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of gender on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of gender on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -238,13 +251,13 @@ age.glm %>%
         digits =c(0,0,0,0,0,99))
 
 age.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of age group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of age group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 
 glm(Stress~age, data=combined.data) %>% 
-  tidy %>%
-  kable(caption="Binomial regression estimates of age (continuous) on stress incidence", 
+  tidy(exponentiate=TRUE) %>%
+  kable(caption="Binomial regression estimates of age (continuous) on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -294,8 +307,8 @@ disadvantage.glm %>%
         digits =c(0,0,0,0,0,99))
 
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood education group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood education group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -343,8 +356,8 @@ disadvantage.glm %>%
         digits =c(0,0,0,0,0,99))
 
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -392,8 +405,8 @@ disadvantage.glm %>%
         digits =c(0,0,0,0,0,99))
 
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
@@ -428,25 +441,56 @@ stress.bmi %>%
   knitr::kable(caption="Number of participants by stress diagnosis and BMI category")
 ```
 
-```{r stress-type2-counts-bmi-stats}
-glm(Stress~BMI_cat, 
-    family="binomial",
-    data=combined.data) -> bmi.glm
+## By Type 2 Diabetes Diagnosis
 
-bmi.glm %>% 
+```{r stress-type2-counts-t2d}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Type2Diabetes,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=Type2Diabetes,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Type2Diabetes1",
+         "No"="Type2Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.diabtes
+
+stress.diabtes %>%
+  ggplot(aes(y=Prevalence,x=Type2Diabetes)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+stress.bmi %>%
+  knitr::kable(caption="Number of participants by stress diagnosis and diabetes diagnosis")
+```
+
+```{r stress-type2-counts-t2d-stats}
+glm(Stress~Type2Diabetes, 
+    family="binomial",
+    data=combined.data) -> t2d.glm
+
+t2d.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
-  kable(caption="Binomial regression of BMI group on stress incidence",
+  kable(caption="Binomial regression of type 2 diabetes diagnosis on stress incidence",
         digits =c(0,0,0,0,0,99))
 
-bmi.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of BMI group on stress incidence", 
+t2d.glm %>% 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of type 2 diabetes diagnosis on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 
 glm(Stress~BMI, data=combined.data) %>% 
-  tidy %>%
-  kable(caption="Binomial regression estimates of BMI on stress incidence",
+  tidy(exponentiate=TRUE) %>%
+  kable(caption="Binomial regression estimates of BMI on stress incidence, exponentiated",
         digits =c(0,2,3,2,99))
 ```
 
@@ -460,7 +504,10 @@ rbind(stress.race %>% rename("Group"="Race.Ethnicity"),
       mutate(Group=as.factor(Group)),
       stress.age %>% rename("Group"="Age.group")) %>%
   mutate(Total=No+Yes) %>%
-  select(Group,Total,No,Yes,Prevalence)-> summary.table
+  ungroup %>%
+  group_by(Group) %>%
+  mutate(Percent = Total/sum(Total))
+  select(Group,Total,Percent, No,Yes,Prevalence)-> summary.table
 
 kable(summary.table, caption="Summary of demographic variables by stress incidence")
 write_csv(summary.table, "Stress Demographics Table.csv")
