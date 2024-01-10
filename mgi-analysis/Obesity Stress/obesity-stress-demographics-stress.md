@@ -73,7 +73,30 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Sep 26 17:08:01 2023. This dataset has 39694 values.
+# Definition of Stress
+
+Stress is defined as high or low, based on whether the participant is above or below the median value (5).
+
+
+```r
+combined.data %>%
+  group_by(Stress) %>%
+  count %>%
+  ungroup %>%
+  mutate(Pct = n/sum(n)*100) %>%
+  kable(caption="Number of participants by high or low stress")
+```
+
+
+
+Table: Number of participants by high or low stress
+
+| Stress|     n|  Pct|
+|------:|-----:|----:|
+|      0| 22893| 57.7|
+|      1| 16801| 42.3|
+
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Jan 10 13:31:06 2024. This dataset has 39694 values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -151,22 +174,22 @@ Table: Binomial regression of ethicity on stress
 
 ```r
 race.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of ethicity on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of ethicity on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of ethicity on stress incidence
+Table: Binomial regression estimates of ethicity on stress incidence, exponentiated
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |    -0.32|     0.011|    -30.09| 0.00e+00|
-|Race.EthnicityAsian           |    -0.11|     0.086|     -1.28| 2.00e-01|
-|Race.EthnicityBlack           |     0.30|     0.049|      6.20| 5.62e-10|
-|Race.EthnicityHispanic/Latino |     0.11|     0.073|      1.55| 1.22e-01|
-|Race.EthnicityOther           |     0.02|     0.058|      0.42| 6.73e-01|
+|(Intercept)                   |     0.72|     0.011|    -30.09| 0.00e+00|
+|Race.EthnicityAsian           |     0.90|     0.086|     -1.28| 2.00e-01|
+|Race.EthnicityBlack           |     1.36|     0.049|      6.20| 5.62e-10|
+|Race.EthnicityHispanic/Latino |     1.12|     0.073|      1.55| 1.22e-01|
+|Race.EthnicityOther           |     1.02|     0.058|      0.42| 6.73e-01|
 
 ## By Gender
 
@@ -274,21 +297,21 @@ Table: Binomial regression of gender:BMI interaction on stress incidence
 
 ```r
 gender.bmi.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of gender:BMI on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of gender:BMI on stress incidence
+Table: Binomial regression estimates of gender:BMI on stress incidence, exponentiated
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |    -0.32|     0.019|    -17.40| 8.01e-68|
-|GenderM                       |    -0.13|     0.027|     -4.79| 1.66e-06|
-|BMI_cat.Ob.NonObObese         |     0.23|     0.028|      8.26| 1.42e-16|
-|GenderM:BMI_cat.Ob.NonObObese |    -0.12|     0.041|     -3.02| 2.56e-03|
+|(Intercept)                   |     0.72|     0.019|    -17.40| 8.01e-68|
+|GenderM                       |     0.88|     0.027|     -4.79| 1.66e-06|
+|BMI_cat.Ob.NonObObese         |     1.26|     0.028|      8.26| 1.42e-16|
+|GenderM:BMI_cat.Ob.NonObObese |     0.88|     0.041|     -3.02| 2.56e-03|
 
 
 ```r
@@ -332,19 +355,19 @@ Table: Binomial regression of gender on stress incidence
 
 ```r
 gender.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of gender on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of gender on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of gender on stress incidence
+Table: Binomial regression estimates of gender on stress incidence, exponentiated
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |    -0.22|     0.014|    -15.97| 1.99e-57|
-|GenderM     |    -0.18|     0.020|     -9.05| 1.38e-19|
+|(Intercept) |     0.80|     0.014|    -15.97| 1.99e-57|
+|GenderM     |     0.83|     0.020|     -9.05| 1.38e-19|
 
 ## By Age
 
@@ -422,40 +445,40 @@ Table: Binomial regression of age group on stress incidence
 
 ```r
 age.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of age group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of age group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of age group on stress incidence
+Table: Binomial regression estimates of age group on stress incidence, exponentiated
 
 |term             | estimate| std.error| statistic|  p.value|
 |:----------------|--------:|---------:|---------:|--------:|
-|(Intercept)      |    -0.20|     0.030|     -6.60| 4.20e-11|
-|Age.group(30,40] |     0.04|     0.042|      1.02| 3.06e-01|
-|Age.group(40,50] |     0.05|     0.039|      1.32| 1.87e-01|
-|Age.group(50,60] |    -0.09|     0.037|     -2.45| 1.43e-02|
-|Age.group(60,70] |    -0.30|     0.037|     -8.09| 6.14e-16|
-|Age.group(70,80] |    -0.26|     0.043|     -6.10| 1.05e-09|
-|Age.group(80,90] |    -0.25|     0.069|     -3.61| 3.05e-04|
+|(Intercept)      |     0.82|     0.030|     -6.60| 4.20e-11|
+|Age.group(30,40] |     1.04|     0.042|      1.02| 3.06e-01|
+|Age.group(40,50] |     1.05|     0.039|      1.32| 1.87e-01|
+|Age.group(50,60] |     0.91|     0.037|     -2.45| 1.43e-02|
+|Age.group(60,70] |     0.74|     0.037|     -8.09| 6.14e-16|
+|Age.group(70,80] |     0.77|     0.043|     -6.10| 1.05e-09|
+|Age.group(80,90] |     0.78|     0.069|     -3.61| 3.05e-04|
 
 ```r
 glm(Stress~age, data=combined.data) %>% 
-  tidy %>%
-  kable(caption="Binomial regression estimates of age (continuous) on stress incidence", 
+  tidy(exponentiate=TRUE) %>%
+  kable(caption="Binomial regression estimates of age (continuous) on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of age (continuous) on stress incidence
+Table: Binomial regression estimates of age (continuous) on stress incidence, exponentiated
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |     0.52|     0.008|      62.1| 0.00e+00|
-|age         |     0.00|     0.000|     -11.6| 5.32e-31|
+|(Intercept) |     1.67|     0.008|      62.1| 0.00e+00|
+|age         |     1.00|     0.000|     -11.6| 5.32e-31|
 
 ## By Neighborhood Disadvantage
 
@@ -532,19 +555,19 @@ Table: Binomial regression of neighborhood education group on stress incidence
 
 ```r
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood education group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood education group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of neighborhood education group on stress incidence
+Table: Binomial regression estimates of neighborhood education group on stress incidence, exponentiated
 
 |term            | estimate| std.error| statistic|  p.value|
 |:---------------|--------:|---------:|---------:|--------:|
-|(Intercept)     |    -0.73|     0.025|     -29.0| 0.00e+00|
-|ped1_13_17_qrtl |     0.22|     0.012|      18.5| 3.82e-76|
+|(Intercept)     |     0.48|     0.025|     -29.0| 0.00e+00|
+|ped1_13_17_qrtl |     1.25|     0.012|      18.5| 3.82e-76|
 
 ### Neighborhood Affluence
 
@@ -619,19 +642,19 @@ Table: Binomial regression of neighborhood affluence group on stress incidence
 
 ```r
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of neighborhood affluence group on stress incidence
+Table: Binomial regression estimates of neighborhood affluence group on stress incidence, exponentiated
 
 |term                | estimate| std.error| statistic|  p.value|
 |:-------------------|--------:|---------:|---------:|--------:|
-|(Intercept)         |     0.27|     0.028|      9.54| 1.42e-21|
-|affluence13_17_qrtl |    -0.21|     0.010|    -22.08| 0.00e+00|
+|(Intercept)         |     1.31|     0.028|      9.54| 1.42e-21|
+|affluence13_17_qrtl |     0.81|     0.010|    -22.08| 0.00e+00|
 
 ### Disadvantage
 
@@ -706,19 +729,19 @@ Table: Binomial regression of neighborhood disadvantage group on stress incidenc
 
 ```r
 disadvantage.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence", 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of neighborhood disadvantage group on stress incidence
+Table: Binomial regression estimates of neighborhood disadvantage group on stress incidence, exponentiated
 
 |term                   | estimate| std.error| statistic|  p.value|
 |:----------------------|--------:|---------:|---------:|--------:|
-|(Intercept)            |    -0.71|     0.024|     -29.4| 0.00e+00|
-|disadvantage13_17_qrtl |     0.19|     0.010|      18.4| 9.64e-76|
+|(Intercept)            |     0.49|     0.024|     -29.4| 0.00e+00|
+|disadvantage13_17_qrtl |     1.21|     0.010|      18.4| 9.64e-76|
 
 ## By Body Mass Index
 
@@ -770,76 +793,131 @@ Table: Number of participants by stress diagnosis and BMI category
 |Class III Obese | 1743| 1635|       48.4|
 |NA              |   74|   60|       44.8|
 
+## By Type 2 Diabetes Diagnosis
+
 
 ```r
-glm(Stress~BMI_cat, 
-    family="binomial",
-    data=combined.data) -> bmi.glm
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Type2Diabetes,Stress) %>%
+  count %>%
+  pivot_wider(id_cols=Type2Diabetes,
+              names_from=Stress,
+              values_from = n,
+              names_prefix='Type2Diabetes') %>% 
+  rename("Yes"="Type2Diabetes1",
+         "No"="Type2Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> stress.diabtes
 
-bmi.glm %>% 
+stress.diabtes %>%
+  ggplot(aes(y=Prevalence,x=Type2Diabetes)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent High Stress",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+```
+
+![](figures/stress-type2-counts-t2d-1.png)<!-- -->
+
+```r
+stress.diabtes %>%
+  knitr::kable(caption="Number of participants by stress diagnosis and diabetes diagnosis")
+```
+
+
+
+Table: Number of participants by stress diagnosis and diabetes diagnosis
+
+| Type2Diabetes|    No|   Yes| Prevalence|
+|-------------:|-----:|-----:|----------:|
+|             0| 19658| 13891|       41.4|
+|             1|  3235|  2910|       47.4|
+
+
+```r
+glm(Stress~Type2Diabetes, 
+    family="binomial",
+    data=combined.data) -> t2d.glm
+
+t2d.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
-  kable(caption="Binomial regression of BMI group on stress incidence",
+  kable(caption="Binomial regression of type 2 diabetes diagnosis on stress incidence",
         digits =c(0,0,0,0,0,99))
 ```
 
 
 
-Table: Binomial regression of BMI group on stress incidence
+Table: Binomial regression of type 2 diabetes diagnosis on stress incidence
 
-|term    | df| deviance| df.residual| residual.deviance|  p.value|
-|:-------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL    | NA|       NA|       39559|             53904|       NA|
-|BMI_cat |  5|      124|       39554|             53780| 4.73e-25|
+|term          | df| deviance| df.residual| residual.deviance| p.value|
+|:-------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL          | NA|       NA|       39693|             54089|      NA|
+|Type2Diabetes |  1|       75|       39692|             54014| 5.2e-18|
 
 ```r
-bmi.glm %>% 
-  tidy %>% 
-  kable(caption="Binomial regression estimates of BMI group on stress incidence", 
+t2d.glm %>% 
+  tidy(exponentiate=TRUE) %>% 
+  kable(caption="Binomial regression estimates of type 2 diabetes diagnosis on stress incidence, exponentiated", 
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of BMI group on stress incidence
+Table: Binomial regression estimates of type 2 diabetes diagnosis on stress incidence, exponentiated
 
-|term                   | estimate| std.error| statistic|    p.value|
-|:----------------------|--------:|---------:|---------:|----------:|
-|(Intercept)            |     0.13|     0.119|      1.13| 0.25907413|
-|BMI_catNormal          |    -0.51|     0.121|     -4.24| 0.00002193|
-|BMI_catOverweight      |    -0.54|     0.121|     -4.46| 0.00000832|
-|BMI_catClass I Obese   |    -0.41|     0.121|     -3.40| 0.00068042|
-|BMI_catClass II Obese  |    -0.31|     0.123|     -2.55| 0.01075039|
-|BMI_catClass III Obese |    -0.20|     0.124|     -1.60| 0.10960980|
+|term          | estimate| std.error| statistic|  p.value|
+|:-------------|--------:|---------:|---------:|--------:|
+|(Intercept)   |     0.71|     0.011|    -31.33| 0.00e+00|
+|Type2Diabetes |     1.27|     0.028|      8.67| 4.45e-18|
 
 ```r
 glm(Stress~BMI, data=combined.data) %>% 
-  tidy %>%
-  kable(caption="Binomial regression estimates of BMI on stress incidence",
+  tidy(exponentiate=TRUE) %>%
+  kable(caption="Binomial regression estimates of BMI on stress incidence, exponentiated",
         digits =c(0,2,3,2,99))
 ```
 
 
 
-Table: Binomial regression estimates of BMI on stress incidence
+Table: Binomial regression estimates of BMI on stress incidence, exponentiated
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |     0.33|     0.011|     30.44| 0.00e+00|
-|BMI         |     0.00|     0.000|      8.95| 3.74e-19|
+|(Intercept) |     1.39|     0.011|     30.44| 0.00e+00|
+|BMI         |     1.00|     0.000|      8.95| 3.74e-19|
 
 # Summary Table
 
 
 ```r
-rbind(stress.race %>% rename("Group"="Race.Ethnicity"),
-      stress.gender %>% rename("Group"="Gender"),
-      stress.bmi %>% rename("Group"="BMI_cat"),
-      stress.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
+rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
+        mutate(Categoyr="Race.Ethnicity"),
+      stress.gender %>% 
+        rename("Group"="Gender") %>%
+        mutate(Category="Gender"),
+      stress.bmi %>% 
+        rename("Group"="BMI_cat") %>%
+        mutate(Category="BMI"),
+      stress.disadvantage %>%
+        rename("Group"="disadvantage13_17_qrtl") %>%
+        mutate(Category="SES") %>%
       mutate(Group=as.factor(Group)),
-      stress.age %>% rename("Group"="Age.group")) %>%
+      stress.age %>% rename("Group"="Age.group") %>%
+        mutate(Category="Age Group"), 
+      stress.diabtes %>% rename("Group"="Type2Diabetes") %>%
+        mutate(Category = "Type 2 Diabetes") %>%
+        mutate(Group=as.factor(Group))) %>%
   mutate(Total=No+Yes) %>%
-  select(Group,Total,No,Yes,Prevalence)-> summary.table
+  ungroup %>%
+  group_by(Category) %>%
+  mutate(Percent = Total/sum(Total)*100) %>%
+  select(Category, Group,Total,Percent, No,Yes,Prevalence)-> summary.table
 
 kable(summary.table, caption="Summary of demographic variables by stress incidence")
 ```
@@ -848,35 +926,37 @@ kable(summary.table, caption="Summary of demographic variables by stress inciden
 
 Table: Summary of demographic variables by stress incidence
 
-|Group           | Total|    No|   Yes| Prevalence|
-|:---------------|-----:|-----:|-----:|----------:|
-|White           | 35321| 20500| 14821|       42.0|
-|Asian           |   580|   352|   228|       39.3|
-|Black           |  1739|   878|   861|       49.5|
-|Hispanic/Latino |   778|   430|   348|       44.7|
-|Other           |  1276|   733|   543|       42.6|
-|F               | 20866| 11589|  9277|       44.5|
-|M               | 18828| 11304|  7524|       40.0|
-|Underweight     |   283|   132|   151|       53.4|
-|Normal          |  9648|  5727|  3921|       40.6|
-|Overweight      | 12910|  7737|  5173|       40.1|
-|Class I Obese   |  8870|  5045|  3825|       43.1|
-|Class II Obese  |  4471|  2435|  2036|       45.5|
-|Class III Obese |  3378|  1743|  1635|       48.4|
-|NA              |   134|    74|    60|       44.8|
-|1               | 13997|  8798|  5199|       37.1|
-|2               | 10546|  6090|  4456|       42.3|
-|3               |  7636|  4055|  3581|       46.9|
-|4               |  4341|  2142|  2199|       50.7|
-|NA              |  3174|  1808|  1366|       43.0|
-|(18,30]         |  4495|  2469|  2026|       45.1|
-|(30,40]         |  4832|  2603|  2229|       46.1|
-|(40,50]         |  6325|  3393|  2932|       46.4|
-|(50,60]         |  8917|  5096|  3821|       42.9|
-|(60,70]         |  9172|  5701|  3471|       37.8|
-|(70,80]         |  4447|  2726|  1721|       38.7|
-|(80,90]         |  1087|   663|   424|       39.0|
-|NA              |   419|   242|   177|       42.2|
+|Category        |Group           | Total| Percent|    No|   Yes| Prevalence|
+|:---------------|:---------------|-----:|-------:|-----:|-----:|----------:|
+|NA              |White           | 35321|  88.983| 20500| 14821|       42.0|
+|NA              |Asian           |   580|   1.461|   352|   228|       39.3|
+|NA              |Black           |  1739|   4.381|   878|   861|       49.5|
+|NA              |Hispanic/Latino |   778|   1.960|   430|   348|       44.7|
+|NA              |Other           |  1276|   3.215|   733|   543|       42.6|
+|Gender          |F               | 20866|  52.567| 11589|  9277|       44.5|
+|Gender          |M               | 18828|  47.433| 11304|  7524|       40.0|
+|BMI             |Underweight     |   283|   0.713|   132|   151|       53.4|
+|BMI             |Normal          |  9648|  24.306|  5727|  3921|       40.6|
+|BMI             |Overweight      | 12910|  32.524|  7737|  5173|       40.1|
+|BMI             |Class I Obese   |  8870|  22.346|  5045|  3825|       43.1|
+|BMI             |Class II Obese  |  4471|  11.264|  2435|  2036|       45.5|
+|BMI             |Class III Obese |  3378|   8.510|  1743|  1635|       48.4|
+|BMI             |NA              |   134|   0.338|    74|    60|       44.8|
+|SES             |1               | 13997|  35.262|  8798|  5199|       37.1|
+|SES             |2               | 10546|  26.568|  6090|  4456|       42.3|
+|SES             |3               |  7636|  19.237|  4055|  3581|       46.9|
+|SES             |4               |  4341|  10.936|  2142|  2199|       50.7|
+|SES             |NA              |  3174|   7.996|  1808|  1366|       43.0|
+|Age Group       |(18,30]         |  4495|  11.324|  2469|  2026|       45.1|
+|Age Group       |(30,40]         |  4832|  12.173|  2603|  2229|       46.1|
+|Age Group       |(40,50]         |  6325|  15.934|  3393|  2932|       46.4|
+|Age Group       |(50,60]         |  8917|  22.464|  5096|  3821|       42.9|
+|Age Group       |(60,70]         |  9172|  23.107|  5701|  3471|       37.8|
+|Age Group       |(70,80]         |  4447|  11.203|  2726|  1721|       38.7|
+|Age Group       |(80,90]         |  1087|   2.738|   663|   424|       39.0|
+|Age Group       |NA              |   419|   1.056|   242|   177|       42.2|
+|Type 2 Diabetes |0               | 33549|  84.519| 19658| 13891|       41.4|
+|Type 2 Diabetes |1               |  6145|  15.481|  3235|  2910|       47.4|
 
 ```r
 write_csv(summary.table, "Stress Demographics Table.csv")

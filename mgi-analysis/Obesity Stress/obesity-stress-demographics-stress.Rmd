@@ -47,7 +47,7 @@ combined.data %>%
   group_by(Stress) %>%
   count %>%
   ungroup %>%
-  mutate(Pct = n/sum(n)*100)
+  mutate(Pct = n/sum(n)*100) %>%
   kable(caption="Number of participants by high or low stress")
 ```
 
@@ -452,7 +452,7 @@ combined.data %>%
   pivot_wider(id_cols=Type2Diabetes,
               names_from=Stress,
               values_from = n,
-              names_prefix='Diabetes') %>%
+              names_prefix='Type2Diabetes') %>% 
   rename("Yes"="Type2Diabetes1",
          "No"="Type2Diabetes0") %>%
   mutate(Prevalence=Yes/(Yes+No)*100) -> stress.diabtes
@@ -468,7 +468,7 @@ stress.diabtes %>%
         axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
         legend.position = c(0.1,0.85))  
 
-stress.bmi %>%
+stress.diabtes %>%
   knitr::kable(caption="Number of participants by stress diagnosis and diabetes diagnosis")
 ```
 
@@ -497,17 +497,28 @@ glm(Stress~BMI, data=combined.data) %>%
 # Summary Table
 
 ```{r summary-table}
-rbind(stress.race %>% rename("Group"="Race.Ethnicity"),
-      stress.gender %>% rename("Group"="Gender"),
-      stress.bmi %>% rename("Group"="BMI_cat"),
-      stress.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
+rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
+        mutate(Categoyr="Race.Ethnicity"),
+      stress.gender %>% 
+        rename("Group"="Gender") %>%
+        mutate(Category="Gender"),
+      stress.bmi %>% 
+        rename("Group"="BMI_cat") %>%
+        mutate(Category="BMI"),
+      stress.disadvantage %>%
+        rename("Group"="disadvantage13_17_qrtl") %>%
+        mutate(Category="SES") %>%
       mutate(Group=as.factor(Group)),
-      stress.age %>% rename("Group"="Age.group")) %>%
+      stress.age %>% rename("Group"="Age.group") %>%
+        mutate(Category="Age Group"), 
+      stress.diabtes %>% rename("Group"="Type2Diabetes") %>%
+        mutate(Category = "Type 2 Diabetes") %>%
+        mutate(Group=as.factor(Group))) %>%
   mutate(Total=No+Yes) %>%
   ungroup %>%
-  group_by(Group) %>%
-  mutate(Percent = Total/sum(Total))
-  select(Group,Total,Percent, No,Yes,Prevalence)-> summary.table
+  group_by(Category) %>%
+  mutate(Percent = Total/sum(Total)*100) %>%
+  select(Category, Group,Total,Percent, No,Yes,Prevalence)-> summary.table
 
 kable(summary.table, caption="Summary of demographic variables by stress incidence")
 write_csv(summary.table, "Stress Demographics Table.csv")
