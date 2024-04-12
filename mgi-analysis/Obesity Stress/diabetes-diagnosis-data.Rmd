@@ -35,7 +35,10 @@ library(knitr)
 library(lubridate)
 
 #get diagnosis data
-diagnosis.data<- read_csv(diagnosis.datafile) %>%
+diagnosis.data <- read_csv(diagnosis.datafile) 
+  
+diagnosis.data <- 
+  diagnosis.data %>%
   mutate(DeID_ProblemObservationDate=ymd_hms(DeID_ProblemObservationDate))
 ```
 
@@ -46,12 +49,12 @@ For ICD9 codes (see https://edit.cms.gov/files/document/valid-icd-9-list.xlsx), 
 ```{r icd-codes}
 diabetes.diagnoses.icd10 <- 
   diagnosis.data %>%
-  filter(grepl('Type 2 diabetes', DiagnosisICDNameMapped))
+  filter(grepl('E11.', DiagnosisICDCodeMapped)) #includes all ICD10 code E11
 
 diabetes.diagnoses.icd9 <-
   diagnosis.data %>%
-  filter(grepl('type II',DiagnosisICDNameMapped)) %>% #includes all diseases marked type II
-  filter(grepl('Diabetes',DiagnosisICDNameMapped)) #includes only those that contain diabetes in the name
+  filter(grepl('250.',DiagnosisICDCodeMapped)) %>% #includes ICD9 code 250.x
+  filter(grepl('type II',DiagnosisICDNameMapped)) #subset of all diseases marked type II, removes type 1
 
 #combine the two
 diabetes.diagnoses <-
@@ -66,7 +69,10 @@ This generates a list of all diabetes related diagnoses for all participants.  W
 #this generates a list of all participants with at least one ID
 diabetic.participants <-
   diabetes.diagnoses %>%
-  distinct(DeID_PatientID)  
+  arrange(DeID_ProblemObservationDate) %>% #sort by first observation
+  select(DeID_ProblemObservationDate,DeID_PatientID) %>% #keep just these columns
+  rename(DeID_Diabetes_Diagnosis=DeID_ProblemObservationDate) %>%
+  distinct(DeID_PatientID,.keep_all=T)  
 ```
 
 There was a total of `r nrow(diabetic.participants)` that we identified as having type 2 diabetes
@@ -83,39 +89,18 @@ comorbidity.diabetics <-
   distinct(DeID_PatientID)
 ```
 
-From the Elixhauser data there were `r nrow(comorbidity.diabetics)` people with diabetes (either type 1 or type 2).
+From the Elixhauser data there were `r nrow(comorbidity.diabetics)` people with diabetes combining those with and without complications.  This may be either type 1 or type 2.
 
 ## What percent of all elixhauser diabetic participants had type 2 diabetes?
 
 ```{r comorbidity-comparison-elixhauser-complete}
 comorbidity.diabetics$DeID_PatientID %in% diabetic.participants$DeID_PatientID %>%
   table %>%
-  kable(caption="Number of Elixhauser diabetics identified by charts")
-```
+  kable(caption="Number of Elixhauser diabetics identified by IC9/10 codes, these could be type 1")
 
-Among the participants who were elixhauser diabetic, but charted negative we expect some of these should be type I, among the remainder the charted diagnoses included the following
-
-```{r comorbidity-comparison-elixhauser-incomplete}
-comorbidity.diabetics %>%
-  filter(!(DeID_PatientID %in% diabetic.participants$DeID_PatientID)) %>%
-  distinct(DeID_PatientID) -> comorbidity.not.chart
-
-diagnosis.data %>%
-  filter(DeID_PatientID %in% comorbidity.not.chart) %>% #patients with uncharted comorbidities, but do have diabetes according to elixhauser
-  filter(grepl('[Dd]iabete[sic]',DiagnosisICDNameMapped)) %>% #contains the word diabetes or diabetic in either case
-  group_by(DiagnosisICDNameMapped) %>%
-  count %>%
-  arrange(desc(n)) %>%
-  kable(caption="Common diagnoses related to diabetes present in elixhauser tables, but not chart abstractions")
-```
-
-
-## What percent of type 2 diabetic participants were found in Elixhauser?
-
-```{r comorbidity-comparison-chart-complete}
-diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID  %>% 
+diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID %>%
   table %>%
-  kable(caption="Number of charted diabetics identified by Elixhauser tables")
+  kable(caption="Number of ICD9/10 diabetics identified by Elixhauser.  These are perhaps false negatives in Elixhauser")
 ```
 
 # Output
@@ -123,6 +108,7 @@ diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID  
 ```{r output}
 combined.data <-
   comorbidity.data %>%
+  full_join(diabetic.participants,by=DeID_PatientID) %>%
   mutate(Type2Diabetes = case_when(DeID_PatientID %in% diabetic.participants$DeID_PatientID ~ '1',
                                    TRUE~'0'))
   

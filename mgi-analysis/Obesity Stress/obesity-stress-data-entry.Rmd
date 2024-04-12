@@ -46,7 +46,7 @@ library(tidyr)
 library(knitr)
 
 mgi.patient.data <- read_csv(mgi.survey.datafile) %>%
-  select(DeID_PatientID, Gender,age, 'Stress_d1') 
+  select(DeID_PatientID, Gender,age, 'Stress_d1',DeID_Survey_Date) 
 
 mgi.patient.data %>%
   summarize(All=length(Gender),
