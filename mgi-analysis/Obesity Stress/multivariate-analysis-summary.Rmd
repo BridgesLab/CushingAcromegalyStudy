@@ -1,0 +1,50 @@
+---
+title: "Summary of Multivariat Analysis"
+author: "Dave Bridges"
+date: "2024-01-26"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To plot summary of multivariate models
+
+```{r data-entry}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+input.file <- 'multivariate_data.csv'
+mv.data <- read_tsv(input.file) 
+```
+# Model Plots
+
+```{r multivariate-plots}
+ggplot(mv.data,
+       aes(y=Covariates,
+       x=beta,
+       xmin=beta-se*1.96,
+       xmax=beta+se*1.96)) +
+  geom_point() +
+  geom_errorbarh() +
+  geom_vline(xintercept=0,lty=2)
+```
+
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```
