@@ -5,7 +5,9 @@
 * Stratify by stress and run demographics
 * Doublecheck values in CONSORT diagrams
 * Analyse by ancestry data 
-* Table by PSS high/low
+* Calculate within obese individuals logistic regression effects of diabetes to obesity-stress-type2-diabetes
+* Add exponentiatd logistic regressions to section 3.1 Logistic Regressions for Obese/Non-Obese
+* Do stratified analysis for SES
 
 
 # New Data Pulls
