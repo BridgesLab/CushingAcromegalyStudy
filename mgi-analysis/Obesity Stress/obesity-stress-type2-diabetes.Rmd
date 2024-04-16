@@ -557,6 +557,46 @@ anova(obesity.glm5,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on diabetes, with stress as a modifier and age, gender, race, and neighborhood disadvantage as covariates", digits =c(0,0,0,0,0,99))
 ```
 
+### Effects of Stress in Lean vs Obese Groups
+
+```{r type2-obesity-stratification}
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+   tidy %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity")
+
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  tidy %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity")
+
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  tidy(exponentiate=T) %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity (exponentiated)")
+
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity")
+
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  tidy %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity")
+
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  tidy(exponentiate=T) %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity (exponentiated)")
+```
+
 ### Testing for the Interaction Between Gender and Obesity-BMI
 
 Used the final fully adjusted model to test if gender modifies the relationships between BMI and obesity on diabetes rates.  
