@@ -761,6 +761,22 @@ glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity
     family="binomial",
     data=combined.data %>% filter(Gender == "M")) -> model.male
 
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "1")) -> model.ses.1
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "2")) -> model.ses.2
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "3")) -> model.ses.3
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "4")) -> model.ses.4
+
 bind_rows(model.full %>% tidy %>% mutate(Group="All"),
           model.white %>% tidy %>% mutate(Group="White"),
           model.black  %>% tidy %>% mutate(Group="Black"),
@@ -768,10 +784,15 @@ bind_rows(model.full %>% tidy %>% mutate(Group="All"),
           model.asian %>% tidy  %>% mutate(Group="Asian"),
           model.other  %>% tidy %>% mutate(Group="Other"),
           model.male  %>% tidy %>% mutate(Group="Male"),
-          model.female  %>% tidy %>% mutate(Group="Female")) %>%
+          model.female  %>% tidy %>% mutate(Group="Female"),
+          model.ses.1  %>% tidy %>% mutate(Group="SES 1"),
+          model.ses.2  %>% tidy %>% mutate(Group="SES 2"),
+          model.ses.3  %>% tidy %>% mutate(Group="SES 3"),
+          model.ses.4  %>% tidy %>% mutate(Group="SES 4")) %>%
   filter(term=="BMI_cat.Ob.NonObObese:StressHigh") %>%
   mutate(Group = factor(Group, levels=c("All","Female","Male",
-                                        "White","Black","Hispanic/Latino","Asian","Other"))) %>%
+                                        "White","Black","Hispanic/Latino","Asian","Other",
+                                        "SES 1", "SES 2", "SES 3","SES 4"))) %>%
   select(-term) -> subgroup.analyses
 
 subgroup.analyses %>%
