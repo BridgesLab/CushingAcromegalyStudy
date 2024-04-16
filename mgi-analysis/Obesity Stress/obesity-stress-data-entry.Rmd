@@ -127,17 +127,31 @@ combined.data <-
                                     Race.Ethnicity.Code=='A-NonHL'~"Asian",
                                     Race.Ethnicity.Code %in% c('C-HL','O-HL')~"Hispanic/Latino",
                                     TRUE~'Other'))
+```
 
+
+# Filtering out incomplete data
+
+```{r incomplete}
+combined.data.bmi <- 
+  combined.data %>%
+  filter(!is.na(BMI)) # remove participants with no BMI
+
+combined.data.age <- 
+  combined.data.bmi %>%
+  filter(!is.na(age)) # remove participants with no BMI
+
+```
+
+* All data: **`r nrow(combined.data)`** particiipants
+* No BMI `r nrow(combined.data) - nrow(combined.data.bmi)` leaving **`r nrow(combined.data.bmi)`** participants
+* No Age `r nrow(combined.data.bmi) - nrow(combined.data.age)` leaving **`r nrow(combined.data.age)`** participants
+
+# Writing out of the Data
+
+```{r output}
 output.file <- 'data-combined.csv'
-write_csv(combined.data, file=output.file)
-
-combined.data %>%
-  summarize(All=length(Gender),
-            Race.Ethnicity=length(!(is.na(Race.Ethnicity))),
-            BMI=length(!(is.na(BMI))),
-            SES=length(!(is.na(BMI))),
-            Type2Diabetes=length(!(is.na(Type2Diabetes)))) %>%
-  kable(caption="Number of participants with key outcomes")
+write_csv(combined.data.age, file=output.file)
 ```
 
 These data were written out to `r output.file`. This is the input file for the other scripts.
