@@ -20,7 +20,7 @@ echo "Running from $(pwd)"
 
 # requires 30 mins and 64G
 #Rscript -e "rmarkdown::render('diabetes-diagnosis-data.Rmd')"
-#Rscript -e "rmarkdown::render('obesity-stress-encounter-data.Rmd')"
+Rscript -e "rmarkdown::render('obesity-stress-encounter-data.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-data-entry.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-demographics.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-demographics-stress.Rmd')"

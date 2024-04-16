@@ -63,7 +63,7 @@ ggplot(bmi.data,
 bmi.data %>%
   group_by(EncounterYear) %>%
   count %>%
-  kable(caption="Total Encoutners by Year")
+  kable(caption="Total Encounters by Year")
 ```
 
 ## Time of Follow Up
