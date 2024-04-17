@@ -11,7 +11,7 @@ output:
 
 # Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jan 29 11:56:25 2024.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:09:12 2024.
 
 # Data Descriptions
 
@@ -139,26 +139,33 @@ combined.data <-
                                     Race.Ethnicity.Code=='A-NonHL'~"Asian",
                                     Race.Ethnicity.Code %in% c('C-HL','O-HL')~"Hispanic/Latino",
                                     TRUE~'Other'))
-
-output.file <- 'data-combined.csv'
-write_csv(combined.data, file=output.file)
-
-combined.data %>%
-  summarize(All=length(Gender),
-            Race.Ethnicity=length(!(is.na(Race.Ethnicity))),
-            BMI=length(!(is.na(BMI))),
-            SES=length(!(is.na(BMI))),
-            Type2Diabetes=length(!(is.na(Type2Diabetes)))) %>%
-  kable(caption="Number of participants with key outcomes")
 ```
 
 
+# Filtering out incomplete data
 
-Table: Number of participants with key outcomes
 
-|   All| Race.Ethnicity|   BMI| SES| Type2Diabetes|
-|-----:|--------------:|-----:|---:|-------------:|
-| 62010|          62010| 62010|   1|         62010|
+```r
+combined.data.bmi <- 
+  combined.data %>%
+  filter(!is.na(BMI)) # remove participants with no BMI
+
+combined.data.age <- 
+  combined.data.bmi %>%
+  filter(!is.na(age)) # remove participants with no BMI
+```
+
+* All data: **62010** particiipants
+* No BMI 0 leaving **62010** participants
+* No Age 0 leaving **62010** participants
+
+# Writing out of the Data
+
+
+```r
+output.file <- 'data-combined.csv'
+write_csv(combined.data.age, file=output.file)
+```
 
 These data were written out to data-combined.csv. This is the input file for the other scripts.
 

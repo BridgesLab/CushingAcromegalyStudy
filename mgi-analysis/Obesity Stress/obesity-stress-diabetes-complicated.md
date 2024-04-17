@@ -53,20 +53,20 @@ combined.data <- read_csv(input.file, na="-99") %>%
 ```
 
 ```
-## Rows: 62010 Columns: 39
+## Rows: 62010 Columns: 40
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (21): DeID_PatientID, Gender, Stress_d1, DeID_EncounterID, affluence13_1...
+## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
 ## dbl (18): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Jan 10 13:11:03 2024. This dataset has 36813 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:23:48 2024. This dataset has 36813 values.
 
 
 ```r

@@ -60,13 +60,13 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ```
 
 ```
-## Rows: 62010 Columns: 39
+## Rows: 62010 Columns: 40
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (17): DeID_PatientID, Gender, DeID_EncounterID, BMI_cat, BMI_cat.obese, ...
+## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
 ## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
@@ -96,7 +96,7 @@ Table: Number of participants by high or low stress
 |      0| 22893| 57.7|
 |      1| 16801| 42.3|
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Jan 10 13:31:06 2024. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:22:22 2024. This dataset has 39694 values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -1005,8 +1005,8 @@ sessionInfo()
 ## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
 ## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
 ## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      rstudioapi_0.13  hms_1.1.3       
-## [37] lifecycle_1.0.3  vctrs_0.6.3      evaluate_0.21    glue_1.6.2      
-## [41] farver_2.1.1     fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25  
-## [45] purrr_1.0.2      tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
+## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
+## [41] fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25   purrr_1.0.2     
+## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
 ```

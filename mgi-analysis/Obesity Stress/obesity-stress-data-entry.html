@@ -426,13 +426,15 @@ pre code {
 <li><a href="#consort-diagrams"><span class="toc-section-number">3</span> CONSORT Diagrams</a></li>
 <li><a href="#defining-bmi-data"><span class="toc-section-number">4</span> Defining BMI Data</a></li>
 <li><a href="#merging-data"><span class="toc-section-number">5</span> Merging Data</a></li>
-<li><a href="#session-information"><span class="toc-section-number">6</span> Session Information</a></li>
+<li><a href="#filtering-out-incomplete-data"><span class="toc-section-number">6</span> Filtering out incomplete data</a></li>
+<li><a href="#writing-out-of-the-data"><span class="toc-section-number">7</span> Writing out of the Data</a></li>
+<li><a href="#session-information"><span class="toc-section-number">8</span> Session Information</a></li>
 </ul>
 </div>
 
 <div id="purpose" class="section level1">
 <h1><span class="header-section-number">1</span> Purpose</h1>
-<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jan 29 11:56:25 2024.</p>
+<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:09:12 2024.</p>
 </div>
 <div id="data-descriptions" class="section level1">
 <h1><span class="header-section-number">2</span> Data Descriptions</h1>
@@ -560,44 +562,32 @@ pre code {
 <a class="sourceLine" id="cb4-36" data-line-number="36">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'AA-NonHL'</span><span class="op">~</span><span class="st">&quot;Black&quot;</span>,</a>
 <a class="sourceLine" id="cb4-37" data-line-number="37">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'A-NonHL'</span><span class="op">~</span><span class="st">&quot;Asian&quot;</span>,</a>
 <a class="sourceLine" id="cb4-38" data-line-number="38">                                    Race.Ethnicity.Code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'C-HL'</span>,<span class="st">'O-HL'</span>)<span class="op">~</span><span class="st">&quot;Hispanic/Latino&quot;</span>,</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39">                                    <span class="ot">TRUE</span><span class="op">~</span><span class="st">'Other'</span>))</a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"></a>
-<a class="sourceLine" id="cb4-41" data-line-number="41">output.file &lt;-<span class="st"> 'data-combined.csv'</span></a>
-<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="kw">write_csv</span>(combined.data, <span class="dt">file=</span>output.file)</a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-45" data-line-number="45"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">All=</span><span class="kw">length</span>(Gender),</a>
-<a class="sourceLine" id="cb4-46" data-line-number="46">            <span class="dt">Race.Ethnicity=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Race.Ethnicity))),</a>
-<a class="sourceLine" id="cb4-47" data-line-number="47">            <span class="dt">BMI=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI))),</a>
-<a class="sourceLine" id="cb4-48" data-line-number="48">            <span class="dt">SES=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI))),</a>
-<a class="sourceLine" id="cb4-49" data-line-number="49">            <span class="dt">Type2Diabetes=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Type2Diabetes)))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants with key outcomes&quot;</span>)</a></code></pre></div>
-<table>
-<caption>Number of participants with key outcomes</caption>
-<thead>
-<tr class="header">
-<th align="right">All</th>
-<th align="right">Race.Ethnicity</th>
-<th align="right">BMI</th>
-<th align="right">SES</th>
-<th align="right">Type2Diabetes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">62010</td>
-<td align="right">62010</td>
-<td align="right">62010</td>
-<td align="right">1</td>
-<td align="right">62010</td>
-</tr>
-</tbody>
-</table>
+<a class="sourceLine" id="cb4-39" data-line-number="39">                                    <span class="ot">TRUE</span><span class="op">~</span><span class="st">'Other'</span>))</a></code></pre></div>
+</div>
+<div id="filtering-out-incomplete-data" class="section level1">
+<h1><span class="header-section-number">6</span> Filtering out incomplete data</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">combined.data.bmi &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(BMI)) <span class="co"># remove participants with no BMI</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">combined.data.age &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span>combined.data.bmi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(age)) <span class="co"># remove participants with no BMI</span></a></code></pre></div>
+<ul>
+<li>All data: <strong>62010</strong> particiipants</li>
+<li>No BMI 0 leaving <strong>62010</strong> participants</li>
+<li>No Age 0 leaving <strong>62010</strong> participants</li>
+</ul>
+</div>
+<div id="writing-out-of-the-data" class="section level1">
+<h1><span class="header-section-number">7</span> Writing out of the Data</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">output.file &lt;-<span class="st"> 'data-combined.csv'</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">write_csv</span>(combined.data.age, <span class="dt">file=</span>output.file)</a></code></pre></div>
 <p>These data were written out to data-combined.csv. This is the input file for the other scripts.</p>
 </div>
 <div id="session-information" class="section level1">
-<h1><span class="header-section-number">6</span> Session Information</h1>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<h1><span class="header-section-number">8</span> Session Information</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)

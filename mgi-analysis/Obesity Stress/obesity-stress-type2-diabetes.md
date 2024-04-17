@@ -50,20 +50,20 @@ combined.data <- read_csv(input.file)
 ```
 
 ```
-## Rows: 62010 Columns: 39
+## Rows: 62010 Columns: 40
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (17): DeID_PatientID, Gender, DeID_EncounterID, BMI_cat, BMI_cat.obese, ...
+## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
 ## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Jan 10 13:10:30 2024. This dataset has 62010 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:23:12 2024. This dataset has 62010 values.
 
 
 ```r
@@ -1345,6 +1345,111 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 |BMI_cat.Ob.NonOb:Stress |  1|        5|       36509|             28035| 2.77e-02|
 |BMI_cat.Ob.NonOb:Gender |  1|       26|       36508|             28009| 3.45e-07|
 
+### Effects of Stress in Lean vs Obese Groups
+
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+   tidy %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity")
+```
+
+
+
+Table: Logistic regression of effects of stress in people with obesity
+
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |   -1.249|     0.025|    -49.91|       0|
+|StressHigh  |    0.242|     0.036|      6.69|       0|
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  tidy %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity")
+```
+
+
+
+Table: Logistic regression of effects of stress in people with obesity
+
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |   -1.249|     0.025|    -49.91|       0|
+|StressHigh  |    0.242|     0.036|      6.69|       0|
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Obese"))  %>%
+  tidy(exponentiate=T) %>%
+  kable(caption="Logistic regression of effects of stress in people with obesity (exponentiated)")
+```
+
+
+
+Table: Logistic regression of effects of stress in people with obesity (exponentiated)
+
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |    0.287|     0.025|    -49.91|       0|
+|StressHigh  |    1.274|     0.036|      6.69|       0|
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  anova(test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity")
+```
+
+
+
+Table: Logistic regression of effects of stress in people without obesity
+
+|term   | df| deviance| df.residual| residual.deviance| p.value|
+|:------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL   | NA|       NA|       22974|             13972|      NA|
+|Stress |  1|     7.94|       22973|             13964|   0.005|
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  tidy %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity")
+```
+
+
+
+Table: Logistic regression of effects of stress in people without obesity
+
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |   -2.360|     0.030|    -77.47|   0.000|
+|StressHigh  |    0.131|     0.046|      2.82|   0.005|
+
+```r
+glm(Type2Diabetes~Stress, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat.Ob.NonOb=="Non-Obese"))  %>%
+  tidy(exponentiate=T) %>%
+  kable(caption="Logistic regression of effects of stress in people without obesity (exponentiated)")
+```
+
+
+
+Table: Logistic regression of effects of stress in people without obesity (exponentiated)
+
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |    0.094|     0.030|    -77.47|   0.000|
+|StressHigh  |    1.140|     0.046|      2.82|   0.005|
+
 ### Testing for the Interaction Between Gender and Obesity-BMI
 
 Used the final fully adjusted model to test if gender modifies the relationships between BMI and obesity on diabetes rates.  
@@ -1790,6 +1895,22 @@ glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity
     family="binomial",
     data=combined.data %>% filter(Gender == "M")) -> model.male
 
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "1")) -> model.ses.1
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "2")) -> model.ses.2
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "3")) -> model.ses.3
+
+glm(Type2Diabetes~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Race.Ethnicity+age+Gender+Gender:BMI_cat.Ob.NonOb, 
+    family="binomial",
+    data=combined.data %>% filter(disadvantage13_17_qrtl == "4")) -> model.ses.4
+
 bind_rows(model.full %>% tidy %>% mutate(Group="All"),
           model.white %>% tidy %>% mutate(Group="White"),
           model.black  %>% tidy %>% mutate(Group="Black"),
@@ -1797,10 +1918,15 @@ bind_rows(model.full %>% tidy %>% mutate(Group="All"),
           model.asian %>% tidy  %>% mutate(Group="Asian"),
           model.other  %>% tidy %>% mutate(Group="Other"),
           model.male  %>% tidy %>% mutate(Group="Male"),
-          model.female  %>% tidy %>% mutate(Group="Female")) %>%
+          model.female  %>% tidy %>% mutate(Group="Female"),
+          model.ses.1  %>% tidy %>% mutate(Group="SES 1"),
+          model.ses.2  %>% tidy %>% mutate(Group="SES 2"),
+          model.ses.3  %>% tidy %>% mutate(Group="SES 3"),
+          model.ses.4  %>% tidy %>% mutate(Group="SES 4")) %>%
   filter(term=="BMI_cat.Ob.NonObObese:StressHigh") %>%
   mutate(Group = factor(Group, levels=c("All","Female","Male",
-                                        "White","Black","Hispanic/Latino","Asian","Other"))) %>%
+                                        "White","Black","Hispanic/Latino","Asian","Other",
+                                        "SES 1", "SES 2", "SES 3","SES 4"))) %>%
   select(-term) -> subgroup.analyses
 
 subgroup.analyses %>%
@@ -1821,6 +1947,10 @@ Table: Stratified BMI:Stress interaction terms by race/ethnicity and gender
 |    0.363|     0.338|     1.074|   0.283|Other           |
 |    0.192|     0.082|     2.340|   0.019|Male            |
 |    0.003|     0.091|     0.033|   0.973|Female          |
+|    0.118|     0.111|     1.060|   0.289|SES 1           |
+|    0.136|     0.116|     1.171|   0.242|SES 2           |
+|    0.183|     0.130|     1.404|   0.160|SES 3           |
+|   -0.035|     0.175|    -0.199|   0.842|SES 4           |
 
 ```r
 ggplot(subgroup.analyses, aes(y=estimate,

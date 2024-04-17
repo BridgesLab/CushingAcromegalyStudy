@@ -11,7 +11,7 @@ output:
 
 ## Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jan 29 11:45:26 2024.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 09:43:04 2024.
 
 
 ```r
@@ -70,12 +70,12 @@ ggplot(bmi.data,
 bmi.data %>%
   group_by(EncounterYear) %>%
   count %>%
-  kable(caption="Total Encoutners by Year")
+  kable(caption="Total Encounters by Year")
 ```
 
 
 
-Table: Total Encoutners by Year
+Table: Total Encounters by Year
 
 | EncounterYear|       n|
 |-------------:|-------:|
