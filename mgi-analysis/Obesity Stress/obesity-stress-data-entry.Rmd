@@ -119,7 +119,8 @@ combined.data <-
   mutate(Stress=relevel(as.factor(High.Stress),ref="Low")) %>%
   mutate(Stress.quartile = cut(Stress_d1,4)) %>%
   mutate(Age.group = cut(age,
-                          breaks=c(18,30,40,50,60,70,80,90))) %>%
+                          breaks=c(18,30,40,50,60,70,80,90,100),
+                         right=FALSE)) %>%
   left_join(demo.data) %>%
   mutate(Race.Ethnicity.Code = paste(RaceCode,EthnicityCode,sep="-")) %>%
   mutate(Race.Ethnicity = case_when(Race.Ethnicity.Code %in% c('C-NonHL','C-U')~"White",
@@ -135,17 +136,17 @@ combined.data <-
 ```{r incomplete}
 combined.data.bmi <- 
   combined.data %>%
-  filter(!is.na(BMI)) # remove participants with no BMI
+  filter(!is.na(BMI_cat)) # remove participants with no BMI category
 
 combined.data.age <- 
   combined.data.bmi %>%
-  filter(!is.na(age)) # remove participants with no BMI
+  filter(!is.na(Age.group)) # remove participants with no BMI
 
 ```
 
 * All data: **`r nrow(combined.data)`** particiipants
-* No BMI `r nrow(combined.data) - nrow(combined.data.bmi)` leaving **`r nrow(combined.data.bmi)`** participants
-* No Age `r nrow(combined.data.bmi) - nrow(combined.data.age)` leaving **`r nrow(combined.data.age)`** participants
+* No BMI category `r nrow(combined.data) - nrow(combined.data.bmi)` leaving **`r nrow(combined.data.bmi)`** participants
+* No Age category `r nrow(combined.data.bmi) - nrow(combined.data.age)` leaving **`r nrow(combined.data.age)`** participants
 
 # Writing out of the Data
 
