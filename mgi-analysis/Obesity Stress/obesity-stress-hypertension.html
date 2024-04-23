@@ -466,7 +466,7 @@ pre code {
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(HypertensionAny))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">  </span><span class="kw">filter</span>(Stress<span class="op">!=</span><span class="st">&quot;NA&quot;</span>)</a></code></pre></div>
-<pre><code>## Rows: 62010 Columns: 40</code></pre>
+<pre><code>## Rows: 61793 Columns: 40</code></pre>
 <pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
@@ -474,7 +474,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:24:15 2024. This dataset has 39694 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:13:21 2024. This dataset has 39560 values.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat=</span> <span class="kw">factor</span>(BMI_cat, </a>
@@ -2678,9 +2678,9 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="left">Low</td>
 <td align="left">F</td>
-<td align="right">5218</td>
-<td align="right">1695</td>
-<td align="right">6913</td>
+<td align="right">5176</td>
+<td align="right">1682</td>
+<td align="right">6858</td>
 <td align="right">24.5</td>
 </tr>
 <tr class="even">
@@ -2696,9 +2696,9 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="left">High</td>
 <td align="left">F</td>
-<td align="right">3674</td>
-<td align="right">1331</td>
-<td align="right">5005</td>
+<td align="right">3646</td>
+<td align="right">1320</td>
+<td align="right">4966</td>
 <td align="right">26.6</td>
 </tr>
 <tr class="even">
@@ -2714,9 +2714,9 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="left">Low</td>
 <td align="left">M</td>
-<td align="right">4313</td>
-<td align="right">2444</td>
-<td align="right">6757</td>
+<td align="right">4298</td>
+<td align="right">2440</td>
+<td align="right">6738</td>
 <td align="right">36.2</td>
 </tr>
 <tr class="even">
@@ -2732,9 +2732,9 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="left">High</td>
 <td align="left">M</td>
-<td align="right">2758</td>
-<td align="right">1542</td>
-<td align="right">4300</td>
+<td align="right">2743</td>
+<td align="right">1536</td>
+<td align="right">4279</td>
 <td align="right">35.9</td>
 </tr>
 <tr class="even">
@@ -2789,14 +2789,14 @@ pre code {
 <td align="left">(Intercept)</td>
 <td align="right">-0.82</td>
 <td align="right">0.014</td>
-<td align="right">-57.4</td>
+<td align="right">-57.2</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
 <td align="right">0.80</td>
 <td align="right">0.021</td>
-<td align="right">37.9</td>
+<td align="right">37.8</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -2820,16 +2820,16 @@ pre code {
 <td align="left">NULL</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">39693</td>
-<td align="right">52899</td>
+<td align="right">39559</td>
+<td align="right">52737</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb</td>
 <td align="right">1</td>
-<td align="right">1455</td>
-<td align="right">39692</td>
-<td align="right">51444</td>
+<td align="right">1447</td>
+<td align="right">39558</td>
+<td align="right">51290</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -2858,29 +2858,29 @@ pre code {
 <td align="left">(Intercept)</td>
 <td align="right">-0.83</td>
 <td align="right">0.019</td>
-<td align="right">-44.81</td>
+<td align="right">-44.60</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
 <td align="right">0.80</td>
 <td align="right">0.028</td>
-<td align="right">28.67</td>
+<td align="right">28.57</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
 <td align="right">0.03</td>
 <td align="right">0.029</td>
-<td align="right">0.97</td>
-<td align="right">0.334</td>
+<td align="right">0.93</td>
+<td align="right">0.355</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
 <td align="right">-0.01</td>
 <td align="right">0.043</td>
-<td align="right">-0.17</td>
-<td align="right">0.865</td>
+<td align="right">-0.14</td>
+<td align="right">0.885</td>
 </tr>
 </tbody>
 </table>
@@ -2903,33 +2903,33 @@ pre code {
 <td align="left">NULL</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">39693</td>
-<td align="right">52899</td>
+<td align="right">39559</td>
+<td align="right">52737</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb</td>
 <td align="right">1</td>
-<td align="right">1455</td>
-<td align="right">39692</td>
-<td align="right">51444</td>
+<td align="right">1447</td>
+<td align="right">39558</td>
+<td align="right">51290</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">Stress</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">39691</td>
-<td align="right">51442</td>
-<td align="right">0.244</td>
+<td align="right">39557</td>
+<td align="right">51289</td>
+<td align="right">0.257</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb:Stress</td>
 <td align="right">1</td>
 <td align="right">0</td>
-<td align="right">39690</td>
-<td align="right">51442</td>
-<td align="right">0.865</td>
+<td align="right">39556</td>
+<td align="right">51289</td>
+<td align="right">0.885</td>
 </tr>
 </tbody>
 </table>
@@ -2955,45 +2955,45 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-4.25</td>
+<td align="right">-4.26</td>
 <td align="right">0.054</td>
-<td align="right">-78.99</td>
+<td align="right">-78.84</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
 <td align="right">0.89</td>
 <td align="right">0.031</td>
-<td align="right">29.25</td>
+<td align="right">29.23</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
-<td align="right">0.16</td>
+<td align="right">0.17</td>
 <td align="right">0.032</td>
-<td align="right">5.14</td>
-<td align="right">2.79e-07</td>
+<td align="right">5.15</td>
+<td align="right">2.60e-07</td>
 </tr>
 <tr class="even">
 <td align="left">GenderM</td>
 <td align="right">0.29</td>
 <td align="right">0.023</td>
-<td align="right">12.45</td>
-<td align="right">1.32e-35</td>
+<td align="right">12.42</td>
+<td align="right">1.99e-35</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
 <td align="right">0.06</td>
 <td align="right">0.001</td>
-<td align="right">69.75</td>
+<td align="right">69.63</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
 <td align="right">0.00</td>
 <td align="right">0.046</td>
-<td align="right">0.07</td>
-<td align="right">9.43e-01</td>
+<td align="right">0.06</td>
+<td align="right">9.56e-01</td>
 </tr>
 </tbody>
 </table>
@@ -3016,49 +3016,49 @@ pre code {
 <td align="left">NULL</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">39693</td>
-<td align="right">52899</td>
+<td align="right">39559</td>
+<td align="right">52737</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb</td>
 <td align="right">1</td>
-<td align="right">1455</td>
-<td align="right">39692</td>
-<td align="right">51444</td>
+<td align="right">1447</td>
+<td align="right">39558</td>
+<td align="right">51290</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">Stress</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">39691</td>
-<td align="right">51442</td>
-<td align="right">0.244</td>
+<td align="right">39557</td>
+<td align="right">51289</td>
+<td align="right">0.257</td>
 </tr>
 <tr class="even">
 <td align="left">Gender</td>
 <td align="right">1</td>
-<td align="right">491</td>
-<td align="right">39690</td>
-<td align="right">50951</td>
+<td align="right">492</td>
+<td align="right">39556</td>
+<td align="right">50798</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
 <td align="right">1</td>
-<td align="right">6130</td>
-<td align="right">39689</td>
-<td align="right">44822</td>
+<td align="right">6109</td>
+<td align="right">39555</td>
+<td align="right">44689</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb:Stress</td>
 <td align="right">1</td>
 <td align="right">0</td>
-<td align="right">39688</td>
-<td align="right">44822</td>
-<td align="right">0.943</td>
+<td align="right">39554</td>
+<td align="right">44689</td>
+<td align="right">0.956</td>
 </tr>
 </tbody>
 </table>
@@ -3084,73 +3084,73 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-4.23</td>
-<td align="right">0.117</td>
-<td align="right">-35.98</td>
+<td align="right">-4.21</td>
+<td align="right">0.118</td>
+<td align="right">-35.82</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
 <td align="right">0.88</td>
 <td align="right">0.031</td>
-<td align="right">28.80</td>
+<td align="right">28.79</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
 <td align="right">0.16</td>
 <td align="right">0.032</td>
-<td align="right">4.96</td>
-<td align="right">6.90e-07</td>
+<td align="right">4.98</td>
+<td align="right">6.36e-07</td>
 </tr>
 <tr class="even">
 <td align="left">GenderM</td>
 <td align="right">0.29</td>
 <td align="right">0.023</td>
-<td align="right">12.72</td>
-<td align="right">4.85e-37</td>
+<td align="right">12.69</td>
+<td align="right">6.98e-37</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
 <td align="right">0.06</td>
 <td align="right">0.001</td>
-<td align="right">69.85</td>
+<td align="right">69.75</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">Race.EthnicityBlack</td>
-<td align="right">0.64</td>
+<td align="right">0.62</td>
 <td align="right">0.122</td>
-<td align="right">5.24</td>
-<td align="right">1.64e-07</td>
+<td align="right">5.06</td>
+<td align="right">4.26e-07</td>
 </tr>
 <tr class="odd">
 <td align="left">Race.EthnicityHispanic/Latino</td>
-<td align="right">-0.27</td>
+<td align="right">-0.29</td>
 <td align="right">0.142</td>
-<td align="right">-1.90</td>
-<td align="right">5.69e-02</td>
+<td align="right">-2.05</td>
+<td align="right">4.03e-02</td>
 </tr>
 <tr class="even">
 <td align="left">Race.EthnicityOther</td>
-<td align="right">-0.27</td>
+<td align="right">-0.30</td>
 <td align="right">0.128</td>
-<td align="right">-2.14</td>
-<td align="right">3.20e-02</td>
+<td align="right">-2.32</td>
+<td align="right">2.05e-02</td>
 </tr>
 <tr class="odd">
 <td align="left">Race.EthnicityWhite</td>
-<td align="right">-0.11</td>
+<td align="right">-0.13</td>
 <td align="right">0.110</td>
-<td align="right">-0.97</td>
-<td align="right">3.34e-01</td>
+<td align="right">-1.17</td>
+<td align="right">2.44e-01</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
 <td align="right">0.00</td>
 <td align="right">0.047</td>
-<td align="right">0.05</td>
-<td align="right">9.64e-01</td>
+<td align="right">0.03</td>
+<td align="right">9.78e-01</td>
 </tr>
 </tbody>
 </table>
@@ -3173,57 +3173,57 @@ pre code {
 <td align="left">NULL</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">39693</td>
-<td align="right">52899</td>
+<td align="right">39559</td>
+<td align="right">52737</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonOb</td>
 <td align="right">1</td>
-<td align="right">1455</td>
-<td align="right">39692</td>
-<td align="right">51444</td>
+<td align="right">1447</td>
+<td align="right">39558</td>
+<td align="right">51290</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">Stress</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">39691</td>
-<td align="right">51442</td>
-<td align="right">2.44e-01</td>
+<td align="right">39557</td>
+<td align="right">51289</td>
+<td align="right">2.57e-01</td>
 </tr>
 <tr class="even">
 <td align="left">Gender</td>
 <td align="right">1</td>
-<td align="right">491</td>
-<td align="right">39690</td>
-<td align="right">50951</td>
+<td align="right">492</td>
+<td align="right">39556</td>
+<td align="right">50798</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
 <td align="right">1</td>
-<td align="right">6130</td>
-<td align="right">39689</td>
-<td align="right">44822</td>
+<td align="right">6109</td>
+<td align="right">39555</td>
+<td align="right">44689</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">Race.Ethnicity</td>
 <td align="right">4</td>
-<td align="right">195</td>
-<td align="right">39685</td>
-<td align="right">44626</td>
-<td align="right">3.85e-41</td>
+<td align="right">196</td>
+<td align="right">39551</td>
+<td align="right">44493</td>
+<td align="right">2.97e-41</td>
 </tr>
 <tr class="odd">
 <td align="left">BMI_cat.Ob.NonOb:Stress</td>
 <td align="right">1</td>
 <td align="right">0</td>
-<td align="right">39684</td>
-<td align="right">44626</td>
-<td align="right">9.64e-01</td>
+<td align="right">39550</td>
+<td align="right">44493</td>
+<td align="right">9.78e-01</td>
 </tr>
 </tbody>
 </table>
@@ -3249,7 +3249,7 @@ pre code {
 <tr class="odd">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
-<td align="right">13670</td>
+<td align="right">13596</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -3259,7 +3259,7 @@ pre code {
 <tr class="odd">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
-<td align="right">9305</td>
+<td align="right">9245</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
@@ -3289,13 +3289,13 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">F</td>
-<td align="right">6913</td>
+<td align="right">6858</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">M</td>
-<td align="right">6757</td>
+<td align="right">6738</td>
 </tr>
 <tr class="odd">
 <td align="left">Low</td>
@@ -3313,13 +3313,13 @@ pre code {
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">F</td>
-<td align="right">5005</td>
+<td align="right">4966</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">M</td>
-<td align="right">4300</td>
+<td align="right">4279</td>
 </tr>
 <tr class="odd">
 <td align="left">High</td>
@@ -3356,7 +3356,7 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">Asian</td>
-<td align="right">316</td>
+<td align="right">314</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -3368,19 +3368,19 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">Hispanic/Latino</td>
-<td align="right">250</td>
+<td align="right">249</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">Other</td>
-<td align="right">431</td>
+<td align="right">428</td>
 </tr>
 <tr class="odd">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">White</td>
-<td align="right">12279</td>
+<td align="right">12211</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -3416,7 +3416,7 @@ pre code {
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">Asian</td>
-<td align="right">187</td>
+<td align="right">184</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
@@ -3434,13 +3434,13 @@ pre code {
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">Other</td>
-<td align="right">311</td>
+<td align="right">309</td>
 </tr>
 <tr class="odd">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">White</td>
-<td align="right">8236</td>
+<td align="right">8181</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
@@ -3501,11 +3501,11 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="right">25.3</td>
-<td align="right">53.0</td>
-<td align="right">2.98</td>
+<td align="right">53.1</td>
+<td align="right">2.94</td>
 <td align="right">17.7</td>
-<td align="right">13670</td>
-<td align="right">13670</td>
+<td align="right">13596</td>
+<td align="right">13596</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -3522,10 +3522,10 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="right">25.2</td>
 <td align="right">51.0</td>
-<td align="right">3.13</td>
+<td align="right">3.09</td>
 <td align="right">17.8</td>
-<td align="right">9305</td>
-<td align="right">9305</td>
+<td align="right">9245</td>
+<td align="right">9245</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
@@ -3566,11 +3566,11 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="right">25.3</td>
-<td align="right">53.0</td>
-<td align="right">2.98</td>
+<td align="right">53.1</td>
+<td align="right">2.94</td>
 <td align="right">17.7</td>
-<td align="right">13670</td>
-<td align="right">13670</td>
+<td align="right">13596</td>
+<td align="right">13596</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -3587,10 +3587,10 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="right">25.2</td>
 <td align="right">51.0</td>
-<td align="right">3.13</td>
+<td align="right">3.09</td>
 <td align="right">17.8</td>
-<td align="right">9305</td>
-<td align="right">9305</td>
+<td align="right">9245</td>
+<td align="right">9245</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>

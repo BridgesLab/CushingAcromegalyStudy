@@ -50,7 +50,7 @@ combined.data <- read_csv(input.file)
 ```
 
 ```
-## Rows: 62010 Columns: 40
+## Rows: 61793 Columns: 40
 ```
 
 ```
@@ -63,7 +63,7 @@ combined.data <- read_csv(input.file)
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:22:39 2024. This dataset has 62010 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:41 2024. This dataset has 61793 values.
 
 
 ```r
@@ -993,9 +993,9 @@ Table: Diabetes Rates by Obese or not and Stress
 
 |BMI_cat.Ob.NonOb |Stress | NonDiabetes| Diabetes| Total| Percent|
 |:----------------|:------|-----------:|--------:|-----:|-------:|
-|Non-Obese        |Low    |       12512|     1158| 13670|    8.47|
+|Non-Obese        |Low    |       12442|     1154| 13596|    8.49|
 |Obese            |Low    |        7437|     1786|  9223|   19.36|
-|Non-Obese        |High   |        8439|      866|  9305|    9.31|
+|Non-Obese        |High   |        8382|      863|  9245|    9.34|
 |Obese            |High   |        5716|     1780|  7496|   23.75|
 
 ```r
@@ -1036,13 +1036,13 @@ Table: Diabetes Rates by Obese or not and Stress
 
 |BMI_cat.Ob.NonOb |Stress |Gender | NonDiabetes| Diabetes| Total| Percent|
 |:----------------|:------|:------|-----------:|--------:|-----:|-------:|
-|Non-Obese        |Low    |F      |        6508|      405|  6913|    5.86|
+|Non-Obese        |Low    |F      |        6457|      401|  6858|    5.85|
 |Obese            |Low    |F      |        3898|      778|  4676|   16.64|
-|Non-Obese        |High   |F      |        4631|      374|  5005|    7.47|
+|Non-Obese        |High   |F      |        4593|      373|  4966|    7.51|
 |Obese            |High   |F      |        3332|      940|  4272|   22.00|
-|Non-Obese        |Low    |M      |        6004|      753|  6757|   11.14|
+|Non-Obese        |Low    |M      |        5985|      753|  6738|   11.18|
 |Obese            |Low    |M      |        3539|     1008|  4547|   22.17|
-|Non-Obese        |High   |M      |        3808|      492|  4300|   11.44|
+|Non-Obese        |High   |M      |        3789|      490|  4279|   11.45|
 |Obese            |High   |M      |        2384|      840|  3224|   26.05|
 
 ```r
@@ -1146,8 +1146,8 @@ Table: Logistic regression of obese vs non-obese on diabetes
 
 |term                  | estimate| std.error| statistic| p.value|
 |:---------------------|--------:|---------:|---------:|-------:|
-|(Intercept)           |    -2.24|     0.018|    -125.4|       0|
-|BMI_cat.Ob.NonObObese |     1.01|     0.023|      43.7|       0|
+|(Intercept)           |    -2.24|     0.018|    -125.0|       0|
+|BMI_cat.Ob.NonObObese |     1.01|     0.023|      43.6|       0|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -1160,8 +1160,8 @@ Table: Logistic regression of obese vs non-obese on diabetes,
 
 |term             | df| deviance| df.residual| residual.deviance| p.value|
 |:----------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL             | NA|       NA|       62009|             52630|      NA|
-|BMI_cat.Ob.NonOb |  1|     1988|       62008|             50643|       0|
+|NULL             | NA|       NA|       61792|             52511|      NA|
+|BMI_cat.Ob.NonOb |  1|     1975|       61791|             50536|       0|
 
 ```r
 #adding in stress as a modifier
@@ -1180,10 +1180,10 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                             | estimate| std.error| statistic| p.value|
 |:--------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                      |    -2.38|     0.031|    -77.48| 0.00000|
-|BMI_cat.Ob.NonObObese            |     0.95|     0.040|     23.56| 0.00000|
-|StressHigh                       |     0.10|     0.047|      2.19| 0.02829|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.060|      2.59| 0.00953|
+|(Intercept)                      |    -2.38|     0.031|    -77.27|  0.0000|
+|BMI_cat.Ob.NonObObese            |     0.95|     0.041|     23.48|  0.0000|
+|StressHigh                       |     0.10|     0.047|      2.21|  0.0269|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.060|      2.57|  0.0102|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -1196,10 +1196,10 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       39693|             32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
-|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
-|BMI_cat.Ob.NonOb:Stress |  1|        7|       39690|             30977| 9.46e-03|
+|NULL                    | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1231|       39558|             30971| 0.00e+00|
+|Stress                  |  1|       45|       39557|             30926| 1.62e-11|
+|BMI_cat.Ob.NonOb:Stress |  1|        7|       39556|             30919| 1.01e-02|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -1218,13 +1218,13 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -4.93|     0.078|    -62.87| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     1.18|     0.055|     21.35| 0.00e+00|
-|StressHigh                       |     0.20|     0.048|      4.12| 3.85e-05|
-|GenderM                          |     0.47|     0.049|      9.60| 8.26e-22|
-|age                              |     0.04|     0.001|     36.56| 0.00e+00|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.062|      2.64| 8.35e-03|
-|BMI_cat.Ob.NonObObese:GenderM    |    -0.34|     0.062|     -5.51| 3.62e-08|
+|(Intercept)                      |    -4.94|     0.079|    -62.78| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     1.18|     0.055|     21.31| 0.00e+00|
+|StressHigh                       |     0.20|     0.048|      4.17| 3.08e-05|
+|GenderM                          |     0.47|     0.049|      9.56| 1.17e-21|
+|age                              |     0.04|     0.001|     36.59| 0.00e+00|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.062|      2.59| 9.53e-03|
+|BMI_cat.Ob.NonObObese:GenderM    |    -0.34|     0.062|     -5.50| 3.85e-08|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -1237,13 +1237,13 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       39693|             32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
-|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
-|Gender                  |  1|      194|       39690|             30790| 4.81e-44|
-|age                     |  1|     1512|       39689|             29277| 0.00e+00|
-|BMI_cat.Ob.NonOb:Stress |  1|        9|       39688|             29269| 3.13e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       31|       39687|             29238| 3.27e-08|
+|NULL                    | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1231|       39558|             30971| 0.00e+00|
+|Stress                  |  1|       45|       39557|             30926| 1.62e-11|
+|Gender                  |  1|      193|       39556|             30732| 5.58e-44|
+|age                     |  1|     1515|       39555|             29217| 0.00e+00|
+|BMI_cat.Ob.NonOb:Stress |  1|        8|       39554|             29209| 3.61e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       30|       39553|             29178| 3.48e-08|
 
 ```r
 #adding in race and ethnicity
@@ -1262,17 +1262,17 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -5.07|     0.080|    -63.07| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     1.17|     0.056|     21.12| 5.00e-99|
-|StressHigh                       |     0.19|     0.048|      4.01| 6.01e-05|
-|GenderM                          |     0.47|     0.049|      9.60| 8.35e-22|
-|age                              |     0.04|     0.001|     37.38| 0.00e+00|
-|Race.EthnicityAsian              |     0.60|     0.141|      4.24| 2.28e-05|
-|Race.EthnicityBlack              |     0.64|     0.065|      9.84| 7.77e-23|
-|Race.EthnicityHispanic/Latino    |     0.37|     0.110|      3.37| 7.65e-04|
-|Race.EthnicityOther              |     0.11|     0.085|      1.30| 1.93e-01|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.062|      2.63| 8.42e-03|
-|BMI_cat.Ob.NonObObese:GenderM    |    -0.33|     0.062|     -5.30| 1.15e-07|
+|(Intercept)                      |    -5.08|     0.081|    -62.99| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     1.17|     0.056|     21.09| 1.10e-98|
+|StressHigh                       |     0.20|     0.048|      4.07| 4.77e-05|
+|GenderM                          |     0.47|     0.049|      9.57| 1.11e-21|
+|age                              |     0.04|     0.001|     37.42| 0.00e+00|
+|Race.EthnicityAsian              |     0.61|     0.141|      4.35| 1.34e-05|
+|Race.EthnicityBlack              |     0.64|     0.065|      9.84| 7.25e-23|
+|Race.EthnicityHispanic/Latino    |     0.37|     0.110|      3.37| 7.41e-04|
+|Race.EthnicityOther              |     0.11|     0.085|      1.32| 1.86e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.16|     0.062|      2.59| 9.67e-03|
+|BMI_cat.Ob.NonObObese:GenderM    |    -0.33|     0.062|     -5.30| 1.19e-07|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -1285,14 +1285,14 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       39693|             32268|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1240|       39692|             31029| 0.00e+00|
-|Stress                  |  1|       45|       39691|             30983| 1.79e-11|
-|Gender                  |  1|      194|       39690|             30790| 4.81e-44|
-|age                     |  1|     1512|       39689|             29277| 0.00e+00|
-|Race.Ethnicity          |  4|      113|       39685|             29164| 1.68e-23|
-|BMI_cat.Ob.NonOb:Stress |  1|        9|       39684|             29156| 3.31e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       28|       39683|             29127| 1.06e-07|
+|NULL                    | NA|       NA|       39559|             32202|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1231|       39558|             30971| 0.00e+00|
+|Stress                  |  1|       45|       39557|             30926| 1.62e-11|
+|Gender                  |  1|      193|       39556|             30732| 5.58e-44|
+|age                     |  1|     1515|       39555|             29217| 0.00e+00|
+|Race.Ethnicity          |  4|      114|       39551|             29103| 1.09e-23|
+|BMI_cat.Ob.NonOb:Stress |  1|        8|       39550|             29095| 3.83e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       28|       39549|             29067| 1.09e-07|
 
 ```r
 #adding in neighborhood disadvantage
@@ -1311,18 +1311,18 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -5.35|     0.091|    -58.64| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     1.15|     0.058|     19.87| 6.85e-88|
-|StressHigh                       |     0.16|     0.050|      3.27| 1.08e-03|
-|GenderM                          |     0.47|     0.051|      9.20| 3.63e-20|
-|age                              |     0.04|     0.001|     36.37| 0.00e+00|
-|Race.EthnicityAsian              |     0.63|     0.146|      4.33| 1.48e-05|
-|Race.EthnicityBlack              |     0.52|     0.070|      7.52| 5.32e-14|
-|Race.EthnicityHispanic/Latino    |     0.37|     0.114|      3.27| 1.08e-03|
-|Race.EthnicityOther              |     0.09|     0.089|      0.97| 3.31e-01|
-|disadvantage13_17_qrtl           |     0.13|     0.016|      8.18| 2.81e-16|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.17|     0.065|      2.64| 8.21e-03|
-|BMI_cat.Ob.NonObObese:GenderM    |    -0.32|     0.065|     -4.86| 1.16e-06|
+|(Intercept)                      |    -5.35|     0.091|    -58.56| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     1.15|     0.058|     19.85| 1.20e-87|
+|StressHigh                       |     0.17|     0.051|      3.33| 8.80e-04|
+|GenderM                          |     0.47|     0.051|      9.18| 4.36e-20|
+|age                              |     0.04|     0.001|     36.40| 0.00e+00|
+|Race.EthnicityAsian              |     0.65|     0.146|      4.45| 8.64e-06|
+|Race.EthnicityBlack              |     0.53|     0.070|      7.55| 4.48e-14|
+|Race.EthnicityHispanic/Latino    |     0.37|     0.114|      3.28| 1.03e-03|
+|Race.EthnicityOther              |     0.09|     0.089|      1.00| 3.19e-01|
+|disadvantage13_17_qrtl           |     0.13|     0.016|      8.12| 4.70e-16|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.17|     0.065|      2.60| 9.42e-03|
+|BMI_cat.Ob.NonObObese:GenderM    |    -0.32|     0.065|     -4.87| 1.13e-06|
 
 ```r
 anova(obesity.glm5,test="Chisq") %>% tidy %>%
@@ -1335,15 +1335,15 @@ Table: Logistic regression of obese vs non-obese on diabetes, with stress as a m
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       36519|             29829|       NA|
-|BMI_cat.Ob.NonOb        |  1|     1135|       36518|             28694| 0.00e+00|
-|Stress                  |  1|       41|       36517|             28652| 1.36e-10|
-|Gender                  |  1|      179|       36516|             28473| 7.12e-41|
-|age                     |  1|     1393|       36515|             27080| 0.00e+00|
-|Race.Ethnicity          |  4|      116|       36511|             26964| 4.11e-24|
-|disadvantage13_17_qrtl  |  1|       68|       36510|             26896| 1.39e-16|
-|BMI_cat.Ob.NonOb:Stress |  1|        8|       36509|             26887| 3.67e-03|
-|BMI_cat.Ob.NonOb:Gender |  1|       24|       36508|             26864| 1.08e-06|
+|NULL                    | NA|       NA|       36392|             29765|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1127|       36391|             28637| 0.00e+00|
+|Stress                  |  1|       41|       36390|             28596| 1.25e-10|
+|Gender                  |  1|      179|       36389|             28417| 7.34e-41|
+|age                     |  1|     1396|       36388|             27021| 0.00e+00|
+|Race.Ethnicity          |  4|      117|       36384|             26904| 2.54e-24|
+|disadvantage13_17_qrtl  |  1|       67|       36383|             26837| 2.34e-16|
+|BMI_cat.Ob.NonOb:Stress |  1|        8|       36382|             26828| 4.22e-03|
+|BMI_cat.Ob.NonOb:Gender |  1|       24|       36381|             26805| 1.05e-06|
 
 ### Testing for the Interaction Between Gender and Obesity-BMI
 
@@ -1372,16 +1372,16 @@ Table: Logistic regression of obese vs non-obese on diabetes, with gender and st
 
 |term                           | df| deviance| df.residual| residual.deviance| p.value|
 |:------------------------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL                           | NA|       NA|       39693|             32268|      NA|
-|BMI_cat.Ob.NonOb               |  1| 1239.733|       39692|             31029|   0.000|
-|Stress                         |  1|   45.185|       39691|             30983|   0.000|
-|Gender                         |  1|  193.757|       39690|             30790|   0.000|
-|age                            |  1| 1512.314|       39689|             29277|   0.000|
-|Race.Ethnicity                 |  4|  112.983|       39685|             29164|   0.000|
-|BMI_cat.Ob.NonOb:Stress        |  1|    8.631|       39684|             29156|   0.003|
-|BMI_cat.Ob.NonOb:Gender        |  1|   28.267|       39683|             29127|   0.000|
-|Stress:Gender                  |  1|    6.118|       39682|             29121|   0.013|
-|BMI_cat.Ob.NonOb:Stress:Gender |  1|    0.479|       39681|             29121|   0.489|
+|NULL                           | NA|       NA|       39559|             32202|      NA|
+|BMI_cat.Ob.NonOb               |  1| 1231.155|       39558|             30971|   0.000|
+|Stress                         |  1|   45.389|       39557|             30926|   0.000|
+|Gender                         |  1|  193.463|       39556|             30732|   0.000|
+|age                            |  1| 1515.240|       39555|             29217|   0.000|
+|Race.Ethnicity                 |  4|  113.871|       39551|             29103|   0.000|
+|BMI_cat.Ob.NonOb:Stress        |  1|    8.363|       39550|             29095|   0.004|
+|BMI_cat.Ob.NonOb:Gender        |  1|   28.213|       39549|             29067|   0.000|
+|Stress:Gender                  |  1|    6.415|       39548|             29060|   0.011|
+|BMI_cat.Ob.NonOb:Stress:Gender |  1|    0.594|       39547|             29060|   0.441|
 
 ```r
 gender.int.model %>%
@@ -1395,19 +1395,19 @@ Table: Logistic regression of obese vs non-obese on diabetes, with gender and st
 
 |term                                     | estimate| std.error| statistic| p.value|
 |:----------------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                              |   -5.124|     0.085|   -60.155|   0.000|
-|BMI_cat.Ob.NonObObese                    |    1.197|     0.066|    18.194|   0.000|
-|StressHigh                               |    0.314|     0.075|     4.171|   0.000|
-|GenderM                                  |    0.557|     0.065|     8.533|   0.000|
-|age                                      |    0.041|     0.001|    37.356|   0.000|
-|Race.EthnicityAsian                      |    0.600|     0.141|     4.258|   0.000|
-|Race.EthnicityBlack                      |    0.640|     0.065|     9.844|   0.000|
-|Race.EthnicityHispanic/Latino            |    0.373|     0.110|     3.390|   0.001|
-|Race.EthnicityOther                      |    0.112|     0.085|     1.310|   0.190|
-|BMI_cat.Ob.NonObObese:StressHigh         |    0.102|     0.093|     1.087|   0.277|
-|BMI_cat.Ob.NonObObese:GenderM            |   -0.363|     0.085|    -4.275|   0.000|
-|StressHigh:GenderM                       |   -0.204|     0.098|    -2.081|   0.037|
-|BMI_cat.Ob.NonObObese:StressHigh:GenderM |    0.087|     0.125|     0.692|   0.489|
+|(Intercept)                              |   -5.135|     0.085|   -60.074|   0.000|
+|BMI_cat.Ob.NonObObese                    |    1.201|     0.066|    18.187|   0.000|
+|StressHigh                               |    0.323|     0.076|     4.278|   0.000|
+|GenderM                                  |    0.561|     0.065|     8.569|   0.000|
+|age                                      |    0.041|     0.001|    37.393|   0.000|
+|Race.EthnicityAsian                      |    0.617|     0.141|     4.376|   0.000|
+|Race.EthnicityBlack                      |    0.641|     0.065|     9.850|   0.000|
+|Race.EthnicityHispanic/Latino            |    0.374|     0.110|     3.400|   0.001|
+|Race.EthnicityOther                      |    0.113|     0.085|     1.331|   0.183|
+|BMI_cat.Ob.NonObObese:StressHigh         |    0.093|     0.094|     0.990|   0.322|
+|BMI_cat.Ob.NonObObese:GenderM            |   -0.367|     0.085|    -4.321|   0.000|
+|StressHigh:GenderM                       |   -0.214|     0.098|    -2.177|   0.029|
+|BMI_cat.Ob.NonObObese:StressHigh:GenderM |    0.097|     0.126|     0.771|   0.441|
 
 ```r
 anova(gender.int.model.null,gender.int.model,test="Chisq") %>% 
@@ -1421,8 +1421,8 @@ Table: Chi squared test of model with and without a gender interaction term
 
 | Resid. Df| Resid. Dev| Df| Deviance| Pr(>Chi)|
 |---------:|----------:|--:|--------:|--------:|
-|     39684|      29156| NA|       NA|       NA|
-|     39681|      29121|  3|       35|  1.3e-07|
+|     39550|      29095| NA|       NA|       NA|
+|     39547|      29060|  3|       35| 1.09e-07|
 
 Then did this asking for gender moderation of the stress effect only in each obese category using a stratification approach
 
@@ -1489,12 +1489,12 @@ Table: Logistic regression of effects of gender on stress in people without obes
 
 |term           | df| deviance| df.residual| residual.deviance| p.value|
 |:--------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL           | NA|       NA|       22974|             13698|      NA|
-|age            |  1|   842.99|       22973|             12855|   0.000|
-|Race.Ethnicity |  4|    56.83|       22969|             12798|   0.000|
-|Stress         |  1|    13.69|       22968|             12785|   0.000|
-|Gender         |  1|    91.85|       22967|             12693|   0.000|
-|Stress:Gender  |  1|     4.27|       22966|             12689|   0.039|
+|NULL           | NA|       NA|       22840|             13641|      NA|
+|age            |  1|   846.19|       22839|             12795|    0.00|
+|Race.Ethnicity |  4|    57.80|       22835|             12737|    0.00|
+|Stress         |  1|    14.12|       22834|             12723|    0.00|
+|Gender         |  1|    91.12|       22833|             12631|    0.00|
+|Stress:Gender  |  1|     4.68|       22832|             12627|    0.03|
 
 ```r
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Gender, 
@@ -1510,15 +1510,15 @@ Table: Logistic regression of effects of gender on stress in people without obes
 
 |term                          | estimate| std.error| statistic| p.value|
 |:-----------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                   |   -5.215|     0.112|   -46.488|   0.000|
-|age                           |    0.042|     0.002|    26.381|   0.000|
-|Race.EthnicityAsian           |    0.711|     0.158|     4.490|   0.000|
-|Race.EthnicityBlack           |    0.755|     0.112|     6.717|   0.000|
-|Race.EthnicityHispanic/Latino |    0.291|     0.191|     1.524|   0.128|
-|Race.EthnicityOther           |    0.125|     0.136|     0.922|   0.357|
-|StressHigh                    |    0.315|     0.075|     4.177|   0.000|
-|GenderM                       |    0.553|     0.065|     8.451|   0.000|
-|StressHigh:GenderM            |   -0.203|     0.098|    -2.067|   0.039|
+|(Intercept)                   |   -5.236|     0.113|   -46.412|   0.000|
+|age                           |    0.043|     0.002|    26.433|   0.000|
+|Race.EthnicityAsian           |    0.736|     0.159|     4.644|   0.000|
+|Race.EthnicityBlack           |    0.756|     0.112|     6.720|   0.000|
+|Race.EthnicityHispanic/Latino |    0.294|     0.191|     1.537|   0.124|
+|Race.EthnicityOther           |    0.130|     0.136|     0.958|   0.338|
+|StressHigh                    |    0.325|     0.076|     4.289|   0.000|
+|GenderM                       |    0.557|     0.066|     8.481|   0.000|
+|StressHigh:GenderM            |   -0.213|     0.099|    -2.163|   0.031|
 
 Based on this added a Gender:BMI term to all models
 
@@ -1546,28 +1546,28 @@ Table: Logistic regression of obese vs non-obese on diabetes, with gender and ra
 
 |term                                                           | estimate| std.error| statistic| p.value|
 |:--------------------------------------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                                                    |   -4.949|     0.077|   -64.246|   0.000|
-|BMI_cat.Ob.NonObObese                                          |    1.003|     0.044|    22.791|   0.000|
-|StressHigh                                                     |    0.183|     0.051|     3.567|   0.000|
-|GenderM                                                        |    0.266|     0.031|     8.719|   0.000|
-|age                                                            |    0.041|     0.001|    37.297|   0.000|
-|Race.EthnicityAsian                                            |    0.749|     0.194|     3.855|   0.000|
-|Race.EthnicityBlack                                            |    0.739|     0.157|     4.720|   0.000|
-|Race.EthnicityHispanic/Latino                                  |   -0.106|     0.314|    -0.336|   0.737|
-|Race.EthnicityOther                                            |    0.180|     0.173|     1.043|   0.297|
-|BMI_cat.Ob.NonObObese:StressHigh                               |    0.153|     0.066|     2.317|   0.021|
-|BMI_cat.Ob.NonObObese:Race.EthnicityAsian                      |   -0.932|     0.576|    -1.619|   0.106|
-|BMI_cat.Ob.NonObObese:Race.EthnicityBlack                      |   -0.312|     0.196|    -1.588|   0.112|
-|BMI_cat.Ob.NonObObese:Race.EthnicityHispanic/Latino            |    0.475|     0.370|     1.282|   0.200|
-|BMI_cat.Ob.NonObObese:Race.EthnicityOther                      |   -0.134|     0.230|    -0.581|   0.561|
-|StressHigh:Race.EthnicityAsian                                 |   -0.208|     0.327|    -0.634|   0.526|
-|StressHigh:Race.EthnicityBlack                                 |    0.005|     0.223|     0.023|   0.982|
-|StressHigh:Race.EthnicityHispanic/Latino                       |    0.638|     0.397|     1.609|   0.108|
-|StressHigh:Race.EthnicityOther                                 |   -0.132|     0.277|    -0.475|   0.635|
-|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityAsian           |    0.982|     0.737|     1.332|   0.183|
-|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityBlack           |    0.322|     0.274|     1.177|   0.239|
-|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityHispanic/Latino |   -0.517|     0.481|    -1.076|   0.282|
-|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityOther           |    0.259|     0.354|     0.732|   0.464|
+|(Intercept)                                                    |   -4.957|     0.077|   -64.179|   0.000|
+|BMI_cat.Ob.NonObObese                                          |    1.003|     0.044|    22.765|   0.000|
+|StressHigh                                                     |    0.186|     0.051|     3.613|   0.000|
+|GenderM                                                        |    0.266|     0.031|     8.686|   0.000|
+|age                                                            |    0.041|     0.001|    37.337|   0.000|
+|Race.EthnicityAsian                                            |    0.764|     0.194|     3.927|   0.000|
+|Race.EthnicityBlack                                            |    0.740|     0.157|     4.723|   0.000|
+|Race.EthnicityHispanic/Latino                                  |   -0.102|     0.314|    -0.325|   0.745|
+|Race.EthnicityOther                                            |    0.185|     0.173|     1.072|   0.284|
+|BMI_cat.Ob.NonObObese:StressHigh                               |    0.151|     0.066|     2.276|   0.023|
+|BMI_cat.Ob.NonObObese:Race.EthnicityAsian                      |   -0.945|     0.576|    -1.641|   0.101|
+|BMI_cat.Ob.NonObObese:Race.EthnicityBlack                      |   -0.312|     0.196|    -1.586|   0.113|
+|BMI_cat.Ob.NonObObese:Race.EthnicityHispanic/Latino            |    0.472|     0.370|     1.274|   0.202|
+|BMI_cat.Ob.NonObObese:Race.EthnicityOther                      |   -0.139|     0.230|    -0.603|   0.547|
+|StressHigh:Race.EthnicityAsian                                 |   -0.189|     0.328|    -0.578|   0.563|
+|StressHigh:Race.EthnicityBlack                                 |    0.003|     0.223|     0.012|   0.990|
+|StressHigh:Race.EthnicityHispanic/Latino                       |    0.633|     0.397|     1.595|   0.111|
+|StressHigh:Race.EthnicityOther                                 |   -0.133|     0.277|    -0.480|   0.631|
+|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityAsian           |    0.965|     0.738|     1.308|   0.191|
+|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityBlack           |    0.325|     0.274|     1.186|   0.236|
+|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityHispanic/Latino |   -0.511|     0.481|    -1.064|   0.287|
+|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityOther           |    0.260|     0.354|     0.736|   0.462|
 
 ```r
 race.int.model %>% anova %>% tidy %>%
@@ -1580,16 +1580,16 @@ Table: Logistic regression of obese vs non-obese on diabetes, with gender and ra
 
 |term                                   | df| deviance| df.residual| residual.deviance|
 |:--------------------------------------|--:|--------:|-----------:|-----------------:|
-|NULL                                   | NA|       NA|       39693|             32268|
-|BMI_cat.Ob.NonOb                       |  1|  1239.73|       39692|             31029|
-|Stress                                 |  1|    45.19|       39691|             30983|
-|Gender                                 |  1|   193.76|       39690|             30790|
-|age                                    |  1|  1512.31|       39689|             29277|
-|Race.Ethnicity                         |  4|   112.98|       39685|             29164|
-|BMI_cat.Ob.NonOb:Stress                |  1|     8.63|       39684|             29156|
-|BMI_cat.Ob.NonOb:Race.Ethnicity        |  4|     2.87|       39680|             29153|
-|Stress:Race.Ethnicity                  |  4|     4.41|       39676|             29148|
-|BMI_cat.Ob.NonOb:Stress:Race.Ethnicity |  4|     4.96|       39672|             29143|
+|NULL                                   | NA|       NA|       39559|             32202|
+|BMI_cat.Ob.NonOb                       |  1|  1231.15|       39558|             30971|
+|Stress                                 |  1|    45.39|       39557|             30926|
+|Gender                                 |  1|   193.46|       39556|             30732|
+|age                                    |  1|  1515.24|       39555|             29217|
+|Race.Ethnicity                         |  4|   113.87|       39551|             29103|
+|BMI_cat.Ob.NonOb:Stress                |  1|     8.36|       39550|             29095|
+|BMI_cat.Ob.NonOb:Race.Ethnicity        |  4|     2.99|       39546|             29092|
+|Stress:Race.Ethnicity                  |  4|     4.37|       39542|             29087|
+|BMI_cat.Ob.NonOb:Stress:Race.Ethnicity |  4|     4.89|       39538|             29082|
 
 ```r
 anova(race.int.model.null,race.int.model) %>% 
@@ -1602,8 +1602,8 @@ Table: Chi squared test of model with and without a gender interaction term
 
 | Resid. Df| Resid. Dev| Df| Deviance|
 |---------:|----------:|--:|--------:|
-|     39684|      29156| NA|       NA|
-|     39672|      29143| 12|     12.2|
+|     39550|      29095| NA|       NA|
+|     39538|      29082| 12|     12.2|
 
 Then did this asking about racial moderation of the stress effect only in each obese category using a stratification approach
 
@@ -1670,12 +1670,12 @@ Table: Logistic regression of effects of race on stress in people without obesit
 
 |term                  | df| deviance| df.residual| residual.deviance| p.value|
 |:---------------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL                  | NA|       NA|       22974|             13698|      NA|
-|age                   |  1|   842.99|       22973|             12855|   0.000|
-|Race.Ethnicity        |  4|    56.83|       22969|             12798|   0.000|
-|Stress                |  1|    13.69|       22968|             12785|   0.000|
-|Gender                |  1|    91.85|       22967|             12693|   0.000|
-|Race.Ethnicity:Stress |  4|     3.15|       22963|             12690|   0.532|
+|NULL                  | NA|       NA|       22840|             13641|      NA|
+|age                   |  1|   846.19|       22839|             12795|   0.000|
+|Race.Ethnicity        |  4|    57.80|       22835|             12737|   0.000|
+|Stress                |  1|    14.12|       22834|             12723|   0.000|
+|Gender                |  1|    91.12|       22833|             12631|   0.000|
+|Race.Ethnicity:Stress |  4|     3.03|       22829|             12628|   0.553|
 
 ```r
 glm(DiabetesAny~age+Race.Ethnicity+Stress+Gender+Stress:Race.Ethnicity, 
@@ -1691,18 +1691,18 @@ Table: Logistic regression of effects of race on stress in people without obesit
 
 |term                                     | estimate| std.error| statistic| p.value|
 |:----------------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                              |   -5.155|     0.109|   -47.356|   0.000|
-|age                                      |    0.042|     0.002|    26.339|   0.000|
-|Race.EthnicityAsian                      |    0.787|     0.196|     4.019|   0.000|
-|Race.EthnicityBlack                      |    0.750|     0.158|     4.764|   0.000|
-|Race.EthnicityHispanic/Latino            |   -0.061|     0.316|    -0.194|   0.846|
-|Race.EthnicityOther                      |    0.178|     0.174|     1.025|   0.305|
-|StressHigh                               |    0.194|     0.052|     3.768|   0.000|
-|GenderM                                  |    0.464|     0.049|     9.478|   0.000|
-|Race.EthnicityAsian:StressHigh           |   -0.218|     0.329|    -0.663|   0.507|
-|Race.EthnicityBlack:StressHigh           |    0.011|     0.224|     0.049|   0.961|
-|Race.EthnicityHispanic/Latino:StressHigh |    0.605|     0.398|     1.518|   0.129|
-|Race.EthnicityOther:StressHigh           |   -0.138|     0.278|    -0.495|   0.621|
+|(Intercept)                              |   -5.173|     0.109|   -47.264|   0.000|
+|age                                      |    0.043|     0.002|    26.391|   0.000|
+|Race.EthnicityAsian                      |    0.805|     0.196|     4.106|   0.000|
+|Race.EthnicityBlack                      |    0.752|     0.158|     4.774|   0.000|
+|Race.EthnicityHispanic/Latino            |   -0.056|     0.316|    -0.176|   0.860|
+|Race.EthnicityOther                      |    0.183|     0.174|     1.055|   0.291|
+|StressHigh                               |    0.198|     0.052|     3.821|   0.000|
+|GenderM                                  |    0.463|     0.049|     9.439|   0.000|
+|Race.EthnicityAsian:StressHigh           |   -0.200|     0.329|    -0.607|   0.544|
+|Race.EthnicityBlack:StressHigh           |    0.009|     0.224|     0.039|   0.969|
+|Race.EthnicityHispanic/Latino:StressHigh |    0.599|     0.399|     1.502|   0.133|
+|Race.EthnicityOther:StressHigh           |   -0.139|     0.279|    -0.499|   0.618|
 
 Finally did this using only Black and White as comparator groups to simplify.
 
@@ -1726,17 +1726,17 @@ Table: Logistic regression of obese vs non-obese on diabetes, with gender and ra
 
 |term                                                 | estimate| std.error| statistic| p.value|
 |:----------------------------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                                          |   -5.074|     0.084|    -60.61|   0.000|
-|BMI_cat.Ob.NonObObese                                |    1.207|     0.059|     20.59|   0.000|
-|StressHigh                                           |    0.193|     0.052|      3.75|   0.000|
-|GenderM                                              |    0.487|     0.051|      9.62|   0.000|
-|age                                                  |    0.041|     0.001|     35.85|   0.000|
-|Race.EthnicityBlack                                  |    0.742|     0.157|      4.72|   0.000|
-|BMI_cat.Ob.NonObObese:StressHigh                     |    0.133|     0.066|      2.01|   0.044|
-|BMI_cat.Ob.NonObObese:GenderM                        |   -0.347|     0.065|     -5.37|   0.000|
-|BMI_cat.Ob.NonObObese:Race.EthnicityBlack            |   -0.335|     0.197|     -1.70|   0.089|
-|StressHigh:Race.EthnicityBlack                       |    0.009|     0.224|      0.04|   0.968|
-|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityBlack |    0.325|     0.274|      1.19|   0.236|
+|(Intercept)                                          |   -5.082|     0.084|   -60.536|   0.000|
+|BMI_cat.Ob.NonObObese                                |    1.207|     0.059|    20.554|   0.000|
+|StressHigh                                           |    0.196|     0.052|     3.795|   0.000|
+|GenderM                                              |    0.487|     0.051|     9.588|   0.000|
+|age                                                  |    0.041|     0.001|    35.877|   0.000|
+|Race.EthnicityBlack                                  |    0.743|     0.157|     4.725|   0.000|
+|BMI_cat.Ob.NonObObese:StressHigh                     |    0.130|     0.066|     1.967|   0.049|
+|BMI_cat.Ob.NonObObese:GenderM                        |   -0.348|     0.065|    -5.367|   0.000|
+|BMI_cat.Ob.NonObObese:Race.EthnicityBlack            |   -0.335|     0.197|    -1.702|   0.089|
+|StressHigh:Race.EthnicityBlack                       |    0.006|     0.224|     0.029|   0.977|
+|BMI_cat.Ob.NonObObese:StressHigh:Race.EthnicityBlack |    0.328|     0.274|     1.196|   0.232|
 
 ```r
 anova(race.int.model.null,race.int.model) %>% 
@@ -1749,8 +1749,8 @@ Table: Chi squared test of model with and without a race interaction term, using
 
 | Resid. Df| Resid. Dev| Df| Deviance|
 |---------:|----------:|--:|--------:|
-|     37052|      27267| NA|       NA|
-|     37049|      27262|  3|      5.8|
+|     36929|      27209| NA|       NA|
+|     36926|      27203|  3|     5.78|
 
 # Subgroup Analyses
 
@@ -1813,14 +1813,14 @@ Table: Stratified BMI:Stress interaction terms by race/ethnicity and gender
 
 | estimate| std.error| statistic| p.value|Group           |
 |--------:|---------:|---------:|-------:|:---------------|
-|    0.163|     0.062|     2.635|   0.008|All             |
-|    0.130|     0.066|     1.959|   0.050|White           |
+|    0.161|     0.062|     2.587|   0.010|All             |
+|    0.127|     0.066|     1.916|   0.055|White           |
 |    0.509|     0.268|     1.898|   0.058|Black           |
-|   -0.325|     0.486|    -0.669|   0.504|Hispanic/Latino |
-|    1.183|     0.758|     1.560|   0.119|Asian           |
-|    0.411|     0.345|     1.193|   0.233|Other           |
-|    0.188|     0.084|     2.239|   0.025|Male            |
-|    0.101|     0.093|     1.086|   0.278|Female          |
+|   -0.324|     0.486|    -0.665|   0.506|Hispanic/Latino |
+|    1.164|     0.760|     1.532|   0.126|Asian           |
+|    0.411|     0.345|     1.191|   0.234|Other           |
+|    0.188|     0.084|     2.249|   0.025|Male            |
+|    0.093|     0.094|     0.991|   0.322|Female          |
 
 ```r
 ggplot(subgroup.analyses, aes(y=estimate,
@@ -1864,18 +1864,18 @@ Table: Logistic regression of obese vs non-obese on diabetes, with continuous st
 
 |term                            | estimate| std.error| statistic|  p.value|
 |:-------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                     |    -5.47|     0.097|    -56.44| 0.00e+00|
-|BMI_cat.Ob.NonObObese           |     1.14|     0.070|     16.29| 1.21e-59|
-|Stress_d1                       |     0.04|     0.008|      4.81| 1.49e-06|
-|GenderM                         |     0.47|     0.051|      9.31| 1.30e-20|
-|age                             |     0.04|     0.001|     36.66| 0.00e+00|
-|Race.EthnicityAsian             |     0.64|     0.146|      4.38| 1.18e-05|
-|Race.EthnicityBlack             |     0.53|     0.070|      7.62| 2.48e-14|
-|Race.EthnicityHispanic/Latino   |     0.37|     0.114|      3.22| 1.29e-03|
-|Race.EthnicityOther             |     0.09|     0.089|      1.00| 3.18e-01|
-|disadvantage13_17_qrtl          |     0.12|     0.016|      7.89| 2.97e-15|
-|BMI_cat.Ob.NonObObese:Stress_d1 |     0.02|     0.010|      1.68| 9.37e-02|
-|BMI_cat.Ob.NonObObese:GenderM   |    -0.32|     0.065|     -4.86| 1.19e-06|
+|(Intercept)                     |    -5.48|     0.097|    -56.38| 0.00e+00|
+|BMI_cat.Ob.NonObObese           |     1.14|     0.070|     16.27| 1.73e-59|
+|Stress_d1                       |     0.04|     0.008|      4.84| 1.30e-06|
+|GenderM                         |     0.47|     0.051|      9.29| 1.55e-20|
+|age                             |     0.04|     0.001|     36.70| 0.00e+00|
+|Race.EthnicityAsian             |     0.66|     0.146|      4.50| 6.70e-06|
+|Race.EthnicityBlack             |     0.53|     0.070|      7.65| 2.08e-14|
+|Race.EthnicityHispanic/Latino   |     0.37|     0.114|      3.23| 1.23e-03|
+|Race.EthnicityOther             |     0.09|     0.089|      1.02| 3.06e-01|
+|disadvantage13_17_qrtl          |     0.12|     0.016|      7.83| 4.88e-15|
+|BMI_cat.Ob.NonObObese:Stress_d1 |     0.02|     0.010|      1.66| 9.77e-02|
+|BMI_cat.Ob.NonObObese:GenderM   |    -0.32|     0.065|     -4.86| 1.16e-06|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -1888,15 +1888,15 @@ Table: Logistic regression of obese vs non-obese on diabetes, with continuous st
 
 |term                       | df| deviance| df.residual| residual.deviance|  p.value|
 |:--------------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                       | NA|       NA|       36519|             29829|       NA|
-|BMI_cat.Ob.NonOb           |  1|     1135|       36518|             28694| 0.00e+00|
-|Stress_d1                  |  1|       35|       36517|             28658| 2.67e-09|
-|Gender                     |  1|      182|       36516|             28476| 1.58e-41|
-|age                        |  1|     1423|       36515|             27052| 0.00e+00|
-|Race.Ethnicity             |  4|      116|       36511|             26936| 3.31e-24|
-|disadvantage13_17_qrtl     |  1|       64|       36510|             26873| 1.55e-15|
-|BMI_cat.Ob.NonOb:Stress_d1 |  1|        4|       36509|             26868| 4.11e-02|
-|BMI_cat.Ob.NonOb:Gender    |  1|       24|       36508|             26845| 1.11e-06|
+|NULL                       | NA|       NA|       36392|             29765|       NA|
+|BMI_cat.Ob.NonOb           |  1|     1127|       36391|             28637| 0.00e+00|
+|Stress_d1                  |  1|       35|       36390|             28602| 2.64e-09|
+|Gender                     |  1|      182|       36389|             28420| 1.63e-41|
+|age                        |  1|     1426|       36388|             26993| 0.00e+00|
+|Race.Ethnicity             |  4|      117|       36384|             26876| 2.00e-24|
+|disadvantage13_17_qrtl     |  1|       63|       36383|             26814| 2.56e-15|
+|BMI_cat.Ob.NonOb:Stress_d1 |  1|        4|       36382|             26809| 4.28e-02|
+|BMI_cat.Ob.NonOb:Gender    |  1|       24|       36381|             26786| 1.08e-06|
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Discrete Covariate
 
@@ -1919,48 +1919,48 @@ Table: Logistic regression of obese vs non-obese on diabetes, with discrete stre
 
 |term                                         | estimate| std.error| statistic|  p.value|
 |:--------------------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                                  |    -5.47|     0.113|    -48.30| 0.00e+00|
-|BMI_cat.Ob.NonObObese                        |     1.21|     0.104|     11.69| 1.49e-31|
-|as.factor(Stress_d1)1                        |     0.00|     0.107|      0.03| 9.80e-01|
-|as.factor(Stress_d1)2                        |     0.08|     0.108|      0.74| 4.59e-01|
-|as.factor(Stress_d1)3                        |     0.11|     0.117|      0.93| 3.52e-01|
-|as.factor(Stress_d1)4                        |     0.12|     0.107|      1.14| 2.56e-01|
-|as.factor(Stress_d1)5                        |     0.25|     0.108|      2.34| 1.92e-02|
-|as.factor(Stress_d1)6                        |     0.19|     0.111|      1.70| 8.82e-02|
-|as.factor(Stress_d1)7                        |     0.25|     0.112|      2.24| 2.53e-02|
-|as.factor(Stress_d1)8                        |     0.19|     0.098|      1.93| 5.38e-02|
-|as.factor(Stress_d1)9                        |     0.15|     0.140|      1.10| 2.72e-01|
-|as.factor(Stress_d1)10                       |     0.41|     0.156|      2.61| 9.07e-03|
-|as.factor(Stress_d1)11                       |     0.51|     0.197|      2.60| 9.28e-03|
-|as.factor(Stress_d1)12                       |     0.55|     0.253|      2.17| 3.02e-02|
-|as.factor(Stress_d1)13                       |     0.50|     0.331|      1.50| 1.33e-01|
-|as.factor(Stress_d1)14                       |     1.64|     0.313|      5.23| 1.69e-07|
-|as.factor(Stress_d1)15                       |     0.22|     0.745|      0.29| 7.69e-01|
-|as.factor(Stress_d1)16                       |    -0.11|     1.046|     -0.11| 9.16e-01|
-|GenderM                                      |     0.48|     0.051|      9.37| 7.23e-21|
-|age                                          |     0.04|     0.001|     36.66| 0.00e+00|
-|Race.EthnicityAsian                          |     0.64|     0.146|      4.39| 1.12e-05|
-|Race.EthnicityBlack                          |     0.54|     0.070|      7.67| 1.68e-14|
-|Race.EthnicityHispanic/Latino                |     0.37|     0.114|      3.27| 1.08e-03|
-|Race.EthnicityOther                          |     0.09|     0.089|      1.04| 2.98e-01|
-|disadvantage13_17_qrtl                       |     0.12|     0.016|      7.82| 5.40e-15|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)1  |    -0.05|     0.142|     -0.36| 7.19e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)2  |    -0.07|     0.144|     -0.49| 6.24e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)3  |    -0.03|     0.152|     -0.17| 8.65e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)4  |    -0.16|     0.142|     -1.13| 2.57e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)5  |    -0.09|     0.142|     -0.63| 5.29e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)6  |     0.06|     0.144|      0.39| 6.95e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)7  |     0.12|     0.146|      0.83| 4.06e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)8  |     0.08|     0.128|      0.61| 5.40e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)9  |     0.38|     0.172|      2.20| 2.80e-02|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)10 |     0.14|     0.198|      0.71| 4.80e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)11 |    -0.10|     0.246|     -0.41| 6.83e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)12 |     0.01|     0.310|      0.02| 9.87e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)13 |     0.34|     0.406|      0.84| 3.99e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)14 |    -1.29|     0.472|     -2.73| 6.31e-03|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)15 |     0.21|     0.839|      0.25| 7.99e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)16 |     0.35|     1.192|      0.29| 7.69e-01|
-|BMI_cat.Ob.NonObObese:GenderM                |    -0.32|     0.065|     -4.89| 1.00e-06|
+|(Intercept)                                  |    -5.48|     0.114|    -48.26| 0.00e+00|
+|BMI_cat.Ob.NonObObese                        |     1.22|     0.104|     11.70| 1.30e-31|
+|as.factor(Stress_d1)1                        |     0.00|     0.107|      0.02| 9.86e-01|
+|as.factor(Stress_d1)2                        |     0.09|     0.108|      0.79| 4.29e-01|
+|as.factor(Stress_d1)3                        |     0.12|     0.117|      1.02| 3.10e-01|
+|as.factor(Stress_d1)4                        |     0.12|     0.108|      1.07| 2.83e-01|
+|as.factor(Stress_d1)5                        |     0.26|     0.108|      2.44| 1.46e-02|
+|as.factor(Stress_d1)6                        |     0.20|     0.111|      1.83| 6.68e-02|
+|as.factor(Stress_d1)7                        |     0.25|     0.113|      2.25| 2.45e-02|
+|as.factor(Stress_d1)8                        |     0.19|     0.099|      1.96| 4.95e-02|
+|as.factor(Stress_d1)9                        |     0.16|     0.140|      1.16| 2.46e-01|
+|as.factor(Stress_d1)10                       |     0.42|     0.156|      2.66| 7.70e-03|
+|as.factor(Stress_d1)11                       |     0.52|     0.197|      2.67| 7.64e-03|
+|as.factor(Stress_d1)12                       |     0.55|     0.253|      2.18| 2.91e-02|
+|as.factor(Stress_d1)13                       |     0.51|     0.332|      1.55| 1.21e-01|
+|as.factor(Stress_d1)14                       |     1.57|     0.321|      4.88| 1.06e-06|
+|as.factor(Stress_d1)15                       |     0.22|     0.745|      0.30| 7.64e-01|
+|as.factor(Stress_d1)16                       |    -0.11|     1.046|     -0.10| 9.20e-01|
+|GenderM                                      |     0.48|     0.051|      9.35| 8.95e-21|
+|age                                          |     0.04|     0.001|     36.69| 0.00e+00|
+|Race.EthnicityAsian                          |     0.66|     0.146|      4.51| 6.44e-06|
+|Race.EthnicityBlack                          |     0.54|     0.070|      7.70| 1.40e-14|
+|Race.EthnicityHispanic/Latino                |     0.37|     0.114|      3.28| 1.04e-03|
+|Race.EthnicityOther                          |     0.09|     0.089|      1.06| 2.88e-01|
+|disadvantage13_17_qrtl                       |     0.12|     0.016|      7.76| 8.61e-15|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)1  |    -0.05|     0.142|     -0.35| 7.25e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)2  |    -0.08|     0.144|     -0.53| 5.99e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)3  |    -0.04|     0.152|     -0.23| 8.16e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)4  |    -0.15|     0.143|     -1.09| 2.78e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)5  |    -0.10|     0.142|     -0.70| 4.81e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)6  |     0.04|     0.144|      0.29| 7.68e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)7  |     0.12|     0.146|      0.82| 4.13e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)8  |     0.08|     0.128|      0.58| 5.59e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)9  |     0.37|     0.173|      2.15| 3.14e-02|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)10 |     0.13|     0.198|      0.67| 5.05e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)11 |    -0.11|     0.246|     -0.46| 6.47e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)12 |     0.00|     0.311|      0.01| 9.93e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)13 |     0.33|     0.407|      0.81| 4.20e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)14 |    -1.22|     0.478|     -2.55| 1.07e-02|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)15 |     0.21|     0.839|      0.25| 8.01e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress_d1)16 |     0.35|     1.192|      0.29| 7.71e-01|
+|BMI_cat.Ob.NonObObese:GenderM                |    -0.32|     0.065|     -4.89| 9.94e-07|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -1973,15 +1973,15 @@ Table: Logistic regression of obese vs non-obese on diabetes, with discrete stre
 
 |term                                  | df| deviance| df.residual| residual.deviance|  p.value|
 |:-------------------------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                                  | NA|       NA|       36519|             29829|       NA|
-|BMI_cat.Ob.NonOb                      |  1|     1135|       36518|             28694| 0.00e+00|
-|as.factor(Stress_d1)                  | 16|       55|       36502|             28639| 3.55e-06|
-|Gender                                |  1|      182|       36501|             28457| 2.17e-41|
-|age                                   |  1|     1421|       36500|             27035| 0.00e+00|
-|Race.Ethnicity                        |  4|      117|       36496|             26918| 2.06e-24|
-|disadvantage13_17_qrtl                |  1|       63|       36495|             26855| 2.32e-15|
-|BMI_cat.Ob.NonOb:as.factor(Stress_d1) | 16|       24|       36479|             26831| 9.02e-02|
-|BMI_cat.Ob.NonOb:Gender               |  1|       24|       36478|             26807| 9.33e-07|
+|NULL                                  | NA|       NA|       36392|             29765|       NA|
+|BMI_cat.Ob.NonOb                      |  1|     1127|       36391|             28637| 0.00e+00|
+|as.factor(Stress_d1)                  | 16|       55|       36375|             28582| 3.78e-06|
+|Gender                                |  1|      182|       36374|             28401| 2.25e-41|
+|age                                   |  1|     1424|       36373|             26977| 0.00e+00|
+|Race.Ethnicity                        |  4|      118|       36369|             26858| 1.21e-24|
+|disadvantage13_17_qrtl                |  1|       62|       36368|             26797| 3.76e-15|
+|BMI_cat.Ob.NonOb:as.factor(Stress_d1) | 16|       22|       36352|             26774| 1.30e-01|
+|BMI_cat.Ob.NonOb:Gender               |  1|       24|       36351|             26750| 9.23e-07|
 
 
 ## Logistic Regressions for Obese/Non-Obese - Stress as Quartile
@@ -2005,22 +2005,22 @@ Table: Logistic regression of obese vs non-obese on diabetes, with discrete stre
 
 |term                                               | estimate| std.error| statistic|  p.value|
 |:--------------------------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                                        |    -5.41|     0.093|    -58.19| 0.00e+00|
-|BMI_cat.Ob.NonObObese                              |     1.15|     0.061|     18.85| 3.21e-79|
-|as.factor(Stress.quartile)Q2                       |     0.16|     0.053|      3.02| 2.52e-03|
-|as.factor(Stress.quartile)Q3                       |     0.27|     0.085|      3.16| 1.58e-03|
-|as.factor(Stress.quartile)Q4                       |     0.80|     0.207|      3.86| 1.12e-04|
-|GenderM                                            |     0.47|     0.051|      9.29| 1.50e-20|
-|age                                                |     0.04|     0.001|     36.62| 0.00e+00|
-|Race.EthnicityAsian                                |     0.65|     0.146|      4.44| 9.17e-06|
-|Race.EthnicityBlack                                |     0.54|     0.070|      7.68| 1.57e-14|
-|Race.EthnicityHispanic/Latino                      |     0.37|     0.114|      3.25| 1.15e-03|
-|Race.EthnicityOther                                |     0.09|     0.089|      1.03| 3.05e-01|
-|disadvantage13_17_qrtl                             |     0.12|     0.016|      7.88| 3.32e-15|
-|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q2 |     0.10|     0.069|      1.49| 1.37e-01|
-|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q3 |     0.25|     0.105|      2.37| 1.77e-02|
-|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q4 |    -0.21|     0.265|     -0.78| 4.35e-01|
-|BMI_cat.Ob.NonObObese:GenderM                      |    -0.31|     0.065|     -4.84| 1.29e-06|
+|(Intercept)                                        |    -5.42|     0.093|    -58.13| 0.00e+00|
+|BMI_cat.Ob.NonObObese                              |     1.16|     0.061|     18.84| 3.35e-79|
+|as.factor(Stress.quartile)Q2                       |     0.17|     0.053|      3.14| 1.71e-03|
+|as.factor(Stress.quartile)Q3                       |     0.28|     0.085|      3.25| 1.15e-03|
+|as.factor(Stress.quartile)Q4                       |     0.77|     0.211|      3.68| 2.38e-04|
+|GenderM                                            |     0.47|     0.051|      9.27| 1.83e-20|
+|age                                                |     0.04|     0.001|     36.65| 0.00e+00|
+|Race.EthnicityAsian                                |     0.67|     0.146|      4.55| 5.25e-06|
+|Race.EthnicityBlack                                |     0.54|     0.070|      7.70| 1.32e-14|
+|Race.EthnicityHispanic/Latino                      |     0.37|     0.114|      3.26| 1.10e-03|
+|Race.EthnicityOther                                |     0.09|     0.089|      1.05| 2.94e-01|
+|disadvantage13_17_qrtl                             |     0.12|     0.016|      7.82| 5.48e-15|
+|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q2 |     0.10|     0.069|      1.39| 1.63e-01|
+|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q3 |     0.24|     0.105|      2.30| 2.13e-02|
+|BMI_cat.Ob.NonObObese:as.factor(Stress.quartile)Q4 |    -0.18|     0.267|     -0.67| 5.05e-01|
+|BMI_cat.Ob.NonObObese:GenderM                      |    -0.32|     0.065|     -4.84| 1.27e-06|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -2033,15 +2033,15 @@ Table: Logistic regression of obese vs non-obese on diabetes, with discrete stre
 
 |term                                        | df| deviance| df.residual| residual.deviance|  p.value|
 |:-------------------------------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                                        | NA|       NA|       36519|             29829|       NA|
-|BMI_cat.Ob.NonOb                            |  1|     1135|       36518|             28694| 0.00e+00|
-|as.factor(Stress.quartile)                  |  3|       44|       36515|             28649| 1.31e-09|
-|Gender                                      |  1|      182|       36514|             28467| 1.45e-41|
-|age                                         |  1|     1419|       36513|             27047| 0.00e+00|
-|Race.Ethnicity                              |  4|      118|       36509|             26930| 1.48e-24|
-|disadvantage13_17_qrtl                      |  1|       63|       36508|             26866| 1.62e-15|
-|BMI_cat.Ob.NonOb:as.factor(Stress.quartile) |  3|        9|       36505|             26857| 2.92e-02|
-|BMI_cat.Ob.NonOb:Gender                     |  1|       24|       36504|             26833| 1.21e-06|
+|NULL                                        | NA|       NA|       36392|             29765|       NA|
+|BMI_cat.Ob.NonOb                            |  1|     1127|       36391|             28637| 0.00e+00|
+|as.factor(Stress.quartile)                  |  3|       45|       36388|             28593| 1.07e-09|
+|Gender                                      |  1|      182|       36387|             28410| 1.49e-41|
+|age                                         |  1|     1422|       36386|             26988| 0.00e+00|
+|Race.Ethnicity                              |  4|      119|       36382|             26869| 9.06e-25|
+|disadvantage13_17_qrtl                      |  1|       62|       36381|             26807| 2.69e-15|
+|BMI_cat.Ob.NonOb:as.factor(Stress.quartile) |  3|        8|       36378|             26798| 4.01e-02|
+|BMI_cat.Ob.NonOb:Gender                     |  1|       24|       36377|             26775| 1.18e-06|
 
 ## Logistic Regressions for BMI as a Continuous Variable
 
@@ -2064,18 +2064,18 @@ Table: Logistic regression of BMI as a continuous variable on diabetes.
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |    -7.29|     0.145|    -50.20| 0.00e+00|
+|(Intercept)                   |    -7.31|     0.146|    -50.13| 0.00e+00|
 |BMI                           |     0.08|     0.003|     22.44| 0.00e+00|
-|StressHigh                    |     0.08|     0.139|      0.59| 5.57e-01|
-|GenderM                       |     0.42|     0.142|      2.96| 3.05e-03|
-|age                           |     0.04|     0.001|     37.50| 0.00e+00|
-|Race.EthnicityAsian           |     0.71|     0.146|      4.88| 1.08e-06|
-|Race.EthnicityBlack           |     0.52|     0.070|      7.39| 1.49e-13|
-|Race.EthnicityHispanic/Latino |     0.41|     0.114|      3.61| 3.03e-04|
-|Race.EthnicityOther           |     0.08|     0.090|      0.89| 3.71e-01|
-|disadvantage13_17_qrtl        |     0.11|     0.016|      7.19| 6.36e-13|
-|BMI:StressHigh                |     0.01|     0.004|      1.38| 1.66e-01|
-|BMI:GenderM                   |     0.00|     0.004|     -0.66| 5.11e-01|
+|StressHigh                    |     0.09|     0.139|      0.64| 5.21e-01|
+|GenderM                       |     0.43|     0.142|      3.00| 2.72e-03|
+|age                           |     0.04|     0.001|     37.55| 0.00e+00|
+|Race.EthnicityAsian           |     0.73|     0.146|      4.97| 6.56e-07|
+|Race.EthnicityBlack           |     0.52|     0.070|      7.42| 1.19e-13|
+|Race.EthnicityHispanic/Latino |     0.42|     0.114|      3.63| 2.83e-04|
+|Race.EthnicityOther           |     0.08|     0.090|      0.92| 3.58e-01|
+|disadvantage13_17_qrtl        |     0.11|     0.016|      7.13| 1.01e-12|
+|BMI:StressHigh                |     0.01|     0.004|      1.33| 1.83e-01|
+|BMI:GenderM                   |     0.00|     0.004|     -0.70| 4.85e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -2088,15 +2088,15 @@ Table: Logistic regression of BMI as a continuous variable on diabetes.
 
 |term                   | df| deviance| df.residual| residual.deviance|  p.value|
 |:----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                   | NA|       NA|       36519|             29829|       NA|
-|BMI                    |  1|     1260|       36518|             28568| 0.00e+00|
-|Stress                 |  1|       37|       36517|             28531| 1.05e-09|
-|Gender                 |  1|      228|       36516|             28303| 1.76e-51|
-|age                    |  1|     1516|       36515|             26788| 0.00e+00|
-|Race.Ethnicity         |  4|      113|       36511|             26675| 2.09e-23|
-|disadvantage13_17_qrtl |  1|       52|       36510|             26624| 7.06e-13|
-|BMI:Stress             |  1|        2|       36509|             26622| 1.56e-01|
-|BMI:Gender             |  1|        0|       36508|             26621| 5.11e-01|
+|NULL                   | NA|       NA|       36392|             29765|       NA|
+|BMI                    |  1|     1250|       36391|             28514| 0.00e+00|
+|Stress                 |  1|       37|       36390|             28477| 9.90e-10|
+|Gender                 |  1|      228|       36389|             28249| 1.43e-51|
+|age                    |  1|     1520|       36388|             26729| 0.00e+00|
+|Race.Ethnicity         |  4|      114|       36384|             26615| 1.19e-23|
+|disadvantage13_17_qrtl |  1|       51|       36383|             26565| 1.11e-12|
+|BMI:Stress             |  1|        2|       36382|             26563| 1.71e-01|
+|BMI:Gender             |  1|        0|       36381|             26562| 4.85e-01|
 
 
 # Summary of Covariates
@@ -2117,11 +2117,11 @@ Table: Number of participants by group
 
 |Stress |BMI_cat.Ob.NonOb |     n|
 |:------|:----------------|-----:|
-|Low    |Non-Obese        | 13670|
+|Low    |Non-Obese        | 13596|
 |Low    |Obese            |  9223|
-|High   |Non-Obese        |  9305|
+|High   |Non-Obese        |  9245|
 |High   |Obese            |  7496|
-|NA     |Non-Obese        | 13055|
+|NA     |Non-Obese        | 12972|
 |NA     |Obese            |  9261|
 
 ```r
@@ -2139,12 +2139,12 @@ Table: Number of participants by group and gender
 
 |Stress |BMI_cat.Ob.NonOb |Gender |    n|
 |:------|:----------------|:------|----:|
-|Low    |Non-Obese        |F      | 6913|
-|Low    |Non-Obese        |M      | 6757|
+|Low    |Non-Obese        |F      | 6858|
+|Low    |Non-Obese        |M      | 6738|
 |Low    |Obese            |F      | 4676|
 |Low    |Obese            |M      | 4547|
-|High   |Non-Obese        |F      | 5005|
-|High   |Non-Obese        |M      | 4300|
+|High   |Non-Obese        |F      | 4966|
+|High   |Non-Obese        |M      | 4279|
 |High   |Obese            |F      | 4272|
 |High   |Obese            |M      | 3224|
 
@@ -2163,21 +2163,21 @@ Table: Number of participants by group and race/ethnicity
 
 |Stress |BMI_cat.Ob.NonOb |Race.Ethnicity  |     n|
 |:------|:----------------|:---------------|-----:|
-|Low    |Non-Obese        |White           | 12279|
-|Low    |Non-Obese        |Asian           |   316|
+|Low    |Non-Obese        |White           | 12211|
+|Low    |Non-Obese        |Asian           |   314|
 |Low    |Non-Obese        |Black           |   394|
-|Low    |Non-Obese        |Hispanic/Latino |   250|
-|Low    |Non-Obese        |Other           |   431|
+|Low    |Non-Obese        |Hispanic/Latino |   249|
+|Low    |Non-Obese        |Other           |   428|
 |Low    |Obese            |White           |  8221|
 |Low    |Obese            |Asian           |    36|
 |Low    |Obese            |Black           |   484|
 |Low    |Obese            |Hispanic/Latino |   180|
 |Low    |Obese            |Other           |   302|
-|High   |Non-Obese        |White           |  8236|
-|High   |Non-Obese        |Asian           |   187|
+|High   |Non-Obese        |White           |  8181|
+|High   |Non-Obese        |Asian           |   184|
 |High   |Non-Obese        |Black           |   386|
 |High   |Non-Obese        |Hispanic/Latino |   185|
-|High   |Non-Obese        |Other           |   311|
+|High   |Non-Obese        |Other           |   309|
 |High   |Obese            |White           |  6585|
 |High   |Obese            |Asian           |    41|
 |High   |Obese            |Black           |   475|
@@ -2201,9 +2201,9 @@ Table: Average BMI, stress and age of participants by group
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| Stress_d1_mean| BMI_sd| age_sd| Stress_d1_sd| BMI_n| age_n| Stress_d1_n|
 |:------|:----------------|--------:|--------:|--------------:|------:|------:|------------:|-----:|-----:|-----------:|
-|Low    |Non-Obese        |     25.3|     53.0|           2.34|   2.98|   17.7|         1.75| 13670| 13670|       13670|
+|Low    |Non-Obese        |     25.3|     53.1|           2.33|   2.94|   17.7|         1.75| 13596| 13596|       13596|
 |Low    |Obese            |     36.0|     54.7|           2.43|   5.72|   14.6|         1.75|  9223|  9223|        9223|
-|High   |Non-Obese        |     25.2|     51.0|           8.04|   3.13|   17.8|         1.78|  9305|  9305|        9305|
+|High   |Non-Obese        |     25.2|     51.0|           8.04|   3.09|   17.8|         1.78|  9245|  9245|        9245|
 |High   |Obese            |     36.6|     52.6|           8.16|   6.00|   14.6|         1.85|  7496|  7496|        7496|
 
 ```r
@@ -2223,9 +2223,9 @@ Table: Average BMI,stress and age of participants by group,complete cases
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| Stress_d1_mean| BMI_sd| age_sd| Stress_d1_sd| BMI_n| age_n| Stress_d1_n|
 |:------|:----------------|--------:|--------:|--------------:|------:|------:|------------:|-----:|-----:|-----------:|
-|Low    |Non-Obese        |     25.3|     53.0|           2.34|   2.98|   17.7|         1.75| 13670| 13670|       13670|
+|Low    |Non-Obese        |     25.3|     53.1|           2.33|   2.94|   17.7|         1.75| 13596| 13596|       13596|
 |Low    |Obese            |     36.0|     54.7|           2.43|   5.72|   14.6|         1.75|  9223|  9223|        9223|
-|High   |Non-Obese        |     25.2|     51.0|           8.04|   3.13|   17.8|         1.78|  9305|  9305|        9305|
+|High   |Non-Obese        |     25.2|     51.0|           8.04|   3.09|   17.8|         1.78|  9245|  9245|        9245|
 |High   |Obese            |     36.6|     52.6|           8.16|   6.00|   14.6|         1.85|  7496|  7496|        7496|
 
 

@@ -55,20 +55,20 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ```
 
 ```
-## Rows: 62010 Columns: 39
+## Rows: 61793 Columns: 40
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (21): DeID_PatientID, Gender, Stress_d1, DeID_EncounterID, affluence13_1...
+## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
 ## dbl (18): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Sat Sep 30 11:23:01 2023. This dataset has 36813 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:14:01 2024. This dataset has 36690 values.
 
 
 ```r
@@ -750,13 +750,13 @@ Table: Arrhythmias Rates by Obese or not and Stress
 
 |BMI_cat.Ob.NonOb |Stress |Gender | NonDisease| CardiacArrhythmias| Total| Percent|
 |:----------------|:------|:------|----------:|------------------:|-----:|-------:|
-|Non-Obese        |Low    |F      |       5027|               1423|  6450|    22.1|
+|Non-Obese        |Low    |F      |       4994|               1407|  6401|    22.0|
 |Obese            |Low    |F      |       3318|               1034|  4352|    23.8|
-|Non-Obese        |High   |F      |       3576|               1066|  4642|    23.0|
+|Non-Obese        |High   |F      |       3550|               1056|  4606|    22.9|
 |Obese            |High   |F      |       2910|               1042|  3952|    26.4|
-|Non-Obese        |Low    |M      |       4474|               1791|  6265|    28.6|
+|Non-Obese        |Low    |M      |       4458|               1790|  6248|    28.6|
 |Obese            |Low    |M      |       2952|               1263|  4215|    30.0|
-|Non-Obese        |High   |M      |       2809|               1138|  3947|    28.8|
+|Non-Obese        |High   |M      |       2791|               1135|  3926|    28.9|
 |Obese            |High   |M      |       2025|                965|  2990|    32.3|
 
 ```r
@@ -799,8 +799,8 @@ Table: Logistic regression of obese vs non-obese on arrythmia
 
 |term                  | estimate| std.error| statistic|  p.value|
 |:---------------------|--------:|---------:|---------:|--------:|
-|(Intercept)           |    -1.08|     0.016|    -68.37| 0.00e+00|
-|BMI_cat.Ob.NonObObese |     0.12|     0.024|      4.98| 6.23e-07|
+|(Intercept)           |    -1.08|     0.016|    -68.16| 0.00e+00|
+|BMI_cat.Ob.NonObObese |     0.12|     0.024|      4.96| 6.89e-07|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -813,8 +813,8 @@ Table: Logistic regression of obese vs non-obese on arrythmia,
 
 |term             | df| deviance| df.residual| residual.deviance|  p.value|
 |:----------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL             | NA|       NA|       36812|             42504|       NA|
-|BMI_cat.Ob.NonOb |  1|       25|       36811|             42479| 6.41e-07|
+|NULL             | NA|       NA|       36689|             42367|       NA|
+|BMI_cat.Ob.NonOb |  1|       25|       36688|             42342| 7.08e-07|
 
 ```r
 #adding in stress as a modifier
@@ -833,10 +833,10 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                             | estimate| std.error| statistic| p.value|
 |:--------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                      |    -1.08|     0.020|    -53.12|  0.0000|
-|BMI_cat.Ob.NonObObese            |     0.08|     0.032|      2.51|  0.0122|
-|StressHigh                       |     0.02|     0.032|      0.63|  0.5284|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.08|     0.048|      1.75|  0.0804|
+|(Intercept)                      |    -1.08|     0.020|    -52.98|  0.0000|
+|BMI_cat.Ob.NonObObese            |     0.08|     0.032|      2.51|  0.0121|
+|StressHigh                       |     0.02|     0.032|      0.66|  0.5068|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.08|     0.048|      1.72|  0.0849|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -849,10 +849,10 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       36812|             42504|       NA|
-|BMI_cat.Ob.NonOb        |  1|       25|       36811|             42479| 6.41e-07|
-|Stress                  |  1|        6|       36810|             42473| 1.65e-02|
-|BMI_cat.Ob.NonOb:Stress |  1|        3|       36809|             42470| 8.04e-02|
+|NULL                    | NA|       NA|       36689|             42367|       NA|
+|BMI_cat.Ob.NonOb        |  1|       25|       36688|             42342| 7.08e-07|
+|Stress                  |  1|        6|       36687|             42336| 1.53e-02|
+|BMI_cat.Ob.NonOb:Stress |  1|        3|       36686|             42333| 8.49e-02|
 
 ```r
 #adding in age and gender as covariates as a modifier
@@ -871,12 +871,12 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.63|     0.050|    -52.93| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.06|     0.032|      1.83| 6.78e-02|
-|StressHigh                       |     0.08|     0.033|      2.52| 1.17e-02|
-|GenderM                          |     0.22|     0.024|      9.01| 2.08e-19|
-|age                              |     0.03|     0.001|     33.17| 0.00e+00|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.09|     0.049|      1.85| 6.50e-02|
+|(Intercept)                      |    -2.64|     0.050|    -52.90| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     0.06|     0.032|      1.86| 6.26e-02|
+|StressHigh                       |     0.08|     0.033|      2.59| 9.73e-03|
+|GenderM                          |     0.22|     0.024|      9.12| 7.51e-20|
+|age                              |     0.03|     0.001|     33.19| 0.00e+00|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.09|     0.049|      1.80| 7.12e-02|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -889,12 +889,12 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       36812|             42504|       NA|
-|BMI_cat.Ob.NonOb        |  1|       25|       36811|             42479| 6.41e-07|
-|Stress                  |  1|        6|       36810|             42473| 1.65e-02|
-|Gender                  |  1|      179|       36809|             42294| 6.61e-41|
-|age                     |  1|     1175|       36808|             41119| 0.00e+00|
-|BMI_cat.Ob.NonOb:Stress |  1|        3|       36807|             41116| 6.49e-02|
+|NULL                    | NA|       NA|       36689|             42367|       NA|
+|BMI_cat.Ob.NonOb        |  1|       25|       36688|             42342| 7.08e-07|
+|Stress                  |  1|        6|       36687|             42336| 1.53e-02|
+|Gender                  |  1|      183|       36686|             42153| 9.49e-42|
+|age                     |  1|     1177|       36685|             40977| 0.00e+00|
+|BMI_cat.Ob.NonOb:Stress |  1|        3|       36684|             40973| 7.11e-02|
 
 ```r
 #adding in race and ethnicity
@@ -913,16 +913,16 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.97|     0.126|    -23.57| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.05|     0.032|      1.54| 1.24e-01|
-|StressHigh                       |     0.08|     0.033|      2.42| 1.56e-02|
-|GenderM                          |     0.22|     0.024|      9.09| 9.93e-20|
-|age                              |     0.03|     0.001|     32.69| 0.00e+00|
-|Race.EthnicityBlack              |     0.58|     0.132|      4.36| 1.30e-05|
-|Race.EthnicityHispanic/Latino    |     0.10|     0.155|      0.67| 5.03e-01|
-|Race.EthnicityOther              |     0.06|     0.140|      0.43| 6.64e-01|
-|Race.EthnicityWhite              |     0.36|     0.121|      2.98| 2.89e-03|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.09|     0.049|      1.87| 6.21e-02|
+|(Intercept)                      |    -2.96|     0.126|    -23.51| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |     0.05|     0.032|      1.58| 1.14e-01|
+|StressHigh                       |     0.08|     0.033|      2.48| 1.32e-02|
+|GenderM                          |     0.22|     0.024|      9.20| 3.56e-20|
+|age                              |     0.03|     0.001|     32.71| 0.00e+00|
+|Race.EthnicityBlack              |     0.56|     0.133|      4.25| 2.17e-05|
+|Race.EthnicityHispanic/Latino    |     0.09|     0.155|      0.58| 5.64e-01|
+|Race.EthnicityOther              |     0.05|     0.140|      0.35| 7.29e-01|
+|Race.EthnicityWhite              |     0.34|     0.121|      2.85| 4.44e-03|
+|BMI_cat.Ob.NonObObese:StressHigh |     0.09|     0.049|      1.83| 6.80e-02|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -935,13 +935,13 @@ Table: Logistic regression of obese vs non-obese on arrythmia, with stress as a 
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       36812|             42504|       NA|
-|BMI_cat.Ob.NonOb        |  1|       25|       36811|             42479| 6.41e-07|
-|Stress                  |  1|        6|       36810|             42473| 1.65e-02|
-|Gender                  |  1|      179|       36809|             42294| 6.61e-41|
-|age                     |  1|     1175|       36808|             41119| 0.00e+00|
-|Race.Ethnicity          |  4|       49|       36804|             41070| 6.62e-10|
-|BMI_cat.Ob.NonOb:Stress |  1|        3|       36803|             41067| 6.21e-02|
+|NULL                    | NA|       NA|       36689|             42367|       NA|
+|BMI_cat.Ob.NonOb        |  1|       25|       36688|             42342| 7.08e-07|
+|Stress                  |  1|        6|       36687|             42336| 1.53e-02|
+|Gender                  |  1|      183|       36686|             42153| 9.49e-42|
+|age                     |  1|     1177|       36685|             40977| 0.00e+00|
+|Race.Ethnicity          |  4|       48|       36681|             40929| 1.20e-09|
+|BMI_cat.Ob.NonOb:Stress |  1|        3|       36680|             40926| 6.79e-02|
 
 # Summary of Covariates
 
@@ -961,9 +961,9 @@ Table: Number of participants by group
 
 |Stress |BMI_cat.Ob.NonOb |     n|
 |:------|:----------------|-----:|
-|Low    |Non-Obese        | 12715|
+|Low    |Non-Obese        | 12649|
 |Low    |Obese            |  8567|
-|High   |Non-Obese        |  8589|
+|High   |Non-Obese        |  8532|
 |High   |Obese            |  6942|
 
 ```r
@@ -981,12 +981,12 @@ Table: Number of participants by group and gender
 
 |Stress |BMI_cat.Ob.NonOb |Gender |    n|
 |:------|:----------------|:------|----:|
-|Low    |Non-Obese        |F      | 6450|
-|Low    |Non-Obese        |M      | 6265|
+|Low    |Non-Obese        |F      | 6401|
+|Low    |Non-Obese        |M      | 6248|
 |Low    |Obese            |F      | 4352|
 |Low    |Obese            |M      | 4215|
-|High   |Non-Obese        |F      | 4642|
-|High   |Non-Obese        |M      | 3947|
+|High   |Non-Obese        |F      | 4606|
+|High   |Non-Obese        |M      | 3926|
 |High   |Obese            |F      | 3952|
 |High   |Obese            |M      | 2990|
 
@@ -1005,21 +1005,21 @@ Table: Number of participants by group and race/ethnicity
 
 |Stress |BMI_cat.Ob.NonOb |Race.Ethnicity  |     n|
 |:------|:----------------|:---------------|-----:|
-|Low    |Non-Obese        |Asian           |   302|
+|Low    |Non-Obese        |Asian           |   301|
 |Low    |Non-Obese        |Black           |   362|
 |Low    |Non-Obese        |Hispanic/Latino |   228|
-|Low    |Non-Obese        |Other           |   401|
-|Low    |Non-Obese        |White           | 11422|
+|Low    |Non-Obese        |Other           |   399|
+|Low    |Non-Obese        |White           | 11359|
 |Low    |Obese            |Asian           |    35|
 |Low    |Obese            |Black           |   457|
 |Low    |Obese            |Hispanic/Latino |   172|
 |Low    |Obese            |Other           |   281|
 |Low    |Obese            |White           |  7622|
-|High   |Non-Obese        |Asian           |   172|
+|High   |Non-Obese        |Asian           |   169|
 |High   |Non-Obese        |Black           |   366|
 |High   |Non-Obese        |Hispanic/Latino |   167|
-|High   |Non-Obese        |Other           |   286|
-|High   |Non-Obese        |White           |  7598|
+|High   |Non-Obese        |Other           |   284|
+|High   |Non-Obese        |White           |  7546|
 |High   |Obese            |Asian           |    40|
 |High   |Obese            |Black           |   449|
 |High   |Obese            |Hispanic/Latino |   150|
@@ -1043,9 +1043,9 @@ Table: Average BMI and age of participants by group
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| BMI_sd| age_sd| BMI_n| age_n|
 |:------|:----------------|--------:|--------:|------:|------:|-----:|-----:|
-|Low    |Non-Obese        |     25.3|     53.1|   2.98|   17.7| 12715| 12715|
+|Low    |Non-Obese        |     25.3|     53.2|   2.95|   17.6| 12649| 12649|
 |Low    |Obese            |     36.0|     54.6|   5.71|   14.6|  8567|  8567|
-|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8589|  8589|
+|High   |Non-Obese        |     25.2|     51.1|   3.08|   17.8|  8532|  8532|
 |High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
 ```r
@@ -1065,9 +1065,9 @@ Table: Average BMI and age of participants by group,complete cases
 
 |Stress |BMI_cat.Ob.NonOb | BMI_mean| age_mean| BMI_sd| age_sd| BMI_n| age_n|
 |:------|:----------------|--------:|--------:|------:|------:|-----:|-----:|
-|Low    |Non-Obese        |     25.3|     53.1|   2.98|   17.7| 12715| 12715|
+|Low    |Non-Obese        |     25.3|     53.2|   2.95|   17.6| 12649| 12649|
 |Low    |Obese            |     36.0|     54.6|   5.71|   14.6|  8567|  8567|
-|High   |Non-Obese        |     25.1|     51.0|   3.12|   17.8|  8589|  8589|
+|High   |Non-Obese        |     25.2|     51.1|   3.08|   17.8|  8532|  8532|
 |High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
 # Session Information
@@ -1113,8 +1113,8 @@ sessionInfo()
 ## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
 ## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
 ## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      rstudioapi_0.13  hms_1.1.3       
-## [37] lifecycle_1.0.3  vctrs_0.6.3      evaluate_0.21    glue_1.6.2      
-## [41] farver_2.1.1     colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25  
-## [45] purrr_1.0.2      tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
+## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
+## [41] colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25   purrr_1.0.2     
+## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
 ```

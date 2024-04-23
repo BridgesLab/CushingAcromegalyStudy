@@ -11,7 +11,7 @@ output:
 
 # Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:09:12 2024.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:03:37 2024.
 
 # Data Descriptions
 
@@ -131,7 +131,8 @@ combined.data <-
   mutate(Stress=relevel(as.factor(High.Stress),ref="Low")) %>%
   mutate(Stress.quartile = cut(Stress_d1,4)) %>%
   mutate(Age.group = cut(age,
-                          breaks=c(18,30,40,50,60,70,80,90))) %>%
+                          breaks=c(18,30,40,50,60,70,80,90,100),
+                         right=FALSE)) %>%
   left_join(demo.data) %>%
   mutate(Race.Ethnicity.Code = paste(RaceCode,EthnicityCode,sep="-")) %>%
   mutate(Race.Ethnicity = case_when(Race.Ethnicity.Code %in% c('C-NonHL','C-U')~"White",
@@ -148,16 +149,16 @@ combined.data <-
 ```r
 combined.data.bmi <- 
   combined.data %>%
-  filter(!is.na(BMI)) # remove participants with no BMI
+  filter(!is.na(BMI_cat)) # remove participants with no BMI category
 
 combined.data.age <- 
   combined.data.bmi %>%
-  filter(!is.na(age)) # remove participants with no BMI
+  filter(!is.na(Age.group)) # remove participants with no BMI
 ```
 
 * All data: **62010** particiipants
-* No BMI 0 leaving **62010** participants
-* No Age 0 leaving **62010** participants
+* No BMI category 217 leaving **61793** participants
+* No Age category 0 leaving **61793** participants
 
 # Writing out of the Data
 

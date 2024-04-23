@@ -478,7 +478,7 @@ pre code {
 <a class="sourceLine" id="cb5-21" data-line-number="21">                                  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Non-Obese&quot;</span>,</a>
 <a class="sourceLine" id="cb5-22" data-line-number="22">                                           <span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress=</span><span class="kw">relevel</span>(<span class="kw">as.factor</span>(High.Stress),<span class="dt">ref=</span><span class="st">&quot;Low&quot;</span>))</a></code></pre></div>
-<pre><code>## Rows: 62010 Columns: 40</code></pre>
+<pre><code>## Rows: 61793 Columns: 40</code></pre>
 <pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
@@ -486,7 +486,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:22:18 2024. This dataset has 39694 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:19 2024. This dataset has 39560 values.</p>
 </div>
 <div id="summary-of-demographic-covariates" class="section level1">
 <h1><span class="header-section-number">1</span> Summary of Demographic Covariates</h1>
@@ -514,7 +514,7 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">White</td>
-<td align="right">35321</td>
+<td align="right">35198</td>
 </tr>
 <tr class="even">
 <td align="left">Black</td>
@@ -522,15 +522,15 @@ pre code {
 </tr>
 <tr class="odd">
 <td align="left">Other</td>
-<td align="right">1276</td>
+<td align="right">1271</td>
 </tr>
 <tr class="even">
 <td align="left">Hispanic/Latino</td>
-<td align="right">778</td>
+<td align="right">777</td>
 </tr>
 <tr class="odd">
 <td align="left">Asian</td>
-<td align="right">580</td>
+<td align="right">575</td>
 </tr>
 </tbody>
 </table>
@@ -560,7 +560,7 @@ pre code {
 </tr>
 <tr class="even">
 <td align="left">U-U</td>
-<td align="right">188</td>
+<td align="right">187</td>
 </tr>
 <tr class="odd">
 <td align="left">AI-NonHL</td>
@@ -576,7 +576,7 @@ pre code {
 </tr>
 <tr class="even">
 <td align="left">NA-NA</td>
-<td align="right">59</td>
+<td align="right">58</td>
 </tr>
 <tr class="odd">
 <td align="left">D-NonHL</td>
@@ -584,11 +584,11 @@ pre code {
 </tr>
 <tr class="even">
 <td align="left">D-D</td>
-<td align="right">51</td>
+<td align="right">50</td>
 </tr>
 <tr class="odd">
 <td align="left">C-NA</td>
-<td align="right">37</td>
+<td align="right">36</td>
 </tr>
 <tr class="even">
 <td align="left">P-NonHL</td>
@@ -639,23 +639,23 @@ pre code {
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">NA-U</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
 <td align="left">A-NA</td>
 <td align="right">2</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">AI-U</td>
 <td align="right">2</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">D-U</td>
 <td align="right">2</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">NA-D</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">NA-U</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
@@ -706,18 +706,18 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">F</td>
-<td align="right">20866</td>
+<td align="right">20772</td>
 </tr>
 <tr class="even">
 <td align="left">M</td>
-<td align="right">18828</td>
+<td align="right">18788</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="by-age" class="section level2">
 <h2><span class="header-section-number">2.3</span> By Age</h2>
-<p>The average age of our participants is 52.867 with a standard deviation of 16.527.</p>
+<p>The average age of our participants is 52.887 with a standard deviation of 16.504.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
@@ -735,43 +735,39 @@ pre code {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">(60,70]</td>
-<td align="right">9172</td>
+<td align="left">[60,70)</td>
+<td align="right">9314</td>
 </tr>
 <tr class="even">
-<td align="left">(50,60]</td>
-<td align="right">8917</td>
+<td align="left">[50,60)</td>
+<td align="right">8781</td>
 </tr>
 <tr class="odd">
-<td align="left">(40,50]</td>
-<td align="right">6325</td>
+<td align="left">[40,50)</td>
+<td align="right">6038</td>
 </tr>
 <tr class="even">
-<td align="left">(30,40]</td>
-<td align="right">4832</td>
+<td align="left">[70,80)</td>
+<td align="right">4955</td>
 </tr>
 <tr class="odd">
-<td align="left">(18,30]</td>
-<td align="right">4495</td>
+<td align="left">[30,40)</td>
+<td align="right">4688</td>
 </tr>
 <tr class="even">
-<td align="left">(70,80]</td>
-<td align="right">4447</td>
+<td align="left">[18,30)</td>
+<td align="right">4478</td>
 </tr>
 <tr class="odd">
-<td align="left">(80,90]</td>
-<td align="right">1087</td>
-</tr>
-<tr class="even">
-<td align="left">NA</td>
-<td align="right">419</td>
+<td align="left">[80,90)</td>
+<td align="right">1306</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="by-body-mass-index" class="section level2">
 <h2><span class="header-section-number">2.4</span> By Body Mass Index</h2>
-<p>The average BMI of our participants is 29.886 with a standard deviation of 7.036.</p>
+<p>The average BMI of our participants is 29.925 with a standard deviation of 7.016.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
@@ -812,10 +808,6 @@ pre code {
 <td align="left">Underweight</td>
 <td align="right">283</td>
 </tr>
-<tr class="odd">
-<td align="left">NA</td>
-<td align="right">134</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -840,7 +832,7 @@ pre code {
 <tr class="odd">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
-<td align="right">13670</td>
+<td align="right">13596</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
@@ -850,7 +842,7 @@ pre code {
 <tr class="odd">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
-<td align="right">9305</td>
+<td align="right">9245</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
@@ -880,13 +872,13 @@ pre code {
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">F</td>
-<td align="right">6913</td>
+<td align="right">6858</td>
 </tr>
 <tr class="even">
 <td align="left">Low</td>
 <td align="left">Non-Obese</td>
 <td align="left">M</td>
-<td align="right">6757</td>
+<td align="right">6738</td>
 </tr>
 <tr class="odd">
 <td align="left">Low</td>
@@ -904,13 +896,13 @@ pre code {
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">F</td>
-<td align="right">5005</td>
+<td align="right">4966</td>
 </tr>
 <tr class="even">
 <td align="left">High</td>
 <td align="left">Non-Obese</td>
 <td align="left">M</td>
-<td align="right">4300</td>
+<td align="right">4279</td>
 </tr>
 <tr class="odd">
 <td align="left">High</td>
@@ -963,21 +955,21 @@ pre code {
 <td align="left">Non-Obese</td>
 <td align="left">Low</td>
 <td align="right">25.3</td>
-<td align="right">2.34</td>
-<td align="right">2.98</td>
+<td align="right">2.33</td>
+<td align="right">2.94</td>
 <td align="right">1.75</td>
-<td align="right">13670</td>
-<td align="right">13670</td>
+<td align="right">13596</td>
+<td align="right">13596</td>
 </tr>
 <tr class="even">
 <td align="left">Non-Obese</td>
 <td align="left">High</td>
 <td align="right">25.2</td>
 <td align="right">8.04</td>
-<td align="right">3.13</td>
+<td align="right">3.09</td>
 <td align="right">1.78</td>
-<td align="right">9305</td>
-<td align="right">9305</td>
+<td align="right">9245</td>
+<td align="right">9245</td>
 </tr>
 <tr class="odd">
 <td align="left">Obese</td>

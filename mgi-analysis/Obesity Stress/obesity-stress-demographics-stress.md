@@ -60,7 +60,7 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ```
 
 ```
-## Rows: 62010 Columns: 40
+## Rows: 61793 Columns: 40
 ```
 
 ```
@@ -93,10 +93,10 @@ Table: Number of participants by high or low stress
 
 | Stress|     n|  Pct|
 |------:|-----:|----:|
-|      0| 22893| 57.7|
-|      1| 16801| 42.3|
+|      0| 22819| 57.7|
+|      1| 16741| 42.3|
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:22:22 2024. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:23 2024. This dataset has 39560 values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -143,11 +143,11 @@ Table: Number of participants by stress and race/ethnicity
 
 |Race.Ethnicity  |    No|   Yes| Prevalence|
 |:---------------|-----:|-----:|----------:|
-|White           | 20500| 14821|       42.0|
-|Asian           |   352|   228|       39.3|
+|White           | 20432| 14766|       42.0|
+|Asian           |   350|   225|       39.1|
 |Black           |   878|   861|       49.5|
-|Hispanic/Latino |   430|   348|       44.7|
-|Other           |   733|   543|       42.5|
+|Hispanic/Latino |   429|   348|       44.8|
+|Other           |   730|   541|       42.6|
 
 
 ```r
@@ -169,8 +169,8 @@ Table: Binomial regression of ethicity on stress
 
 |term           | df| deviance| df.residual| residual.deviance|  p.value|
 |:--------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL           | NA|       NA|       39693|             54089|       NA|
-|Race.Ethnicity |  4|       42|       39689|             54047| 1.43e-08|
+|NULL           | NA|       NA|       39559|             53904|       NA|
+|Race.Ethnicity |  4|       43|       39555|             53862| 1.16e-08|
 
 ```r
 race.glm %>% 
@@ -185,11 +185,11 @@ Table: Binomial regression estimates of ethicity on stress incidence, exponentia
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |     0.72|     0.011|    -30.09| 0.00e+00|
-|Race.EthnicityAsian           |     0.90|     0.086|     -1.28| 2.00e-01|
-|Race.EthnicityBlack           |     1.36|     0.049|      6.20| 5.62e-10|
-|Race.EthnicityHispanic/Latino |     1.12|     0.073|      1.55| 1.22e-01|
-|Race.EthnicityOther           |     1.02|     0.058|      0.42| 6.73e-01|
+|(Intercept)                   |     0.72|     0.011|    -30.07| 0.00e+00|
+|Race.EthnicityAsian           |     0.89|     0.086|     -1.36| 1.74e-01|
+|Race.EthnicityBlack           |     1.36|     0.049|      6.21| 5.36e-10|
+|Race.EthnicityHispanic/Latino |     1.12|     0.073|      1.58| 1.13e-01|
+|Race.EthnicityOther           |     1.03|     0.058|      0.44| 6.63e-01|
 
 ## By Gender
 
@@ -235,8 +235,8 @@ Table: Number of participants by stress and gender
 
 |Gender |    No|  Yes| Prevalence|
 |:------|-----:|----:|----------:|
-|F      | 11589| 9277|       44.5|
-|M      | 11304| 7524|       40.0|
+|F      | 11534| 9238|       44.5|
+|M      | 11285| 7503|       39.9|
 
 ## Interaction Between Gender and BMI
 
@@ -271,9 +271,9 @@ Table: Prevalence of stress by obesity and gender
 
 |Gender |BMI_cat.Ob.NonOb |   No|  Yes| Prevalence|
 |:------|:----------------|----:|----:|----------:|
-|F      |Non-Obese        | 6913| 5005|       42.0|
+|F      |Non-Obese        | 6858| 4966|       42.0|
 |F      |Obese            | 4676| 4272|       47.7|
-|M      |Non-Obese        | 6757| 4300|       38.9|
+|M      |Non-Obese        | 6738| 4279|       38.8|
 |M      |Obese            | 4547| 3224|       41.5|
 
 ```r
@@ -290,10 +290,10 @@ Table: Binomial regression of gender:BMI interaction on stress incidence
 
 |term                    | df| deviance| df.residual| residual.deviance|  p.value|
 |:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                    | NA|       NA|       39693|             54089|       NA|
-|Gender                  |  1|       82|       39692|             54007| 1.29e-19|
-|BMI_cat.Ob.NonOb        |  1|       72|       39691|             53935| 2.10e-17|
-|Gender:BMI_cat.Ob.NonOb |  1|        9|       39690|             53926| 2.55e-03|
+|NULL                    | NA|       NA|       39559|             53904|       NA|
+|Gender                  |  1|       83|       39558|             53821| 7.02e-20|
+|BMI_cat.Ob.NonOb        |  1|       73|       39557|             53748| 1.64e-17|
+|Gender:BMI_cat.Ob.NonOb |  1|        9|       39556|             53740| 3.09e-03|
 
 ```r
 gender.bmi.glm %>% 
@@ -308,10 +308,10 @@ Table: Binomial regression estimates of gender:BMI on stress incidence, exponent
 
 |term                          | estimate| std.error| statistic|  p.value|
 |:-----------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                   |     0.72|     0.019|    -17.40| 8.01e-68|
-|GenderM                       |     0.88|     0.027|     -4.79| 1.66e-06|
-|BMI_cat.Ob.NonObObese         |     1.26|     0.028|      8.26| 1.42e-16|
-|GenderM:BMI_cat.Ob.NonObObese |     0.88|     0.041|     -3.02| 2.56e-03|
+|(Intercept)                   |     0.72|     0.019|    -17.32| 3.09e-67|
+|GenderM                       |     0.88|     0.027|     -4.86| 1.17e-06|
+|BMI_cat.Ob.NonObObese         |     1.26|     0.028|      8.24| 1.68e-16|
+|GenderM:BMI_cat.Ob.NonObObese |     0.88|     0.041|     -2.96| 3.09e-03|
 
 
 ```r
@@ -350,8 +350,8 @@ Table: Binomial regression of gender on stress incidence
 
 |term   | df| deviance| df.residual| residual.deviance|  p.value|
 |:------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL   | NA|       NA|       39693|             54089|       NA|
-|Gender |  1|       82|       39692|             54007| 1.29e-19|
+|NULL   | NA|       NA|       39559|             53904|       NA|
+|Gender |  1|       83|       39558|             53821| 7.02e-20|
 
 ```r
 gender.glm %>% 
@@ -366,8 +366,8 @@ Table: Binomial regression estimates of gender on stress incidence, exponentiate
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |     0.80|     0.014|    -15.97| 1.99e-57|
-|GenderM     |     0.83|     0.020|     -9.05| 1.38e-19|
+|(Intercept) |     0.80|     0.014|    -15.90| 6.55e-57|
+|GenderM     |     0.83|     0.020|     -9.12| 7.52e-20|
 
 ## By Age
 
@@ -412,14 +412,13 @@ Table: Number of participants by stress diagnosis and age
 
 |Age.group |   No|  Yes| Prevalence|
 |:---------|----:|----:|----------:|
-|(18,30]   | 2469| 2026|       45.1|
-|(30,40]   | 2603| 2229|       46.1|
-|(40,50]   | 3393| 2932|       46.4|
-|(50,60]   | 5096| 3821|       42.9|
-|(60,70]   | 5701| 3471|       37.8|
-|(70,80]   | 2726| 1721|       38.7|
-|(80,90]   |  663|  424|       39.0|
-|NA        |  242|  177|       42.2|
+|[18,30)   | 2459| 2019|       45.1|
+|[30,40)   | 2533| 2155|       46.0|
+|[40,50)   | 3219| 2819|       46.7|
+|[50,60)   | 5010| 3771|       42.9|
+|[60,70)   | 5744| 3570|       38.3|
+|[70,80)   | 3059| 1896|       38.3|
+|[80,90)   |  795|  511|       39.1|
 
 
 ```r
@@ -440,8 +439,8 @@ Table: Binomial regression of age group on stress incidence
 
 |term      | df| deviance| df.residual| residual.deviance|  p.value|
 |:---------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL      | NA|       NA|       39274|             53518|       NA|
-|Age.group |  6|      190|       39268|             53328| 2.03e-38|
+|NULL      | NA|       NA|       39559|             53904|       NA|
+|Age.group |  6|      188|       39553|             53716| 6.31e-38|
 
 ```r
 age.glm %>% 
@@ -456,13 +455,13 @@ Table: Binomial regression estimates of age group on stress incidence, exponenti
 
 |term             | estimate| std.error| statistic|  p.value|
 |:----------------|--------:|---------:|---------:|--------:|
-|(Intercept)      |     0.82|     0.030|     -6.60| 4.20e-11|
-|Age.group(30,40] |     1.04|     0.042|      1.02| 3.06e-01|
-|Age.group(40,50] |     1.05|     0.039|      1.32| 1.87e-01|
-|Age.group(50,60] |     0.91|     0.037|     -2.45| 1.43e-02|
-|Age.group(60,70] |     0.74|     0.037|     -8.09| 6.14e-16|
-|Age.group(70,80] |     0.77|     0.043|     -6.10| 1.05e-09|
-|Age.group(80,90] |     0.78|     0.069|     -3.61| 3.05e-04|
+|(Intercept)      |     0.82|     0.030|     -6.56| 5.22e-11|
+|Age.group[30,40) |     1.04|     0.042|      0.85| 3.97e-01|
+|Age.group[40,50) |     1.07|     0.040|      1.63| 1.03e-01|
+|Age.group[50,60) |     0.92|     0.037|     -2.35| 1.87e-02|
+|Age.group[60,70) |     0.76|     0.037|     -7.56| 4.00e-14|
+|Age.group[70,80) |     0.75|     0.042|     -6.71| 1.95e-11|
+|Age.group[80,90) |     0.78|     0.064|     -3.82| 1.36e-04|
 
 ```r
 glm(Stress~age, data=combined.data) %>% 
@@ -477,8 +476,8 @@ Table: Binomial regression estimates of age (continuous) on stress incidence, ex
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |     1.67|     0.008|      62.1| 0.00e+00|
-|age         |     1.00|     0.000|     -11.6| 5.32e-31|
+|(Intercept) |     1.68|     0.008|      62.0| 0.00e+00|
+|age         |     1.00|     0.000|     -11.7| 1.31e-31|
 
 ## By Neighborhood Disadvantage
 
@@ -525,11 +524,11 @@ Table: Number of participants by stress neighborhood education
 
 | ped1_13_17_qrtl|   No|  Yes| Prevalence|
 |---------------:|----:|----:|----------:|
-|               1| 9708| 5803|       37.4|
-|               2| 6792| 5190|       43.3|
-|               3| 3924| 3690|       48.5|
-|               4|  661|  752|       53.2|
-|              NA| 1808| 1366|       43.0|
+|               1| 9672| 5786|       37.4|
+|               2| 6770| 5165|       43.3|
+|               3| 3914| 3677|       48.4|
+|               4|  658|  751|       53.3|
+|              NA| 1805| 1362|       43.0|
 
 
 ```r
@@ -550,8 +549,8 @@ Table: Binomial regression of neighborhood education group on stress incidence
 
 |term            | df| deviance| df.residual| residual.deviance|  p.value|
 |:---------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL            | NA|       NA|       36519|             49750|       NA|
-|ped1_13_17_qrtl |  1|      343|       36518|             49407| 1.59e-76|
+|NULL            | NA|       NA|       36392|             49575|       NA|
+|ped1_13_17_qrtl |  1|      340|       36391|             49235| 5.06e-76|
 
 ```r
 disadvantage.glm %>% 
@@ -564,10 +563,10 @@ disadvantage.glm %>%
 
 Table: Binomial regression estimates of neighborhood education group on stress incidence, exponentiated
 
-|term            | estimate| std.error| statistic|  p.value|
-|:---------------|--------:|---------:|---------:|--------:|
-|(Intercept)     |     0.48|     0.025|     -29.0| 0.00e+00|
-|ped1_13_17_qrtl |     1.25|     0.012|      18.5| 3.82e-76|
+|term            | estimate| std.error| statistic| p.value|
+|:---------------|--------:|---------:|---------:|-------:|
+|(Intercept)     |     0.48|     0.025|     -29.0| 0.0e+00|
+|ped1_13_17_qrtl |     1.25|     0.012|      18.4| 1.2e-75|
 
 ### Neighborhood Affluence
 
@@ -612,11 +611,11 @@ Table: Number of participants by stress neighborhood affluence
 
 | affluence13_17_qrtl|   No|  Yes| Prevalence|
 |-------------------:|----:|----:|----------:|
-|                   1| 3195| 3342|       51.1|
-|                   2| 4634| 3968|       46.1|
-|                   3| 5497| 3852|       41.2|
-|                   4| 7759| 4273|       35.5|
-|                  NA| 1808| 1366|       43.0|
+|                   1| 3183| 3335|       51.2|
+|                   2| 4619| 3950|       46.1|
+|                   3| 5476| 3836|       41.2|
+|                   4| 7736| 4258|       35.5|
+|                  NA| 1805| 1362|       43.0|
 
 
 ```r
@@ -637,8 +636,8 @@ Table: Binomial regression of neighborhood affluence group on stress incidence
 
 |term                | df| deviance| df.residual| residual.deviance| p.value|
 |:-------------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL                | NA|       NA|       36519|             49750|      NA|
-|affluence13_17_qrtl |  1|      492|       36518|             49258|       0|
+|NULL                | NA|       NA|       36392|             49575|      NA|
+|affluence13_17_qrtl |  1|      492|       36391|             49083|       0|
 
 ```r
 disadvantage.glm %>% 
@@ -653,8 +652,8 @@ Table: Binomial regression estimates of neighborhood affluence group on stress i
 
 |term                | estimate| std.error| statistic|  p.value|
 |:-------------------|--------:|---------:|---------:|--------:|
-|(Intercept)         |     1.31|     0.028|      9.54| 1.42e-21|
-|affluence13_17_qrtl |     0.81|     0.010|    -22.08| 0.00e+00|
+|(Intercept)         |     1.31|     0.028|      9.56| 1.19e-21|
+|affluence13_17_qrtl |     0.81|     0.010|    -22.09| 0.00e+00|
 
 ### Disadvantage
 
@@ -699,11 +698,11 @@ Table: Number of participants by stress neighborhood disadvantage
 
 | disadvantage13_17_qrtl|   No|  Yes| Prevalence|
 |----------------------:|----:|----:|----------:|
-|                      1| 8798| 5199|       37.1|
-|                      2| 6090| 4456|       42.3|
-|                      3| 4055| 3581|       46.9|
-|                      4| 2142| 2199|       50.7|
-|                     NA| 1808| 1366|       43.0|
+|                      1| 8767| 5183|       37.2|
+|                      2| 6071| 4434|       42.2|
+|                      3| 4037| 3566|       46.9|
+|                      4| 2139| 2196|       50.7|
+|                     NA| 1805| 1362|       43.0|
 
 
 ```r
@@ -724,8 +723,8 @@ Table: Binomial regression of neighborhood disadvantage group on stress incidenc
 
 |term                   | df| deviance| df.residual| residual.deviance|  p.value|
 |:----------------------|--:|--------:|-----------:|-----------------:|--------:|
-|NULL                   | NA|       NA|       36519|             49750|       NA|
-|disadvantage13_17_qrtl |  1|      341|       36518|             49409| 4.41e-76|
+|NULL                   | NA|       NA|       36392|             49575|       NA|
+|disadvantage13_17_qrtl |  1|      340|       36391|             49236| 8.17e-76|
 
 ```r
 disadvantage.glm %>% 
@@ -741,7 +740,7 @@ Table: Binomial regression estimates of neighborhood disadvantage group on stres
 |term                   | estimate| std.error| statistic|  p.value|
 |:----------------------|--------:|---------:|---------:|--------:|
 |(Intercept)            |     0.49|     0.024|     -29.4| 0.00e+00|
-|disadvantage13_17_qrtl |     1.21|     0.010|      18.4| 9.64e-76|
+|disadvantage13_17_qrtl |     1.21|     0.010|      18.4| 1.78e-75|
 
 ## By Body Mass Index
 
@@ -791,7 +790,6 @@ Table: Number of participants by stress diagnosis and BMI category
 |Class I Obese   | 5045| 3825|       43.1|
 |Class II Obese  | 2435| 2036|       45.5|
 |Class III Obese | 1743| 1635|       48.4|
-|NA              |   74|   60|       44.8|
 
 ## By Type 2 Diabetes Diagnosis
 
@@ -835,8 +833,8 @@ Table: Number of participants by stress diagnosis and diabetes diagnosis
 
 | Type2Diabetes|    No|   Yes| Prevalence|
 |-------------:|-----:|-----:|----------:|
-|             0| 19658| 13891|       41.4|
-|             1|  3235|  2910|       47.4|
+|             0| 19585| 13834|       41.4|
+|             1|  3234|  2907|       47.3|
 
 
 ```r
@@ -855,10 +853,10 @@ t2d.glm %>%
 
 Table: Binomial regression of type 2 diabetes diagnosis on stress incidence
 
-|term          | df| deviance| df.residual| residual.deviance| p.value|
-|:-------------|--:|--------:|-----------:|-----------------:|-------:|
-|NULL          | NA|       NA|       39693|             54089|      NA|
-|Type2Diabetes |  1|       75|       39692|             54014| 5.2e-18|
+|term          | df| deviance| df.residual| residual.deviance|  p.value|
+|:-------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL          | NA|       NA|       39559|             53904|       NA|
+|Type2Diabetes |  1|       75|       39558|             53830| 6.04e-18|
 
 ```r
 t2d.glm %>% 
@@ -873,8 +871,8 @@ Table: Binomial regression estimates of type 2 diabetes diagnosis on stress inci
 
 |term          | estimate| std.error| statistic|  p.value|
 |:-------------|--------:|---------:|---------:|--------:|
-|(Intercept)   |     0.71|     0.011|    -31.33| 0.00e+00|
-|Type2Diabetes |     1.27|     0.028|      8.67| 4.45e-18|
+|(Intercept)   |     0.71|     0.011|    -31.30| 0.00e+00|
+|Type2Diabetes |     1.27|     0.028|      8.65| 5.17e-18|
 
 ```r
 glm(Stress~BMI, data=combined.data) %>% 
@@ -889,8 +887,8 @@ Table: Binomial regression estimates of BMI on stress incidence, exponentiated
 
 |term        | estimate| std.error| statistic|  p.value|
 |:-----------|--------:|---------:|---------:|--------:|
-|(Intercept) |     1.39|     0.011|     30.44| 0.00e+00|
-|BMI         |     1.00|     0.000|      8.95| 3.74e-19|
+|(Intercept) |     1.39|     0.011|     30.11| 0.00e+00|
+|BMI         |     1.00|     0.000|      9.05| 1.52e-19|
 
 # Summary Table
 
@@ -928,35 +926,33 @@ Table: Summary of demographic variables by stress incidence
 
 |Category        |Group           | Total| Percent|    No|   Yes| Prevalence|
 |:---------------|:---------------|-----:|-------:|-----:|-----:|----------:|
-|NA              |White           | 35321|  88.983| 20500| 14821|       42.0|
-|NA              |Asian           |   580|   1.461|   352|   228|       39.3|
-|NA              |Black           |  1739|   4.381|   878|   861|       49.5|
-|NA              |Hispanic/Latino |   778|   1.960|   430|   348|       44.7|
-|NA              |Other           |  1276|   3.215|   733|   543|       42.6|
-|Gender          |F               | 20866|  52.567| 11589|  9277|       44.5|
-|Gender          |M               | 18828|  47.433| 11304|  7524|       40.0|
-|BMI             |Underweight     |   283|   0.713|   132|   151|       53.4|
-|BMI             |Normal          |  9648|  24.306|  5727|  3921|       40.6|
-|BMI             |Overweight      | 12910|  32.524|  7737|  5173|       40.1|
-|BMI             |Class I Obese   |  8870|  22.346|  5045|  3825|       43.1|
-|BMI             |Class II Obese  |  4471|  11.264|  2435|  2036|       45.5|
-|BMI             |Class III Obese |  3378|   8.510|  1743|  1635|       48.4|
-|BMI             |NA              |   134|   0.338|    74|    60|       44.8|
-|SES             |1               | 13997|  35.262|  8798|  5199|       37.1|
-|SES             |2               | 10546|  26.568|  6090|  4456|       42.3|
-|SES             |3               |  7636|  19.237|  4055|  3581|       46.9|
-|SES             |4               |  4341|  10.936|  2142|  2199|       50.7|
-|SES             |NA              |  3174|   7.996|  1808|  1366|       43.0|
-|Age Group       |(18,30]         |  4495|  11.324|  2469|  2026|       45.1|
-|Age Group       |(30,40]         |  4832|  12.173|  2603|  2229|       46.1|
-|Age Group       |(40,50]         |  6325|  15.934|  3393|  2932|       46.4|
-|Age Group       |(50,60]         |  8917|  22.464|  5096|  3821|       42.9|
-|Age Group       |(60,70]         |  9172|  23.107|  5701|  3471|       37.8|
-|Age Group       |(70,80]         |  4447|  11.203|  2726|  1721|       38.7|
-|Age Group       |(80,90]         |  1087|   2.738|   663|   424|       39.0|
-|Age Group       |NA              |   419|   1.056|   242|   177|       42.2|
-|Type 2 Diabetes |0               | 33549|  84.519| 19658| 13891|       41.4|
-|Type 2 Diabetes |1               |  6145|  15.481|  3235|  2910|       47.4|
+|NA              |White           | 35198|  88.974| 20432| 14766|       42.0|
+|NA              |Asian           |   575|   1.453|   350|   225|       39.1|
+|NA              |Black           |  1739|   4.396|   878|   861|       49.5|
+|NA              |Hispanic/Latino |   777|   1.964|   429|   348|       44.8|
+|NA              |Other           |  1271|   3.213|   730|   541|       42.6|
+|Gender          |F               | 20772|  52.508| 11534|  9238|       44.5|
+|Gender          |M               | 18788|  47.492| 11285|  7503|       39.9|
+|BMI             |Underweight     |   283|   0.715|   132|   151|       53.4|
+|BMI             |Normal          |  9648|  24.388|  5727|  3921|       40.6|
+|BMI             |Overweight      | 12910|  32.634|  7737|  5173|       40.1|
+|BMI             |Class I Obese   |  8870|  22.422|  5045|  3825|       43.1|
+|BMI             |Class II Obese  |  4471|  11.302|  2435|  2036|       45.5|
+|BMI             |Class III Obese |  3378|   8.539|  1743|  1635|       48.4|
+|SES             |1               | 13950|  35.263|  8767|  5183|       37.2|
+|SES             |2               | 10505|  26.555|  6071|  4434|       42.2|
+|SES             |3               |  7603|  19.219|  4037|  3566|       46.9|
+|SES             |4               |  4335|  10.958|  2139|  2196|       50.7|
+|SES             |NA              |  3167|   8.006|  1805|  1362|       43.0|
+|Age Group       |[18,30)         |  4478|  11.320|  2459|  2019|       45.1|
+|Age Group       |[30,40)         |  4688|  11.850|  2533|  2155|       46.0|
+|Age Group       |[40,50)         |  6038|  15.263|  3219|  2819|       46.7|
+|Age Group       |[50,60)         |  8781|  22.197|  5010|  3771|       42.9|
+|Age Group       |[60,70)         |  9314|  23.544|  5744|  3570|       38.3|
+|Age Group       |[70,80)         |  4955|  12.525|  3059|  1896|       38.3|
+|Age Group       |[80,90)         |  1306|   3.301|   795|   511|       39.1|
+|Type 2 Diabetes |0               | 33419|  84.477| 19585| 13834|       41.4|
+|Type 2 Diabetes |1               |  6141|  15.523|  3234|  2907|       47.3|
 
 ```r
 write_csv(summary.table, "Stress Demographics Table.csv")

@@ -69,7 +69,7 @@ combined.data <- read_csv(input.file)%>%
 ```
 
 ```
-## Rows: 62010 Columns: 40
+## Rows: 61793 Columns: 40
 ```
 
 ```
@@ -82,7 +82,7 @@ combined.data <- read_csv(input.file)%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 10:22:18 2024. This dataset has 39694 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:19 2024. This dataset has 39560 values.
 
 # Summary of Demographic Covariates
 
@@ -109,11 +109,11 @@ Table: Number of participants by all race/ethnicity
 
 |Race.Ethnicity  |     n|
 |:---------------|-----:|
-|White           | 35321|
+|White           | 35198|
 |Black           |  1739|
-|Other           |  1276|
-|Hispanic/Latino |   778|
-|Asian           |   580|
+|Other           |  1271|
+|Hispanic/Latino |   777|
+|Asian           |   575|
 
 ### Race and Ethnicity Groupings
 
@@ -138,14 +138,14 @@ Table: Number of participants by race/ethnicity, grouped into the other category
 |Race.Ethnicity.Code |   n|
 |:-------------------|---:|
 |O-NonHL             | 303|
-|U-U                 | 188|
+|U-U                 | 187|
 |AI-NonHL            | 175|
 |U-NonHL             | 162|
 |C-D                 |  81|
-|NA-NA               |  59|
+|NA-NA               |  58|
 |D-NonHL             |  55|
-|D-D                 |  51|
-|C-NA                |  37|
+|D-D                 |  50|
+|C-NA                |  36|
 |P-NonHL             |  28|
 |AA-HL               |  20|
 |AA-U                |  19|
@@ -158,11 +158,11 @@ Table: Number of participants by race/ethnicity, grouped into the other category
 |O-D                 |   6|
 |AA-D                |   4|
 |A-D                 |   3|
-|NA-U                |   3|
 |A-NA                |   2|
 |AI-U                |   2|
 |D-U                 |   2|
 |NA-D                |   2|
+|NA-U                |   2|
 |O-NA                |   2|
 |A-HL                |   1|
 |AA-NA               |   1|
@@ -189,12 +189,12 @@ Table: Number of participants by all gender
 
 |Gender |     n|
 |:------|-----:|
-|F      | 20866|
-|M      | 18828|
+|F      | 20772|
+|M      | 18788|
 
 ## By Age
 
-The average age of our participants is 52.867 with a standard deviation of 16.527.
+The average age of our participants is 52.887 with a standard deviation of 16.504.
 
 
 ```r
@@ -213,18 +213,17 @@ Table: Number of participants by age group
 
 |Age.group |    n|
 |:---------|----:|
-|(60,70]   | 9172|
-|(50,60]   | 8917|
-|(40,50]   | 6325|
-|(30,40]   | 4832|
-|(18,30]   | 4495|
-|(70,80]   | 4447|
-|(80,90]   | 1087|
-|NA        |  419|
+|[60,70)   | 9314|
+|[50,60)   | 8781|
+|[40,50)   | 6038|
+|[70,80)   | 4955|
+|[30,40)   | 4688|
+|[18,30)   | 4478|
+|[80,90)   | 1306|
 
 ## By Body Mass Index
 
-The average BMI of our participants is 29.886 with a standard deviation of 7.036.
+The average BMI of our participants is 29.925 with a standard deviation of 7.016.
 
 
 ```r
@@ -249,7 +248,6 @@ Table: Number of participants by BMI group
 |Class II Obese  |  4471|
 |Class III Obese |  3378|
 |Underweight     |   283|
-|NA              |   134|
 
 # Stratifying by Stress and BMI
 
@@ -269,9 +267,9 @@ Table: Number of participants by group
 
 |Stress |BMI_cat.Ob.NonOb |     n|
 |:------|:----------------|-----:|
-|Low    |Non-Obese        | 13670|
+|Low    |Non-Obese        | 13596|
 |Low    |Obese            |  9223|
-|High   |Non-Obese        |  9305|
+|High   |Non-Obese        |  9245|
 |High   |Obese            |  7496|
 
 ```r
@@ -289,12 +287,12 @@ Table: Number of participants by group and gender
 
 |Stress |BMI_cat.Ob.NonOb |Gender |    n|
 |:------|:----------------|:------|----:|
-|Low    |Non-Obese        |F      | 6913|
-|Low    |Non-Obese        |M      | 6757|
+|Low    |Non-Obese        |F      | 6858|
+|Low    |Non-Obese        |M      | 6738|
 |Low    |Obese            |F      | 4676|
 |Low    |Obese            |M      | 4547|
-|High   |Non-Obese        |F      | 5005|
-|High   |Non-Obese        |M      | 4300|
+|High   |Non-Obese        |F      | 4966|
+|High   |Non-Obese        |M      | 4279|
 |High   |Obese            |F      | 4272|
 |High   |Obese            |M      | 3224|
 
@@ -315,8 +313,8 @@ Table: Average BMI and age of participants by group
 
 |BMI_cat.Ob.NonOb |Stress | BMI_mean| Stress_d1_mean| BMI_sd| Stress_d1_sd| BMI_n| Stress_d1_n|
 |:----------------|:------|--------:|--------------:|------:|------------:|-----:|-----------:|
-|Non-Obese        |Low    |     25.3|           2.34|   2.98|         1.75| 13670|       13670|
-|Non-Obese        |High   |     25.2|           8.04|   3.13|         1.78|  9305|        9305|
+|Non-Obese        |Low    |     25.3|           2.33|   2.94|         1.75| 13596|       13596|
+|Non-Obese        |High   |     25.2|           8.04|   3.09|         1.78|  9245|        9245|
 |Obese            |Low    |     36.0|           2.43|   5.72|         1.75|  9223|        9223|
 |Obese            |High   |     36.6|           8.16|   6.00|         1.85|  7496|        7496|
 
