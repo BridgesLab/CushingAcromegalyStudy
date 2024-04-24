@@ -82,7 +82,7 @@ combined.data <- read_csv(input.file)%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:19 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Apr 24 09:01:16 2024. This dataset has 39560 values.
 
 # Summary of Demographic Covariates
 
@@ -194,7 +194,7 @@ Table: Number of participants by all gender
 
 ## By Age
 
-The average age of our participants is 52.887 with a standard deviation of 16.504.
+The average age of our participants is 52.887 with a standard error of 0.083.
 
 
 ```r
@@ -223,7 +223,7 @@ Table: Number of participants by age group
 
 ## By Body Mass Index
 
-The average BMI of our participants is 29.925 with a standard deviation of 7.016.
+The average BMI of our participants is 29.925 with a standard deviation of 0.035`.
 
 
 ```r
@@ -358,8 +358,8 @@ sessionInfo()
 ## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
 ## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
 ## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   pkgconfig_2.0.3 
-## [25] digest_0.6.33    R6_2.5.1         tidyselect_1.2.0 utf8_1.2.3      
-## [29] parallel_4.3.1   vroom_1.6.3      pillar_1.9.0     magrittr_2.0.3  
-## [33] bslib_0.5.1      withr_2.5.0      bit64_4.0.5      tools_4.3.1     
-## [37] cachem_1.0.8
+## [25] rstudioapi_0.13  digest_0.6.33    R6_2.5.1         tidyselect_1.2.0
+## [29] utf8_1.2.3       parallel_4.3.1   vroom_1.6.3      pillar_1.9.0    
+## [33] magrittr_2.0.3   bslib_0.5.1      withr_2.5.0      bit64_4.0.5     
+## [37] tools_4.3.1      cachem_1.0.8
 ```
