@@ -1,2 +1,6 @@
-Model,beta,se,p-value
-T2D ~ ,,,
+,Model,beta,se,p-value
+1,T2D ~ Obesity * Stress,0.112,0.059,0.056
+2,Model 1 + Age,0.13,0.06,0.031
+3,Model 2 + Gender * Obesity,0.117,0.061,0.023
+4,Model 3 + Race/Ethnicity,0.117,0.061,0.025
+5,Model 4 + SES,0.122,0.063,0.028
