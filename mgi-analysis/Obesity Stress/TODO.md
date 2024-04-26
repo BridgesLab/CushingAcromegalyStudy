@@ -2,7 +2,8 @@
 
 * Doublecheck values in CONSORT diagrams
 * Analyse by ancestry data 
-
+* Sensitivity for age groups
+* Calculate prop test for stress demographics
 
 # New Data Pulls
 

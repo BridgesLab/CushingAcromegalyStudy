@@ -68,7 +68,7 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:00:51 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:20:52 2024. This dataset has 39560 values.
 
 
 ```r
@@ -853,6 +853,46 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |BMI_cat.Ob.NonOb        |  1|     1447|       39558|             51290|   0.000|
 |Stress                  |  1|        1|       39557|             51289|   0.257|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39556|             51289|   0.885|
+
+```r
+#adding in age as covariate to separate age and sex effects
+glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+age, 
+    family="binomial",
+    data=combined.data) -> obesity.glm3a
+
+obesity.glm3a %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age as covarites", digits =c(0,3,3,2,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age as covarites
+
+|term                             | estimate| std.error| statistic|    p.value|
+|:--------------------------------|--------:|---------:|---------:|----------:|
+|(Intercept)                      |   -4.176|     0.053|    -78.09| 0.00000000|
+|BMI_cat.Ob.NonObObese            |    0.890|     0.030|     29.19| 0.00000000|
+|StressHigh                       |    0.156|     0.032|      4.88| 0.00000108|
+|age                              |    0.059|     0.001|     71.23| 0.00000000|
+|BMI_cat.Ob.NonObObese:StressHigh |   -0.005|     0.046|     -0.10| 0.92124966|
+
+```r
+anova(obesity.glm3a,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age as covarite", digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age as covarite
+
+|term                    | df| deviance| df.residual| residual.deviance| p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                    | NA|       NA|       39559|             52737|      NA|
+|BMI_cat.Ob.NonOb        |  1|     1447|       39558|             51290|   0.000|
+|Stress                  |  1|        1|       39557|             51289|   0.257|
+|age                     |  1|     6446|       39556|             44843|   0.000|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|       39555|             44843|   0.921|
 
 ```r
 #adding in age and gender as covariates as a modifier
