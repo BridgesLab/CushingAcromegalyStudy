@@ -7,12 +7,12 @@
 
 # Writing
 
-- [] Write background  (Irit)
-- [] Write methods/results - demographics and CONSORT diagram (@davebridges)
-- [] Write methods/results - prevalence and paramaterization of stress (@davebridges)
-- [] Write methods/results - relationship between stress and diabetes
-- [] Write methods/results - other chronic diseases
-- [] Write discussion  (Irit)
+- [X] Write background  (Irit)
+- [X] Write methods/results - demographics and CONSORT diagram (@davebridges)
+- [X] Write methods/results - prevalence and paramaterization of stress (@davebridges)
+- [X] Write methods/results - relationship between stress and diabetes
+- [X] Write methods/results - other chronic diseases
+- [X] Write discussion  (Irit)
 - [] Format for target journal
 
 # Review and Submission

@@ -7,9 +7,9 @@ Figures were then modified using Adobe Illustrator CC  into the file **Figures.a
 |-------|:---------------------------------:|:-----------------------------------------------------------------------------------:|
 | Figure 1| | Obesity-Stress-CONSORT.ai |
 | Table 1| obesity-stress-demographics-stress.Rmd | Stress Demographics Table.csv |
-| Figure 2A| obesity-stress-type2-diabetes.Rmd | stress-obesity |
-| Figure 2B| obesity-stress-type2-diabetes.Rmd | stress-obesity-gender |
-| Figure 2C| obesity-stress-type2-diabetes.Rmd | stress-obesity-ses |
-| Figure 2D| obesity-stress-type2-diabetes.Rmd | stress-obesity-race |
-| Table 2 | multivariate stress-obesity | |
-| Table 3 | multivariate other conditions | | 
+| Figure 2A| obesity-stress-type2-diabetes.Rmd | type2-diabetes-BMI-obese-nonobese-1.pdf |
+| Figure 2B| obesity-stress-type2-diabetes.Rmd | type2-diabetes-BMI-obese-nonobese-sex-1.pdf |
+| Figure 2C| obesity-stress-type2-diabetes.Rmd | type2-diabetes-BMI-obese-nonobese-disadvantage-1.pdf |
+| Figure 2D| obesity-stress-type2-diabetes.Rmd | type2-diabetes-BMI-obese-nonobese-race-1.pdf |
+| Table 2 | multivariate stress-obesity | manually abstracted |
+| Table 3 | multivariate other conditions | manually abstracted | 
