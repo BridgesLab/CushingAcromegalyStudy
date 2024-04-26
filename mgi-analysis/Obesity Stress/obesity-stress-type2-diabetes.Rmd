@@ -88,8 +88,8 @@ ggplot(diabetes.bmi.counts,
        aes(y=Percent,
            x=BMI_cat)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes Rates",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Obesity",
        x="") +
   theme_classic() +
   scale_fill_grey() +
@@ -113,8 +113,8 @@ ggplot(diabetes.bmi.counts,
        aes(y=Percent,
            x=BMI_cat)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes Rates",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Gender",
        x="") +
   theme_classic() +
   scale_fill_grey() +
@@ -148,8 +148,8 @@ ggplot(diabetes.bmi.stress.counts,
            x=BMI_cat,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes Rates",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Obesity",
        x="") +
   theme_classic() +
   scale_fill_grey() +
@@ -178,8 +178,8 @@ ggplot(diabetes.bmi.stress.counts,
            x=BMI_cat,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes Rates",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="BMI Categories",
        x="") +
   theme_classic() +
   scale_fill_grey() +
@@ -209,8 +209,8 @@ ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
            x=BMI_cat.Ob.NonOb,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Obesity",
        x="") +
   theme_classic() +
   scale_fill_grey() +
@@ -236,8 +236,8 @@ ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
            x=BMI_cat.Ob.NonOb,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Gender",
        x="") +
   facet_grid(.~Gender) +
   theme_classic() +
@@ -262,8 +262,8 @@ ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
            x=BMI_cat.Ob.NonOb,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Race and Ethnicity",
        x="") +
   facet_grid(.~Race.Ethnicity) +
   theme_classic() +
@@ -290,8 +290,8 @@ ggplot(diabetes.BMI_cat.Ob.NonOb.stress.counts,
            x=BMI_cat.Ob.NonOb,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Neighborhood Disadvantage",
        x="") +
   facet_grid(.~disadvantage13_17_qrtl) +
   theme_classic() +
@@ -729,8 +729,8 @@ ggplot(diabetes.bmi.stress.quartile.counts,
            x=BMI_cat.obese,
            fill=Stress.quartile)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Quartiles of Stress",
        x="") +
   theme_classic() +
   facet_grid(.~Gender) +
@@ -759,8 +759,8 @@ ggplot(diabetes.bmi.stress.gender.counts,
            x=BMI_cat.obese,
            fill=Stress)) +
   geom_bar(stat='identity',position='dodge') +
-  labs(y="Percent Diabetes",
-       title="Effects of Chronic Stress on Diabetes",
+  labs(y="Prevalence of Type 2 Diabetes",
+       title="Gender",
        x="") +
   facet_grid(.~Gender) +
   theme_classic() +
