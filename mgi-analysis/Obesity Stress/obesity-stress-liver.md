@@ -68,7 +68,7 @@ combined.data <- read_csv(input.file, na="-99") %>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:13:06 2024. This dataset has 36690 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:00:29 2024. This dataset has 36690 values.
 
 
 ```r
@@ -824,7 +824,7 @@ glm(LiverDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb,
 
 obesity.glm2 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier", digits =c(0,3,3,2,99))
 ```
 
 
@@ -833,10 +833,10 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.21|     0.030|    -74.21| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.26|     0.044|      5.96| 2.53e-09|
-|StressHigh                       |     0.16|     0.045|      3.43| 5.99e-04|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.066|      0.19| 8.51e-01|
+|(Intercept)                      |   -2.214|     0.030|    -74.21| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |    0.264|     0.044|      5.96| 2.53e-09|
+|StressHigh                       |    0.156|     0.045|      3.43| 5.99e-04|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.012|     0.066|      0.19| 8.51e-01|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -862,7 +862,7 @@ glm(LiverDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age and  gender as covarites", digits =c(0,3,3,2,99))
 ```
 
 
@@ -871,12 +871,12 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -3.01|     0.067|    -45.18| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.25|     0.044|      5.68| 1.38e-08|
-|StressHigh                       |     0.19|     0.046|      4.08| 4.58e-05|
-|GenderM                          |    -0.04|     0.033|     -1.30| 1.95e-01|
-|age                              |     0.01|     0.001|     14.16| 1.53e-45|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.066|      0.14| 8.85e-01|
+|(Intercept)                      |   -3.008|     0.067|    -45.18| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |    0.252|     0.044|      5.68| 1.38e-08|
+|StressHigh                       |    0.186|     0.046|      4.08| 4.58e-05|
+|GenderM                          |   -0.043|     0.033|     -1.30| 1.95e-01|
+|age                              |    0.015|     0.001|     14.16| 1.53e-45|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.010|     0.066|      0.14| 8.85e-01|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -904,7 +904,7 @@ glm(LiverDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender and race as covarites", digits =c(0,3,3,2,99))
 ```
 
 
@@ -913,16 +913,16 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -2.97|     0.154|    -19.27| 9.43e-83|
-|BMI_cat.Ob.NonObObese            |     0.25|     0.045|      5.67| 1.40e-08|
-|StressHigh                       |     0.19|     0.046|      4.07| 4.62e-05|
-|GenderM                          |    -0.04|     0.033|     -1.25| 2.10e-01|
-|age                              |     0.01|     0.001|     14.18| 1.27e-45|
-|Race.EthnicityBlack              |    -0.06|     0.166|     -0.34| 7.37e-01|
-|Race.EthnicityHispanic/Latino    |     0.22|     0.183|      1.20| 2.30e-01|
-|Race.EthnicityOther              |    -0.32|     0.178|     -1.82| 6.93e-02|
-|Race.EthnicityWhite              |    -0.05|     0.147|     -0.34| 7.35e-01|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.01|     0.066|      0.14| 8.89e-01|
+|(Intercept)                      |   -2.966|     0.154|    -19.27| 9.43e-83|
+|BMI_cat.Ob.NonObObese            |    0.253|     0.045|      5.67| 1.40e-08|
+|StressHigh                       |    0.186|     0.046|      4.07| 4.62e-05|
+|GenderM                          |   -0.041|     0.033|     -1.25| 2.10e-01|
+|age                              |    0.015|     0.001|     14.18| 1.27e-45|
+|Race.EthnicityBlack              |   -0.056|     0.166|     -0.34| 7.37e-01|
+|Race.EthnicityHispanic/Latino    |    0.219|     0.183|      1.20| 2.30e-01|
+|Race.EthnicityOther              |   -0.323|     0.178|     -1.82| 6.93e-02|
+|Race.EthnicityWhite              |   -0.050|     0.147|     -0.34| 7.35e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.009|     0.066|      0.14| 8.89e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -942,6 +942,58 @@ Table: Logistic regression of obese vs non-obese on liver.disease, with stress a
 |age                     |  1|      207|       36685|             26124| 6.66e-47|
 |Race.Ethnicity          |  4|       13|       36681|             26111| 9.53e-03|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       36680|             26111| 8.89e-01|
+
+```r
+#adding in ses
+glm(LiverDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,3,3,2,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender,  race and SES as covariates
+
+|term                             | estimate| std.error| statistic|  p.value|
+|:--------------------------------|--------:|---------:|---------:|--------:|
+|(Intercept)                      |   -2.958|     0.155|    -19.06| 5.20e-81|
+|BMI_cat.Ob.NonObObese            |    0.253|     0.045|      5.68| 1.34e-08|
+|StressHigh                       |    0.185|     0.046|      4.05| 5.06e-05|
+|GenderM                          |   -0.040|     0.033|     -1.21| 2.25e-01|
+|age                              |    0.015|     0.001|     14.25| 4.61e-46|
+|Race.EthnicityBlack              |   -0.087|     0.167|     -0.52| 6.04e-01|
+|Race.EthnicityHispanic/Latino    |    0.215|     0.183|      1.18| 2.38e-01|
+|Race.EthnicityOther              |   -0.323|     0.178|     -1.81| 6.96e-02|
+|Race.EthnicityWhite              |   -0.046|     0.147|     -0.31| 7.55e-01|
+|disadvantage13_17_qrtl2          |   -0.061|     0.042|     -1.45| 1.48e-01|
+|disadvantage13_17_qrtl3          |   -0.007|     0.046|     -0.15| 8.78e-01|
+|disadvantage13_17_qrtl4          |    0.063|     0.058|      1.07| 2.84e-01|
+|disadvantage13_17_qrtlNA         |   -0.082|     0.066|     -1.26| 2.09e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.008|     0.066|      0.12| 9.08e-01|
+
+```r
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on liver.disease, with stress as a modifier and age, gender,  race and SES as covariates
+
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       36689|             26428|       NA|
+|BMI_cat.Ob.NonOb        |  1|       72|       36688|             26356| 2.54e-17|
+|Stress                  |  1|       24|       36687|             26332| 8.43e-07|
+|Gender                  |  1|        0|       36686|             26331| 5.51e-01|
+|age                     |  1|      207|       36685|             26124| 6.66e-47|
+|Race.Ethnicity          |  4|       13|       36681|             26111| 9.53e-03|
+|disadvantage13_17_qrtl  |  4|        6|       36677|             26105| 1.98e-01|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|       36676|             26105| 9.08e-01|
 
 # Summary of Covariates
 

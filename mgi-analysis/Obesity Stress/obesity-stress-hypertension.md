@@ -68,7 +68,7 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:13:21 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:00:51 2024. This dataset has 39560 values.
 
 
 ```r
@@ -790,7 +790,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb,
 
 obesity.glm1 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension", digits =c(0,3,3,2,99))
 ```
 
 
@@ -799,8 +799,8 @@ Table: Logistic regression of obese vs non-obese on hypertension
 
 |term                  | estimate| std.error| statistic| p.value|
 |:---------------------|--------:|---------:|---------:|-------:|
-|(Intercept)           |    -0.82|     0.014|     -57.2|       0|
-|BMI_cat.Ob.NonObObese |     0.80|     0.021|      37.8|       0|
+|(Intercept)           |   -0.821|     0.014|     -57.2|       0|
+|BMI_cat.Ob.NonObObese |    0.797|     0.021|      37.8|       0|
 
 ```r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
@@ -824,7 +824,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb,
 
 obesity.glm2 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,3,3,2,99))
 ```
 
 
@@ -833,10 +833,10 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 
 |term                             | estimate| std.error| statistic| p.value|
 |:--------------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)                      |    -0.83|     0.019|    -44.60|   0.000|
-|BMI_cat.Ob.NonObObese            |     0.80|     0.028|     28.57|   0.000|
-|StressHigh                       |     0.03|     0.029|      0.93|   0.355|
-|BMI_cat.Ob.NonObObese:StressHigh |    -0.01|     0.043|     -0.14|   0.885|
+|(Intercept)                      |   -0.832|     0.019|    -44.60|   0.000|
+|BMI_cat.Ob.NonObObese            |    0.799|     0.028|     28.57|   0.000|
+|StressHigh                       |    0.027|     0.029|      0.93|   0.355|
+|BMI_cat.Ob.NonObObese:StressHigh |   -0.006|     0.043|     -0.14|   0.885|
 
 ```r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
@@ -862,7 +862,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites", digits =c(0,3,3,2,99))
 ```
 
 
@@ -871,12 +871,12 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -4.26|     0.054|    -78.84| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.89|     0.031|     29.23| 0.00e+00|
-|StressHigh                       |     0.17|     0.032|      5.15| 2.60e-07|
-|GenderM                          |     0.29|     0.023|     12.42| 1.99e-35|
-|age                              |     0.06|     0.001|     69.63| 0.00e+00|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.00|     0.046|      0.06| 9.56e-01|
+|(Intercept)                      |   -4.258|     0.054|    -78.84| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |    0.893|     0.031|     29.23| 0.00e+00|
+|StressHigh                       |    0.165|     0.032|      5.15| 2.60e-07|
+|GenderM                          |    0.287|     0.023|     12.42| 1.99e-35|
+|age                              |    0.058|     0.001|     69.63| 0.00e+00|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.003|     0.046|      0.06| 9.56e-01|
 
 ```r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
@@ -904,7 +904,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+R
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites", digits =c(0,3,3,2,99))
 ```
 
 
@@ -913,16 +913,16 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 
 |term                             | estimate| std.error| statistic|  p.value|
 |:--------------------------------|--------:|---------:|---------:|--------:|
-|(Intercept)                      |    -4.21|     0.118|    -35.82| 0.00e+00|
-|BMI_cat.Ob.NonObObese            |     0.88|     0.031|     28.79| 0.00e+00|
-|StressHigh                       |     0.16|     0.032|      4.98| 6.36e-07|
-|GenderM                          |     0.29|     0.023|     12.69| 6.98e-37|
-|age                              |     0.06|     0.001|     69.75| 0.00e+00|
-|Race.EthnicityBlack              |     0.62|     0.122|      5.06| 4.26e-07|
-|Race.EthnicityHispanic/Latino    |    -0.29|     0.142|     -2.05| 4.03e-02|
-|Race.EthnicityOther              |    -0.30|     0.128|     -2.32| 2.05e-02|
-|Race.EthnicityWhite              |    -0.13|     0.110|     -1.17| 2.44e-01|
-|BMI_cat.Ob.NonObObese:StressHigh |     0.00|     0.047|      0.03| 9.78e-01|
+|(Intercept)                      |   -4.210|     0.118|    -35.82| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |    0.884|     0.031|     28.79| 0.00e+00|
+|StressHigh                       |    0.160|     0.032|      4.98| 6.36e-07|
+|GenderM                          |    0.294|     0.023|     12.69| 6.98e-37|
+|age                              |    0.059|     0.001|     69.75| 0.00e+00|
+|Race.EthnicityBlack              |    0.615|     0.122|      5.06| 4.26e-07|
+|Race.EthnicityHispanic/Latino    |   -0.291|     0.142|     -2.05| 4.03e-02|
+|Race.EthnicityOther              |   -0.296|     0.128|     -2.32| 2.05e-02|
+|Race.EthnicityWhite              |   -0.129|     0.110|     -1.17| 2.44e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.001|     0.047|      0.03| 9.78e-01|
 
 ```r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
@@ -942,6 +942,58 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |age                     |  1|     6109|       39555|             44689| 0.00e+00|
 |Race.Ethnicity          |  4|      196|       39551|             44493| 2.97e-41|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39550|             44493| 9.78e-01|
+
+```r
+#adding in ses
+glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,3,3,2,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates
+
+|term                             | estimate| std.error| statistic|  p.value|
+|:--------------------------------|--------:|---------:|---------:|--------:|
+|(Intercept)                      |   -4.262|     0.118|    -36.02| 0.00e+00|
+|BMI_cat.Ob.NonObObese            |    0.879|     0.031|     28.57| 0.00e+00|
+|StressHigh                       |    0.152|     0.032|      4.71| 2.52e-06|
+|GenderM                          |    0.296|     0.023|     12.79| 1.96e-37|
+|age                              |    0.059|     0.001|     69.82| 0.00e+00|
+|Race.EthnicityBlack              |    0.547|     0.123|      4.45| 8.52e-06|
+|Race.EthnicityHispanic/Latino    |   -0.314|     0.142|     -2.21| 2.72e-02|
+|Race.EthnicityOther              |   -0.314|     0.128|     -2.45| 1.43e-02|
+|Race.EthnicityWhite              |   -0.136|     0.110|     -1.23| 2.18e-01|
+|disadvantage13_17_qrtl2          |    0.061|     0.030|      2.06| 3.96e-02|
+|disadvantage13_17_qrtl3          |    0.095|     0.033|      2.90| 3.77e-03|
+|disadvantage13_17_qrtl4          |    0.174|     0.042|      4.14| 3.47e-05|
+|disadvantage13_17_qrtlNA         |    0.023|     0.046|      0.50| 6.16e-01|
+|BMI_cat.Ob.NonObObese:StressHigh |    0.001|     0.047|      0.02| 9.83e-01|
+
+```r
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,0,0,0,0,99))
+```
+
+
+
+Table: Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates
+
+|term                    | df| deviance| df.residual| residual.deviance|  p.value|
+|:-----------------------|--:|--------:|-----------:|-----------------:|--------:|
+|NULL                    | NA|       NA|       39559|             52737|       NA|
+|BMI_cat.Ob.NonOb        |  1|     1447|       39558|             51290| 0.00e+00|
+|Stress                  |  1|        1|       39557|             51289| 2.57e-01|
+|Gender                  |  1|      492|       39556|             50798| 0.00e+00|
+|age                     |  1|     6109|       39555|             44689| 0.00e+00|
+|Race.Ethnicity          |  4|      196|       39551|             44493| 2.97e-41|
+|disadvantage13_17_qrtl  |  4|       21|       39547|             44472| 3.39e-04|
+|BMI_cat.Ob.NonOb:Stress |  1|        0|       39546|             44472| 9.83e-01|
 
 # Summary of Covariates
 

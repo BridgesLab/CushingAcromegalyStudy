@@ -474,7 +474,7 @@ pre code {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:13:21 2024. This dataset has 39560 values.</p>
+<p>Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:00:51 2024. This dataset has 39560 values.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat=</span> <span class="kw">factor</span>(BMI_cat, </a>
@@ -2772,7 +2772,7 @@ pre code {
 <a class="sourceLine" id="cb35-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb35-5" data-line-number="5">obesity.glm1 <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb35-6" data-line-number="6"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb35-7" data-line-number="7"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb35-7" data-line-number="7"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Logistic regression of obese vs non-obese on hypertension</caption>
 <thead>
@@ -2787,14 +2787,14 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-0.82</td>
+<td align="right">-0.821</td>
 <td align="right">0.014</td>
 <td align="right">-57.2</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
-<td align="right">0.80</td>
+<td align="right">0.797</td>
 <td align="right">0.021</td>
 <td align="right">37.8</td>
 <td align="right">0</td>
@@ -2841,7 +2841,7 @@ pre code {
 <a class="sourceLine" id="cb37-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb37-6" data-line-number="6">obesity.glm2 <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb37-7" data-line-number="7"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb37-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb37-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Logistic regression of obese vs non-obese on hypertension, with stress as a modifier</caption>
 <thead>
@@ -2856,28 +2856,28 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-0.83</td>
+<td align="right">-0.832</td>
 <td align="right">0.019</td>
 <td align="right">-44.60</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
-<td align="right">0.80</td>
+<td align="right">0.799</td>
 <td align="right">0.028</td>
 <td align="right">28.57</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
-<td align="right">0.03</td>
+<td align="right">0.027</td>
 <td align="right">0.029</td>
 <td align="right">0.93</td>
 <td align="right">0.355</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
-<td align="right">-0.01</td>
+<td align="right">-0.006</td>
 <td align="right">0.043</td>
 <td align="right">-0.14</td>
 <td align="right">0.885</td>
@@ -2940,7 +2940,7 @@ pre code {
 <a class="sourceLine" id="cb39-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb39-6" data-line-number="6">obesity.glm3 <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb39-7" data-line-number="7"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb39-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb39-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and gender as covarites</caption>
 <thead>
@@ -2955,42 +2955,42 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-4.26</td>
+<td align="right">-4.258</td>
 <td align="right">0.054</td>
 <td align="right">-78.84</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
-<td align="right">0.89</td>
+<td align="right">0.893</td>
 <td align="right">0.031</td>
 <td align="right">29.23</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
-<td align="right">0.17</td>
+<td align="right">0.165</td>
 <td align="right">0.032</td>
 <td align="right">5.15</td>
 <td align="right">2.60e-07</td>
 </tr>
 <tr class="even">
 <td align="left">GenderM</td>
-<td align="right">0.29</td>
+<td align="right">0.287</td>
 <td align="right">0.023</td>
 <td align="right">12.42</td>
 <td align="right">1.99e-35</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
-<td align="right">0.06</td>
+<td align="right">0.058</td>
 <td align="right">0.001</td>
 <td align="right">69.63</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
-<td align="right">0.00</td>
+<td align="right">0.003</td>
 <td align="right">0.046</td>
 <td align="right">0.06</td>
 <td align="right">9.56e-01</td>
@@ -3069,7 +3069,7 @@ pre code {
 <a class="sourceLine" id="cb41-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb41-6" data-line-number="6">obesity.glm4 <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb41-7" data-line-number="7"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb41-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb41-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
 <table>
 <caption>Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites</caption>
 <thead>
@@ -3084,70 +3084,70 @@ pre code {
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-4.21</td>
+<td align="right">-4.210</td>
 <td align="right">0.118</td>
 <td align="right">-35.82</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese</td>
-<td align="right">0.88</td>
+<td align="right">0.884</td>
 <td align="right">0.031</td>
 <td align="right">28.79</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td align="left">StressHigh</td>
-<td align="right">0.16</td>
+<td align="right">0.160</td>
 <td align="right">0.032</td>
 <td align="right">4.98</td>
 <td align="right">6.36e-07</td>
 </tr>
 <tr class="even">
 <td align="left">GenderM</td>
-<td align="right">0.29</td>
+<td align="right">0.294</td>
 <td align="right">0.023</td>
 <td align="right">12.69</td>
 <td align="right">6.98e-37</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
-<td align="right">0.06</td>
+<td align="right">0.059</td>
 <td align="right">0.001</td>
 <td align="right">69.75</td>
 <td align="right">0.00e+00</td>
 </tr>
 <tr class="even">
 <td align="left">Race.EthnicityBlack</td>
-<td align="right">0.62</td>
+<td align="right">0.615</td>
 <td align="right">0.122</td>
 <td align="right">5.06</td>
 <td align="right">4.26e-07</td>
 </tr>
 <tr class="odd">
 <td align="left">Race.EthnicityHispanic/Latino</td>
-<td align="right">-0.29</td>
+<td align="right">-0.291</td>
 <td align="right">0.142</td>
 <td align="right">-2.05</td>
 <td align="right">4.03e-02</td>
 </tr>
 <tr class="even">
 <td align="left">Race.EthnicityOther</td>
-<td align="right">-0.30</td>
+<td align="right">-0.296</td>
 <td align="right">0.128</td>
 <td align="right">-2.32</td>
 <td align="right">2.05e-02</td>
 </tr>
 <tr class="odd">
 <td align="left">Race.EthnicityWhite</td>
-<td align="right">-0.13</td>
+<td align="right">-0.129</td>
 <td align="right">0.110</td>
 <td align="right">-1.17</td>
 <td align="right">2.44e-01</td>
 </tr>
 <tr class="even">
 <td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
-<td align="right">0.00</td>
+<td align="right">0.001</td>
 <td align="right">0.047</td>
 <td align="right">0.03</td>
 <td align="right">9.78e-01</td>
@@ -3227,15 +3227,216 @@ pre code {
 </tr>
 </tbody>
 </table>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="co">#adding in ses</span></a>
+<a class="sourceLine" id="cb43-2" data-line-number="2"><span class="kw">glm</span>(HypertensionAny<span class="op">~</span>BMI_cat.Ob.NonOb<span class="op">+</span>Stress<span class="op">+</span>Stress<span class="op">:</span>BMI_cat.Ob.NonOb<span class="op">+</span>Gender<span class="op">+</span>age<span class="op">+</span>Race.Ethnicity<span class="op">+</span>disadvantage13_<span class="dv">17</span>_qrtl, </a>
+<a class="sourceLine" id="cb43-3" data-line-number="3">    <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>,</a>
+<a class="sourceLine" id="cb43-4" data-line-number="4">    <span class="dt">data=</span>combined.data) -&gt;<span class="st"> </span>obesity.glm5</a>
+<a class="sourceLine" id="cb43-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb43-6" data-line-number="6">obesity.glm5 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-7" data-line-number="7"><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-8" data-line-number="8"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender, race and SES as covariates</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-4.262</td>
+<td align="right">0.118</td>
+<td align="right">-36.02</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese</td>
+<td align="right">0.879</td>
+<td align="right">0.031</td>
+<td align="right">28.57</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="odd">
+<td align="left">StressHigh</td>
+<td align="right">0.152</td>
+<td align="right">0.032</td>
+<td align="right">4.71</td>
+<td align="right">2.52e-06</td>
+</tr>
+<tr class="even">
+<td align="left">GenderM</td>
+<td align="right">0.296</td>
+<td align="right">0.023</td>
+<td align="right">12.79</td>
+<td align="right">1.96e-37</td>
+</tr>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">0.059</td>
+<td align="right">0.001</td>
+<td align="right">69.82</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">Race.EthnicityBlack</td>
+<td align="right">0.547</td>
+<td align="right">0.123</td>
+<td align="right">4.45</td>
+<td align="right">8.52e-06</td>
+</tr>
+<tr class="odd">
+<td align="left">Race.EthnicityHispanic/Latino</td>
+<td align="right">-0.314</td>
+<td align="right">0.142</td>
+<td align="right">-2.21</td>
+<td align="right">2.72e-02</td>
+</tr>
+<tr class="even">
+<td align="left">Race.EthnicityOther</td>
+<td align="right">-0.314</td>
+<td align="right">0.128</td>
+<td align="right">-2.45</td>
+<td align="right">1.43e-02</td>
+</tr>
+<tr class="odd">
+<td align="left">Race.EthnicityWhite</td>
+<td align="right">-0.136</td>
+<td align="right">0.110</td>
+<td align="right">-1.23</td>
+<td align="right">2.18e-01</td>
+</tr>
+<tr class="even">
+<td align="left">disadvantage13_17_qrtl2</td>
+<td align="right">0.061</td>
+<td align="right">0.030</td>
+<td align="right">2.06</td>
+<td align="right">3.96e-02</td>
+</tr>
+<tr class="odd">
+<td align="left">disadvantage13_17_qrtl3</td>
+<td align="right">0.095</td>
+<td align="right">0.033</td>
+<td align="right">2.90</td>
+<td align="right">3.77e-03</td>
+</tr>
+<tr class="even">
+<td align="left">disadvantage13_17_qrtl4</td>
+<td align="right">0.174</td>
+<td align="right">0.042</td>
+<td align="right">4.14</td>
+<td align="right">3.47e-05</td>
+</tr>
+<tr class="odd">
+<td align="left">disadvantage13_17_qrtlNA</td>
+<td align="right">0.023</td>
+<td align="right">0.046</td>
+<td align="right">0.50</td>
+<td align="right">6.16e-01</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonObObese:StressHigh</td>
+<td align="right">0.001</td>
+<td align="right">0.047</td>
+<td align="right">0.02</td>
+<td align="right">9.83e-01</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="kw">anova</span>(obesity.glm5,<span class="dt">test=</span><span class="st">&quot;Chisq&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>tidy <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates&quot;</span>, <span class="dt">digits =</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">99</span>))</a></code></pre></div>
+<table>
+<caption>Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender, race and SES as covariates</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">deviance</th>
+<th align="right">df.residual</th>
+<th align="right">residual.deviance</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NULL</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">39559</td>
+<td align="right">52737</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonOb</td>
+<td align="right">1</td>
+<td align="right">1447</td>
+<td align="right">39558</td>
+<td align="right">51290</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="odd">
+<td align="left">Stress</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">39557</td>
+<td align="right">51289</td>
+<td align="right">2.57e-01</td>
+</tr>
+<tr class="even">
+<td align="left">Gender</td>
+<td align="right">1</td>
+<td align="right">492</td>
+<td align="right">39556</td>
+<td align="right">50798</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">1</td>
+<td align="right">6109</td>
+<td align="right">39555</td>
+<td align="right">44689</td>
+<td align="right">0.00e+00</td>
+</tr>
+<tr class="even">
+<td align="left">Race.Ethnicity</td>
+<td align="right">4</td>
+<td align="right">196</td>
+<td align="right">39551</td>
+<td align="right">44493</td>
+<td align="right">2.97e-41</td>
+</tr>
+<tr class="odd">
+<td align="left">disadvantage13_17_qrtl</td>
+<td align="right">4</td>
+<td align="right">21</td>
+<td align="right">39547</td>
+<td align="right">44472</td>
+<td align="right">3.39e-04</td>
+</tr>
+<tr class="even">
+<td align="left">BMI_cat.Ob.NonOb:Stress</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">39546</td>
+<td align="right">44472</td>
+<td align="right">9.83e-01</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="summary-of-covariates" class="section level1">
 <h1><span class="header-section-number">3</span> Summary of Covariates</h1>
 <p>Stratified data by stress and obesity status and summarized data</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb43-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb43-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb43-4" data-line-number="4"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group</caption>
 <thead>
@@ -3268,12 +3469,12 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Gender) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb44-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb44-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb44-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and gender&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Gender) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and gender&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group and gender</caption>
 <thead>
@@ -3335,12 +3536,12 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb45-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and race/ethnicity&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb47-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb47-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants by group and race/ethnicity&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants by group and race/ethnicity</caption>
 <thead>
@@ -3474,14 +3675,14 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb46-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb46-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb46-6" data-line-number="6">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb46-7" data-line-number="7">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb46-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI and age of participants by group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-5" data-line-number="5"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb48-6" data-line-number="6">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb48-7" data-line-number="7">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI and age of participants by group&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Average BMI and age of participants by group</caption>
 <thead>
@@ -3539,14 +3740,14 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb47-4" data-line-number="4">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
-<a class="sourceLine" id="cb47-5" data-line-number="5">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb47-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb47-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb47-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI and age of participants by group,complete cases&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Stress,BMI_cat.Ob.NonOb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize_at</span>(<span class="kw">c</span>(<span class="st">'BMI'</span>,<span class="st">'age'</span>), <span class="kw">list</span>(<span class="dt">mean=</span><span class="op">~</span><span class="kw">mean</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb49-4" data-line-number="4">                                    <span class="dt">sd=</span><span class="op">~</span><span class="kw">sd</span>(.x,<span class="dt">na.rm=</span>T),</a>
+<a class="sourceLine" id="cb49-5" data-line-number="5">                                    <span class="dt">n=</span><span class="op">~</span><span class="kw">length</span>(.x)))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(BMI_cat.Ob.NonOb))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Average BMI and age of participants by group,complete cases&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Average BMI and age of participants by group,complete cases</caption>
 <thead>
@@ -3607,7 +3808,7 @@ pre code {
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">4</span> Session Information</h1>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 4.3.1 (2023-06-16)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
