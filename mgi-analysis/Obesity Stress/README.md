@@ -19,6 +19,8 @@ Ran slurm file to execute scripts in this order
 * **obesity-stress-liver.Rmd** to analyse the relationships between stress, obesity and liver disease
 * **obesity-stress-hypertension.Rmd** to analyse the relationships between stress, obesity and hypertension
 
+The files multivariate_data.csv and comorbidity_data.csv are manually extracted from the relevant files. 
+
 
 
 

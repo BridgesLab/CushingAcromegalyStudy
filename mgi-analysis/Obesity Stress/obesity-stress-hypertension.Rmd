@@ -336,7 +336,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb,
 
 obesity.glm1 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension", digits =c(0,3,3,2,99))
   
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, ", digits =c(0,0,0,0,0,99))
@@ -348,7 +348,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb,
 
 obesity.glm2 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,3,3,2,99))
   
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,0,0,0,0,99))
@@ -360,7 +360,7 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age,
 
 obesity.glm3 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and  gender as covarites", digits =c(0,3,3,2,99))
   
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
@@ -372,10 +372,22 @@ glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+R
 
 obesity.glm4 %>%
   tidy() %>%
-  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites", digits =c(0,2,3,2,99))
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarites", digits =c(0,3,3,2,99))
   
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
+
+#adding in ses
+glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> obesity.glm5
+
+obesity.glm5 %>%
+  tidy() %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,3,3,2,99))
+  
+anova(obesity.glm5,test="Chisq") %>% tidy %>%
+  kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,0,0,0,0,99))
 ```
 
 # Summary of Covariates
