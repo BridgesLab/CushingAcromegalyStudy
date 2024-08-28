@@ -5,6 +5,8 @@
 - [x] Report beta coefficents as exponentiated in obesity-stress-demographics-stress.Rmd
 - [x] Add diabetes prevalence to obesity-stress-demographics-stress.Rmd
 - [] What is absolute prevalence in lean versus obese participants?
+- [] Clarify effect of obesity in males versus females
+- [] Calculate p-value for BMI differences in obese diabetic participants
 
 # Writing
 
@@ -28,4 +30,5 @@
 - [X] Irit
 - [X] Kate
 - [] Decide on target journal
+- [] Check journal standards for p value reporting
 - [] Post preprint
