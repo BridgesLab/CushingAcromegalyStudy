@@ -14,7 +14,7 @@ output:
 To define covariates for stress-obesity relationships.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -42,7 +42,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 
 input.file <- 'data-combined.csv'
@@ -69,20 +69,21 @@ combined.data <- read_csv(input.file)%>%
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
-## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
+## chr  (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_c...
+## dbl  (23): age, Stress_d1, Survey.Year, CardiacArrhythmias, ChronicPulmonary...
+## dttm  (2): Survey.Date, DeID_Diabetes_Diagnosis
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Apr 24 09:01:16 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:58:48 2024. This dataset has 39560 values.
 
 # Summary of Demographic Covariates
 
@@ -93,7 +94,7 @@ Stratified data by stress and obesity status and summarized data
 ## By Race and Ethnicity
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -120,7 +121,7 @@ Table: Number of participants by all race/ethnicity
 Here is all the races currently marked as other
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -173,7 +174,7 @@ Table: Number of participants by race/ethnicity, grouped into the other category
 ## By Gender
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -197,7 +198,7 @@ Table: Number of participants by all gender
 The average age of our participants is 52.887 with a standard error of 0.083.
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -226,7 +227,7 @@ Table: Number of participants by age group
 The average BMI of our participants is 29.925 with a standard deviation of 0.035`.
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -254,7 +255,7 @@ Table: Number of participants by BMI group
 Grouped by stress and BMI and tested for differences in demographic factors.
 
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   count %>%
@@ -272,7 +273,7 @@ Table: Number of participants by group
 |High   |Non-Obese        |  9245|
 |High   |Obese            |  7496|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Gender) %>%
   count %>%
@@ -296,7 +297,7 @@ Table: Number of participants by group and gender
 |High   |Obese            |F      | 4272|
 |High   |Obese            |M      | 3224|
 
-```r
+``` r
 combined.data %>%
   group_by(BMI_cat.Ob.NonOb,Stress) %>%
     filter(!(is.na(Stress))) %>%
@@ -321,18 +322,18 @@ Table: Average BMI and age of participants by group
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -349,17 +350,17 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_1.3.0 dplyr_1.1.3 readr_2.1.4 knitr_1.44 
+## [1] tidyr_1.3.1 dplyr_1.1.4 readr_2.1.5 knitr_1.48 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] crayon_1.5.2     vctrs_0.6.3      cli_3.6.1        rlang_1.1.1     
-##  [5] xfun_0.40        purrr_1.0.2      generics_0.1.3   jsonlite_1.8.7  
-##  [9] bit_4.0.5        glue_1.6.2       htmltools_0.5.6  sass_0.4.7      
-## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
-## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
-## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   pkgconfig_2.0.3 
-## [25] rstudioapi_0.13  digest_0.6.33    R6_2.5.1         tidyselect_1.2.0
-## [29] utf8_1.2.3       parallel_4.3.1   vroom_1.6.3      pillar_1.9.0    
-## [33] magrittr_2.0.3   bslib_0.5.1      withr_2.5.0      bit64_4.0.5     
-## [37] tools_4.3.1      cachem_1.0.8
+##  [1] crayon_1.5.3      vctrs_0.6.5       cli_3.6.3         rlang_1.1.4      
+##  [5] xfun_0.45         purrr_1.0.2       generics_0.1.3    jsonlite_1.8.8   
+##  [9] bit_4.0.5         glue_1.7.0        htmltools_0.5.8.1 sass_0.4.9       
+## [13] hms_1.1.3         fansi_1.0.6       rmarkdown_2.27    evaluate_0.24.0  
+## [17] jquerylib_0.1.4   tibble_3.2.1      tzdb_0.4.0        fastmap_1.2.0    
+## [21] yaml_2.3.9        lifecycle_1.0.4   compiler_4.4.0    pkgconfig_2.0.3  
+## [25] digest_0.6.36     R6_2.5.1          tidyselect_1.2.1  utf8_1.2.4       
+## [29] parallel_4.4.0    vroom_1.6.5       pillar_1.9.0      magrittr_2.0.3   
+## [33] bslib_0.7.0       withr_3.0.0       bit64_4.0.5       tools_4.4.0      
+## [37] cachem_1.1.0
 ```

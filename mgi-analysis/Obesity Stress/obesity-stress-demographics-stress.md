@@ -15,7 +15,7 @@ output:
 To define covariates for stress-obesity relationships, referring to associations with the exposure (stress).
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -43,7 +43,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 library(ggplot2)
 
@@ -60,14 +60,15 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
-## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
+## chr  (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_c...
+## dbl  (23): age, Stress_d1, Survey.Year, CardiacArrhythmias, ChronicPulmonary...
+## dttm  (2): Survey.Date, DeID_Diabetes_Diagnosis
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -78,7 +79,7 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 Stress is defined as high or low, based on whether the participant is above or below the median value (5).
 
 
-```r
+``` r
 combined.data %>%
   group_by(Stress) %>%
   count %>%
@@ -96,14 +97,14 @@ Table: Number of participants by high or low stress
 |      0| 22819| 57.7|
 |      1| 16741| 42.3|
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:23 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:58:52 2024. This dataset has 39560 values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
 
 ## By Race and Ethnicity
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -131,7 +132,7 @@ stress.race %>%
 
 ![](figures/stress-type2-counts-race-ethnicity-1.png)<!-- -->
 
-```r
+``` r
 stress.race %>%
   knitr::kable(caption="Number of participants by stress and race/ethnicity",
                digits =c(0,2,3,2,99))
@@ -150,7 +151,7 @@ Table: Number of participants by stress and race/ethnicity
 |Other           |   730|   541|       42.6|
 
 
-```r
+``` r
 library(broom)
 glm(Stress~Race.Ethnicity, 
     family="binomial",
@@ -172,7 +173,7 @@ Table: Binomial regression of ethicity on stress
 |NULL           | NA|       NA|       39559|             53904|       NA|
 |Race.Ethnicity |  4|       43|       39555|             53862| 1.16e-08|
 
-```r
+``` r
 race.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of ethicity on stress incidence, exponentiated", 
@@ -194,7 +195,7 @@ Table: Binomial regression estimates of ethicity on stress incidence, exponentia
 ## By Gender
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -223,7 +224,7 @@ stress.gender %>%
 
 ![](figures/stress-type2-counts-gender-1.png)<!-- -->
 
-```r
+``` r
 stress.gender %>% 
   knitr::kable(caption="Number of participants by stress and gender",
                digits =c(0,2,3,2,99))
@@ -243,7 +244,7 @@ Table: Number of participants by stress and gender
 Modelling shows a significant interaction between BMI and gender with respect to stress risk
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -276,7 +277,7 @@ Table: Prevalence of stress by obesity and gender
 |M      |Non-Obese        | 6738| 4279|       38.8|
 |M      |Obese            | 4547| 3224|       41.5|
 
-```r
+``` r
 gender.bmi.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
@@ -295,7 +296,7 @@ Table: Binomial regression of gender:BMI interaction on stress incidence
 |BMI_cat.Ob.NonOb        |  1|       73|       39557|             53748| 1.64e-17|
 |Gender:BMI_cat.Ob.NonOb |  1|        9|       39556|             53740| 3.09e-03|
 
-```r
+``` r
 gender.bmi.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of gender:BMI on stress incidence, exponentiated", 
@@ -314,7 +315,7 @@ Table: Binomial regression estimates of gender:BMI on stress incidence, exponent
 |GenderM:BMI_cat.Ob.NonObObese |     0.88|     0.041|     -2.96| 3.09e-03|
 
 
-```r
+``` r
 stress.gender.bmi %>%
   ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
   geom_bar(stat='identity',position='dodge') +
@@ -331,7 +332,7 @@ stress.gender.bmi %>%
 
 
 
-```r
+``` r
 library(broom)
 glm(Stress~Gender, 
     family="binomial",
@@ -353,7 +354,7 @@ Table: Binomial regression of gender on stress incidence
 |NULL   | NA|       NA|       39559|             53904|       NA|
 |Gender |  1|       83|       39558|             53821| 7.02e-20|
 
-```r
+``` r
 gender.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of gender on stress incidence, exponentiated", 
@@ -372,7 +373,7 @@ Table: Binomial regression estimates of gender on stress incidence, exponentiate
 ## By Age
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -401,7 +402,7 @@ stress.age %>%
 
 ![](figures/stress-type2-counts-age-1.png)<!-- -->
 
-```r
+``` r
 stress.age %>%
   knitr::kable(caption="Number of participants by stress diagnosis and age")
 ```
@@ -421,7 +422,7 @@ Table: Number of participants by stress diagnosis and age
 |[80,90)   |  795|  511|       39.1|
 
 
-```r
+``` r
 glm(Stress~Age.group, 
     family="binomial",
     data=combined.data) -> age.glm
@@ -442,7 +443,7 @@ Table: Binomial regression of age group on stress incidence
 |NULL      | NA|       NA|       39559|             53904|       NA|
 |Age.group |  6|      188|       39553|             53716| 6.31e-38|
 
-```r
+``` r
 age.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of age group on stress incidence, exponentiated", 
@@ -463,7 +464,7 @@ Table: Binomial regression estimates of age group on stress incidence, exponenti
 |Age.group[70,80) |     0.75|     0.042|     -6.71| 1.95e-11|
 |Age.group[80,90) |     0.78|     0.064|     -3.82| 1.36e-04|
 
-```r
+``` r
 glm(Stress~age, data=combined.data) %>% 
   tidy(exponentiate=TRUE) %>%
   kable(caption="Binomial regression estimates of age (continuous) on stress incidence, exponentiated", 
@@ -484,7 +485,7 @@ Table: Binomial regression estimates of age (continuous) on stress incidence, ex
 ### Neighborhood Education
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -513,7 +514,7 @@ stress.disadvantage %>%
 
 ![](figures/stress-type2-counts-education-1.png)<!-- -->
 
-```r
+``` r
 stress.disadvantage %>%
   knitr::kable(caption="Number of participants by stress neighborhood education")
 ```
@@ -531,7 +532,7 @@ Table: Number of participants by stress neighborhood education
 |              NA| 1805| 1362|       43.0|
 
 
-```r
+``` r
 glm(Stress~ped1_13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
@@ -552,7 +553,7 @@ Table: Binomial regression of neighborhood education group on stress incidence
 |NULL            | NA|       NA|       36392|             49575|       NA|
 |ped1_13_17_qrtl |  1|      340|       36391|             49235| 5.06e-76|
 
-```r
+``` r
 disadvantage.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of neighborhood education group on stress incidence, exponentiated", 
@@ -571,7 +572,7 @@ Table: Binomial regression estimates of neighborhood education group on stress i
 ### Neighborhood Affluence
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -600,7 +601,7 @@ stress.disadvantage %>%
 
 ![](figures/stress-type2-counts-affluence-1.png)<!-- -->
 
-```r
+``` r
 stress.disadvantage %>%
   knitr::kable(caption="Number of participants by stress neighborhood affluence")
 ```
@@ -618,7 +619,7 @@ Table: Number of participants by stress neighborhood affluence
 |                  NA| 1805| 1362|       43.0|
 
 
-```r
+``` r
 glm(Stress~affluence13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
@@ -639,7 +640,7 @@ Table: Binomial regression of neighborhood affluence group on stress incidence
 |NULL                | NA|       NA|       36392|             49575|      NA|
 |affluence13_17_qrtl |  1|      492|       36391|             49083|       0|
 
-```r
+``` r
 disadvantage.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of neighborhood affluence group on stress incidence, exponentiated", 
@@ -658,7 +659,7 @@ Table: Binomial regression estimates of neighborhood affluence group on stress i
 ### Disadvantage
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -687,7 +688,7 @@ stress.disadvantage %>%
 
 ![](figures/stress-type2-counts-disadvantage-1.png)<!-- -->
 
-```r
+``` r
 stress.disadvantage %>%
   knitr::kable(caption="Number of participants by stress neighborhood disadvantage")
 ```
@@ -705,7 +706,7 @@ Table: Number of participants by stress neighborhood disadvantage
 |                     NA| 1805| 1362|       43.0|
 
 
-```r
+``` r
 glm(Stress~disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
@@ -726,7 +727,7 @@ Table: Binomial regression of neighborhood disadvantage group on stress incidenc
 |NULL                   | NA|       NA|       36392|             49575|       NA|
 |disadvantage13_17_qrtl |  1|      340|       36391|             49236| 8.17e-76|
 
-```r
+``` r
 disadvantage.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of neighborhood disadvantage group on stress incidence, exponentiated", 
@@ -745,7 +746,7 @@ Table: Binomial regression estimates of neighborhood disadvantage group on stres
 ## By Body Mass Index
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -773,7 +774,7 @@ stress.bmi %>%
 
 ![](figures/stress-type2-counts-bmi-1.png)<!-- -->
 
-```r
+``` r
 stress.bmi %>%
   knitr::kable(caption="Number of participants by stress diagnosis and BMI category")
 ```
@@ -794,7 +795,7 @@ Table: Number of participants by stress diagnosis and BMI category
 ## By Type 2 Diabetes Diagnosis
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -822,7 +823,7 @@ stress.diabtes %>%
 
 ![](figures/stress-type2-counts-t2d-1.png)<!-- -->
 
-```r
+``` r
 stress.diabtes %>%
   knitr::kable(caption="Number of participants by stress diagnosis and diabetes diagnosis")
 ```
@@ -837,7 +838,7 @@ Table: Number of participants by stress diagnosis and diabetes diagnosis
 |             1|  3234|  2907|       47.3|
 
 
-```r
+``` r
 glm(Stress~Type2Diabetes, 
     family="binomial",
     data=combined.data) -> t2d.glm
@@ -858,7 +859,7 @@ Table: Binomial regression of type 2 diabetes diagnosis on stress incidence
 |NULL          | NA|       NA|       39559|             53904|       NA|
 |Type2Diabetes |  1|       75|       39558|             53830| 6.04e-18|
 
-```r
+``` r
 t2d.glm %>% 
   tidy(exponentiate=TRUE) %>% 
   kable(caption="Binomial regression estimates of type 2 diabetes diagnosis on stress incidence, exponentiated", 
@@ -874,7 +875,7 @@ Table: Binomial regression estimates of type 2 diabetes diagnosis on stress inci
 |(Intercept)   |     0.71|     0.011|    -31.30| 0.00e+00|
 |Type2Diabetes |     1.27|     0.028|      8.65| 5.17e-18|
 
-```r
+``` r
 glm(Stress~BMI, data=combined.data) %>% 
   tidy(exponentiate=TRUE) %>%
   kable(caption="Binomial regression estimates of BMI on stress incidence, exponentiated",
@@ -893,7 +894,7 @@ Table: Binomial regression estimates of BMI on stress incidence, exponentiated
 # Summary Table
 
 
-```r
+``` r
 rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
         mutate(Categoyr="Race.Ethnicity"),
       stress.gender %>% 
@@ -954,25 +955,25 @@ Table: Summary of demographic variables by stress incidence
 |Type 2 Diabetes |0               | 33419|  84.477| 19585| 13834|       41.4|
 |Type 2 Diabetes |1               |  6141|  15.523|  3234|  2907|       47.3|
 
-```r
+``` r
 write_csv(summary.table, "Stress Demographics Table.csv")
 ```
 
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -989,20 +990,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
-## [6] knitr_1.44   
+## [1] broom_1.0.6   ggplot2_3.5.1 tidyr_1.3.1   dplyr_1.1.4   readr_2.1.5  
+## [6] knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   crayon_1.5.2    
-##  [5] compiler_4.3.1   tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
-##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
-## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
-## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
-## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
-## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
-## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
-## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
-## [41] fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25   purrr_1.0.2     
-## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] crayon_1.5.3      compiler_4.4.0    tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
+## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
+## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
+## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
+## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [41] farver_2.1.2      fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27   
+## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

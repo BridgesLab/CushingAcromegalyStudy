@@ -15,7 +15,7 @@ editor: visual
 To test the effect modification of obesity on the stress-hypertension relationships.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -43,7 +43,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 library(knitr)
 
@@ -55,23 +55,24 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
-## dbl (18): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
+## chr  (23): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encount...
+## dbl  (19): age, Survey.Year, CardiacArrhythmias, ChronicPulmonaryDisease, Co...
+## dttm  (1): Survey.Date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:20:52 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 14:01:34 2024. This dataset has 39560 values.
 
 
-```r
+``` r
 combined.data <- 
   combined.data %>%
   mutate(BMI_cat= factor(BMI_cat, 
@@ -99,7 +100,7 @@ Stratified diagnoses by various BMI categories
 ## Hypertension by BMI Category
 
 
-```r
+``` r
 #calculating hypertension rates by bmi category
 with(combined.data, table(HypertensionAny,BMI_cat,Gender)) %>% 
   data.frame %>%
@@ -132,7 +133,7 @@ Table: Liver disease rates by BMI category
 |Class II Obese  |M      |        845|            1139|  1984|    57.4|
 |Class III Obese |M      |        407|             677|  1084|    62.5|
 
-```r
+``` r
 library(ggplot2)
 
 ggplot(hypertension.bmi.counts,
@@ -157,7 +158,7 @@ ggplot(hypertension.bmi.counts,
 This analysis uses all the BMI categories
 
 
-```r
+``` r
 #calculating hypertension rates by bmi category and stress
 with(combined.data, table(HypertensionAny,BMI_cat,Stress,Gender)) %>% 
   data.frame %>%
@@ -204,7 +205,7 @@ Table: Hypertension rates by BMI category
 |Class II Obese  |High   |M      |                371|             483|   854|    56.6|
 |Class III Obese |High   |M      |                182|             319|   501|    63.7|
 
-```r
+``` r
 ggplot(hypertension.bmi.stress.counts,
        aes(y=Percent,
            x=BMI_cat,
@@ -228,7 +229,7 @@ ggplot(hypertension.bmi.stress.counts,
 Ran a series of stepwise logistic regressions testing for obesity as a modifier of the effects of stress.
 
 
-```r
+``` r
 library(broom)
 glm(HypertensionAny~BMI_cat, 
     family="binomial",
@@ -252,7 +253,7 @@ Table: Logistic regression of obesity on hypertension
 |BMI_catClass II Obese  |     1.19|     0.143|      8.33| 8.32e-17|
 |BMI_catClass III Obese |     1.36|     0.144|      9.43| 4.14e-21|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on hypertension, ", digits =c(0,0,0,0,0,99))
 ```
@@ -266,7 +267,7 @@ Table: Logistic regression of obesity on hypertension,
 |NULL    | NA|       NA|       39559|             52737|      NA|
 |BMI_cat |  5|     1910|       39554|             50827|       0|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(HypertensionAny~BMI_cat+Stress+Stress:BMI_cat, 
     family="binomial",
@@ -296,7 +297,7 @@ Table: Logistic regression of obesity on hypertension, with stress as a modifier
 |BMI_catClass II Obese:StressHigh  |    -0.19|     0.288|     -0.64| 5.19e-01|
 |BMI_catClass III Obese:StressHigh |    -0.18|     0.290|     -0.61| 5.41e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -312,7 +313,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |Stress         |  1|        1|       39553|             50826|   0.293|
 |BMI_cat:Stress |  5|        4|       39548|             50822|   0.581|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(HypertensionAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age, 
     family="binomial",
@@ -344,7 +345,7 @@ Table: Logistic regression of obesity on hypertension, with stress as a modifier
 |BMI_catClass II Obese:StressHigh  |    -0.18|     0.314|     -0.57| 5.66e-01|
 |BMI_catClass III Obese:StressHigh |    -0.17|     0.316|     -0.52| 6.01e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on hypertension, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -362,7 +363,7 @@ Table: Logistic regression of obesity on hypertension, with stress as a modifier
 |age            |  1|     6094|       39551|             44285| 0.00e+00|
 |BMI_cat:Stress |  5|        2|       39546|             44283| 8.55e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(HypertensionAny~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -398,7 +399,7 @@ Table: Logistic regression of obesity on hypertension, with stress as a modifier
 |BMI_catClass II Obese:StressHigh  |    -0.19|     0.315|     -0.60| 5.50e-01|
 |BMI_catClass III Obese:StressHigh |    -0.17|     0.317|     -0.53| 5.99e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on hypertension, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -420,7 +421,7 @@ Table: Logistic regression of obesity on hypertension, with stress as a modifier
 ### Hypertension Rates by Quartiles
 
 
-```r
+``` r
 with(combined.data, table(HypertensionAny,BMI_cat.obese,Stress.quartile,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=HypertensionAny,
@@ -472,7 +473,7 @@ Table: Hypertension Rates by BMI and Stress Quartile
 |Overweight    |(8,12]          |M      |        357|             226|   583|    38.8|
 |Obese         |(8,12]          |M      |        382|             429|   811|    52.9|
 
-```r
+``` r
 ggplot(hypertension.bmi.stress.quartile.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -493,7 +494,7 @@ ggplot(hypertension.bmi.stress.quartile.counts,
 ## Hypertension Rates by Normal Obesity and Stress
 
 
-```r
+``` r
 #calculating hypertension rates by bmi category, stress and gender
 with(combined.data, table(HypertensionAny,BMI_cat.obese,Stress,Gender)) %>% 
   data.frame %>%
@@ -530,7 +531,7 @@ Table: Hypertension Rates by BMI and Stress
 |Overweight    |High   |M      |       1633|            1074|  2707|    39.7|
 |Obese         |High   |M      |       1433|            1791|  3224|    55.6|
 
-```r
+``` r
 ggplot(hypertension.bmi.stress.gender.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -554,7 +555,7 @@ ggplot(hypertension.bmi.stress.gender.counts,
 Ran a series of logistic regressions using the normal obesity categories not classes as the categorization
 
 
-```r
+``` r
 glm(HypertensionAny~BMI_cat.obese, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -575,7 +576,7 @@ Table: Logistic regression of obese vs non-obese on liver disease
 |BMI_cat.obeseOverweight |     0.59|     0.141|      4.18| 2.97e-05|
 |BMI_cat.obeseObese      |     1.15|     0.141|      8.15| 3.61e-16|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on liver disease, ", digits =c(0,0,0,0,0,99))
 ```
@@ -589,7 +590,7 @@ Table: Logistic regression of obesity on liver disease,
 |NULL          | NA|       NA|       39559|             52737|      NA|
 |BMI_cat.obese |  3|     1847|       39556|             50890|       0|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(HypertensionAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese, 
     family="binomial",
@@ -615,7 +616,7 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 |BMI_cat.obeseOverweight:StressHigh |    -0.19|     0.284|     -0.65| 5.13e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.16|     0.283|     -0.55| 5.80e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on liver disease, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -631,7 +632,7 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 |Stress               |  1|        2|       39555|             50889|   0.202|
 |BMI_cat.obese:Stress |  3|        3|       39552|             50885|   0.338|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(HypertensionAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age, 
     family="binomial",
@@ -659,7 +660,7 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 |BMI_cat.obeseOverweight:StressHigh |    -0.17|     0.309|     -0.54| 5.91e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.14|     0.308|     -0.45| 6.50e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on liver disease, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -677,7 +678,7 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 |age                  |  1|     5939|       39553|             44546| 0.00e+00|
 |BMI_cat.obese:Stress |  3|        2|       39550|             44545| 6.80e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(HypertensionAny~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -709,7 +710,7 @@ Table: Logistic regression of obesity on liver diesease, with stress as a modifi
 |BMI_cat.obeseOverweight:StressHigh |    -0.17|     0.310|     -0.55| 5.83e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.14|     0.309|     -0.46| 6.43e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on liver disease, with stress as a modifier and age, gender and race as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -731,7 +732,7 @@ Table: Logistic regression of obesity on liver disease, with stress as a modifie
 # Hypertension Rates by Obese/Not Obese and Stress
 
 
-```r
+``` r
 with(combined.data, table(HypertensionAny,BMI_cat.Ob.NonOb,Stress,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=HypertensionAny,
@@ -759,7 +760,7 @@ Table: Hypertension Rates by Obese or not and Stress
 |Non-Obese        |High   |M      |       2743|            1536|  4279|    35.9|
 |Obese            |High   |M      |       1433|            1791|  3224|    55.6|
 
-```r
+``` r
 ggplot(hypertension.BMI_cat.Ob.NonOb.stress.counts,
        aes(y=Percent,
            x=BMI_cat.Ob.NonOb,
@@ -783,7 +784,7 @@ ggplot(hypertension.BMI_cat.Ob.NonOb.stress.counts,
 Ran a series of logistic regressions using obese/non-obese as the categorization
 
 
-```r
+``` r
 glm(HypertensionAny~BMI_cat.Ob.NonOb, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -802,7 +803,7 @@ Table: Logistic regression of obese vs non-obese on hypertension
 |(Intercept)           |   -0.821|     0.014|     -57.2|       0|
 |BMI_cat.Ob.NonObObese |    0.797|     0.021|      37.8|       0|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, ", digits =c(0,0,0,0,0,99))
 ```
@@ -816,7 +817,7 @@ Table: Logistic regression of obese vs non-obese on hypertension,
 |NULL             | NA|       NA|       39559|             52737|      NA|
 |BMI_cat.Ob.NonOb |  1|     1447|       39558|             51290|       0|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb, 
     family="binomial",
@@ -838,7 +839,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |StressHigh                       |    0.027|     0.029|      0.93|   0.355|
 |BMI_cat.Ob.NonObObese:StressHigh |   -0.006|     0.043|     -0.14|   0.885|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -854,7 +855,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |Stress                  |  1|        1|       39557|             51289|   0.257|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39556|             51289|   0.885|
 
-```r
+``` r
 #adding in age as covariate to separate age and sex effects
 glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+age, 
     family="binomial",
@@ -877,7 +878,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |age                              |    0.059|     0.001|     71.23| 0.00000000|
 |BMI_cat.Ob.NonObObese:StressHigh |   -0.005|     0.046|     -0.10| 0.92124966|
 
-```r
+``` r
 anova(obesity.glm3a,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -894,7 +895,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |age                     |  1|     6446|       39556|             44843|   0.000|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39555|             44843|   0.921|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
     family="binomial",
@@ -918,7 +919,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |age                              |    0.058|     0.001|     69.63| 0.00e+00|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.003|     0.046|      0.06| 9.56e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -936,7 +937,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |age                     |  1|     6109|       39555|             44689|   0.000|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39554|             44689|   0.956|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -964,7 +965,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |Race.EthnicityWhite              |   -0.129|     0.110|     -1.17| 2.44e-01|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.001|     0.047|      0.03| 9.78e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -983,7 +984,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |Race.Ethnicity          |  4|      196|       39551|             44493| 2.97e-41|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       39550|             44493| 9.78e-01|
 
-```r
+``` r
 #adding in ses
 glm(HypertensionAny~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
@@ -1015,7 +1016,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 |disadvantage13_17_qrtlNA         |    0.023|     0.046|      0.50| 6.16e-01|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.001|     0.047|      0.02| 9.83e-01|
 
-```r
+``` r
 anova(obesity.glm5,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on hypertension, with stress as a modifier and age, gender,  race and SES as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -1040,7 +1041,7 @@ Table: Logistic regression of obese vs non-obese on hypertension, with stress as
 Stratified data by stress and obesity status and summarized data
 
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   count %>%
@@ -1058,7 +1059,7 @@ Table: Number of participants by group
 |High   |Non-Obese        |  9245|
 |High   |Obese            |  7496|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Gender) %>%
   count %>%
@@ -1082,7 +1083,7 @@ Table: Number of participants by group and gender
 |High   |Obese            |F      | 4272|
 |High   |Obese            |M      | 3224|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) %>%
   count %>%
@@ -1118,7 +1119,7 @@ Table: Number of participants by group and race/ethnicity
 |High   |Obese            |Other           |   232|
 |High   |Obese            |White           |  6585|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
     filter(!(is.na(Stress))) %>%
@@ -1140,7 +1141,7 @@ Table: Average BMI and age of participants by group
 |High   |Non-Obese        |     25.2|     51.0|   3.09|   17.8|  9245|  9245|
 |High   |Obese            |     36.6|     52.6|   6.00|   14.6|  7496|  7496|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
@@ -1165,18 +1166,18 @@ Table: Average BMI and age of participants by group,complete cases
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1193,20 +1194,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
-## [6] knitr_1.44   
+## [1] broom_1.0.6   ggplot2_3.5.1 tidyr_1.3.1   dplyr_1.1.4   readr_2.1.5  
+## [6] knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   compiler_4.3.1  
-##  [5] crayon_1.5.2     tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
-##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
-## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
-## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
-## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
-## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
-## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
-## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
-## [41] colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25   purrr_1.0.2     
-## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] compiler_4.4.0    crayon_1.5.3      tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
+## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
+## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
+## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
+## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [41] farver_2.1.2      colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27   
+## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

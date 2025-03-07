@@ -14,7 +14,7 @@ output:
 To define covariates for stress-obesity relationships, referring to associations with the outcome (diabetes risk).
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -42,7 +42,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 library(ggplot2)
 
@@ -57,27 +57,28 @@ combined.data <- read_csv(input.file) %>% #set reference values for each group
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_ca...
-## dbl (22): age, Stress_d1, CardiacArrhythmias, ChronicPulmonaryDisease, Conge...
+## chr  (18): DeID_PatientID, Gender, DeID_Survey_Date, DeID_EncounterID, BMI_c...
+## dbl  (23): age, Stress_d1, Survey.Year, CardiacArrhythmias, ChronicPulmonary...
+## dttm  (2): Survey.Date, DeID_Diabetes_Diagnosis
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:11:33 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:59:18 2024. This dataset has 39560 values.
 
 Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
 
 ## By Race and Ethnicity
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -105,7 +106,7 @@ diabetes.race %>%
 
 ![](figures/diabetes-type2-counts-race-ethnicity-1.png)<!-- -->
 
-```r
+``` r
 diabetes.race %>%
   knitr::kable(caption="Number of participants by diabetes diagnosis and race/ethnicity",
                digits =c(0,2,3,2,99))
@@ -124,7 +125,7 @@ Table: Number of participants by diabetes diagnosis and race/ethnicity
 |Other           |  1081|  190|       14.9|
 
 
-```r
+``` r
 library(broom)
 glm(Type2Diabetes~Race.Ethnicity, 
     family="binomial",
@@ -146,7 +147,7 @@ Table: Binomial regression of ethicity on diabetes incidence
 |NULL           | NA|       NA|       39559|             34154|       NA|
 |Race.Ethnicity |  4|       72|       39555|             34083| 9.81e-15|
 
-```r
+``` r
 race.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of ethicity on diabetes incidence", 
@@ -168,7 +169,7 @@ Table: Binomial regression estimates of ethicity on diabetes incidence
 ## By Gender
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -197,7 +198,7 @@ diabetes.gender %>%
 
 ![](figures/diabetes-type2-counts-gender-1.png)<!-- -->
 
-```r
+``` r
 diabetes.gender %>% 
   knitr::kable(caption="Number of participants by diabetes diagnosis and gender",
                digits =c(0,2,3,2,99))
@@ -217,7 +218,7 @@ Table: Number of participants by diabetes diagnosis and gender
 Modelling shows a significant interaction between BMI and gender with respect to diabetes risk
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -250,7 +251,7 @@ Table: Prevalence of diabetes by obesity and gender
 |M      |Non-Obese        |  9742| 1275|       11.6|
 |M      |Obese            |  5684| 2087|       26.9|
 
-```r
+``` r
 gender.bmi.glm %>% 
   anova(test="Chisq") %>% 
   tidy %>% 
@@ -269,7 +270,7 @@ Table: Binomial regression of gender:BMI interaction on diabetes incidence
 |BMI_cat.Ob.NonOb        |  1|     1712|       39557|             32289| 0.00e+00|
 |Gender:BMI_cat.Ob.NonOb |  1|       30|       39556|             32259| 4.05e-08|
 
-```r
+``` r
 gender.bmi.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of gender:BMI on diabetes incidence", 
@@ -288,7 +289,7 @@ Table: Binomial regression estimates of gender:BMI on diabetes incidence
 |GenderM:BMI_cat.Ob.NonObObese |    -0.32|     0.059|     -5.47| 4.50e-08|
 
 
-```r
+``` r
 diabetes.gender.bmi %>%
   ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
   geom_bar(stat='identity',position='dodge') +
@@ -305,7 +306,7 @@ diabetes.gender.bmi %>%
 
 
 
-```r
+``` r
 library(broom)
 glm(Type2Diabetes~Gender, 
     family="binomial",
@@ -327,7 +328,7 @@ Table: Binomial regression of gender on diabetes incidence
 |NULL   | NA|       NA|       39559|             34154|       NA|
 |Gender |  1|      153|       39558|             34001| 3.36e-35|
 
-```r
+``` r
 gender.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of gender on diabetes incidence", 
@@ -346,7 +347,7 @@ Table: Binomial regression estimates of gender on diabetes incidence
 ## By Age
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -375,7 +376,7 @@ diabetes.age %>%
 
 ![](figures/diabetes-type2-counts-age-1.png)<!-- -->
 
-```r
+``` r
 diabetes.age %>%
   knitr::kable(caption="Number of participants by diabetes diagnosis and age")
 ```
@@ -395,7 +396,7 @@ Table: Number of participants by diabetes diagnosis and age
 |[80,90)   | 1025|  281|      21.52|
 
 
-```r
+``` r
 glm(Type2Diabetes~Age.group, 
     family="binomial",
     data=combined.data) -> age.glm
@@ -416,7 +417,7 @@ Table: Binomial regression of age group on diabetes incidence
 |NULL      | NA|       NA|       39559|             34154|      NA|
 |Age.group |  6|     1988|       39553|             32166|       0|
 
-```r
+``` r
 age.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of age group on diabetes incidence", 
@@ -437,7 +438,7 @@ Table: Binomial regression estimates of age group on diabetes incidence
 |Age.group[70,80) |     2.75|     0.109|      25.2| 0.00e+00|
 |Age.group[80,90) |     2.55|     0.124|      20.5| 1.04e-93|
 
-```r
+``` r
 glm(Type2Diabetes~age, data=combined.data) %>% 
   tidy %>%
   kable(caption="Binomial regression estimates of age (continuous) on diabetes incidence", 
@@ -456,7 +457,7 @@ Table: Binomial regression estimates of age (continuous) on diabetes incidence
 ## By Neighborhood Disadvantage
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -485,7 +486,7 @@ diabetes.disadvantage %>%
 
 ![](figures/diabetes-type2-counts-disadvantage-1.png)<!-- -->
 
-```r
+``` r
 diabetes.disadvantage %>%
   knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
 ```
@@ -503,7 +504,7 @@ Table: Number of participants by diabetes neighborhood disadvantage
 |                     NA|  2726|  441|       13.9|
 
 
-```r
+``` r
 glm(Type2Diabetes~disadvantage13_17_qrtl, 
     family="binomial",
     data=combined.data) -> disadvantage.glm
@@ -524,7 +525,7 @@ Table: Binomial regression of neighborhood disadvantage group on diabetes incide
 |NULL                   | NA|       NA|       36392|             31591|       NA|
 |disadvantage13_17_qrtl |  1|      130|       36391|             31461| 3.77e-30|
 
-```r
+``` r
 disadvantage.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of neighborhood disadvantage group on diabetes incidence", 
@@ -543,7 +544,7 @@ Table: Binomial regression estimates of neighborhood disadvantage group on diabe
 ## By Body Mass Index
 
 
-```r
+``` r
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
@@ -571,7 +572,7 @@ diabetes.bmi %>%
 
 ![](figures/diabetes-type2-counts-bmi-1.png)<!-- -->
 
-```r
+``` r
 diabetes.bmi %>%
   knitr::kable(caption="Number of participants by diabetes diagnosis and BMI category")
 ```
@@ -590,7 +591,7 @@ Table: Number of participants by diabetes diagnosis and BMI category
 |Class III Obese |  2273| 1105|      32.71|
 
 
-```r
+``` r
 glm(Type2Diabetes~BMI_cat, 
     family="binomial",
     data=combined.data) -> bmi.glm
@@ -611,7 +612,7 @@ Table: Binomial regression of BMI group on diabetes incidence
 |NULL    | NA|       NA|       39559|             34154|      NA|
 |BMI_cat |  5|     2155|       39554|             31999|       0|
 
-```r
+``` r
 bmi.glm %>% 
   tidy %>% 
   kable(caption="Binomial regression estimates of BMI group on diabetes incidence", 
@@ -631,7 +632,7 @@ Table: Binomial regression estimates of BMI group on diabetes incidence
 |BMI_catClass II Obese  |     2.41|     0.340|      7.09| 1.39e-12|
 |BMI_catClass III Obese |     2.69|     0.340|      7.92| 2.45e-15|
 
-```r
+``` r
 glm(Type2Diabetes~BMI, data=combined.data) %>% 
   tidy %>%
   kable(caption="Binomial regression estimates of BMI on diabetes incidence",
@@ -650,7 +651,7 @@ Table: Binomial regression estimates of BMI on diabetes incidence
 # Summary Table
 
 
-```r
+``` r
 rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
       diabetes.gender %>% rename("Group"="Gender"),
       diabetes.bmi %>% rename("Group"="BMI_cat"),
@@ -695,25 +696,25 @@ Table: Summary of demographic variables by diabetes incidence
 |[70,80)         |  4955|  3710| 1245|      25.13|
 |[80,90)         |  1306|  1025|  281|      21.52|
 
-```r
+``` r
 write_csv(summary.table, "Type 2 Diabetes Demographics Table.csv")
 ```
 
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -730,20 +731,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
-## [6] knitr_1.44   
+## [1] broom_1.0.6   ggplot2_3.5.1 tidyr_1.3.1   dplyr_1.1.4   readr_2.1.5  
+## [6] knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   crayon_1.5.2    
-##  [5] compiler_4.3.1   tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
-##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
-## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
-## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
-## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
-## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
-## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
-## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
-## [41] fansi_1.0.4      colorspace_2.1-0 rmarkdown_2.25   purrr_1.0.2     
-## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] crayon_1.5.3      compiler_4.4.0    tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
+## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
+## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
+## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
+## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [41] farver_2.1.2      fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27   
+## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

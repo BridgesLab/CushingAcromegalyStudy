@@ -11,14 +11,14 @@ output:
 
 # Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:03:37 2024.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:52:16 2024.
 
 # Data Descriptions
 
 These data were obtained from Precision Health DataDirect, starting with 91,602 MGI Study Participants, pulled from DataDirect on 2023-01-20.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -41,14 +41,17 @@ The input data files are:
 -   **Socioeconomic Status** is found in GisNeighborhoodAffluence.csv. For SES we used GIS neighborhood affluence scores. This is census tract affluence and disadvantage metrics for respective patient addresses. These are quartile values for affluence `affluence13_17_qrtl` (Mean of proportion of families with an income greater than 75k, ped3 proportion with a bachelor's degree or higher, proportion with a professional occupation from the ACS 2013-2017), `disadvantage13_17_qrtl` disadvantage (Mean of proportion of female headed families with kids, proportion of families with public assistance income, proportion of people with income in the past 12 months below the poverty level, proportion of the 16+ civilian labor force unemployed all ACS 2013-2017), and `ped1_13_17_qrtl` education (Proportion with less than high school diploma, from the ACS 2013-2017)
 
 
-```r
+``` r
 library(readr)
 library(dplyr)
 library(tidyr)
 library(knitr)
+library(lubridate)
 
 mgi.patient.data <- read_csv(mgi.survey.datafile) %>%
-  select(DeID_PatientID, Gender,age, 'Stress_d1',DeID_Survey_Date) 
+  select(DeID_PatientID, Gender,age, 'Stress_d1',DeID_Survey_Date) %>%
+  mutate(Survey.Date = mdy_hm(DeID_Survey_Date)) %>%
+  mutate(Survey.Year = year(Survey.Date)) 
 
 mgi.patient.data %>%
   summarize(All=length(Gender),
@@ -69,7 +72,62 @@ Table: Number of participants with MGI survey values in the patient dataset
 |-----:|------:|-----:|------:|--------:|
 | 62040|  62040| 62040|  62040|    62040|
 
-```r
+``` r
+mgi.patient.data %>%
+  group_by(Survey.Year) %>%
+  count %>%
+  kable(caption="Summary of initial surveys by year, all patients have a survey year.")
+```
+
+
+
+Table: Summary of initial surveys by year, all patients have a survey year.
+
+| Survey.Year|     n|
+|-----------:|-----:|
+|        1989|     2|
+|        2011|     1|
+|        2012|  2008|
+|        2013|  8560|
+|        2014|  8293|
+|        2015| 10122|
+|        2016|  9782|
+|        2017|  8638|
+|        2018|  8902|
+|        2019|  5587|
+|        2020|   145|
+
+``` r
+mgi.patient.data %>%
+  mutate(No.Stress = is.na(Stress_d1))%>%
+  group_by(Survey.Year, No.Stress) %>%
+  count %>% 
+  pivot_wider(names_from="No.Stress", values_from = "n") %>%
+  rename("Has Data"=`FALSE`,
+         "Missing Data"=`TRUE`) %>%
+  mutate(`Percent Complete`=`Has Data`/(`Has Data`+`Missing Data`)*100) %>%
+  kable(caption="Summary of initial surveys by year and whether there are stress data.") 
+```
+
+
+
+Table: Summary of initial surveys by year and whether there are stress data.
+
+| Survey.Year| Missing Data| Has Data| Percent Complete|
+|-----------:|------------:|--------:|----------------:|
+|        1989|            2|       NA|               NA|
+|        2011|            1|       NA|               NA|
+|        2012|         2008|       NA|               NA|
+|        2013|         8560|       NA|               NA|
+|        2014|         4604|     3689|             44.5|
+|        2015|         1398|     8724|             86.2|
+|        2016|         1702|     8080|             82.6|
+|        2017|         1411|     7227|             83.7|
+|        2018|         1566|     7336|             82.4|
+|        2019|         1053|     4534|             81.2|
+|        2020|           27|      118|             81.4|
+
+``` r
 # For the rest of the datasets, only patients in the mgi dataset
 
 #get demographics
@@ -99,7 +157,7 @@ We will use the mean BMI measure if there are multiple in the encounters file.
 # Merging Data
 
 
-```r
+``` r
 combined.data <- 
   mgi.patient.data %>%
   left_join(cm.data) %>% #only want comorbidities for folks with mgi data
@@ -146,7 +204,7 @@ combined.data <-
 # Filtering out incomplete data
 
 
-```r
+``` r
 combined.data.bmi <- 
   combined.data %>%
   filter(!is.na(BMI_cat)) # remove participants with no BMI category
@@ -154,16 +212,21 @@ combined.data.bmi <-
 combined.data.age <- 
   combined.data.bmi %>%
   filter(!is.na(Age.group)) # remove participants with no BMI
+
+combined.data.stress <-
+  combined.data.age %>%
+  filter(is.na(Stress_d1)) # remove participants with no stress score
 ```
 
 * All data: **62010** particiipants
 * No BMI category 217 leaving **61793** participants
 * No Age category 0 leaving **61793** participants
+* No Age category 39560 leaving **22233** participants
 
 # Writing out of the Data
 
 
-```r
+``` r
 output.file <- 'data-combined.csv'
 write_csv(combined.data.age, file=output.file)
 ```
@@ -173,18 +236,18 @@ These data were written out to data-combined.csv. This is the input file for the
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -201,17 +264,18 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_1.3.0 dplyr_1.1.3 readr_2.1.4 knitr_1.44 
+## [1] lubridate_1.9.3 tidyr_1.3.1     dplyr_1.1.4     readr_2.1.5    
+## [5] knitr_1.48     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] crayon_1.5.2     vctrs_0.6.3      cli_3.6.1        rlang_1.1.1     
-##  [5] xfun_0.40        purrr_1.0.2      generics_0.1.3   jsonlite_1.8.7  
-##  [9] bit_4.0.5        glue_1.6.2       htmltools_0.5.6  sass_0.4.7      
-## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
-## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
-## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   pkgconfig_2.0.3 
-## [25] digest_0.6.33    R6_2.5.1         tidyselect_1.2.0 utf8_1.2.3      
-## [29] parallel_4.3.1   vroom_1.6.3      pillar_1.9.0     magrittr_2.0.3  
-## [33] bslib_0.5.1      withr_2.5.0      bit64_4.0.5      tools_4.3.1     
-## [37] cachem_1.0.8
+##  [1] bit_4.0.5         jsonlite_1.8.8    compiler_4.4.0    crayon_1.5.3     
+##  [5] tidyselect_1.2.1  parallel_4.4.0    jquerylib_0.1.4   yaml_2.3.9       
+##  [9] fastmap_1.2.0     R6_2.5.1          generics_0.1.3    tibble_3.2.1     
+## [13] bslib_0.7.0       pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4      
+## [17] utf8_1.2.4        cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [21] bit64_4.0.5       timechange_0.3.0  cli_3.6.3         withr_3.0.0      
+## [25] magrittr_2.0.3    digest_0.6.36     vroom_1.6.5       hms_1.1.3        
+## [29] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [33] fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2       tools_4.4.0      
+## [37] pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

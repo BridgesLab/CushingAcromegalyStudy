@@ -15,7 +15,7 @@ editor: visual
 To test the effect modification of obesity on the stress-cpd relationships.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -43,7 +43,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 library(knitr)
 
@@ -55,23 +55,24 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
-## dbl (18): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
+## chr  (23): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encount...
+## dbl  (19): age, Survey.Year, CardiacArrhythmias, ChronicPulmonaryDisease, Co...
+## dttm  (1): Survey.Date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:01:20 2024. This dataset has 36690 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 14:02:18 2024. This dataset has 36690 values.
 
 
-```r
+``` r
 combined.data <- 
   combined.data %>%
   mutate(BMI_cat= factor(BMI_cat, 
@@ -99,7 +100,7 @@ Stratified diagnoses by various BMI categories
 ## Chronic Pulmonary Disease by BMI Category
 
 
-```r
+``` r
 #calculating cpd rates by bmi category
 with(combined.data, table(ChronicPulmonaryDisease,BMI_cat,Gender)) %>% 
   data.frame %>%
@@ -132,7 +133,7 @@ Table: Chronic pulmonary disease rates by BMI category
 |Class II Obese  |M      |       1437|                     403|  1840|    21.9|
 |Class III Obese |M      |        735|                     252|   987|    25.5|
 
-```r
+``` r
 library(ggplot2)
 
 ggplot(cpd.bmi.counts,
@@ -157,7 +158,7 @@ ggplot(cpd.bmi.counts,
 This analysis uses all the BMI categories
 
 
-```r
+``` r
 #calculating cpd rates by bmi category and stress
 with(combined.data, table(ChronicPulmonaryDisease,BMI_cat,Stress,Gender)) %>% 
   data.frame %>%
@@ -204,7 +205,7 @@ Table: Chronic Pulmonary Disease rates by BMI category
 |Class II Obese  |High   |M      |                        604|                     187|   791|    23.6|
 |Class III Obese |High   |M      |                        333|                     128|   461|    27.8|
 
-```r
+``` r
 ggplot(cpd.bmi.stress.counts,
        aes(y=Percent,
            x=BMI_cat,
@@ -228,7 +229,7 @@ ggplot(cpd.bmi.stress.counts,
 Ran a series of stepwise logistic regressions testing for obesity as a modifier of the effects of stress.
 
 
-```r
+``` r
 library(broom)
 glm(ChronicPulmonaryDisease~BMI_cat, 
     family="binomial",
@@ -252,7 +253,7 @@ Table: Logistic regression of obesity on cpd
 |BMI_catClass II Obese  |    -0.05|     0.141|     -0.38| 7.05e-01|
 |BMI_catClass III Obese |     0.21|     0.142|      1.51| 1.32e-01|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on cpd, ", digits =c(0,0,0,0,0,99))
 ```
@@ -266,7 +267,7 @@ Table: Logistic regression of obesity on cpd,
 |NULL    | NA|       NA|       36689|             39782|       NA|
 |BMI_cat |  5|      263|       36684|             39519| 1.13e-54|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat+Stress+Stress:BMI_cat, 
     family="binomial",
@@ -296,7 +297,7 @@ Table: Logistic regression of obesity on cpd, with stress as a modifier
 |BMI_catClass II Obese:StressHigh  |    -0.02|     0.285|     -0.08| 9.38e-01|
 |BMI_catClass III Obese:StressHigh |    -0.11|     0.286|     -0.39| 6.97e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -312,7 +313,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |Stress         |  1|       80|       36683|             39439| 3.10e-19|
 |BMI_cat:Stress |  5|        4|       36678|             39435| 5.94e-01|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat+Stress+Stress:BMI_cat+Gender+age, 
     family="binomial",
@@ -344,7 +345,7 @@ Table: Logistic regression of obesity on cpd, with stress as a modifier and age 
 |BMI_catClass II Obese:StressHigh  |    -0.05|     0.286|     -0.19| 8.53e-01|
 |BMI_catClass III Obese:StressHigh |    -0.13|     0.288|     -0.47| 6.39e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on cpd, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -362,7 +363,7 @@ Table: Logistic regression of obesity on cpd, with stress as a modifier and age 
 |age            |  1|       98|       36681|             39229| 4.01e-23|
 |BMI_cat:Stress |  5|        3|       36676|             39226| 6.93e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(ChronicPulmonaryDisease~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -398,7 +399,7 @@ Table: Logistic regression of obesity on cpd, with stress as a modifier and age,
 |BMI_catClass II Obese:StressHigh  |    -0.04|     0.286|     -0.15| 8.84e-01|
 |BMI_catClass III Obese:StressHigh |    -0.12|     0.288|     -0.43| 6.70e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on cpd, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -420,7 +421,7 @@ Table: Logistic regression of obesity on cpd, with stress as a modifier and age,
 ### Chronic Pulmonary Disease Rates by Quartiles
 
 
-```r
+``` r
 with(combined.data, table(ChronicPulmonaryDisease,BMI_cat.obese,Stress.quartile,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=ChronicPulmonaryDisease,
@@ -472,7 +473,7 @@ Table: Chronic Pulmonary Disease Rates by BMI and Stress Quartile
 |Overweight    |(8,12]          |M      |        406|                     127|   533|    23.8|
 |Obese         |(8,12]          |M      |        531|                     202|   733|    27.6|
 
-```r
+``` r
 ggplot(cpd.bmi.stress.quartile.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -493,7 +494,7 @@ ggplot(cpd.bmi.stress.quartile.counts,
 ## Chronic Pulmonary Disease Rates by Normal Obesity and Stress
 
 
-```r
+``` r
 #calculating cpd rates by bmi category, stress and gender
 with(combined.data, table(ChronicPulmonaryDisease,BMI_cat.obese,Stress,Gender)) %>% 
   data.frame %>%
@@ -530,7 +531,7 @@ Table: Chronic Pulmonary Disease Rates by BMI and Stress
 |Overweight    |High   |M      |       1966|                     498|  2464|    20.2|
 |Obese         |High   |M      |       2293|                     697|  2990|    23.3|
 
-```r
+``` r
 ggplot(cpd.bmi.stress.gender.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -554,7 +555,7 @@ ggplot(cpd.bmi.stress.gender.counts,
 Ran a series of logistic regressions using the normal obesity categories not classes as the categorization
 
 
-```r
+``` r
 glm(ChronicPulmonaryDisease~BMI_cat.obese, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -575,7 +576,7 @@ Table: Logistic regression of obese vs non-obese on Chronic pulmonary disease
 |BMI_cat.obeseOverweight |    -0.42|     0.138|     -3.05| 2.30e-03|
 |BMI_cat.obeseObese      |    -0.10|     0.138|     -0.74| 4.60e-01|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Chronic pulmonary disease, ", digits =c(0,0,0,0,0,99))
 ```
@@ -589,7 +590,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease,
 |NULL          | NA|       NA|       36689|             39782|       NA|
 |BMI_cat.obese |  3|      157|       36686|             39625| 7.74e-34|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat.obese+Stress+Stress:BMI_cat.obese, 
     family="binomial",
@@ -615,7 +616,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease, with stress 
 |BMI_cat.obeseOverweight:StressHigh |    -0.11|     0.280|     -0.38| 7.05e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.04|     0.278|     -0.15| 8.82e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Chronic pulmonary disease, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -631,7 +632,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease, with stress 
 |Stress               |  1|       86|       36685|             39539| 2.20e-20|
 |BMI_cat.obese:Stress |  3|        4|       36682|             39535| 2.82e-01|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age, 
     family="binomial",
@@ -659,7 +660,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease, with stress 
 |BMI_cat.obeseOverweight:StressHigh |    -0.14|     0.281|     -0.50| 6.19e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.08|     0.280|     -0.29| 7.75e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Chronic pulmonary disease, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -677,7 +678,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease, with stress 
 |age                  |  1|       87|       36683|             39317| 1.12e-20|
 |BMI_cat.obese:Stress |  3|        3|       36680|             39314| 3.76e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(ChronicPulmonaryDisease~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -709,7 +710,7 @@ Table: Logistic regression of obesity on liver diesease, with stress as a modifi
 |BMI_cat.obeseOverweight:StressHigh |    -0.13|     0.281|     -0.47| 6.42e-01|
 |BMI_cat.obeseObese:StressHigh      |    -0.07|     0.280|     -0.24| 8.08e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Chronic pulmonary disease, with stress as a modifier and age, gender and race as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -731,7 +732,7 @@ Table: Logistic regression of obesity on Chronic pulmonary disease, with stress 
 # Chronic Pulmonary Disease Rates by Obese/Not Obese and Stress
 
 
-```r
+``` r
 with(combined.data, table(ChronicPulmonaryDisease,BMI_cat.Ob.NonOb,Stress,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=ChronicPulmonaryDisease,
@@ -759,7 +760,7 @@ Table: Chronic Pulmonary Disease Rates by Obese or not and Stress
 |Non-Obese        |High   |M      |       3089|                     837|  3926|    21.3|
 |Obese            |High   |M      |       2293|                     697|  2990|    23.3|
 
-```r
+``` r
 ggplot(cpd.BMI_cat.Ob.NonOb.stress.counts,
        aes(y=Percent,
            x=BMI_cat.Ob.NonOb,
@@ -783,7 +784,7 @@ ggplot(cpd.BMI_cat.Ob.NonOb.stress.counts,
 Ran a series of logistic regressions using obese/non-obese as the categorization
 
 
-```r
+``` r
 glm(ChronicPulmonaryDisease~BMI_cat.Ob.NonOb, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -802,7 +803,7 @@ Table: Logistic regression of obese vs non-obese on cpd
 |(Intercept)           |   -1.329|     0.017|     -78.7| 0.00e+00|
 |BMI_cat.Ob.NonObObese |    0.303|     0.025|      12.2| 3.51e-34|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, ", digits =c(0,0,0,0,0,99))
 ```
@@ -816,7 +817,7 @@ Table: Logistic regression of obese vs non-obese on cpd,
 |NULL             | NA|       NA|       36689|             39782|      NA|
 |BMI_cat.Ob.NonOb |  1|      148|       36688|             39634| 4.4e-34|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb, 
     family="binomial",
@@ -838,7 +839,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |StressHigh                       |    0.194|     0.034|      5.67| 1.39e-08|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.084|     0.050|      1.67| 9.49e-02|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -854,7 +855,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |Stress                  |  1|       87|       36687|             39547| 1.20e-20|
 |BMI_cat.Ob.NonOb:Stress |  1|        3|       36686|             39544| 9.48e-02|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(ChronicPulmonaryDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
     family="binomial",
@@ -878,7 +879,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |age                              |    0.007|     0.001|      9.24| 2.36e-20|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.074|     0.050|      1.48| 1.39e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -896,7 +897,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |age                     |  1|       86|       36685|             39324| 1.48e-20|
 |BMI_cat.Ob.NonOb:Stress |  1|        2|       36684|             39321| 1.39e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(ChronicPulmonaryDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -924,7 +925,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |Race.EthnicityWhite              |    0.247|     0.117|      2.12| 3.44e-02|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.077|     0.050|      1.54| 1.24e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -943,7 +944,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |Race.Ethnicity          |  4|       45|       36681|             39279| 3.95e-09|
 |BMI_cat.Ob.NonOb:Stress |  1|        2|       36680|             39276| 1.24e-01|
 
-```r
+``` r
 #adding in ses
 glm(ChronicPulmonaryDisease~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
@@ -975,7 +976,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 |disadvantage13_17_qrtlNA         |    0.056|     0.049|      1.14| 2.52e-01|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.076|     0.050|      1.52| 1.29e-01|
 
-```r
+``` r
 anova(obesity.glm5,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on cpd, with stress as a modifier and age, gender, race and SES as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -1000,7 +1001,7 @@ Table: Logistic regression of obese vs non-obese on cpd, with stress as a modifi
 Stratified data by stress and obesity status and summarized data
 
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   count %>%
@@ -1018,7 +1019,7 @@ Table: Number of participants by group
 |High   |Non-Obese        |  8532|
 |High   |Obese            |  6942|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Gender) %>%
   count %>%
@@ -1042,7 +1043,7 @@ Table: Number of participants by group and gender
 |High   |Obese            |F      | 3952|
 |High   |Obese            |M      | 2990|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) %>%
   count %>%
@@ -1078,7 +1079,7 @@ Table: Number of participants by group and race/ethnicity
 |High   |Obese            |Other           |   217|
 |High   |Obese            |White           |  6086|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
     filter(!(is.na(Stress))) %>%
@@ -1100,7 +1101,7 @@ Table: Average BMI and age of participants by group
 |High   |Non-Obese        |     25.2|     51.1|   3.08|   17.8|  8532|  8532|
 |High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
@@ -1125,18 +1126,18 @@ Table: Average BMI and age of participants by group,complete cases
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1153,20 +1154,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
-## [6] knitr_1.44   
+## [1] broom_1.0.6   ggplot2_3.5.1 tidyr_1.3.1   dplyr_1.1.4   readr_2.1.5  
+## [6] knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   compiler_4.3.1  
-##  [5] crayon_1.5.2     tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
-##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
-## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
-## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
-## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
-## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
-## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
-## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
-## [41] colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25   purrr_1.0.2     
-## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] compiler_4.4.0    crayon_1.5.3      tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
+## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
+## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
+## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
+## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [41] farver_2.1.2      colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27   
+## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

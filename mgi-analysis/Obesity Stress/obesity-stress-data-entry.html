@@ -434,7 +434,7 @@ pre code {
 
 <div id="purpose" class="section level1">
 <h1><span class="header-section-number">1</span> Purpose</h1>
-<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 19 08:03:37 2024.</p>
+<p>To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:52:16 2024.</p>
 </div>
 <div id="data-descriptions" class="section level1">
 <h1><span class="header-section-number">2</span> Data Descriptions</h1>
@@ -463,19 +463,22 @@ pre code {
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">library</span>(tidyr)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">library</span>(knitr)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">mgi.patient.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(mgi.survey.datafile) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(DeID_PatientID, Gender,age, <span class="st">'Stress_d1'</span>,DeID_Survey_Date) </a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">mgi.patient.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">All=</span><span class="kw">length</span>(Gender),</a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">            <span class="dt">Gender=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Gender))),</a>
-<a class="sourceLine" id="cb2-12" data-line-number="12">            <span class="dt">age=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(age))),</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13">            <span class="dt">Stress=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress_d1))),</a>
-<a class="sourceLine" id="cb2-14" data-line-number="14">            <span class="dt">Complete =</span> <span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress_d1))<span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="st">                            </span><span class="op">!</span>(<span class="kw">is.na</span>(age))<span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="st">                            </span><span class="op">!</span>(<span class="kw">is.na</span>(Gender)))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants with MGI survey values in the patient dataset&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">library</span>(lubridate)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">mgi.patient.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(mgi.survey.datafile) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">  </span><span class="kw">select</span>(DeID_PatientID, Gender,age, <span class="st">'Stress_d1'</span>,DeID_Survey_Date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Survey.Date =</span> <span class="kw">mdy_hm</span>(DeID_Survey_Date)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Survey.Year =</span> <span class="kw">year</span>(Survey.Date)) </a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">mgi.patient.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">All=</span><span class="kw">length</span>(Gender),</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">            <span class="dt">Gender=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Gender))),</a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">            <span class="dt">age=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(age))),</a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">            <span class="dt">Stress=</span><span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress_d1))),</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">            <span class="dt">Complete =</span> <span class="kw">length</span>(<span class="op">!</span>(<span class="kw">is.na</span>(Stress_d1))<span class="op">&amp;</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="st">                            </span><span class="op">!</span>(<span class="kw">is.na</span>(age))<span class="op">&amp;</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="st">                            </span><span class="op">!</span>(<span class="kw">is.na</span>(Gender)))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Number of participants with MGI survey values in the patient dataset&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Number of participants with MGI survey values in the patient dataset</caption>
 <thead>
@@ -497,22 +500,169 @@ pre code {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># For the rest of the datasets, only patients in the mgi dataset</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#get demographics</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">demo.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(demographic.datafile) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID)</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#get comorbidity data</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">cm.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(comorbidity.datafile,<span class="dt">na=</span><span class="kw">c</span>(<span class="st">'99'</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID)</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#get encounter data</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12">bmi.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(encounters.datafile) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID) </a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#get geolocation data</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16">geo.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(geolocation.datafile) </a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">mgi.patient.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(Survey.Year) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span>count <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Summary of initial surveys by year, all patients have a survey year.&quot;</span>)</a></code></pre></div>
+<table>
+<caption>Summary of initial surveys by year, all patients have a survey year.</caption>
+<thead>
+<tr class="header">
+<th align="right">Survey.Year</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">2008</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">8560</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">8293</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">10122</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">9782</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">8638</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">8902</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">5587</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">145</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">mgi.patient.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">No.Stress =</span> <span class="kw">is.na</span>(Stress_d1))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">group_by</span>(Survey.Year, No.Stress) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span>count <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from=</span><span class="st">&quot;No.Stress&quot;</span>, <span class="dt">values_from =</span> <span class="st">&quot;n&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;Has Data&quot;</span>=<span class="st">`</span><span class="dt">FALSE</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">         <span class="st">&quot;Missing Data&quot;</span>=<span class="st">`</span><span class="dt">TRUE</span><span class="st">`</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">Percent Complete</span><span class="st">`</span>=<span class="st">`</span><span class="dt">Has Data</span><span class="st">`</span><span class="op">/</span>(<span class="st">`</span><span class="dt">Has Data</span><span class="st">`</span><span class="op">+</span><span class="st">`</span><span class="dt">Missing Data</span><span class="st">`</span>)<span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Summary of initial surveys by year and whether there are stress data.&quot;</span>) </a></code></pre></div>
+<table>
+<caption>Summary of initial surveys by year and whether there are stress data.</caption>
+<thead>
+<tr class="header">
+<th align="right">Survey.Year</th>
+<th align="right">Missing Data</th>
+<th align="right">Has Data</th>
+<th align="right">Percent Complete</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">2008</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">8560</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">4604</td>
+<td align="right">3689</td>
+<td align="right">44.5</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">1398</td>
+<td align="right">8724</td>
+<td align="right">86.2</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">1702</td>
+<td align="right">8080</td>
+<td align="right">82.6</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">1411</td>
+<td align="right">7227</td>
+<td align="right">83.7</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">1566</td>
+<td align="right">7336</td>
+<td align="right">82.4</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">1053</td>
+<td align="right">4534</td>
+<td align="right">81.2</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">27</td>
+<td align="right">118</td>
+<td align="right">81.4</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># For the rest of the datasets, only patients in the mgi dataset</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#get demographics</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">demo.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(demographic.datafile) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID)</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#get comorbidity data</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">cm.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(comorbidity.datafile,<span class="dt">na=</span><span class="kw">c</span>(<span class="st">'99'</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID)</a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#get encounter data</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">bmi.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(encounters.datafile) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="st">  </span><span class="kw">filter</span>(DeID_PatientID <span class="op">%in%</span><span class="st"> </span>mgi.patient.data<span class="op">$</span>DeID_PatientID) </a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#get geolocation data</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">geo.data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(geolocation.datafile) </a></code></pre></div>
 </div>
 <div id="consort-diagrams" class="section level1">
 <h1><span class="header-section-number">3</span> CONSORT Diagrams</h1>
@@ -524,78 +674,83 @@ pre code {
 </div>
 <div id="merging-data" class="section level1">
 <h1><span class="header-section-number">5</span> Merging Data</h1>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span>mgi.patient.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">left_join</span>(cm.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want comorbidities for folks with mgi data</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">right_join</span>(bmi.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want mgi participants with BMI values</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">left_join</span>(geo.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want geo data for folks with mgi data</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#unique values per participant</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DiabetesAny=</span><span class="kw">case_when</span>(DiabetesUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>DiabetesComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">                               <span class="ot">TRUE</span><span class="op">~</span><span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">HypertensionAny=</span><span class="kw">case_when</span>(HypertensionUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>HypertensionComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">                               <span class="ot">TRUE</span><span class="op">~</span><span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="fl">18.1</span><span class="op">~</span><span class="st">&quot;Underweight&quot;</span>,</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">                             BMI<span class="op">&gt;=</span><span class="fl">18.5</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">25</span><span class="op">~</span><span class="st">&quot;Normal&quot;</span>,</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">                             BMI<span class="op">&gt;=</span><span class="dv">25</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Overweight&quot;</span>,</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14">                             BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">35</span><span class="op">~</span><span class="st">&quot;Class I Obese&quot;</span>,</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">                             BMI<span class="op">&gt;=</span><span class="dv">35</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">40</span><span class="op">~</span><span class="st">&quot;Class II Obese&quot;</span>,</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">                             BMI<span class="op">&gt;</span><span class="dv">40</span><span class="op">~</span><span class="st">&quot;Class III Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat=</span> <span class="kw">factor</span>(BMI_cat, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Underweight&quot;</span>,<span class="st">&quot;Normal&quot;</span>,<span class="st">&quot;Overweight&quot;</span>,</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">                                           <span class="st">'Class I Obese'</span>,<span class="st">'Class II Obese'</span>,<span class="st">'Class III Obese'</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.obese =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="fl">18.1</span><span class="op">~</span><span class="st">&quot;Underweight&quot;</span>,</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">                             BMI<span class="op">&gt;=</span><span class="fl">18.5</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">25</span><span class="op">~</span><span class="st">&quot;Normal&quot;</span>,</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21">                             BMI<span class="op">&gt;=</span><span class="dv">25</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Overweight&quot;</span>,</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">                             BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.obese=</span> <span class="kw">factor</span>(BMI_cat.obese, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Underweight&quot;</span>,<span class="st">&quot;Normal&quot;</span>,<span class="st">&quot;Overweight&quot;</span>,<span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.Ob.NonOb =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Non-Obese&quot;</span>,</a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">                               BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.Ob.NonOb=</span> <span class="kw">factor</span>(BMI_cat.Ob.NonOb, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Non-Obese&quot;</span>,<span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">High.Stress =</span> <span class="kw">case_when</span>(Stress_d1<span class="op">&gt;</span><span class="kw">median</span>(Stress_d1,<span class="dt">na.rm=</span>T)<span class="op">~</span><span class="st">'High'</span>,</a>
-<a class="sourceLine" id="cb4-28" data-line-number="28">                                 Stress_d1<span class="op">&lt;=</span><span class="kw">median</span>(Stress_d1,<span class="dt">na.rm=</span>T)<span class="op">~</span><span class="st">'Low'</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-29" data-line-number="29"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress=</span><span class="kw">relevel</span>(<span class="kw">as.factor</span>(High.Stress),<span class="dt">ref=</span><span class="st">&quot;Low&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress.quartile =</span> <span class="kw">cut</span>(Stress_d1,<span class="dv">4</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Age.group =</span> <span class="kw">cut</span>(age,</a>
-<a class="sourceLine" id="cb4-32" data-line-number="32">                          <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">18</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">50</span>,<span class="dv">60</span>,<span class="dv">70</span>,<span class="dv">80</span>,<span class="dv">90</span>,<span class="dv">100</span>),</a>
-<a class="sourceLine" id="cb4-33" data-line-number="33">                         <span class="dt">right=</span><span class="ot">FALSE</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="st">  </span><span class="kw">left_join</span>(demo.data) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-35" data-line-number="35"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Race.Ethnicity.Code =</span> <span class="kw">paste</span>(RaceCode,EthnicityCode,<span class="dt">sep=</span><span class="st">&quot;-&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Race.Ethnicity =</span> <span class="kw">case_when</span>(Race.Ethnicity.Code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'C-NonHL'</span>,<span class="st">'C-U'</span>)<span class="op">~</span><span class="st">&quot;White&quot;</span>,</a>
-<a class="sourceLine" id="cb4-37" data-line-number="37">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'AA-NonHL'</span><span class="op">~</span><span class="st">&quot;Black&quot;</span>,</a>
-<a class="sourceLine" id="cb4-38" data-line-number="38">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'A-NonHL'</span><span class="op">~</span><span class="st">&quot;Asian&quot;</span>,</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39">                                    Race.Ethnicity.Code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'C-HL'</span>,<span class="st">'O-HL'</span>)<span class="op">~</span><span class="st">&quot;Hispanic/Latino&quot;</span>,</a>
-<a class="sourceLine" id="cb4-40" data-line-number="40">                                    <span class="ot">TRUE</span><span class="op">~</span><span class="st">'Other'</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">combined.data &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span>mgi.patient.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">left_join</span>(cm.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want comorbidities for folks with mgi data</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">right_join</span>(bmi.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want mgi participants with BMI values</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">left_join</span>(geo.data) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#only want geo data for folks with mgi data</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">distinct</span>(DeID_PatientID, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#unique values per participant</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DiabetesAny=</span><span class="kw">case_when</span>(DiabetesUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>DiabetesComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">                               <span class="ot">TRUE</span><span class="op">~</span><span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">HypertensionAny=</span><span class="kw">case_when</span>(HypertensionUncomplicated<span class="op">==</span><span class="dv">1</span><span class="op">|</span>HypertensionComplicated<span class="op">==</span><span class="dv">1</span><span class="op">~</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">                               <span class="ot">TRUE</span><span class="op">~</span><span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="fl">18.1</span><span class="op">~</span><span class="st">&quot;Underweight&quot;</span>,</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">                             BMI<span class="op">&gt;=</span><span class="fl">18.5</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">25</span><span class="op">~</span><span class="st">&quot;Normal&quot;</span>,</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">                             BMI<span class="op">&gt;=</span><span class="dv">25</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Overweight&quot;</span>,</a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">                             BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">35</span><span class="op">~</span><span class="st">&quot;Class I Obese&quot;</span>,</a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">                             BMI<span class="op">&gt;=</span><span class="dv">35</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">40</span><span class="op">~</span><span class="st">&quot;Class II Obese&quot;</span>,</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16">                             BMI<span class="op">&gt;</span><span class="dv">40</span><span class="op">~</span><span class="st">&quot;Class III Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat=</span> <span class="kw">factor</span>(BMI_cat, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Underweight&quot;</span>,<span class="st">&quot;Normal&quot;</span>,<span class="st">&quot;Overweight&quot;</span>,</a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">                                           <span class="st">'Class I Obese'</span>,<span class="st">'Class II Obese'</span>,<span class="st">'Class III Obese'</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.obese =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="fl">18.1</span><span class="op">~</span><span class="st">&quot;Underweight&quot;</span>,</a>
+<a class="sourceLine" id="cb6-20" data-line-number="20">                             BMI<span class="op">&gt;=</span><span class="fl">18.5</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">25</span><span class="op">~</span><span class="st">&quot;Normal&quot;</span>,</a>
+<a class="sourceLine" id="cb6-21" data-line-number="21">                             BMI<span class="op">&gt;=</span><span class="dv">25</span><span class="op">&amp;</span>BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Overweight&quot;</span>,</a>
+<a class="sourceLine" id="cb6-22" data-line-number="22">                             BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.obese=</span> <span class="kw">factor</span>(BMI_cat.obese, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Underweight&quot;</span>,<span class="st">&quot;Normal&quot;</span>,<span class="st">&quot;Overweight&quot;</span>,<span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.Ob.NonOb =</span> <span class="kw">case_when</span>(BMI<span class="op">&lt;</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Non-Obese&quot;</span>,</a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">                               BMI<span class="op">&gt;=</span><span class="dv">30</span><span class="op">~</span><span class="st">&quot;Obese&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BMI_cat.Ob.NonOb=</span> <span class="kw">factor</span>(BMI_cat.Ob.NonOb, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Non-Obese&quot;</span>,<span class="st">'Obese'</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">High.Stress =</span> <span class="kw">case_when</span>(Stress_d1<span class="op">&gt;</span><span class="kw">median</span>(Stress_d1,<span class="dt">na.rm=</span>T)<span class="op">~</span><span class="st">'High'</span>,</a>
+<a class="sourceLine" id="cb6-28" data-line-number="28">                                 Stress_d1<span class="op">&lt;=</span><span class="kw">median</span>(Stress_d1,<span class="dt">na.rm=</span>T)<span class="op">~</span><span class="st">'Low'</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress=</span><span class="kw">relevel</span>(<span class="kw">as.factor</span>(High.Stress),<span class="dt">ref=</span><span class="st">&quot;Low&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Stress.quartile =</span> <span class="kw">cut</span>(Stress_d1,<span class="dv">4</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Age.group =</span> <span class="kw">cut</span>(age,</a>
+<a class="sourceLine" id="cb6-32" data-line-number="32">                          <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">18</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">50</span>,<span class="dv">60</span>,<span class="dv">70</span>,<span class="dv">80</span>,<span class="dv">90</span>,<span class="dv">100</span>),</a>
+<a class="sourceLine" id="cb6-33" data-line-number="33">                         <span class="dt">right=</span><span class="ot">FALSE</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="st">  </span><span class="kw">left_join</span>(demo.data) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-35" data-line-number="35"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Race.Ethnicity.Code =</span> <span class="kw">paste</span>(RaceCode,EthnicityCode,<span class="dt">sep=</span><span class="st">&quot;-&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-36" data-line-number="36"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Race.Ethnicity =</span> <span class="kw">case_when</span>(Race.Ethnicity.Code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'C-NonHL'</span>,<span class="st">'C-U'</span>)<span class="op">~</span><span class="st">&quot;White&quot;</span>,</a>
+<a class="sourceLine" id="cb6-37" data-line-number="37">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'AA-NonHL'</span><span class="op">~</span><span class="st">&quot;Black&quot;</span>,</a>
+<a class="sourceLine" id="cb6-38" data-line-number="38">                                    Race.Ethnicity.Code<span class="op">==</span><span class="st">'A-NonHL'</span><span class="op">~</span><span class="st">&quot;Asian&quot;</span>,</a>
+<a class="sourceLine" id="cb6-39" data-line-number="39">                                    Race.Ethnicity.Code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'C-HL'</span>,<span class="st">'O-HL'</span>)<span class="op">~</span><span class="st">&quot;Hispanic/Latino&quot;</span>,</a>
+<a class="sourceLine" id="cb6-40" data-line-number="40">                                    <span class="ot">TRUE</span><span class="op">~</span><span class="st">'Other'</span>))</a></code></pre></div>
 </div>
 <div id="filtering-out-incomplete-data" class="section level1">
 <h1><span class="header-section-number">6</span> Filtering out incomplete data</h1>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">combined.data.bmi &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(BMI_cat)) <span class="co"># remove participants with no BMI category</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">combined.data.age &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span>combined.data.bmi <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(Age.group)) <span class="co"># remove participants with no BMI</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">combined.data.bmi &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>combined.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(BMI_cat)) <span class="co"># remove participants with no BMI category</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">combined.data.age &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">  </span>combined.data.bmi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(Age.group)) <span class="co"># remove participants with no BMI</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">combined.data.stress &lt;-</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">  </span>combined.data.age <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(Stress_d1)) <span class="co"># remove participants with no stress score</span></a></code></pre></div>
 <ul>
 <li>All data: <strong>62010</strong> particiipants</li>
 <li>No BMI category 217 leaving <strong>61793</strong> participants</li>
 <li>No Age category 0 leaving <strong>61793</strong> participants</li>
+<li>No Age category 39560 leaving <strong>22233</strong> participants</li>
 </ul>
 </div>
 <div id="writing-out-of-the-data" class="section level1">
 <h1><span class="header-section-number">7</span> Writing out of the Data</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">output.file &lt;-<span class="st"> 'data-combined.csv'</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">write_csv</span>(combined.data.age, <span class="dt">file=</span>output.file)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">output.file &lt;-<span class="st"> 'data-combined.csv'</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">write_csv</span>(combined.data.age, <span class="dt">file=</span>output.file)</a></code></pre></div>
 <p>These data were written out to data-combined.csv. This is the input file for the other scripts.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1><span class="header-section-number">8</span> Session Information</h1>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
-<pre><code>## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<pre><code>## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -612,19 +767,20 @@ pre code {
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] tidyr_1.3.0 dplyr_1.1.3 readr_2.1.4 knitr_1.44 
+## [1] lubridate_1.9.3 tidyr_1.3.1     dplyr_1.1.4     readr_2.1.5    
+## [5] knitr_1.48     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] crayon_1.5.2     vctrs_0.6.3      cli_3.6.1        rlang_1.1.1     
-##  [5] xfun_0.40        purrr_1.0.2      generics_0.1.3   jsonlite_1.8.7  
-##  [9] bit_4.0.5        glue_1.6.2       htmltools_0.5.6  sass_0.4.7      
-## [13] hms_1.1.3        fansi_1.0.4      rmarkdown_2.25   evaluate_0.21   
-## [17] jquerylib_0.1.4  tibble_3.2.1     tzdb_0.4.0       fastmap_1.1.1   
-## [21] yaml_2.3.7       lifecycle_1.0.3  compiler_4.3.1   pkgconfig_2.0.3 
-## [25] digest_0.6.33    R6_2.5.1         tidyselect_1.2.0 utf8_1.2.3      
-## [29] parallel_4.3.1   vroom_1.6.3      pillar_1.9.0     magrittr_2.0.3  
-## [33] bslib_0.5.1      withr_2.5.0      bit64_4.0.5      tools_4.3.1     
-## [37] cachem_1.0.8</code></pre>
+##  [1] bit_4.0.5         jsonlite_1.8.8    compiler_4.4.0    crayon_1.5.3     
+##  [5] tidyselect_1.2.1  parallel_4.4.0    jquerylib_0.1.4   yaml_2.3.9       
+##  [9] fastmap_1.2.0     R6_2.5.1          generics_0.1.3    tibble_3.2.1     
+## [13] bslib_0.7.0       pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4      
+## [17] utf8_1.2.4        cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [21] bit64_4.0.5       timechange_0.3.0  cli_3.6.3         withr_3.0.0      
+## [25] magrittr_2.0.3    digest_0.6.36     vroom_1.6.5       hms_1.1.3        
+## [29] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [33] fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2       tools_4.4.0      
+## [37] pkgconfig_2.0.3   htmltools_0.5.8.1</code></pre>
 </div>
 
 

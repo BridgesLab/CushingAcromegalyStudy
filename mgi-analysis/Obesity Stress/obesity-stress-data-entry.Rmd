@@ -44,9 +44,12 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(knitr)
+library(lubridate)
 
 mgi.patient.data <- read_csv(mgi.survey.datafile) %>%
-  select(DeID_PatientID, Gender,age, 'Stress_d1',DeID_Survey_Date) 
+  select(DeID_PatientID, Gender,age, 'Stress_d1',DeID_Survey_Date) %>%
+  mutate(Survey.Date = mdy_hm(DeID_Survey_Date)) %>%
+  mutate(Survey.Year = year(Survey.Date)) 
 
 mgi.patient.data %>%
   summarize(All=length(Gender),
@@ -57,6 +60,22 @@ mgi.patient.data %>%
                             !(is.na(age))&
                             !(is.na(Gender)))) %>%
   kable(caption="Number of participants with MGI survey values in the patient dataset")
+
+
+mgi.patient.data %>%
+  group_by(Survey.Year) %>%
+  count %>%
+  kable(caption="Summary of initial surveys by year, all patients have a survey year.")
+
+mgi.patient.data %>%
+  mutate(No.Stress = is.na(Stress_d1))%>%
+  group_by(Survey.Year, No.Stress) %>%
+  count %>% 
+  pivot_wider(names_from="No.Stress", values_from = "n") %>%
+  rename("Has Data"=`FALSE`,
+         "Missing Data"=`TRUE`) %>%
+  mutate(`Percent Complete`=`Has Data`/(`Has Data`+`Missing Data`)*100) %>%
+  kable(caption="Summary of initial surveys by year and whether there are stress data.") 
   
 
 # For the rest of the datasets, only patients in the mgi dataset
@@ -142,11 +161,16 @@ combined.data.age <-
   combined.data.bmi %>%
   filter(!is.na(Age.group)) # remove participants with no BMI
 
+combined.data.stress <-
+  combined.data.age %>%
+  filter(is.na(Stress_d1)) # remove participants with no stress score
+
 ```
 
 * All data: **`r nrow(combined.data)`** particiipants
 * No BMI category `r nrow(combined.data) - nrow(combined.data.bmi)` leaving **`r nrow(combined.data.bmi)`** participants
 * No Age category `r nrow(combined.data.bmi) - nrow(combined.data.age)` leaving **`r nrow(combined.data.age)`** participants
+* No Age category `r nrow(combined.data.age) - nrow(combined.data.stress)` leaving **`r nrow(combined.data.stress)`** participants
 
 # Writing out of the Data
 

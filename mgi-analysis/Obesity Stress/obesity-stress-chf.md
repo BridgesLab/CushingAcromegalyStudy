@@ -15,7 +15,7 @@ editor: visual
 To test the effect modification of obesity on the stress-chf relationships.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -43,7 +43,7 @@ library(dplyr)
 ##     intersect, setdiff, setequal, union
 ```
 
-```r
+``` r
 library(tidyr)
 library(knitr)
 
@@ -55,23 +55,24 @@ combined.data <- read_csv(input.file, na="-99")%>%
 ```
 
 ```
-## Rows: 61793 Columns: 40
+## Rows: 61793 Columns: 43
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (22): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encounte...
-## dbl (18): age, CardiacArrhythmias, ChronicPulmonaryDisease, CongestiveHeartF...
+## chr  (23): DeID_PatientID, Gender, Stress_d1, DeID_Survey_Date, DeID_Encount...
+## dbl  (19): age, Survey.Year, CardiacArrhythmias, ChronicPulmonaryDisease, Co...
+## dttm  (1): Survey.Date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Fri Apr 26 10:01:05 2024. This dataset has 36690 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 14:02:03 2024. This dataset has 36690 values.
 
 
-```r
+``` r
 combined.data <- 
   combined.data %>%
   mutate(BMI_cat= factor(BMI_cat, 
@@ -99,7 +100,7 @@ Stratified diagnoses by various BMI categories
 ## Congestive Heart Failure by BMI Category
 
 
-```r
+``` r
 #calculating chf rates by bmi category
 with(combined.data, table(CongestiveHeartFailure,BMI_cat,Gender)) %>% 
   data.frame %>%
@@ -132,7 +133,7 @@ Table: Congestive Heart Failure rates by BMI category
 |Class II Obese  |M      |       1599|                    241|  1840|   13.10|
 |Class III Obese |M      |        838|                    149|   987|   15.10|
 
-```r
+``` r
 library(ggplot2)
 
 ggplot(chf.bmi.counts,
@@ -157,7 +158,7 @@ ggplot(chf.bmi.counts,
 This analysis uses all the BMI categories
 
 
-```r
+``` r
 #calculating chf rates by bmi category and stress
 with(combined.data, table(CongestiveHeartFailure,BMI_cat,Stress,Gender)) %>% 
   data.frame %>%
@@ -204,7 +205,7 @@ Table: Congestive Heart Failure rates by BMI category
 |Class II Obese  |High   |M      |                       683|                    108|   791|   13.65|
 |Class III Obese |High   |M      |                       393|                     68|   461|   14.75|
 
-```r
+``` r
 ggplot(chf.bmi.stress.counts,
        aes(y=Percent,
            x=BMI_cat,
@@ -228,7 +229,7 @@ ggplot(chf.bmi.stress.counts,
 Ran a series of stepwise logistic regressions testing for obesity as a modifier of the effects of stress.
 
 
-```r
+``` r
 library(broom)
 glm(CongestiveHeartFailure~BMI_cat, 
     family="binomial",
@@ -252,7 +253,7 @@ Table: Logistic regression of obesity on chf
 |BMI_catClass II Obese  |     0.67|     0.280|      2.41| 1.58e-02|
 |BMI_catClass III Obese |     0.80|     0.281|      2.86| 4.25e-03|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on chf, ", digits =c(0,0,0,0,0,99))
 ```
@@ -266,7 +267,7 @@ Table: Logistic regression of obesity on chf,
 |NULL    | NA|       NA|       36689|             20012|       NA|
 |BMI_cat |  5|      142|       36684|             19871| 6.94e-29|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(CongestiveHeartFailure~BMI_cat+Stress+Stress:BMI_cat, 
     family="binomial",
@@ -296,7 +297,7 @@ Table: Logistic regression of obesity on chf, with stress as a modifier
 |BMI_catClass II Obese:StressHigh  |     0.36|     0.559|      0.65| 5.18e-01|
 |BMI_catClass III Obese:StressHigh |     0.19|     0.561|      0.35| 7.29e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on chf, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -312,7 +313,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |Stress         |  1|       23|       36683|             19847| 1.38e-06|
 |BMI_cat:Stress |  5|        5|       36678|             19843| 4.72e-01|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(CongestiveHeartFailure~BMI_cat+Stress+Stress:BMI_cat+Gender+age, 
     family="binomial",
@@ -344,7 +345,7 @@ Table: Logistic regression of obesity on chf, with stress as a modifier and age 
 |BMI_catClass II Obese:StressHigh  |     0.41|     0.569|      0.72| 4.71e-01|
 |BMI_catClass III Obese:StressHigh |     0.25|     0.571|      0.44| 6.58e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on chf, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -362,7 +363,7 @@ Table: Logistic regression of obesity on chf, with stress as a modifier and age 
 |age            |  1|     1087|       36681|             18533| 0.00e+00|
 |BMI_cat:Stress |  5|        6|       36676|             18527| 3.00e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(CongestiveHeartFailure~BMI_cat+Stress+Stress:BMI_cat+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -398,7 +399,7 @@ Table: Logistic regression of obesity on chf, with stress as a modifier and age,
 |BMI_catClass II Obese:StressHigh  |     0.42|     0.569|      0.73| 4.66e-01|
 |BMI_catClass III Obese:StressHigh |     0.27|     0.571|      0.47| 6.41e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on chf, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -420,7 +421,7 @@ Table: Logistic regression of obesity on chf, with stress as a modifier and age,
 ### Congestive Heart Failure Rates by Quartiles
 
 
-```r
+``` r
 with(combined.data, table(CongestiveHeartFailure,BMI_cat.obese,Stress.quartile,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=CongestiveHeartFailure,
@@ -472,7 +473,7 @@ Table: Congestive Heart Failure Rates by BMI and Stress Quartile
 |Overweight    |(8,12]          |M      |        471|                     62|   533|   11.63|
 |Obese         |(8,12]          |M      |        633|                    100|   733|   13.64|
 
-```r
+``` r
 ggplot(chf.bmi.stress.quartile.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -493,7 +494,7 @@ ggplot(chf.bmi.stress.quartile.counts,
 ## Congestive Heart Failure Rates by Normal Obesity and Stress
 
 
-```r
+``` r
 #calculating chf rates by bmi category, stress and gender
 with(combined.data, table(CongestiveHeartFailure,BMI_cat.obese,Stress,Gender)) %>% 
   data.frame %>%
@@ -530,7 +531,7 @@ Table: Congestive Heart Failure Rates by BMI and Stress
 |Overweight    |High   |M      |       2203|                    261|  2464|   10.59|
 |Obese         |High   |M      |       2593|                    397|  2990|   13.28|
 
-```r
+``` r
 ggplot(chf.bmi.stress.gender.counts,
        aes(y=Percent,
            x=BMI_cat.obese,
@@ -554,7 +555,7 @@ ggplot(chf.bmi.stress.gender.counts,
 Ran a series of logistic regressions using the normal obesity categories not classes as the categorization
 
 
-```r
+``` r
 glm(CongestiveHeartFailure~BMI_cat.obese, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -575,7 +576,7 @@ Table: Logistic regression of obese vs non-obese on Congestive Heart Failure
 |BMI_cat.obeseOverweight |     0.33|     0.277|      1.19| 2.35e-01|
 |BMI_cat.obeseObese      |     0.62|     0.276|      2.24| 2.51e-02|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Congestive Heart Failure, ", digits =c(0,0,0,0,0,99))
 ```
@@ -589,7 +590,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure,
 |NULL          | NA|       NA|       36689|             20012|       NA|
 |BMI_cat.obese |  3|      123|       36686|             19889| 1.55e-26|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(CongestiveHeartFailure~BMI_cat.obese+Stress+Stress:BMI_cat.obese, 
     family="binomial",
@@ -615,7 +616,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure, with stress a
 |BMI_cat.obeseOverweight:StressHigh |     0.40|     0.554|      0.72| 4.69e-01|
 |BMI_cat.obeseObese:StressHigh      |     0.32|     0.552|      0.58| 5.61e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Congestive Heart Failure, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -631,7 +632,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure, with stress a
 |Stress               |  1|       25|       36685|             19865| 7.20e-07|
 |BMI_cat.obese:Stress |  3|        3|       36682|             19862| 3.73e-01|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(CongestiveHeartFailure~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age, 
     family="binomial",
@@ -659,7 +660,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure, with stress a
 |BMI_cat.obeseOverweight:StressHigh |     0.47|     0.563|      0.83| 4.04e-01|
 |BMI_cat.obeseObese:StressHigh      |     0.39|     0.561|      0.69| 4.91e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Congestive Heart Failure, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -677,7 +678,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure, with stress a
 |age                  |  1|     1048|       36683|             18607| 0.00e+00|
 |BMI_cat.obese:Stress |  3|        5|       36680|             18602| 1.99e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(CongestiveHeartFailure~BMI_cat.obese+Stress+Stress:BMI_cat.obese+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -709,7 +710,7 @@ Table: Logistic regression of obesity on liver diesease, with stress as a modifi
 |BMI_cat.obeseOverweight:StressHigh |     0.48|     0.564|      0.85| 3.98e-01|
 |BMI_cat.obeseObese:StressHigh      |     0.40|     0.562|      0.70| 4.81e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obesity on Congestive Heart Failure, with stress as a modifier and age, gender and race as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -731,7 +732,7 @@ Table: Logistic regression of obesity on Congestive Heart Failure, with stress a
 # Congestive Heart Failure Rates by Obese/Not Obese and Stress
 
 
-```r
+``` r
 with(combined.data, table(CongestiveHeartFailure,BMI_cat.Ob.NonOb,Stress,Gender)) %>% 
   data.frame %>%
   pivot_wider(names_from=CongestiveHeartFailure,
@@ -759,7 +760,7 @@ Table: Congestive Heart Failure Rates by Obese or not and Stress
 |Non-Obese        |High   |M      |       3555|                    371|  3926|    9.45|
 |Obese            |High   |M      |       2593|                    397|  2990|   13.28|
 
-```r
+``` r
 ggplot(chf.BMI_cat.Ob.NonOb.stress.counts,
        aes(y=Percent,
            x=BMI_cat.Ob.NonOb,
@@ -783,7 +784,7 @@ ggplot(chf.BMI_cat.Ob.NonOb.stress.counts,
 Ran a series of logistic regressions using obese/non-obese as the categorization
 
 
-```r
+``` r
 glm(CongestiveHeartFailure~BMI_cat.Ob.NonOb, 
     family="binomial",
     data=combined.data) -> obesity.glm1
@@ -802,7 +803,7 @@ Table: Logistic regression of obese vs non-obese on chf
 |(Intercept)           |   -2.660|     0.028|     -95.7| 0.00e+00|
 |BMI_cat.Ob.NonObObese |    0.396|     0.039|      10.1| 4.51e-24|
 
-```r
+``` r
 anova(obesity.glm1,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on chf, ", digits =c(0,0,0,0,0,99))
 ```
@@ -816,7 +817,7 @@ Table: Logistic regression of obese vs non-obese on chf,
 |NULL             | NA|       NA|       36689|             20012|      NA|
 |BMI_cat.Ob.NonOb |  1|      102|       36688|             19910|   5e-24|
 
-```r
+``` r
 #adding in stress as a modifier
 glm(CongestiveHeartFailure~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb, 
     family="binomial",
@@ -838,7 +839,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |StressHigh                       |    0.194|     0.056|      3.46| 5.44e-04|
 |BMI_cat.Ob.NonObObese:StressHigh |   -0.001|     0.078|     -0.01| 9.95e-01|
 
-```r
+``` r
 anova(obesity.glm2,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on chf, with stress as a modifier", digits =c(0,0,0,0,0,99))
 ```
@@ -854,7 +855,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |Stress                  |  1|       24|       36687|             19886| 8.92e-07|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       36686|             19886| 9.95e-01|
 
-```r
+``` r
 #adding in age and gender as covariates as a modifier
 glm(CongestiveHeartFailure~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age, 
     family="binomial",
@@ -878,7 +879,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |age                              |    0.044|     0.001|     30.16| 0.00e+00|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.012|     0.080|      0.15| 8.78e-01|
 
-```r
+``` r
 anova(obesity.glm3,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on chf, with stress as a modifier and age and gender as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -896,7 +897,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |age                     |  1|     1057|       36685|             18608| 0.00e+00|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       36684|             18608| 8.78e-01|
 
-```r
+``` r
 #adding in race and ethnicity
 glm(CongestiveHeartFailure~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity, 
     family="binomial",
@@ -924,7 +925,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |Race.EthnicityWhite              |    0.171|     0.238|      0.72| 4.73e-01|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.012|     0.080|      0.16| 8.76e-01|
 
-```r
+``` r
 anova(obesity.glm4,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on chf, with stress as a modifier and age, gender and race as covarite", digits =c(0,0,0,0,0,99))
 ```
@@ -943,7 +944,7 @@ Table: Logistic regression of obese vs non-obese on chf, with stress as a modifi
 |Race.Ethnicity          |  4|       38|       36681|             18570| 1.40e-07|
 |BMI_cat.Ob.NonOb:Stress |  1|        0|       36680|             18570| 8.76e-01|
 
-```r
+``` r
 #adding in ses
 glm(CongestiveHeartFailure~BMI_cat.Ob.NonOb+Stress+Stress:BMI_cat.Ob.NonOb+Gender+age+Race.Ethnicity+disadvantage13_17_qrtl, 
     family="binomial",
@@ -975,7 +976,7 @@ Table: Logistic regression of obese vs non-obese on congestive heart failure, wi
 |disadvantage13_17_qrtlNA         |    0.032|     0.079|      0.40| 6.90e-01|
 |BMI_cat.Ob.NonObObese:StressHigh |    0.013|     0.080|      0.17| 8.68e-01|
 
-```r
+``` r
 anova(obesity.glm5,test="Chisq") %>% tidy %>%
   kable(caption="Logistic regression of obese vs non-obese on congestive heart failure, with stress as a modifier and age, gender, race and SES as covariates", digits =c(0,0,0,0,0,99))
 ```
@@ -1000,7 +1001,7 @@ Table: Logistic regression of obese vs non-obese on congestive heart failure, wi
 Stratified data by stress and obesity status and summarized data
 
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   count %>%
@@ -1018,7 +1019,7 @@ Table: Number of participants by group
 |High   |Non-Obese        |  8532|
 |High   |Obese            |  6942|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Gender) %>%
   count %>%
@@ -1042,7 +1043,7 @@ Table: Number of participants by group and gender
 |High   |Obese            |F      | 3952|
 |High   |Obese            |M      | 2990|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb,Race.Ethnicity) %>%
   count %>%
@@ -1078,7 +1079,7 @@ Table: Number of participants by group and race/ethnicity
 |High   |Obese            |Other           |   217|
 |High   |Obese            |White           |  6086|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
     filter(!(is.na(Stress))) %>%
@@ -1100,7 +1101,7 @@ Table: Average BMI and age of participants by group
 |High   |Non-Obese        |     25.2|     51.1|   3.08|   17.8|  8532|  8532|
 |High   |Obese            |     36.6|     52.7|   5.98|   14.6|  6942|  6942|
 
-```r
+``` r
 combined.data %>%
   group_by(Stress,BMI_cat.Ob.NonOb) %>%
   summarize_at(c('BMI','age'), list(mean=~mean(.x,na.rm=T),
@@ -1125,18 +1126,18 @@ Table: Average BMI and age of participants by group,complete cases
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.0 (2024-04-24)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1153,20 +1154,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_1.0.5   ggplot2_3.4.3 tidyr_1.3.0   dplyr_1.1.3   readr_2.1.4  
-## [6] knitr_1.44   
+## [1] broom_1.0.6   ggplot2_3.5.1 tidyr_1.3.1   dplyr_1.1.4   readr_2.1.5  
+## [6] knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   compiler_4.3.1  
-##  [5] crayon_1.5.2     tidyselect_1.2.0 stringr_1.5.0    parallel_4.3.1  
-##  [9] jquerylib_0.1.4  scales_1.2.1     yaml_2.3.7       fastmap_1.1.1   
-## [13] R6_2.5.1         labeling_0.4.3   generics_0.1.3   backports_1.4.1 
-## [17] tibble_3.2.1     munsell_0.5.0    bslib_0.5.1      pillar_1.9.0    
-## [21] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12  
-## [25] cachem_1.0.8     xfun_0.40        sass_0.4.7       bit64_4.0.5     
-## [29] cli_3.6.1        withr_2.5.0      magrittr_2.0.3   digest_0.6.33   
-## [33] grid_4.3.1       vroom_1.6.3      hms_1.1.3        lifecycle_1.0.3 
-## [37] vctrs_0.6.3      evaluate_0.21    glue_1.6.2       farver_2.1.1    
-## [41] colorspace_2.1-0 fansi_1.0.4      rmarkdown_2.25   purrr_1.0.2     
-## [45] tools_4.3.1      pkgconfig_2.0.3  htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] compiler_4.4.0    crayon_1.5.3      tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
+## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
+## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
+## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
+## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
+## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [41] farver_2.1.2      colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27   
+## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```
