@@ -97,7 +97,7 @@ Table: Number of participants by high or low stress
 |      0| 22819| 57.7|
 |      1| 16741| 42.3|
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 13:58:52 2024. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Jul 29 16:36:32 2025. This dataset has 39560 values.
 
 Performed univariate analyses on the categorical associations with stress incidence. Treated both age and BMI as both linear and categorical variables.
 
@@ -750,9 +750,9 @@ Table: Binomial regression estimates of neighborhood disadvantage group on stres
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  group_by(BMI_cat,Stress) %>%
+  group_by(BMI_cat.Ob.NonOb,Stress) %>%
   count %>%
-  pivot_wider(id_cols=BMI_cat,
+  pivot_wider(id_cols=BMI_cat.Ob.NonOb,
               names_from=Stress,
               values_from = n,
               names_prefix='Diabetes') %>%
@@ -761,7 +761,7 @@ combined.data %>%
   mutate(Prevalence=Yes/(Yes+No)*100) -> stress.bmi
 
 stress.bmi %>%
-  ggplot(aes(y=Prevalence,x=BMI_cat)) +
+  ggplot(aes(y=Prevalence,x=BMI_cat.Ob.NonOb)) +
   geom_bar(stat='identity',position='dodge') +
   labs(y="Percent High Stress",
        x="") +
@@ -783,14 +783,10 @@ stress.bmi %>%
 
 Table: Number of participants by stress diagnosis and BMI category
 
-|BMI_cat         |   No|  Yes| Prevalence|
-|:---------------|----:|----:|----------:|
-|Underweight     |  132|  151|       53.4|
-|Normal          | 5727| 3921|       40.6|
-|Overweight      | 7737| 5173|       40.1|
-|Class I Obese   | 5045| 3825|       43.1|
-|Class II Obese  | 2435| 2036|       45.5|
-|Class III Obese | 1743| 1635|       48.4|
+|BMI_cat.Ob.NonOb |    No|  Yes| Prevalence|
+|:----------------|-----:|----:|----------:|
+|Non-Obese        | 13596| 9245|       40.5|
+|Obese            |  9223| 7496|       44.8|
 
 ## By Type 2 Diabetes Diagnosis
 
@@ -896,12 +892,12 @@ Table: Binomial regression estimates of BMI on stress incidence, exponentiated
 
 ``` r
 rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
-        mutate(Categoyr="Race.Ethnicity"),
+        mutate(Category="Race.Ethnicity"),
       stress.gender %>% 
         rename("Group"="Gender") %>%
         mutate(Category="Gender"),
       stress.bmi %>% 
-        rename("Group"="BMI_cat") %>%
+        rename("Group"="BMI_cat.Ob.NonOb") %>%
         mutate(Category="BMI"),
       stress.disadvantage %>%
         rename("Group"="disadvantage13_17_qrtl") %>%
@@ -916,47 +912,118 @@ rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
   ungroup %>%
   group_by(Category) %>%
   mutate(Percent = Total/sum(Total)*100) %>%
-  select(Category, Group,Total,Percent, No,Yes,Prevalence)-> summary.table
+  select(Category, Group,Total,Percent, No,Yes,Prevalence) %>%
+  rename(`Lower Stress`=No,
+         `Higher Stress`=Yes)-> summary.table
 
-kable(summary.table, caption="Summary of demographic variables by stress incidence")
+# calculate category level chi-squared tests
+# Step 1: Create the contingency table with counts
+contingency_df <- 
+  summary.table %>%
+  select(Category, Group, `Lower Stress`, `Higher Stress`) 
+
+
+# Load required packages
+
+
+# Perform chi-squared test for each category
+results <- contingency_df %>%
+  group_by(Category) %>%
+  summarise(
+    chi_squared = {
+      # Create contingency table
+      contingency_table <- as.matrix(select(cur_data(), `Lower Stress`, `Higher Stress`))
+      row_names <- cur_data()$Group  # Use cur_data() to access Group in summarise
+      if (length(row_names) == nrow(contingency_table)) {
+        rownames(contingency_table) <- row_names
+        # Run chi-squared test with error handling
+        tryCatch(
+          {
+            test <- chisq.test(contingency_table)
+            c(statistic = test$statistic, p_value = test$p.value, df = test$parameter)
+          },
+          error = function(e) c(statistic = NA, p_value = NA, df = NA)
+        )
+      } else {
+        c(statistic = NA, p_value = NA, df = NA)  # Return NA if dimensions don't match
+      }
+    }
+  ) %>%
+  # Unnest the results into separate columns
+  tidyr::unnest_wider(chi_squared)
+
+chisq.results <- results %>%
+  group_by(Category) %>%
+  summarise(
+    chi_squared = first(na.omit(`statistic.X-squared`), default = NA_real_),
+    p_value = first(na.omit(p_value), default = NA_real_),
+    df = first(na.omit(df.df), default = NA_real_)
+  )
+
+kable(chisq.results, caption="Chi-squared tests for demographic variables by stress")
+```
+
+
+
+Table: Chi-squared tests for demographic variables by stress
+
+|Category        | chi_squared| p_value| df|
+|:---------------|-----------:|-------:|--:|
+|Age Group       |       187.8|       0|  6|
+|BMI             |        75.0|       0|  1|
+|Gender          |        83.1|       0|  1|
+|Race.Ethnicity  |        43.2|       0|  4|
+|SES             |       342.0|       0|  4|
+|Type 2 Diabetes |        74.8|       0|  1|
+
+``` r
+final_table <- summary.table %>%
+  group_by(Category) %>% 
+  mutate( row_num = row_number(), 
+          max_row = n(), 
+          p_value = if_else(row_num == max_row, 
+                            chisq.results$p_value[match(Category, chisq.results$Category)],
+                            NA_real_)) %>%
+  select(Category, Group, Total,Percent,`Lower Stress`, `Higher Stress`, Prevalence,p_value) %>%
+    rename(`Percent Higher Stress`=Prevalence,
+         `Percent Group`=Percent)
+
+kable(final_table, caption="Summary of demographic variables by stress incidence",
+      digits = c(rep(0,3),1,0,0,1,99))
 ```
 
 
 
 Table: Summary of demographic variables by stress incidence
 
-|Category        |Group           | Total| Percent|    No|   Yes| Prevalence|
-|:---------------|:---------------|-----:|-------:|-----:|-----:|----------:|
-|NA              |White           | 35198|  88.974| 20432| 14766|       42.0|
-|NA              |Asian           |   575|   1.453|   350|   225|       39.1|
-|NA              |Black           |  1739|   4.396|   878|   861|       49.5|
-|NA              |Hispanic/Latino |   777|   1.964|   429|   348|       44.8|
-|NA              |Other           |  1271|   3.213|   730|   541|       42.6|
-|Gender          |F               | 20772|  52.508| 11534|  9238|       44.5|
-|Gender          |M               | 18788|  47.492| 11285|  7503|       39.9|
-|BMI             |Underweight     |   283|   0.715|   132|   151|       53.4|
-|BMI             |Normal          |  9648|  24.388|  5727|  3921|       40.6|
-|BMI             |Overweight      | 12910|  32.634|  7737|  5173|       40.1|
-|BMI             |Class I Obese   |  8870|  22.422|  5045|  3825|       43.1|
-|BMI             |Class II Obese  |  4471|  11.302|  2435|  2036|       45.5|
-|BMI             |Class III Obese |  3378|   8.539|  1743|  1635|       48.4|
-|SES             |1               | 13950|  35.263|  8767|  5183|       37.2|
-|SES             |2               | 10505|  26.555|  6071|  4434|       42.2|
-|SES             |3               |  7603|  19.219|  4037|  3566|       46.9|
-|SES             |4               |  4335|  10.958|  2139|  2196|       50.7|
-|SES             |NA              |  3167|   8.006|  1805|  1362|       43.0|
-|Age Group       |[18,30)         |  4478|  11.320|  2459|  2019|       45.1|
-|Age Group       |[30,40)         |  4688|  11.850|  2533|  2155|       46.0|
-|Age Group       |[40,50)         |  6038|  15.263|  3219|  2819|       46.7|
-|Age Group       |[50,60)         |  8781|  22.197|  5010|  3771|       42.9|
-|Age Group       |[60,70)         |  9314|  23.544|  5744|  3570|       38.3|
-|Age Group       |[70,80)         |  4955|  12.525|  3059|  1896|       38.3|
-|Age Group       |[80,90)         |  1306|   3.301|   795|   511|       39.1|
-|Type 2 Diabetes |0               | 33419|  84.477| 19585| 13834|       41.4|
-|Type 2 Diabetes |1               |  6141|  15.523|  3234|  2907|       47.3|
+|Category        |Group           | Total| Percent Group| Lower Stress| Higher Stress| Percent Higher Stress|  p_value|
+|:---------------|:---------------|-----:|-------------:|------------:|-------------:|---------------------:|--------:|
+|Race.Ethnicity  |White           | 35198|          89.0|        20432|         14766|                  42.0|       NA|
+|Race.Ethnicity  |Asian           |   575|           1.5|          350|           225|                  39.1|       NA|
+|Race.Ethnicity  |Black           |  1739|           4.4|          878|           861|                  49.5|       NA|
+|Race.Ethnicity  |Hispanic/Latino |   777|           2.0|          429|           348|                  44.8|       NA|
+|Race.Ethnicity  |Other           |  1271|           3.2|          730|           541|                  42.6| 9.55e-09|
+|Gender          |F               | 20772|          52.5|        11534|          9238|                  44.5|       NA|
+|Gender          |M               | 18788|          47.5|        11285|          7503|                  39.9| 8.00e-20|
+|BMI             |Non-Obese       | 22841|          57.7|        13596|          9245|                  40.5|       NA|
+|BMI             |Obese           | 16719|          42.3|         9223|          7496|                  44.8| 4.73e-18|
+|SES             |1               | 13950|          35.3|         8767|          5183|                  37.2|       NA|
+|SES             |2               | 10505|          26.6|         6071|          4434|                  42.2|       NA|
+|SES             |3               |  7603|          19.2|         4037|          3566|                  46.9|       NA|
+|SES             |4               |  4335|          11.0|         2139|          2196|                  50.7|       NA|
+|SES             |NA              |  3167|           8.0|         1805|          1362|                  43.0| 9.21e-73|
+|Age Group       |[18,30)         |  4478|          11.3|         2459|          2019|                  45.1|       NA|
+|Age Group       |[30,40)         |  4688|          11.9|         2533|          2155|                  46.0|       NA|
+|Age Group       |[40,50)         |  6038|          15.3|         3219|          2819|                  46.7|       NA|
+|Age Group       |[50,60)         |  8781|          22.2|         5010|          3771|                  42.9|       NA|
+|Age Group       |[60,70)         |  9314|          23.5|         5744|          3570|                  38.3|       NA|
+|Age Group       |[70,80)         |  4955|          12.5|         3059|          1896|                  38.3|       NA|
+|Age Group       |[80,90)         |  1306|           3.3|          795|           511|                  39.1| 7.43e-38|
+|Type 2 Diabetes |0               | 33419|          84.5|        19585|         13834|                  41.4|       NA|
+|Type 2 Diabetes |1               |  6141|          15.5|         3234|          2907|                  47.3| 5.23e-18|
 
 ``` r
-write_csv(summary.table, "Stress Demographics Table.csv")
+write_csv(final_table, "Stress Demographics Table.csv")
 ```
 
 # Session Information
@@ -967,13 +1034,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.4.0 (2024-04-24)
+## R version 4.4.3 (2025-02-28)
 ## Platform: x86_64-pc-linux-gnu
-## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -995,15 +1062,16 @@ sessionInfo()
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
-##  [5] crayon_1.5.3      compiler_4.4.0    tidyselect_1.2.1  stringr_1.5.1    
-##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+##  [5] crayon_1.5.3      compiler_4.4.3    tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.3    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
 ## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
 ## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
 ## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
 ## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
 ## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
-## [33] digest_0.6.36     grid_4.4.0        vroom_1.6.5       hms_1.1.3        
-## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
-## [41] farver_2.1.2      fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27   
-## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
+## [33] digest_0.6.36     grid_4.4.3        vroom_1.6.5       rstudioapi_0.16.0
+## [37] hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0  
+## [41] glue_1.8.0        farver_2.1.2      fansi_1.0.6       colorspace_2.1-0 
+## [45] rmarkdown_2.27    purrr_1.0.2       tools_4.4.3       pkgconfig_2.0.3  
+## [49] htmltools_0.5.8.1
 ```

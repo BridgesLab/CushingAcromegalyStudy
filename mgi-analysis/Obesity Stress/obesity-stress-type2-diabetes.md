@@ -65,7 +65,7 @@ combined.data <- read_csv(input.file)
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Sep 30 14:00:18 2024. This dataset has 61793 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jul 28 17:20:58 2025. This dataset has 61793 values.
 
 
 ``` r
@@ -2436,13 +2436,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.4.0 (2024-04-24)
+## R version 4.4.3 (2025-02-28)
 ## Platform: x86_64-pc-linux-gnu
-## Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
+## Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -2464,15 +2464,15 @@ sessionInfo()
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
-##  [5] compiler_4.4.0    crayon_1.5.3      tidyselect_1.2.1  stringr_1.5.1    
-##  [9] parallel_4.4.0    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
+##  [5] compiler_4.4.3    crayon_1.5.3      tidyselect_1.2.1  stringr_1.5.1    
+##  [9] parallel_4.4.3    jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9       
 ## [13] fastmap_1.2.0     R6_2.5.1          labeling_0.4.3    generics_0.1.3   
 ## [17] backports_1.5.0   tibble_3.2.1      munsell_0.5.1     bslib_0.7.0      
 ## [21] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4       
 ## [25] stringi_1.8.4     cachem_1.1.0      xfun_0.45         sass_0.4.9       
 ## [29] bit64_4.0.5       cli_3.6.3         withr_3.0.0       magrittr_2.0.3   
-## [33] grid_4.4.0        digest_0.6.36     vroom_1.6.5       hms_1.1.3        
-## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       
+## [33] grid_4.4.3        digest_0.6.36     vroom_1.6.5       hms_1.1.3        
+## [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.8.0       
 ## [41] farver_2.1.2      colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27   
-## [45] purrr_1.0.2       tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
+## [45] purrr_1.0.2       tools_4.4.3       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

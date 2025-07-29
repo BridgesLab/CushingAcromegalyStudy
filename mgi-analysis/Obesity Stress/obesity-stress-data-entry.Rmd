@@ -76,7 +76,17 @@ mgi.patient.data %>%
          "Missing Data"=`TRUE`) %>%
   mutate(`Percent Complete`=`Has Data`/(`Has Data`+`Missing Data`)*100) %>%
   kable(caption="Summary of initial surveys by year and whether there are stress data.") 
-  
+
+ mgi.patient.data %>%
+  mutate(No.Stress = is.na(Stress_d1))%>%
+  filter(Survey.Year>2014) %>%
+  group_by(No.Stress) %>%
+  count %>% 
+  pivot_wider(names_from="No.Stress", values_from = "n") %>%
+  rename("Has Data"=`FALSE`,
+         "Missing Data"=`TRUE`) %>%
+  mutate(`Percent Complete`=`Has Data`/(`Has Data`+`Missing Data`)*100) %>%
+  kable(caption="Summary of initial surveys since or including 2014 and whether there are stress data available.")  
 
 # For the rest of the datasets, only patients in the mgi dataset
 
@@ -163,14 +173,13 @@ combined.data.age <-
 
 combined.data.stress <-
   combined.data.age %>%
-  filter(is.na(Stress_d1)) # remove participants with no stress score
-
+  filter(!is.na(Stress_d1)) # remove participants with no stress score
 ```
 
 * All data: **`r nrow(combined.data)`** particiipants
 * No BMI category `r nrow(combined.data) - nrow(combined.data.bmi)` leaving **`r nrow(combined.data.bmi)`** participants
 * No Age category `r nrow(combined.data.bmi) - nrow(combined.data.age)` leaving **`r nrow(combined.data.age)`** participants
-* No Age category `r nrow(combined.data.age) - nrow(combined.data.stress)` leaving **`r nrow(combined.data.stress)`** participants
+* No Stress category `r nrow(combined.data.age) - nrow(combined.data.stress)` leaving **`r nrow(combined.data.stress)`** participants
 
 # Writing out of the Data
 

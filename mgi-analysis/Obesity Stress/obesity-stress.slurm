@@ -2,7 +2,7 @@
 #SBATCH --job-name ObesityStress
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=24G
+#SBATCH --mem-per-cpu=40G
 #SBATCH --time=02:00:00
 #SBATCH --account=davebrid0
 #SBATCH --partition=standard
@@ -19,8 +19,8 @@ echo "Running from $(pwd)"
 
 
 # requires 30 mins and 64G
-#Rscript -e "rmarkdown::render('diabetes-diagnosis-data.Rmd')"
-#Rscript -e "rmarkdown::render('obesity-stress-encounter-data.Rmd')"
+Rscript -e "rmarkdown::render('diabetes-diagnosis-data.Rmd')"
+Rscript -e "rmarkdown::render('obesity-stress-encounter-data.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-data-entry.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-demographics.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-demographics-stress.Rmd')"
@@ -33,3 +33,5 @@ Rscript -e "rmarkdown::render('obesity-stress-hypertension.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-chf.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-cpd.Rmd')"
 Rscript -e "rmarkdown::render('obesity-stress-arythmia.Rmd')"
+#Rscript -e "rmarkdown::render('obesity-stress-encounter-enrollment-data.Rmd')"
+#Rscript -e "rmarkdown::render('obesity-stress-type2-diabetes-longitudinal.Rmd')"

@@ -39,7 +39,7 @@ diagnosis.data <- read_csv(diagnosis.datafile)
   
 diagnosis.data <- 
   diagnosis.data %>%
-  mutate(DeID_ProblemObservationDate=ymd_hms(DeID_ProblemObservationDate))
+  mutate(DeID_ProblemObservationDate=mdy_hm(DeID_ProblemObservationDate))
 ```
 
 For ICD10 codes (see https://edit.cms.gov/files/document/valid-icd-10-list.xlsx), all Type 2 Diabetes codes start with *E11* and include the phrase "Type 2"
@@ -108,7 +108,7 @@ diabetic.participants$DeID_PatientID %in% comorbidity.diabetics$DeID_PatientID %
 ```{r output}
 combined.data <-
   comorbidity.data %>%
-  full_join(diabetic.participants,by=DeID_PatientID) %>%
+  full_join(diabetic.participants,by='DeID_PatientID') %>%
   mutate(Type2Diabetes = case_when(DeID_PatientID %in% diabetic.participants$DeID_PatientID ~ '1',
                                    TRUE~'0'))
   

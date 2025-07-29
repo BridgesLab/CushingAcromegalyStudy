@@ -11,10 +11,10 @@ output:
 
 ## Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Apr 16 09:43:04 2024.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jul 28 17:08:46 2025.
 
 
-```r
+``` r
 library(knitr)
 #figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
@@ -28,7 +28,7 @@ encounters.datefile <- 'EncounterAll.csv'
 The input data file is in EncounterAnthropometricsBMI.csv. This includes the BMI for each patient, potentially at multiple time points. This script takes this file and pulls out just the first BMI measure
 
 
-```r
+``` r
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -49,7 +49,7 @@ bmi.data <-
 # Summarizing BMI Data
 
 
-```r
+``` r
 library(ggplot2)
 
 ggplot(bmi.data,
@@ -66,7 +66,7 @@ ggplot(bmi.data,
 
 ![](figures/encounter-range-1.png)<!-- -->
 
-```r
+``` r
 bmi.data %>%
   group_by(EncounterYear) %>%
   count %>%
@@ -160,7 +160,7 @@ Table: Total Encounters by Year
 ## Time of Follow Up
 
 
-```r
+``` r
 follow.up.data <-
   bmi.data %>%
   filter(!(is.na(EncounterDate))) %>%
@@ -259,7 +259,7 @@ Table: Participant follow up duration
 |        1| 5161|      88864|
 |        0| 2734|      91598|
 
-```r
+``` r
 ggplot(follow.up.data,
        aes(x=FollowUp)) +
   geom_bar() +
@@ -281,9 +281,9 @@ The average follow up period is NA.
 We will use the median BMI measure if there are multiple in the encounters file.
 
 
-```r
-bmi.cutoff <- 300
-bmi.lower <- 12
+``` r
+bmi.cutoff <- 129
+bmi.lower <- 9
 
 bmi.data.median <- 
   bmi.data %>%
@@ -301,12 +301,12 @@ bmi.data.cutoff <-
   filter(BMI>bmi.lower) #remove BMI above cutoff
 ```
 
-Based on this procedure we had 91598 participants in the initial dataset.  After removing individuals with no BMI measure we had 90245 (a loss of 1353 participants).  We then removed anyone who's median BMI was >300 or <12, a loss of 3 participants.  This resulted in a final dataset of 90242.
+Based on this procedure we had 91598 participants in the initial dataset.  After removing individuals with no BMI measure we had 90245 (a loss of 1353 participants).  We then removed anyone who's median BMI was >129 or <9, a loss of 2 participants.  This resulted in a final dataset of 90243.
 
 ## Analysis of BMI
 
 
-```r
+``` r
 library(ggplot2)
 bmi.data.cutoff %>%
   ggplot(aes(x=BMI)) +
@@ -320,7 +320,7 @@ bmi.data.cutoff %>%
 
 ![](figures/bmi-analysis-1.png)<!-- -->
 
-```r
+``` r
 bmi.data.cutoff %>%
   ggplot(aes(x=BMI)) +
   geom_histogram() +
@@ -333,7 +333,7 @@ bmi.data.cutoff %>%
 
 ![](figures/bmi-analysis-2.png)<!-- -->
 
-```r
+``` r
 bmi.data.cutoff %>%
   summarize(mean=mean(BMI,na.rm=T),
              min=min(BMI, na.rm=T),
@@ -349,14 +349,14 @@ Table: Summary statistics for the BMI measurements used in this study
 
 | mean|  min| max|  sd|     n|
 |----:|----:|---:|---:|-----:|
-| 29.8| 12.3| 100| 7.2| 90242|
+| 29.8| 11.9| 100| 7.2| 90243|
 
 # Validation and Checking for Outliers
 
-We filtered out all BMI that the median was \>300. After this the highest and lowest BMI were
+We filtered out all BMI that the median was \>129. After this the highest and lowest BMI were
 
 
-```r
+``` r
 bmi.data.cutoff %>%
   arrange(desc(BMI)) %>%
   select(BMI,BMI.n) %>%
@@ -381,7 +381,7 @@ Table: Top 50 median BMI values and number of encounters
 |  79.8|     1|
 |  79.7|     1|
 
-```r
+``` r
 bmi.data.cutoff %>%
   arrange(BMI) %>%
   select(BMI,BMI.n) %>%
@@ -395,6 +395,7 @@ Table: Top 50 median BMI values and number of encounters
 
 |  BMI| BMI.n|
 |----:|-----:|
+| 11.9|     1|
 | 12.3|     1|
 | 12.5|     1|
 | 12.6|     1|
@@ -404,12 +405,11 @@ Table: Top 50 median BMI values and number of encounters
 | 13.6|     1|
 | 13.7|     1|
 | 14.1|     1|
-| 14.1|     1|
 
 # Output
 
 
-```r
+``` r
 output.file <- 'MedianEncounterAnthropometricsBMI.csv'
 write_csv(bmi.data.cutoff, file=output.file)
 ```
@@ -419,18 +419,18 @@ These data were written out to MedianEncounterAnthropometricsBMI.csv. This is th
 # Session Information
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Red Hat Enterprise Linux 8.6 (Ootpa)
+## R version 4.4.3 (2025-02-28)
+## Platform: x86_64-pc-linux-gnu
+## Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 ## 
 ## Matrix products: default
-## BLAS:   /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRblas.so 
-## LAPACK: /sw/pkgs/arc/stacks/gcc/10.3.0/R/4.3.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.11.0
+## BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+## LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -447,20 +447,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.4.3   lubridate_1.9.2 tidyr_1.3.0     dplyr_1.1.3    
-## [5] readr_2.1.4     knitr_1.44     
+## [1] ggplot2_3.5.1   lubridate_1.9.3 tidyr_1.3.1     dplyr_1.1.4    
+## [5] readr_2.1.5     knitr_1.48     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5        gtable_0.3.4     jsonlite_1.8.7   compiler_4.3.1  
-##  [5] crayon_1.5.2     tidyselect_1.2.0 parallel_4.3.1   jquerylib_0.1.4 
-##  [9] scales_1.2.1     yaml_2.3.7       fastmap_1.1.1    R6_2.5.1        
-## [13] labeling_0.4.3   generics_0.1.3   tibble_3.2.1     munsell_0.5.0   
-## [17] bslib_0.5.1      pillar_1.9.0     tzdb_0.4.0       rlang_1.1.1     
-## [21] utf8_1.2.3       cachem_1.0.8     xfun_0.40        sass_0.4.7      
-## [25] bit64_4.0.5      timechange_0.2.0 cli_3.6.1        withr_2.5.0     
-## [29] magrittr_2.0.3   grid_4.3.1       digest_0.6.33    vroom_1.6.3     
-## [33] hms_1.1.3        lifecycle_1.0.3  vctrs_0.6.3      evaluate_0.21   
-## [37] glue_1.6.2       farver_2.1.1     colorspace_2.1-0 fansi_1.0.4     
-## [41] rmarkdown_2.25   purrr_1.0.2      tools_4.3.1      pkgconfig_2.0.3 
-## [45] htmltools_0.5.6
+##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
+##  [5] compiler_4.4.3    crayon_1.5.3      tidyselect_1.2.1  parallel_4.4.3   
+##  [9] jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9        fastmap_1.2.0    
+## [13] R6_2.5.1          labeling_0.4.3    generics_0.1.3    tibble_3.2.1     
+## [17] munsell_0.5.1     bslib_0.7.0       pillar_1.9.0      tzdb_0.4.0       
+## [21] rlang_1.1.4       utf8_1.2.4        cachem_1.1.0      xfun_0.45        
+## [25] sass_0.4.9        bit64_4.0.5       timechange_0.3.0  cli_3.6.3        
+## [29] withr_3.0.0       magrittr_2.0.3    grid_4.4.3        digest_0.6.36    
+## [33] vroom_1.6.5       hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5      
+## [37] evaluate_0.24.0   glue_1.8.0        farver_2.1.2      colorspace_2.1-0 
+## [41] fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2       tools_4.4.3      
+## [45] pkgconfig_2.0.3   htmltools_0.5.8.1
 ```

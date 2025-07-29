@@ -107,8 +107,8 @@ The average follow up period is `r follow.up.data %>% mean(FollowUp, na.rm=T)`.
 We will use the median BMI measure if there are multiple in the encounters file.
 
 ```{r bmi-measurements}
-bmi.cutoff <- 300
-bmi.lower <- 12
+bmi.cutoff <- 129
+bmi.lower <- 9
 
 bmi.data.median <- 
   bmi.data %>%

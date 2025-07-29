@@ -96,7 +96,7 @@ combined.data %>%
 
 ## By Age
 
-The average age of our participants is `r mean(combined.data$age, na.rm=T)` with a standard error of `r sd(combined.data$age, na.rm=T)/sqrt(nrow(combined.data)))`.
+The average age of our participants is `r mean(combined.data$age, na.rm=T)` with a standard error of `r sd(combined.data$age, na.rm=T)/sqrt(nrow(combined.data))`.
 
 ```{r counts-age}
 combined.data %>%

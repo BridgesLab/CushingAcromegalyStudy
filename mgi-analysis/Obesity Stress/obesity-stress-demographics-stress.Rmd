@@ -416,9 +416,9 @@ disadvantage.glm %>%
 combined.data %>%
   filter(!(is.na(Stress))) %>%
   filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
-  group_by(BMI_cat,Stress) %>%
+  group_by(BMI_cat.Ob.NonOb,Stress) %>%
   count %>%
-  pivot_wider(id_cols=BMI_cat,
+  pivot_wider(id_cols=BMI_cat.Ob.NonOb,
               names_from=Stress,
               values_from = n,
               names_prefix='Diabetes') %>%
@@ -427,7 +427,7 @@ combined.data %>%
   mutate(Prevalence=Yes/(Yes+No)*100) -> stress.bmi
 
 stress.bmi %>%
-  ggplot(aes(y=Prevalence,x=BMI_cat)) +
+  ggplot(aes(y=Prevalence,x=BMI_cat.Ob.NonOb)) +
   geom_bar(stat='identity',position='dodge') +
   labs(y="Percent High Stress",
        x="") +
@@ -498,12 +498,12 @@ glm(Stress~BMI, data=combined.data) %>%
 
 ```{r summary-table}
 rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
-        mutate(Categoyr="Race.Ethnicity"),
+        mutate(Category="Race.Ethnicity"),
       stress.gender %>% 
         rename("Group"="Gender") %>%
         mutate(Category="Gender"),
       stress.bmi %>% 
-        rename("Group"="BMI_cat") %>%
+        rename("Group"="BMI_cat.Ob.NonOb") %>%
         mutate(Category="BMI"),
       stress.disadvantage %>%
         rename("Group"="disadvantage13_17_qrtl") %>%
@@ -518,10 +518,70 @@ rbind(stress.race %>% rename("Group"="Race.Ethnicity") %>%
   ungroup %>%
   group_by(Category) %>%
   mutate(Percent = Total/sum(Total)*100) %>%
-  select(Category, Group,Total,Percent, No,Yes,Prevalence)-> summary.table
+  select(Category, Group,Total,Percent, No,Yes,Prevalence) %>%
+  rename(`Lower Stress`=No,
+         `Higher Stress`=Yes)-> summary.table
 
-kable(summary.table, caption="Summary of demographic variables by stress incidence")
-write_csv(summary.table, "Stress Demographics Table.csv")
+# calculate category level chi-squared tests
+# Step 1: Create the contingency table with counts
+contingency_df <- 
+  summary.table %>%
+  select(Category, Group, `Lower Stress`, `Higher Stress`) 
+
+
+# Load required packages
+
+
+# Perform chi-squared test for each category
+results <- contingency_df %>%
+  group_by(Category) %>%
+  summarise(
+    chi_squared = {
+      # Create contingency table
+      contingency_table <- as.matrix(select(cur_data(), `Lower Stress`, `Higher Stress`))
+      row_names <- cur_data()$Group  # Use cur_data() to access Group in summarise
+      if (length(row_names) == nrow(contingency_table)) {
+        rownames(contingency_table) <- row_names
+        # Run chi-squared test with error handling
+        tryCatch(
+          {
+            test <- chisq.test(contingency_table)
+            c(statistic = test$statistic, p_value = test$p.value, df = test$parameter)
+          },
+          error = function(e) c(statistic = NA, p_value = NA, df = NA)
+        )
+      } else {
+        c(statistic = NA, p_value = NA, df = NA)  # Return NA if dimensions don't match
+      }
+    }
+  ) %>%
+  # Unnest the results into separate columns
+  tidyr::unnest_wider(chi_squared)
+
+chisq.results <- results %>%
+  group_by(Category) %>%
+  summarise(
+    chi_squared = first(na.omit(`statistic.X-squared`), default = NA_real_),
+    p_value = first(na.omit(p_value), default = NA_real_),
+    df = first(na.omit(df.df), default = NA_real_)
+  )
+
+kable(chisq.results, caption="Chi-squared tests for demographic variables by stress")
+
+final_table <- summary.table %>%
+  group_by(Category) %>% 
+  mutate( row_num = row_number(), 
+          max_row = n(), 
+          p_value = if_else(row_num == max_row, 
+                            chisq.results$p_value[match(Category, chisq.results$Category)],
+                            NA_real_)) %>%
+  select(Category, Group, Total,Percent,`Lower Stress`, `Higher Stress`, Prevalence,p_value) %>%
+    rename(`Percent Higher Stress`=Prevalence,
+         `Percent Group`=Percent)
+
+kable(final_table, caption="Summary of demographic variables by stress incidence",
+      digits = c(rep(0,3),1,0,0,1,99))
+write_csv(final_table, "Stress Demographics Table.csv")
 ```
 
 # Session Information
