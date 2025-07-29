@@ -11,7 +11,7 @@ output:
 
 # Purpose
 
-To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Mon Jul 28 19:20:54 2025.
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Jul 29 17:18:40 2025.
 
 # Data Descriptions
 
@@ -249,7 +249,7 @@ combined.data.stress <-
 
 ``` r
 output.file <- 'data-combined.csv'
-write_csv(combined.data.age, file=output.file)
+write_csv(combined.data.stress, file=output.file)
 ```
 
 These data were written out to data-combined.csv. This is the input file for the other scripts.

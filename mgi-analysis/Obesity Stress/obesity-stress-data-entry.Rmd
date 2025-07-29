@@ -185,7 +185,7 @@ combined.data.stress <-
 
 ```{r output}
 output.file <- 'data-combined.csv'
-write_csv(combined.data.age, file=output.file)
+write_csv(combined.data.stress, file=output.file)
 ```
 
 These data were written out to `r output.file`. This is the input file for the other scripts.
