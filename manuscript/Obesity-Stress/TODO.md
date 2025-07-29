@@ -7,16 +7,18 @@
 - [] What is absolute prevalence in lean versus obese participants?
 - [] Clarify effect of obesity in males versus females
 - [] Calculate p-value for BMI differences in obese diabetic participants
+- [] Calculate p-value for demographic differences in high vs low stress in Table 1
+- [] Modify table 1 to show obese vs non-obese
 
 # Writing
 
 - [X] Write background  (Irit)
-- [] Expand on clinical importance (Irit)
+- [X] Expand on clinical importance (Irit)
 - [] Get more details about enrollment strategies from Matt Z (@davebridges)
-- [] Find out more about why PSS was unavailable for so many
-- [] Check about why there are so many missing BMI's
+- [X] Find out more about why PSS was unavailable for so many
+- [X] Check about why there are so many missing BMI's
 - [] Pull relevant ICD9/10 codes
-- [] How were race and ethnicity defined in MGI
+- [X] How were race and ethnicity defined in MGI
 - [X] Write methods/results - demographics and CONSORT diagram (@davebridges)
 - [X] Write methods/results - prevalence and paramaterization of stress (@davebridges)
 - [X] Write methods/results - relationship between stress and diabetes
