@@ -387,6 +387,7 @@ ggplot(diabetes.stress.obesity.counts,
         legend.position.inside = c(0.1,0.85))
 
 kable(diabetes.stress.obesity.counts, caption="Diabetes rates by stress, obesity and gender")
+  
 
 #adding in age and gender as covariates as a modifier
 glm(Type2Diabetes~Stress+BMI_cat.Ob.NonOb+Gender+Age.group+disadvantage13_17_qrtl+Stress:BMI_cat.Ob.NonOb, 
@@ -416,6 +417,144 @@ glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl,
 stress.em.obese %>%
   tidy(exponentiate=T, conf.int = TRUE, conf.level = 0.95) %>%
   kable(caption="Participants with obesity.  Logistic regression of stress, gender, age, and neighborhood SES with effect modification by obesity status on diabetes (exponentiated estimates)", digits =c(0,2,3,2,99,3,3))
+```
+# Summary Table of Interaction Estimates
+
+```{r interaction-estimates}
+interaction.summary.table <-
+  diabetes.stress.obesity.counts %>%
+  mutate(`Cases/Total`=paste0(Diabetes,"/",Total)) %>%
+  select(BMI_cat.Ob.NonOb,Stress,`Cases/Total`) %>%
+  pivot_wider(names_from=Stress, values_from=`Cases/Total`) %>%
+  rename(BMI = BMI_cat.Ob.NonOb,
+         `Lower Stress`=Low,
+         `Higher Stress`=High) %>%
+  mutate(`OR [95% CI]`=c(
+    stress.em.non.obese %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.obese %>% tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+      select(estimate, conf.low, conf.high) %>%
+      mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate)))
+
+kable(interaction.summary.table, caption="Summary Table for Interaction Effects")
+
+write_csv(interaction.summary.table,"Obesity-Stress Interaction Table.csv")
+```
+
+# Interaction Effects Across Obesity Categories
+
+Repeated this analysis across all BMI categories
+
+```{r stress-obesity-bmi-categories}
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Underweight")) -> stress.em.1
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Normal")) -> stress.em.2
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Overweight")) -> stress.em.3
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class I Obese")) -> stress.em.4
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class II Obese")) -> stress.em.5
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class III Obese")) -> stress.em.6
+
+diabetes.stress.obesity.class.counts <-
+  with(combined.data, table(Type2Diabetes,Stress,BMI_cat)) %>% 
+  data.frame %>%
+  pivot_wider(names_from=Type2Diabetes,
+              values_from = Freq) %>%
+  rename(Diabetes=`1`,
+         NonDiabetes=`0`) %>%
+  mutate(Total=Diabetes+NonDiabetes) %>%
+  mutate(Percent=Diabetes/Total*100) %>%
+  mutate(Odds = Percent/100 / (1 - Percent/100))
+
+interaction.summary.table.class <-
+  diabetes.stress.obesity.class.counts %>%
+  mutate(`Cases/Total`=paste0(Diabetes,"/",Total)) %>%
+  select(BMI_cat,`Cases/Total`,Stress) %>%
+  pivot_wider(names_from=Stress, values_from=`Cases/Total`) %>%
+  rename(BMI = BMI_cat,
+         `Lower Stress`=Low,
+         `Higher Stress`=High) %>%
+  mutate(`OR [95% CI]`=c(
+    stress.em.1 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.2 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.3 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.4 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.5 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.6 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate)))
+
+kable(interaction.summary.table.class, caption="Summary Table for Interaction Effects")
+
+write_csv(interaction.summary.table.class, "Obesity-Stress Interaction Table by Class.csv")
+
+glm(Type2Diabetes~Stress+BMI_cat+Gender+Age.group+disadvantage13_17_qrtl+Stress:BMI_cat, 
+    family="binomial",
+    data=combined.data) -> stress.em.class
+
+stress.em.class %>% anova %>% tidy %>% kable(caption="Omnibus ANOVA for all six obesity classes")
+
+stress.em.class %>%
+  tidy(exponentiate=T, conf.int = TRUE, conf.level = 0.95) %>%
+  kable(caption="Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses all six obesity classes (exponentiated estimates)", digits =c(0,2,3,2,99,3,3))
+```
+
+## Nonlinear BMI-Diabetes Relationship
+
+Rather than categories i used a nonlinear spline relationship using actual BMI.  We modeled the association between body mass index (BMI) and diabetes risk using natural cubic splines to flexibly capture potential nonlinear relationships. Specifically, BMI was included as a natural cubic spline with 3 degrees of freedom `(ns(BMI, df = 3))`. Natural cubic splines allow the relationship between BMI and the log-odds of diabetes to vary smoothly across the range of BMI values without imposing a strict linear form, while constraining the function to be linear beyond the boundary knots to ensure stable estimates at extreme BMI values.
+
+```{r diabetes-stress-nonlinear}
+library(splines)
+glm(Type2Diabetes~ns(BMI,df=3)*Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> stress.em.nl
+
+stress.em.nl %>% anova %>% tidy %>% kable(caption="Omnibus ANOVA for all a nonlinear obesity relationship")
+
+stress.em.nl %>%
+  tidy(exponentiate=T, conf.int = TRUE, conf.level = 0.95) %>%
+  kable(caption="Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses a nonlinear BMI-diabetes relationship (exponentiated estimates)", digits =c(0,2,3,2,99,3,3))
 ```
 
 # Session Information

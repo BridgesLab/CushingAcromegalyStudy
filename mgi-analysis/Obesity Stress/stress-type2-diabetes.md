@@ -66,7 +66,7 @@ combined.data <- read_csv(input.file)
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Tue Jul 29 18:33:05 2025. This dataset has 39560 values.
+Loaded in the cleaned data from data-combined.csv. This script can be found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort - DeID - 2023-03-14 and was most recently run on Wed Jul 30 12:02:58 2025. This dataset has 39560 values.
 
 
 ``` r
@@ -745,6 +745,255 @@ Table: Participants with obesity.  Logistic regression of stress, gender, age, a
 |Age.group[70,80)       |    12.53|     0.157|     16.12| 1.82e-58|    9.310|    17.238|
 |Age.group[80,90)       |    12.50|     0.193|     13.07| 4.76e-39|    8.606|    18.378|
 |disadvantage13_17_qrtl |     1.19|     0.019|      9.26| 2.10e-20|    1.146|     1.234|
+# Summary Table of Interaction Estimates
+
+
+``` r
+interaction.summary.table <-
+  diabetes.stress.obesity.counts %>%
+  mutate(`Cases/Total`=paste0(Diabetes,"/",Total)) %>%
+  select(BMI_cat.Ob.NonOb,Stress,`Cases/Total`) %>%
+  pivot_wider(names_from=Stress, values_from=`Cases/Total`) %>%
+  rename(BMI = BMI_cat.Ob.NonOb,
+         `Lower Stress`=Low,
+         `Higher Stress`=High) %>%
+  mutate(`OR [95% CI]`=c(
+    stress.em.non.obese %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.obese %>% tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+      select(estimate, conf.low, conf.high) %>%
+      mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate)))
+
+kable(interaction.summary.table, caption="Summary Table for Interaction Effects")
+```
+
+
+
+Table: Summary Table for Interaction Effects
+
+|BMI       |Lower Stress |Higher Stress |OR [95% CI]      |
+|:---------|:------------|:-------------|:----------------|
+|Non-Obese |1178/13596   |901/9245      |1.24 [1.12-1.37] |
+|Obese     |2056/9223    |2006/7496     |1.37 [1.27-1.48] |
+
+``` r
+write_csv(interaction.summary.table,"Obesity-Stress Interaction Table.csv")
+```
+
+# Interaction Effects Across Obesity Categories
+
+Repeated this analysis across all BMI categories
+
+
+``` r
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Underweight")) -> stress.em.1
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Normal")) -> stress.em.2
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Overweight")) -> stress.em.3
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class I Obese")) -> stress.em.4
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class II Obese")) -> stress.em.5
+
+glm(Type2Diabetes~Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data %>% filter(BMI_cat=="Class III Obese")) -> stress.em.6
+
+diabetes.stress.obesity.class.counts <-
+  with(combined.data, table(Type2Diabetes,Stress,BMI_cat)) %>% 
+  data.frame %>%
+  pivot_wider(names_from=Type2Diabetes,
+              values_from = Freq) %>%
+  rename(Diabetes=`1`,
+         NonDiabetes=`0`) %>%
+  mutate(Total=Diabetes+NonDiabetes) %>%
+  mutate(Percent=Diabetes/Total*100) %>%
+  mutate(Odds = Percent/100 / (1 - Percent/100))
+
+interaction.summary.table.class <-
+  diabetes.stress.obesity.class.counts %>%
+  mutate(`Cases/Total`=paste0(Diabetes,"/",Total)) %>%
+  select(BMI_cat,`Cases/Total`,Stress) %>%
+  pivot_wider(names_from=Stress, values_from=`Cases/Total`) %>%
+  rename(BMI = BMI_cat,
+         `Lower Stress`=Low,
+         `Higher Stress`=High) %>%
+  mutate(`OR [95% CI]`=c(
+    stress.em.1 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.2 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.3 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.4 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.5 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate),
+    stress.em.6 %>% 
+           tidy(exponentiate = T, conf.int = T, conf.level=0.95) %>% filter(term=="StressHigh") %>%
+           select(estimate, conf.low, conf.high) %>%
+           mutate(Estimate = paste0(round(estimate,2), " [", round(conf.low,2),"-",round(conf.high,2),"]")) %>%
+      pull(Estimate)))
+
+kable(interaction.summary.table.class, caption="Summary Table for Interaction Effects")
+```
+
+
+
+Table: Summary Table for Interaction Effects
+
+|BMI             |Lower Stress |Higher Stress |OR [95% CI]       |
+|:---------------|:------------|:-------------|:-----------------|
+|Underweight     |3/132        |6/151         |2.16 [0.53-11.01] |
+|Normal          |314/5727     |262/3921      |1.3 [1.09-1.56]   |
+|Overweight      |861/7737     |633/5173      |1.22 [1.09-1.38]  |
+|Class I Obese   |920/5045     |840/3825      |1.4 [1.25-1.57]   |
+|Class II Obese  |603/2435     |594/2036      |1.35 [1.17-1.56]  |
+|Class III Obese |533/1743     |572/1635      |1.33 [1.14-1.56]  |
+
+``` r
+write_csv(interaction.summary.table.class, "Obesity-Stress Interaction Table by Class.csv")
+
+glm(Type2Diabetes~Stress+BMI_cat+Gender+Age.group+disadvantage13_17_qrtl+Stress:BMI_cat, 
+    family="binomial",
+    data=combined.data) -> stress.em.class
+
+stress.em.class %>% anova %>% tidy %>% kable(caption="Omnibus ANOVA for all six obesity classes")
+```
+
+
+
+Table: Omnibus ANOVA for all six obesity classes
+
+|term                   | df| deviance| df.residual| residual.deviance| p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                   | NA|       NA|       36392|             31591|      NA|
+|Stress                 |  1|    74.79|       36391|             31516|   0.000|
+|BMI_cat                |  5|  1954.16|       36386|             29562|   0.000|
+|Gender                 |  1|   195.15|       36385|             29367|   0.000|
+|Age.group              |  6|  1719.78|       36379|             27647|   0.000|
+|disadvantage13_17_qrtl |  1|   130.39|       36378|             27517|   0.000|
+|Stress:BMI_cat         |  5|     3.42|       36373|             27513|   0.635|
+
+``` r
+stress.em.class %>%
+  tidy(exponentiate=T, conf.int = TRUE, conf.level = 0.95) %>%
+  kable(caption="Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses all six obesity classes (exponentiated estimates)", digits =c(0,2,3,2,99,3,3))
+```
+
+
+
+Table: Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses all six obesity classes (exponentiated estimates)
+
+|term                              | estimate| std.error| statistic|  p.value| conf.low| conf.high|
+|:---------------------------------|--------:|---------:|---------:|--------:|--------:|---------:|
+|(Intercept)                       |     0.00|     0.600|    -10.16| 3.14e-24|    0.001|     0.006|
+|StressHigh                        |     1.91|     0.725|      0.89| 3.72e-01|    0.486|     9.318|
+|BMI_catNormal                     |     2.34|     0.592|      1.43| 1.52e-01|    0.865|     9.590|
+|BMI_catOverweight                 |     3.96|     0.591|      2.33| 1.99e-02|    1.471|    16.186|
+|BMI_catClass I Obese              |     7.14|     0.591|      3.33| 8.77e-04|    2.654|    29.198|
+|BMI_catClass II Obese             |    11.37|     0.591|      4.11| 3.95e-05|    4.220|    46.581|
+|BMI_catClass III Obese            |    18.59|     0.592|      4.94| 7.93e-07|    6.889|    76.199|
+|GenderM                           |     1.35|     0.032|      9.48| 2.50e-21|    1.268|     1.435|
+|Age.group[30,40)                  |     2.28|     0.128|      6.44| 1.23e-10|    1.782|     2.946|
+|Age.group[40,50)                  |     4.85|     0.118|     13.38| 7.42e-41|    3.873|     6.156|
+|Age.group[50,60)                  |     7.68|     0.115|     17.80| 7.64e-71|    6.174|     9.679|
+|Age.group[60,70)                  |    11.23|     0.114|     21.25| 0.00e+00|    9.044|    14.137|
+|Age.group[70,80)                  |    15.11|     0.116|     23.34| 0.00e+00|   12.100|    19.101|
+|Age.group[80,90)                  |    15.87|     0.132|     20.91| 3.93e-97|   12.299|    20.662|
+|disadvantage13_17_qrtl            |     1.19|     0.015|     11.47| 1.85e-30|    1.153|     1.222|
+|StressHigh:BMI_catNormal          |     0.68|     0.731|     -0.53| 5.99e-01|    0.138|     2.710|
+|StressHigh:BMI_catOverweight      |     0.63|     0.728|     -0.63| 5.31e-01|    0.130|     2.508|
+|StressHigh:BMI_catClass I Obese   |     0.72|     0.728|     -0.45| 6.50e-01|    0.147|     2.843|
+|StressHigh:BMI_catClass II Obese  |     0.72|     0.729|     -0.45| 6.55e-01|    0.147|     2.862|
+|StressHigh:BMI_catClass III Obese |     0.72|     0.730|     -0.46| 6.47e-01|    0.146|     2.843|
+
+## Nonlinear BMI-Diabetes Relationship
+
+Rather than categories i used a nonlinear spline relationship using actual BMI.  We modeled the association between body mass index (BMI) and diabetes risk using natural cubic splines to flexibly capture potential nonlinear relationships. Specifically, BMI was included as a natural cubic spline with 3 degrees of freedom `(ns(BMI, df = 3))`. Natural cubic splines allow the relationship between BMI and the log-odds of diabetes to vary smoothly across the range of BMI values without imposing a strict linear form, while constraining the function to be linear beyond the boundary knots to ensure stable estimates at extreme BMI values.
+
+
+``` r
+library(splines)
+glm(Type2Diabetes~ns(BMI,df=3)*Stress+Gender+Age.group+disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> stress.em.nl
+
+stress.em.nl %>% anova %>% tidy %>% kable(caption="Omnibus ANOVA for all a nonlinear obesity relationship")
+```
+
+
+
+Table: Omnibus ANOVA for all a nonlinear obesity relationship
+
+|term                   | df| deviance| df.residual| residual.deviance| p.value|
+|:----------------------|--:|--------:|-----------:|-----------------:|-------:|
+|NULL                   | NA|       NA|       36392|             31591|      NA|
+|ns(BMI, df = 3)        |  3|  2055.67|       36389|             29536|   0.000|
+|Stress                 |  1|    43.75|       36388|             29492|   0.000|
+|Gender                 |  1|   197.91|       36387|             29294|   0.000|
+|Age.group              |  6|  1737.68|       36381|             27556|   0.000|
+|disadvantage13_17_qrtl |  1|   123.65|       36380|             27433|   0.000|
+|ns(BMI, df = 3):Stress |  3|     1.66|       36377|             27431|   0.646|
+
+``` r
+stress.em.nl %>%
+  tidy(exponentiate=T, conf.int = TRUE, conf.level = 0.95) %>%
+  kable(caption="Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses a nonlinear BMI-diabetes relationship (exponentiated estimates)", digits =c(0,2,3,2,99,3,3))
+```
+
+
+
+Table: Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses a nonlinear BMI-diabetes relationship (exponentiated estimates)
+
+|term                        | estimate| std.error| statistic|  p.value| conf.low| conf.high|
+|:---------------------------|--------:|---------:|---------:|--------:|--------:|---------:|
+|(Intercept)                 |     0.00|     0.365|    -16.71| 1.05e-62|    0.001|     0.004|
+|ns(BMI, df = 3)1            |    62.95|     0.193|     21.43| 0.00e+00|   43.307|    92.404|
+|ns(BMI, df = 3)2            |    49.83|     0.864|      4.52| 6.14e-06|    9.212|   273.654|
+|ns(BMI, df = 3)3            |     4.65|     0.848|      1.81| 7.00e-02|    0.839|    23.457|
+|StressHigh                  |     1.13|     0.504|      0.24| 8.14e-01|    0.418|     3.016|
+|GenderM                     |     1.35|     0.032|      9.56| 1.18e-21|    1.272|     1.440|
+|Age.group[30,40)            |     2.27|     0.128|      6.39| 1.65e-10|    1.774|     2.936|
+|Age.group[40,50)            |     4.83|     0.118|     13.31| 1.93e-40|    3.854|     6.131|
+|Age.group[50,60)            |     7.69|     0.115|     17.76| 1.53e-70|    6.175|     9.691|
+|Age.group[60,70)            |    11.36|     0.114|     21.29| 0.00e+00|    9.138|    14.301|
+|Age.group[70,80)            |    15.35|     0.117|     23.41| 0.00e+00|   12.285|    19.418|
+|Age.group[80,90)            |    16.24|     0.132|     21.04| 3.00e-98|   12.576|    21.153|
+|disadvantage13_17_qrtl      |     1.18|     0.015|     11.17| 5.69e-29|    1.148|     1.217|
+|ns(BMI, df = 3)1:StressHigh |     1.15|     0.282|      0.51| 6.13e-01|    0.664|     2.005|
+|ns(BMI, df = 3)2:StressHigh |     1.87|     1.249|      0.50| 6.16e-01|    0.163|    21.836|
+|ns(BMI, df = 3)3:StressHigh |     2.12|     1.228|      0.61| 5.41e-01|    0.193|    23.904|
 
 # Session Information
 
@@ -774,23 +1023,25 @@ sessionInfo()
 ## tzcode source: system (glibc)
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] splines   stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
 ## [1] ggplot2_3.5.1 forcats_1.0.0 broom_1.0.6   tidyr_1.3.1   dplyr_1.1.4  
 ## [6] readr_2.1.5   knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
-##  [5] compiler_4.4.3    crayon_1.5.3      tidyselect_1.2.1  parallel_4.4.3   
-##  [9] jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9        fastmap_1.2.0    
-## [13] R6_2.5.1          labeling_0.4.3    generics_0.1.3    backports_1.5.0  
-## [17] tibble_3.2.1      munsell_0.5.1     bslib_0.7.0       pillar_1.9.0     
-## [21] tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4        cachem_1.1.0     
-## [25] xfun_0.45         sass_0.4.9        bit64_4.0.5       cli_3.6.3        
-## [29] withr_3.0.0       magrittr_2.0.3    grid_4.4.3        digest_0.6.36    
-## [33] vroom_1.6.5       rstudioapi_0.16.0 hms_1.1.3         lifecycle_1.0.4  
-## [37] vctrs_0.6.5       evaluate_0.24.0   glue_1.8.0        farver_2.1.2     
-## [41] colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2      
-## [45] tools_4.4.3       pkgconfig_2.0.3   htmltools_0.5.8.1
+##  [1] sass_0.4.9        utf8_1.2.4        generics_0.1.3    stringi_1.8.4    
+##  [5] hms_1.1.3         digest_0.6.36     magrittr_2.0.3    evaluate_0.24.0  
+##  [9] grid_4.4.3        fastmap_1.2.0     jsonlite_1.8.8    backports_1.5.0  
+## [13] purrr_1.0.2       fansi_1.0.6       scales_1.3.0      jquerylib_0.1.4  
+## [17] cli_3.6.3         rlang_1.1.4       crayon_1.5.3      bit64_4.0.5      
+## [21] munsell_0.5.1     withr_3.0.0       cachem_1.1.0      yaml_2.3.9       
+## [25] tools_4.4.3       parallel_4.4.3    tzdb_0.4.0        colorspace_2.1-0 
+## [29] vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4   stringr_1.5.1    
+## [33] bit_4.0.5         vroom_1.6.5       pkgconfig_2.0.3   pillar_1.9.0     
+## [37] bslib_0.7.0       gtable_0.3.5      glue_1.8.0        xfun_0.45        
+## [41] tibble_3.2.1      tidyselect_1.2.1  highr_0.11        rstudioapi_0.16.0
+## [45] farver_2.1.2      htmltools_0.5.8.1 rmarkdown_2.27    labeling_0.4.3   
+## [49] compiler_4.4.3
 ```

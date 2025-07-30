@@ -452,7 +452,15 @@ Models</a></li>
 <li><a href="#stratified-fully-adjusted-models-in-support-of-effect-modification" id="toc-stratified-fully-adjusted-models-in-support-of-effect-modification"><span class="toc-section-number">3.1</span> Stratified Fully Adjusted Models
 in Support of Effect Modification</a></li>
 </ul></li>
-<li><a href="#session-information" id="toc-session-information"><span class="toc-section-number">4</span> Session Information</a></li>
+<li><a href="#summary-table-of-interaction-estimates" id="toc-summary-table-of-interaction-estimates"><span class="toc-section-number">4</span> Summary Table of Interaction
+Estimates</a></li>
+<li><a href="#interaction-effects-across-obesity-categories" id="toc-interaction-effects-across-obesity-categories"><span class="toc-section-number">5</span> Interaction Effects Across Obesity
+Categories</a>
+<ul>
+<li><a href="#nonlinear-bmi-diabetes-relationship" id="toc-nonlinear-bmi-diabetes-relationship"><span class="toc-section-number">5.1</span> Nonlinear BMI-Diabetes
+Relationship</a></li>
+</ul></li>
+<li><a href="#session-information" id="toc-session-information"><span class="toc-section-number">6</span> Session Information</a></li>
 </ul>
 </div>
 
@@ -493,7 +501,7 @@ multivariable analyses.</p>
 <p>Loaded in the cleaned data from data-combined.csv. This script can be
 found in /nfs/turbo/precision-health/DataDirect/HUM00219435 - Obesity as
 a modifier of chronic psy/2023-03-14/2150 - Obesity and Stress - Cohort
-- DeID - 2023-03-14 and was most recently run on Tue Jul 29 18:33:05
+- DeID - 2023-03-14 and was most recently run on Wed Jul 30 12:02:58
 2025. This dataset has 39560 values.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>combined.data <span class="ot">&lt;-</span> </span>
@@ -2171,10 +2179,762 @@ status on diabetes (exponentiated estimates)</caption>
 </table>
 </div>
 </div>
-<div id="session-information" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Session
+<div id="summary-table-of-interaction-estimates" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Summary Table of
+Interaction Estimates</h1>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>interaction.summary.table <span class="ot">&lt;-</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  diabetes.stress.obesity.counts <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span><span class="ot">=</span><span class="fu">paste0</span>(Diabetes,<span class="st">&quot;/&quot;</span>,Total)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a>  <span class="fu">select</span>(BMI_cat.Ob.NonOb,Stress,<span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>Stress, <span class="at">values_from=</span><span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">BMI =</span> BMI_cat.Ob.NonOb,</span>
+<span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a>         <span class="st">`</span><span class="at">Lower Stress</span><span class="st">`</span><span class="ot">=</span>Low,</span>
+<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a>         <span class="st">`</span><span class="at">Higher Stress</span><span class="st">`</span><span class="ot">=</span>High) <span class="sc">%&gt;%</span></span>
+<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">OR [95% CI]</span><span class="st">`</span><span class="ot">=</span><span class="fu">c</span>(</span>
+<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a>    stress.em.non.obese <span class="sc">%&gt;%</span> </span>
+<span id="cb35-11"><a href="#cb35-11" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-12"><a href="#cb35-12" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb35-13"><a href="#cb35-13" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-14"><a href="#cb35-14" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb35-15"><a href="#cb35-15" tabindex="-1"></a>    stress.em.obese <span class="sc">%&gt;%</span> <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-16"><a href="#cb35-16" tabindex="-1"></a>      <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb35-17"><a href="#cb35-17" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-18"><a href="#cb35-18" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate)))</span>
+<span id="cb35-19"><a href="#cb35-19" tabindex="-1"></a></span>
+<span id="cb35-20"><a href="#cb35-20" tabindex="-1"></a><span class="fu">kable</span>(interaction.summary.table, <span class="at">caption=</span><span class="st">&quot;Summary Table for Interaction Effects&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary Table for Interaction Effects</caption>
+<thead>
+<tr>
+<th align="left">BMI</th>
+<th align="left">Lower Stress</th>
+<th align="left">Higher Stress</th>
+<th align="left">OR [95% CI]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Non-Obese</td>
+<td align="left">1178/13596</td>
+<td align="left">901/9245</td>
+<td align="left">1.24 [1.12-1.37]</td>
+</tr>
+<tr>
+<td align="left">Obese</td>
+<td align="left">2056/9223</td>
+<td align="left">2006/7496</td>
+<td align="left">1.37 [1.27-1.48]</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">write_csv</span>(interaction.summary.table,<span class="st">&quot;Obesity-Stress Interaction Table.csv&quot;</span>)</span></code></pre></div>
+</div>
+<div id="interaction-effects-across-obesity-categories" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Interaction Effects
+Across Obesity Categories</h1>
+<p>Repeated this analysis across all BMI categories</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Underweight&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.1</span></span>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-7"><a href="#cb37-7" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Normal&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.2</span></span>
+<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-10"><a href="#cb37-10" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-11"><a href="#cb37-11" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Overweight&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.3</span></span>
+<span id="cb37-12"><a href="#cb37-12" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-14"><a href="#cb37-14" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-15"><a href="#cb37-15" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Class I Obese&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.4</span></span>
+<span id="cb37-16"><a href="#cb37-16" tabindex="-1"></a></span>
+<span id="cb37-17"><a href="#cb37-17" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-18"><a href="#cb37-18" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-19"><a href="#cb37-19" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Class II Obese&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.5</span></span>
+<span id="cb37-20"><a href="#cb37-20" tabindex="-1"></a></span>
+<span id="cb37-21"><a href="#cb37-21" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb37-22"><a href="#cb37-22" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb37-23"><a href="#cb37-23" tabindex="-1"></a>    <span class="at">data=</span>combined.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BMI_cat<span class="sc">==</span><span class="st">&quot;Class III Obese&quot;</span>)) <span class="ot">-&gt;</span> stress.em<span class="fl">.6</span></span>
+<span id="cb37-24"><a href="#cb37-24" tabindex="-1"></a></span>
+<span id="cb37-25"><a href="#cb37-25" tabindex="-1"></a>diabetes.stress.obesity.class.counts <span class="ot">&lt;-</span></span>
+<span id="cb37-26"><a href="#cb37-26" tabindex="-1"></a>  <span class="fu">with</span>(combined.data, <span class="fu">table</span>(Type2Diabetes,Stress,BMI_cat)) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-27"><a href="#cb37-27" tabindex="-1"></a>  data.frame <span class="sc">%&gt;%</span></span>
+<span id="cb37-28"><a href="#cb37-28" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>Type2Diabetes,</span>
+<span id="cb37-29"><a href="#cb37-29" tabindex="-1"></a>              <span class="at">values_from =</span> Freq) <span class="sc">%&gt;%</span></span>
+<span id="cb37-30"><a href="#cb37-30" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Diabetes=</span><span class="st">`</span><span class="at">1</span><span class="st">`</span>,</span>
+<span id="cb37-31"><a href="#cb37-31" tabindex="-1"></a>         <span class="at">NonDiabetes=</span><span class="st">`</span><span class="at">0</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-32"><a href="#cb37-32" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Total=</span>Diabetes<span class="sc">+</span>NonDiabetes) <span class="sc">%&gt;%</span></span>
+<span id="cb37-33"><a href="#cb37-33" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percent=</span>Diabetes<span class="sc">/</span>Total<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-34"><a href="#cb37-34" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Odds =</span> Percent<span class="sc">/</span><span class="dv">100</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> Percent<span class="sc">/</span><span class="dv">100</span>))</span>
+<span id="cb37-35"><a href="#cb37-35" tabindex="-1"></a></span>
+<span id="cb37-36"><a href="#cb37-36" tabindex="-1"></a>interaction.summary.table.class <span class="ot">&lt;-</span></span>
+<span id="cb37-37"><a href="#cb37-37" tabindex="-1"></a>  diabetes.stress.obesity.class.counts <span class="sc">%&gt;%</span></span>
+<span id="cb37-38"><a href="#cb37-38" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span><span class="ot">=</span><span class="fu">paste0</span>(Diabetes,<span class="st">&quot;/&quot;</span>,Total)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-39"><a href="#cb37-39" tabindex="-1"></a>  <span class="fu">select</span>(BMI_cat,<span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span>,Stress) <span class="sc">%&gt;%</span></span>
+<span id="cb37-40"><a href="#cb37-40" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>Stress, <span class="at">values_from=</span><span class="st">`</span><span class="at">Cases/Total</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-41"><a href="#cb37-41" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">BMI =</span> BMI_cat,</span>
+<span id="cb37-42"><a href="#cb37-42" tabindex="-1"></a>         <span class="st">`</span><span class="at">Lower Stress</span><span class="st">`</span><span class="ot">=</span>Low,</span>
+<span id="cb37-43"><a href="#cb37-43" tabindex="-1"></a>         <span class="st">`</span><span class="at">Higher Stress</span><span class="st">`</span><span class="ot">=</span>High) <span class="sc">%&gt;%</span></span>
+<span id="cb37-44"><a href="#cb37-44" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">OR [95% CI]</span><span class="st">`</span><span class="ot">=</span><span class="fu">c</span>(</span>
+<span id="cb37-45"><a href="#cb37-45" tabindex="-1"></a>    stress.em<span class="fl">.1</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-46"><a href="#cb37-46" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-47"><a href="#cb37-47" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-48"><a href="#cb37-48" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-49"><a href="#cb37-49" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb37-50"><a href="#cb37-50" tabindex="-1"></a>    stress.em<span class="fl">.2</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-51"><a href="#cb37-51" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-52"><a href="#cb37-52" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-53"><a href="#cb37-53" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-54"><a href="#cb37-54" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb37-55"><a href="#cb37-55" tabindex="-1"></a>    stress.em<span class="fl">.3</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-56"><a href="#cb37-56" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-57"><a href="#cb37-57" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-58"><a href="#cb37-58" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-59"><a href="#cb37-59" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb37-60"><a href="#cb37-60" tabindex="-1"></a>    stress.em<span class="fl">.4</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-61"><a href="#cb37-61" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-62"><a href="#cb37-62" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-63"><a href="#cb37-63" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-64"><a href="#cb37-64" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb37-65"><a href="#cb37-65" tabindex="-1"></a>    stress.em<span class="fl">.5</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-66"><a href="#cb37-66" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-67"><a href="#cb37-67" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-68"><a href="#cb37-68" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-69"><a href="#cb37-69" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate),</span>
+<span id="cb37-70"><a href="#cb37-70" tabindex="-1"></a>    stress.em<span class="fl">.6</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb37-71"><a href="#cb37-71" tabindex="-1"></a>           <span class="fu">tidy</span>(<span class="at">exponentiate =</span> T, <span class="at">conf.int =</span> T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&quot;StressHigh&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-72"><a href="#cb37-72" tabindex="-1"></a>           <span class="fu">select</span>(estimate, conf.low, conf.high) <span class="sc">%&gt;%</span></span>
+<span id="cb37-73"><a href="#cb37-73" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">Estimate =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(estimate,<span class="dv">2</span>), <span class="st">&quot; [&quot;</span>, <span class="fu">round</span>(conf.low,<span class="dv">2</span>),<span class="st">&quot;-&quot;</span>,<span class="fu">round</span>(conf.high,<span class="dv">2</span>),<span class="st">&quot;]&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-74"><a href="#cb37-74" tabindex="-1"></a>      <span class="fu">pull</span>(Estimate)))</span>
+<span id="cb37-75"><a href="#cb37-75" tabindex="-1"></a></span>
+<span id="cb37-76"><a href="#cb37-76" tabindex="-1"></a><span class="fu">kable</span>(interaction.summary.table.class, <span class="at">caption=</span><span class="st">&quot;Summary Table for Interaction Effects&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary Table for Interaction Effects</caption>
+<thead>
+<tr>
+<th align="left">BMI</th>
+<th align="left">Lower Stress</th>
+<th align="left">Higher Stress</th>
+<th align="left">OR [95% CI]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Underweight</td>
+<td align="left">3/132</td>
+<td align="left">6/151</td>
+<td align="left">2.16 [0.53-11.01]</td>
+</tr>
+<tr>
+<td align="left">Normal</td>
+<td align="left">314/5727</td>
+<td align="left">262/3921</td>
+<td align="left">1.3 [1.09-1.56]</td>
+</tr>
+<tr>
+<td align="left">Overweight</td>
+<td align="left">861/7737</td>
+<td align="left">633/5173</td>
+<td align="left">1.22 [1.09-1.38]</td>
+</tr>
+<tr>
+<td align="left">Class I Obese</td>
+<td align="left">920/5045</td>
+<td align="left">840/3825</td>
+<td align="left">1.4 [1.25-1.57]</td>
+</tr>
+<tr>
+<td align="left">Class II Obese</td>
+<td align="left">603/2435</td>
+<td align="left">594/2036</td>
+<td align="left">1.35 [1.17-1.56]</td>
+</tr>
+<tr>
+<td align="left">Class III Obese</td>
+<td align="left">533/1743</td>
+<td align="left">572/1635</td>
+<td align="left">1.33 [1.14-1.56]</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">write_csv</span>(interaction.summary.table.class, <span class="st">&quot;Obesity-Stress Interaction Table by Class.csv&quot;</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span>Stress<span class="sc">+</span>BMI_cat<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl<span class="sc">+</span>Stress<span class="sc">:</span>BMI_cat, </span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>    <span class="at">data=</span>combined.data) <span class="ot">-&gt;</span> stress.em.class</span>
+<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a>stress.em.class <span class="sc">%&gt;%</span> anova <span class="sc">%&gt;%</span> tidy <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">&quot;Omnibus ANOVA for all six obesity classes&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<caption>Omnibus ANOVA for all six obesity classes</caption>
+<colgroup>
+<col width="31%" />
+<col width="4%" />
+<col width="12%" />
+<col width="16%" />
+<col width="24%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr>
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">deviance</th>
+<th align="right">df.residual</th>
+<th align="right">residual.deviance</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">NULL</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">36392</td>
+<td align="right">31591</td>
+<td align="right">NA</td>
+</tr>
+<tr>
+<td align="left">Stress</td>
+<td align="right">1</td>
+<td align="right">74.79</td>
+<td align="right">36391</td>
+<td align="right">31516</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">BMI_cat</td>
+<td align="right">5</td>
+<td align="right">1954.16</td>
+<td align="right">36386</td>
+<td align="right">29562</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Gender</td>
+<td align="right">1</td>
+<td align="right">195.15</td>
+<td align="right">36385</td>
+<td align="right">29367</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Age.group</td>
+<td align="right">6</td>
+<td align="right">1719.78</td>
+<td align="right">36379</td>
+<td align="right">27647</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">disadvantage13_17_qrtl</td>
+<td align="right">1</td>
+<td align="right">130.39</td>
+<td align="right">36378</td>
+<td align="right">27517</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Stress:BMI_cat</td>
+<td align="right">5</td>
+<td align="right">3.42</td>
+<td align="right">36373</td>
+<td align="right">27513</td>
+<td align="right">0.635</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>stress.em.class <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">exponentiate=</span>T, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">&quot;Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses all six obesity classes (exponentiated estimates)&quot;</span>, <span class="at">digits =</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div>
+<table>
+<caption>Logistic regression of stress, obesity, gender, age, and
+neighborhood SES with effect modification by obesity status on diabetes.
+This analysis uses all six obesity classes (exponentiated
+estimates)</caption>
+<colgroup>
+<col width="37%" />
+<col width="9%" />
+<col width="10%" />
+<col width="10%" />
+<col width="9%" />
+<col width="9%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr>
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">(Intercept)</td>
+<td align="right">0.00</td>
+<td align="right">0.600</td>
+<td align="right">-10.16</td>
+<td align="right">3.14e-24</td>
+<td align="right">0.001</td>
+<td align="right">0.006</td>
+</tr>
+<tr>
+<td align="left">StressHigh</td>
+<td align="right">1.91</td>
+<td align="right">0.725</td>
+<td align="right">0.89</td>
+<td align="right">3.72e-01</td>
+<td align="right">0.486</td>
+<td align="right">9.318</td>
+</tr>
+<tr>
+<td align="left">BMI_catNormal</td>
+<td align="right">2.34</td>
+<td align="right">0.592</td>
+<td align="right">1.43</td>
+<td align="right">1.52e-01</td>
+<td align="right">0.865</td>
+<td align="right">9.590</td>
+</tr>
+<tr>
+<td align="left">BMI_catOverweight</td>
+<td align="right">3.96</td>
+<td align="right">0.591</td>
+<td align="right">2.33</td>
+<td align="right">1.99e-02</td>
+<td align="right">1.471</td>
+<td align="right">16.186</td>
+</tr>
+<tr>
+<td align="left">BMI_catClass I Obese</td>
+<td align="right">7.14</td>
+<td align="right">0.591</td>
+<td align="right">3.33</td>
+<td align="right">8.77e-04</td>
+<td align="right">2.654</td>
+<td align="right">29.198</td>
+</tr>
+<tr>
+<td align="left">BMI_catClass II Obese</td>
+<td align="right">11.37</td>
+<td align="right">0.591</td>
+<td align="right">4.11</td>
+<td align="right">3.95e-05</td>
+<td align="right">4.220</td>
+<td align="right">46.581</td>
+</tr>
+<tr>
+<td align="left">BMI_catClass III Obese</td>
+<td align="right">18.59</td>
+<td align="right">0.592</td>
+<td align="right">4.94</td>
+<td align="right">7.93e-07</td>
+<td align="right">6.889</td>
+<td align="right">76.199</td>
+</tr>
+<tr>
+<td align="left">GenderM</td>
+<td align="right">1.35</td>
+<td align="right">0.032</td>
+<td align="right">9.48</td>
+<td align="right">2.50e-21</td>
+<td align="right">1.268</td>
+<td align="right">1.435</td>
+</tr>
+<tr>
+<td align="left">Age.group[30,40)</td>
+<td align="right">2.28</td>
+<td align="right">0.128</td>
+<td align="right">6.44</td>
+<td align="right">1.23e-10</td>
+<td align="right">1.782</td>
+<td align="right">2.946</td>
+</tr>
+<tr>
+<td align="left">Age.group[40,50)</td>
+<td align="right">4.85</td>
+<td align="right">0.118</td>
+<td align="right">13.38</td>
+<td align="right">7.42e-41</td>
+<td align="right">3.873</td>
+<td align="right">6.156</td>
+</tr>
+<tr>
+<td align="left">Age.group[50,60)</td>
+<td align="right">7.68</td>
+<td align="right">0.115</td>
+<td align="right">17.80</td>
+<td align="right">7.64e-71</td>
+<td align="right">6.174</td>
+<td align="right">9.679</td>
+</tr>
+<tr>
+<td align="left">Age.group[60,70)</td>
+<td align="right">11.23</td>
+<td align="right">0.114</td>
+<td align="right">21.25</td>
+<td align="right">0.00e+00</td>
+<td align="right">9.044</td>
+<td align="right">14.137</td>
+</tr>
+<tr>
+<td align="left">Age.group[70,80)</td>
+<td align="right">15.11</td>
+<td align="right">0.116</td>
+<td align="right">23.34</td>
+<td align="right">0.00e+00</td>
+<td align="right">12.100</td>
+<td align="right">19.101</td>
+</tr>
+<tr>
+<td align="left">Age.group[80,90)</td>
+<td align="right">15.87</td>
+<td align="right">0.132</td>
+<td align="right">20.91</td>
+<td align="right">3.93e-97</td>
+<td align="right">12.299</td>
+<td align="right">20.662</td>
+</tr>
+<tr>
+<td align="left">disadvantage13_17_qrtl</td>
+<td align="right">1.19</td>
+<td align="right">0.015</td>
+<td align="right">11.47</td>
+<td align="right">1.85e-30</td>
+<td align="right">1.153</td>
+<td align="right">1.222</td>
+</tr>
+<tr>
+<td align="left">StressHigh:BMI_catNormal</td>
+<td align="right">0.68</td>
+<td align="right">0.731</td>
+<td align="right">-0.53</td>
+<td align="right">5.99e-01</td>
+<td align="right">0.138</td>
+<td align="right">2.710</td>
+</tr>
+<tr>
+<td align="left">StressHigh:BMI_catOverweight</td>
+<td align="right">0.63</td>
+<td align="right">0.728</td>
+<td align="right">-0.63</td>
+<td align="right">5.31e-01</td>
+<td align="right">0.130</td>
+<td align="right">2.508</td>
+</tr>
+<tr>
+<td align="left">StressHigh:BMI_catClass I Obese</td>
+<td align="right">0.72</td>
+<td align="right">0.728</td>
+<td align="right">-0.45</td>
+<td align="right">6.50e-01</td>
+<td align="right">0.147</td>
+<td align="right">2.843</td>
+</tr>
+<tr>
+<td align="left">StressHigh:BMI_catClass II Obese</td>
+<td align="right">0.72</td>
+<td align="right">0.729</td>
+<td align="right">-0.45</td>
+<td align="right">6.55e-01</td>
+<td align="right">0.147</td>
+<td align="right">2.862</td>
+</tr>
+<tr>
+<td align="left">StressHigh:BMI_catClass III Obese</td>
+<td align="right">0.72</td>
+<td align="right">0.730</td>
+<td align="right">-0.46</td>
+<td align="right">6.47e-01</td>
+<td align="right">0.146</td>
+<td align="right">2.843</td>
+</tr>
+</tbody>
+</table>
+<div id="nonlinear-bmi-diabetes-relationship" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Nonlinear
+BMI-Diabetes Relationship</h2>
+<p>Rather than categories i used a nonlinear spline relationship using
+actual BMI. We modeled the association between body mass index (BMI) and
+diabetes risk using natural cubic splines to flexibly capture potential
+nonlinear relationships. Specifically, BMI was included as a natural
+cubic spline with 3 degrees of freedom <code>(ns(BMI, df = 3))</code>.
+Natural cubic splines allow the relationship between BMI and the
+log-odds of diabetes to vary smoothly across the range of BMI values
+without imposing a strict linear form, while constraining the function
+to be linear beyond the boundary knots to ensure stable estimates at
+extreme BMI values.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a><span class="fu">glm</span>(Type2Diabetes<span class="sc">~</span><span class="fu">ns</span>(BMI,<span class="at">df=</span><span class="dv">3</span>)<span class="sc">*</span>Stress<span class="sc">+</span>Gender<span class="sc">+</span>Age.group<span class="sc">+</span>disadvantage13_17_qrtl, </span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>    <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a>    <span class="at">data=</span>combined.data) <span class="ot">-&gt;</span> stress.em.nl</span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a>stress.em.nl <span class="sc">%&gt;%</span> anova <span class="sc">%&gt;%</span> tidy <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">&quot;Omnibus ANOVA for all a nonlinear obesity relationship&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<caption>Omnibus ANOVA for all a nonlinear obesity
+relationship</caption>
+<colgroup>
+<col width="31%" />
+<col width="4%" />
+<col width="12%" />
+<col width="16%" />
+<col width="24%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr>
+<th align="left">term</th>
+<th align="right">df</th>
+<th align="right">deviance</th>
+<th align="right">df.residual</th>
+<th align="right">residual.deviance</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">NULL</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">36392</td>
+<td align="right">31591</td>
+<td align="right">NA</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)</td>
+<td align="right">3</td>
+<td align="right">2055.67</td>
+<td align="right">36389</td>
+<td align="right">29536</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Stress</td>
+<td align="right">1</td>
+<td align="right">43.75</td>
+<td align="right">36388</td>
+<td align="right">29492</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Gender</td>
+<td align="right">1</td>
+<td align="right">197.91</td>
+<td align="right">36387</td>
+<td align="right">29294</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">Age.group</td>
+<td align="right">6</td>
+<td align="right">1737.68</td>
+<td align="right">36381</td>
+<td align="right">27556</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">disadvantage13_17_qrtl</td>
+<td align="right">1</td>
+<td align="right">123.65</td>
+<td align="right">36380</td>
+<td align="right">27433</td>
+<td align="right">0.000</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3):Stress</td>
+<td align="right">3</td>
+<td align="right">1.66</td>
+<td align="right">36377</td>
+<td align="right">27431</td>
+<td align="right">0.646</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>stress.em.nl <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">exponentiate=</span>T, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">&quot;Logistic regression of stress, obesity, gender, age, and neighborhood SES with effect modification by obesity status on diabetes.  This analysis uses a nonlinear BMI-diabetes relationship (exponentiated estimates)&quot;</span>, <span class="at">digits =</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">99</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div>
+<table>
+<caption>Logistic regression of stress, obesity, gender, age, and
+neighborhood SES with effect modification by obesity status on diabetes.
+This analysis uses a nonlinear BMI-diabetes relationship (exponentiated
+estimates)</caption>
+<colgroup>
+<col width="32%" />
+<col width="10%" />
+<col width="11%" />
+<col width="11%" />
+<col width="10%" />
+<col width="10%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr>
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">(Intercept)</td>
+<td align="right">0.00</td>
+<td align="right">0.365</td>
+<td align="right">-16.71</td>
+<td align="right">1.05e-62</td>
+<td align="right">0.001</td>
+<td align="right">0.004</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)1</td>
+<td align="right">62.95</td>
+<td align="right">0.193</td>
+<td align="right">21.43</td>
+<td align="right">0.00e+00</td>
+<td align="right">43.307</td>
+<td align="right">92.404</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)2</td>
+<td align="right">49.83</td>
+<td align="right">0.864</td>
+<td align="right">4.52</td>
+<td align="right">6.14e-06</td>
+<td align="right">9.212</td>
+<td align="right">273.654</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)3</td>
+<td align="right">4.65</td>
+<td align="right">0.848</td>
+<td align="right">1.81</td>
+<td align="right">7.00e-02</td>
+<td align="right">0.839</td>
+<td align="right">23.457</td>
+</tr>
+<tr>
+<td align="left">StressHigh</td>
+<td align="right">1.13</td>
+<td align="right">0.504</td>
+<td align="right">0.24</td>
+<td align="right">8.14e-01</td>
+<td align="right">0.418</td>
+<td align="right">3.016</td>
+</tr>
+<tr>
+<td align="left">GenderM</td>
+<td align="right">1.35</td>
+<td align="right">0.032</td>
+<td align="right">9.56</td>
+<td align="right">1.18e-21</td>
+<td align="right">1.272</td>
+<td align="right">1.440</td>
+</tr>
+<tr>
+<td align="left">Age.group[30,40)</td>
+<td align="right">2.27</td>
+<td align="right">0.128</td>
+<td align="right">6.39</td>
+<td align="right">1.65e-10</td>
+<td align="right">1.774</td>
+<td align="right">2.936</td>
+</tr>
+<tr>
+<td align="left">Age.group[40,50)</td>
+<td align="right">4.83</td>
+<td align="right">0.118</td>
+<td align="right">13.31</td>
+<td align="right">1.93e-40</td>
+<td align="right">3.854</td>
+<td align="right">6.131</td>
+</tr>
+<tr>
+<td align="left">Age.group[50,60)</td>
+<td align="right">7.69</td>
+<td align="right">0.115</td>
+<td align="right">17.76</td>
+<td align="right">1.53e-70</td>
+<td align="right">6.175</td>
+<td align="right">9.691</td>
+</tr>
+<tr>
+<td align="left">Age.group[60,70)</td>
+<td align="right">11.36</td>
+<td align="right">0.114</td>
+<td align="right">21.29</td>
+<td align="right">0.00e+00</td>
+<td align="right">9.138</td>
+<td align="right">14.301</td>
+</tr>
+<tr>
+<td align="left">Age.group[70,80)</td>
+<td align="right">15.35</td>
+<td align="right">0.117</td>
+<td align="right">23.41</td>
+<td align="right">0.00e+00</td>
+<td align="right">12.285</td>
+<td align="right">19.418</td>
+</tr>
+<tr>
+<td align="left">Age.group[80,90)</td>
+<td align="right">16.24</td>
+<td align="right">0.132</td>
+<td align="right">21.04</td>
+<td align="right">3.00e-98</td>
+<td align="right">12.576</td>
+<td align="right">21.153</td>
+</tr>
+<tr>
+<td align="left">disadvantage13_17_qrtl</td>
+<td align="right">1.18</td>
+<td align="right">0.015</td>
+<td align="right">11.17</td>
+<td align="right">5.69e-29</td>
+<td align="right">1.148</td>
+<td align="right">1.217</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)1:StressHigh</td>
+<td align="right">1.15</td>
+<td align="right">0.282</td>
+<td align="right">0.51</td>
+<td align="right">6.13e-01</td>
+<td align="right">0.664</td>
+<td align="right">2.005</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)2:StressHigh</td>
+<td align="right">1.87</td>
+<td align="right">1.249</td>
+<td align="right">0.50</td>
+<td align="right">6.16e-01</td>
+<td align="right">0.163</td>
+<td align="right">21.836</td>
+</tr>
+<tr>
+<td align="left">ns(BMI, df = 3)3:StressHigh</td>
+<td align="right">2.12</td>
+<td align="right">1.228</td>
+<td align="right">0.61</td>
+<td align="right">5.41e-01</td>
+<td align="right">0.193</td>
+<td align="right">23.904</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="session-information" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Session
 Information</h1>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 <pre><code>## R version 4.4.3 (2025-02-28)
 ## Platform: x86_64-pc-linux-gnu
 ## Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
@@ -2195,25 +2955,27 @@ Information</h1>
 ## tzcode source: system (glibc)
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] splines   stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
 ## [1] ggplot2_3.5.1 forcats_1.0.0 broom_1.0.6   tidyr_1.3.1   dplyr_1.1.4  
 ## [6] readr_2.1.5   knitr_1.48   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    highr_0.11       
-##  [5] compiler_4.4.3    crayon_1.5.3      tidyselect_1.2.1  parallel_4.4.3   
-##  [9] jquerylib_0.1.4   scales_1.3.0      yaml_2.3.9        fastmap_1.2.0    
-## [13] R6_2.5.1          labeling_0.4.3    generics_0.1.3    backports_1.5.0  
-## [17] tibble_3.2.1      munsell_0.5.1     bslib_0.7.0       pillar_1.9.0     
-## [21] tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4        cachem_1.1.0     
-## [25] xfun_0.45         sass_0.4.9        bit64_4.0.5       cli_3.6.3        
-## [29] withr_3.0.0       magrittr_2.0.3    grid_4.4.3        digest_0.6.36    
-## [33] vroom_1.6.5       rstudioapi_0.16.0 hms_1.1.3         lifecycle_1.0.4  
-## [37] vctrs_0.6.5       evaluate_0.24.0   glue_1.8.0        farver_2.1.2     
-## [41] colorspace_2.1-0  fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2      
-## [45] tools_4.4.3       pkgconfig_2.0.3   htmltools_0.5.8.1</code></pre>
+##  [1] sass_0.4.9        utf8_1.2.4        generics_0.1.3    stringi_1.8.4    
+##  [5] hms_1.1.3         digest_0.6.36     magrittr_2.0.3    evaluate_0.24.0  
+##  [9] grid_4.4.3        fastmap_1.2.0     jsonlite_1.8.8    backports_1.5.0  
+## [13] purrr_1.0.2       fansi_1.0.6       scales_1.3.0      jquerylib_0.1.4  
+## [17] cli_3.6.3         rlang_1.1.4       crayon_1.5.3      bit64_4.0.5      
+## [21] munsell_0.5.1     withr_3.0.0       cachem_1.1.0      yaml_2.3.9       
+## [25] tools_4.4.3       parallel_4.4.3    tzdb_0.4.0        colorspace_2.1-0 
+## [29] vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4   stringr_1.5.1    
+## [33] bit_4.0.5         vroom_1.6.5       pkgconfig_2.0.3   pillar_1.9.0     
+## [37] bslib_0.7.0       gtable_0.3.5      glue_1.8.0        xfun_0.45        
+## [41] tibble_3.2.1      tidyselect_1.2.1  highr_0.11        rstudioapi_0.16.0
+## [45] farver_2.1.2      htmltools_0.5.8.1 rmarkdown_2.27    labeling_0.4.3   
+## [49] compiler_4.4.3</code></pre>
 </div>
 
 
