@@ -8,8 +8,4 @@ To do this analysis we requested data from Michigan Medicine Data Direct, most r
 
 ## Analysis
 
-### Propensity Mapping
-
-- `propensity_mapping.qmd` loads in 
-
-Files that were never compiled include diagnosis.cleaning.qmd
+- `propensity_mapping.qmd` loads in the cases and does outcome-specific propensity mapping and then the analyses for each outcome.  This is where the majority of the data analyses are done.
