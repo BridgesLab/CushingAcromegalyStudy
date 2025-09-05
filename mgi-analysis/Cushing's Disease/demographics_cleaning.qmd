@@ -1,0 +1,94 @@
+---
+title: "Control Demographics"
+author: "Dave Bridges and Trey Carr"
+date: "April 9, 2025"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+    fig-path: "figures/"
+  pdf: default
+#theme: journal
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+# sets maize and blue color scheme
+color_scheme <- c("#00274c", "#ffcb05")
+```
+
+## Purpose
+
+To create a table about our control group demographics. SES, Race, Ethniciy, Age, and Sex specifically.
+
+### Case Demographic Data
+
+```{r case-data-cleaning}
+encounter.datafile.cases <- "EncounterAll.csv" 
+cushings.datafile.cases <- "CushingsDataClean.csv"
+demographics.datafile.cases <- "DemographicInfo.csv"
+ses.datafile.cases <- "GisNeighborhoodAffluence.csv"
+
+
+library(readr) #for loading csv files
+library(dplyr) #for data cleaning
+library(lubridate) #for date cleaning
+library(knitr) #for kables
+encounter.data.cases <- read_csv(encounter.datafile.cases) |>
+  mutate(DeID_AdmitDate_Clean = as_date(mdy_hm(DeID_AdmitDate))) 
+demographics.data <- read_csv(demographics.datafile.cases) %>%
+  mutate(DeID_DOB_clean = as_date(mdy_hm(DeID_DOB)))
+ses.data <- read_csv(ses.datafile.cases)
+
+cushings.data <- read_csv(cushings.datafile.cases) %>%
+  rename("cushings_diagnosis"="DeID_AdmitDate_Clean_diagnosis",
+         "cushings_procedure"="DeID_AdmitDate_Clean_procedure") %>%
+  left_join(demographics.data, by="DeID_PatientID") %>%
+  left_join(ses.data, by="DeID_PatientID")
+
+case.filename <- "CaseDemographics.csv"
+write_csv(cushings.data, case.filename)
+```
+
+Written out cases as `r case.filename`.  There was a total of `r nrow(cushings.data)` cases in this file.
+
+```{r control-data-cleaning}
+encounter.datafile.controls <- "../controls/EncounterAll.csv" 
+demographics.datafile.controls  <- "../controls/DemographicInfo.csv"
+ses.datafile.controls  <- "../controls/GisNeighborhoodAffluence.csv"
+
+demographics.data <- read_csv(demographics.datafile.controls ) %>%
+  mutate(DeID_DOB_clean = as_date(mdy_hm(DeID_DOB)))
+ses.data <- read_csv(ses.datafile.controls )
+
+controls.data <- demographics.data %>%
+  left_join(ses.data, by="DeID_PatientID")
+
+controls.filename <- "ControlDemographics.csv"
+write_csv(controls.data, controls.filename)
+```
+
+Written out cases as `r controls.filename`.  There was a total of `r nrow(controls.data)` cases in this file.
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```
