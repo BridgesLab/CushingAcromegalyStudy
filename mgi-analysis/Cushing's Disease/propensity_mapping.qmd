@@ -1,0 +1,829 @@
+---
+title: "Propensity Mapped Comparason Between Cases and Controls"
+author: "Dave Bridges and Trey Carr"
+date: "April 9, 2025"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+    fig-path: "figures/"
+  pdf: default
+#theme: journal
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+# sets maize and blue color scheme
+color_scheme <- c("#00274c", "#ffcb05")
+```
+
+## Purpose
+
+To create a propensity mapped subgroup for lab results.
+
+## Data Entry
+
+```{r data-entry}
+case.demographics.filename <- 'CaseDemographics.csv'
+control.demographics.filename <- 'ControlDemographics.csv'
+
+case.lab.results.filename <- 'LabResults.csv'
+control.lab.results.filename <- '../controls/LabResults.csv'
+
+bp.filename.cases <- 'NursingStandardVitalSigns.csv'
+bp.filename.controls <- '../controls/NursingStandardVitalSigns.csv'
+
+case.encounter.datafile <- "EncounterAll.csv" 
+case.encounter.bmi.datafile <- "EncounterAnthropometricsBMI.csv" 
+control.encounter.datafile <- "../controls/EncounterAll.csv" 
+control.encounter.bmi.datafile <- "../controls/EncounterAnthropometricsBMI.csv" 
+
+library(readr)
+library(dplyr)
+
+#labs dont have dates/ages
+case.encounters <- read_csv(case.encounter.datafile)
+case.encounters.bmi <- read_csv(case.encounter.bmi.datafile)
+case.encounters.all <- left_join(case.encounters,case.encounters.bmi,
+                                 by = join_by(DeID_PatientID, DeID_EncounterID))
+
+control.encounters <- read_csv(control.encounter.datafile)
+control.encounters.bmi <- read_csv(control.encounter.bmi.datafile)
+control.encounters.all <- left_join(control.encounters,control.encounters.bmi,
+                                 by = join_by(DeID_PatientID, DeID_EncounterID))
+
+
+case.demographics <- read_csv(case.demographics.filename)
+control.demographics <- read_csv(control.demographics.filename)
+
+case.labs <- read_csv(case.lab.results.filename) |>
+  left_join(case.encounters.all, by = join_by(DeID_PatientID, DeID_EncounterID)) |> #added encounter info
+    left_join(case.demographics, by="DeID_PatientID") # added demographic data
+control.labs <- read_csv(control.lab.results.filename) |> 
+  left_join(control.encounters.all, by = join_by(DeID_PatientID, DeID_EncounterID)) |> #added encounter info
+  left_join(control.demographics, by="DeID_PatientID") # added demographic data
+#remove large objects not needed further
+#rm(control.encounters,control.encounters.all,control.encounters.bmi)
+
+#combined into one dataset
+library(lubridate)
+
+#this is used to filter for the window between when a lab result is allowable relative to the procedure.
+procedure.result.interval <- 30
+
+lab.results <- bind_rows(control.labs |> mutate(Cushings=0),
+                         case.labs |> mutate(Cushings=1)) |>  #combined, new column indicating cushings
+  mutate(cushings_procedure = ymd(cushings_procedure),
+         DeID_AdmitDate = mdy_hm(DeID_AdmitDate)) |> 
+  mutate(TimePoint = case_when(cushings_procedure<= DeID_AdmitDate ~ "Before",
+                               cushings_procedure > DeID_AdmitDate ~ "After",
+                               .default="Unknown")) %>% # defined each encounter as before or after
+  mutate(ProcedureFollowUp = cushings_procedure - DeID_AdmitDate) #used to define point between the lab result and the procedure.
+
+#filtered out lab results outside of our interval
+lab.results.filtered <-
+  lab.results |>
+  filter(ProcedureFollowUp<procedure.result.interval | is.na(ProcedureFollowUp)) |>
+  filter(TimePoint!="After")
+  
+#filtered out if the age, gender, race, ethnicity was NA for a patient.
+complete.data.race.ethnicity.age <-
+  lab.results.filtered |>
+  filter(!if_any(c(AgeInYears, GenderCode, RaceCode, EthnicityCode), is.na)) #removed if they had missing data for age, gender, race or ethnicity
+
+#this is the complete dataset  
+complete.data  <-
+  complete.data.race.ethnicity.age |>
+  mutate(RaceEthnicity = case_when(EthnicityCode=="HL"~"Hispanic or Latino",
+                                   RaceCode=="C"~"White",
+                                   RaceCode=="AA"~"Black",
+                                   RaceCode=="A"~"Asian",
+                                   .default="Other")) #defined race/ethnicity categories
+
+#number of controls per case
+fold <- 10
+```
+
+Note the controls dont have ages or BMIs because it depends on when the lab results were obtained, so had to merge in with encounter data.
+
+### Participant Inclusion Data
+
+We began with `r nrow(lab.results |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls who had lab data, and **`r nrow(lab.results |> filter(Cushings==1) |> distinct(DeID_PatientID))`** cases with Cushing's Disease.
+
+* **Had Laboratory Results**: We also removed `r nrow(lab.results |> filter(Cushings==1))-nrow(lab.results.filtered |> filter(Cushings==1))` lab results from Cushing's patients because they were outside of our acceptable window of `r procedure.result.interval` days before their procedure.  This eliminated a total of **`r lab.results |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow() - lab.results.filtered |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow()`** Cushings patients from our dataset.
+
+* **Missing Demographic Data** After filtering out missing demographic data we had `r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))` cases and `r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls with lab results.  The specific pieces of missing information are found here:
+
+```{r mising-demographics}
+lab.results.filtered |>
+  filter(Cushings==1) |> #only for cushings data
+  group_by(DeID_PatientID) %>%
+  summarise(
+    Age_na = sum(is.na(AgeInYears)),
+    Gender_na = sum(is.na(GenderCode)),
+    Race_na = sum(is.na(RaceCode)),
+    Ethnicity_na = sum(is.na(EthnicityCode)),
+    Any_na = any(is.na(AgeInYears) | is.na(GenderCode) | is.na(RaceCode) |is.na(EthnicityCode))) |>
+  ungroup() |>
+    pivot_longer(cols = ends_with("_na"),
+                 names_to = "field",
+                 values_to = "has_na") |>
+  filter(has_na!=0) %>%
+  count(field, name = "n_patients_with_NA")-> missing.demographic.summary
+
+library(knitr)
+missing.demographic.summary |> arrange(desc(n_patients_with_NA)) |> kable(caption="Summary of exclusions from Cushing's patient pool due to missing demographic data")
+```
+
+Our final dataset therefore included **`r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))`** Cushing's patients, and we had the ability to draw from **`r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))`** Cushing's patients control patients.
+
+## Propensity Mapping
+
+Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  We wanted exact matches for everything except age, where we wanted the closest case that had a measurement.  We picked `r fold` matched controls for each case
+
+
+### Hba1c
+
+```{r hba1c-propensity}
+library(MatchIt)
+m.out.a1c <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+summary(m.out.a1c, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.a1c, type = "jitter")         # Propensity score distribution[5]
+
+matched_data.a1c <- match.data(m.out.a1c)
+
+hba1c.data <- 
+  matched_data.a1c |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity)) 
+
+hba1c.summary <-
+  hba1c.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+hba1c.summary.iii <-
+  hba1c.data %>%
+  group_by(Cushings,ObesityIII) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+library(ggplot2)
+ggplot(hba1c.summary,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Hba1c (Percent)") +
+  theme_classic()
+
+ggplot(hba1c.summary.iii,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=ObesityIII,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic()
+
+ggplot(hba1c.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Hba1c (Percent)") +
+  theme_classic()
+
+
+library(knitr)
+hba1c.summary %>% kable(caption="Summary of Hb1ac levels by obesity and pre-existing Cushing's")
+library(broom)
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Hba1c")
+
+lm(value ~ Cushings + ObesityIII + Cushings:ObesityIII,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Class III Obesity and Cushings on Hba1c")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
+```
+
+### Glucose
+
+```{r glucose-propensity}
+m.out.glucose <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("GLUC","GLUC_WB")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+summary(m.out.glucose, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.glucose, type = "jitter")         # Propensity score distribution[5]
+
+matched_data.glucose <- match.data(m.out.glucose)
+
+glucose.data <- 
+  matched_data.glucose |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity)) 
+
+glucose.summary <-
+  glucose.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+ggplot(glucose.summary,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Glucose (mg/dL)") +
+  theme_classic()
+
+ggplot(glucose.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Glucuose (mg/dL)") +
+  theme_classic()
+
+
+
+glucose.summary %>% kable(caption="Summary of glucose levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=glucose.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Glucose")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=glucose.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Glucose")
+```
+
+### ALT
+
+```{r alt-propensity}
+m.out.alt <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("ALT")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+
+summary(m.out.alt, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.alt, type = "jitter")  
+
+matched_data.alt <- match.data(m.out.alt)
+
+alt.data <- 
+  matched_data.alt |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity)) 
+
+alt.summary <-
+  alt.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+library(ggplot2)
+ggplot(alt.summary,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="ALT (mg/dL)") +
+  theme_classic()
+
+ggplot(alt.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="ALT (mg/dL)") +
+  theme_classic()
+
+
+library(knitr)
+alt.summary %>% kable(caption="Summary of ALT levels by obesity and pre-existing Cushing's")
+library(broom)
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
+```
+
+### LDL Cholesterol
+
+```{r ldl-propensity}
+m.out.ldl <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("LDLC","DLDL")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+
+summary(m.out.ldl, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.ldl, type = "jitter")  
+
+matched_data.ldl <- match.data(m.out.ldl)
+
+ldl.data <- 
+  matched_data.ldl |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity)) 
+
+ldl.summary <-
+  ldl.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+ggplot(ldl.summary,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="LDL Cholesterol (mg/dL)") +
+  theme_classic()
+
+ggplot(ldl.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="LDL Cholesterol (mg/dL)") +
+  theme_classic()
+
+ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
+
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on LDL-C")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C")
+```
+
+## Blood Pressure
+
+Blood pressure data is in a separate file (`r bp.filename.cases` and `r bp.filename.controls`).  We have mean noninvasive blood pressure, as well as systolic and diastolic.  These data, similar to lab results need to be mapped to encounter data 
+
+```{r blood-pressure-data-cleaning}
+bp.data.cases <- read_csv(bp.filename.cases) |>
+  left_join(case.encounters.all) |>
+  left_join(case.demographics, by="DeID_PatientID") 
+
+bp.data.controls <- read_csv(bp.filename.controls) |>
+  left_join(control.encounters.all) |>
+  left_join(control.demographics, by="DeID_PatientID") 
+
+bp.results <- bind_rows(bp.data.controls |> mutate(Cushings=0),
+          bp.data.cases |> mutate(Cushings=1)) |>  #combined, new column indicating cushings
+  mutate(cushings_procedure = ymd(cushings_procedure),
+         DeID_AdmitDate = mdy_hm(DeID_AdmitDate)) |> 
+  mutate(TimePoint = case_when(cushings_procedure<= DeID_AdmitDate ~ "Before",
+                               cushings_procedure > DeID_AdmitDate ~ "After",
+                               .default="Unknown")) %>% # defined each encounter as before or after
+  mutate(ProcedureFollowUp = cushings_procedure - DeID_AdmitDate) #used to define point between the lab result and the procedure.
+
+#filtered out lab results outside of our interval
+bp.results.filtered <-
+  bp.results |>
+  filter(ProcedureFollowUp<procedure.result.interval | is.na(ProcedureFollowUp)) |>
+  filter(TimePoint!="After")
+  
+#filtered out if the age, gender, race, ethnicity was NA for a patient.
+bp.data.race.ethnicity.age <-
+  bp.results.filtered |>
+  filter(!if_any(c(AgeInYears, GenderCode, RaceCode, EthnicityCode), is.na)) #removed if they had missing data for age, gender, race or ethnicity
+
+#this is the complete dataset  
+bp.data  <-
+  bp.data.race.ethnicity.age |>
+  mutate(RaceEthnicity = case_when(EthnicityCode=="HL"~"Hispanic or Latino",
+                                   RaceCode=="C"~"White",
+                                   RaceCode=="AA"~"Black",
+                                   RaceCode=="A"~"Asian",
+                                   .default="Other")) #defined race/ethnicity categories
+```
+
+### Inclusion and Exclusion for Blood Pressure Data
+
+We began with `r nrow(bp.results |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls who had lab data, and **`r nrow(bp.results |> filter(Cushings==1) |> distinct(DeID_PatientID))`** cases with Cushing's Disease.
+
+* **Had Laboratory Results**: We also removed `r nrow(bp.results |> filter(Cushings==1))-nrow(bp.results.filtered |> filter(Cushings==1))` lab results from Cushing's patients because they were outside of our acceptable window of `r procedure.result.interval` days before their procedure.  This eliminated a total of **`r bp.results |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow() - bp.results.filtered |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow()`** Cushings patients from our dataset.
+
+* **Missing Demographic Data** After filtering out missing demographic data we had `r nrow(bp.data |> filter(Cushings==1) |> distinct(DeID_PatientID))` cases and `r nrow(bp.data |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls with lab results.  The specific pieces of missing information are found here:
+
+```{r mising-demographics-bp}
+bp.results.filtered |>
+  filter(Cushings==1) |> #only for cushings data
+  group_by(DeID_PatientID) %>%
+  summarise(
+    Age_na = sum(is.na(AgeInYears)),
+    Gender_na = sum(is.na(GenderCode)),
+    Race_na = sum(is.na(RaceCode)),
+    Ethnicity_na = sum(is.na(EthnicityCode)),
+    Any_na = any(is.na(AgeInYears) | is.na(GenderCode) | is.na(RaceCode) |is.na(EthnicityCode))) |>
+  ungroup() |>
+    pivot_longer(cols = ends_with("_na"),
+                 names_to = "field",
+                 values_to = "has_na") |>
+  filter(has_na!=0) %>%
+  count(field, name = "n_patients_with_NA")-> missing.demographic.summary.bp
+
+library(knitr)
+missing.demographic.summary.bp |> arrange(desc(n_patients_with_NA)) |> kable(caption="Summary of exclusions from Cushing's patient pool due to missing demographic data, for blood pressure measures")
+```
+
+Our final dataset for blood pressure therefore included **`r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))`** Cushing's patients, and we had the ability to draw from **`r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))`** control patients.
+
+
+### Blood Pressure 
+
+```{r bp-propensity}
+m.out.bp <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = bp.data, 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+summary(m.out.bp, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.bp, type = "jitter")         # Propensity score distribution[5]
+
+matched_data <- match.data(m.out.bp)
+
+bp.data <- 
+  matched_data |>
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity)) 
+```
+
+#### Mean Arterial Pressure
+
+```{r bp-map}
+#MAP
+bp.summary.map <-
+  bp.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(BPMeanNonInvasive,na.rm=T),
+            se=se(BPMeanNonInvasive),
+            sd=sd(BPMeanNonInvasive,na.rm=T),
+            n=length(BPMeanNonInvasive))
+
+ggplot(bp.summary.map,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Mean; mmHg)") +
+  theme_classic()
+
+ggplot(bp.data,
+       aes(y=BPMeanNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Mean; mmHg)") +
+  theme_classic()
+
+
+
+bp.summary.map %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Mean)")
+lm(BPMeanNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Mean)")
+
+lm(BPMeanNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)")
+```
+
+
+#### Systolic Blood Pressure
+
+```{r bp-systolic}
+#systolic
+bp.summary.sys <-
+  bp.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(BPSysNonInvasive,na.rm=T),
+            se=se(BPSysNonInvasive),
+            sd=sd(BPSysNonInvasive,na.rm=T),
+            n=length(BPSysNonInvasive))
+
+ggplot(bp.summary.sys,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Systolic; mmHg)") +
+  theme_classic()
+
+ggplot(bp.data,
+       aes(y=BPSysNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Systolic; mmHg)") +
+  theme_classic()
+
+
+
+bp.summary.sys %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Systolic)")
+lm(BPSysNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Systolic)")
+
+lm(BPSysNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Systolic)")
+```
+
+#### Diastolic Arterial Pressure
+
+```{r bp-diastolic}
+#MAP
+bp.summary.dia <-
+  bp.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(BPDiaNonInvasive,na.rm=T),
+            se=se(BPDiaNonInvasive),
+            sd=sd(BPDiaNonInvasive,na.rm=T),
+            n=length(BPDiaNonInvasive))
+
+ggplot(bp.summary.dia,
+       aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Diastolic; mmHg)") +
+  theme_classic()
+
+ggplot(bp.data,
+       aes(y=BPDiaNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Diastolic; mmHg)") +
+  theme_classic()
+
+
+
+bp.summary.dia %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Diastoic)")
+lm(BPDiaNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Diastolic)")
+
+lm(BPDiaNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Diastolic)")
+```
+
+
+####PRISMA Diagram
+Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
+
+```{r diagram}
+labresult_name<- c("Glucose","Hba1c","ALT","LDL","Blood Pressure","Mean Arterial Pressure","Systolic Arterial Pressure","Diastolic Arterial Pressure")
+
+n_people<- c(3639, 20, 326, 13, 19054, 23349, 23349, 23349 )
+
+summary_table<- data.frame(Lab_name=labresult_name, N_people=n_people)
+
+kable(summary_table)
+
+
+
+```
+
+## Diagnostic Data on Propensity Mapping
+
+```{r propensity-mapping-diagnostics}
+# List of matchit objects by outcome
+outcomes <- list(`Blood Pressure` = m.out.bp, Glucose=m.out.glucose, HbA1c= m.out.a1c, `LDL-C` = m.out.ldl)
+
+# Function to extract age summary from a single m.out object
+extract_age_summary <- function(m.out, outcome_name) {
+  matched_data <- match.data(m.out)
+  pre_summary <- m.out$model$data %>% 
+    group_by(Cushings) %>% 
+    summarise(
+      Mean = mean(AgeInYears, na.rm = TRUE),
+      SE = sd(AgeInYears, na.rm = TRUE)/sqrt(n())
+    ) %>% 
+    mutate(Stage = "Pre-matching")
+  
+  post_summary <- matched_data %>% 
+    group_by(Cushings) %>% 
+    summarise(
+      Mean = mean(AgeInYears, na.rm = TRUE),
+      SE = sd(AgeInYears, na.rm = TRUE)/sqrt(n())
+    ) %>% 
+    mutate(Stage = "Post-matching")
+  
+  bind_rows(pre_summary, post_summary) %>% 
+    mutate(Outcome = outcome_name) %>%
+    select(Outcome, Stage, Cushings, Mean, SE)
+}
+
+# Apply to all outcomes and combine
+age_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_summary(outcomes[[x]], x)))
+
+age_table_wide <- 
+  age_table |>
+  mutate(Cushings = case_when(Cushings==0~"Control",
+                                Cushings==1~"Cushing")) |>
+  pivot_wider(names_from=Cushings,
+              values_from = c(Mean,SE))
+
+extract_age_smd <- function(m.out, outcome_name){
+  bal <- summary(m.out)$sum.matched
+  matched_col <- grep("Matched", colnames(bal), value = TRUE)
+  pre_col <- grep("Std.*Mean.*Diff.*", colnames(bal), value = TRUE)[1]
+  
+  data.frame(
+    Outcome = outcome_name,
+    Stage = c("Pre-matching", "Post-matching"),
+    SMD_Age = c(bal["AgeInYears", pre_col], bal["AgeInYears", matched_col])
+  )
+}
+
+smd_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_smd(outcomes[[x]], x)))
+
+full_join(age_table_wide,smd_table,by=c("Outcome","Stage")) -> propensity.diagnostics.table
+
+propensity.diagnostics.table |>
+  kable(caption="Propensity Matching Summary for Age.")
+
+propensity.diagnostics.table.pub <-
+  propensity.diagnostics.table |>
+  mutate(Control= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
+         `Cushing's`= paste0(round(Mean_Cushing,2)," +/- ",round(SE_Cushing,2))) |>
+  rename(`Standardized Mean Difference`=SMD_Age) |>
+  mutate(`Standardized Mean Difference`=round(`Standardized Mean Difference`,4)) |>
+  select(Outcome,Stage,Control,`Cushing's`,`Standardized Mean Difference`)
+
+kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensity Mapping Summary")
+
+write_csv(propensity.diagnostics.table.pub,"Propensity Matching Summary - Age.csv")
+
+```
+
+### Love Plots
+
+Generated Love plots using ggplot for each outcome.
+
+```{r love-plots}
+library(cobalt)
+library(ggplot2)
+
+plots <- lapply(names(outcomes), function(name) {
+  # Generate Love plot, force only SMDs
+  gg <- love.plot(
+    outcomes[[name]],
+    stats = "mean.diffs",  # only standardized mean differences
+    threshold = 0.1,
+    abs = TRUE,
+    stars = "none"         # avoids mixing with raw differences
+  )
+  
+  # gg is now a ggplot object directly
+  gg + 
+    theme_classic(base_size=6) +
+    labs(
+      title = name,
+      x = "Standardized Mean Difference"
+    )
+})
+
+# Example: display HbA1c plot
+plots[[1]]
+library(cowplot)
+
+combined_plot <- plot_grid(
+  plotlist = plots,   # your list of ggplot objects
+  ncol = 2,           # number of columns
+  labels = names(plots)  # optional: label each subplot with the outcome name
+)
+
+# Display
+combined_plot
+```
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```
