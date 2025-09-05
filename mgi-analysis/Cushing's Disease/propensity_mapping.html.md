@@ -317,7 +317,7 @@ master.data <-
 
 
 
-#### Demographics of Total Population
+#### Demographics of the Total Population
 
 
 
@@ -326,22 +326,6 @@ master.data <-
 
 ```{.r .cell-code}
 library(janitor)
-master.data |>
-  tabyl(GenderName)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
- GenderName    n   percent
-     Female 7255 0.8111583
-       Male 1689 0.1888417
-```
-
-
-:::
-
-```{.r .cell-code}
 master.summary.gender <-
   master.data |>
   tabyl(GenderName,Cushings) |>
@@ -494,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.765169e-34 </td>
+   <td style="text-align:right;"> 9.400858e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.032919e-65 </td>
+   <td style="text-align:right;"> 5.522846e-67 </td>
   </tr>
 </tbody>
 </table>
@@ -694,7 +678,251 @@ hba1c.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
+```
+:::
 
+
+
+
+#### Demographics of Participants with HbA1c Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+hba1c.summary.gender <-
+  hba1c.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+hba1c.summary.race.ethnicity <-
+  hba1c.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+hba1c.summary.quant <-
+  hba1c.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+hba1c.summary.table <-
+  bind_rows(hba1c.summary.quant,
+          hba1c.summary.gender,
+          hba1c.summary.race.ethnicity)
+
+hba1c.summary.table |>
+  kable(caption="Demographic Summary for HbA1c List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for HbA1c List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 47.13 ± 14.08 </td>
+   <td style="text-align:left;"> 48.06 ± 15.15 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 30.68 ± 8.05 </td>
+   <td style="text-align:left;"> 38.83 ± 11.35 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 140 (78.21%) </td>
+   <td style="text-align:left;"> 14 (82.35%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 39 (21.79%) </td>
+   <td style="text-align:left;"> 3 (17.65%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 161 (89.94%) </td>
+   <td style="text-align:left;"> 15 (88.24%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 8  (4.47%) </td>
+   <td style="text-align:left;"> 1  (5.88%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 10  (5.59%) </td>
+   <td style="text-align:left;"> 1  (5.88%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(hba1c.summary.table,"Demographic Summary - HbA1c Sample.csv")
+
+#statistics for BMI
+hba1c.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for HbA1c sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for HbA1c sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 3.203648e-38 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1.424131e-29 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,hba1c.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for HbA1c sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for HbA1c sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 853 </td>
+   <td style="text-align:right;"> 0.002801628 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(hba1c.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the HbA1c sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the HbA1c sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 7.1 </td>
+   <td style="text-align:right;"> 0.007632882 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+
+
+
+
+```{hba1c-analyses}
 hba1c.summary <-
   hba1c.data %>%
   group_by(Cushings,Obesity) |>
@@ -725,13 +953,7 @@ ggplot(hba1c.summary,
   ) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
-```
 
-::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/hba1c-propensity-2.png){width=672}
-:::
-
-```{.r .cell-code}
 ggplot(hba1c.summary.iii,
        aes(y=mean,
            ymin=mean-se,
@@ -745,13 +967,7 @@ ggplot(hba1c.summary.iii,
   ) +
   labs(y="Hba1c (Percent)",x="") +
   theme_classic()
-```
 
-::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/hba1c-propensity-3.png){width=672}
-:::
-
-```{.r .cell-code}
 ggplot(hba1c.data,
        aes(y=value,
            x=BMI,
@@ -760,99 +976,23 @@ ggplot(hba1c.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
-```
 
-::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/hba1c-propensity-4.png){width=672}
-:::
 
-```{.r .cell-code}
 library(knitr)
 hba1c.summary %>% kable(caption="Summary of Hb1ac levels by obesity and pre-existing Cushing's")
-```
-
-::: {.cell-output-display}
-
-
-Table: Summary of Hb1ac levels by obesity and pre-existing Cushing's
-
-| Cushings|Obesity   |     mean|        se|        sd|  n|
-|--------:|:---------|--------:|---------:|---------:|--:|
-|        0|Non-Obese | 5.501020| 0.0616673| 0.6104747| 98|
-|        0|Obese     | 5.870370| 0.1225683| 1.1031143| 81|
-|        1|Non-Obese | 6.450000| 0.4856267| 0.9712535|  4|
-|        1|Obese     | 7.307692| 0.5129679| 1.8495322| 13|
-
-
-:::
-
-```{.r .cell-code}
 library(broom)
 lm(value ~ Cushings + Obesity + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Hba1c")
-```
 
-::: {.cell-output-display}
-
-
-Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on Hba1c
-
-|term                  |  estimate| std.error|  statistic|   p.value|
-|:---------------------|---------:|---------:|----------:|---------:|
-|(Intercept)           | 5.5010204| 0.0970926| 56.6574481| 0.0000000|
-|Cushings              | 0.9489796| 0.4902937|  1.9355328| 0.0543938|
-|ObesityObese          | 0.3693500| 0.1443345|  2.5589854| 0.0112683|
-|Cushings:ObesityObese | 0.4883423| 0.5682062|  0.8594456| 0.3911665|
-
-
-:::
-
-```{.r .cell-code}
 lm(value ~ Cushings + ObesityIII + Cushings:ObesityIII,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Class III Obesity and Cushings on Hba1c")
-```
 
-::: {.cell-output-display}
-
-
-Table: 2x2 ANOVA with Interaction for effects of Class III Obesity and Cushings on Hba1c
-
-|term                               |  estimate| std.error| statistic|   p.value|
-|:----------------------------------|---------:|---------:|---------:|---------:|
-|(Intercept)                        | 5.5748428| 0.0721782| 77.237240| 0.0000000|
-|Cushings                           | 0.7651572| 0.2967216|  2.578704| 0.0106656|
-|ObesityIIIClass III Obese          | 0.8351572| 0.2159322|  3.867683| 0.0001504|
-|Cushings:ObesityIIIClass III Obese | 1.0248428| 0.4977902|  2.058784| 0.0408651|
-
-
-:::
-
-```{.r .cell-code}
 lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
 ```
-
-::: {.cell-output-display}
-
-
-Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c
-
-|term                  |   estimate| std.error|  statistic|   p.value|
-|:---------------------|----------:|---------:|----------:|---------:|
-|(Intercept)           |  4.1987483| 0.2552271| 16.4510295| 0.0000000|
-|Cushings              |  1.0825194| 0.4566348|  2.3706457| 0.0187476|
-|BMI                   |  0.0478872| 0.0080251|  5.9671600| 0.0000000|
-|Cushings:ObesityObese | -0.0452704| 0.5351304| -0.0845969| 0.9326700|
-
-
-:::
-:::
-
-
-
 
 ### Glucose
 
@@ -964,7 +1104,259 @@ glucose.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
+```
+:::
 
+
+
+
+#### Demographics of Participants with Glucose Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+glucose.summary.gender <-
+  glucose.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+glucose.summary.race.ethnicity <-
+  glucose.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+glucose.summary.quant <-
+  glucose.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+glucose.summary.table <-
+  bind_rows(glucose.summary.quant,
+          glucose.summary.gender,
+          glucose.summary.race.ethnicity)
+
+glucose.summary.table |>
+  kable(caption="Demographic Summary for Glucose List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for Glucose List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 45.85 ± 14.86 </td>
+   <td style="text-align:left;"> 46.29 ± 15.52 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 29.44 ± 7.48 </td>
+   <td style="text-align:left;"> 34.67 ± 13.82 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 12,838 (81.04%) </td>
+   <td style="text-align:left;"> 284 (79.78%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 3,003 (18.96%) </td>
+   <td style="text-align:left;"> 72 (20.22%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 13,713 (86.57%) </td>
+   <td style="text-align:left;"> 311 (87.36%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 619  (3.91%) </td>
+   <td style="text-align:left;"> 19  (5.34%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 709  (4.48%) </td>
+   <td style="text-align:left;"> 9  (2.53%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 354  (2.23%) </td>
+   <td style="text-align:left;"> 9  (2.53%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 446  (2.82%) </td>
+   <td style="text-align:left;"> 8  (2.25%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(glucose.summary.table,"Demographic Summary - Glucose Sample.csv")
+
+#statistics for BMI
+glucose.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for Glucose sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for Glucose sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 2.920972e-32 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 2.497631e-64 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,glucose.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for Glucose sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for Glucose sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 1892988 </td>
+   <td style="text-align:right;"> 2.366542e-26 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(glucose.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the Glucose sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the Glucose sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 126.2 </td>
+   <td style="text-align:right;"> 2.714723e-29 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+::: {.cell}
+
+```{.r .cell-code}
 glucose.summary <-
   glucose.data %>%
   group_by(Cushings,Obesity) |>
@@ -989,7 +1381,7 @@ ggplot(glucose.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/glucose-propensity-2.png){width=672}
+![](propensity_mapping_files/figure-html/glucose-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1004,7 +1396,7 @@ ggplot(glucose.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/glucose-propensity-3.png){width=672}
+![](propensity_mapping_files/figure-html/glucose-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1180,8 +1572,260 @@ alt.data <-
   arrange(desc(DeID_AdmitDate)) %>% #sort by date
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
-  filter(!is.na(Obesity)) 
+  filter(!is.na(Obesity))
+```
+:::
 
+
+
+
+#### Demographics of Participants with ALT Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+alt.summary.gender <-
+  alt.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+alt.summary.race.ethnicity <-
+  alt.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+alt.summary.quant <-
+  alt.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+alt.summary.table <-
+  bind_rows(alt.summary.quant,
+          alt.summary.gender,
+          alt.summary.race.ethnicity)
+
+alt.summary.table |>
+  kable(caption="Demographic Summary for ALT List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for ALT List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 47.81 ± 15.02 </td>
+   <td style="text-align:left;"> 45.74 ± 17.68 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 29.89 ± 7.68 </td>
+   <td style="text-align:left;"> 33.53 ± 9.36 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 1,630 (84.68%) </td>
+   <td style="text-align:left;"> 67 (79.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 295 (15.32%) </td>
+   <td style="text-align:left;"> 17 (20.24%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 1,797 (93.35%) </td>
+   <td style="text-align:left;"> 73 (86.90%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 42  (2.18%) </td>
+   <td style="text-align:left;"> 4  (4.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 60  (3.12%) </td>
+   <td style="text-align:left;"> 4  (4.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 18  (0.94%) </td>
+   <td style="text-align:left;"> 2  (2.38%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 8  (0.42%) </td>
+   <td style="text-align:left;"> 1  (1.19%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(alt.summary.table,"Demographic Summary - ALT Sample.csv")
+
+#statistics for BMI
+alt.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for ALT sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for ALT sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 3.329667e-31 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1.768724e-18 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,alt.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for ALT sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for ALT sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 61013.5 </td>
+   <td style="text-align:right;"> 0.0001381468 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(alt.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the ALT sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the ALT sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 29.8 </td>
+   <td style="text-align:right;"> 4.884973e-08 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+::: {.cell}
+
+```{.r .cell-code}
 alt.summary <-
   alt.data %>%
   group_by(Cushings,Obesity) |>
@@ -1207,7 +1851,7 @@ ggplot(alt.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/alt-propensity-2.png){width=672}
+![](propensity_mapping_files/figure-html/alt-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1222,7 +1866,7 @@ ggplot(alt.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/alt-propensity-3.png){width=672}
+![](propensity_mapping_files/figure-html/alt-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1263,27 +1907,6 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT
 |Cushings              | 33.464894| 5.8691104|  5.701868| 0.00e+00|
 |ObesityObese          |  6.028455| 1.5112271|  3.989112| 6.87e-05|
 |Cushings:ObesityObese | 35.722771| 7.5325394|  4.742460| 2.30e-06|
-
-
-:::
-
-```{.r .cell-code}
-lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
-```
-
-::: {.cell-output-display}
-
-
-Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c
-
-|term                  |   estimate| std.error|  statistic|   p.value|
-|:---------------------|----------:|---------:|----------:|---------:|
-|(Intercept)           |  4.1987483| 0.2552271| 16.4510295| 0.0000000|
-|Cushings              |  1.0825194| 0.4566348|  2.3706457| 0.0187476|
-|BMI                   |  0.0478872| 0.0080251|  5.9671600| 0.0000000|
-|Cushings:ObesityObese | -0.0452704| 0.5351304| -0.0845969| 0.9326700|
 
 
 :::
@@ -1401,7 +2024,239 @@ ldl.data <-
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   filter(!is.na(Obesity)) 
+```
+:::
 
+
+
+
+#### Demographics of Participants with LDL-C Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+ldl.summary.gender <-
+  ldl.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ldl.summary.race.ethnicity <-
+  ldl.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ldl.summary.quant <-
+  ldl.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+ldl.summary.table <-
+  bind_rows(ldl.summary.quant,
+          ldl.summary.gender,
+          ldl.summary.race.ethnicity)
+
+ldl.summary.table |>
+  kable(caption="Demographic Summary for LDL-C List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for LDL-C List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 41.78 ± 15.53 </td>
+   <td style="text-align:left;"> 44.40 ± 17.11 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 30.19 ± 8.91 </td>
+   <td style="text-align:left;"> 38.13 ± 14.28 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 104 (83.87%) </td>
+   <td style="text-align:left;"> 9 (90.00%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 20 (16.13%) </td>
+   <td style="text-align:left;"> 1 (10.00%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 124 (100.00%) </td>
+   <td style="text-align:left;"> 10 (100.00%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(ldl.summary.table,"Demographic Summary - LDL-C Sample.csv")
+
+#statistics for BMI
+ldl.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for LDL-C sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for LDL-C sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1.182648e-39 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 6.099195e-42 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,ldl.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for LDL-C sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for LDL-C sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 423 </td>
+   <td style="text-align:right;"> 0.09617165 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(ldl.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the LDL-C sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the LDL-C sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 6.4 </td>
+   <td style="text-align:right;"> 0.01141204 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+::: {.cell}
+
+```{.r .cell-code}
 ldl.summary <-
   ldl.data %>%
   group_by(Cushings,Obesity) |>
@@ -1426,7 +2281,7 @@ ggplot(ldl.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/ldl-propensity-2.png){width=672}
+![](propensity_mapping_files/figure-html/ldl-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1441,7 +2296,7 @@ ggplot(ldl.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/ldl-propensity-3.png){width=672}
+![](propensity_mapping_files/figure-html/ldl-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1509,7 +2364,7 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C
 
 
 
-## Blood Pressure
+### Blood Pressure
 
 Blood pressure data is in a separate file (NursingStandardVitalSigns.csv and ../controls/NursingStandardVitalSigns.csv).  We have mean noninvasive blood pressure, as well as systolic and diastolic.  These data, similar to lab results need to be mapped to encounter data 
 
@@ -1561,7 +2416,7 @@ bp.data  <-
 
 
 
-### Inclusion and Exclusion for Blood Pressure Data
+#### Inclusion and Exclusion for Blood Pressure Data
 
 We began with 98302 controls who had lab data, and **338** cases with Cushing's Disease.
 
@@ -1618,7 +2473,7 @@ Table: Summary of exclusions from Cushing's patient pool due to missing demograp
 Our final dataset for blood pressure therefore included **363** Cushing's patients, and we had the ability to draw from **70070** control patients.
 
 
-### Blood Pressure 
+#### Blood Pressure Propensity Mapping
 
 
 
@@ -1727,6 +2582,253 @@ bp.data <-
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
 ```
+:::
+
+
+
+
+#### Demographics of Participants with Blood Pressure Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+bp.summary.gender <-
+  bp.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+bp.summary.race.ethnicity <-
+  bp.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+bp.summary.quant <-
+  bp.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+bp.summary.table <-
+  bind_rows(bp.summary.quant,
+          bp.summary.gender,
+          bp.summary.race.ethnicity)
+
+bp.summary.table |>
+  kable(caption="Demographic Summary for Blood Pressure List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for Blood Pressure List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 44.13 ± 16.03 </td>
+   <td style="text-align:left;"> 46.35 ± 15.96 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 28.68 ± 7.20 </td>
+   <td style="text-align:left;"> 34.97 ± 14.37 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 18,780 (81.50%) </td>
+   <td style="text-align:left;"> 247 (80.72%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 4,263 (18.50%) </td>
+   <td style="text-align:left;"> 59 (19.28%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 20,330 (88.23%) </td>
+   <td style="text-align:left;"> 264 (86.27%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 840  (3.65%) </td>
+   <td style="text-align:left;"> 18  (5.88%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 765  (3.32%) </td>
+   <td style="text-align:left;"> 9  (2.94%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 555  (2.41%) </td>
+   <td style="text-align:left;"> 9  (2.94%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 553  (2.40%) </td>
+   <td style="text-align:left;"> 6  (1.96%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(bp.summary.table,"Demographic Summary - Blood Pressure Sample.csv")
+
+#statistics for BMI
+bp.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for Blood Pressure sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for Blood Pressure sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 4.935533e-36 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 2.500081e-64 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,bp.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for Blood Pressure sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for Blood Pressure sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 2079821 </td>
+   <td style="text-align:right;"> 5.329459e-35 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(bp.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the Blood Pressure sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the Blood Pressure sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 115.5 </td>
+   <td style="text-align:right;"> 6.105835e-27 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
 :::
 
 
@@ -2082,7 +3184,7 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressu
 
 
 
-####PRISMA Diagram
+## PRISMA Diagram
 Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
 
 

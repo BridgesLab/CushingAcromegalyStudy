@@ -185,13 +185,10 @@ master.data <-
   filter(!is.na(Obesity)) 
 ```
 
-#### Demographics of Total Population
+#### Demographics of the Total Population
 
 ```{r total-population-demographics}
 library(janitor)
-master.data |>
-  tabyl(GenderName)
-
 master.summary.gender <-
   master.data |>
   tabyl(GenderName,Cushings) |>
@@ -300,7 +297,96 @@ hba1c.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
+```
 
+#### Demographics of Participants with HbA1c Values
+
+```{r aic-demographics}
+hba1c.summary.gender <-
+  hba1c.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+hba1c.summary.race.ethnicity <-
+  hba1c.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+hba1c.summary.quant <-
+  hba1c.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+hba1c.summary.table <-
+  bind_rows(hba1c.summary.quant,
+          hba1c.summary.gender,
+          hba1c.summary.race.ethnicity)
+
+hba1c.summary.table |>
+  kable(caption="Demographic Summary for HbA1c List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(hba1c.summary.table,"Demographic Summary - HbA1c Sample.csv")
+
+#statistics for BMI
+hba1c.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for HbA1c sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,hba1c.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for HbA1c sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(hba1c.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the HbA1c sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+
+```{hba1c-analyses}
 hba1c.summary <-
   hba1c.data %>%
   group_by(Cushings,Obesity) |>
@@ -394,7 +480,95 @@ glucose.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
+```
 
+#### Demographics of Participants with Glucose Values
+
+```{r glucose-demographics}
+glucose.summary.gender <-
+  glucose.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+glucose.summary.race.ethnicity <-
+  glucose.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+glucose.summary.quant <-
+  glucose.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+glucose.summary.table <-
+  bind_rows(glucose.summary.quant,
+          glucose.summary.gender,
+          glucose.summary.race.ethnicity)
+
+glucose.summary.table |>
+  kable(caption="Demographic Summary for Glucose List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(glucose.summary.table,"Demographic Summary - Glucose Sample.csv")
+
+#statistics for BMI
+glucose.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for Glucose sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,glucose.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for Glucose sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(glucose.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the Glucose sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+```{r glucose-analysis}
 glucose.summary <-
   glucose.data %>%
   group_by(Cushings,Obesity) |>
@@ -458,8 +632,96 @@ alt.data <-
   arrange(desc(DeID_AdmitDate)) %>% #sort by date
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
-  filter(!is.na(Obesity)) 
+  filter(!is.na(Obesity))
+```
 
+#### Demographics of Participants with ALT Values
+
+```{r alt-demographics}
+alt.summary.gender <-
+  alt.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+alt.summary.race.ethnicity <-
+  alt.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+alt.summary.quant <-
+  alt.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+alt.summary.table <-
+  bind_rows(alt.summary.quant,
+          alt.summary.gender,
+          alt.summary.race.ethnicity)
+
+alt.summary.table |>
+  kable(caption="Demographic Summary for ALT List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(alt.summary.table,"Demographic Summary - ALT Sample.csv")
+
+#statistics for BMI
+alt.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for ALT sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,alt.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for ALT sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(alt.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the ALT sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+```{r alt-analysis}
 alt.summary <-
   alt.data %>%
   group_by(Cushings,Obesity) |>
@@ -499,10 +761,6 @@ library(broom)
 lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
-
-lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
 ```
 
 ### LDL Cholesterol
@@ -526,7 +784,95 @@ ldl.data <-
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   filter(!is.na(Obesity)) 
+```
 
+#### Demographics of Participants with LDL-C Values
+
+```{r ldl-demographics}
+ldl.summary.gender <-
+  ldl.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ldl.summary.race.ethnicity <-
+  ldl.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ldl.summary.quant <-
+  ldl.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+ldl.summary.table <-
+  bind_rows(ldl.summary.quant,
+          ldl.summary.gender,
+          ldl.summary.race.ethnicity)
+
+ldl.summary.table |>
+  kable(caption="Demographic Summary for LDL-C List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(ldl.summary.table,"Demographic Summary - LDL-C Sample.csv")
+
+#statistics for BMI
+ldl.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for LDL-C sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,ldl.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for LDL-C sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(ldl.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the LDL-C sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+```{r ldl-analysis}
 ldl.summary <-
   ldl.data %>%
   group_by(Cushings,Obesity) |>
@@ -569,7 +915,7 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=ldl.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C")
 ```
 
-## Blood Pressure
+### Blood Pressure
 
 Blood pressure data is in a separate file (`r bp.filename.cases` and `r bp.filename.controls`).  We have mean noninvasive blood pressure, as well as systolic and diastolic.  These data, similar to lab results need to be mapped to encounter data 
 
@@ -612,7 +958,7 @@ bp.data  <-
                                    .default="Other")) #defined race/ethnicity categories
 ```
 
-### Inclusion and Exclusion for Blood Pressure Data
+#### Inclusion and Exclusion for Blood Pressure Data
 
 We began with `r nrow(bp.results |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls who had lab data, and **`r nrow(bp.results |> filter(Cushings==1) |> distinct(DeID_PatientID))`** cases with Cushing's Disease.
 
@@ -644,7 +990,7 @@ missing.demographic.summary.bp |> arrange(desc(n_patients_with_NA)) |> kable(cap
 Our final dataset for blood pressure therefore included **`r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))`** Cushing's patients, and we had the ability to draw from **`r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))`** control patients.
 
 
-### Blood Pressure 
+#### Blood Pressure Propensity Mapping
 
 ```{r bp-propensity}
 m.out.bp <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
@@ -665,6 +1011,92 @@ bp.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
+```
+
+#### Demographics of Participants with Blood Pressure Values
+
+```{r bp-demographics}
+bp.summary.gender <-
+  bp.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+bp.summary.race.ethnicity <-
+  bp.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+bp.summary.quant <-
+  bp.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+bp.summary.table <-
+  bind_rows(bp.summary.quant,
+          bp.summary.gender,
+          bp.summary.race.ethnicity)
+
+bp.summary.table |>
+  kable(caption="Demographic Summary for Blood Pressure List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(bp.summary.table,"Demographic Summary - Blood Pressure Sample.csv")
+
+#statistics for BMI
+bp.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for Blood Pressure sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,bp.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for Blood Pressure sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(bp.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the Blood Pressure sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
 ```
 
 #### Mean Arterial Pressure
@@ -810,7 +1242,7 @@ lm(BPDiaNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |>
 ```
 
 
-####PRISMA Diagram
+## PRISMA Diagram
 Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
 
 ```{r diagram}
