@@ -1,16 +1,19 @@
 ---
-title: "Propensity Mapped Comparason Between Cases and Controls"
+title: "Propensity Mapped Comparison Between Cases and Controls"
 author: "Dave Bridges and Trey Carr"
 date: "April 9, 2025"
-format: 
+format:
   html:
     toc: true
     toc-location: right
     keep-md: true
     code-fold: true
     code-summary: "Show the code"
-    fig-path: "figures/"
-  pdf: default
+    fig-path: "figures/html/"
+    dev: png
+  pdf:
+    fig-path: "figures/pdf/"
+    dev: pdf
 #theme: journal
 execute:
   echo: true
@@ -712,11 +715,18 @@ kable(summary_table)
 
 ```{r propensity-mapping-diagnostics}
 # List of matchit objects by outcome
-outcomes <- list(`Blood Pressure` = m.out.bp, Glucose=m.out.glucose, HbA1c= m.out.a1c, `LDL-C` = m.out.ldl)
+outcomes <- list(
+  `Blood Pressure` = m.out.bp, 
+  Glucose = m.out.glucose, 
+  HbA1c = m.out.a1c, 
+  `LDL-C` = m.out.ldl
+)
 
-# Function to extract age summary from a single m.out object
+# Function to extract age means ± SE per group
 extract_age_summary <- function(m.out, outcome_name) {
   matched_data <- match.data(m.out)
+  
+  # Pre-matching summary
   pre_summary <- m.out$model$data %>% 
     group_by(Cushings) %>% 
     summarise(
@@ -725,6 +735,7 @@ extract_age_summary <- function(m.out, outcome_name) {
     ) %>% 
     mutate(Stage = "Pre-matching")
   
+  # Post-matching summary
   post_summary <- matched_data %>% 
     group_by(Cushings) %>% 
     summarise(
@@ -738,44 +749,61 @@ extract_age_summary <- function(m.out, outcome_name) {
     select(Outcome, Stage, Cushings, Mean, SE)
 }
 
-# Apply to all outcomes and combine
-age_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_summary(outcomes[[x]], x)))
-
-age_table_wide <- 
-  age_table |>
-  mutate(Cushings = case_when(Cushings==0~"Control",
-                                Cushings==1~"Cushing")) |>
-  pivot_wider(names_from=Cushings,
-              values_from = c(Mean,SE))
-
+# Function to extract SMD for AgeInYears
 extract_age_smd <- function(m.out, outcome_name){
-  bal <- summary(m.out)$sum.matched
-  matched_col <- grep("Matched", colnames(bal), value = TRUE)
-  pre_col <- grep("Std.*Mean.*Diff.*", colnames(bal), value = TRUE)[1]
+  s <- summary(m.out, standardize = TRUE)
+  
+  bal_all <- s$sum.all      # pre-matching balance
+  bal_matched <- s$sum.matched  # post-matching balance
   
   data.frame(
     Outcome = outcome_name,
     Stage = c("Pre-matching", "Post-matching"),
-    SMD_Age = c(bal["AgeInYears", pre_col], bal["AgeInYears", matched_col])
+    SMD_Age = c(
+      bal_all["AgeInYears","Std. Mean Diff."],
+      bal_matched["AgeInYears","Std. Mean Diff."]
+    )
   )
 }
 
+# Apply functions to all outcomes
+age_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_summary(outcomes[[x]], x)))
 smd_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_smd(outcomes[[x]], x)))
 
-full_join(age_table_wide,smd_table,by=c("Outcome","Stage")) -> propensity.diagnostics.table
+# Merge BEFORE pivot
+full_table <- full_join(age_table, smd_table, by = c("Outcome", "Stage"))
 
-propensity.diagnostics.table |>
-  kable(caption="Propensity Matching Summary for Age.")
+# Format for display
+full_table_formatted <- full_table %>%
+  mutate(
+    Cushings = case_when(Cushings == 0 ~ "Control",
+                         Cushings == 1 ~ "Cushing"),
+    Stage = factor(Stage, levels = c("Pre-matching", "Post-matching")),
+    across(c(Mean, SE, SMD_Age), ~round(., 2))
+  ) %>%
+  pivot_wider(
+    names_from = Cushings,
+    values_from = c(Mean, SE)
+  ) %>%
+  arrange(Outcome, Stage)
+library(kableExtra)
+
+# Display table with kableExtra
+full_table_formatted %>%
+  kable(caption = "Propensity Matching Summary for Age (means ± SE and SMD).") %>%
+  kable_styling(full_width = FALSE, position = "center")
 
 propensity.diagnostics.table.pub <-
-  propensity.diagnostics.table |>
-  mutate(Control= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
+  full_table_formatted |>
+  mutate(Controls= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
          `Cushing's`= paste0(round(Mean_Cushing,2)," +/- ",round(SE_Cushing,2))) |>
   rename(`Standardized Mean Difference`=SMD_Age) |>
   mutate(`Standardized Mean Difference`=round(`Standardized Mean Difference`,4)) |>
-  select(Outcome,Stage,Control,`Cushing's`,`Standardized Mean Difference`)
+  select(Outcome,Stage,Controls,`Cushing's`,`Standardized Mean Difference`)
 
-kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensity Mapping Summary")
+kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensity Mapping Summary") |>
+  kable_styling(full_width = FALSE, position = "center")
+
 
 write_csv(propensity.diagnostics.table.pub,"Propensity Matching Summary - Age.csv")
 
@@ -804,8 +832,11 @@ plots <- lapply(names(outcomes), function(name) {
     theme_classic(base_size=6) +
     labs(
       title = name,
-      x = "Standardized Mean Difference"
-    )
+      x = "Standardized Mean Difference",
+      color = "Stage",
+    ) +
+    scale_color_grey() +
+    theme(legend.position = c(0.75,0.5))
 })
 
 # Example: display HbA1c plot

@@ -1,16 +1,19 @@
 ---
-title: "Propensity Mapped Comparason Between Cases and Controls"
+title: "Propensity Mapped Comparison Between Cases and Controls"
 author: "Dave Bridges and Trey Carr"
 date: "April 9, 2025"
-format: 
+format:
   html:
     toc: true
     toc-location: right
     keep-md: true
     code-fold: true
     code-summary: "Show the code"
-    fig-path: "figures/"
-  pdf: default
+    fig-path: "figures/html/"
+    dev: png
+  pdf:
+    fig-path: "figures/pdf/"
+    dev: pdf
 #theme: journal
 execute:
   echo: true
@@ -1747,11 +1750,18 @@ kable(summary_table)
 
 ```{.r .cell-code}
 # List of matchit objects by outcome
-outcomes <- list(`Blood Pressure` = m.out.bp, Glucose=m.out.glucose, HbA1c= m.out.a1c, `LDL-C` = m.out.ldl)
+outcomes <- list(
+  `Blood Pressure` = m.out.bp, 
+  Glucose = m.out.glucose, 
+  HbA1c = m.out.a1c, 
+  `LDL-C` = m.out.ldl
+)
 
-# Function to extract age summary from a single m.out object
+# Function to extract age means ± SE per group
 extract_age_summary <- function(m.out, outcome_name) {
   matched_data <- match.data(m.out)
+  
+  # Pre-matching summary
   pre_summary <- m.out$model$data %>% 
     group_by(Cushings) %>% 
     summarise(
@@ -1760,6 +1770,7 @@ extract_age_summary <- function(m.out, outcome_name) {
     ) %>% 
     mutate(Stage = "Pre-matching")
   
+  # Post-matching summary
   post_summary <- matched_data %>% 
     group_by(Cushings) %>% 
     summarise(
@@ -1773,83 +1784,235 @@ extract_age_summary <- function(m.out, outcome_name) {
     select(Outcome, Stage, Cushings, Mean, SE)
 }
 
-# Apply to all outcomes and combine
-age_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_summary(outcomes[[x]], x)))
-
-age_table_wide <- 
-  age_table |>
-  mutate(Cushings = case_when(Cushings==0~"Control",
-                                Cushings==1~"Cushing")) |>
-  pivot_wider(names_from=Cushings,
-              values_from = c(Mean,SE))
-
+# Function to extract SMD for AgeInYears
 extract_age_smd <- function(m.out, outcome_name){
-  bal <- summary(m.out)$sum.matched
-  matched_col <- grep("Matched", colnames(bal), value = TRUE)
-  pre_col <- grep("Std.*Mean.*Diff.*", colnames(bal), value = TRUE)[1]
+  s <- summary(m.out, standardize = TRUE)
+  
+  bal_all <- s$sum.all      # pre-matching balance
+  bal_matched <- s$sum.matched  # post-matching balance
   
   data.frame(
     Outcome = outcome_name,
     Stage = c("Pre-matching", "Post-matching"),
-    SMD_Age = c(bal["AgeInYears", pre_col], bal["AgeInYears", matched_col])
+    SMD_Age = c(
+      bal_all["AgeInYears","Std. Mean Diff."],
+      bal_matched["AgeInYears","Std. Mean Diff."]
+    )
   )
 }
 
+# Apply functions to all outcomes
+age_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_summary(outcomes[[x]], x)))
 smd_table <- bind_rows(lapply(names(outcomes), function(x) extract_age_smd(outcomes[[x]], x)))
 
-full_join(age_table_wide,smd_table,by=c("Outcome","Stage")) -> propensity.diagnostics.table
+# Merge BEFORE pivot
+full_table <- full_join(age_table, smd_table, by = c("Outcome", "Stage"))
 
-propensity.diagnostics.table |>
-  kable(caption="Propensity Matching Summary for Age.")
+# Format for display
+full_table_formatted <- full_table %>%
+  mutate(
+    Cushings = case_when(Cushings == 0 ~ "Control",
+                         Cushings == 1 ~ "Cushing"),
+    Stage = factor(Stage, levels = c("Pre-matching", "Post-matching")),
+    across(c(Mean, SE, SMD_Age), ~round(., 2))
+  ) %>%
+  pivot_wider(
+    names_from = Cushings,
+    values_from = c(Mean, SE)
+  ) %>%
+  arrange(Outcome, Stage)
+library(kableExtra)
+
+# Display table with kableExtra
+full_table_formatted %>%
+  kable(caption = "Propensity Matching Summary for Age (means ± SE and SMD).") %>%
+  kable_styling(full_width = FALSE, position = "center")
 ```
 
 ::: {.cell-output-display}
 
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Propensity Matching Summary for Age (means ± SE and SMD).</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Outcome </th>
+   <th style="text-align:left;"> Stage </th>
+   <th style="text-align:right;"> SMD_Age </th>
+   <th style="text-align:right;"> Mean_Control </th>
+   <th style="text-align:right;"> Mean_Cushing </th>
+   <th style="text-align:right;"> SE_Control </th>
+   <th style="text-align:right;"> SE_Cushing </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Blood Pressure </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.83 </td>
+   <td style="text-align:right;"> 61.15 </td>
+   <td style="text-align:right;"> 47.51 </td>
+   <td style="text-align:right;"> 0.01 </td>
+   <td style="text-align:right;"> 0.12 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Blood Pressure </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.03 </td>
+   <td style="text-align:right;"> 47.97 </td>
+   <td style="text-align:right;"> 47.51 </td>
+   <td style="text-align:right;"> 0.04 </td>
+   <td style="text-align:right;"> 0.12 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.99 </td>
+   <td style="text-align:right;"> 62.05 </td>
+   <td style="text-align:right;"> 46.03 </td>
+   <td style="text-align:right;"> 0.04 </td>
+   <td style="text-align:right;"> 0.27 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.04 </td>
+   <td style="text-align:right;"> 46.60 </td>
+   <td style="text-align:right;"> 46.03 </td>
+   <td style="text-align:right;"> 0.08 </td>
+   <td style="text-align:right;"> 0.27 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.83 </td>
+   <td style="text-align:right;"> 58.91 </td>
+   <td style="text-align:right;"> 46.80 </td>
+   <td style="text-align:right;"> 0.06 </td>
+   <td style="text-align:right;"> 3.25 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 46.80 </td>
+   <td style="text-align:right;"> 46.80 </td>
+   <td style="text-align:right;"> 1.00 </td>
+   <td style="text-align:right;"> 3.25 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.98 </td>
+   <td style="text-align:right;"> 58.03 </td>
+   <td style="text-align:right;"> 40.85 </td>
+   <td style="text-align:right;"> 0.06 </td>
+   <td style="text-align:right;"> 4.87 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.04 </td>
+   <td style="text-align:right;"> 41.62 </td>
+   <td style="text-align:right;"> 40.85 </td>
+   <td style="text-align:right;"> 1.38 </td>
+   <td style="text-align:right;"> 4.87 </td>
+  </tr>
+</tbody>
+</table>
 
-Table: Propensity Matching Summary for Age.
-
-|Outcome        |Stage         | Mean_Control| Mean_Cushing| SE_Control| SE_Cushing|    SMD_Age|
-|:--------------|:-------------|------------:|------------:|----------:|----------:|----------:|
-|Blood Pressure |Pre-matching  |     61.14583|     47.50787|  0.0137642|  0.1195172| -0.0280257|
-|Blood Pressure |Post-matching |     47.97023|     47.50787|  0.0357724|  0.1195172| -0.0280257|
-|Glucose        |Pre-matching  |     62.04613|     46.02913|  0.0362510|  0.2679295| -0.0354633|
-|Glucose        |Post-matching |     46.60231|     46.02913|  0.0800490|  0.2679295| -0.0354633|
-|HbA1c          |Pre-matching  |     58.90603|     46.80000|  0.0572522|  3.2538237| -0.0003436|
-|HbA1c          |Post-matching |     46.80500|     46.80000|  1.0049550|  3.2538237| -0.0003436|
-|LDL-C          |Pre-matching  |     58.02914|     40.84615|  0.0590880|  4.8659547| -0.0438447|
-|LDL-C          |Post-matching |     41.61538|     40.84615|  1.3768416|  4.8659547| -0.0438447|
-
+`````
 
 :::
 
 ```{.r .cell-code}
 propensity.diagnostics.table.pub <-
-  propensity.diagnostics.table |>
-  mutate(Control= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
+  full_table_formatted |>
+  mutate(Controls= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
          `Cushing's`= paste0(round(Mean_Cushing,2)," +/- ",round(SE_Cushing,2))) |>
   rename(`Standardized Mean Difference`=SMD_Age) |>
   mutate(`Standardized Mean Difference`=round(`Standardized Mean Difference`,4)) |>
-  select(Outcome,Stage,Control,`Cushing's`,`Standardized Mean Difference`)
+  select(Outcome,Stage,Controls,`Cushing's`,`Standardized Mean Difference`)
 
-kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensity Mapping Summary")
+kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensity Mapping Summary") |>
+  kable_styling(full_width = FALSE, position = "center")
 ```
 
 ::: {.cell-output-display}
 
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Publication Version of Propensity Mapping Summary</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Outcome </th>
+   <th style="text-align:left;"> Stage </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+   <th style="text-align:right;"> Standardized Mean Difference </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Blood Pressure </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 61.15 +/- 0.01 </td>
+   <td style="text-align:left;"> 47.51 +/- 0.12 </td>
+   <td style="text-align:right;"> -0.83 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Blood Pressure </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 47.97 +/- 0.04 </td>
+   <td style="text-align:left;"> 47.51 +/- 0.12 </td>
+   <td style="text-align:right;"> -0.03 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 62.05 +/- 0.04 </td>
+   <td style="text-align:left;"> 46.03 +/- 0.27 </td>
+   <td style="text-align:right;"> -0.99 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 46.6 +/- 0.08 </td>
+   <td style="text-align:left;"> 46.03 +/- 0.27 </td>
+   <td style="text-align:right;"> -0.04 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 58.91 +/- 0.06 </td>
+   <td style="text-align:left;"> 46.8 +/- 3.25 </td>
+   <td style="text-align:right;"> -0.83 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 46.8 +/- 1 </td>
+   <td style="text-align:left;"> 46.8 +/- 3.25 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 58.03 +/- 0.06 </td>
+   <td style="text-align:left;"> 40.85 +/- 4.87 </td>
+   <td style="text-align:right;"> -0.98 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 41.62 +/- 1.38 </td>
+   <td style="text-align:left;"> 40.85 +/- 4.87 </td>
+   <td style="text-align:right;"> -0.04 </td>
+  </tr>
+</tbody>
+</table>
 
-Table: Publication Version of Propensity Mapping Summary
-
-|Outcome        |Stage         |Control        |Cushing's      | Standardized Mean Difference|
-|:--------------|:-------------|:--------------|:--------------|----------------------------:|
-|Blood Pressure |Pre-matching  |61.15 +/- 0.01 |47.51 +/- 0.12 |                      -0.0280|
-|Blood Pressure |Post-matching |47.97 +/- 0.04 |47.51 +/- 0.12 |                      -0.0280|
-|Glucose        |Pre-matching  |62.05 +/- 0.04 |46.03 +/- 0.27 |                      -0.0355|
-|Glucose        |Post-matching |46.6 +/- 0.08  |46.03 +/- 0.27 |                      -0.0355|
-|HbA1c          |Pre-matching  |58.91 +/- 0.06 |46.8 +/- 3.25  |                      -0.0003|
-|HbA1c          |Post-matching |46.8 +/- 1     |46.8 +/- 3.25  |                      -0.0003|
-|LDL-C          |Pre-matching  |58.03 +/- 0.06 |40.85 +/- 4.87 |                      -0.0438|
-|LDL-C          |Post-matching |41.62 +/- 1.38 |40.85 +/- 4.87 |                      -0.0438|
-
+`````
 
 :::
 
@@ -1886,11 +2049,14 @@ plots <- lapply(names(outcomes), function(name) {
   
   # gg is now a ggplot object directly
   gg + 
-    theme_classic(base_size=16) +
+    theme_classic(base_size=6) +
     labs(
       title = name,
-      x = "Standardized Mean Difference"
-    )
+      x = "Standardized Mean Difference",
+      color = "Stage",
+    ) +
+    scale_color_grey() +
+    theme(legend.position = c(0.75,0.5))
 })
 
 # Example: display HbA1c plot
@@ -1959,25 +2125,26 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] cowplot_1.1.3   cobalt_4.6.1    broom_1.0.6     MatchIt_4.7.1  
- [5] knitr_1.48      lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1  
- [9] dplyr_1.1.4     purrr_1.0.2     readr_2.1.5     tidyr_1.3.1    
-[13] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
+ [1] cowplot_1.1.3    cobalt_4.6.1     kableExtra_1.4.0 broom_1.0.6     
+ [5] MatchIt_4.7.1    knitr_1.48       lubridate_1.9.3  forcats_1.0.0   
+ [9] stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2      readr_2.1.5     
+[13] tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1    tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
- [1] utf8_1.2.4        generics_0.1.3    lattice_0.22-6    stringi_1.8.4    
- [5] hms_1.1.3         digest_0.6.36     magrittr_2.0.3    evaluate_0.24.0  
- [9] grid_4.4.3        timechange_0.3.0  fastmap_1.2.0     Matrix_1.7-2     
-[13] jsonlite_1.8.8    backports_1.5.0   mgcv_1.9-1        fansi_1.0.6      
-[17] scales_1.3.0      cli_3.6.3         rlang_1.1.4       chk_0.10.0       
-[21] crayon_1.5.3      splines_4.4.3     bit64_4.0.5       munsell_0.5.1    
-[25] withr_3.0.0       yaml_2.3.9        tools_4.4.3       parallel_4.4.3   
-[29] tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.5       R6_2.5.1         
-[33] lifecycle_1.0.4   htmlwidgets_1.6.4 bit_4.0.5         vroom_1.6.5      
-[37] pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.6      glue_1.8.0       
-[41] Rcpp_1.0.14       xfun_0.45         tidyselect_1.2.1  rstudioapi_0.16.0
-[45] farver_2.1.2      nlme_3.1-167      htmltools_0.5.8.1 labeling_0.4.3   
-[49] rmarkdown_2.27    compiler_4.4.3   
+ [1] gtable_0.3.6      xfun_0.45         htmlwidgets_1.6.4 lattice_0.22-6   
+ [5] tzdb_0.4.0        vctrs_0.6.5       tools_4.4.3       generics_0.1.3   
+ [9] parallel_4.4.3    fansi_1.0.6       highr_0.11        pkgconfig_2.0.3  
+[13] Matrix_1.7-2      lifecycle_1.0.4   compiler_4.4.3    farver_2.1.2     
+[17] textshaping_0.4.0 munsell_0.5.1     htmltools_0.5.8.1 yaml_2.3.9       
+[21] pillar_1.9.0      crayon_1.5.3      nlme_3.1-167      tidyselect_1.2.1 
+[25] digest_0.6.36     stringi_1.8.4     labeling_0.4.3    splines_4.4.3    
+[29] fastmap_1.2.0     grid_4.4.3        colorspace_2.1-0  cli_3.6.3        
+[33] magrittr_2.0.3    utf8_1.2.4        withr_3.0.0       scales_1.3.0     
+[37] backports_1.5.0   bit64_4.0.5       timechange_0.3.0  rmarkdown_2.27   
+[41] bit_4.0.5         chk_0.10.0        hms_1.1.3         evaluate_0.24.0  
+[45] viridisLite_0.4.2 mgcv_1.9-1        rlang_1.1.4       Rcpp_1.0.14      
+[49] glue_1.8.0        xml2_1.3.6        svglite_2.2.1     rstudioapi_0.16.0
+[53] vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1          systemfonts_1.2.3
 ```
 
 
