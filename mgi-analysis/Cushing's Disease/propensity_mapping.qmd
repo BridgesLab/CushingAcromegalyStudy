@@ -10,7 +10,7 @@ format:
     code-fold: true
     code-summary: "Show the code"
     fig-path: "figures/html/"
-    dev: png
+    dev: pdf
   pdf:
     fig-path: "figures/pdf/"
     dev: pdf
@@ -161,11 +161,126 @@ Our final dataset therefore included **`r nrow(complete.data |> filter(Cushings=
 
 Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  We wanted exact matches for everything except age, where we wanted the closest case that had a measurement.  We picked `r fold` matched controls for each case
 
+### Total Population
+
+```{r total-population-propensity}
+library(MatchIt)
+m.out.all <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data,
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+summary(m.out.all, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.all, type = "jitter")         # Propensity score distribution[5]
+
+matched_data.all <- match.data(m.out.all)
+
+master.data <- 
+  matched_data.all |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity)) 
+```
+
+#### Demographics of Total Population
+
+```{r total-population-demographics}
+library(janitor)
+master.data |>
+  tabyl(GenderName)
+
+master.summary.gender <-
+  master.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+master.summary.race.ethnicity <-
+  master.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+master.summary.quant <-
+  master.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+master.summary.table <-
+  bind_rows(master.summary.quant,
+          master.summary.gender,
+          master.summary.race.ethnicity)
+
+library(kableExtra)
+master.summary.table |>
+  kable(caption="Demographic Summary for Master List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(master.summary.table,"Demographic Summary - Master Sample.csv")
+
+#statistics for BMI
+master.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for entire sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+library(broom)
+wilcox.test(BMI~Cushings,master.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for entire sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the master sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
 
 ### Hba1c
 
 ```{r hba1c-propensity}
-library(MatchIt)
 m.out.a1c <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")), 
                  method = "nearest", 
@@ -716,8 +831,10 @@ kable(summary_table)
 ```{r propensity-mapping-diagnostics}
 # List of matchit objects by outcome
 outcomes <- list(
+  `Any Outcome` = m.out.all,
   `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
+  ALT = m.out.alt,
   HbA1c = m.out.a1c, 
   `LDL-C` = m.out.ldl
 )

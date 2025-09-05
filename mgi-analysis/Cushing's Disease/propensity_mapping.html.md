@@ -10,7 +10,7 @@ format:
     code-fold: true
     code-summary: "Show the code"
     fig-path: "figures/html/"
-    dev: png
+    dev: pdf
   pdf:
     fig-path: "figures/pdf/"
     dev: pdf
@@ -202,6 +202,387 @@ Our final dataset therefore included **363** Cushing's patients, and we had the 
 
 Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  We wanted exact matches for everything except age, where we wanted the closest case that had a measurement.  We picked 10 matched controls for each case
 
+### Total Population
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(MatchIt)
+m.out.all <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data,
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+summary(m.out.all, standardize = TRUE)  # Balance statistics[5]
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+Call:
+matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+    data = complete.data, method = "nearest", exact = c("GenderCode", 
+        "RaceEthnicity"), ratio = fold)
+
+Summary of Balance for All Data:
+                                Means Treated Means Control Std. Mean Diff.
+distance                               0.0208        0.0077          0.6789
+AgeInYears                            46.1991       60.4624         -0.8822
+GenderCodeF                            0.8132        0.5534          0.6663
+GenderCodeM                            0.1868        0.4466         -0.6663
+RaceEthnicityAsian                     0.0165        0.0774         -0.4779
+RaceEthnicityBlack                     0.0423        0.1066         -0.3195
+RaceEthnicityHispanic or Latino        0.0448        0.0307          0.0683
+RaceEthnicityOther                     0.0198        0.0329         -0.0942
+RaceEthnicityWhite                     0.8767        0.7525          0.3776
+                                Var. Ratio eCDF Mean eCDF Max
+distance                            3.6739    0.2424   0.5055
+AgeInYears                          0.9129    0.1752   0.3623
+GenderCodeF                              .    0.2597   0.2597
+GenderCodeM                              .    0.2597   0.2597
+RaceEthnicityAsian                       .    0.0609   0.0609
+RaceEthnicityBlack                       .    0.0643   0.0643
+RaceEthnicityHispanic or Latino          .    0.0141   0.0141
+RaceEthnicityOther                       .    0.0131   0.0131
+RaceEthnicityWhite                       .    0.1242   0.1242
+
+Summary of Balance for Matched Data:
+                                Means Treated Means Control Std. Mean Diff.
+distance                               0.0208        0.0200          0.0416
+AgeInYears                            46.1991       46.5324         -0.0206
+GenderCodeF                            0.8132        0.8132          0.0000
+GenderCodeM                            0.1868        0.1868          0.0000
+RaceEthnicityAsian                     0.0165        0.0165          0.0000
+RaceEthnicityBlack                     0.0423        0.0423          0.0000
+RaceEthnicityHispanic or Latino        0.0448        0.0448          0.0000
+RaceEthnicityOther                     0.0198        0.0198          0.0000
+RaceEthnicityWhite                     0.8767        0.8767          0.0000
+                                Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
+distance                            1.2617    0.0012   0.0354          0.0433
+AgeInYears                          1.0835    0.0038   0.0503          0.0234
+GenderCodeF                              .    0.0000   0.0000          0.0000
+GenderCodeM                              .    0.0000   0.0000          0.0000
+RaceEthnicityAsian                       .    0.0000   0.0000          0.0000
+RaceEthnicityBlack                       .    0.0000   0.0000          0.0000
+RaceEthnicityHispanic or Latino          .    0.0000   0.0000          0.0000
+RaceEthnicityOther                       .    0.0000   0.0000          0.0000
+RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
+
+Sample Sizes:
+          Control Treated
+All        509914    3998
+Matched     39980    3998
+Unmatched  469934       0
+Discarded       0       0
+```
+
+
+:::
+
+```{.r .cell-code}
+plot(m.out.all, type = "jitter")         # Propensity score distribution[5]
+```
+
+::: {.cell-output-display}
+![](propensity_mapping_files/figure-html/total-population-propensity-1.png){width=672}
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+To identify the units, use first mouse button; to stop, use second.
+```
+
+
+:::
+
+```{.r .cell-code}
+matched_data.all <- match.data(m.out.all)
+
+master.data <- 
+  matched_data.all |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity)) 
+```
+:::
+
+
+
+
+#### Demographics of Total Population
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(janitor)
+master.data |>
+  tabyl(GenderName)
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+ GenderName    n   percent
+     Female 7255 0.8111583
+       Male 1689 0.1888417
+```
+
+
+:::
+
+```{.r .cell-code}
+master.summary.gender <-
+  master.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+master.summary.race.ethnicity <-
+  master.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+master.summary.quant <-
+  master.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+master.summary.table <-
+  bind_rows(master.summary.quant,
+          master.summary.gender,
+          master.summary.race.ethnicity)
+
+library(kableExtra)
+master.summary.table |>
+  kable(caption="Demographic Summary for Master List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for Master List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 44.79 ± 15.52 </td>
+   <td style="text-align:left;"> 46.30 ± 15.52 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 29.33 ± 7.46 </td>
+   <td style="text-align:left;"> 34.72 ± 13.83 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 6,971 (81.17%) </td>
+   <td style="text-align:left;"> 284 (79.78%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 1,617 (18.83%) </td>
+   <td style="text-align:left;"> 72 (20.22%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 7,406 (86.24%) </td>
+   <td style="text-align:left;"> 310 (87.08%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 399  (4.65%) </td>
+   <td style="text-align:left;"> 19  (5.34%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 381  (4.44%) </td>
+   <td style="text-align:left;"> 10  (2.81%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 208  (2.42%) </td>
+   <td style="text-align:left;"> 9  (2.53%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 194  (2.26%) </td>
+   <td style="text-align:left;"> 8  (2.25%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(master.summary.table,"Demographic Summary - Master Sample.csv")
+
+#statistics for BMI
+master.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for entire sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for entire sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 3.765169e-34 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 5.032919e-65 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+library(broom)
+wilcox.test(BMI~Cushings,master.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for entire sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for entire sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 1010764 </td>
+   <td style="text-align:right;"> 2.024351e-27 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the master sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the master sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 126.2 </td>
+   <td style="text-align:right;"> 2.714723e-29 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+
+
+
 
 ### Hba1c
 
@@ -211,7 +592,6 @@ Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  
 ::: {.cell}
 
 ```{.r .cell-code}
-library(MatchIt)
 m.out.a1c <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")), 
                  method = "nearest", 
@@ -1751,8 +2131,10 @@ kable(summary_table)
 ```{.r .cell-code}
 # List of matchit objects by outcome
 outcomes <- list(
+  `Any Outcome` = m.out.all,
   `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
+  ALT = m.out.alt,
   HbA1c = m.out.a1c, 
   `LDL-C` = m.out.ldl
 )
@@ -1846,6 +2228,42 @@ full_table_formatted %>%
   </tr>
  </thead>
 <tbody>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.72 </td>
+   <td style="text-align:right;"> 59.95 </td>
+   <td style="text-align:right;"> 48.27 </td>
+   <td style="text-align:right;"> 0.05 </td>
+   <td style="text-align:right;"> 0.89 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.02 </td>
+   <td style="text-align:right;"> 48.61 </td>
+   <td style="text-align:right;"> 48.27 </td>
+   <td style="text-align:right;"> 0.27 </td>
+   <td style="text-align:right;"> 0.89 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Any Outcome </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.88 </td>
+   <td style="text-align:right;"> 60.46 </td>
+   <td style="text-align:right;"> 46.20 </td>
+   <td style="text-align:right;"> 0.02 </td>
+   <td style="text-align:right;"> 0.26 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Any Outcome </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.02 </td>
+   <td style="text-align:right;"> 46.53 </td>
+   <td style="text-align:right;"> 46.20 </td>
+   <td style="text-align:right;"> 0.08 </td>
+   <td style="text-align:right;"> 0.26 </td>
+  </tr>
   <tr>
    <td style="text-align:left;"> Blood Pressure </td>
    <td style="text-align:left;"> Pre-matching </td>
@@ -1953,6 +2371,34 @@ kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensit
   </tr>
  </thead>
 <tbody>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 59.95 +/- 0.05 </td>
+   <td style="text-align:left;"> 48.27 +/- 0.89 </td>
+   <td style="text-align:right;"> -0.72 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 48.61 +/- 0.27 </td>
+   <td style="text-align:left;"> 48.27 +/- 0.89 </td>
+   <td style="text-align:right;"> -0.02 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Any Outcome </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 60.46 +/- 0.02 </td>
+   <td style="text-align:left;"> 46.2 +/- 0.26 </td>
+   <td style="text-align:right;"> -0.88 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Any Outcome </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 46.53 +/- 0.08 </td>
+   <td style="text-align:left;"> 46.2 +/- 0.26 </td>
+   <td style="text-align:right;"> -0.02 </td>
+  </tr>
   <tr>
    <td style="text-align:left;"> Blood Pressure </td>
    <td style="text-align:left;"> Pre-matching </td>
@@ -2125,26 +2571,28 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] cowplot_1.1.3    cobalt_4.6.1     kableExtra_1.4.0 broom_1.0.6     
- [5] MatchIt_4.7.1    knitr_1.48       lubridate_1.9.3  forcats_1.0.0   
- [9] stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2      readr_2.1.5     
-[13] tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1    tidyverse_2.0.0 
+ [1] cowplot_1.1.3    cobalt_4.6.1     broom_1.0.6      kableExtra_1.4.0
+ [5] janitor_2.2.1    MatchIt_4.7.1    knitr_1.48       lubridate_1.9.3 
+ [9] forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2     
+[13] readr_2.1.5      tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1   
+[17] tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
  [1] gtable_0.3.6      xfun_0.45         htmlwidgets_1.6.4 lattice_0.22-6   
  [5] tzdb_0.4.0        vctrs_0.6.5       tools_4.4.3       generics_0.1.3   
  [9] parallel_4.4.3    fansi_1.0.6       highr_0.11        pkgconfig_2.0.3  
 [13] Matrix_1.7-2      lifecycle_1.0.4   compiler_4.4.3    farver_2.1.2     
-[17] textshaping_0.4.0 munsell_0.5.1     htmltools_0.5.8.1 yaml_2.3.9       
-[21] pillar_1.9.0      crayon_1.5.3      nlme_3.1-167      tidyselect_1.2.1 
-[25] digest_0.6.36     stringi_1.8.4     labeling_0.4.3    splines_4.4.3    
-[29] fastmap_1.2.0     grid_4.4.3        colorspace_2.1-0  cli_3.6.3        
-[33] magrittr_2.0.3    utf8_1.2.4        withr_3.0.0       scales_1.3.0     
-[37] backports_1.5.0   bit64_4.0.5       timechange_0.3.0  rmarkdown_2.27   
-[41] bit_4.0.5         chk_0.10.0        hms_1.1.3         evaluate_0.24.0  
-[45] viridisLite_0.4.2 mgcv_1.9-1        rlang_1.1.4       Rcpp_1.0.14      
-[49] glue_1.8.0        xml2_1.3.6        svglite_2.2.1     rstudioapi_0.16.0
-[53] vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1          systemfonts_1.2.3
+[17] textshaping_0.4.0 munsell_0.5.1     snakecase_0.11.1  htmltools_0.5.8.1
+[21] yaml_2.3.9        pillar_1.9.0      crayon_1.5.3      nlme_3.1-167     
+[25] tidyselect_1.2.1  digest_0.6.36     stringi_1.8.4     labeling_0.4.3   
+[29] splines_4.4.3     fastmap_1.2.0     grid_4.4.3        colorspace_2.1-0 
+[33] cli_3.6.3         magrittr_2.0.3    utf8_1.2.4        withr_3.0.0      
+[37] scales_1.3.0      backports_1.5.0   bit64_4.0.5       timechange_0.3.0 
+[41] rmarkdown_2.27    bit_4.0.5         chk_0.10.0        hms_1.1.3        
+[45] evaluate_0.24.0   viridisLite_0.4.2 mgcv_1.9-1        rlang_1.1.4      
+[49] Rcpp_1.0.14       glue_1.8.0        xml2_1.3.6        svglite_2.2.1    
+[53] rstudioapi_0.16.0 vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1         
+[57] systemfonts_1.2.3
 ```
 
 
