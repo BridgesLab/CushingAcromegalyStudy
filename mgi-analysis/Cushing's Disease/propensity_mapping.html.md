@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.400858e-35 </td>
+   <td style="text-align:right;"> 1.172786e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.522846e-67 </td>
+   <td style="text-align:right;"> 2.251331e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -564,6 +564,299 @@ chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", in
 :::
 :::
 
+
+
+
+#### Stratified Demographics for the Entire Population
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# first check for normality of Age and BMI
+master.data |>
+  group_by(Obesity,Cushings)|>
+  summarize(Age = shapiro.test(sample(AgeInYears,3000,replace=T))$p.value,
+            BMI = shapiro.test(sample(BMI,3000,replace=T))$p.value,
+            n= length(Cushings)) -> master.data.dist
+
+master.data.dist |>
+  kable(caption="Shapiro-Wilk Tests for Distribution of Quantitative Variables",
+        digits=c(1,1,99,99,1))|>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro-Wilk Tests for Distribution of Quantitative Variables</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Obesity </th>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> Age </th>
+   <th style="text-align:right;"> BMI </th>
+   <th style="text-align:right;"> n </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 2.484133e-30 </td>
+   <td style="text-align:right;"> 5.562262e-21 </td>
+   <td style="text-align:right;"> 5171 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1.502296e-17 </td>
+   <td style="text-align:right;"> 5.124860e-38 </td>
+   <td style="text-align:right;"> 127 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1.519645e-24 </td>
+   <td style="text-align:right;"> 1.598304e-44 </td>
+   <td style="text-align:right;"> 3417 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 6.243282e-17 </td>
+   <td style="text-align:right;"> 1.703803e-70 </td>
+   <td style="text-align:right;"> 229 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+#kruskal wallis testst since they are not normally distributed
+
+master.quant.kw <-
+  master.data |> 
+  mutate(ObesityCushings=paste0(Obesity,Cushings)) |>
+  summarize(BMI.kw=kruskal.test(BMI~ObesityCushings)$p.value,
+            Age.kw=kruskal.test(AgeInYears~ObesityCushings)$p.value)
+
+master.2x2.quant.summary <- 
+  master.data |>
+  group_by(Obesity, Cushings) |>
+  summarize_at(.vars = c('AgeInYears', 'BMI'),
+               .funs = list(mean = mean, sd = sd,n=length)) |>
+  mutate(Age = paste0(round(AgeInYears_mean, 2), " +/- ", round(AgeInYears_sd, 2)),
+         BMI = paste0(round(BMI_mean, 2), " +/- ", round(BMI_sd, 2)),
+         n = as.character(BMI_n)) |>
+  select(Obesity, Cushings, BMI, Age,n) |>
+  ungroup() |>
+  pivot_longer(
+    cols = c(n, BMI, Age),
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>%
+  # Create group column combining Obesity and Cushings
+  mutate(group = paste(Obesity, Cushings, sep = "_")) %>%
+  # Pivot wider to spread group into columns, keeping Variable as row identifier
+  pivot_wider(
+    id_cols = Variable,  # Explicitly specify Variable as the row identifier
+    names_from = group,
+    values_from = Value,
+    names_sort = TRUE
+  ) |>
+  mutate(p.value=c(NA,as.numeric(master.quant.kw))) |>
+  rename("Control, BMI < 30"=`Non-Obese_0`,
+         "Cushing's, BMI < 30"=`Non-Obese_1`,
+         "Control, BMI > 30" = `Obese_0`,
+         "Cushing's, BMI > 30" = Obese_1)
+
+
+# Create the group column (replacing hyphen with underscore for clean column names)
+master.data <- master.data %>%
+  mutate(group = paste(gsub("-", "_", Obesity), Cushings, sep = "_"))
+
+# Define the categorical variables to iterate over
+cat_vars <- c("GenderName", "RaceEthnicity")
+
+# Initialize an empty list to store tables for each variable
+master.tables_list <- list()
+
+# Loop over each categorical variable
+for (var in cat_vars) {
+  # Compute counts
+  counts_df <- master.data %>%
+    group_by(!!sym(var), group) %>%
+    summarise(count = n(), .groups = "drop") %>%
+    # Pivot to wide format
+    pivot_wider(
+      names_from = group,
+      values_from = count,
+      values_fill = 0,
+      names_sort = TRUE
+    ) %>%
+    rename(Variable = !!sym(var))
+
+  # Calculate group-wise (column-wise) percentages
+  counts_df <- counts_df %>%
+    mutate(across(c(Non_Obese_0, Non_Obese_1, Obese_0, Obese_1),
+                  ~ sprintf("%d (%.1f%%)", .x, .x / sum(.x, na.rm = TRUE) * 100),
+                  .names = "{.col}"))
+
+  # Calculate total count for sorting (sum of numeric part of formatted strings)
+  counts_df <- counts_df %>%
+    mutate(total_count = rowSums(
+      sapply(select(., Non_Obese_0, Non_Obese_1, Obese_0, Obese_1),
+             function(x) as.numeric(gsub(" .*", "", x)))
+    )) %>%
+    # Sort by total count in descending order
+    arrange(desc(total_count)) %>%
+    # Select desired columns
+    select(Variable, Non_Obese_0, Non_Obese_1, Obese_0, Obese_1)
+
+  # Compute chi-squared test p-value
+  cont_table <- table(master.data[[var]], master.data$group)
+  chi_test <- chisq.test(cont_table)
+  p_val <- chi_test$p.value
+
+  # Add p-value to the first row
+  counts_df <- counts_df %>%
+    mutate(p.value = if_else(row_number() == 1, p_val, NA_real_))
+
+  # Add to list
+  master.tables_list[[var]] <- counts_df
+}
+
+
+# Combine all variable tables into one
+master.2x2.counts.table <- bind_rows(master.tables_list) |>
+  rename("Control, BMI < 30"=`Non_Obese_0`,
+         "Cushing's, BMI < 30"=`Non_Obese_1`,
+         "Control, BMI > 30" = `Obese_0`,
+         "Cushing's, BMI > 30" = Obese_1)
+  
+master.2x2.table <-
+  bind_rows(master.2x2.quant.summary,
+            master.2x2.counts.table) 
+
+kable(master.2x2.table,
+      caption="Summary of stratified variables") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Summary of stratified variables</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Variable </th>
+   <th style="text-align:left;"> Control, BMI &lt; 30 </th>
+   <th style="text-align:left;"> Cushing's, BMI &lt; 30 </th>
+   <th style="text-align:left;"> Control, BMI &gt; 30 </th>
+   <th style="text-align:left;"> Cushing's, BMI &gt; 30 </th>
+   <th style="text-align:right;"> p.value </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> n </td>
+   <td style="text-align:left;"> 5171 </td>
+   <td style="text-align:left;"> 127 </td>
+   <td style="text-align:left;"> 3417 </td>
+   <td style="text-align:left;"> 229 </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 24.51 +/- 3.23 </td>
+   <td style="text-align:left;"> 25.91 +/- 3.16 </td>
+   <td style="text-align:left;"> 36.63 +/- 5.99 </td>
+   <td style="text-align:left;"> 39.61 +/- 15 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 44.06 +/- 16.14 </td>
+   <td style="text-align:left;"> 46.8 +/- 17.27 </td>
+   <td style="text-align:left;"> 45.89 +/- 14.47 </td>
+   <td style="text-align:left;"> 46.03 +/- 14.49 </td>
+   <td style="text-align:right;"> 0.0000049 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 4199 (81.2%) </td>
+   <td style="text-align:left;"> 92 (72.4%) </td>
+   <td style="text-align:left;"> 2772 (81.1%) </td>
+   <td style="text-align:left;"> 192 (83.8%) </td>
+   <td style="text-align:right;"> 0.0608153 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 972 (18.8%) </td>
+   <td style="text-align:left;"> 35 (27.6%) </td>
+   <td style="text-align:left;"> 645 (18.9%) </td>
+   <td style="text-align:left;"> 37 (16.2%) </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 4466 (86.4%) </td>
+   <td style="text-align:left;"> 105 (82.7%) </td>
+   <td style="text-align:left;"> 2940 (86.0%) </td>
+   <td style="text-align:left;"> 205 (89.5%) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 175 (3.4%) </td>
+   <td style="text-align:left;"> 7 (5.5%) </td>
+   <td style="text-align:left;"> 224 (6.6%) </td>
+   <td style="text-align:left;"> 12 (5.2%) </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 213 (4.1%) </td>
+   <td style="text-align:left;"> 6 (4.7%) </td>
+   <td style="text-align:left;"> 168 (4.9%) </td>
+   <td style="text-align:left;"> 4 (1.7%) </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 145 (2.8%) </td>
+   <td style="text-align:left;"> 3 (2.4%) </td>
+   <td style="text-align:left;"> 63 (1.8%) </td>
+   <td style="text-align:left;"> 6 (2.6%) </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 172 (3.3%) </td>
+   <td style="text-align:left;"> 6 (4.7%) </td>
+   <td style="text-align:left;"> 22 (0.6%) </td>
+   <td style="text-align:left;"> 2 (0.9%) </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+master.2x2.table |> write_csv(na="",file="Stratified Demographic Summary - Master Sample.csv")
+```
+:::
 
 
 
@@ -833,11 +1126,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.203648e-38 </td>
+   <td style="text-align:right;"> 1.185376e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.424131e-29 </td>
+   <td style="text-align:right;"> 1.402626e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1269,11 +1562,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.920972e-32 </td>
+   <td style="text-align:right;"> 8.358887e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.497631e-64 </td>
+   <td style="text-align:right;"> 2.948245e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -1738,11 +2031,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.329667e-31 </td>
+   <td style="text-align:right;"> 1.02909e-29 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.768724e-18 </td>
+   <td style="text-align:right;"> 1.38493e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2169,11 +2462,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.182648e-39 </td>
+   <td style="text-align:right;"> 1.691175e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 6.099195e-42 </td>
+   <td style="text-align:right;"> 4.924957e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -2746,11 +3039,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.935533e-36 </td>
+   <td style="text-align:right;"> 9.877487e-36 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.500081e-64 </td>
+   <td style="text-align:right;"> 2.661282e-64 </td>
   </tr>
 </tbody>
 </table>

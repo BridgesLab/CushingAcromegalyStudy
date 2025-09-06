@@ -274,6 +274,133 @@ chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", in
   kable_styling(full_width = FALSE, position = "center")
 ```
 
+#### Stratified Demographics for the Entire Population
+
+```{r total-population-stratified-demographics}
+# first check for normality of Age and BMI
+master.data |>
+  group_by(Obesity,Cushings)|>
+  summarize(Age = shapiro.test(sample(AgeInYears,3000,replace=T))$p.value,
+            BMI = shapiro.test(sample(BMI,3000,replace=T))$p.value,
+            n= length(Cushings)) -> master.data.dist
+
+master.data.dist |>
+  kable(caption="Shapiro-Wilk Tests for Distribution of Quantitative Variables",
+        digits=c(1,1,99,99,1))|>
+  kable_styling(full_width = FALSE, position = "center")
+
+#kruskal wallis testst since they are not normally distributed
+
+master.quant.kw <-
+  master.data |> 
+  mutate(ObesityCushings=paste0(Obesity,Cushings)) |>
+  summarize(BMI.kw=kruskal.test(BMI~ObesityCushings)$p.value,
+            Age.kw=kruskal.test(AgeInYears~ObesityCushings)$p.value)
+
+master.2x2.quant.summary <- 
+  master.data |>
+  group_by(Obesity, Cushings) |>
+  summarize_at(.vars = c('AgeInYears', 'BMI'),
+               .funs = list(mean = mean, sd = sd,n=length)) |>
+  mutate(Age = paste0(round(AgeInYears_mean, 2), " +/- ", round(AgeInYears_sd, 2)),
+         BMI = paste0(round(BMI_mean, 2), " +/- ", round(BMI_sd, 2)),
+         n = as.character(BMI_n)) |>
+  select(Obesity, Cushings, BMI, Age,n) |>
+  ungroup() |>
+  pivot_longer(
+    cols = c(n, BMI, Age),
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>%
+  # Create group column combining Obesity and Cushings
+  mutate(group = paste(Obesity, Cushings, sep = "_")) %>%
+  # Pivot wider to spread group into columns, keeping Variable as row identifier
+  pivot_wider(
+    id_cols = Variable,  # Explicitly specify Variable as the row identifier
+    names_from = group,
+    values_from = Value,
+    names_sort = TRUE
+  ) |>
+  mutate(p.value=c(NA,as.numeric(master.quant.kw))) |>
+  rename("Control, BMI < 30"=`Non-Obese_0`,
+         "Cushing's, BMI < 30"=`Non-Obese_1`,
+         "Control, BMI > 30" = `Obese_0`,
+         "Cushing's, BMI > 30" = Obese_1)
+
+
+# Create the group column (replacing hyphen with underscore for clean column names)
+master.data <- master.data %>%
+  mutate(group = paste(gsub("-", "_", Obesity), Cushings, sep = "_"))
+
+# Define the categorical variables to iterate over
+cat_vars <- c("GenderName", "RaceEthnicity")
+
+# Initialize an empty list to store tables for each variable
+master.tables_list <- list()
+
+# Loop over each categorical variable
+for (var in cat_vars) {
+  # Compute counts
+  counts_df <- master.data %>%
+    group_by(!!sym(var), group) %>%
+    summarise(count = n(), .groups = "drop") %>%
+    # Pivot to wide format
+    pivot_wider(
+      names_from = group,
+      values_from = count,
+      values_fill = 0,
+      names_sort = TRUE
+    ) %>%
+    rename(Variable = !!sym(var))
+
+  # Calculate group-wise (column-wise) percentages
+  counts_df <- counts_df %>%
+    mutate(across(c(Non_Obese_0, Non_Obese_1, Obese_0, Obese_1),
+                  ~ sprintf("%d (%.1f%%)", .x, .x / sum(.x, na.rm = TRUE) * 100),
+                  .names = "{.col}"))
+
+  # Calculate total count for sorting (sum of numeric part of formatted strings)
+  counts_df <- counts_df %>%
+    mutate(total_count = rowSums(
+      sapply(select(., Non_Obese_0, Non_Obese_1, Obese_0, Obese_1),
+             function(x) as.numeric(gsub(" .*", "", x)))
+    )) %>%
+    # Sort by total count in descending order
+    arrange(desc(total_count)) %>%
+    # Select desired columns
+    select(Variable, Non_Obese_0, Non_Obese_1, Obese_0, Obese_1)
+
+  # Compute chi-squared test p-value
+  cont_table <- table(master.data[[var]], master.data$group)
+  chi_test <- chisq.test(cont_table)
+  p_val <- chi_test$p.value
+
+  # Add p-value to the first row
+  counts_df <- counts_df %>%
+    mutate(p.value = if_else(row_number() == 1, p_val, NA_real_))
+
+  # Add to list
+  master.tables_list[[var]] <- counts_df
+}
+
+
+# Combine all variable tables into one
+master.2x2.counts.table <- bind_rows(master.tables_list) |>
+  rename("Control, BMI < 30"=`Non_Obese_0`,
+         "Cushing's, BMI < 30"=`Non_Obese_1`,
+         "Control, BMI > 30" = `Obese_0`,
+         "Cushing's, BMI > 30" = Obese_1)
+  
+master.2x2.table <-
+  bind_rows(master.2x2.quant.summary,
+            master.2x2.counts.table) 
+
+kable(master.2x2.table,
+      caption="Summary of stratified variables") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+master.2x2.table |> write_csv(na="",file="Stratified Demographic Summary - Master Sample.csv")
+```
 
 ### Hba1c
 
