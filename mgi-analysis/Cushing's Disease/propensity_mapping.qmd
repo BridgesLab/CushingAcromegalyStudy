@@ -610,8 +610,8 @@ hba1c.summary.iii <-
 library(ggplot2)
 ggplot(hba1c.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -626,8 +626,8 @@ ggplot(hba1c.summary,
 
 ggplot(hba1c.summary.iii,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=ObesityIII,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -850,8 +850,8 @@ glucose.summary <-
 
 ggplot(glucose.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1057,8 +1057,8 @@ alt.summary <-
 library(ggplot2)
 ggplot(alt.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1272,8 +1272,8 @@ ldl.summary <-
 
 ggplot(ldl.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1310,11 +1310,13 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=ldl.data) |>
 
 #### LDL-C Statistics
 
-Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.  
+
+**Important**: This model unlike all the otehrs was not adjusted for RaceEthnicity, as all participants with a LDL-C value were of the same Race/Ethnicity (White).
 
 ```{r ldl-statistics}
 #used fully adjusted model
-lm.ldl <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = ldl.data)
+lm.ldl <- lm(value ~ AgeInYears + GenderName + Cushings * Obesity, data = ldl.data)
 
 ## 1. Adjusted means
 emm.ldl <- emmeans(lm.ldl, ~ Cushings | Obesity) %>%
@@ -1566,8 +1568,8 @@ bp.summary.map <-
 
 ggplot(bp.summary.map,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1607,7 +1609,7 @@ Used the fully adjusted model to test the interaction between Cushings's diagnos
 
 ```{r map-statistics}
 #used fully adjusted model
-lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = map.data)
+lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
 ## 1. Adjusted means
 emm.map <- emmeans(lm.map, ~ Cushings | Obesity) %>%
@@ -1633,7 +1635,7 @@ contrast.map <- contrast(emmeans(lm.map, ~ Cushings | Obesity),
 interaction_row.map <- tidy(lm.map) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "Mean Arterial Pressure",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1650,15 +1652,6 @@ means_wide <- emm.map %>%
 # Merge means with differences
 table.map <- means_wide %>%
   left_join(contrast.map, by = c("Outcome", "Obesity"))
-
-map.summary %>% kable(caption="Summary of Mean Arterial Pressure levels by obesity and pre-existing Cushing's")
-lm(value ~ Cushings + Obesity + Cushings:Obesity,data=map.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Mean Arterial Pressure")
-
-lm(value ~ Cushings + BMI + Cushings:Obesity,data=map.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Mean Arterial Pressure")
 ```
 
 
@@ -1676,8 +1669,8 @@ bp.summary.sys <-
 
 ggplot(bp.summary.sys,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1719,13 +1712,13 @@ Used the fully adjusted model to test the interaction between Cushings's diagnos
 
 ```{r sbp-statistics}
 #used fully adjusted model
-lm.sbp <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = sbp.data)
+lm.sbp <- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
 ## 1. Adjusted means
 emm.sbp <- emmeans(lm.sbp, ~ Cushings | Obesity) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Systolic Arterial Pressure",
+    Outcome = "Systolic Blood Pressure",
     Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, Cushings, Mean_CI)
@@ -1736,7 +1729,7 @@ contrast.sbp <- contrast(emmeans(lm.sbp, ~ Cushings | Obesity),
   summary(infer = TRUE) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Systolic Arterial Pressure",
+    Outcome = "Systolic Blood Pressure",
     Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, contrast, Diff_CI, p.value)
@@ -1745,7 +1738,7 @@ contrast.sbp <- contrast(emmeans(lm.sbp, ~ Cushings | Obesity),
 interaction_row.sbp <- tidy(lm.sbp) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "Systolic Blood Pressure",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1762,15 +1755,6 @@ means_wide <- emm.sbp %>%
 # Merge means with differences
 table.sbp <- means_wide %>%
   left_join(contrast.sbp, by = c("Outcome", "Obesity"))
-
-sbp.summary %>% kable(caption="Summary of Systolic Arterial Pressure levels by obesity and pre-existing Cushing's")
-lm(value ~ Cushings + Obesity + Cushings:Obesity,data=sbp.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Systolic Arterial Pressure")
-
-lm(value ~ Cushings + BMI + Cushings:Obesity,data=sbp.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Systolic Arterial Pressure")
 ```
 
 #### Diastolic Arterial Pressure
@@ -1787,8 +1771,8 @@ bp.summary.dia <-
 
 ggplot(bp.summary.dia,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1828,13 +1812,13 @@ Used the fully adjusted model to test the interaction between Cushings's diagnos
 
 ```{r dbp-statistics}
 #used fully adjusted model
-lm.dbp <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = dbp.data)
+lm.dbp <- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
 ## 1. Adjusted means
 emm.dbp <- emmeans(lm.dbp, ~ Cushings | Obesity) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Diastolic Arterial Pressure",
+    Outcome = "Diastolic Blood Pressure",
     Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, Cushings, Mean_CI)
@@ -1845,7 +1829,7 @@ contrast.dbp <- contrast(emmeans(lm.dbp, ~ Cushings | Obesity),
   summary(infer = TRUE) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Diastolic Arterial Pressure",
+    Outcome = "Diastolic Blood Pressure",
     Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, contrast, Diff_CI, p.value)
@@ -1854,7 +1838,7 @@ contrast.dbp <- contrast(emmeans(lm.dbp, ~ Cushings | Obesity),
 interaction_row.dbp <- tidy(lm.dbp) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "Diastolic Blood Pressure",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1871,15 +1855,6 @@ means_wide <- emm.dbp %>%
 # Merge means with differences
 table.dbp <- means_wide %>%
   left_join(contrast.dbp, by = c("Outcome", "Obesity"))
-
-dbp.summary %>% kable(caption="Summary of Diastolic Arterial Pressure levels by obesity and pre-existing Cushing's")
-lm(value ~ Cushings + Obesity + Cushings:Obesity,data=dbp.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Diastolic Arterial Pressure")
-
-lm(value ~ Cushings + BMI + Cushings:Obesity,data=dbp.data) |> 
-  tidy() |> 
-  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Diastolic Arterial Pressure")
 ```
 
 ## PRISMA Diagram
@@ -2047,13 +2022,15 @@ combined_plot
 ```{r interaction-effects-summary}
 table_summary <- bind_rows(
   table.glucose,
-  table.a1c,
+  table.hba1c,
   table.alt,
   table.ldl,
   table.map,
   table.sbp,
   table.dbp
-) |>
+) 
+
+table_summary |>
   kable(caption="Summary of contrasts for all outcomes") |>
   kable_styling(full_width = FALSE, position = "center")
 
@@ -2061,7 +2038,7 @@ write_csv(table_summary,"Summary of Contrasts - All Outcomes.csv")
 
 interaction_summary <- bind_rows(
   interaction_row.glucose,
-  interaction_row.a1c,
+  interaction_row.hba1c,
   interaction_row.alt,
   interaction_row.ldl,
   interaction_row.map,

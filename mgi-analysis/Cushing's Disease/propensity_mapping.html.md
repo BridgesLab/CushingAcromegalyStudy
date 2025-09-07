@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.432753e-35 </td>
+   <td style="text-align:right;"> 2.379816e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.233253e-59 </td>
+   <td style="text-align:right;"> 5.214693e-64 </td>
   </tr>
 </tbody>
 </table>
@@ -661,29 +661,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.565222e-29 </td>
-   <td style="text-align:right;"> 1.023297e-20 </td>
+   <td style="text-align:right;"> 3.076414e-30 </td>
+   <td style="text-align:right;"> 2.531932e-22 </td>
    <td style="text-align:right;"> 5171 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.942181e-19 </td>
-   <td style="text-align:right;"> 2.221119e-37 </td>
+   <td style="text-align:right;"> 2.750668e-21 </td>
+   <td style="text-align:right;"> 9.561990e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.458047e-24 </td>
-   <td style="text-align:right;"> 1.148004e-44 </td>
+   <td style="text-align:right;"> 5.942979e-24 </td>
+   <td style="text-align:right;"> 3.755341e-45 </td>
    <td style="text-align:right;"> 3417 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.130490e-17 </td>
-   <td style="text-align:right;"> 6.374958e-72 </td>
+   <td style="text-align:right;"> 4.732484e-16 </td>
+   <td style="text-align:right;"> 4.901963e-72 </td>
    <td style="text-align:right;"> 229 </td>
   </tr>
 </tbody>
@@ -1216,11 +1216,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.904457e-40 </td>
+   <td style="text-align:right;"> 2.175648e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.711997e-29 </td>
+   <td style="text-align:right;"> 7.747289e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1323,8 +1323,8 @@ hba1c.summary.iii <-
 library(ggplot2)
 ggplot(hba1c.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1332,8 +1332,10 @@ ggplot(hba1c.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Hba1c (Percent)") +
-  theme_classic()
+  scale_fill_grey() +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -1343,8 +1345,8 @@ ggplot(hba1c.summary,
 ```{.r .cell-code}
 ggplot(hba1c.summary.iii,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=ObesityIII,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1353,7 +1355,9 @@ ggplot(hba1c.summary.iii,
     width = 0.5
   ) +
   labs(y="Hba1c (Percent)",x="") +
-  theme_classic()
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -1367,8 +1371,10 @@ ggplot(hba1c.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Hba1c (Percent)") +
-  theme_classic()
+  labs(y="Hba1c (Percent)",x="") +
+  scale_fill_grey() +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -1448,6 +1454,126 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |>
 
 
 Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c
+
+|term                  |   estimate| std.error|  statistic|   p.value|
+|:---------------------|----------:|---------:|----------:|---------:|
+|(Intercept)           |  4.1987483| 0.2552271| 16.4510295| 0.0000000|
+|Cushings              |  1.0825194| 0.4566348|  2.3706457| 0.0187476|
+|BMI                   |  0.0478872| 0.0080251|  5.9671600| 0.0000000|
+|Cushings:ObesityObese | -0.0452704| 0.5351304| -0.0845969| 0.9326700|
+
+
+:::
+:::
+
+
+
+
+#### HbA1c Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(emmeans)
+#used fully adjusted model
+lm.hba1c <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = hba1c.data)
+
+## 1. Adjusted means
+emm.hba1c <- emmeans(lm.hba1c, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "HbA1c",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.hba1c <- contrast(emmeans(lm.hba1c, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "HbA1c",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.hba1c <- tidy(lm.hba1c) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.hba1c %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.hba1c <- means_wide %>%
+  left_join(contrast.hba1c, by = c("Outcome", "Obesity"))
+
+hba1c.summary %>% kable(caption="Summary of HbA1c levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of HbA1c levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|        se|        sd|  n|
+|--------:|:---------|--------:|---------:|---------:|--:|
+|        0|Non-Obese | 5.501020| 0.0616673| 0.6104747| 98|
+|        0|Obese     | 5.870370| 0.1225683| 1.1031143| 81|
+|        1|Non-Obese | 6.450000| 0.4856267| 0.9712535|  4|
+|        1|Obese     | 7.307692| 0.5129679| 1.8495322| 13|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on HbA1c")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on HbA1c
+
+|term                  |  estimate| std.error|  statistic|   p.value|
+|:---------------------|---------:|---------:|----------:|---------:|
+|(Intercept)           | 5.5010204| 0.0970926| 56.6574481| 0.0000000|
+|Cushings              | 0.9489796| 0.4902937|  1.9355328| 0.0543938|
+|ObesityObese          | 0.3693500| 0.1443345|  2.5589854| 0.0112683|
+|Cushings:ObesityObese | 0.4883423| 0.5682062|  0.8594456| 0.3911665|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on HbA1c")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on HbA1c
 
 |term                  |   estimate| std.error|  statistic|   p.value|
 |:---------------------|----------:|---------:|----------:|---------:|
@@ -1738,11 +1864,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.215606e-32 </td>
+   <td style="text-align:right;"> 3.845928e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.959082e-65 </td>
+   <td style="text-align:right;"> 5.207730e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -1836,8 +1962,8 @@ glucose.summary <-
 
 ggplot(glucose.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1845,8 +1971,10 @@ ggplot(glucose.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Glucose (mg/dL)") +
-  theme_classic()
+  labs(y="Glucose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -1860,15 +1988,75 @@ ggplot(glucose.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Glucuose (mg/dL)") +
-  theme_classic()
+  labs(y="Glucuose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
 ![](figures/glucose-analysis-2.png){width=672}
 :::
+:::
+
+
+
+
+#### Glucose Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
 
 ```{.r .cell-code}
+#used fully adjusted model
+lm.glucose <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = glucose.data)
+
+## 1. Adjusted means
+emm.glucose <- emmeans(lm.glucose, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.glucose <- tidy(lm.glucose) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.glucose %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.glucose <- means_wide %>%
+  left_join(contrast.glucose, by = c("Outcome", "Obesity"))
+
 glucose.summary %>% kable(caption="Summary of glucose levels by obesity and pre-existing Cushing's")
 ```
 
@@ -2207,11 +2395,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.011856e-30 </td>
+   <td style="text-align:right;"> 4.057452e-29 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.556907e-18 </td>
+   <td style="text-align:right;"> 2.929592e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2306,8 +2494,8 @@ alt.summary <-
 library(ggplot2)
 ggplot(alt.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2315,8 +2503,10 @@ ggplot(alt.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="ALT (mg/dL)") +
-  theme_classic()
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -2330,8 +2520,10 @@ ggplot(alt.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="ALT (mg/dL)") +
-  theme_classic()
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -2380,6 +2572,126 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT
 
 :::
 :::
+
+
+
+
+#### ALT Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.alt <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = alt.data)
+
+## 1. Adjusted means
+emm.alt <- emmeans(lm.alt, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "ALT",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.alt <- contrast(emmeans(lm.alt, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "ALT",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.alt <- tidy(lm.alt) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.alt %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.alt <- means_wide %>%
+  left_join(contrast.alt, by = c("Outcome", "Obesity"))
+
+alt.summary %>% kable(caption="Summary of ALT levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of ALT levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|         se|        sd|    n|
+|--------:|:---------|--------:|----------:|---------:|----:|
+|        0|Non-Obese | 23.09761|  0.6252781|  20.72870| 1099|
+|        0|Obese     | 29.12606|  0.7734031|  22.22777|  826|
+|        1|Non-Obese | 56.56250|  8.3017606|  46.96185|   32|
+|        1|Obese     | 98.31373| 21.3854640| 154.21277|   52|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT
+
+|term                  |  estimate| std.error| statistic|  p.value|
+|:---------------------|---------:|---------:|---------:|--------:|
+|(Intercept)           | 23.097606| 0.9929477| 23.261654| 0.00e+00|
+|Cushings              | 33.464894| 5.8691104|  5.701868| 0.00e+00|
+|ObesityObese          |  6.028455| 1.5112271|  3.989112| 6.87e-05|
+|Cushings:ObesityObese | 35.722771| 7.5325394|  4.742460| 2.30e-06|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=alt.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT
+
+|term                  |   estimate| std.error| statistic|   p.value|
+|:---------------------|----------:|---------:|---------:|---------:|
+|(Intercept)           |  8.6488483| 2.9625796|  2.919364| 0.0035469|
+|Cushings              | 34.0164965| 5.8288466|  5.835888| 0.0000000|
+|BMI                   |  0.5695597| 0.0957787|  5.946619| 0.0000000|
+|Cushings:ObesityObese | 33.2602797| 7.4813905|  4.445735| 0.0000092|
+
+
+:::
+:::
+
 
 
 
@@ -2638,11 +2950,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.207737e-39 </td>
+   <td style="text-align:right;"> 8.256474e-42 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.447521e-41 </td>
+   <td style="text-align:right;"> 4.797477e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -2736,8 +3048,8 @@ ldl.summary <-
 
 ggplot(ldl.summary,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2745,8 +3057,10 @@ ggplot(ldl.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="LDL Cholesterol (mg/dL)") +
-  theme_classic()
+  labs(y="LDL Cholesterol (mg/dL)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -2760,8 +3074,10 @@ ggplot(ldl.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="LDL Cholesterol (mg/dL)") +
-  theme_classic()
+  labs(y="LDL Cholesterol (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -2769,6 +3085,127 @@ ggplot(ldl.data,
 :::
 
 ```{.r .cell-code}
+ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of LDL-C levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|        se|       sd|  n|
+|--------:|:---------|--------:|---------:|--------:|--:|
+|        0|Non-Obese | 113.7733|  3.674729| 31.82408| 75|
+|        0|Obese     | 108.5102|  4.625253| 32.37677| 49|
+|        1|Non-Obese |  80.0000| 15.513435| 26.87006|  3|
+|        1|Obese     | 120.7143| 16.918170| 44.76127|  7|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on LDL-C")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on LDL-C
+
+|term                  |   estimate| std.error|  statistic|   p.value|
+|:---------------------|----------:|---------:|----------:|---------:|
+|(Intercept)           | 113.773333|  3.776780| 30.1244302| 0.0000000|
+|Cushings              | -33.773333| 23.434301| -1.4411923| 0.1519534|
+|ObesityObese          |  -5.263129|  6.008063| -0.8760111| 0.3826523|
+|Cushings:ObesityObese |  45.977415| 26.904061|  1.7089396| 0.0898669|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C
+
+|term                  |    estimate|  std.error| statistic|   p.value|
+|:---------------------|-----------:|----------:|---------:|---------:|
+|(Intercept)           | 113.9022087| 10.1472758| 11.224905| 0.0000000|
+|Cushings              | -32.1852793| 23.4780289| -1.370868| 0.1727965|
+|BMI                   |  -0.0731692|  0.3216894| -0.227453| 0.8204316|
+|Cushings:ObesityObese |  42.3060658| 27.2125234|  1.554654| 0.1224784|
+
+
+:::
+:::
+
+
+
+
+#### LDL-C Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.  
+
+**Important**: This model unlike all the otehrs was not adjusted for RaceEthnicity, as all participants with a LDL-C value were of the same Race/Ethnicity (White).
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.ldl <- lm(value ~ AgeInYears + GenderName + Cushings * Obesity, data = ldl.data)
+
+## 1. Adjusted means
+emm.ldl <- emmeans(lm.ldl, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "LDL-C",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.ldl <- contrast(emmeans(lm.ldl, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "LDL-C",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.ldl <- tidy(lm.ldl) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.ldl %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.ldl <- means_wide %>%
+  left_join(contrast.ldl, by = c("Outcome", "Obesity"))
+
 ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
 ```
 
@@ -3215,11 +3652,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.219250e-34 </td>
+   <td style="text-align:right;"> 4.342914e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.385917e-67 </td>
+   <td style="text-align:right;"> 1.065669e-67 </td>
   </tr>
 </tbody>
 </table>
@@ -3322,8 +3759,8 @@ bp.summary.map <-
 
 ggplot(bp.summary.map,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -3331,8 +3768,10 @@ ggplot(bp.summary.map,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Mean; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3346,8 +3785,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Mean; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3419,6 +3860,66 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressu
 
 
 
+##### MAP Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
+
+## 1. Adjusted means
+emm.map <- emmeans(lm.map, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Mean Arterial Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.map <- contrast(emmeans(lm.map, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Mean Arterial Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.map <- tidy(lm.map) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "Mean Arterial Pressure",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.map %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.map <- means_wide %>%
+  left_join(contrast.map, by = c("Outcome", "Obesity"))
+```
+:::
+
+
+
+
 
 #### Systolic Blood Pressure
 
@@ -3439,8 +3940,8 @@ bp.summary.sys <-
 
 ggplot(bp.summary.sys,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -3448,8 +3949,10 @@ ggplot(bp.summary.sys,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Systolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3463,8 +3966,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Systolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3536,6 +4041,66 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressu
 
 
 
+##### Systolic Blood Pressure Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.sbp <- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
+
+## 1. Adjusted means
+emm.sbp <- emmeans(lm.sbp, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Systolic Blood Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.sbp <- contrast(emmeans(lm.sbp, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Systolic Blood Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.sbp <- tidy(lm.sbp) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "Systolic Blood Pressure",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.sbp %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.sbp <- means_wide %>%
+  left_join(contrast.sbp, by = c("Outcome", "Obesity"))
+```
+:::
+
+
+
+
 #### Diastolic Arterial Pressure
 
 
@@ -3555,8 +4120,8 @@ bp.summary.dia <-
 
 ggplot(bp.summary.dia,
        aes(y=mean,
-           ymin=mean-se,
-           ymax=mean+se,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -3564,8 +4129,10 @@ ggplot(bp.summary.dia,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Diastolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3579,8 +4146,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Diastolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -3649,6 +4218,65 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressu
 :::
 :::
 
+
+
+
+##### Diastolic Blood Pressure Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.dbp <- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
+
+## 1. Adjusted means
+emm.dbp <- emmeans(lm.dbp, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Diastolic Blood Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.dbp <- contrast(emmeans(lm.dbp, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Diastolic Blood Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.dbp <- tidy(lm.dbp) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "Diastolic Blood Pressure",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.dbp %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.dbp <- means_wide %>%
+  left_join(contrast.dbp, by = c("Outcome", "Obesity"))
+```
+:::
 
 
 
@@ -4105,6 +4733,292 @@ combined_plot
 
 
 
+## Summary of Interaction Effects
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+table_summary <- bind_rows(
+  table.glucose,
+  table.hba1c,
+  table.alt,
+  table.ldl,
+  table.map,
+  table.sbp,
+  table.dbp
+) 
+
+table_summary |>
+  kable(caption="Summary of contrasts for all outcomes") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Summary of contrasts for all outcomes</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Outcome </th>
+   <th style="text-align:left;"> Obesity </th>
+   <th style="text-align:left;"> Control </th>
+   <th style="text-align:left;"> Cushing </th>
+   <th style="text-align:left;"> contrast </th>
+   <th style="text-align:left;"> Diff_CI </th>
+   <th style="text-align:right;"> p.value </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 99.32 (98.14–100.50) </td>
+   <td style="text-align:left;"> 126.26 (120.93–131.60) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 26.95 (21.66–32.24) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Glucose </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 107.45 (106.19–108.71) </td>
+   <td style="text-align:left;"> 133.63 (129.56–137.71) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 26.18 (22.18–30.19) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 5.61 (5.28–5.95) </td>
+   <td style="text-align:left;"> 6.54 (5.59–7.50) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 0.93 (-0.02–1.88) </td>
+   <td style="text-align:right;"> 0.0562223 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> HbA1c </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 6.03 (5.72–6.34) </td>
+   <td style="text-align:left;"> 7.43 (6.84–8.01) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 1.40 (0.84–1.95) </td>
+   <td style="text-align:right;"> 0.0000017 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 23.01 (16.92–29.10) </td>
+   <td style="text-align:left;"> 56.08 (43.75–68.42) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 33.07 (21.53–44.61) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ALT </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 29.11 (22.91–35.31) </td>
+   <td style="text-align:left;"> 98.34 (87.69–108.98) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 69.23 (59.98–78.47) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 115.38 (106.32–124.44) </td>
+   <td style="text-align:left;"> 76.76 (30.57–122.94) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> -38.62 (-84.68–7.44) </td>
+   <td style="text-align:right;"> 0.0995712 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LDL-C </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 112.43 (101.94–122.91) </td>
+   <td style="text-align:left;"> 122.09 (97.36–146.83) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 9.67 (-16.20–35.53) </td>
+   <td style="text-align:right;"> 0.4609357 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Mean Arterial Pressure </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 82.80 (79.47–86.13) </td>
+   <td style="text-align:left;"> 95.35 (85.47–105.22) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 12.55 (2.97–22.12) </td>
+   <td style="text-align:right;"> 0.0103679 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Mean Arterial Pressure </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 88.57 (84.77–92.38) </td>
+   <td style="text-align:left;"> 96.51 (87.65–105.37) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 7.94 (-0.72–16.59) </td>
+   <td style="text-align:right;"> 0.0721237 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Systolic Blood Pressure </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 119.59 (119.09–120.10) </td>
+   <td style="text-align:left;"> 130.47 (126.97–133.97) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 10.88 (7.39–14.37) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Systolic Blood Pressure </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 126.01 (125.46–126.57) </td>
+   <td style="text-align:left;"> 130.51 (127.83–133.19) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 4.50 (1.84–7.16) </td>
+   <td style="text-align:right;"> 0.0009277 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Diastolic Blood Pressure </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 68.80 (68.46–69.14) </td>
+   <td style="text-align:left;"> 74.34 (72.00–76.67) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 5.53 (3.21–7.86) </td>
+   <td style="text-align:right;"> 0.0000031 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Diastolic Blood Pressure </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 72.26 (71.89–72.63) </td>
+   <td style="text-align:left;"> 72.99 (71.20–74.77) </td>
+   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
+   <td style="text-align:left;"> 0.73 (-1.05–2.50) </td>
+   <td style="text-align:right;"> 0.4216498 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(table_summary,"Summary of Contrasts - All Outcomes.csv")
+
+interaction_summary <- bind_rows(
+  interaction_row.glucose,
+  interaction_row.hba1c,
+  interaction_row.alt,
+  interaction_row.ldl,
+  interaction_row.map,
+  interaction_row.sbp,
+  interaction_row.dbp
+) 
+
+interaction_summary |>
+  kable(caption="Summary of interactions for all outcomes") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Summary of interactions for all outcomes</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Outcome </th>
+   <th style="text-align:left;"> term </th>
+   <th style="text-align:right;"> estimate </th>
+   <th style="text-align:right;"> std.error </th>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> Interaction_CI </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> value </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> -0.7643105 </td>
+   <td style="text-align:right;"> 3.3853713 </td>
+   <td style="text-align:right;"> -0.2257686 </td>
+   <td style="text-align:right;"> 0.8213843 </td>
+   <td style="text-align:left;"> -0.76 (-7.40–5.87) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> value </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> 0.4677739 </td>
+   <td style="text-align:right;"> 0.5630989 </td>
+   <td style="text-align:right;"> 0.8307135 </td>
+   <td style="text-align:right;"> 0.4071892 </td>
+   <td style="text-align:left;"> 0.47 (-0.64–1.57) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> value </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> 36.1532951 </td>
+   <td style="text-align:right;"> 7.5367413 </td>
+   <td style="text-align:right;"> 4.7969399 </td>
+   <td style="text-align:right;"> 0.0000017 </td>
+   <td style="text-align:left;"> 36.15 (21.38–50.93) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> value </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> 48.2860803 </td>
+   <td style="text-align:right;"> 26.5594031 </td>
+   <td style="text-align:right;"> 1.8180409 </td>
+   <td style="text-align:right;"> 0.0714147 </td>
+   <td style="text-align:left;"> 48.29 (-3.77–100.34) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Mean Arterial Pressure </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> -4.6119572 </td>
+   <td style="text-align:right;"> 6.5261241 </td>
+   <td style="text-align:right;"> -0.7066916 </td>
+   <td style="text-align:right;"> 0.4802756 </td>
+   <td style="text-align:left;"> -4.61 (-17.40–8.18) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Systolic Blood Pressure </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> -6.3842310 </td>
+   <td style="text-align:right;"> 2.2385607 </td>
+   <td style="text-align:right;"> -2.8519357 </td>
+   <td style="text-align:right;"> 0.0043492 </td>
+   <td style="text-align:left;"> -6.38 (-10.77–-2.00) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Diastolic Blood Pressure </td>
+   <td style="text-align:left;"> Cushings:ObesityObese </td>
+   <td style="text-align:right;"> -4.8068181 </td>
+   <td style="text-align:right;"> 1.4927238 </td>
+   <td style="text-align:right;"> -3.2201659 </td>
+   <td style="text-align:right;"> 0.0012829 </td>
+   <td style="text-align:left;"> -4.81 (-7.73–-1.88) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(interaction_summary,"Summary of Interactions - All Outcomes.csv")
+```
+:::
+
+
+
+
 ## Session Information
 
 
@@ -4142,28 +5056,29 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] cowplot_1.1.3    cobalt_4.6.1     broom_1.0.6      kableExtra_1.4.0
- [5] janitor_2.2.1    MatchIt_4.7.1    knitr_1.48       lubridate_1.9.3 
- [9] forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2     
-[13] readr_2.1.5      tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1   
-[17] tidyverse_2.0.0 
+ [1] cowplot_1.1.3    cobalt_4.6.1     emmeans_1.11.2-8 broom_1.0.6     
+ [5] kableExtra_1.4.0 janitor_2.2.1    MatchIt_4.7.1    knitr_1.48      
+ [9] lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4     
+[13] purrr_1.0.2      readr_2.1.5      tidyr_1.3.1      tibble_3.2.1    
+[17] ggplot2_3.5.1    tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6      xfun_0.45         htmlwidgets_1.6.4 lattice_0.22-6   
- [5] tzdb_0.4.0        vctrs_0.6.5       tools_4.4.3       generics_0.1.3   
- [9] parallel_4.4.3    fansi_1.0.6       highr_0.11        pkgconfig_2.0.3  
-[13] Matrix_1.7-2      lifecycle_1.0.4   compiler_4.4.3    farver_2.1.2     
-[17] textshaping_0.4.0 munsell_0.5.1     snakecase_0.11.1  htmltools_0.5.8.1
-[21] yaml_2.3.9        pillar_1.9.0      crayon_1.5.3      nlme_3.1-167     
-[25] tidyselect_1.2.1  digest_0.6.36     stringi_1.8.4     labeling_0.4.3   
-[29] splines_4.4.3     fastmap_1.2.0     grid_4.4.3        colorspace_2.1-0 
-[33] cli_3.6.3         magrittr_2.0.3    utf8_1.2.4        withr_3.0.0      
-[37] scales_1.3.0      backports_1.5.0   bit64_4.0.5       timechange_0.3.0 
-[41] rmarkdown_2.27    bit_4.0.5         chk_0.10.0        hms_1.1.3        
-[45] evaluate_0.24.0   viridisLite_0.4.2 mgcv_1.9-1        rlang_1.1.4      
-[49] Rcpp_1.0.14       glue_1.8.0        xml2_1.3.6        svglite_2.2.1    
-[53] rstudioapi_0.16.0 vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1         
-[57] systemfonts_1.2.3
+ [1] gtable_0.3.6       xfun_0.45          htmlwidgets_1.6.4  lattice_0.22-6    
+ [5] tzdb_0.4.0         vctrs_0.6.5        tools_4.4.3        generics_0.1.3    
+ [9] parallel_4.4.3     fansi_1.0.6        highr_0.11         pkgconfig_2.0.3   
+[13] Matrix_1.7-2       lifecycle_1.0.4    compiler_4.4.3     farver_2.1.2      
+[17] textshaping_0.4.0  munsell_0.5.1      snakecase_0.11.1   htmltools_0.5.8.1 
+[21] yaml_2.3.9         pillar_1.9.0       crayon_1.5.3       nlme_3.1-167      
+[25] tidyselect_1.2.1   digest_0.6.36      mvtnorm_1.3-1      stringi_1.8.4     
+[29] labeling_0.4.3     splines_4.4.3      fastmap_1.2.0      grid_4.4.3        
+[33] colorspace_2.1-0   cli_3.6.3          magrittr_2.0.3     utf8_1.2.4        
+[37] withr_3.0.0        scales_1.3.0       backports_1.5.0    bit64_4.0.5       
+[41] estimability_1.5.1 timechange_0.3.0   rmarkdown_2.27     bit_4.0.5         
+[45] chk_0.10.0         hms_1.1.3          coda_0.19-4.1      evaluate_0.24.0   
+[49] viridisLite_0.4.2  mgcv_1.9-1         rlang_1.1.4        Rcpp_1.0.14       
+[53] xtable_1.8-4       glue_1.8.0         xml2_1.3.6         svglite_2.2.1     
+[57] rstudioapi_0.16.0  vroom_1.6.5        jsonlite_1.8.8     R6_2.5.1          
+[61] systemfonts_1.2.3 
 ```
 
 
