@@ -590,8 +590,7 @@ chisq.test(x=as.numeric(separate(hba1c.summary.gender, `Cushing's`, sep=" ", int
   kable_styling(full_width = FALSE, position = "center")
 ```
 
-
-```{hba1c-analyses}
+```{r hba1c-analyses}
 hba1c.summary <-
   hba1c.data %>%
   group_by(Cushings,Obesity) |>
@@ -645,9 +644,8 @@ ggplot(hba1c.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
-```
 
-```{r glucose-statistics}
+
 library(knitr)
 hba1c.summary %>% kable(caption="Summary of Hb1ac levels by obesity and pre-existing Cushing's")
 library(broom)
@@ -662,40 +660,42 @@ lm(value ~ Cushings + ObesityIII + Cushings:ObesityIII,data=hba1c.data) |>
 lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
+```
 
+#### HbA1c Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r aic-statistics}
 library(emmeans)
-library(dplyr)
-library(broom)
-library(tidyr)
-
-# Model is already fit:
-lm.glucose <- lm(Glucose ~ RaceEthnicity + AgeInYears + GenderName + Obesity * Cushings, data = glucose.data)
+#used fully adjusted model
+lm.hba1c <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = hba1c.data)
 
 ## 1. Adjusted means
-emm.glucose <- emmeans(lm.glucose, ~ Cushings | Obesity) %>%
+emm.hba1c <- emmeans(lm.hba1c, ~ Cushings | Obesity) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Glucose",
+    Outcome = "HbA1c",
     Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, Cushings, Mean_CI)
 
 ## 2. Within-stratum Cushing–Control difference
-contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
+contrast.hba1c <- contrast(emmeans(lm.hba1c, ~ Cushings | Obesity),
                              method = "revpairwise") %>%
   summary(infer = TRUE) %>%
   as.data.frame() %>%
   mutate(
-    Outcome = "Glucose",
+    Outcome = "HbA1c",
     Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
   ) %>%
   select(Outcome, Obesity, contrast, Diff_CI, p.value)
 
 ## 3. Interaction term
-interaction_row.glucose <- tidy(lm.glucose) %>%
+interaction_row.hba1c <- tidy(lm.hba1c) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "Glucose",
+    Outcome = "value",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -705,22 +705,22 @@ interaction_row.glucose <- tidy(lm.glucose) %>%
 
 ## 4. Combine into one publication-style table:
 # Pivot adjusted means to wide format (Control vs Cushing side by side)
-means_wide <- emm.glucose %>%
+means_wide <- emm.hba1c %>%
   mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
   pivot_wider(names_from = Cushings, values_from = Mean_CI)
 
 # Merge means with differences
-table.glucose <- means_wide %>%
-  left_join(contrast.glucose, by = c("Outcome", "Obesity"))
+table.hba1c <- means_wide %>%
+  left_join(contrast.hba1c, by = c("Outcome", "Obesity"))
 
-# Add interaction term as separate row or column as you prefer:
-# simplest: keep it separate and rbind across outcomes later
-# e.g. interaction_row.glucose
+hba1c.summary %>% kable(caption="Summary of HbA1c levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on HbA1c")
 
-# View
-table.glucose
-interaction_row.glucose
-
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on HbA1c")
 ```
 
 ### Glucose
@@ -864,7 +864,65 @@ ggplot(glucose.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Glucuose (mg/dL)") +
   theme_classic()
+```
 
+#### Glucose Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r glucose-statistics}
+#used fully adjusted model
+lm.glucose <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = glucose.data)
+
+## 1. Adjusted means
+emm.glucose <- emmeans(lm.glucose, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.glucose <- tidy(lm.glucose) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.glucose %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.glucose <- means_wide %>%
+  left_join(contrast.glucose, by = c("Outcome", "Obesity"))
+
+# Add interaction term as separate row or column as you prefer:
+# simplest: keep it separate and rbind across outcomes later
+# e.g. interaction_row.glucose
+
+# View
+table.glucose
+interaction_row.glucose
 
 
 glucose.summary %>% kable(caption="Summary of glucose levels by obesity and pre-existing Cushing's")
@@ -1028,6 +1086,67 @@ lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
 ```
 
+#### ALT Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r alt-statistics}
+#used fully adjusted model
+lm.alt <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = alt.data)
+
+## 1. Adjusted means
+emm.alt <- emmeans(lm.alt, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "ALT",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.alt <- contrast(emmeans(lm.alt, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "ALT",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.alt <- tidy(lm.alt) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.alt %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.alt <- means_wide %>%
+  left_join(contrast.alt, by = c("Outcome", "Obesity"))
+
+alt.summary %>% kable(caption="Summary of ALT levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=alt.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT")
+```
+
+
 ### LDL Cholesterol
 
 ```{r ldl-propensity}
@@ -1171,6 +1290,66 @@ ggplot(ldl.data,
 
 ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
 
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on LDL-C")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=ldl.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on LDL-C")
+```
+
+#### LDL-C Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r ldl-statistics}
+#used fully adjusted model
+lm.ldl <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = ldl.data)
+
+## 1. Adjusted means
+emm.ldl <- emmeans(lm.ldl, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "LDL-C",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.ldl <- contrast(emmeans(lm.ldl, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "LDL-C",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.ldl <- tidy(lm.ldl) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.ldl %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.ldl <- means_wide %>%
+  left_join(contrast.ldl, by = c("Outcome", "Obesity"))
+
+ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
 lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ldl.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on LDL-C")
@@ -1411,6 +1590,66 @@ lm(BPMeanNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)")
 ```
 
+##### MAP Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r map-statistics}
+#used fully adjusted model
+lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = map.data)
+
+## 1. Adjusted means
+emm.map <- emmeans(lm.map, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Mean Arterial Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.map <- contrast(emmeans(lm.map, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Mean Arterial Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.map <- tidy(lm.map) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.map %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.map <- means_wide %>%
+  left_join(contrast.map, by = c("Outcome", "Obesity"))
+
+map.summary %>% kable(caption="Summary of Mean Arterial Pressure levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=map.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Mean Arterial Pressure")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=map.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Mean Arterial Pressure")
+```
+
 
 #### Systolic Blood Pressure
 
@@ -1457,6 +1696,66 @@ lm(BPSysNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |>
 lm(BPSysNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Systolic)")
+```
+
+##### Systolic Blood Pressure Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r sbp-statistics}
+#used fully adjusted model
+lm.sbp <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = sbp.data)
+
+## 1. Adjusted means
+emm.sbp <- emmeans(lm.sbp, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Systolic Arterial Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.sbp <- contrast(emmeans(lm.sbp, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Systolic Arterial Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.sbp <- tidy(lm.sbp) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.sbp %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.sbp <- means_wide %>%
+  left_join(contrast.sbp, by = c("Outcome", "Obesity"))
+
+sbp.summary %>% kable(caption="Summary of Systolic Arterial Pressure levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=sbp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Systolic Arterial Pressure")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=sbp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Systolic Arterial Pressure")
 ```
 
 #### Diastolic Arterial Pressure
@@ -1506,6 +1805,65 @@ lm(BPDiaNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Diastolic)")
 ```
 
+##### Diastolic Blood Pressure Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r dbp-statistics}
+#used fully adjusted model
+lm.dbp <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = dbp.data)
+
+## 1. Adjusted means
+emm.dbp <- emmeans(lm.dbp, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Diastolic Arterial Pressure",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.dbp <- contrast(emmeans(lm.dbp, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Diastolic Arterial Pressure",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.dbp <- tidy(lm.dbp) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "value",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.dbp %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.dbp <- means_wide %>%
+  left_join(contrast.dbp, by = c("Outcome", "Obesity"))
+
+dbp.summary %>% kable(caption="Summary of Diastolic Arterial Pressure levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=dbp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Diastolic Arterial Pressure")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=dbp.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Diastolic Arterial Pressure")
+```
 
 ## PRISMA Diagram
 Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
