@@ -619,8 +619,10 @@ ggplot(hba1c.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Hba1c (Percent)") +
-  theme_classic()
+  scale_fill_grey() +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
 
 ggplot(hba1c.summary.iii,
        aes(y=mean,
@@ -634,7 +636,9 @@ ggplot(hba1c.summary.iii,
     width = 0.5
   ) +
   labs(y="Hba1c (Percent)",x="") +
-  theme_classic()
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(hba1c.data,
        aes(y=value,
@@ -642,8 +646,10 @@ ggplot(hba1c.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Hba1c (Percent)") +
-  theme_classic()
+  labs(y="Hba1c (Percent)",x="") +
+  scale_fill_grey() +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
 
 
 library(knitr)
@@ -853,8 +859,10 @@ ggplot(glucose.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Glucose (mg/dL)") +
-  theme_classic()
+  labs(y="Glucose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(glucose.data,
        aes(y=value,
@@ -862,8 +870,10 @@ ggplot(glucose.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Glucuose (mg/dL)") +
-  theme_classic()
+  labs(y="Glucuose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 ```
 
 #### Glucose Statistics
@@ -1056,8 +1066,10 @@ ggplot(alt.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="ALT (mg/dL)") +
-  theme_classic()
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(alt.data,
        aes(y=value,
@@ -1065,8 +1077,10 @@ ggplot(alt.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="ALT (mg/dL)") +
-  theme_classic()
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 
 library(knitr)
@@ -1267,8 +1281,10 @@ ggplot(ldl.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="LDL Cholesterol (mg/dL)") +
-  theme_classic()
+  labs(y="LDL Cholesterol (mg/dL)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(ldl.data,
        aes(y=value,
@@ -1276,8 +1292,10 @@ ggplot(ldl.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="LDL Cholesterol (mg/dL)") +
-  theme_classic()
+  labs(y="LDL Cholesterol (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
 
@@ -1557,8 +1575,10 @@ ggplot(bp.summary.map,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Mean; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(bp.data,
        aes(y=BPMeanNonInvasive,
@@ -1566,10 +1586,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Mean; mmHg)") +
-  theme_classic()
-
-
+  labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 bp.summary.map %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Mean)")
 lm(BPMeanNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
@@ -1665,8 +1685,10 @@ ggplot(bp.summary.sys,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Systolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(bp.data,
        aes(y=BPSysNonInvasive,
@@ -1674,8 +1696,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Systolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 
 
@@ -1772,8 +1796,10 @@ ggplot(bp.summary.dia,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  labs(y="Blood Pressure (Diastolic; mmHg)") +
-  theme_classic()
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 ggplot(bp.data,
        aes(y=BPDiaNonInvasive,
@@ -1781,10 +1807,10 @@ ggplot(bp.data,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
-  labs(y="Blood Pressure (Diastolic; mmHg)") +
-  theme_classic()
-
-
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
 
 bp.summary.dia %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Diastoic)")
 lm(BPDiaNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
