@@ -9,15 +9,17 @@ format:
     keep-md: true
     code-fold: true
     code-summary: "Show the code"
-    fig-path: "figures/html/"
-    dev: pdf
+    fig-path: "figures/"
+    fig-format: png
+    fig-dpi: 300
   pdf:
-    fig-path: "figures/pdf/"
-    dev: pdf
-#theme: journal
+    fig-path: "figures/"
+    fig-format: pdf
 execute:
   echo: true
   warning: false
+  dev: ["png", "pdf"]  # This generates both formats
+  fig-path: "figures/"
 ---
 
 ```{r global_options}
