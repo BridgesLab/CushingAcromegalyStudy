@@ -8,7 +8,8 @@ This documemt shows where the results and tables are generated from.  Files are 
 | Figure 4 (optional) | Distribution plots of raw outcomes (e.g., HbA1c)                          |             |          |
 | Table 1 |  Baseline characteristics of cases vs. controls (matched sample)           | propensity-mapping.qmd | Demographic Summary - Master Sample.csv|
 | Table 2 | Baseline characteristics of 2×2 groups | propensity-mapping.qmd  | Stratified Demographic Summary - Master Sample.csv |
-| Table 3 | Main adjusted results (least-squares means and interaction terms)         |             |          |
+| Table 3A | Main adjusted results    |  propensity-mapping.qmd |  Summary of Contrasts - All Outcomes.csv      |
+| Table 3B | Interaction analyses    | propensity-mapping.qmd  |  Summary of Interactions - All Outcomes.csv      |
 | Table 4 | Sensitivity analyses / subgroup results 
 | Supplementary Figure S1 | Balance diagnostics (Love plot of matched variables)                      | propensity-mapping.qmd  | love-plots-2.pdf |                                  |             |          |
 | Supplementary Figure S2 | Extended distributions for all outcomes                                |             |          |

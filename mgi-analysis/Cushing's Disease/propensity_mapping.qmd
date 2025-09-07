@@ -916,15 +916,6 @@ means_wide <- emm.glucose %>%
 table.glucose <- means_wide %>%
   left_join(contrast.glucose, by = c("Outcome", "Obesity"))
 
-# Add interaction term as separate row or column as you prefer:
-# simplest: keep it separate and rbind across outcomes later
-# e.g. interaction_row.glucose
-
-# View
-table.glucose
-interaction_row.glucose
-
-
 glucose.summary %>% kable(caption="Summary of glucose levels by obesity and pre-existing Cushing's")
 lm(value ~ Cushings + Obesity + Cushings:Obesity,data=glucose.data) |> 
   tidy() |> 
@@ -2023,6 +2014,40 @@ combined_plot <- plot_grid(
 
 # Display
 combined_plot
+```
+
+## Summary of Interaction Effects
+
+```{r interaction-effects-summary}
+table_summary <- bind_rows(
+  table.glucose,
+  table.a1c,
+  table.alt,
+  table.ldl,
+  table.map,
+  table.sbp,
+  table.dbp
+) |>
+  kable(caption="Summary of contrasts for all outcomes") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(table_summary,"Summary of Contrasts - All Outcomes.csv")
+
+interaction_summary <- bind_rows(
+  interaction_row.glucose,
+  interaction_row.a1c,
+  interaction_row.alt,
+  interaction_row.ldl,
+  interaction_row.map,
+  interaction_row.sbp,
+  interaction_row.dbp
+) 
+
+interaction_summary |>
+  kable(caption="Summary of interactions for all outcomes") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(interaction_summary,"Summary of Interactions - All Outcomes.csv")
 ```
 
 ## Session Information
