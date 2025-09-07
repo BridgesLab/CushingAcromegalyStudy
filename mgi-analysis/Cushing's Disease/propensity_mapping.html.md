@@ -9,12 +9,12 @@ format:
     keep-md: true
     code-fold: true
     code-summary: "Show the code"
-    fig-path: "figures/html/"
-    dev: pdf
-  pdf:
-    fig-path: "figures/pdf/"
-    dev: pdf
-#theme: journal
+  pdf: default
+knitr:
+  opts_chunk:
+    fig.path: "figures/"
+    dev: ["png", "pdf"]  # Remove !expr, just use array syntax
+    fig.keep: "all"
 execute:
   echo: true
   warning: false
@@ -289,7 +289,7 @@ plot(m.out.all, type = "jitter")         # Propensity score distribution[5]
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/total-population-propensity-1.png){width=672}
+![](figures/total-population-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.172786e-33 </td>
+   <td style="text-align:right;"> 1.070187e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.251331e-68 </td>
+   <td style="text-align:right;"> 4.288870e-60 </td>
   </tr>
 </tbody>
 </table>
@@ -567,6 +567,61 @@ chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", in
 
 
 
+Specific points described in the manuscript:
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+complete.data |> 
+  distinct(DeID_PatientID, .keep_all=T) |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_totals() |>
+  rename('Controls'=`0`,
+         'Cases'=`1`) -> unmatched.totals.race
+  
+race.totals <- 
+  filter(unmatched.totals.race, RaceEthnicity=="Total") |> 
+  select(Cases,Controls) |>
+  as.integer()
+white.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="White") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+asian.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Asian") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+black.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Black") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+nonwhite.totals <- race.totals-white.totals
+nonasian.totals <- race.totals-asian.totals
+nonblack.totals <- race.totals-black.totals
+
+# for obesity status using matched data
+
+master.data |> 
+  tabyl(Obesity,Cushings) |>
+  adorn_totals() |>
+  rename('Controls'=`0`,
+         'Cases'=`1`) -> totals.obesity
+```
+:::
+
+
+
+
+- Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (**87.1794872%** than the overall Michigan Medicine participant population (**75.3532182%** Non-Hispanic White, **p=3.9688951\times 10^{-7}**)
+- Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (**p=1.870811\times 10^{-5}**) or Black. (**p=0.0181936**).
+- As we expected, participants with Cushing’s disease had a higher BMI than the controls, with **64.3258427**% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only **39.7880764%** controls (p=**4.4237462\times 10^{-20}**).  
+
 #### Stratified Demographics for the Entire Population
 
 
@@ -606,29 +661,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.484133e-30 </td>
-   <td style="text-align:right;"> 5.562262e-21 </td>
+   <td style="text-align:right;"> 6.446412e-30 </td>
+   <td style="text-align:right;"> 1.376546e-21 </td>
    <td style="text-align:right;"> 5171 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.502296e-17 </td>
-   <td style="text-align:right;"> 5.124860e-38 </td>
+   <td style="text-align:right;"> 1.317280e-21 </td>
+   <td style="text-align:right;"> 4.997645e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.519645e-24 </td>
-   <td style="text-align:right;"> 1.598304e-44 </td>
+   <td style="text-align:right;"> 9.790823e-24 </td>
+   <td style="text-align:right;"> 2.058589e-45 </td>
    <td style="text-align:right;"> 3417 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 6.243282e-17 </td>
-   <td style="text-align:right;"> 1.703803e-70 </td>
+   <td style="text-align:right;"> 4.640672e-16 </td>
+   <td style="text-align:right;"> 2.828051e-72 </td>
    <td style="text-align:right;"> 229 </td>
   </tr>
 </tbody>
@@ -858,7 +913,42 @@ master.2x2.table |> write_csv(na="",file="Stratified Demographic Summary - Maste
 ```
 :::
 
+::: {.cell}
 
+```{.r .cell-code}
+master.data |>
+  mutate(Obesity = fct_recode(Obesity, "NonObese"="Non-Obese")) |>
+  tabyl(GenderName, Obesity, Cushings)  -> matched.table.gender
+
+master.data |>
+  mutate(Obesity = fct_recode(Obesity, "NonObese"="Non-Obese")) |>
+  tabyl(RaceEthnicity, Obesity, Cushings)  -> matched.table.raceethnicity
+
+matched.table.raceethnicity[[2]] |>
+  adorn_totals() |>
+  mutate(Pct=NonObese/(Obese+NonObese)*100)-> matched.table.raceethnicity.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Asian") |> select(Obese,NonObese) -> matched.asian.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Hispanic or Latino") |> select(Obese,NonObese) -> matched.hl.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Total") |> select(Obese,NonObese) -> matched.total.cushings
+
+matched.nonasian.cushings <- matched.total.cushings - matched.asian.cushings
+
+matched.nonhl.cushings <- matched.total.cushings - matched.hl.cushings
+```
+:::
+
+
+
+
+Details specified in the manuscript:
+
+- For example, among participants with a $BMI > 30 mg/m^2$, participants with Cushing’s disease had a higher BMI than controls (p=2.4556526\times 10^{-4}).
+- Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (67.6056338% of females with Cushing's disease had a $BMI>30$) than males (51.3888889%), p=0.015186).  
+- Among participants with Cushing’s disease, Asian (75%) and Hispanic or Latino (60%) participants were more likely have a BMI  under 30 kg/m2 compared to the overall average (35.6741573%, p=0.0265181 and 0.176412 respectively).
+- The average age of participants with Cushing’s disease with or without obesity was similar.
 
 
 ### Hba1c
@@ -948,7 +1038,7 @@ plot(m.out.a1c, type = "jitter")         # Propensity score distribution[5]
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/hba1c-propensity-1.png){width=672}
+![](figures/hba1c-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -1126,11 +1216,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.185376e-39 </td>
+   <td style="text-align:right;"> 3.912392e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.402626e-30 </td>
+   <td style="text-align:right;"> 4.776470e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1374,7 +1464,7 @@ plot(m.out.glucose, type = "jitter")         # Propensity score distribution[5]
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/glucose-propensity-1.png){width=672}
+![](figures/glucose-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -1562,11 +1652,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 8.358887e-34 </td>
+   <td style="text-align:right;"> 9.274627e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.948245e-68 </td>
+   <td style="text-align:right;"> 1.832056e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -1674,7 +1764,7 @@ ggplot(glucose.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/glucose-analysis-1.png){width=672}
+![](figures/glucose-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1689,7 +1779,7 @@ ggplot(glucose.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/glucose-analysis-2.png){width=672}
+![](figures/glucose-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1844,7 +1934,7 @@ plot(m.out.alt, type = "jitter")
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/alt-propensity-1.png){width=672}
+![](figures/alt-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -2031,11 +2121,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.02909e-29 </td>
+   <td style="text-align:right;"> 1.859004e-30 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.38493e-18 </td>
+   <td style="text-align:right;"> 1.158514e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2144,7 +2234,7 @@ ggplot(alt.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/alt-analysis-1.png){width=672}
+![](figures/alt-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -2159,7 +2249,7 @@ ggplot(alt.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/alt-analysis-2.png){width=672}
+![](figures/alt-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -2295,7 +2385,7 @@ plot(m.out.ldl, type = "jitter")
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/ldl-propensity-1.png){width=672}
+![](figures/ldl-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -2462,11 +2552,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.691175e-39 </td>
+   <td style="text-align:right;"> 5.404476e-41 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.924957e-42 </td>
+   <td style="text-align:right;"> 1.788001e-41 </td>
   </tr>
 </tbody>
 </table>
@@ -2574,7 +2664,7 @@ ggplot(ldl.summary,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/ldl-analysis-1.png){width=672}
+![](figures/ldl-analysis-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -2589,7 +2679,7 @@ ggplot(ldl.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/ldl-analysis-2.png){width=672}
+![](figures/ldl-analysis-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -2852,7 +2942,7 @@ plot(m.out.bp, type = "jitter")         # Propensity score distribution[5]
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-propensity-1.png){width=672}
+![](figures/bp-propensity-1.png){width=672}
 :::
 
 ::: {.cell-output .cell-output-stdout}
@@ -3039,11 +3129,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.877487e-36 </td>
+   <td style="text-align:right;"> 7.840757e-36 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.661282e-64 </td>
+   <td style="text-align:right;"> 9.710883e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -3160,7 +3250,7 @@ ggplot(bp.summary.map,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-map-1.png){width=672}
+![](figures/bp-map-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3175,7 +3265,7 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-map-2.png){width=672}
+![](figures/bp-map-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3277,7 +3367,7 @@ ggplot(bp.summary.sys,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-systolic-1.png){width=672}
+![](figures/bp-systolic-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3292,7 +3382,7 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-systolic-2.png){width=672}
+![](figures/bp-systolic-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3393,7 +3483,7 @@ ggplot(bp.summary.dia,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-diastolic-1.png){width=672}
+![](figures/bp-diastolic-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3408,7 +3498,7 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/bp-diastolic-2.png){width=672}
+![](figures/bp-diastolic-2.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3905,7 +3995,7 @@ plots[[1]]
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/love-plots-1.png){width=672}
+![](figures/love-plots-1.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3922,7 +4012,7 @@ combined_plot
 ```
 
 ::: {.cell-output-display}
-![](propensity_mapping_files/figure-html/love-plots-2.png){width=672}
+![](figures/love-plots-2.png){width=672}
 :::
 :::
 

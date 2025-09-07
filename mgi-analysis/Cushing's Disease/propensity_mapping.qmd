@@ -9,17 +9,15 @@ format:
     keep-md: true
     code-fold: true
     code-summary: "Show the code"
-    fig-path: "figures/"
-    fig-format: png
-    fig-dpi: 300
-  pdf:
-    fig-path: "figures/"
-    fig-format: pdf
+  pdf: default
+knitr:
+  opts_chunk:
+    fig.path: "figures/"
+    dev: ["png", "pdf"]  # Remove !expr, just use array syntax
+    fig.keep: "all"
 execute:
   echo: true
   warning: false
-  dev: ["png", "pdf"]  # This generates both formats
-  fig-path: "figures/"
 ---
 
 ```{r global_options}
@@ -276,6 +274,52 @@ chisq.test(x=as.numeric(separate(master.summary.gender, `Cushing's`, sep=" ", in
   kable_styling(full_width = FALSE, position = "center")
 ```
 
+Specific points described in the manuscript:
+
+```{r total-population-details}
+complete.data |> 
+  distinct(DeID_PatientID, .keep_all=T) |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_totals() |>
+  rename('Controls'=`0`,
+         'Cases'=`1`) -> unmatched.totals.race
+  
+race.totals <- 
+  filter(unmatched.totals.race, RaceEthnicity=="Total") |> 
+  select(Cases,Controls) |>
+  as.integer()
+white.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="White") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+asian.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Asian") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+black.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Black") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
+nonwhite.totals <- race.totals-white.totals
+nonasian.totals <- race.totals-asian.totals
+nonblack.totals <- race.totals-black.totals
+
+# for obesity status using matched data
+
+master.data |> 
+  tabyl(Obesity,Cushings) |>
+  adorn_totals() |>
+  rename('Controls'=`0`,
+         'Cases'=`1`) -> totals.obesity
+```
+
+- Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (**`r white.totals[1]/race.totals[1]*100`%** than the overall Michigan Medicine participant population (**`r white.totals[2]/race.totals[2]*100`%** Non-Hispanic White, **p=`r chisq.test(rbind(white.totals, nonwhite.totals))$p.value`**)
+- Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (**p=`r chisq.test(rbind(asian.totals, nonasian.totals))$p.value`**) or Black. (**p=`r chisq.test(rbind(black.totals, nonblack.totals))$p.value`**).
+- As we expected, participants with Cushing’s disease had a higher BMI than the controls, with **`r filter(totals.obesity, Obesity=="Obese")['Cases']/filter(totals.obesity, Obesity=="Total")['Cases']*100`**% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only **`r filter(totals.obesity, Obesity=="Obese")['Controls']/filter(totals.obesity, Obesity=="Total")['Controls']*100`%** controls (p=**`r chisq.test(as.matrix(rbind(totals.obesity |> filter(Obesity=="Obese") |> select(Cases,Controls),totals.obesity |> filter(Obesity=="Non-Obese") |> select(Cases,Controls))))$p.value`**).  
+
 #### Stratified Demographics for the Entire Population
 
 ```{r total-population-stratified-demographics}
@@ -403,6 +447,38 @@ kable(master.2x2.table,
 
 master.2x2.table |> write_csv(na="",file="Stratified Demographic Summary - Master Sample.csv")
 ```
+
+```{r stratified-demographics-details}
+master.data |>
+  mutate(Obesity = fct_recode(Obesity, "NonObese"="Non-Obese")) |>
+  tabyl(GenderName, Obesity, Cushings)  -> matched.table.gender
+
+master.data |>
+  mutate(Obesity = fct_recode(Obesity, "NonObese"="Non-Obese")) |>
+  tabyl(RaceEthnicity, Obesity, Cushings)  -> matched.table.raceethnicity
+
+matched.table.raceethnicity[[2]] |>
+  adorn_totals() |>
+  mutate(Pct=NonObese/(Obese+NonObese)*100)-> matched.table.raceethnicity.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Asian") |> select(Obese,NonObese) -> matched.asian.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Hispanic or Latino") |> select(Obese,NonObese) -> matched.hl.cushings
+
+matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Total") |> select(Obese,NonObese) -> matched.total.cushings
+
+matched.nonasian.cushings <- matched.total.cushings - matched.asian.cushings
+
+matched.nonhl.cushings <- matched.total.cushings - matched.hl.cushings
+```
+
+Details specified in the manuscript:
+
+- For example, among participants with a $BMI > 30 mg/m^2$, participants with Cushing’s disease had a higher BMI than controls (p=`r wilcox.test(BMI~Cushings, data=master.data |> filter(Obesity=="Obese"))$p.value`).
+- Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (`r matched.table.gender[[2]] |> mutate(Pct = Obese/(NonObese+Obese)*100) |> filter(GenderName=="Female")|> pull(Pct)`% of females with Cushing's disease had a $BMI>30$) than males (`r matched.table.gender[[2]] |> mutate(Pct = Obese/(NonObese+Obese)*100) |> filter(GenderName=="Male")|> pull(Pct)`%), p=`r chisq.test(matched.table.gender[[2]] |> select(-GenderName) |> as.matrix() )$p.value`).  
+- Among participants with Cushing’s disease, Asian (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Asian")|> pull(Pct)`%) and Hispanic or Latino (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Hispanic or Latino")|> pull(Pct)`%) participants were more likely have a BMI  under 30 kg/m2 compared to the overall average (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Total")|> pull(Pct)`%, p=`r fisher.test(as.matrix(rbind(matched.asian.cushings,matched.nonasian.cushings)))$p.value` and `r fisher.test(as.matrix(rbind(matched.hl.cushings,matched.nonhl.cushings)))$p.value` respectively).
+- The average age of participants with Cushing’s disease with or without obesity was similar.
+
 
 ### Hba1c
 
