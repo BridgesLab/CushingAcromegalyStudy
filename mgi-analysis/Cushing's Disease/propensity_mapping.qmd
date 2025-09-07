@@ -645,8 +645,9 @@ ggplot(hba1c.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
+```
 
-
+```{r glucose-statistics}
 library(knitr)
 hba1c.summary %>% kable(caption="Summary of Hb1ac levels by obesity and pre-existing Cushing's")
 library(broom)
@@ -661,6 +662,65 @@ lm(value ~ Cushings + ObesityIII + Cushings:ObesityIII,data=hba1c.data) |>
 lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
+
+library(emmeans)
+library(dplyr)
+library(broom)
+library(tidyr)
+
+# Model is already fit:
+lm.glucose <- lm(Glucose ~ RaceEthnicity + AgeInYears + GenderName + Obesity * Cushings, data = glucose.data)
+
+## 1. Adjusted means
+emm.glucose <- emmeans(lm.glucose, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "Glucose",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.glucose <- tidy(lm.glucose) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "Glucose",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.glucose %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.glucose <- means_wide %>%
+  left_join(contrast.glucose, by = c("Outcome", "Obesity"))
+
+# Add interaction term as separate row or column as you prefer:
+# simplest: keep it separate and rbind across outcomes later
+# e.g. interaction_row.glucose
+
+# View
+table.glucose
+interaction_row.glucose
+
 ```
 
 ### Glucose

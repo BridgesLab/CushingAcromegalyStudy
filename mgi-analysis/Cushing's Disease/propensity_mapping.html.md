@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.070187e-33 </td>
+   <td style="text-align:right;"> 2.432753e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.288870e-60 </td>
+   <td style="text-align:right;"> 1.233253e-59 </td>
   </tr>
 </tbody>
 </table>
@@ -661,29 +661,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.446412e-30 </td>
-   <td style="text-align:right;"> 1.376546e-21 </td>
+   <td style="text-align:right;"> 1.565222e-29 </td>
+   <td style="text-align:right;"> 1.023297e-20 </td>
    <td style="text-align:right;"> 5171 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.317280e-21 </td>
-   <td style="text-align:right;"> 4.997645e-37 </td>
+   <td style="text-align:right;"> 1.942181e-19 </td>
+   <td style="text-align:right;"> 2.221119e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.790823e-24 </td>
-   <td style="text-align:right;"> 2.058589e-45 </td>
+   <td style="text-align:right;"> 2.458047e-24 </td>
+   <td style="text-align:right;"> 1.148004e-44 </td>
    <td style="text-align:right;"> 3417 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.640672e-16 </td>
-   <td style="text-align:right;"> 2.828051e-72 </td>
+   <td style="text-align:right;"> 2.130490e-17 </td>
+   <td style="text-align:right;"> 6.374958e-72 </td>
    <td style="text-align:right;"> 229 </td>
   </tr>
 </tbody>
@@ -1216,11 +1216,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.912392e-35 </td>
+   <td style="text-align:right;"> 3.904457e-40 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.776470e-30 </td>
+   <td style="text-align:right;"> 1.711997e-29 </td>
   </tr>
 </tbody>
 </table>
@@ -1301,11 +1301,9 @@ chisq.test(x=as.numeric(separate(hba1c.summary.gender, `Cushing's`, sep=" ", int
 :::
 :::
 
+::: {.cell}
 
-
-
-
-```{hba1c-analyses}
+```{.r .cell-code}
 hba1c.summary <-
   hba1c.data %>%
   group_by(Cushings,Obesity) |>
@@ -1336,7 +1334,13 @@ ggplot(hba1c.summary,
   ) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
+```
 
+::: {.cell-output-display}
+![](figures/hba1c-analyses-1.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(hba1c.summary.iii,
        aes(y=mean,
            ymin=mean-se,
@@ -1350,7 +1354,13 @@ ggplot(hba1c.summary.iii,
   ) +
   labs(y="Hba1c (Percent)",x="") +
   theme_classic()
+```
 
+::: {.cell-output-display}
+![](figures/hba1c-analyses-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(hba1c.data,
        aes(y=value,
            x=BMI,
@@ -1359,23 +1369,99 @@ ggplot(hba1c.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Hba1c (Percent)") +
   theme_classic()
+```
 
+::: {.cell-output-display}
+![](figures/hba1c-analyses-3.png){width=672}
+:::
 
+```{.r .cell-code}
 library(knitr)
 hba1c.summary %>% kable(caption="Summary of Hb1ac levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of Hb1ac levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|        se|        sd|  n|
+|--------:|:---------|--------:|---------:|---------:|--:|
+|        0|Non-Obese | 5.501020| 0.0616673| 0.6104747| 98|
+|        0|Obese     | 5.870370| 0.1225683| 1.1031143| 81|
+|        1|Non-Obese | 6.450000| 0.4856267| 0.9712535|  4|
+|        1|Obese     | 7.307692| 0.5129679| 1.8495322| 13|
+
+
+:::
+
+```{.r .cell-code}
 library(broom)
 lm(value ~ Cushings + Obesity + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Hba1c")
+```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on Hba1c
+
+|term                  |  estimate| std.error|  statistic|   p.value|
+|:---------------------|---------:|---------:|----------:|---------:|
+|(Intercept)           | 5.5010204| 0.0970926| 56.6574481| 0.0000000|
+|Cushings              | 0.9489796| 0.4902937|  1.9355328| 0.0543938|
+|ObesityObese          | 0.3693500| 0.1443345|  2.5589854| 0.0112683|
+|Cushings:ObesityObese | 0.4883423| 0.5682062|  0.8594456| 0.3911665|
+
+
+:::
+
+```{.r .cell-code}
 lm(value ~ Cushings + ObesityIII + Cushings:ObesityIII,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Class III Obesity and Cushings on Hba1c")
+```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Class III Obesity and Cushings on Hba1c
+
+|term                               |  estimate| std.error| statistic|   p.value|
+|:----------------------------------|---------:|---------:|---------:|---------:|
+|(Intercept)                        | 5.5748428| 0.0721782| 77.237240| 0.0000000|
+|Cushings                           | 0.7651572| 0.2967216|  2.578704| 0.0106656|
+|ObesityIIIClass III Obese          | 0.8351572| 0.2159322|  3.867683| 0.0001504|
+|Cushings:ObesityIIIClass III Obese | 1.0248428| 0.4977902|  2.058784| 0.0408651|
+
+
+:::
+
+```{.r .cell-code}
 lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c")
 ```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Hba1c
+
+|term                  |   estimate| std.error|  statistic|   p.value|
+|:---------------------|----------:|---------:|----------:|---------:|
+|(Intercept)           |  4.1987483| 0.2552271| 16.4510295| 0.0000000|
+|Cushings              |  1.0825194| 0.4566348|  2.3706457| 0.0187476|
+|BMI                   |  0.0478872| 0.0080251|  5.9671600| 0.0000000|
+|Cushings:ObesityObese | -0.0452704| 0.5351304| -0.0845969| 0.9326700|
+
+
+:::
+:::
+
+
+
 
 ### Glucose
 
@@ -1652,11 +1738,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.274627e-34 </td>
+   <td style="text-align:right;"> 4.215606e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.832056e-65 </td>
+   <td style="text-align:right;"> 5.959082e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -2121,11 +2207,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.859004e-30 </td>
+   <td style="text-align:right;"> 2.011856e-30 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.158514e-18 </td>
+   <td style="text-align:right;"> 1.556907e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2552,11 +2638,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.404476e-41 </td>
+   <td style="text-align:right;"> 1.207737e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.788001e-41 </td>
+   <td style="text-align:right;"> 1.447521e-41 </td>
   </tr>
 </tbody>
 </table>
@@ -3129,11 +3215,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.840757e-36 </td>
+   <td style="text-align:right;"> 7.219250e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 9.710883e-68 </td>
+   <td style="text-align:right;"> 5.385917e-67 </td>
   </tr>
 </tbody>
 </table>
