@@ -701,7 +701,7 @@ contrast.hba1c <- contrast(emmeans(lm.hba1c, ~ Cushings | Obesity),
 interaction_row.hba1c <- tidy(lm.hba1c) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "HbA1c",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -908,7 +908,7 @@ contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
 interaction_row.glucose <- tidy(lm.glucose) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "Glucose",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1123,7 +1123,7 @@ contrast.alt <- contrast(emmeans(lm.alt, ~ Cushings | Obesity),
 interaction_row.alt <- tidy(lm.alt) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "ALT",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1342,7 +1342,7 @@ contrast.ldl <- contrast(emmeans(lm.ldl, ~ Cushings | Obesity),
 interaction_row.ldl <- tidy(lm.ldl) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "LDL-C",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -2028,7 +2028,8 @@ table_summary <- bind_rows(
   table.map,
   table.sbp,
   table.dbp
-) 
+) |>
+  select(-contrast)
 
 table_summary |>
   kable(caption="Summary of contrasts for all outcomes") |>
@@ -2044,10 +2045,12 @@ interaction_summary <- bind_rows(
   interaction_row.map,
   interaction_row.sbp,
   interaction_row.dbp
-) 
+) |>
+  select(Outcome,Interaction_CI,p.value) |>
+  rename(`Interaction Estimate`=Interaction_CI)
 
 interaction_summary |>
-  kable(caption="Summary of interactions for all outcomes") |>
+  kable(caption="Summary of interactions for all outcomes as mean with 95% confidence interval") |>
   kable_styling(full_width = FALSE, position = "center")
 
 write_csv(interaction_summary,"Summary of Interactions - All Outcomes.csv")

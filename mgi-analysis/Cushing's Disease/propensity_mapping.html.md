@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.379816e-33 </td>
+   <td style="text-align:right;"> 7.132950e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.214693e-64 </td>
+   <td style="text-align:right;"> 2.415978e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -661,29 +661,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.076414e-30 </td>
-   <td style="text-align:right;"> 2.531932e-22 </td>
+   <td style="text-align:right;"> 4.458768e-30 </td>
+   <td style="text-align:right;"> 1.996731e-21 </td>
    <td style="text-align:right;"> 5171 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.750668e-21 </td>
-   <td style="text-align:right;"> 9.561990e-37 </td>
+   <td style="text-align:right;"> 6.594172e-20 </td>
+   <td style="text-align:right;"> 5.535067e-39 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.942979e-24 </td>
-   <td style="text-align:right;"> 3.755341e-45 </td>
+   <td style="text-align:right;"> 2.488950e-23 </td>
+   <td style="text-align:right;"> 2.185963e-44 </td>
    <td style="text-align:right;"> 3417 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.732484e-16 </td>
-   <td style="text-align:right;"> 4.901963e-72 </td>
+   <td style="text-align:right;"> 1.293993e-16 </td>
+   <td style="text-align:right;"> 1.292181e-70 </td>
    <td style="text-align:right;"> 229 </td>
   </tr>
 </tbody>
@@ -1216,11 +1216,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.175648e-33 </td>
+   <td style="text-align:right;"> 2.700864e-37 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 7.747289e-30 </td>
+   <td style="text-align:right;"> 4.139216e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1507,7 +1507,7 @@ contrast.hba1c <- contrast(emmeans(lm.hba1c, ~ Cushings | Obesity),
 interaction_row.hba1c <- tidy(lm.hba1c) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "HbA1c",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -1864,11 +1864,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.845928e-33 </td>
+   <td style="text-align:right;"> 4.312913e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.207730e-68 </td>
+   <td style="text-align:right;"> 8.408470e-70 </td>
   </tr>
 </tbody>
 </table>
@@ -2039,7 +2039,7 @@ contrast.glucose <- contrast(emmeans(lm.glucose, ~ Cushings | Obesity),
 interaction_row.glucose <- tidy(lm.glucose) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "Glucose",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -2395,11 +2395,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.057452e-29 </td>
+   <td style="text-align:right;"> 9.329441e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.929592e-18 </td>
+   <td style="text-align:right;"> 4.551175e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2613,7 +2613,7 @@ contrast.alt <- contrast(emmeans(lm.alt, ~ Cushings | Obesity),
 interaction_row.alt <- tidy(lm.alt) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "ALT",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -2950,11 +2950,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 8.256474e-42 </td>
+   <td style="text-align:right;"> 4.428908e-41 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.797477e-42 </td>
+   <td style="text-align:right;"> 4.208462e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -3188,7 +3188,7 @@ contrast.ldl <- contrast(emmeans(lm.ldl, ~ Cushings | Obesity),
 interaction_row.ldl <- tidy(lm.ldl) %>%
   filter(term == "Cushings:ObesityObese") %>%
   mutate(
-    Outcome = "value",
+    Outcome = "LDL-C",
     Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
                              estimate,
                              estimate - 1.96 * std.error,
@@ -3652,11 +3652,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.342914e-34 </td>
+   <td style="text-align:right;"> 2.268974e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.065669e-67 </td>
+   <td style="text-align:right;"> 7.724852e-70 </td>
   </tr>
 </tbody>
 </table>
@@ -4749,7 +4749,8 @@ table_summary <- bind_rows(
   table.map,
   table.sbp,
   table.dbp
-) 
+) |>
+  select(-contrast)
 
 table_summary |>
   kable(caption="Summary of contrasts for all outcomes") |>
@@ -4767,7 +4768,6 @@ table_summary |>
    <th style="text-align:left;"> Obesity </th>
    <th style="text-align:left;"> Control </th>
    <th style="text-align:left;"> Cushing </th>
-   <th style="text-align:left;"> contrast </th>
    <th style="text-align:left;"> Diff_CI </th>
    <th style="text-align:right;"> p.value </th>
   </tr>
@@ -4778,7 +4778,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 99.32 (98.14–100.50) </td>
    <td style="text-align:left;"> 126.26 (120.93–131.60) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 26.95 (21.66–32.24) </td>
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
@@ -4787,7 +4786,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 107.45 (106.19–108.71) </td>
    <td style="text-align:left;"> 133.63 (129.56–137.71) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 26.18 (22.18–30.19) </td>
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
@@ -4796,7 +4794,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 5.61 (5.28–5.95) </td>
    <td style="text-align:left;"> 6.54 (5.59–7.50) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 0.93 (-0.02–1.88) </td>
    <td style="text-align:right;"> 0.0562223 </td>
   </tr>
@@ -4805,7 +4802,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 6.03 (5.72–6.34) </td>
    <td style="text-align:left;"> 7.43 (6.84–8.01) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 1.40 (0.84–1.95) </td>
    <td style="text-align:right;"> 0.0000017 </td>
   </tr>
@@ -4814,7 +4810,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 23.01 (16.92–29.10) </td>
    <td style="text-align:left;"> 56.08 (43.75–68.42) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 33.07 (21.53–44.61) </td>
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
@@ -4823,7 +4818,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 29.11 (22.91–35.31) </td>
    <td style="text-align:left;"> 98.34 (87.69–108.98) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 69.23 (59.98–78.47) </td>
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
@@ -4832,7 +4826,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 115.38 (106.32–124.44) </td>
    <td style="text-align:left;"> 76.76 (30.57–122.94) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> -38.62 (-84.68–7.44) </td>
    <td style="text-align:right;"> 0.0995712 </td>
   </tr>
@@ -4841,7 +4834,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 112.43 (101.94–122.91) </td>
    <td style="text-align:left;"> 122.09 (97.36–146.83) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 9.67 (-16.20–35.53) </td>
    <td style="text-align:right;"> 0.4609357 </td>
   </tr>
@@ -4850,7 +4842,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 82.80 (79.47–86.13) </td>
    <td style="text-align:left;"> 95.35 (85.47–105.22) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 12.55 (2.97–22.12) </td>
    <td style="text-align:right;"> 0.0103679 </td>
   </tr>
@@ -4859,7 +4850,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 88.57 (84.77–92.38) </td>
    <td style="text-align:left;"> 96.51 (87.65–105.37) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 7.94 (-0.72–16.59) </td>
    <td style="text-align:right;"> 0.0721237 </td>
   </tr>
@@ -4868,7 +4858,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 119.59 (119.09–120.10) </td>
    <td style="text-align:left;"> 130.47 (126.97–133.97) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 10.88 (7.39–14.37) </td>
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
@@ -4877,7 +4866,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 126.01 (125.46–126.57) </td>
    <td style="text-align:left;"> 130.51 (127.83–133.19) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 4.50 (1.84–7.16) </td>
    <td style="text-align:right;"> 0.0009277 </td>
   </tr>
@@ -4886,7 +4874,6 @@ table_summary |>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:left;"> 68.80 (68.46–69.14) </td>
    <td style="text-align:left;"> 74.34 (72.00–76.67) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 5.53 (3.21–7.86) </td>
    <td style="text-align:right;"> 0.0000031 </td>
   </tr>
@@ -4895,7 +4882,6 @@ table_summary |>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:left;"> 72.26 (71.89–72.63) </td>
    <td style="text-align:left;"> 72.99 (71.20–74.77) </td>
-   <td style="text-align:left;"> Cushings1 - Cushings0 </td>
    <td style="text-align:left;"> 0.73 (-1.05–2.50) </td>
    <td style="text-align:right;"> 0.4216498 </td>
   </tr>
@@ -4917,10 +4903,12 @@ interaction_summary <- bind_rows(
   interaction_row.map,
   interaction_row.sbp,
   interaction_row.dbp
-) 
+) |>
+  select(Outcome,Interaction_CI,p.value) |>
+  rename(`Interaction Estimate`=Interaction_CI)
 
 interaction_summary |>
-  kable(caption="Summary of interactions for all outcomes") |>
+  kable(caption="Summary of interactions for all outcomes as mean with 95% confidence interval") |>
   kable_styling(full_width = FALSE, position = "center")
 ```
 
@@ -4928,81 +4916,49 @@ interaction_summary |>
 
 `````{=html}
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>Summary of interactions for all outcomes</caption>
+<caption>Summary of interactions for all outcomes as mean with 95% confidence interval</caption>
  <thead>
   <tr>
    <th style="text-align:left;"> Outcome </th>
-   <th style="text-align:left;"> term </th>
-   <th style="text-align:right;"> estimate </th>
-   <th style="text-align:right;"> std.error </th>
-   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:left;"> Interaction Estimate </th>
    <th style="text-align:right;"> p.value </th>
-   <th style="text-align:left;"> Interaction_CI </th>
   </tr>
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> value </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> -0.7643105 </td>
-   <td style="text-align:right;"> 3.3853713 </td>
-   <td style="text-align:right;"> -0.2257686 </td>
-   <td style="text-align:right;"> 0.8213843 </td>
+   <td style="text-align:left;"> Glucose </td>
    <td style="text-align:left;"> -0.76 (-7.40–5.87) </td>
+   <td style="text-align:right;"> 0.8213843 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> value </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> 0.4677739 </td>
-   <td style="text-align:right;"> 0.5630989 </td>
-   <td style="text-align:right;"> 0.8307135 </td>
-   <td style="text-align:right;"> 0.4071892 </td>
+   <td style="text-align:left;"> HbA1c </td>
    <td style="text-align:left;"> 0.47 (-0.64–1.57) </td>
+   <td style="text-align:right;"> 0.4071892 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> value </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> 36.1532951 </td>
-   <td style="text-align:right;"> 7.5367413 </td>
-   <td style="text-align:right;"> 4.7969399 </td>
-   <td style="text-align:right;"> 0.0000017 </td>
+   <td style="text-align:left;"> ALT </td>
    <td style="text-align:left;"> 36.15 (21.38–50.93) </td>
+   <td style="text-align:right;"> 0.0000017 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> value </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> 48.2860803 </td>
-   <td style="text-align:right;"> 26.5594031 </td>
-   <td style="text-align:right;"> 1.8180409 </td>
-   <td style="text-align:right;"> 0.0714147 </td>
+   <td style="text-align:left;"> LDL-C </td>
    <td style="text-align:left;"> 48.29 (-3.77–100.34) </td>
+   <td style="text-align:right;"> 0.0714147 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Mean Arterial Pressure </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> -4.6119572 </td>
-   <td style="text-align:right;"> 6.5261241 </td>
-   <td style="text-align:right;"> -0.7066916 </td>
-   <td style="text-align:right;"> 0.4802756 </td>
    <td style="text-align:left;"> -4.61 (-17.40–8.18) </td>
+   <td style="text-align:right;"> 0.4802756 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Systolic Blood Pressure </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> -6.3842310 </td>
-   <td style="text-align:right;"> 2.2385607 </td>
-   <td style="text-align:right;"> -2.8519357 </td>
-   <td style="text-align:right;"> 0.0043492 </td>
    <td style="text-align:left;"> -6.38 (-10.77–-2.00) </td>
+   <td style="text-align:right;"> 0.0043492 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Diastolic Blood Pressure </td>
-   <td style="text-align:left;"> Cushings:ObesityObese </td>
-   <td style="text-align:right;"> -4.8068181 </td>
-   <td style="text-align:right;"> 1.4927238 </td>
-   <td style="text-align:right;"> -3.2201659 </td>
-   <td style="text-align:right;"> 0.0012829 </td>
    <td style="text-align:left;"> -4.81 (-7.73–-1.88) </td>
+   <td style="text-align:right;"> 0.0012829 </td>
   </tr>
 </tbody>
 </table>
