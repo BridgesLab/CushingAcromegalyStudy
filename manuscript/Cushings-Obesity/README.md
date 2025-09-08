@@ -11,7 +11,7 @@ This documemt shows where the results and tables are generated from.  Files are 
 | Table 3A | Main adjusted results    |  propensity-mapping.qmd |  Summary of Contrasts - All Outcomes.csv      |
 | Table 3B | Interaction analyses    | propensity-mapping.qmd  |  Summary of Interactions - All Outcomes.csv      |
 | Table 4 | Sensitivity analyses / subgroup results 
-| Supplementary Figure S1 | Balance diagnostics (Love plot of matched variables)                      | propensity-mapping.qmd  | love-plots-2.pdf |                                  |             |          |
+| Supplementary Figure S1 | Balance diagnostics (Love plot of matched variables)   | propensity-mapping.qmd  | love-plots-2.pdf |                                  |             |          |
 | Supplementary Figure S2 | Extended distributions for all outcomes                                |             |          |
 | Supplementary Figure S3 | Additional subgroup / sensitivity plots                                |             |          |
 | Supplementary Table S1 | Detailed matching diagnostics (propensity score details)                | propensity-mapping.qmd | Propensity Matching Summary - Age.csv |
