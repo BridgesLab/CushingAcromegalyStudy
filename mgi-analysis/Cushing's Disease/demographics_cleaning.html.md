@@ -39,11 +39,15 @@ color_scheme <- c("#00274c", "#ffcb05")
 :::
 
 
+
+
 ## Purpose
 
 To create a table about our control group demographics. SES, Race, Ethniciy, Age, and Sex specifically.
 
 ### Case Demographic Data
+
+
 
 
 ::: {.cell}
@@ -77,7 +81,11 @@ write_csv(cushings.data, case.filename)
 :::
 
 
+
+
 Written out cases as CaseDemographics.csv.  There was a total of 457 cases in this file.
+
+
 
 
 ::: {.cell}
@@ -100,9 +108,13 @@ write_csv(controls.data, controls.filename)
 :::
 
 
-Written out cases as ControlDemographics.csv.  There was a total of 99304 cases in this file.
+
+
+Written out cases as ControlDemographics.csv.  There was a total of 98436 cases in this file.
 
 ## Session Information
+
+
 
 
 ::: {.cell}
@@ -114,13 +126,13 @@ sessionInfo()
 ::: {.cell-output .cell-output-stdout}
 
 ```
-R version 4.4.0 (2024-04-24)
+R version 4.4.3 (2025-02-28)
 Platform: x86_64-pc-linux-gnu
-Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
+Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 
 Matrix products: default
-BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
-LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -142,16 +154,16 @@ other attached packages:
  [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
 
 loaded via a namespace (and not attached):
- [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    crayon_1.5.3     
- [5] compiler_4.4.0    tidyselect_1.2.1  parallel_4.4.0    scales_1.3.0     
+ [1] bit_4.0.5         gtable_0.3.6      jsonlite_1.8.8    crayon_1.5.3     
+ [5] compiler_4.4.3    tidyselect_1.2.1  parallel_4.4.3    scales_1.3.0     
  [9] yaml_2.3.9        fastmap_1.2.0     R6_2.5.1          generics_0.1.3   
 [13] htmlwidgets_1.6.4 munsell_0.5.1     pillar_1.9.0      tzdb_0.4.0       
 [17] rlang_1.1.4       utf8_1.2.4        stringi_1.8.4     xfun_0.45        
 [21] bit64_4.0.5       timechange_0.3.0  cli_3.6.3         withr_3.0.0      
-[25] magrittr_2.0.3    digest_0.6.36     grid_4.4.0        vroom_1.6.5      
+[25] magrittr_2.0.3    digest_0.6.36     grid_4.4.3        vroom_1.6.5      
 [29] rstudioapi_0.16.0 hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5      
 [33] evaluate_0.24.0   glue_1.8.0        fansi_1.0.6       colorspace_2.1-0 
-[37] rmarkdown_2.27    tools_4.4.0       pkgconfig_2.0.3   htmltools_0.5.8.1
+[37] rmarkdown_2.27    tools_4.4.3       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```
 
 

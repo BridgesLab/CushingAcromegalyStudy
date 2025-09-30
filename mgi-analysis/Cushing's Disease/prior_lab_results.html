@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -65,12 +65,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="prior_lab_results_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="prior_lab_results_files/libs/quarto-html/anchor.min.js"></script>
 <link href="prior_lab_results_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="prior_lab_results_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="prior_lab_results_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="prior_lab_results_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="prior_lab_results_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="prior_lab_results_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="prior_lab_results_files/libs/bootstrap/bootstrap-fab5046e44d814aed33db37120a1c224.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -233,11 +233,11 @@ window.Quarto = {
 <li><strong>Diagnoses</strong> are in DiagnosesComprehensiveAll.csv. This includes patient ID, encouter ID, TermCodeMapped (ICD code).</li>
 <li>The EncounterAll.csv contains metadata about encounters including dates and BMIs</li>
 </ul>
-<p>This files was most recently updated on 2025-05-08. This script was most recently updated on Fri May 16 13:07:33 2025.</p>
+<p>This files was most recently updated on 2025-09-29. This script was most recently updated on Mon Sep 29 17:02:54 2025.</p>
 </section>
 <section id="lab-results" class="level2">
 <h2 class="anchored" data-anchor-id="lab-results">Lab Results</h2>
-<p>There are 475 unique patients in this data set.</p>
+<p>There are 476 unique patients in this data set.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -247,7 +247,7 @@ window.Quarto = {
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Total number of lab results for cases."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Total number of lab results for cases.</caption>
 <thead>
 <tr class="header">
@@ -258,30 +258,106 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">GLUC</td>
-<td style="text-align: right;">4363</td>
+<td style="text-align: right;">4563</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">POT</td>
+<td style="text-align: right;">4378</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AST</td>
+<td style="text-align: right;">714</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ALT</td>
-<td style="text-align: right;">577</td>
+<td style="text-align: right;">709</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">KA</td>
+<td style="text-align: right;">453</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">K+A</td>
+<td style="text-align: right;">272</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">APOTA</td>
+<td style="text-align: right;">244</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRIG</td>
+<td style="text-align: right;">96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KV</td>
+<td style="text-align: right;">75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">K+V</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">POTU</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">A1C</td>
 <td style="text-align: right;">35</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">CHOL</td>
+<td style="text-align: right;">28</td>
+</tr>
 <tr class="even">
-<td style="text-align: left;">LDLC</td>
-<td style="text-align: right;">25</td>
+<td style="text-align: left;">HDL</td>
+<td style="text-align: right;">27</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">DLDL</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: left;">CHOL/HDL</td>
+<td style="text-align: right;">26</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">LDLC</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">APOTV</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DLDL</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">GLUC_WB</td>
 <td style="text-align: right;">3</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">INS</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FTRIG</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRIGF</td>
+<td style="text-align: right;">2</td>
+</tr>
 <tr class="odd">
 <td style="text-align: left;">GLYC</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NHDL</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">POTUQ</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WBPOT</td>
 <td style="text-align: right;">1</td>
 </tr>
 </tbody>
@@ -313,7 +389,7 @@ window.Quarto = {
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>glucose.summary <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of glucose levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of glucose levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -332,27 +408,27 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td style="text-align: left;">Before</td>
-<td style="text-align: right;">131.6744</td>
-<td style="text-align: right;">2.377453</td>
+<td style="text-align: right;">133.1354</td>
+<td style="text-align: right;">2.410461</td>
 <td style="text-align: right;">347</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Unknown</td>
-<td style="text-align: right;">122.0000</td>
-<td style="text-align: right;">4.724052</td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">122.7647</td>
+<td style="text-align: right;">5.179519</td>
+<td style="text-align: right;">17</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">114.0000</td>
-<td style="text-align: right;">2.000000</td>
+<td style="text-align: right;">115.0000</td>
+<td style="text-align: right;">1.000000</td>
 <td style="text-align: right;">2</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>We found 441 patients that had a lab result for a HbA1c test.</p>
+<p>We found 442 patients that had a lab result for a HbA1c test.</p>
 <p>Now looking at the effect of BMI</p>
 <div class="cell">
 <details class="code-fold">
@@ -370,7 +446,7 @@ window.Quarto = {
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of Hb1ac levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of Hb1ac levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -385,15 +461,15 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">Before</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">124.2077</td>
-<td style="text-align: right;">2.909604</td>
+<td style="text-align: right;">125.8308</td>
+<td style="text-align: right;">2.862609</td>
 <td style="text-align: right;">130</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Before</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">137.0376</td>
-<td style="text-align: right;">3.379310</td>
+<td style="text-align: right;">138.4131</td>
+<td style="text-align: right;">3.456081</td>
 <td style="text-align: right;">213</td>
 </tr>
 </tbody>
@@ -459,7 +535,7 @@ window.Quarto = {
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(lm.glucose, gam.glucose) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Glucose for linear and nonlinear models,lower AIC indicates better model fit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Glucose for linear and nonlinear models,lower AIC indicates better model fit</caption>
 <thead>
 <tr class="header">
@@ -472,12 +548,12 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">lm.glucose</td>
 <td style="text-align: right;">3.000000</td>
-<td style="text-align: right;">3563.689</td>
+<td style="text-align: right;">3577.600</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">gam.glucose</td>
-<td style="text-align: right;">3.000441</td>
-<td style="text-align: right;">3563.689</td>
+<td style="text-align: right;">3.267101</td>
+<td style="text-align: right;">3577.559</td>
 </tr>
 </tbody>
 </table>
@@ -489,7 +565,7 @@ window.Quarto = {
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">term</th>
@@ -502,10 +578,10 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">s(BMI)</td>
-<td style="text-align: right;">1.000441</td>
-<td style="text-align: right;">1.000883</td>
-<td style="text-align: right;">15.42868</td>
-<td style="text-align: right;">0.0001037</td>
+<td style="text-align: right;">1.267101</td>
+<td style="text-align: right;">1.494824</td>
+<td style="text-align: right;">6.581876</td>
+<td style="text-align: right;">0.0034267</td>
 </tr>
 </tbody>
 </table>
@@ -517,7 +593,7 @@ window.Quarto = {
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Linear model for glucose prior to intervention"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Linear model for glucose prior to intervention</caption>
 <thead>
 <tr class="header">
@@ -531,17 +607,17 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">96.974603</td>
-<td style="text-align: right;">9.258379</td>
-<td style="text-align: right;">10.474253</td>
+<td style="text-align: right;">103.6243701</td>
+<td style="text-align: right;">9.4480336</td>
+<td style="text-align: right;">10.967824</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">1.024951</td>
-<td style="text-align: right;">0.260810</td>
-<td style="text-align: right;">3.929874</td>
-<td style="text-align: right;">0.0001029</td>
+<td style="text-align: right;">0.8741101</td>
+<td style="text-align: right;">0.2661526</td>
+<td style="text-align: right;">3.284244</td>
+<td style="text-align: right;">0.0011286</td>
 </tr>
 </tbody>
 </table>
@@ -579,7 +655,7 @@ window.Quarto = {
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>hba1c.summary <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of Hb1ac levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of Hb1ac levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -592,25 +668,25 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">After</td>
-<td style="text-align: right;">6.18</td>
+<td style="text-align: right;">6.180000</td>
 <td style="text-align: right;">0.5112729</td>
 <td style="text-align: right;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Before</td>
-<td style="text-align: right;">6.85</td>
-<td style="text-align: right;">0.3142163</td>
+<td style="text-align: right;">6.854167</td>
+<td style="text-align: right;">0.3131756</td>
 <td style="text-align: right;">24</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Unknown</td>
-<td style="text-align: right;">5.30</td>
+<td style="text-align: right;">5.300000</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">5.95</td>
+<td style="text-align: right;">5.950000</td>
 <td style="text-align: right;">0.9500000</td>
 <td style="text-align: right;">2</td>
 </tr>
@@ -636,7 +712,7 @@ window.Quarto = {
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of Hb1ac levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of Hb1ac levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -658,8 +734,8 @@ window.Quarto = {
 <tr class="even">
 <td style="text-align: left;">Before</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">7.278571</td>
-<td style="text-align: right;">0.4751146</td>
+<td style="text-align: right;">7.285714</td>
+<td style="text-align: right;">0.4725262</td>
 <td style="text-align: right;">14</td>
 </tr>
 </tbody>
@@ -725,7 +801,7 @@ window.Quarto = {
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(lm.hba1c, gam.hba1c) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"AIC for linear and nonlinear models,lower AIC indicates better model fit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>AIC for linear and nonlinear models,lower AIC indicates better model fit</caption>
 <thead>
 <tr class="header">
@@ -738,12 +814,12 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">lm.hba1c</td>
 <td style="text-align: right;">4.000000</td>
-<td style="text-align: right;">74.57534</td>
+<td style="text-align: right;">74.25328</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">gam.hba1c</td>
-<td style="text-align: right;">5.671663</td>
-<td style="text-align: right;">71.52501</td>
+<td style="text-align: right;">5.759355</td>
+<td style="text-align: right;">71.02013</td>
 </tr>
 </tbody>
 </table>
@@ -755,7 +831,7 @@ window.Quarto = {
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">term</th>
@@ -768,10 +844,10 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">s(BMI)</td>
-<td style="text-align: right;">2.671663</td>
-<td style="text-align: right;">3.345978</td>
-<td style="text-align: right;">4.062093</td>
-<td style="text-align: right;">0.020986</td>
+<td style="text-align: right;">2.759355</td>
+<td style="text-align: right;">3.450598</td>
+<td style="text-align: right;">4.121414</td>
+<td style="text-align: right;">0.0190887</td>
 </tr>
 </tbody>
 </table>
@@ -788,7 +864,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Used a generalized additive model with a splined term for BMI. The EDF for this was 2.671663, where <span class="math inline">\(edf &gt; 1\)</span> suggests nonlinearity, this was a better model fit based on the AIC.</p>
+<p>Used a generalized additive model with a splined term for BMI. The EDF for this was 2.7593546, where <span class="math inline">\(edf &gt; 1\)</span> suggests nonlinearity, this was a better model fit based on the AIC.</p>
 </section>
 </section>
 <section id="alt" class="level3">
@@ -814,7 +890,7 @@ window.Quarto = {
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>alt.summary <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of ALT levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of ALT levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -833,15 +909,15 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td style="text-align: left;">Before</td>
-<td style="text-align: right;">104.58696</td>
-<td style="text-align: right;">20.705279</td>
+<td style="text-align: right;">104.60870</td>
+<td style="text-align: right;">21.066012</td>
 <td style="text-align: right;">92</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Unknown</td>
-<td style="text-align: right;">60.60000</td>
-<td style="text-align: right;">21.465839</td>
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">68.18182</td>
+<td style="text-align: right;">20.844366</td>
+<td style="text-align: right;">11</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">NA</td>
@@ -853,7 +929,7 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>We found 170 patients that had a lab result for a ALT test.</p>
+<p>We found 171 patients that had a lab result for a ALT test.</p>
 </section>
 <section id="ast" class="level3">
 <h3 class="anchored" data-anchor-id="ast">AST</h3>
@@ -878,7 +954,7 @@ window.Quarto = {
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>ast.summary <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of AST levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table>
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of AST levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -889,11 +965,35 @@ window.Quarto = {
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td style="text-align: left;">After</td>
+<td style="text-align: right;">26.33846</td>
+<td style="text-align: right;">1.145282</td>
+<td style="text-align: right;">65</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Before</td>
+<td style="text-align: right;">73.26087</td>
+<td style="text-align: right;">19.732086</td>
+<td style="text-align: right;">92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Unknown</td>
+<td style="text-align: right;">51.36364</td>
+<td style="text-align: right;">16.840575</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">50.00000</td>
+<td style="text-align: right;">33.005050</td>
+<td style="text-align: right;">3</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>We found 0 patients that had a lab result for a AST test.</p>
+<p>We found 171 patients that had a lab result for a AST test.</p>
 <p>Now looking at the effect of BMI</p>
 <div class="cell">
 <details class="code-fold">
@@ -911,7 +1011,7 @@ window.Quarto = {
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of ALT levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of ALT levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -926,15 +1026,15 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">Before</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">62.56757</td>
-<td style="text-align: right;">11.79343</td>
+<td style="text-align: right;">59.37838</td>
+<td style="text-align: right;">8.795162</td>
 <td style="text-align: right;">37</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Before</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">140.17647</td>
-<td style="text-align: right;">35.73563</td>
+<td style="text-align: right;">142.52941</td>
+<td style="text-align: right;">36.759412</td>
 <td style="text-align: right;">51</td>
 </tr>
 </tbody>
@@ -999,7 +1099,7 @@ window.Quarto = {
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(lm.alt, gam.alt) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"AIC for linear and nonlinear models,lower AIC indicates better model fit for ALT levels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>AIC for linear and nonlinear models,lower AIC indicates better model fit for ALT levels</caption>
 <thead>
 <tr class="header">
@@ -1012,12 +1112,12 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">lm.alt</td>
 <td style="text-align: right;">4.000000</td>
-<td style="text-align: right;">1171.819</td>
+<td style="text-align: right;">1174.292</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">gam.alt</td>
-<td style="text-align: right;">6.383201</td>
-<td style="text-align: right;">1162.108</td>
+<td style="text-align: right;">6.458279</td>
+<td style="text-align: right;">1166.152</td>
 </tr>
 </tbody>
 </table>
@@ -1029,7 +1129,7 @@ window.Quarto = {
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">term</th>
@@ -1042,10 +1142,10 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">s(BMI)</td>
-<td style="text-align: right;">3.383201</td>
-<td style="text-align: right;">4.248939</td>
-<td style="text-align: right;">7.242125</td>
-<td style="text-align: right;">4.01e-05</td>
+<td style="text-align: right;">3.458279</td>
+<td style="text-align: right;">4.338225</td>
+<td style="text-align: right;">6.785832</td>
+<td style="text-align: right;">7.15e-05</td>
 </tr>
 </tbody>
 </table>
@@ -1062,7 +1162,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Used a generalized additive model with a splined term for BMI. The EDF for this was 3.3832013, where <span class="math inline">\(edf &gt; 1\)</span> suggests nonlinearity, this was a better model fit based on the AIC.</p>
+<p>Used a generalized additive model with a splined term for BMI. The EDF for this was 3.4582788, where <span class="math inline">\(edf &gt; 1\)</span> suggests nonlinearity, this was a better model fit based on the AIC.</p>
 </section>
 <section id="ldl-cholesterol" class="level3">
 <h3 class="anchored" data-anchor-id="ldl-cholesterol">LDL Cholesterol</h3>
@@ -1087,7 +1187,7 @@ window.Quarto = {
 <span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>ldl.summary <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of LDL-C levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of LDL-C levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -1112,9 +1212,9 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Unknown</td>
-<td style="text-align: right;">116.0</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">79.5</td>
+<td style="text-align: right;">36.50000</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">NA</td>
@@ -1126,7 +1226,7 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>We found 26 patients that had a lab result for a LDL-C test.</p>
+<p>We found 27 patients that had a lab result for a LDL-C test.</p>
 <p>Now looking at the effect of BMI</p>
 <div class="cell">
 <details class="code-fold">
@@ -1144,7 +1244,7 @@ window.Quarto = {
 <span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of Hb1ac levels before and after procedures"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Summary of Hb1ac levels before and after procedures</caption>
 <thead>
 <tr class="header">
@@ -1233,7 +1333,7 @@ window.Quarto = {
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(lm.ldl, gam.ldl) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"AIC for linear and nonlinear models,lower AIC indicates better model fit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>AIC for linear and nonlinear models,lower AIC indicates better model fit</caption>
 <thead>
 <tr class="header">
@@ -1263,7 +1363,7 @@ window.Quarto = {
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">term</th>
@@ -1307,13 +1407,13 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.4.0 (2024-04-24)
+<pre><code>R version 4.4.3 (2025-02-28)
 Platform: x86_64-pc-linux-gnu
-Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
+Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 
 Matrix products: default
-BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
-LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1330,7 +1430,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] mgcv_1.9-1      nlme_3.1-164    broom_1.0.6     knitr_1.48     
+ [1] mgcv_1.9-1      nlme_3.1-167    broom_1.0.6     knitr_1.48     
  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
 [13] ggplot2_3.5.1   tidyverse_2.0.0
@@ -1338,16 +1438,16 @@ other attached packages:
 loaded via a namespace (and not attached):
  [1] utf8_1.2.4        generics_0.1.3    lattice_0.22-6    stringi_1.8.4    
  [5] hms_1.1.3         digest_0.6.36     magrittr_2.0.3    evaluate_0.24.0  
- [9] grid_4.4.0        timechange_0.3.0  fastmap_1.2.0     Matrix_1.7-0     
+ [9] grid_4.4.3        timechange_0.3.0  fastmap_1.2.0     Matrix_1.7-2     
 [13] jsonlite_1.8.8    backports_1.5.0   fansi_1.0.6       scales_1.3.0     
 [17] cli_3.6.3         rlang_1.1.4       crayon_1.5.3      bit64_4.0.5      
-[21] munsell_0.5.1     splines_4.4.0     withr_3.0.0       yaml_2.3.9       
-[25] tools_4.4.0       parallel_4.4.0    tzdb_0.4.0        colorspace_2.1-0 
+[21] munsell_0.5.1     splines_4.4.3     withr_3.0.0       yaml_2.3.9       
+[25] tools_4.4.3       parallel_4.4.3    tzdb_0.4.0        colorspace_2.1-0 
 [29] vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4   htmlwidgets_1.6.4
 [33] bit_4.0.5         vroom_1.6.5       pkgconfig_2.0.3   pillar_1.9.0     
-[37] gtable_0.3.5      glue_1.8.0        xfun_0.45         tidyselect_1.2.1 
+[37] gtable_0.3.6      glue_1.8.0        xfun_0.45         tidyselect_1.2.1 
 [41] rstudioapi_0.16.0 farver_2.1.2      htmltools_0.5.8.1 rmarkdown_2.27   
-[45] labeling_0.4.3    compiler_4.4.0   </code></pre>
+[45] labeling_0.4.3    compiler_4.4.3   </code></pre>
 </div>
 </div>
 </section>
@@ -1389,18 +1489,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1432,7 +1521,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1440,7 +1549,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -1537,7 +1646,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

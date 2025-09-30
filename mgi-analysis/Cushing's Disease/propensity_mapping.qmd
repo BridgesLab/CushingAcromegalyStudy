@@ -89,7 +89,7 @@ control.labs <- read_csv(control.lab.results.filename) |>
 library(lubridate)
 
 #this is used to filter for the window between when a lab result is allowable relative to the procedure.
-procedure.result.interval <- 30
+procedure.result.interval <- 365 #within a year
 
 lab.results <- bind_rows(control.labs |> mutate(Cushings=0),
                          case.labs |> mutate(Cushings=1)) |>  #combined, new column indicating cushings

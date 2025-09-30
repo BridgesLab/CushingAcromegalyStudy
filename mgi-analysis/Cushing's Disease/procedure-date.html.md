@@ -39,11 +39,15 @@ color_scheme <- c("#00274c", "#ffcb05")
 :::
 
 
+
+
 ## Purpose
 
 To load in the participant data about their Cushing's diagnoses and the procedures.  This is an important landmark for defining effects before or after.
 
 ## Experimental Details
+
+
 
 
 ::: {.cell}
@@ -65,6 +69,8 @@ diagnosis.data <- read_csv(diagnosis.datafile)
 :::
 
 
+
+
 ## Raw Data
 
 Relevant patient data is in these files:
@@ -78,13 +84,15 @@ Relevant patient data is in these files:
 Describe your raw data files, including what the columns mean (and what units they are in).
 
 
-This files was most recently updated on 2025-05-08.  This script was most recently updated on Fri May  9 20:12:30 2025.
+This files was most recently updated on 2025-09-29.  This script was most recently updated on Mon Sep 29 17:02:10 2025.
 
 ## Data Cleaning
 
 ### Procedures
 
 Procedures are defined by ICD codes. 
+
+
 
 
 ::: {.cell}
@@ -95,7 +103,11 @@ procedure_codes <- c("07.6", "07.61", "07.62", "07.63", "07.64", "07.65", "07.68
 :::
 
 
+
+
 We used these ICD codes to define the procedures 07.6,07.61,07.62,07.63,07.64,07.65,07.68,07.69,07.15,07.72,0GB00ZZ,0GT00ZZ,0GB03ZZ,0GB04ZZ,0GT04ZZ,0GC00ZZ,0GC03ZZ,0GC04ZZ,0GT00ZZ,0GT04ZZ.
+
+
 
 
 ::: {.cell}
@@ -110,9 +122,13 @@ cushings.procedures <-
 :::
 
 
+
+
 #### Unmapped Procedures
 
 Several procedures are not in our procedure codes. 
+
+
 
 
 ::: {.cell}
@@ -161,9 +177,13 @@ Table: Unmapped procedures and number of times they occured
 :::
 
 
+
+
 These all seem like reasonable procedures so I am going to keep all of them in the dataset.
 
 #### All Procedures
+
+
 
 
 ::: {.cell}
@@ -226,9 +246,13 @@ first.cushings.procedure <-
 :::
 
 
+
+
 #### Summary of Cushing's Procedures in the Dataset
 
 First checked which year the procedure first occured.
+
+
 
 
 ::: {.cell}
@@ -297,7 +321,11 @@ procedures.by.year |>
 :::
 
 
+
+
 Next evaluated the age at first diagnosis
+
+
 
 
 ::: {.cell}
@@ -325,11 +353,15 @@ procedures.by.age |>
 :::
 :::
 
+
+
 The average age of the first recorded diagnosis of Cushings is 45.255814 $\pm$ 15.7170456 (mean $\pm$ SD).
 
 ### Diagnoses
 
 Procedures are defined by ICD codes.  We used E24.0  for ICD10 coding and 255.0  for ICD9 coding
+
+
 
 
 ::: {.cell}
@@ -346,9 +378,13 @@ cushings.diagnosis.data <-
 :::
 
 
+
+
 #### Summary of Cushing's Diagnoses in the Dataset
 
 First checked which year the diagnoses first occured.
+
+
 
 
 ::: {.cell}
@@ -393,7 +429,7 @@ Table: Diagnoses per year
 | 2019| 20|
 | 2020| 16|
 | 2021| 31|
-| 2022| 22|
+| 2022| 23|
 | 2023| 28|
 | 2024| 16|
 
@@ -417,7 +453,11 @@ cushings.by.year |>
 :::
 
 
+
+
 Next evaluated the age at first diagnosis
+
+
 
 
 ::: {.cell}
@@ -446,9 +486,13 @@ cushings.by.age |>
 :::
 
 
-The average age of the first recorded diagnosis of Cushings is 45.0955414 $\pm$ 15.7073435 (mean $\pm$ SD).
+
+
+The average age of the first recorded diagnosis of Cushings is 45.1461864 $\pm$ 15.7291913 (mean $\pm$ SD).
 
 ### Matching Procedures to Diagnoses
+
+
 
 
 ::: {.cell}
@@ -467,9 +511,13 @@ combined.treatment.data.clean <-
 :::
 
 
+
+
 Out of 474 participants, there were 12 patients with errors in this data (treatment appears to have occured before diagnosis).  A few were missing procedure or diagnosis dates (n=5).  The remaining 457 were reasonable.  Surprisingly 363 patients had diagnoses and procedures on the same day.
 
 The average treatment interval, excluding these was 2.73522975929978 $\pm$ 16.1830919 days
+
+
 
 
 ::: {.cell}
@@ -502,9 +550,13 @@ combined.treatment.data.clean |>
 :::
 
 
+
+
 A file containing diagnosis dates, age and treatment intervals were written into CushingsDataClean.csv.  This can be used to anchor other diagnoses and lab results to before or after their Cushing's treatments.
 
 ## Session Information
+
+
 
 
 ::: {.cell}
@@ -516,13 +568,13 @@ sessionInfo()
 ::: {.cell-output .cell-output-stdout}
 
 ```
-R version 4.4.0 (2024-04-24)
+R version 4.4.3 (2025-02-28)
 Platform: x86_64-pc-linux-gnu
-Running under: Red Hat Enterprise Linux 8.8 (Ootpa)
+Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
 
 Matrix products: default
-BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRblas.so 
-LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -544,16 +596,16 @@ other attached packages:
  [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
 
 loaded via a namespace (and not attached):
- [1] bit_4.0.5         gtable_0.3.5      jsonlite_1.8.8    crayon_1.5.3     
- [5] compiler_4.4.0    tidyselect_1.2.1  parallel_4.4.0    scales_1.3.0     
+ [1] bit_4.0.5         gtable_0.3.6      jsonlite_1.8.8    crayon_1.5.3     
+ [5] compiler_4.4.3    tidyselect_1.2.1  parallel_4.4.3    scales_1.3.0     
  [9] yaml_2.3.9        fastmap_1.2.0     R6_2.5.1          labeling_0.4.3   
 [13] generics_0.1.3    htmlwidgets_1.6.4 munsell_0.5.1     pillar_1.9.0     
 [17] tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4        stringi_1.8.4    
 [21] xfun_0.45         bit64_4.0.5       timechange_0.3.0  cli_3.6.3        
-[25] withr_3.0.0       magrittr_2.0.3    digest_0.6.36     grid_4.4.0       
+[25] withr_3.0.0       magrittr_2.0.3    digest_0.6.36     grid_4.4.3       
 [29] vroom_1.6.5       rstudioapi_0.16.0 hms_1.1.3         lifecycle_1.0.4  
 [33] vctrs_0.6.5       evaluate_0.24.0   glue_1.8.0        farver_2.1.2     
-[37] fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27    tools_4.4.0      
+[37] fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27    tools_4.4.3      
 [41] pkgconfig_2.0.3   htmltools_0.5.8.1
 ```
 

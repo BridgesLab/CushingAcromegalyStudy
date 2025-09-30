@@ -242,7 +242,7 @@ window.Quarto = {
 <span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">#this is used to filter for the window between when a lab result is allowable relative to the procedure.</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>procedure.result.interval <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>procedure.result.interval <span class="ot">&lt;-</span> <span class="dv">365</span> <span class="co">#within a year</span></span>
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>lab.results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(control.labs <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Cushings=</span><span class="dv">0</span>),</span>
 <span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                         case.labs <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Cushings=</span><span class="dv">1</span>)) <span class="sc">|&gt;</span>  <span class="co">#combined, new column indicating cushings</span></span>
@@ -280,10 +280,10 @@ window.Quarto = {
 <p>Note the controls dont have ages or BMIs because it depends on when the lab results were obtained, so had to merge in with encounter data.</p>
 <section id="participant-inclusion-data" class="level3">
 <h3 class="anchored" data-anchor-id="participant-inclusion-data">Participant Inclusion Data</h3>
-<p>We began with 70327 controls who had lab data, and <strong>441</strong> cases with Cushing’s Disease.</p>
+<p>We began with 69797 controls who had lab data, and <strong>453</strong> cases with Cushing’s Disease.</p>
 <ul>
-<li><p><strong>Had Laboratory Results</strong>: We also removed 162 lab results from Cushing’s patients because they were outside of our acceptable window of 30 days before their procedure. This eliminated a total of <strong>2</strong> Cushings patients from our dataset.</p></li>
-<li><p><strong>Missing Demographic Data</strong> After filtering out missing demographic data we had 363 cases and 70070 controls with lab results. The specific pieces of missing information are found here:</p></li>
+<li><p><strong>Had Laboratory Results</strong>: We also removed 329 lab results from Cushing’s patients because they were outside of our acceptable window of 365 days before their procedure. This eliminated a total of <strong>1</strong> Cushings patients from our dataset.</p></li>
+<li><p><strong>Missing Demographic Data</strong> After filtering out missing demographic data we had 365 cases and 69273 controls with lab results. The specific pieces of missing information are found here:</p></li>
 </ul>
 <div class="cell">
 <details class="code-fold">
@@ -319,29 +319,29 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Any_na</td>
-<td style="text-align: right;">78</td>
+<td style="text-align: right;">90</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Ethnicity_na</td>
-<td style="text-align: right;">74</td>
+<td style="text-align: right;">85</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Gender_na</td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">18</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Race_na</td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">18</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Age_na</td>
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">12</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Our final dataset therefore included <strong>363</strong> Cushing’s patients, and we had the ability to draw from <strong>70070</strong> Cushing’s patients control patients.</p>
+<p>Our final dataset therefore included <strong>365</strong> Cushing’s patients, and we had the ability to draw from <strong>69273</strong> Cushing’s patients control patients.</p>
 </section>
 </section>
 <section id="propensity-mapping" class="level2">
@@ -370,40 +370,40 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0208        0.0077          0.6789
-AgeInYears                            46.1991       60.4624         -0.8822
-GenderCodeF                            0.8132        0.5534          0.6663
-GenderCodeM                            0.1868        0.4466         -0.6663
-RaceEthnicityAsian                     0.0165        0.0774         -0.4779
-RaceEthnicityBlack                     0.0423        0.1066         -0.3195
-RaceEthnicityHispanic or Latino        0.0448        0.0307          0.0683
-RaceEthnicityOther                     0.0198        0.0329         -0.0942
-RaceEthnicityWhite                     0.8767        0.7525          0.3776
+distance                               0.0183        0.0069          0.6672
+AgeInYears                            46.2443       59.9716         -0.8386
+GenderCodeF                            0.8110        0.5496          0.6677
+GenderCodeM                            0.1890        0.4504         -0.6677
+RaceEthnicityAsian                     0.0145        0.0764         -0.5172
+RaceEthnicityBlack                     0.0427        0.1028         -0.2976
+RaceEthnicityHispanic or Latino        0.0482        0.0304          0.0832
+RaceEthnicityOther                     0.0184        0.0322         -0.1025
+RaceEthnicityWhite                     0.8761        0.7581          0.3582
                                 Var. Ratio eCDF Mean eCDF Max
-distance                            3.6739    0.2424   0.5055
-AgeInYears                          0.9129    0.1752   0.3623
-GenderCodeF                              .    0.2597   0.2597
-GenderCodeM                              .    0.2597   0.2597
-RaceEthnicityAsian                       .    0.0609   0.0609
-RaceEthnicityBlack                       .    0.0643   0.0643
-RaceEthnicityHispanic or Latino          .    0.0141   0.0141
-RaceEthnicityOther                       .    0.0131   0.0131
-RaceEthnicityWhite                       .    0.1242   0.1242
+distance                            3.6746    0.2358   0.5026
+AgeInYears                          0.9541    0.1684   0.3461
+GenderCodeF                              .    0.2614   0.2614
+GenderCodeM                              .    0.2614   0.2614
+RaceEthnicityAsian                       .    0.0619   0.0619
+RaceEthnicityBlack                       .    0.0602   0.0602
+RaceEthnicityHispanic or Latino          .    0.0178   0.0178
+RaceEthnicityOther                       .    0.0138   0.0138
+RaceEthnicityWhite                       .    0.1180   0.1180
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0208        0.0200          0.0416
-AgeInYears                            46.1991       46.5324         -0.0206
-GenderCodeF                            0.8132        0.8132          0.0000
-GenderCodeM                            0.1868        0.1868          0.0000
-RaceEthnicityAsian                     0.0165        0.0165          0.0000
-RaceEthnicityBlack                     0.0423        0.0423          0.0000
-RaceEthnicityHispanic or Latino        0.0448        0.0448          0.0000
-RaceEthnicityOther                     0.0198        0.0198          0.0000
-RaceEthnicityWhite                     0.8767        0.8767          0.0000
+distance                               0.0183        0.0175          0.0465
+AgeInYears                            46.2443       46.6280         -0.0234
+GenderCodeF                            0.8110        0.8110          0.0000
+GenderCodeM                            0.1890        0.1890          0.0000
+RaceEthnicityAsian                     0.0145        0.0145          0.0000
+RaceEthnicityBlack                     0.0427        0.0427          0.0000
+RaceEthnicityHispanic or Latino        0.0482        0.0482          0.0000
+RaceEthnicityOther                     0.0184        0.0184          0.0000
+RaceEthnicityWhite                     0.8761        0.8761          0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            1.2617    0.0012   0.0354          0.0433
-AgeInYears                          1.0835    0.0038   0.0503          0.0234
+distance                            1.2964    0.0014   0.0372          0.0483
+AgeInYears                          1.0980    0.0043   0.0569          0.0263
 GenderCodeF                              .    0.0000   0.0000          0.0000
 GenderCodeM                              .    0.0000   0.0000          0.0000
 RaceEthnicityAsian                       .    0.0000   0.0000          0.0000
@@ -414,9 +414,9 @@ RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
 
 Sample Sizes:
           Control Treated
-All        509914    3998
-Matched     39980    3998
-Unmatched  469934       0
+All       1203585    8460
+Matched     84600    8460
+Unmatched 1118985       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -526,48 +526,48 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">44.79 ± 15.52</td>
-<td style="text-align: left;">46.30 ± 15.52</td>
+<td style="text-align: left;">44.72 ± 15.73</td>
+<td style="text-align: left;">46.26 ± 15.53</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">29.33 ± 7.46</td>
-<td style="text-align: left;">34.72 ± 13.83</td>
+<td style="text-align: left;">29.33 ± 7.52</td>
+<td style="text-align: left;">34.72 ± 13.78</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">6,971 (81.17%)</td>
-<td style="text-align: left;">284 (79.78%)</td>
+<td style="text-align: left;">6,079 (81.81%)</td>
+<td style="text-align: left;">287 (79.94%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">1,617 (18.83%)</td>
-<td style="text-align: left;">72 (20.22%)</td>
+<td style="text-align: left;">1,352 (18.19%)</td>
+<td style="text-align: left;">72 (20.06%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">7,406 (86.24%)</td>
-<td style="text-align: left;">310 (87.08%)</td>
+<td style="text-align: left;">6,383 (85.90%)</td>
+<td style="text-align: left;">313 (87.19%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Black</td>
-<td style="text-align: left;">399 (4.65%)</td>
-<td style="text-align: left;">19 (5.34%)</td>
+<td style="text-align: left;">372 (5.01%)</td>
+<td style="text-align: left;">19 (5.29%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">381 (4.44%)</td>
-<td style="text-align: left;">10 (2.81%)</td>
+<td style="text-align: left;">354 (4.76%)</td>
+<td style="text-align: left;">10 (2.79%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Other</td>
-<td style="text-align: left;">208 (2.42%)</td>
-<td style="text-align: left;">9 (2.53%)</td>
+<td style="text-align: left;">174 (2.34%)</td>
+<td style="text-align: left;">9 (2.51%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Asian</td>
-<td style="text-align: left;">194 (2.26%)</td>
-<td style="text-align: left;">8 (2.25%)</td>
+<td style="text-align: left;">148 (1.99%)</td>
+<td style="text-align: left;">8 (2.23%)</td>
 </tr>
 </tbody>
 </table>
@@ -597,11 +597,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">7.132950e-32</td>
+<td style="text-align: right;">2.907751e-31</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">2.415978e-65</td>
+<td style="text-align: right;">9.149107e-67</td>
 </tr>
 </tbody>
 </table>
@@ -630,8 +630,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1010764</td>
-<td style="text-align: right;">2.024351e-27</td>
+<td style="text-align: right;">880763</td>
+<td style="text-align: right;">1.325836e-27</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -662,8 +662,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">126.2</td>
-<td style="text-align: right;">2.714723e-29</td>
+<td style="text-align: right;">128.8</td>
+<td style="text-align: right;">7.651798e-30</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Chi-squared test for given probabilities</td>
 </tr>
@@ -717,9 +717,9 @@ Discarded       0       0</code></pre>
 </details>
 </div>
 <ul>
-<li>Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (<strong>87.1794872%</strong> than the overall Michigan Medicine participant population (<strong>75.3532182%</strong> Non-Hispanic White, <strong>p=3.9688951^{-7}</strong>)</li>
-<li>Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (<strong>p=1.870811^{-5}</strong>) or Black. (<strong>p=0.0181936</strong>).</li>
-<li>As we expected, participants with Cushing’s disease had a higher BMI than the controls, with <strong>64.3258427</strong>% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only <strong>39.7880764%</strong> controls (p=<strong>4.4237462^{-20}</strong>).</li>
+<li>Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (<strong>87.2521246%</strong> than the overall Michigan Medicine participant population (<strong>75.6499646%</strong> Non-Hispanic White, <strong>p=5.5003748^{-7}</strong>)</li>
+<li>Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (<strong>p=3.2806302^{-5}</strong>) or Black. (<strong>p=0.015338</strong>).</li>
+<li>As we expected, participants with Cushing’s disease had a higher BMI than the controls, with <strong>64.6239554</strong>% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only <strong>39.8600458%</strong> controls (p=<strong>1.9950144^{-20}</strong>).</li>
 </ul>
 </section>
 <section id="stratified-demographics-for-the-entire-population" class="level4">
@@ -755,30 +755,30 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Non-Obese</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">4.458768e-30</td>
-<td style="text-align: right;">1.996731e-21</td>
-<td style="text-align: right;">5171</td>
+<td style="text-align: right;">9.557869e-32</td>
+<td style="text-align: right;">3.235435e-21</td>
+<td style="text-align: right;">4469</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Non-Obese</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">6.594172e-20</td>
-<td style="text-align: right;">5.535067e-39</td>
+<td style="text-align: right;">1.402338e-19</td>
+<td style="text-align: right;">2.216285e-36</td>
 <td style="text-align: right;">127</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Obese</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">2.488950e-23</td>
-<td style="text-align: right;">2.185963e-44</td>
-<td style="text-align: right;">3417</td>
+<td style="text-align: right;">4.073863e-24</td>
+<td style="text-align: right;">3.315505e-43</td>
+<td style="text-align: right;">2962</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Obese</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1.293993e-16</td>
-<td style="text-align: right;">1.292181e-70</td>
-<td style="text-align: right;">229</td>
+<td style="text-align: right;">1.097803e-17</td>
+<td style="text-align: right;">2.402719e-71</td>
+<td style="text-align: right;">232</td>
 </tr>
 </tbody>
 </table>
@@ -913,81 +913,81 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">n</td>
-<td style="text-align: left;">5171</td>
+<td style="text-align: left;">4469</td>
 <td style="text-align: left;">127</td>
-<td style="text-align: left;">3417</td>
-<td style="text-align: left;">229</td>
+<td style="text-align: left;">2962</td>
+<td style="text-align: left;">232</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">24.51 +/- 3.23</td>
+<td style="text-align: left;">24.47 +/- 3.26</td>
 <td style="text-align: left;">25.91 +/- 3.16</td>
-<td style="text-align: left;">36.63 +/- 5.99</td>
-<td style="text-align: left;">39.61 +/- 15</td>
+<td style="text-align: left;">36.67 +/- 6.02</td>
+<td style="text-align: left;">39.54 +/- 14.92</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">44.06 +/- 16.14</td>
+<td style="text-align: left;">44.04 +/- 16.38</td>
 <td style="text-align: left;">46.8 +/- 17.27</td>
-<td style="text-align: left;">45.89 +/- 14.47</td>
-<td style="text-align: left;">46.03 +/- 14.49</td>
-<td style="text-align: right;">0.0000049</td>
+<td style="text-align: left;">45.74 +/- 14.65</td>
+<td style="text-align: left;">45.97 +/- 14.52</td>
+<td style="text-align: right;">0.0001460</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">4199 (81.2%)</td>
+<td style="text-align: left;">3655 (81.8%)</td>
 <td style="text-align: left;">92 (72.4%)</td>
-<td style="text-align: left;">2772 (81.1%)</td>
-<td style="text-align: left;">192 (83.8%)</td>
-<td style="text-align: right;">0.0608153</td>
+<td style="text-align: left;">2424 (81.8%)</td>
+<td style="text-align: left;">195 (84.1%)</td>
+<td style="text-align: right;">0.0419747</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">972 (18.8%)</td>
+<td style="text-align: left;">814 (18.2%)</td>
 <td style="text-align: left;">35 (27.6%)</td>
-<td style="text-align: left;">645 (18.9%)</td>
-<td style="text-align: left;">37 (16.2%)</td>
+<td style="text-align: left;">538 (18.2%)</td>
+<td style="text-align: left;">37 (15.9%)</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">4466 (86.4%)</td>
+<td style="text-align: left;">3850 (86.1%)</td>
 <td style="text-align: left;">105 (82.7%)</td>
-<td style="text-align: left;">2940 (86.0%)</td>
-<td style="text-align: left;">205 (89.5%)</td>
+<td style="text-align: left;">2533 (85.5%)</td>
+<td style="text-align: left;">208 (89.7%)</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Black</td>
-<td style="text-align: left;">175 (3.4%)</td>
+<td style="text-align: left;">168 (3.8%)</td>
 <td style="text-align: left;">7 (5.5%)</td>
-<td style="text-align: left;">224 (6.6%)</td>
+<td style="text-align: left;">204 (6.9%)</td>
 <td style="text-align: left;">12 (5.2%)</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">213 (4.1%)</td>
+<td style="text-align: left;">200 (4.5%)</td>
 <td style="text-align: left;">6 (4.7%)</td>
-<td style="text-align: left;">168 (4.9%)</td>
+<td style="text-align: left;">154 (5.2%)</td>
 <td style="text-align: left;">4 (1.7%)</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Other</td>
-<td style="text-align: left;">145 (2.8%)</td>
+<td style="text-align: left;">120 (2.7%)</td>
 <td style="text-align: left;">3 (2.4%)</td>
-<td style="text-align: left;">63 (1.8%)</td>
+<td style="text-align: left;">54 (1.8%)</td>
 <td style="text-align: left;">6 (2.6%)</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Asian</td>
-<td style="text-align: left;">172 (3.3%)</td>
+<td style="text-align: left;">131 (2.9%)</td>
 <td style="text-align: left;">6 (4.7%)</td>
-<td style="text-align: left;">22 (0.6%)</td>
+<td style="text-align: left;">17 (0.6%)</td>
 <td style="text-align: left;">2 (0.9%)</td>
 <td style="text-align: right;">NA</td>
 </tr>
@@ -1029,10 +1029,10 @@ Discarded       0       0</code></pre>
 </div>
 <p>Details specified in the manuscript:</p>
 <ul>
-<li>For example, among participants with a <span class="math inline">\(BMI &gt; 30 mg/m^2\)</span>, participants with Cushing’s disease had a higher BMI than controls (p=2.4556526^{-4}).</li>
-<li>Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (67.6056338% of females with Cushing’s disease had a <span class="math inline">\(BMI&gt;30\)</span>) than males (51.3888889%), p=0.015186).<br>
+<li>For example, among participants with a <span class="math inline">\(BMI &gt; 30 mg/m^2\)</span>, participants with Cushing’s disease had a higher BMI than controls (p=5.426642^{-4}).</li>
+<li>Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (67.9442509% of females with Cushing’s disease had a <span class="math inline">\(BMI&gt;30\)</span>) than males (51.3888889%), p=0.0128071).<br>
 </li>
-<li>Among participants with Cushing’s disease, Asian (75%) and Hispanic or Latino (60%) participants were more likely have a BMI under 30 kg/m2 compared to the overall average (35.6741573%, p=0.0265181 and 0.176412 respectively).</li>
+<li>Among participants with Cushing’s disease, Asian (75%) and Hispanic or Latino (60%) participants were more likely have a BMI under 30 kg/m2 compared to the overall average (35.3760446%, p=0.025386 and 0.175616 respectively).</li>
 <li>The average age of participants with Cushing’s disease with or without obesity was similar.</li>
 </ul>
 </section>
@@ -1060,30 +1060,30 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0007        0.0003          0.7937
-AgeInYears                            46.8000       58.9060         -0.8319
-GenderCodeF                            0.8000        0.5541          0.6146
-GenderCodeM                            0.2000        0.4459         -0.6146
-RaceEthnicityAsian                     0.0000        0.1009         -0.3350
-RaceEthnicityBlack                     0.0500        0.0948         -0.2058
-RaceEthnicityHispanic or Latino        0.0500        0.0325          0.0805
-RaceEthnicityOther                     0.0000        0.0333         -0.1855
-RaceEthnicityWhite                     0.9000        0.7385          0.5382
+distance                               0.0007        0.0003          0.7918
+AgeInYears                            46.8000       58.8301         -0.8267
+GenderCodeF                            0.8000        0.5533          0.6167
+GenderCodeM                            0.2000        0.4467         -0.6167
+RaceEthnicityAsian                     0.0000        0.0964         -0.3267
+RaceEthnicityBlack                     0.0500        0.0959         -0.2107
+RaceEthnicityHispanic or Latino        0.0500        0.0322          0.0817
+RaceEthnicityOther                     0.0000        0.0331         -0.1850
+RaceEthnicityWhite                     0.9000        0.7424          0.5254
                                 Var. Ratio eCDF Mean eCDF Max
-distance                            2.2793    0.2044   0.4971
-AgeInYears                          0.8742    0.1686   0.3682
-GenderCodeF                              .    0.2459   0.2459
-GenderCodeM                              .    0.2459   0.2459
-RaceEthnicityAsian                       .    0.1009   0.1009
-RaceEthnicityBlack                       .    0.0448   0.0448
-RaceEthnicityHispanic or Latino          .    0.0175   0.0175
-RaceEthnicityOther                       .    0.0333   0.0333
-RaceEthnicityWhite                       .    0.1615   0.1615
+distance                            2.2566    0.2015   0.4956
+AgeInYears                          0.8735    0.1676   0.3667
+GenderCodeF                              .    0.2467   0.2467
+GenderCodeM                              .    0.2467   0.2467
+RaceEthnicityAsian                       .    0.0964   0.0964
+RaceEthnicityBlack                       .    0.0459   0.0459
+RaceEthnicityHispanic or Latino          .    0.0178   0.0178
+RaceEthnicityOther                       .    0.0331   0.0331
+RaceEthnicityWhite                       .    0.1576   0.1576
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0007        0.0007          0.0002
-AgeInYears                            46.8000       46.8050         -0.0003
+distance                               0.0007        0.0007         -0.0003
+AgeInYears                            46.8000       46.7950          0.0003
 GenderCodeF                            0.8000        0.8000          0.0000
 GenderCodeM                            0.2000        0.2000          0.0000
 RaceEthnicityAsian                     0.0000        0.0000          0.0000
@@ -1092,8 +1092,8 @@ RaceEthnicityHispanic or Latino        0.0500        0.0500          0.0000
 RaceEthnicityOther                     0.0000        0.0000          0.0000
 RaceEthnicityWhite                     0.9000        0.9000          0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            1.0471    0.0002     0.02          0.0015
-AgeInYears                          1.0483    0.0005     0.02          0.0024
+distance                            1.0475    0.0002     0.02          0.0016
+AgeInYears                          1.0461    0.0005     0.02          0.0024
 GenderCodeF                              .    0.0000     0.00          0.0000
 GenderCodeM                              .    0.0000     0.00          0.0000
 RaceEthnicityAsian                       .    0.0000     0.00          0.0000
@@ -1104,9 +1104,9 @@ RaceEthnicityWhite                       .    0.0000     0.00          0.0000
 
 Sample Sizes:
           Control Treated
-All         73898      20
+All         72884      20
 Matched       200      20
-Unmatched   73698       0
+Unmatched   72684       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -1215,37 +1215,37 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">47.13 ± 14.08</td>
+<td style="text-align: left;">47.30 ± 14.10</td>
 <td style="text-align: left;">48.06 ± 15.15</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">30.68 ± 8.05</td>
+<td style="text-align: left;">31.01 ± 8.40</td>
 <td style="text-align: left;">38.83 ± 11.35</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">140 (78.21%)</td>
+<td style="text-align: left;">140 (78.65%)</td>
 <td style="text-align: left;">14 (82.35%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">39 (21.79%)</td>
+<td style="text-align: left;">38 (21.35%)</td>
 <td style="text-align: left;">3 (17.65%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">161 (89.94%)</td>
+<td style="text-align: left;">162 (91.01%)</td>
 <td style="text-align: left;">15 (88.24%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Black</td>
-<td style="text-align: left;">8 (4.47%)</td>
+<td style="text-align: left;">7 (3.93%)</td>
 <td style="text-align: left;">1 (5.88%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">10 (5.59%)</td>
+<td style="text-align: left;">9 (5.06%)</td>
 <td style="text-align: left;">1 (5.88%)</td>
 </tr>
 </tbody>
@@ -1276,11 +1276,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">2.700864e-37</td>
+<td style="text-align: right;">2.310450e-37</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">4.139216e-30</td>
+<td style="text-align: right;">8.887115e-30</td>
 </tr>
 </tbody>
 </table>
@@ -1308,8 +1308,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">853</td>
-<td style="text-align: right;">0.002801628</td>
+<td style="text-align: right;">874</td>
+<td style="text-align: right;">0.004078438</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -1461,18 +1461,18 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">5.501020</td>
-<td style="text-align: right;">0.0616673</td>
-<td style="text-align: right;">0.6104747</td>
+<td style="text-align: right;">5.522449</td>
+<td style="text-align: right;">0.0628841</td>
+<td style="text-align: right;">0.6225208</td>
 <td style="text-align: right;">98</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">5.870370</td>
-<td style="text-align: right;">0.1225683</td>
-<td style="text-align: right;">1.1031143</td>
-<td style="text-align: right;">81</td>
+<td style="text-align: right;">5.892500</td>
+<td style="text-align: right;">0.1265508</td>
+<td style="text-align: right;">1.1319050</td>
+<td style="text-align: right;">80</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
@@ -1485,9 +1485,9 @@ Discarded       0       0</code></pre>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">7.307692</td>
-<td style="text-align: right;">0.5129679</td>
-<td style="text-align: right;">1.8495322</td>
+<td style="text-align: right;">7.315385</td>
+<td style="text-align: right;">0.5101340</td>
+<td style="text-align: right;">1.8393143</td>
 <td style="text-align: right;">13</td>
 </tr>
 </tbody>
@@ -1515,31 +1515,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">5.5010204</td>
-<td style="text-align: right;">0.0970926</td>
-<td style="text-align: right;">56.6574481</td>
+<td style="text-align: right;">5.5224490</td>
+<td style="text-align: right;">0.0986697</td>
+<td style="text-align: right;">55.9690428</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">0.9489796</td>
-<td style="text-align: right;">0.4902937</td>
-<td style="text-align: right;">1.9355328</td>
-<td style="text-align: right;">0.0543938</td>
+<td style="text-align: right;">0.9275510</td>
+<td style="text-align: right;">0.4982576</td>
+<td style="text-align: right;">1.8615893</td>
+<td style="text-align: right;">0.0641974</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">0.3693500</td>
-<td style="text-align: right;">0.1443345</td>
-<td style="text-align: right;">2.5589854</td>
-<td style="text-align: right;">0.0112683</td>
+<td style="text-align: right;">0.3700510</td>
+<td style="text-align: right;">0.1471800</td>
+<td style="text-align: right;">2.5142749</td>
+<td style="text-align: right;">0.0127534</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">0.4883423</td>
-<td style="text-align: right;">0.5682062</td>
-<td style="text-align: right;">0.8594456</td>
-<td style="text-align: right;">0.3911665</td>
+<td style="text-align: right;">0.4953336</td>
+<td style="text-align: right;">0.5775631</td>
+<td style="text-align: right;">0.8576268</td>
+<td style="text-align: right;">0.3921734</td>
 </tr>
 </tbody>
 </table>
@@ -1572,31 +1572,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">5.5748428</td>
-<td style="text-align: right;">0.0721782</td>
-<td style="text-align: right;">77.237240</td>
+<td style="text-align: right;">5.5788462</td>
+<td style="text-align: right;">0.0734715</td>
+<td style="text-align: right;">75.932146</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">0.7651572</td>
-<td style="text-align: right;">0.2967216</td>
-<td style="text-align: right;">2.578704</td>
-<td style="text-align: right;">0.0106656</td>
+<td style="text-align: right;">0.7611538</td>
+<td style="text-align: right;">0.2993455</td>
+<td style="text-align: right;">2.542727</td>
+<td style="text-align: right;">0.0117921</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityIIIClass III Obese</td>
-<td style="text-align: right;">0.8351572</td>
-<td style="text-align: right;">0.2159322</td>
-<td style="text-align: right;">3.867683</td>
-<td style="text-align: right;">0.0001504</td>
+<td style="text-align: right;">0.8893357</td>
+<td style="text-align: right;">0.2089861</td>
+<td style="text-align: right;">4.255478</td>
+<td style="text-align: right;">0.0000327</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityIIIClass III Obese</td>
-<td style="text-align: right;">1.0248428</td>
-<td style="text-align: right;">0.4977902</td>
-<td style="text-align: right;">2.058784</td>
-<td style="text-align: right;">0.0408651</td>
+<td style="text-align: right;">0.9849500</td>
+<td style="text-align: right;">0.4981811</td>
+<td style="text-align: right;">1.977092</td>
+<td style="text-align: right;">0.0494700</td>
 </tr>
 </tbody>
 </table>
@@ -1622,31 +1622,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">4.1987483</td>
-<td style="text-align: right;">0.2552271</td>
-<td style="text-align: right;">16.4510295</td>
+<td style="text-align: right;">4.1945228</td>
+<td style="text-align: right;">0.2517809</td>
+<td style="text-align: right;">16.6594132</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">1.0825194</td>
-<td style="text-align: right;">0.4566348</td>
-<td style="text-align: right;">2.3706457</td>
-<td style="text-align: right;">0.0187476</td>
+<td style="text-align: right;">1.0794586</td>
+<td style="text-align: right;">0.4613284</td>
+<td style="text-align: right;">2.3398918</td>
+<td style="text-align: right;">0.0203221</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.0478872</td>
-<td style="text-align: right;">0.0080251</td>
-<td style="text-align: right;">5.9671600</td>
+<td style="text-align: right;">0.0481857</td>
+<td style="text-align: right;">0.0078180</td>
+<td style="text-align: right;">6.1634688</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-0.0452704</td>
-<td style="text-align: right;">0.5351304</td>
-<td style="text-align: right;">-0.0845969</td>
-<td style="text-align: right;">0.9326700</td>
+<td style="text-align: right;">-0.0432075</td>
+<td style="text-align: right;">0.5389931</td>
+<td style="text-align: right;">-0.0801634</td>
+<td style="text-align: right;">0.9361912</td>
 </tr>
 </tbody>
 </table>
@@ -1724,18 +1724,18 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">5.501020</td>
-<td style="text-align: right;">0.0616673</td>
-<td style="text-align: right;">0.6104747</td>
+<td style="text-align: right;">5.522449</td>
+<td style="text-align: right;">0.0628841</td>
+<td style="text-align: right;">0.6225208</td>
 <td style="text-align: right;">98</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">5.870370</td>
-<td style="text-align: right;">0.1225683</td>
-<td style="text-align: right;">1.1031143</td>
-<td style="text-align: right;">81</td>
+<td style="text-align: right;">5.892500</td>
+<td style="text-align: right;">0.1265508</td>
+<td style="text-align: right;">1.1319050</td>
+<td style="text-align: right;">80</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
@@ -1748,9 +1748,9 @@ Discarded       0       0</code></pre>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">7.307692</td>
-<td style="text-align: right;">0.5129679</td>
-<td style="text-align: right;">1.8495322</td>
+<td style="text-align: right;">7.315385</td>
+<td style="text-align: right;">0.5101340</td>
+<td style="text-align: right;">1.8393143</td>
 <td style="text-align: right;">13</td>
 </tr>
 </tbody>
@@ -1777,31 +1777,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">5.5010204</td>
-<td style="text-align: right;">0.0970926</td>
-<td style="text-align: right;">56.6574481</td>
+<td style="text-align: right;">5.5224490</td>
+<td style="text-align: right;">0.0986697</td>
+<td style="text-align: right;">55.9690428</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">0.9489796</td>
-<td style="text-align: right;">0.4902937</td>
-<td style="text-align: right;">1.9355328</td>
-<td style="text-align: right;">0.0543938</td>
+<td style="text-align: right;">0.9275510</td>
+<td style="text-align: right;">0.4982576</td>
+<td style="text-align: right;">1.8615893</td>
+<td style="text-align: right;">0.0641974</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">0.3693500</td>
-<td style="text-align: right;">0.1443345</td>
-<td style="text-align: right;">2.5589854</td>
-<td style="text-align: right;">0.0112683</td>
+<td style="text-align: right;">0.3700510</td>
+<td style="text-align: right;">0.1471800</td>
+<td style="text-align: right;">2.5142749</td>
+<td style="text-align: right;">0.0127534</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">0.4883423</td>
-<td style="text-align: right;">0.5682062</td>
-<td style="text-align: right;">0.8594456</td>
-<td style="text-align: right;">0.3911665</td>
+<td style="text-align: right;">0.4953336</td>
+<td style="text-align: right;">0.5775631</td>
+<td style="text-align: right;">0.8576268</td>
+<td style="text-align: right;">0.3921734</td>
 </tr>
 </tbody>
 </table>
@@ -1827,31 +1827,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">4.1987483</td>
-<td style="text-align: right;">0.2552271</td>
-<td style="text-align: right;">16.4510295</td>
+<td style="text-align: right;">4.1945228</td>
+<td style="text-align: right;">0.2517809</td>
+<td style="text-align: right;">16.6594132</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">1.0825194</td>
-<td style="text-align: right;">0.4566348</td>
-<td style="text-align: right;">2.3706457</td>
-<td style="text-align: right;">0.0187476</td>
+<td style="text-align: right;">1.0794586</td>
+<td style="text-align: right;">0.4613284</td>
+<td style="text-align: right;">2.3398918</td>
+<td style="text-align: right;">0.0203221</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.0478872</td>
-<td style="text-align: right;">0.0080251</td>
-<td style="text-align: right;">5.9671600</td>
+<td style="text-align: right;">0.0481857</td>
+<td style="text-align: right;">0.0078180</td>
+<td style="text-align: right;">6.1634688</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-0.0452704</td>
-<td style="text-align: right;">0.5351304</td>
-<td style="text-align: right;">-0.0845969</td>
-<td style="text-align: right;">0.9326700</td>
+<td style="text-align: right;">-0.0432075</td>
+<td style="text-align: right;">0.5389931</td>
+<td style="text-align: right;">-0.0801634</td>
+<td style="text-align: right;">0.9361912</td>
 </tr>
 </tbody>
 </table>
@@ -1882,30 +1882,30 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0443        0.0154          0.7027
-AgeInYears                            46.0291       62.0461         -0.9910
-GenderCodeF                            0.8112        0.5527          0.6606
-GenderCodeM                            0.1888        0.4473         -0.6606
-RaceEthnicityAsian                     0.0179        0.0662         -0.3649
-RaceEthnicityBlack                     0.0448        0.1151         -0.3398
-RaceEthnicityHispanic or Latino        0.0459        0.0296          0.0777
-RaceEthnicityOther                     0.0209        0.0328         -0.0836
-RaceEthnicityWhite                     0.8706        0.7563          0.3405
+distance                               0.0446        0.0157          0.7024
+AgeInYears                            46.0291       61.9618         -0.9858
+GenderCodeF                            0.8112        0.5517          0.6630
+GenderCodeM                            0.1888        0.4483         -0.6630
+RaceEthnicityAsian                     0.0179        0.0610         -0.3260
+RaceEthnicityBlack                     0.0448        0.1166         -0.3473
+RaceEthnicityHispanic or Latino        0.0459        0.0299          0.0766
+RaceEthnicityOther                     0.0209        0.0323         -0.0800
+RaceEthnicityWhite                     0.8706        0.7601          0.3290
                                 Var. Ratio eCDF Mean eCDF Max
-distance                            3.7615    0.2622   0.5267
-AgeInYears                          0.8797    0.1969   0.4155
-GenderCodeF                              .    0.2585   0.2585
-GenderCodeM                              .    0.2585   0.2585
-RaceEthnicityAsian                       .    0.0483   0.0483
-RaceEthnicityBlack                       .    0.0703   0.0703
-RaceEthnicityHispanic or Latino          .    0.0163   0.0163
-RaceEthnicityOther                       .    0.0120   0.0120
-RaceEthnicityWhite                       .    0.1143   0.1143
+distance                            3.7215    0.2619   0.5278
+AgeInYears                          0.8761    0.1958   0.4141
+GenderCodeF                              .    0.2595   0.2595
+GenderCodeM                              .    0.2595   0.2595
+RaceEthnicityAsian                       .    0.0432   0.0432
+RaceEthnicityBlack                       .    0.0718   0.0718
+RaceEthnicityHispanic or Latino          .    0.0160   0.0160
+RaceEthnicityOther                       .    0.0114   0.0114
+RaceEthnicityWhite                       .    0.1104   0.1104
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0443        0.0417          0.0614
-AgeInYears                            46.0291       46.6023         -0.0355
+distance                               0.0446        0.0420          0.0627
+AgeInYears                            46.0291       46.6259         -0.0369
 GenderCodeF                            0.8112        0.8112          0.0000
 GenderCodeM                            0.1888        0.1888          0.0000
 RaceEthnicityAsian                     0.0179        0.0179          0.0000
@@ -1914,8 +1914,8 @@ RaceEthnicityHispanic or Latino        0.0459        0.0459          0.0000
 RaceEthnicityOther                     0.0209        0.0209          0.0000
 RaceEthnicityWhite                     0.8706        0.8706          0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            1.3567    0.0028   0.0345          0.0676
-AgeInYears                          1.1203    0.0072   0.0498          0.0449
+distance                            1.3580    0.0029   0.0345          0.0692
+AgeInYears                          1.1233    0.0075   0.0498          0.0467
 GenderCodeF                              .    0.0000   0.0000          0.0000
 GenderCodeM                              .    0.0000   0.0000          0.0000
 RaceEthnicityAsian                       .    0.0000   0.0000          0.0000
@@ -1926,9 +1926,9 @@ RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
 
 Sample Sizes:
           Control Treated
-All        225981    3639
+All        221956    3639
 Matched     36390    3639
-Unmatched  189591       0
+Unmatched  185566       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -2037,47 +2037,47 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">45.85 ± 14.86</td>
-<td style="text-align: left;">46.29 ± 15.52</td>
+<td style="text-align: left;">45.96 ± 14.85</td>
+<td style="text-align: left;">46.24 ± 15.59</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">29.44 ± 7.48</td>
-<td style="text-align: left;">34.67 ± 13.82</td>
+<td style="text-align: left;">29.43 ± 7.46</td>
+<td style="text-align: left;">34.65 ± 13.82</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">12,838 (81.04%)</td>
+<td style="text-align: left;">12,858 (81.19%)</td>
 <td style="text-align: left;">284 (79.78%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">3,003 (18.96%)</td>
+<td style="text-align: left;">2,979 (18.81%)</td>
 <td style="text-align: left;">72 (20.22%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">13,713 (86.57%)</td>
+<td style="text-align: left;">13,741 (86.77%)</td>
 <td style="text-align: left;">311 (87.36%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Black</td>
-<td style="text-align: left;">619 (3.91%)</td>
+<td style="text-align: left;">583 (3.68%)</td>
 <td style="text-align: left;">19 (5.34%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">709 (4.48%)</td>
+<td style="text-align: left;">706 (4.46%)</td>
 <td style="text-align: left;">9 (2.53%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Other</td>
-<td style="text-align: left;">354 (2.23%)</td>
+<td style="text-align: left;">371 (2.34%)</td>
 <td style="text-align: left;">9 (2.53%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Asian</td>
-<td style="text-align: left;">446 (2.82%)</td>
+<td style="text-align: left;">436 (2.75%)</td>
 <td style="text-align: left;">8 (2.25%)</td>
 </tr>
 </tbody>
@@ -2108,11 +2108,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">4.312913e-32</td>
+<td style="text-align: right;">1.572324e-34</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">8.408470e-70</td>
+<td style="text-align: right;">7.289265e-62</td>
 </tr>
 </tbody>
 </table>
@@ -2140,8 +2140,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1892988</td>
-<td style="text-align: right;">2.366542e-26</td>
+<td style="text-align: right;">1892454</td>
+<td style="text-align: right;">2.350919e-26</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -2309,33 +2309,33 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">96.34182</td>
-<td style="text-align: right;">0.256902</td>
-<td style="text-align: right;">24.98826</td>
-<td style="text-align: right;">9461</td>
+<td style="text-align: right;">96.33601</td>
+<td style="text-align: right;">0.2609445</td>
+<td style="text-align: right;">25.40157</td>
+<td style="text-align: right;">9476</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">104.97319</td>
-<td style="text-align: right;">0.465826</td>
-<td style="text-align: right;">37.20781</td>
-<td style="text-align: right;">6380</td>
+<td style="text-align: right;">104.98396</td>
+<td style="text-align: right;">0.4703304</td>
+<td style="text-align: right;">37.51162</td>
+<td style="text-align: right;">6361</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">124.30469</td>
-<td style="text-align: right;">2.707995</td>
-<td style="text-align: right;">30.63747</td>
+<td style="text-align: right;">121.96875</td>
+<td style="text-align: right;">2.6870694</td>
+<td style="text-align: right;">30.40072</td>
 <td style="text-align: right;">128</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">130.73246</td>
-<td style="text-align: right;">2.964935</td>
-<td style="text-align: right;">44.76954</td>
+<td style="text-align: right;">131.49561</td>
+<td style="text-align: right;">3.0886726</td>
+<td style="text-align: right;">46.63793</td>
 <td style="text-align: right;">228</td>
 </tr>
 </tbody>
@@ -2362,31 +2362,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">96.341824</td>
-<td style="text-align: right;">0.3161423</td>
-<td style="text-align: right;">304.7419505</td>
+<td style="text-align: right;">96.3360068</td>
+<td style="text-align: right;">0.3196407</td>
+<td style="text-align: right;">301.3883769</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">27.962863</td>
-<td style="text-align: right;">2.7363037</td>
-<td style="text-align: right;">10.2192104</td>
+<td style="text-align: right;">25.6327432</td>
+<td style="text-align: right;">2.7687467</td>
+<td style="text-align: right;">9.2578866</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">8.631369</td>
-<td style="text-align: right;">0.4981773</td>
-<td style="text-align: right;">17.3258987</td>
+<td style="text-align: right;">8.6479555</td>
+<td style="text-align: right;">0.5043782</td>
+<td style="text-align: right;">17.1457749</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-2.203600</td>
-<td style="text-align: right;">3.4326246</td>
-<td style="text-align: right;">-0.6419579</td>
-<td style="text-align: right;">0.5209096</td>
+<td style="text-align: right;">0.8789085</td>
+<td style="text-align: right;">3.4734022</td>
+<td style="text-align: right;">0.2530397</td>
+<td style="text-align: right;">0.8002408</td>
 </tr>
 </tbody>
 </table>
@@ -2412,31 +2412,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">81.3955168</td>
-<td style="text-align: right;">0.9634177</td>
-<td style="text-align: right;">84.4862137</td>
+<td style="text-align: right;">81.2331245</td>
+<td style="text-align: right;">0.9760673</td>
+<td style="text-align: right;">83.2249192</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">26.6838885</td>
-<td style="text-align: right;">2.7237561</td>
-<td style="text-align: right;">9.7967245</td>
+<td style="text-align: right;">24.3684172</td>
+<td style="text-align: right;">2.7558656</td>
+<td style="text-align: right;">8.8423823</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.6257969</td>
-<td style="text-align: right;">0.0316629</td>
-<td style="text-align: right;">19.7643645</td>
+<td style="text-align: right;">0.6312709</td>
+<td style="text-align: right;">0.0320940</td>
+<td style="text-align: right;">19.6694382</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-2.1180690</td>
-<td style="text-align: right;">3.4144952</td>
-<td style="text-align: right;">-0.6203169</td>
-<td style="text-align: right;">0.5350579</td>
+<td style="text-align: right;">0.9259315</td>
+<td style="text-align: right;">3.4547262</td>
+<td style="text-align: right;">0.2680188</td>
+<td style="text-align: right;">0.7886883</td>
 </tr>
 </tbody>
 </table>
@@ -2467,29 +2467,29 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0059        0.0023          0.7433
-AgeInYears                            48.2730       59.9481         -0.7229
-GenderCodeF                            0.8344        0.5615          0.7341
-GenderCodeM                            0.1656        0.4385         -0.7341
-RaceEthnicityAsian                     0.0031        0.0717         -1.2412
-RaceEthnicityBlack                     0.0153        0.1121         -0.7877
-RaceEthnicityHispanic or Latino        0.0337        0.0316          0.0121
-RaceEthnicityOther                     0.0092        0.0333         -0.2519
-RaceEthnicityWhite                     0.9387        0.7513          0.7806
+distance                               0.0059        0.0024          0.7414
+AgeInYears                            48.2730       59.8571         -0.7172
+GenderCodeF                            0.8344        0.5607          0.7362
+GenderCodeM                            0.1656        0.4393         -0.7362
+RaceEthnicityAsian                     0.0031        0.0666         -1.1496
+RaceEthnicityBlack                     0.0153        0.1129         -0.7935
+RaceEthnicityHispanic or Latino        0.0337        0.0319          0.0099
+RaceEthnicityOther                     0.0092        0.0328         -0.2475
+RaceEthnicityWhite                     0.9387        0.7557          0.7623
                                 Var. Ratio eCDF Mean eCDF Max
-distance                            2.6912    0.2117   0.5246
-AgeInYears                          0.8548    0.1472   0.3284
-GenderCodeF                              .    0.2729   0.2729
-GenderCodeM                              .    0.2729   0.2729
-RaceEthnicityAsian                       .    0.0686   0.0686
-RaceEthnicityBlack                       .    0.0968   0.0968
-RaceEthnicityHispanic or Latino          .    0.0022   0.0022
-RaceEthnicityOther                       .    0.0241   0.0241
-RaceEthnicityWhite                       .    0.1873   0.1873
+distance                            2.6613    0.2092   0.5223
+AgeInYears                          0.8521    0.1460   0.3267
+GenderCodeF                              .    0.2737   0.2737
+GenderCodeM                              .    0.2737   0.2737
+RaceEthnicityAsian                       .    0.0636   0.0636
+RaceEthnicityBlack                       .    0.0975   0.0975
+RaceEthnicityHispanic or Latino          .    0.0018   0.0018
+RaceEthnicityOther                       .    0.0236   0.0236
+RaceEthnicityWhite                       .    0.1829   0.1829
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0059        0.0057          0.0397
+distance                               0.0059        0.0057          0.0395
 AgeInYears                            48.2730       48.6061         -0.0206
 GenderCodeF                            0.8344        0.8344          0.0000
 GenderCodeM                            0.1656        0.1656          0.0000
@@ -2499,7 +2499,7 @@ RaceEthnicityHispanic or Latino        0.0337        0.0337          0.0000
 RaceEthnicityOther                     0.0092        0.0092          0.0000
 RaceEthnicityWhite                     0.9387        0.9387          0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            1.2496    0.0005   0.0399          0.0398
+distance                            1.2478    0.0005   0.0399          0.0397
 AgeInYears                          1.0985    0.0019   0.0543          0.0212
 GenderCodeF                              .    0.0000   0.0000          0.0000
 GenderCodeM                              .    0.0000   0.0000          0.0000
@@ -2511,9 +2511,9 @@ RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
 
 Sample Sizes:
           Control Treated
-All        139025     326
+All        136405     326
 Matched      3260     326
-Unmatched  135765       0
+Unmatched  133145       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -2621,27 +2621,27 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">47.81 ± 15.02</td>
+<td style="text-align: left;">47.79 ± 15.04</td>
 <td style="text-align: left;">45.74 ± 17.68</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">29.89 ± 7.68</td>
+<td style="text-align: left;">29.87 ± 7.66</td>
 <td style="text-align: left;">33.53 ± 9.36</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">1,630 (84.68%)</td>
+<td style="text-align: left;">1,628 (84.66%)</td>
 <td style="text-align: left;">67 (79.76%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">295 (15.32%)</td>
+<td style="text-align: left;">295 (15.34%)</td>
 <td style="text-align: left;">17 (20.24%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">1,797 (93.35%)</td>
+<td style="text-align: left;">1,792 (93.19%)</td>
 <td style="text-align: left;">73 (86.90%)</td>
 </tr>
 <tr class="even">
@@ -2651,7 +2651,7 @@ Discarded       0       0</code></pre>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">60 (3.12%)</td>
+<td style="text-align: left;">61 (3.17%)</td>
 <td style="text-align: left;">4 (4.76%)</td>
 </tr>
 <tr class="even">
@@ -2661,7 +2661,7 @@ Discarded       0       0</code></pre>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Asian</td>
-<td style="text-align: left;">8 (0.42%)</td>
+<td style="text-align: left;">10 (0.52%)</td>
 <td style="text-align: left;">1 (1.19%)</td>
 </tr>
 </tbody>
@@ -2692,11 +2692,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">9.329441e-32</td>
+<td style="text-align: right;">6.764671e-30</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">4.551175e-18</td>
+<td style="text-align: right;">3.254299e-18</td>
 </tr>
 </tbody>
 </table>
@@ -2724,8 +2724,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">61013.5</td>
-<td style="text-align: right;">0.0001381468</td>
+<td style="text-align: right;">60871</td>
+<td style="text-align: right;">0.0001299279</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -2844,33 +2844,33 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">23.09761</td>
-<td style="text-align: right;">0.6252781</td>
-<td style="text-align: right;">20.72870</td>
+<td style="text-align: right;">23.34622</td>
+<td style="text-align: right;">0.7163531</td>
+<td style="text-align: right;">23.74794</td>
 <td style="text-align: right;">1099</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">29.12606</td>
-<td style="text-align: right;">0.7734031</td>
-<td style="text-align: right;">22.22777</td>
-<td style="text-align: right;">826</td>
+<td style="text-align: right;">29.07533</td>
+<td style="text-align: right;">0.7908937</td>
+<td style="text-align: right;">22.70292</td>
+<td style="text-align: right;">824</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">56.56250</td>
-<td style="text-align: right;">8.3017606</td>
-<td style="text-align: right;">46.96185</td>
+<td style="text-align: right;">58.87500</td>
+<td style="text-align: right;">8.5784743</td>
+<td style="text-align: right;">48.52718</td>
 <td style="text-align: right;">32</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">98.31373</td>
-<td style="text-align: right;">21.3854640</td>
-<td style="text-align: right;">154.21277</td>
+<td style="text-align: right;">102.43137</td>
+<td style="text-align: right;">23.1001707</td>
+<td style="text-align: right;">166.57770</td>
 <td style="text-align: right;">52</td>
 </tr>
 </tbody>
@@ -2898,31 +2898,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">23.097606</td>
-<td style="text-align: right;">0.9929477</td>
-<td style="text-align: right;">23.261654</td>
-<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">23.346225</td>
+<td style="text-align: right;">1.075222</td>
+<td style="text-align: right;">21.712938</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">33.464894</td>
-<td style="text-align: right;">5.8691104</td>
-<td style="text-align: right;">5.701868</td>
-<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">35.528775</td>
+<td style="text-align: right;">6.355416</td>
+<td style="text-align: right;">5.590315</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">6.028455</td>
-<td style="text-align: right;">1.5112271</td>
-<td style="text-align: right;">3.989112</td>
-<td style="text-align: right;">6.87e-05</td>
+<td style="text-align: right;">5.729109</td>
+<td style="text-align: right;">1.637575</td>
+<td style="text-align: right;">3.498533</td>
+<td style="text-align: right;">0.0004781</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">35.722771</td>
-<td style="text-align: right;">7.5325394</td>
-<td style="text-align: right;">4.742460</td>
-<td style="text-align: right;">2.30e-06</td>
+<td style="text-align: right;">37.827263</td>
+<td style="text-align: right;">8.156901</td>
+<td style="text-align: right;">4.637455</td>
+<td style="text-align: right;">0.0000038</td>
 </tr>
 </tbody>
 </table>
@@ -2999,33 +2999,33 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">23.09761</td>
-<td style="text-align: right;">0.6252781</td>
-<td style="text-align: right;">20.72870</td>
+<td style="text-align: right;">23.34622</td>
+<td style="text-align: right;">0.7163531</td>
+<td style="text-align: right;">23.74794</td>
 <td style="text-align: right;">1099</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">29.12606</td>
-<td style="text-align: right;">0.7734031</td>
-<td style="text-align: right;">22.22777</td>
-<td style="text-align: right;">826</td>
+<td style="text-align: right;">29.07533</td>
+<td style="text-align: right;">0.7908937</td>
+<td style="text-align: right;">22.70292</td>
+<td style="text-align: right;">824</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">56.56250</td>
-<td style="text-align: right;">8.3017606</td>
-<td style="text-align: right;">46.96185</td>
+<td style="text-align: right;">58.87500</td>
+<td style="text-align: right;">8.5784743</td>
+<td style="text-align: right;">48.52718</td>
 <td style="text-align: right;">32</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">98.31373</td>
-<td style="text-align: right;">21.3854640</td>
-<td style="text-align: right;">154.21277</td>
+<td style="text-align: right;">102.43137</td>
+<td style="text-align: right;">23.1001707</td>
+<td style="text-align: right;">166.57770</td>
 <td style="text-align: right;">52</td>
 </tr>
 </tbody>
@@ -3052,31 +3052,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">23.097606</td>
-<td style="text-align: right;">0.9929477</td>
-<td style="text-align: right;">23.261654</td>
-<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">23.346225</td>
+<td style="text-align: right;">1.075222</td>
+<td style="text-align: right;">21.712938</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">33.464894</td>
-<td style="text-align: right;">5.8691104</td>
-<td style="text-align: right;">5.701868</td>
-<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">35.528775</td>
+<td style="text-align: right;">6.355416</td>
+<td style="text-align: right;">5.590315</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">6.028455</td>
-<td style="text-align: right;">1.5112271</td>
-<td style="text-align: right;">3.989112</td>
-<td style="text-align: right;">6.87e-05</td>
+<td style="text-align: right;">5.729109</td>
+<td style="text-align: right;">1.637575</td>
+<td style="text-align: right;">3.498533</td>
+<td style="text-align: right;">0.0004781</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">35.722771</td>
-<td style="text-align: right;">7.5325394</td>
-<td style="text-align: right;">4.742460</td>
-<td style="text-align: right;">2.30e-06</td>
+<td style="text-align: right;">37.827263</td>
+<td style="text-align: right;">8.156901</td>
+<td style="text-align: right;">4.637455</td>
+<td style="text-align: right;">0.0000038</td>
 </tr>
 </tbody>
 </table>
@@ -3102,31 +3102,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">8.6488483</td>
-<td style="text-align: right;">2.9625796</td>
-<td style="text-align: right;">2.919364</td>
-<td style="text-align: right;">0.0035469</td>
+<td style="text-align: right;">9.5958441</td>
+<td style="text-align: right;">3.2222652</td>
+<td style="text-align: right;">2.977981</td>
+<td style="text-align: right;">0.0029366</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">34.0164965</td>
-<td style="text-align: right;">5.8288466</td>
-<td style="text-align: right;">5.835888</td>
+<td style="text-align: right;">36.0507907</td>
+<td style="text-align: right;">6.3190946</td>
+<td style="text-align: right;">5.705056</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.5695597</td>
-<td style="text-align: right;">0.0957787</td>
-<td style="text-align: right;">5.946619</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.5421501</td>
+<td style="text-align: right;">0.1042606</td>
+<td style="text-align: right;">5.199950</td>
+<td style="text-align: right;">0.0000002</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">33.2602797</td>
-<td style="text-align: right;">7.4813905</td>
-<td style="text-align: right;">4.445735</td>
-<td style="text-align: right;">0.0000092</td>
+<td style="text-align: right;">35.4740470</td>
+<td style="text-align: right;">8.1117369</td>
+<td style="text-align: right;">4.373175</td>
+<td style="text-align: right;">0.0000129</td>
 </tr>
 </tbody>
 </table>
@@ -3157,29 +3157,29 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0013        0.0002          0.6651
-AgeInYears                            40.8462       58.0291         -0.9794
-GenderCodeF                            0.8462        0.5379          0.8543
-GenderCodeM                            0.1538        0.4621         -0.8543
-RaceEthnicityAsian                     0.0000        0.1011         -0.3353
-RaceEthnicityBlack                     0.0000        0.0799         -0.2947
-RaceEthnicityHispanic or Latino        0.0000        0.0304         -0.1770
-RaceEthnicityOther                     0.0000        0.0318         -0.1814
-RaceEthnicityWhite                     1.0000        0.7568          0.5669
+distance                               0.0013        0.0002          0.6649
+AgeInYears                            40.8462       57.9223         -0.9733
+GenderCodeF                            0.8462        0.5372          0.8563
+GenderCodeM                            0.1538        0.4628         -0.8563
+RaceEthnicityAsian                     0.0000        0.0971         -0.3280
+RaceEthnicityBlack                     0.0000        0.0819         -0.2987
+RaceEthnicityHispanic or Latino        0.0000        0.0301         -0.1761
+RaceEthnicityOther                     0.0000        0.0319         -0.1814
+RaceEthnicityWhite                     1.0000        0.7591          0.5634
                                 Var. Ratio eCDF Mean eCDF Max
-distance                           17.2444    0.1744   0.6303
-AgeInYears                          1.2669    0.2270   0.5251
-GenderCodeF                              .    0.3082   0.3082
-GenderCodeM                              .    0.3082   0.3082
-RaceEthnicityAsian                       .    0.1011   0.1011
-RaceEthnicityBlack                       .    0.0799   0.0799
-RaceEthnicityHispanic or Latino          .    0.0304   0.0304
-RaceEthnicityOther                       .    0.0318   0.0318
-RaceEthnicityWhite                       .    0.2432   0.2432
+distance                           17.1672    0.1732   0.6282
+AgeInYears                          1.2603    0.2255   0.5228
+GenderCodeF                              .    0.3090   0.3090
+GenderCodeM                              .    0.3090   0.3090
+RaceEthnicityAsian                       .    0.0971   0.0971
+RaceEthnicityBlack                       .    0.0819   0.0819
+RaceEthnicityHispanic or Latino          .    0.0301   0.0301
+RaceEthnicityOther                       .    0.0319   0.0319
+RaceEthnicityWhite                       .    0.2409   0.2409
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0013        0.0011          0.1268
+distance                               0.0013        0.0011          0.1267
 AgeInYears                            40.8462       41.6154         -0.0438
 GenderCodeF                            0.8462        0.8462          0.0000
 GenderCodeM                            0.1538        0.1538          0.0000
@@ -3189,7 +3189,7 @@ RaceEthnicityHispanic or Latino        0.0000        0.0000          0.0000
 RaceEthnicityOther                     0.0000        0.0000          0.0000
 RaceEthnicityWhite                     1.0000        1.0000          0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            2.0785    0.0002   0.1538          0.1268
+distance                            2.0766    0.0002   0.1538          0.1267
 AgeInYears                          1.2490    0.0021   0.1538          0.0438
 GenderCodeF                              .    0.0000   0.0000          0.0000
 GenderCodeM                              .    0.0000   0.0000          0.0000
@@ -3201,9 +3201,9 @@ RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
 
 Sample Sizes:
           Control Treated
-All         69589      13
+All         68851      13
 Matched       130      13
-Unmatched   69459       0
+Unmatched   68721       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -3316,7 +3316,7 @@ Discarded       0       0</code></pre>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">30.19 ± 8.91</td>
+<td style="text-align: left;">29.95 ± 8.68</td>
 <td style="text-align: left;">38.13 ± 14.28</td>
 </tr>
 <tr class="odd">
@@ -3362,11 +3362,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">4.428908e-41</td>
+<td style="text-align: right;">7.839904e-39</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">4.208462e-42</td>
+<td style="text-align: right;">5.236634e-42</td>
 </tr>
 </tbody>
 </table>
@@ -3394,8 +3394,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">423</td>
-<td style="text-align: right;">0.09617165</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">0.08643623</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -3512,17 +3512,17 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">113.7733</td>
-<td style="text-align: right;">3.674729</td>
-<td style="text-align: right;">31.82408</td>
+<td style="text-align: right;">112.6400</td>
+<td style="text-align: right;">3.685796</td>
+<td style="text-align: right;">31.91993</td>
 <td style="text-align: right;">75</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">108.5102</td>
-<td style="text-align: right;">4.625253</td>
-<td style="text-align: right;">32.37677</td>
+<td style="text-align: right;">107.3878</td>
+<td style="text-align: right;">4.682779</td>
+<td style="text-align: right;">32.77945</td>
 <td style="text-align: right;">49</td>
 </tr>
 <tr class="odd">
@@ -3565,31 +3565,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">113.773333</td>
-<td style="text-align: right;">3.776780</td>
-<td style="text-align: right;">30.1244302</td>
+<td style="text-align: right;">112.640000</td>
+<td style="text-align: right;">3.800127</td>
+<td style="text-align: right;">29.6411143</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">-33.773333</td>
-<td style="text-align: right;">23.434301</td>
-<td style="text-align: right;">-1.4411923</td>
-<td style="text-align: right;">0.1519534</td>
+<td style="text-align: right;">-32.640000</td>
+<td style="text-align: right;">23.579168</td>
+<td style="text-align: right;">-1.3842728</td>
+<td style="text-align: right;">0.1686650</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">-5.263129</td>
-<td style="text-align: right;">6.008063</td>
-<td style="text-align: right;">-0.8760111</td>
-<td style="text-align: right;">0.3826523</td>
+<td style="text-align: right;">-5.252245</td>
+<td style="text-align: right;">6.045203</td>
+<td style="text-align: right;">-0.8688285</td>
+<td style="text-align: right;">0.3865545</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">45.977415</td>
-<td style="text-align: right;">26.904061</td>
-<td style="text-align: right;">1.7089396</td>
-<td style="text-align: right;">0.0898669</td>
+<td style="text-align: right;">45.966531</td>
+<td style="text-align: right;">27.070377</td>
+<td style="text-align: right;">1.6980381</td>
+<td style="text-align: right;">0.0919115</td>
 </tr>
 </tbody>
 </table>
@@ -3615,31 +3615,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">113.9022087</td>
-<td style="text-align: right;">10.1472758</td>
-<td style="text-align: right;">11.224905</td>
+<td style="text-align: right;">113.2012807</td>
+<td style="text-align: right;">10.3593764</td>
+<td style="text-align: right;">10.9274223</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">-32.1852793</td>
-<td style="text-align: right;">23.4780289</td>
-<td style="text-align: right;">-1.370868</td>
-<td style="text-align: right;">0.1727965</td>
+<td style="text-align: right;">-31.1355830</td>
+<td style="text-align: right;">23.6180023</td>
+<td style="text-align: right;">-1.3182988</td>
+<td style="text-align: right;">0.1897396</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">-0.0731692</td>
-<td style="text-align: right;">0.3216894</td>
-<td style="text-align: right;">-0.227453</td>
-<td style="text-align: right;">0.8204316</td>
+<td style="text-align: right;">-0.0880325</td>
+<td style="text-align: right;">0.3314124</td>
+<td style="text-align: right;">-0.2656281</td>
+<td style="text-align: right;">0.7909497</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">42.3060658</td>
-<td style="text-align: right;">27.2125234</td>
-<td style="text-align: right;">1.554654</td>
-<td style="text-align: right;">0.1224784</td>
+<td style="text-align: right;">42.6294120</td>
+<td style="text-align: right;">27.4214060</td>
+<td style="text-align: right;">1.5546034</td>
+<td style="text-align: right;">0.1224905</td>
 </tr>
 </tbody>
 </table>
@@ -3717,17 +3717,17 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">113.7733</td>
-<td style="text-align: right;">3.674729</td>
-<td style="text-align: right;">31.82408</td>
+<td style="text-align: right;">112.6400</td>
+<td style="text-align: right;">3.685796</td>
+<td style="text-align: right;">31.91993</td>
 <td style="text-align: right;">75</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">108.5102</td>
-<td style="text-align: right;">4.625253</td>
-<td style="text-align: right;">32.37677</td>
+<td style="text-align: right;">107.3878</td>
+<td style="text-align: right;">4.682779</td>
+<td style="text-align: right;">32.77945</td>
 <td style="text-align: right;">49</td>
 </tr>
 <tr class="odd">
@@ -3770,31 +3770,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">113.773333</td>
-<td style="text-align: right;">3.776780</td>
-<td style="text-align: right;">30.1244302</td>
+<td style="text-align: right;">112.640000</td>
+<td style="text-align: right;">3.800127</td>
+<td style="text-align: right;">29.6411143</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">-33.773333</td>
-<td style="text-align: right;">23.434301</td>
-<td style="text-align: right;">-1.4411923</td>
-<td style="text-align: right;">0.1519534</td>
+<td style="text-align: right;">-32.640000</td>
+<td style="text-align: right;">23.579168</td>
+<td style="text-align: right;">-1.3842728</td>
+<td style="text-align: right;">0.1686650</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">-5.263129</td>
-<td style="text-align: right;">6.008063</td>
-<td style="text-align: right;">-0.8760111</td>
-<td style="text-align: right;">0.3826523</td>
+<td style="text-align: right;">-5.252245</td>
+<td style="text-align: right;">6.045203</td>
+<td style="text-align: right;">-0.8688285</td>
+<td style="text-align: right;">0.3865545</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">45.977415</td>
-<td style="text-align: right;">26.904061</td>
-<td style="text-align: right;">1.7089396</td>
-<td style="text-align: right;">0.0898669</td>
+<td style="text-align: right;">45.966531</td>
+<td style="text-align: right;">27.070377</td>
+<td style="text-align: right;">1.6980381</td>
+<td style="text-align: right;">0.0919115</td>
 </tr>
 </tbody>
 </table>
@@ -3820,31 +3820,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">113.9022087</td>
-<td style="text-align: right;">10.1472758</td>
-<td style="text-align: right;">11.224905</td>
+<td style="text-align: right;">113.2012807</td>
+<td style="text-align: right;">10.3593764</td>
+<td style="text-align: right;">10.9274223</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">-32.1852793</td>
-<td style="text-align: right;">23.4780289</td>
-<td style="text-align: right;">-1.370868</td>
-<td style="text-align: right;">0.1727965</td>
+<td style="text-align: right;">-31.1355830</td>
+<td style="text-align: right;">23.6180023</td>
+<td style="text-align: right;">-1.3182988</td>
+<td style="text-align: right;">0.1897396</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">-0.0731692</td>
-<td style="text-align: right;">0.3216894</td>
-<td style="text-align: right;">-0.227453</td>
-<td style="text-align: right;">0.8204316</td>
+<td style="text-align: right;">-0.0880325</td>
+<td style="text-align: right;">0.3314124</td>
+<td style="text-align: right;">-0.2656281</td>
+<td style="text-align: right;">0.7909497</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">42.3060658</td>
-<td style="text-align: right;">27.2125234</td>
-<td style="text-align: right;">1.554654</td>
-<td style="text-align: right;">0.1224784</td>
+<td style="text-align: right;">42.6294120</td>
+<td style="text-align: right;">27.4214060</td>
+<td style="text-align: right;">1.5546034</td>
+<td style="text-align: right;">0.1224905</td>
 </tr>
 </tbody>
 </table>
@@ -3898,10 +3898,10 @@ Discarded       0       0</code></pre>
 </div>
 <section id="inclusion-and-exclusion-for-blood-pressure-data" class="level4">
 <h4 class="anchored" data-anchor-id="inclusion-and-exclusion-for-blood-pressure-data">Inclusion and Exclusion for Blood Pressure Data</h4>
-<p>We began with 98302 controls who had lab data, and <strong>338</strong> cases with Cushing’s Disease.</p>
+<p>We began with 97442 controls who had lab data, and <strong>339</strong> cases with Cushing’s Disease.</p>
 <ul>
-<li><p><strong>Had Laboratory Results</strong>: We also removed 168 lab results from Cushing’s patients because they were outside of our acceptable window of 30 days before their procedure. This eliminated a total of <strong>1</strong> Cushings patients from our dataset.</p></li>
-<li><p><strong>Missing Demographic Data</strong> After filtering out missing demographic data we had 311 cases and 97946 controls with lab results. The specific pieces of missing information are found here:</p></li>
+<li><p><strong>Had Laboratory Results</strong>: We also removed 168 lab results from Cushing’s patients because they were outside of our acceptable window of 365 days before their procedure. This eliminated a total of <strong>1</strong> Cushings patients from our dataset.</p></li>
+<li><p><strong>Missing Demographic Data</strong> After filtering out missing demographic data we had 311 cases and 96780 controls with lab results. The specific pieces of missing information are found here:</p></li>
 </ul>
 <div class="cell">
 <details class="code-fold">
@@ -3937,19 +3937,19 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Any_na</td>
-<td style="text-align: right;">33</td>
+<td style="text-align: right;">34</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Ethnicity_na</td>
-<td style="text-align: right;">23</td>
+<td style="text-align: right;">24</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Gender_na</td>
-<td style="text-align: right;">14</td>
+<td style="text-align: right;">15</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Race_na</td>
-<td style="text-align: right;">14</td>
+<td style="text-align: right;">15</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Age_na</td>
@@ -3959,7 +3959,7 @@ Discarded       0       0</code></pre>
 </table>
 </div>
 </div>
-<p>Our final dataset for blood pressure therefore included <strong>363</strong> Cushing’s patients, and we had the ability to draw from <strong>70070</strong> control patients.</p>
+<p>Our final dataset for blood pressure therefore included <strong>365</strong> Cushing’s patients, and we had the ability to draw from <strong>69273</strong> control patients.</p>
 </section>
 <section id="blood-pressure-propensity-mapping" class="level4">
 <h4 class="anchored" data-anchor-id="blood-pressure-propensity-mapping">Blood Pressure Propensity Mapping</h4>
@@ -3983,30 +3983,30 @@ matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity,
 
 Summary of Balance for All Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0258        0.0111          0.6830
-AgeInYears                            47.5079       61.1458         -0.8267
-GenderCodeF                            0.8325        0.5795          0.6777
-GenderCodeM                            0.1675        0.4205         -0.6777
-RaceEthnicityAsian                     0.0133        0.0602         -0.4098
-RaceEthnicityBlack                     0.0446        0.1187         -0.3588
-RaceEthnicityHispanic or Latino        0.0327        0.0307          0.0114
-RaceEthnicityOther                     0.0253        0.0325         -0.0453
-RaceEthnicityWhite                     0.8841        0.7580          0.3938
+distance                               0.0260        0.0113          0.6814
+AgeInYears                            47.5079       61.0895         -0.8232
+GenderCodeF                            0.8325        0.5786          0.6799
+GenderCodeM                            0.1675        0.4214         -0.6799
+RaceEthnicityAsian                     0.0133        0.0549         -0.3639
+RaceEthnicityBlack                     0.0446        0.1204         -0.3670
+RaceEthnicityHispanic or Latino        0.0327        0.0308          0.0107
+RaceEthnicityOther                     0.0253        0.0319         -0.0417
+RaceEthnicityWhite                     0.8841        0.7620          0.3813
                                 Var. Ratio eCDF Mean eCDF Max
-distance                            2.7215    0.2346   0.4920
-AgeInYears                          0.8619    0.1678   0.3766
-GenderCodeF                              .    0.2530   0.2530
-GenderCodeM                              .    0.2530   0.2530
-RaceEthnicityAsian                       .    0.0469   0.0469
-RaceEthnicityBlack                       .    0.0741   0.0741
-RaceEthnicityHispanic or Latino          .    0.0020   0.0020
-RaceEthnicityOther                       .    0.0071   0.0071
-RaceEthnicityWhite                       .    0.1261   0.1261
+distance                            2.7058    0.2343   0.4892
+AgeInYears                          0.8598    0.1671   0.3754
+GenderCodeF                              .    0.2539   0.2539
+GenderCodeM                              .    0.2539   0.2539
+RaceEthnicityAsian                       .    0.0417   0.0417
+RaceEthnicityBlack                       .    0.0758   0.0758
+RaceEthnicityHispanic or Latino          .    0.0019   0.0019
+RaceEthnicityOther                       .    0.0066   0.0066
+RaceEthnicityWhite                       .    0.1221   0.1221
 
 Summary of Balance for Matched Data:
                                 Means Treated Means Control Std. Mean Diff.
-distance                               0.0258        0.0248          0.0474
-AgeInYears                            47.5079       47.9702         -0.0280
+distance                               0.0260        0.0250          0.0474
+AgeInYears                            47.5079       47.9690         -0.0279
 GenderCodeF                            0.8325        0.8325         -0.0000
 GenderCodeM                            0.1675        0.1675         -0.0000
 RaceEthnicityAsian                     0.0133        0.0133         -0.0000
@@ -4015,8 +4015,8 @@ RaceEthnicityHispanic or Latino        0.0327        0.0327         -0.0000
 RaceEthnicityOther                     0.0253        0.0253         -0.0000
 RaceEthnicityWhite                     0.8841        0.8841         -0.0000
                                 Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-distance                            1.2700    0.0021   0.0424          0.0513
-AgeInYears                          1.1163    0.0062   0.0619          0.0348
+distance                            1.2709    0.0022   0.0424          0.0516
+AgeInYears                          1.1164    0.0063   0.0619          0.0351
 GenderCodeF                              .    0.0000   0.0000          0.0000
 GenderCodeM                              .    0.0000   0.0000          0.0000
 RaceEthnicityAsian                       .    0.0000   0.0000          0.0000
@@ -4027,9 +4027,9 @@ RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
 
 Sample Sizes:
           Control Treated
-All       1666879   19054
+All       1640345   19054
 Matched    190540   19054
-Unmatched 1476339       0
+Unmatched 1449805       0
 Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
@@ -4138,48 +4138,48 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Age</td>
-<td style="text-align: left;">44.13 ± 16.03</td>
-<td style="text-align: left;">46.35 ± 15.96</td>
+<td style="text-align: left;">44.09 ± 16.08</td>
+<td style="text-align: left;">46.26 ± 16.01</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: left;">28.68 ± 7.20</td>
-<td style="text-align: left;">34.97 ± 14.37</td>
+<td style="text-align: left;">28.66 ± 7.19</td>
+<td style="text-align: left;">34.96 ± 14.35</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female</td>
-<td style="text-align: left;">18,780 (81.50%)</td>
-<td style="text-align: left;">247 (80.72%)</td>
+<td style="text-align: left;">18,774 (81.47%)</td>
+<td style="text-align: left;">248 (80.78%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male</td>
-<td style="text-align: left;">4,263 (18.50%)</td>
-<td style="text-align: left;">59 (19.28%)</td>
+<td style="text-align: left;">4,270 (18.53%)</td>
+<td style="text-align: left;">59 (19.22%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">White</td>
-<td style="text-align: left;">20,330 (88.23%)</td>
-<td style="text-align: left;">264 (86.27%)</td>
+<td style="text-align: left;">20,375 (88.42%)</td>
+<td style="text-align: left;">265 (86.32%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Black</td>
-<td style="text-align: left;">840 (3.65%)</td>
-<td style="text-align: left;">18 (5.88%)</td>
+<td style="text-align: left;">799 (3.47%)</td>
+<td style="text-align: left;">18 (5.86%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hispanic or Latino</td>
-<td style="text-align: left;">765 (3.32%)</td>
-<td style="text-align: left;">9 (2.94%)</td>
+<td style="text-align: left;">755 (3.28%)</td>
+<td style="text-align: left;">9 (2.93%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Other</td>
-<td style="text-align: left;">555 (2.41%)</td>
-<td style="text-align: left;">9 (2.94%)</td>
+<td style="text-align: left;">560 (2.43%)</td>
+<td style="text-align: left;">9 (2.93%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Asian</td>
-<td style="text-align: left;">553 (2.40%)</td>
-<td style="text-align: left;">6 (1.96%)</td>
+<td style="text-align: left;">555 (2.41%)</td>
+<td style="text-align: left;">6 (1.95%)</td>
 </tr>
 </tbody>
 </table>
@@ -4209,11 +4209,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">2.268974e-35</td>
+<td style="text-align: right;">2.614868e-34</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">7.724852e-70</td>
+<td style="text-align: right;">5.332425e-69</td>
 </tr>
 </tbody>
 </table>
@@ -4241,8 +4241,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">2079821</td>
-<td style="text-align: right;">5.329459e-35</td>
+<td style="text-align: right;">2080200</td>
+<td style="text-align: right;">2.083931e-35</td>
 <td style="text-align: left;">Wilcoxon rank sum test with continuity correction</td>
 <td style="text-align: left;">two.sided</td>
 </tr>
@@ -4273,8 +4273,8 @@ Discarded       0       0</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">115.5</td>
-<td style="text-align: right;">6.105835e-27</td>
+<td style="text-align: right;">116.4</td>
+<td style="text-align: right;">3.973874e-27</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Chi-squared test for given probabilities</td>
 </tr>
@@ -4363,34 +4363,34 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">83.66184</td>
-<td style="text-align: right;">0.0981387</td>
-<td style="text-align: right;">11.97172</td>
-<td style="text-align: right;">14881</td>
+<td style="text-align: right;">84.22283</td>
+<td style="text-align: right;">0.1035021</td>
+<td style="text-align: right;">12.63871</td>
+<td style="text-align: right;">14911</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">89.60952</td>
-<td style="text-align: right;">0.1586487</td>
-<td style="text-align: right;">14.33292</td>
-<td style="text-align: right;">8162</td>
+<td style="text-align: right;">88.55882</td>
+<td style="text-align: right;">0.1340250</td>
+<td style="text-align: right;">12.08679</td>
+<td style="text-align: right;">8133</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">97.28571</td>
-<td style="text-align: right;">1.0774960</td>
-<td style="text-align: right;">11.04105</td>
+<td style="text-align: right;">96.57143</td>
+<td style="text-align: right;">0.7212360</td>
+<td style="text-align: right;">7.39047</td>
 <td style="text-align: right;">105</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">98.22222</td>
-<td style="text-align: right;">0.7923592</td>
-<td style="text-align: right;">11.23363</td>
-<td style="text-align: right;">201</td>
+<td style="text-align: right;">91.25000</td>
+<td style="text-align: right;">0.8280360</td>
+<td style="text-align: right;">11.76860</td>
+<td style="text-align: right;">202</td>
 </tr>
 </tbody>
 </table>
@@ -4416,31 +4416,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">83.661836</td>
-<td style="text-align: right;">0.8858501</td>
-<td style="text-align: right;">94.4424255</td>
+<td style="text-align: right;">84.222826</td>
+<td style="text-align: right;">0.9103038</td>
+<td style="text-align: right;">92.521672</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">13.623879</td>
-<td style="text-align: right;">4.8979926</td>
-<td style="text-align: right;">2.7815229</td>
-<td style="text-align: right;">0.0057273</td>
+<td style="text-align: right;">12.348603</td>
+<td style="text-align: right;">4.7550381</td>
+<td style="text-align: right;">2.596951</td>
+<td style="text-align: right;">0.0098738</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">5.947688</td>
-<td style="text-align: right;">1.5270136</td>
-<td style="text-align: right;">3.8949804</td>
-<td style="text-align: right;">0.0001193</td>
+<td style="text-align: right;">4.335997</td>
+<td style="text-align: right;">1.5242958</td>
+<td style="text-align: right;">2.844590</td>
+<td style="text-align: right;">0.0047558</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-5.011180</td>
-<td style="text-align: right;">6.6019825</td>
-<td style="text-align: right;">-0.7590417</td>
-<td style="text-align: right;">0.4483794</td>
+<td style="text-align: right;">-9.657426</td>
+<td style="text-align: right;">6.5699490</td>
+<td style="text-align: right;">-1.469939</td>
+<td style="text-align: right;">0.1426367</td>
 </tr>
 </tbody>
 </table>
@@ -4466,31 +4466,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">73.2249926</td>
-<td style="text-align: right;">3.0144918</td>
-<td style="text-align: right;">24.2909908</td>
+<td style="text-align: right;">76.1005545</td>
+<td style="text-align: right;">3.0061454</td>
+<td style="text-align: right;">25.314994</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">12.2165876</td>
-<td style="text-align: right;">4.8524233</td>
-<td style="text-align: right;">2.5176261</td>
-<td style="text-align: right;">0.0122967</td>
+<td style="text-align: right;">11.5581089</td>
+<td style="text-align: right;">4.7071340</td>
+<td style="text-align: right;">2.455445</td>
+<td style="text-align: right;">0.0146440</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.4349916</td>
-<td style="text-align: right;">0.1023829</td>
-<td style="text-align: right;">4.2486754</td>
-<td style="text-align: right;">0.0000281</td>
+<td style="text-align: right;">0.3334588</td>
+<td style="text-align: right;">0.1006026</td>
+<td style="text-align: right;">3.314613</td>
+<td style="text-align: right;">0.0010315</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-3.9289726</td>
-<td style="text-align: right;">6.4975712</td>
-<td style="text-align: right;">-0.6046833</td>
-<td style="text-align: right;">0.5458127</td>
+<td style="text-align: right;">-9.6570884</td>
+<td style="text-align: right;">6.4936771</td>
+<td style="text-align: right;">-1.487153</td>
+<td style="text-align: right;">0.1380354</td>
 </tr>
 </tbody>
 </table>
@@ -4628,34 +4628,34 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">118.1498</td>
-<td style="text-align: right;">0.1288470</td>
-<td style="text-align: right;">15.71776</td>
-<td style="text-align: right;">14881</td>
+<td style="text-align: right;">118.1763</td>
+<td style="text-align: right;">0.1283828</td>
+<td style="text-align: right;">15.67690</td>
+<td style="text-align: right;">14911</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">125.7519</td>
-<td style="text-align: right;">0.1755628</td>
-<td style="text-align: right;">15.86101</td>
-<td style="text-align: right;">8162</td>
+<td style="text-align: right;">125.7222</td>
+<td style="text-align: right;">0.1768384</td>
+<td style="text-align: right;">15.94784</td>
+<td style="text-align: right;">8133</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">130.5694</td>
-<td style="text-align: right;">1.9840968</td>
-<td style="text-align: right;">20.33094</td>
+<td style="text-align: right;">131.4868</td>
+<td style="text-align: right;">2.3427832</td>
+<td style="text-align: right;">24.00638</td>
 <td style="text-align: right;">105</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">130.0080</td>
-<td style="text-align: right;">1.3993974</td>
-<td style="text-align: right;">19.83988</td>
-<td style="text-align: right;">201</td>
+<td style="text-align: right;">128.8722</td>
+<td style="text-align: right;">1.4667638</td>
+<td style="text-align: right;">20.84663</td>
+<td style="text-align: right;">202</td>
 </tr>
 </tbody>
 </table>
@@ -4681,31 +4681,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">118.149825</td>
-<td style="text-align: right;">0.1298459</td>
-<td style="text-align: right;">909.923075</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">118.176288</td>
+<td style="text-align: right;">0.1299325</td>
+<td style="text-align: right;">909.520663</td>
+<td style="text-align: right;">0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">12.419620</td>
-<td style="text-align: right;">1.8676564</td>
-<td style="text-align: right;">6.649842</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">13.310554</td>
+<td style="text-align: right;">1.8216176</td>
+<td style="text-align: right;">7.306997</td>
+<td style="text-align: right;">0e+00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">7.602112</td>
-<td style="text-align: right;">0.2181354</td>
-<td style="text-align: right;">34.850429</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">7.545913</td>
+<td style="text-align: right;">0.2187399</td>
+<td style="text-align: right;">34.497190</td>
+<td style="text-align: right;">0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-8.163556</td>
-<td style="text-align: right;">2.3491107</td>
-<td style="text-align: right;">-3.475169</td>
-<td style="text-align: right;">0.0005115</td>
+<td style="text-align: right;">-10.160575</td>
+<td style="text-align: right;">2.2881814</td>
+<td style="text-align: right;">-4.440459</td>
+<td style="text-align: right;">9e-06</td>
 </tr>
 </tbody>
 </table>
@@ -4731,31 +4731,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">103.8820323</td>
-<td style="text-align: right;">0.4168589</td>
-<td style="text-align: right;">249.201924</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">103.5980708</td>
+<td style="text-align: right;">0.4236651</td>
+<td style="text-align: right;">244.528228</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">11.0407379</td>
-<td style="text-align: right;">1.8456464</td>
-<td style="text-align: right;">5.982044</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">12.1191136</td>
+<td style="text-align: right;">1.7993722</td>
+<td style="text-align: right;">6.735190</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.5913948</td>
-<td style="text-align: right;">0.0140824</td>
-<td style="text-align: right;">41.995417</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.6016843</td>
+<td style="text-align: right;">0.0143391</td>
+<td style="text-align: right;">41.961215</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-8.7486884</td>
-<td style="text-align: right;">2.3212470</td>
-<td style="text-align: right;">-3.768960</td>
-<td style="text-align: right;">0.0001643</td>
+<td style="text-align: right;">-9.7601921</td>
+<td style="text-align: right;">2.2579125</td>
+<td style="text-align: right;">-4.322662</td>
+<td style="text-align: right;">1.55e-05</td>
 </tr>
 </tbody>
 </table>
@@ -4893,34 +4893,34 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">68.03811</td>
-<td style="text-align: right;">0.0814139</td>
-<td style="text-align: right;">9.931498</td>
-<td style="text-align: right;">14881</td>
+<td style="text-align: right;">68.08720</td>
+<td style="text-align: right;">0.0810886</td>
+<td style="text-align: right;">9.901782</td>
+<td style="text-align: right;">14911</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">71.84179</td>
-<td style="text-align: right;">0.1155880</td>
-<td style="text-align: right;">10.442658</td>
-<td style="text-align: right;">8162</td>
+<td style="text-align: right;">71.76428</td>
+<td style="text-align: right;">0.1150576</td>
+<td style="text-align: right;">10.376258</td>
+<td style="text-align: right;">8133</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">74.06944</td>
-<td style="text-align: right;">1.3122062</td>
-<td style="text-align: right;">13.446112</td>
+<td style="text-align: right;">74.60526</td>
+<td style="text-align: right;">1.3494341</td>
+<td style="text-align: right;">13.827585</td>
 <td style="text-align: right;">105</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">72.48800</td>
-<td style="text-align: right;">1.0100449</td>
-<td style="text-align: right;">14.319858</td>
-<td style="text-align: right;">201</td>
+<td style="text-align: right;">72.40601</td>
+<td style="text-align: right;">1.0164429</td>
+<td style="text-align: right;">14.446368</td>
+<td style="text-align: right;">202</td>
 </tr>
 </tbody>
 </table>
@@ -4946,31 +4946,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">68.038114</td>
-<td style="text-align: right;">0.0834026</td>
-<td style="text-align: right;">815.779769</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">68.087202</td>
+<td style="text-align: right;">0.0829827</td>
+<td style="text-align: right;">820.498902</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">6.031331</td>
-<td style="text-align: right;">1.1996317</td>
-<td style="text-align: right;">5.027652</td>
-<td style="text-align: right;">0.0000005</td>
+<td style="text-align: right;">6.518061</td>
+<td style="text-align: right;">1.1633943</td>
+<td style="text-align: right;">5.602624</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">3.803681</td>
-<td style="text-align: right;">0.1401126</td>
-<td style="text-align: right;">27.147324</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">3.677083</td>
+<td style="text-align: right;">0.1397004</td>
+<td style="text-align: right;">26.321194</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-5.385125</td>
-<td style="text-align: right;">1.5088790</td>
-<td style="text-align: right;">-3.568958</td>
-<td style="text-align: right;">0.0003591</td>
+<td style="text-align: right;">-5.876331</td>
+<td style="text-align: right;">1.4613699</td>
+<td style="text-align: right;">-4.021111</td>
+<td style="text-align: right;">5.81e-05</td>
 </tr>
 </tbody>
 </table>
@@ -4996,31 +4996,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">61.1325310</td>
-<td style="text-align: right;">0.2692739</td>
-<td style="text-align: right;">227.027352</td>
+<td style="text-align: right;">61.1942195</td>
+<td style="text-align: right;">0.2721941</td>
+<td style="text-align: right;">224.818279</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">5.3233340</td>
-<td style="text-align: right;">1.1922124</td>
-<td style="text-align: right;">4.465089</td>
-<td style="text-align: right;">0.0000080</td>
+<td style="text-align: right;">5.9194832</td>
+<td style="text-align: right;">1.1560514</td>
+<td style="text-align: right;">5.120433</td>
+<td style="text-align: right;">0.0000003</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.2877692</td>
-<td style="text-align: right;">0.0090966</td>
-<td style="text-align: right;">31.634690</td>
+<td style="text-align: right;">0.2858372</td>
+<td style="text-align: right;">0.0092125</td>
+<td style="text-align: right;">31.027155</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-5.5653091</td>
-<td style="text-align: right;">1.4994311</td>
-<td style="text-align: right;">-3.711614</td>
-<td style="text-align: right;">0.0002064</td>
+<td style="text-align: right;">-5.5938160</td>
+<td style="text-align: right;">1.4506520</td>
+<td style="text-align: right;">-3.856070</td>
+<td style="text-align: right;">0.0001155</td>
 </tr>
 </tbody>
 </table>
@@ -5247,7 +5247,7 @@ Discarded       0       0</code></pre>
 <td style="text-align: left;">ALT</td>
 <td style="text-align: left;">Pre-matching</td>
 <td style="text-align: right;">-0.72</td>
-<td style="text-align: right;">59.95</td>
+<td style="text-align: right;">59.86</td>
 <td style="text-align: right;">48.27</td>
 <td style="text-align: right;">0.05</td>
 <td style="text-align: right;">0.89</td>
@@ -5264,26 +5264,26 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Any Outcome</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: right;">-0.88</td>
-<td style="text-align: right;">60.46</td>
-<td style="text-align: right;">46.20</td>
+<td style="text-align: right;">-0.84</td>
+<td style="text-align: right;">59.97</td>
+<td style="text-align: right;">46.24</td>
 <td style="text-align: right;">0.02</td>
-<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.18</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Any Outcome</td>
 <td style="text-align: left;">Post-matching</td>
 <td style="text-align: right;">-0.02</td>
-<td style="text-align: right;">46.53</td>
-<td style="text-align: right;">46.20</td>
-<td style="text-align: right;">0.08</td>
-<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">46.63</td>
+<td style="text-align: right;">46.24</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.18</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Blood Pressure</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: right;">-0.83</td>
-<td style="text-align: right;">61.15</td>
+<td style="text-align: right;">-0.82</td>
+<td style="text-align: right;">61.09</td>
 <td style="text-align: right;">47.51</td>
 <td style="text-align: right;">0.01</td>
 <td style="text-align: right;">0.12</td>
@@ -5301,7 +5301,7 @@ Discarded       0       0</code></pre>
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Pre-matching</td>
 <td style="text-align: right;">-0.99</td>
-<td style="text-align: right;">62.05</td>
+<td style="text-align: right;">61.96</td>
 <td style="text-align: right;">46.03</td>
 <td style="text-align: right;">0.04</td>
 <td style="text-align: right;">0.27</td>
@@ -5310,7 +5310,7 @@ Discarded       0       0</code></pre>
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Post-matching</td>
 <td style="text-align: right;">-0.04</td>
-<td style="text-align: right;">46.60</td>
+<td style="text-align: right;">46.63</td>
 <td style="text-align: right;">46.03</td>
 <td style="text-align: right;">0.08</td>
 <td style="text-align: right;">0.27</td>
@@ -5319,7 +5319,7 @@ Discarded       0       0</code></pre>
 <td style="text-align: left;">HbA1c</td>
 <td style="text-align: left;">Pre-matching</td>
 <td style="text-align: right;">-0.83</td>
-<td style="text-align: right;">58.91</td>
+<td style="text-align: right;">58.83</td>
 <td style="text-align: right;">46.80</td>
 <td style="text-align: right;">0.06</td>
 <td style="text-align: right;">3.25</td>
@@ -5330,14 +5330,14 @@ Discarded       0       0</code></pre>
 <td style="text-align: right;">0.00</td>
 <td style="text-align: right;">46.80</td>
 <td style="text-align: right;">46.80</td>
-<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.01</td>
 <td style="text-align: right;">3.25</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">LDL-C</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: right;">-0.98</td>
-<td style="text-align: right;">58.03</td>
+<td style="text-align: right;">-0.97</td>
+<td style="text-align: right;">57.92</td>
 <td style="text-align: right;">40.85</td>
 <td style="text-align: right;">0.06</td>
 <td style="text-align: right;">4.87</td>
@@ -5385,7 +5385,7 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">ALT</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">59.95 +/- 0.05</td>
+<td style="text-align: left;">59.86 +/- 0.05</td>
 <td style="text-align: left;">48.27 +/- 0.89</td>
 <td style="text-align: right;">-0.72</td>
 </tr>
@@ -5399,23 +5399,23 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Any Outcome</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">60.46 +/- 0.02</td>
-<td style="text-align: left;">46.2 +/- 0.26</td>
-<td style="text-align: right;">-0.88</td>
+<td style="text-align: left;">59.97 +/- 0.02</td>
+<td style="text-align: left;">46.24 +/- 0.18</td>
+<td style="text-align: right;">-0.84</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Any Outcome</td>
 <td style="text-align: left;">Post-matching</td>
-<td style="text-align: left;">46.53 +/- 0.08</td>
-<td style="text-align: left;">46.2 +/- 0.26</td>
+<td style="text-align: left;">46.63 +/- 0.05</td>
+<td style="text-align: left;">46.24 +/- 0.18</td>
 <td style="text-align: right;">-0.02</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Blood Pressure</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">61.15 +/- 0.01</td>
+<td style="text-align: left;">61.09 +/- 0.01</td>
 <td style="text-align: left;">47.51 +/- 0.12</td>
-<td style="text-align: right;">-0.83</td>
+<td style="text-align: right;">-0.82</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Blood Pressure</td>
@@ -5427,37 +5427,37 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">62.05 +/- 0.04</td>
+<td style="text-align: left;">61.96 +/- 0.04</td>
 <td style="text-align: left;">46.03 +/- 0.27</td>
 <td style="text-align: right;">-0.99</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Post-matching</td>
-<td style="text-align: left;">46.6 +/- 0.08</td>
+<td style="text-align: left;">46.63 +/- 0.08</td>
 <td style="text-align: left;">46.03 +/- 0.27</td>
 <td style="text-align: right;">-0.04</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">HbA1c</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">58.91 +/- 0.06</td>
+<td style="text-align: left;">58.83 +/- 0.06</td>
 <td style="text-align: left;">46.8 +/- 3.25</td>
 <td style="text-align: right;">-0.83</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">HbA1c</td>
 <td style="text-align: left;">Post-matching</td>
-<td style="text-align: left;">46.8 +/- 1</td>
+<td style="text-align: left;">46.8 +/- 1.01</td>
 <td style="text-align: left;">46.8 +/- 3.25</td>
 <td style="text-align: right;">0.00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">LDL-C</td>
 <td style="text-align: left;">Pre-matching</td>
-<td style="text-align: left;">58.03 +/- 0.06</td>
+<td style="text-align: left;">57.92 +/- 0.06</td>
 <td style="text-align: left;">40.85 +/- 4.87</td>
-<td style="text-align: right;">-0.98</td>
+<td style="text-align: right;">-0.97</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">LDL-C</td>
@@ -5577,114 +5577,114 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">99.32 (98.14–100.50)</td>
-<td style="text-align: left;">126.26 (120.93–131.60)</td>
-<td style="text-align: left;">26.95 (21.66–32.24)</td>
+<td style="text-align: left;">99.50 (98.31–100.70)</td>
+<td style="text-align: left;">124.17 (118.78–129.57)</td>
+<td style="text-align: left;">24.67 (19.32–30.02)</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Glucose</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: left;">107.45 (106.19–108.71)</td>
-<td style="text-align: left;">133.63 (129.56–137.71)</td>
-<td style="text-align: left;">26.18 (22.18–30.19)</td>
+<td style="text-align: left;">107.67 (106.39–108.95)</td>
+<td style="text-align: left;">134.60 (130.48–138.73)</td>
+<td style="text-align: left;">26.93 (22.88–30.99)</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">HbA1c</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">5.61 (5.28–5.95)</td>
-<td style="text-align: left;">6.54 (5.59–7.50)</td>
-<td style="text-align: left;">0.93 (-0.02–1.88)</td>
-<td style="text-align: right;">0.0562223</td>
+<td style="text-align: left;">5.60 (5.24–5.95)</td>
+<td style="text-align: left;">6.51 (5.54–7.48)</td>
+<td style="text-align: left;">0.91 (-0.06–1.89)</td>
+<td style="text-align: right;">0.0651583</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">HbA1c</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: left;">6.03 (5.72–6.34)</td>
-<td style="text-align: left;">7.43 (6.84–8.01)</td>
-<td style="text-align: left;">1.40 (0.84–1.95)</td>
-<td style="text-align: right;">0.0000017</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALT</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">23.01 (16.92–29.10)</td>
-<td style="text-align: left;">56.08 (43.75–68.42)</td>
-<td style="text-align: left;">33.07 (21.53–44.61)</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALT</td>
-<td style="text-align: left;">Obese</td>
-<td style="text-align: left;">29.11 (22.91–35.31)</td>
-<td style="text-align: left;">98.34 (87.69–108.98)</td>
-<td style="text-align: left;">69.23 (59.98–78.47)</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">115.38 (106.32–124.44)</td>
-<td style="text-align: left;">76.76 (30.57–122.94)</td>
-<td style="text-align: left;">-38.62 (-84.68–7.44)</td>
-<td style="text-align: right;">0.0995712</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">Obese</td>
-<td style="text-align: left;">112.43 (101.94–122.91)</td>
-<td style="text-align: left;">122.09 (97.36–146.83)</td>
-<td style="text-align: left;">9.67 (-16.20–35.53)</td>
-<td style="text-align: right;">0.4609357</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Mean Arterial Pressure</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">82.80 (79.47–86.13)</td>
-<td style="text-align: left;">95.35 (85.47–105.22)</td>
-<td style="text-align: left;">12.55 (2.97–22.12)</td>
-<td style="text-align: right;">0.0103679</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Mean Arterial Pressure</td>
-<td style="text-align: left;">Obese</td>
-<td style="text-align: left;">88.57 (84.77–92.38)</td>
-<td style="text-align: left;">96.51 (87.65–105.37)</td>
-<td style="text-align: left;">7.94 (-0.72–16.59)</td>
-<td style="text-align: right;">0.0721237</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Systolic Blood Pressure</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">119.59 (119.09–120.10)</td>
-<td style="text-align: left;">130.47 (126.97–133.97)</td>
-<td style="text-align: left;">10.88 (7.39–14.37)</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Systolic Blood Pressure</td>
-<td style="text-align: left;">Obese</td>
-<td style="text-align: left;">126.01 (125.46–126.57)</td>
-<td style="text-align: left;">130.51 (127.83–133.19)</td>
-<td style="text-align: left;">4.50 (1.84–7.16)</td>
-<td style="text-align: right;">0.0009277</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Diastolic Blood Pressure</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">68.80 (68.46–69.14)</td>
-<td style="text-align: left;">74.34 (72.00–76.67)</td>
-<td style="text-align: left;">5.53 (3.21–7.86)</td>
+<td style="text-align: left;">6.02 (5.68–6.35)</td>
+<td style="text-align: left;">7.40 (6.80–8.00)</td>
+<td style="text-align: left;">1.38 (0.82–1.95)</td>
 <td style="text-align: right;">0.0000031</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">Non-Obese</td>
+<td style="text-align: left;">23.40 (17.11–29.69)</td>
+<td style="text-align: left;">58.53 (45.27–71.79)</td>
+<td style="text-align: left;">35.13 (22.63–47.63)</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">29.21 (22.80–35.62)</td>
+<td style="text-align: left;">102.59 (91.24–113.95)</td>
+<td style="text-align: left;">73.39 (63.37–83.40)</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LDL-C</td>
+<td style="text-align: left;">Non-Obese</td>
+<td style="text-align: left;">114.01 (104.84–123.18)</td>
+<td style="text-align: left;">77.11 (30.37–123.86)</td>
+<td style="text-align: left;">-36.89 (-83.51–9.73)</td>
+<td style="text-align: right;">0.1198533</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LDL-C</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">110.78 (100.17–121.39)</td>
+<td style="text-align: left;">121.89 (96.85–146.92)</td>
+<td style="text-align: left;">11.11 (-15.07–37.29)</td>
+<td style="text-align: right;">0.4028015</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mean Arterial Pressure</td>
+<td style="text-align: left;">Non-Obese</td>
+<td style="text-align: left;">82.54 (79.24–85.84)</td>
+<td style="text-align: left;">94.43 (84.81–104.06)</td>
+<td style="text-align: left;">11.89 (2.59–21.19)</td>
+<td style="text-align: right;">0.0124101</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mean Arterial Pressure</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">86.65 (82.75–90.55)</td>
+<td style="text-align: left;">89.94 (80.88–98.99)</td>
+<td style="text-align: left;">3.29 (-5.60–12.18)</td>
+<td style="text-align: right;">0.4669551</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Systolic Blood Pressure</td>
+<td style="text-align: left;">Non-Obese</td>
+<td style="text-align: left;">119.58 (119.07–120.09)</td>
+<td style="text-align: left;">131.55 (128.14–134.96)</td>
+<td style="text-align: left;">11.97 (8.57–15.36)</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Systolic Blood Pressure</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">125.92 (125.37–126.47)</td>
+<td style="text-align: left;">129.00 (126.40–131.60)</td>
+<td style="text-align: left;">3.08 (0.50–5.66)</td>
+<td style="text-align: right;">0.0193117</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diastolic Blood Pressure</td>
+<td style="text-align: left;">Non-Obese</td>
+<td style="text-align: left;">68.78 (68.44–69.11)</td>
+<td style="text-align: left;">74.85 (72.58–77.11)</td>
+<td style="text-align: left;">6.07 (3.81–8.32)</td>
+<td style="text-align: right;">0.0000001</td>
+</tr>
 <tr class="even">
 <td style="text-align: left;">Diastolic Blood Pressure</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: left;">72.26 (71.89–72.63)</td>
-<td style="text-align: left;">72.99 (71.20–74.77)</td>
-<td style="text-align: left;">0.73 (-1.05–2.50)</td>
-<td style="text-align: right;">0.4216498</td>
+<td style="text-align: left;">72.09 (71.72–72.45)</td>
+<td style="text-align: left;">72.67 (70.94–74.39)</td>
+<td style="text-align: left;">0.58 (-1.13–2.30)</td>
+<td style="text-align: right;">0.5050663</td>
 </tr>
 </tbody>
 </table>
@@ -5724,38 +5724,38 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Glucose</td>
-<td style="text-align: left;">-0.76 (-7.40–5.87)</td>
-<td style="text-align: right;">0.8213843</td>
+<td style="text-align: left;">2.26 (-4.45–8.98)</td>
+<td style="text-align: right;">0.5090256</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">HbA1c</td>
-<td style="text-align: left;">0.47 (-0.64–1.57)</td>
-<td style="text-align: right;">0.4071892</td>
+<td style="text-align: left;">0.47 (-0.65–1.59)</td>
+<td style="text-align: right;">0.4142720</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ALT</td>
-<td style="text-align: left;">36.15 (21.38–50.93)</td>
-<td style="text-align: right;">0.0000017</td>
+<td style="text-align: left;">38.26 (22.26–54.26)</td>
+<td style="text-align: right;">0.0000030</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">48.29 (-3.77–100.34)</td>
-<td style="text-align: right;">0.0714147</td>
+<td style="text-align: left;">48.00 (-4.69–100.69)</td>
+<td style="text-align: right;">0.0765542</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Mean Arterial Pressure</td>
-<td style="text-align: left;">-4.61 (-17.40–8.18)</td>
-<td style="text-align: right;">0.4802756</td>
+<td style="text-align: left;">-8.60 (-21.39–4.18)</td>
+<td style="text-align: right;">0.1883613</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Systolic Blood Pressure</td>
-<td style="text-align: left;">-6.38 (-10.77–-2.00)</td>
-<td style="text-align: right;">0.0043492</td>
+<td style="text-align: left;">-8.89 (-13.15–-4.63)</td>
+<td style="text-align: right;">0.0000440</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Diastolic Blood Pressure</td>
-<td style="text-align: left;">-4.81 (-7.73–-1.88)</td>
-<td style="text-align: right;">0.0012829</td>
+<td style="text-align: left;">-5.48 (-8.32–-2.65)</td>
+<td style="text-align: right;">0.0001474</td>
 </tr>
 </tbody>
 </table>
