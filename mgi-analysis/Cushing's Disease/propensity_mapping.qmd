@@ -303,9 +303,15 @@ black.totals<-
   select(Cases,Controls) |>
   as.integer()
 
+hl.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Hispanic or Latino") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
 nonwhite.totals <- race.totals-white.totals
 nonasian.totals <- race.totals-asian.totals
 nonblack.totals <- race.totals-black.totals
+nonhl.totals <- race.totals-hl.totals
 
 # for obesity status using matched data
 
@@ -314,11 +320,121 @@ master.data |>
   adorn_totals() |>
   rename('Controls'=`0`,
          'Cases'=`1`) -> totals.obesity
+
+# for gender differences
+complete.data |> 
+  distinct(DeID_PatientID, .keep_all=T) |>
+  tabyl(GenderCode,Cushings) |>
+  adorn_totals() |>
+  rename(`Total Population`=`0`,
+         `Cushing's Disease`=`1`) -> unmatched.totals.gender
+
+male.totals<- 
+  filter(unmatched.totals.gender, GenderCode=="M") |> 
+  select(`Cushing's Disease`,`Total Population`) |>
+  as.integer()
+
+female.totals<- 
+  filter(unmatched.totals.gender, GenderCode=="F") |> 
+  select(`Cushing's Disease`,`Total Population`) |>
+  as.integer()
+```
+
+- Prior to matching by Gender, we noted that participants with Cushing's disease were more likely to identify as Female (**`r female.totals[1]/race.totals[1]*100`%** than the overall Michigan Medicine participant population (**`r female.totals[2]/race.totals[2]*100`%** **p=`r chisq.test(rbind(female.totals, male.totals))$p.value`**)
+
+```{r gender-matching}
+unmatched.totals.gender |>
+  mutate(Percent.Cases = `Cushing's Disease`/`Cushing's Disease`[GenderCode=="Total"]*100,
+         Percent.Controls = `Total Population`/`Total Population`[GenderCode=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(GenderCode!="Total") -> gender.unmatched.summary
+
+gender.unmatched.summary |>
+  filter(Population=="Percent.Cases") |>
+  mutate(Label= paste0(GenderCode, " - ", round(Percent,0), "%")) |>
+  select(Label,GenderCode,`Cushing's Disease`) |>
+  ggplot(aes(x = 2, y = `Cushing's Disease`, fill = GenderCode)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  geom_text(aes(label = Label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 5) +
+  xlim(0.5, 2.5) +
+  scale_fill_grey() +
+  theme_classic(base_size = 16) +
+  theme(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none",
+    plot.background = element_rect(fill = "transparent", colour = NA)
+  ) 
+
+gender.unmatched.summary |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(GenderCode),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
 ```
 
 - Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (**`r white.totals[1]/race.totals[1]*100`%** than the overall Michigan Medicine participant population (**`r white.totals[2]/race.totals[2]*100`%** Non-Hispanic White, **p=`r chisq.test(rbind(white.totals, nonwhite.totals))$p.value`**)
 - Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (**p=`r chisq.test(rbind(asian.totals, nonasian.totals))$p.value`**) or Black. (**p=`r chisq.test(rbind(black.totals, nonblack.totals))$p.value`**).
+
+```{r race-matching}
+race.matching <- tibble(
+  Race = c("White", "Black", "Asian","Hispanic or Latino"),
+  `Total Population` = c(white.totals[2]/race.totals[2]*100,
+                         black.totals[2]/race.totals[2]*100, 
+                         asian.totals[2]/race.totals[2]*100,
+                         hl.totals[2]/race.totals[2]*100),
+  `Cushing's Disease` = c(white.totals[1]/race.totals[1]*100, 
+              black.totals[1]/race.totals[1]*100, 
+              asian.totals[1]/race.totals[1]*100,
+              hl.totals[1]/race.totals[1]*100)) 
+
+race.matching |>
+  pivot_longer(cols=c(2:3), names_to = "Population", values_to = "Percent") |>
+  mutate(Population=relevel(as.factor(Population),ref="Total Population")) |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Race),-Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.75,0.75))
+```
+
 - As we expected, participants with Cushing’s disease had a higher BMI than the controls, with **`r filter(totals.obesity, Obesity=="Obese")['Cases']/filter(totals.obesity, Obesity=="Total")['Cases']*100`**% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only **`r filter(totals.obesity, Obesity=="Obese")['Controls']/filter(totals.obesity, Obesity=="Total")['Controls']*100`%** controls (p=**`r chisq.test(as.matrix(rbind(totals.obesity |> filter(Obesity=="Obese") |> select(Cases,Controls),totals.obesity |> filter(Obesity=="Non-Obese") |> select(Cases,Controls))))$p.value`**).  
+
+```{r obesity-matching}
+totals.obesity |>
+  mutate(Percent.Cases = Cases/Cases[Obesity=="Total"]*100,
+         Percent.Controls = Controls/Controls[Obesity=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(Obesity!="Total") |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Obesity),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+```
 
 #### Stratified Demographics for the Entire Population
 

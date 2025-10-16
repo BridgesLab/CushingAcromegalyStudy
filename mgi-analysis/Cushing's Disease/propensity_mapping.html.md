@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.907751e-31 </td>
+   <td style="text-align:right;"> 8.299924e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 9.149107e-67 </td>
+   <td style="text-align:right;"> 4.213136e-66 </td>
   </tr>
 </tbody>
 </table>
@@ -601,9 +601,15 @@ black.totals<-
   select(Cases,Controls) |>
   as.integer()
 
+hl.totals<- 
+  filter(unmatched.totals.race, RaceEthnicity=="Hispanic or Latino") |> 
+  select(Cases,Controls) |>
+  as.integer()
+
 nonwhite.totals <- race.totals-white.totals
 nonasian.totals <- race.totals-asian.totals
 nonblack.totals <- race.totals-black.totals
+nonhl.totals <- race.totals-hl.totals
 
 # for obesity status using matched data
 
@@ -612,7 +618,90 @@ master.data |>
   adorn_totals() |>
   rename('Controls'=`0`,
          'Cases'=`1`) -> totals.obesity
+
+# for gender differences
+complete.data |> 
+  distinct(DeID_PatientID, .keep_all=T) |>
+  tabyl(GenderCode,Cushings) |>
+  adorn_totals() |>
+  rename(`Total Population`=`0`,
+         `Cushing's Disease`=`1`) -> unmatched.totals.gender
+
+male.totals<- 
+  filter(unmatched.totals.gender, GenderCode=="M") |> 
+  select(`Cushing's Disease`,`Total Population`) |>
+  as.integer()
+
+female.totals<- 
+  filter(unmatched.totals.gender, GenderCode=="F") |> 
+  select(`Cushing's Disease`,`Total Population`) |>
+  as.integer()
 ```
+:::
+
+
+
+
+- Prior to matching by Gender, we noted that participants with Cushing's disease were more likely to identify as Female (**80.4532578%** than the overall Michigan Medicine participant population (**57.0294343%** **p=1.1784135\times 10^{-18}**)
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+unmatched.totals.gender |>
+  mutate(Percent.Cases = `Cushing's Disease`/`Cushing's Disease`[GenderCode=="Total"]*100,
+         Percent.Controls = `Total Population`/`Total Population`[GenderCode=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(GenderCode!="Total") -> gender.unmatched.summary
+
+gender.unmatched.summary |>
+  filter(Population=="Percent.Cases") |>
+  mutate(Label= paste0(GenderCode, " - ", round(Percent,0), "%")) |>
+  select(Label,GenderCode,`Cushing's Disease`) |>
+  ggplot(aes(x = 2, y = `Cushing's Disease`, fill = GenderCode)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  geom_text(aes(label = Label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 5) +
+  xlim(0.5, 2.5) +
+  scale_fill_grey() +
+  theme_classic(base_size = 16) +
+  theme(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none",
+    plot.background = element_rect(fill = "transparent", colour = NA)
+  ) 
+```
+
+::: {.cell-output-display}
+![](figures/gender-matching-1.png){width=672}
+:::
+
+```{.r .cell-code}
+gender.unmatched.summary |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(GenderCode),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+```
+
+::: {.cell-output-display}
+![](figures/gender-matching-2.png){width=672}
+:::
 :::
 
 
@@ -620,7 +709,79 @@ master.data |>
 
 - Prior to matching for Race and Ethnicity, we noted that participants with Cushing’s disease were more likely to identify as Non-Hispanic White (**87.2521246%** than the overall Michigan Medicine participant population (**75.6499646%** Non-Hispanic White, **p=5.5003748\times 10^{-7}**)
 - Correspondingly, participants with Cushing’s disease were less likely to identify as Asian (**p=3.2806302\times 10^{-5}**) or Black. (**p=0.015338**).
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+race.matching <- tibble(
+  Race = c("White", "Black", "Asian","Hispanic or Latino"),
+  `Total Population` = c(white.totals[2]/race.totals[2]*100,
+                         black.totals[2]/race.totals[2]*100, 
+                         asian.totals[2]/race.totals[2]*100,
+                         hl.totals[2]/race.totals[2]*100),
+  `Cushing's Disease` = c(white.totals[1]/race.totals[1]*100, 
+              black.totals[1]/race.totals[1]*100, 
+              asian.totals[1]/race.totals[1]*100,
+              hl.totals[1]/race.totals[1]*100)) 
+
+race.matching |>
+  pivot_longer(cols=c(2:3), names_to = "Population", values_to = "Percent") |>
+  mutate(Population=relevel(as.factor(Population),ref="Total Population")) |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Race),-Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.75,0.75))
+```
+
+::: {.cell-output-display}
+![](figures/race-matching-1.png){width=672}
+:::
+:::
+
+
+
+
 - As we expected, participants with Cushing’s disease had a higher BMI than the controls, with **64.6239554**% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only **39.8600458%** controls (p=**1.9950144\times 10^{-20}**).  
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+totals.obesity |>
+  mutate(Percent.Cases = Cases/Cases[Obesity=="Total"]*100,
+         Percent.Controls = Controls/Controls[Obesity=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(Obesity!="Total") |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Obesity),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+```
+
+::: {.cell-output-display}
+![](figures/obesity-matching-1.png){width=672}
+:::
+:::
+
+
+
 
 #### Stratified Demographics for the Entire Population
 
@@ -661,29 +822,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.557869e-32 </td>
-   <td style="text-align:right;"> 3.235435e-21 </td>
+   <td style="text-align:right;"> 1.812091e-30 </td>
+   <td style="text-align:right;"> 1.319296e-21 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.402338e-19 </td>
-   <td style="text-align:right;"> 2.216285e-36 </td>
+   <td style="text-align:right;"> 4.261358e-20 </td>
+   <td style="text-align:right;"> 5.474452e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.073863e-24 </td>
-   <td style="text-align:right;"> 3.315505e-43 </td>
+   <td style="text-align:right;"> 6.456422e-25 </td>
+   <td style="text-align:right;"> 6.121648e-45 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.097803e-17 </td>
-   <td style="text-align:right;"> 2.402719e-71 </td>
+   <td style="text-align:right;"> 5.216629e-16 </td>
+   <td style="text-align:right;"> 5.846971e-71 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1216,11 +1377,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.310450e-37 </td>
+   <td style="text-align:right;"> 6.230385e-37 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 8.887115e-30 </td>
+   <td style="text-align:right;"> 2.363598e-29 </td>
   </tr>
 </tbody>
 </table>
@@ -1864,11 +2025,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.572324e-34 </td>
+   <td style="text-align:right;"> 4.267794e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 7.289265e-62 </td>
+   <td style="text-align:right;"> 4.357619e-69 </td>
   </tr>
 </tbody>
 </table>
@@ -2395,11 +2556,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.764671e-30 </td>
+   <td style="text-align:right;"> 7.483461e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.254299e-18 </td>
+   <td style="text-align:right;"> 3.324769e-19 </td>
   </tr>
 </tbody>
 </table>
@@ -2950,11 +3111,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.839904e-39 </td>
+   <td style="text-align:right;"> 3.739236e-40 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.236634e-42 </td>
+   <td style="text-align:right;"> 3.187969e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -3652,11 +3813,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.614868e-34 </td>
+   <td style="text-align:right;"> 4.938387e-36 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.332425e-69 </td>
+   <td style="text-align:right;"> 5.964948e-70 </td>
   </tr>
 </tbody>
 </table>
