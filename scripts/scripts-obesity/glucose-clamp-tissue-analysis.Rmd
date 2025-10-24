@@ -144,6 +144,21 @@ superpose.eb(plot,
              as.matrix(plot.data[2:3]),
              as.matrix(plot.data.se[2:3]))
 legend("topright", levels(summary$Treatment), bty="n", fil=color.scheme)
+
+library(ggplot2)
+select(summary,Treatment,Heart_mean, Heart_se) %>%
+  #pivot_longer(cols=2:3, names_to="Measure") %>%
+  ggplot(aes(y=Heart_mean,
+             ymin=Heart_mean-Heart_se,
+             ymax=Heart_mean+Heart_se,
+             x=Treatment)) +
+  labs(y="2-DG Uptake (nmol/g/min)",
+       title="Cardiac Glucose Uptake",
+       subtitle="(In Addition to Cardiac Atrophy)",
+       x="")  +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.6) +
+  theme_classic(base_size=16) 
 ```
 
 # Interpretation
