@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.387347e-34 </td>
+   <td style="text-align:right;"> 2.825153e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.505826e-67 </td>
+   <td style="text-align:right;"> 2.026226e-61 </td>
   </tr>
 </tbody>
 </table>
@@ -822,29 +822,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.575029e-30 </td>
-   <td style="text-align:right;"> 1.162099e-22 </td>
+   <td style="text-align:right;"> 5.414479e-31 </td>
+   <td style="text-align:right;"> 4.774843e-21 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.542493e-18 </td>
-   <td style="text-align:right;"> 1.828801e-38 </td>
+   <td style="text-align:right;"> 9.699565e-20 </td>
+   <td style="text-align:right;"> 1.812209e-38 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.289297e-23 </td>
-   <td style="text-align:right;"> 8.013149e-45 </td>
+   <td style="text-align:right;"> 6.118755e-25 </td>
+   <td style="text-align:right;"> 3.669934e-45 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.400390e-18 </td>
-   <td style="text-align:right;"> 1.179179e-71 </td>
+   <td style="text-align:right;"> 1.542532e-16 </td>
+   <td style="text-align:right;"> 3.166697e-70 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1377,11 +1377,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.497479e-37 </td>
+   <td style="text-align:right;"> 1.267234e-38 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 6.864738e-29 </td>
+   <td style="text-align:right;"> 5.637132e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1493,10 +1493,10 @@ ggplot(hba1c.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
-  scale_fill_grey() +
+  scale_fill_grey(labels=c("Controls","Cases"),name="") +
   labs(y="Hba1c (Percent)",x="") +
   theme_classic(base_size=16) +
-  theme(legend.position="none")
+  theme(legend.position=c(0.1,0.9))
 ```
 
 ::: {.cell-output-display}
@@ -2025,11 +2025,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.254435e-32 </td>
+   <td style="text-align:right;"> 7.785400e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.287298e-66 </td>
+   <td style="text-align:right;"> 2.603234e-66 </td>
   </tr>
 </tbody>
 </table>
@@ -2135,7 +2135,7 @@ ggplot(glucose.summary,
   labs(y="Glucose (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
-  theme(legend.position=c(0.2,0.8))
+  theme(legend.position="none")
 ```
 
 ::: {.cell-output-display}
@@ -2558,11 +2558,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.064202e-32 </td>
+   <td style="text-align:right;"> 1.346330e-31 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.754485e-19 </td>
+   <td style="text-align:right;"> 3.327377e-19 </td>
   </tr>
 </tbody>
 </table>
@@ -3132,11 +3132,11 @@ ast.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.876723e-31 </td>
+   <td style="text-align:right;"> 1.776664e-30 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.037299e-18 </td>
+   <td style="text-align:right;"> 1.350455e-17 </td>
   </tr>
 </tbody>
 </table>
@@ -3687,11 +3687,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.441435e-40 </td>
+   <td style="text-align:right;"> 5.554374e-41 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.808715e-42 </td>
+   <td style="text-align:right;"> 8.056180e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -4389,11 +4389,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.252332e-36 </td>
+   <td style="text-align:right;"> 2.067088e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.216801e-68 </td>
+   <td style="text-align:right;"> 2.343659e-67 </td>
   </tr>
 </tbody>
 </table>
