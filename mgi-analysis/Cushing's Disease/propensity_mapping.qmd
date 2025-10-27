@@ -978,7 +978,7 @@ ggplot(glucose.summary,
   labs(y="Glucose (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
-  theme(legend.position="none")
+  theme(legend.position=c(0.2,0.8))
 
 ggplot(glucose.data,
        aes(y=value,
@@ -1052,7 +1052,9 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=glucose.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Glucose")
 ```
 
-### ALT
+### Liver Enzymes
+
+#### ALT
 
 ```{r alt-propensity}
 m.out.alt <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
@@ -1075,7 +1077,7 @@ alt.data <-
   filter(!is.na(Obesity))
 ```
 
-#### Demographics of Participants with ALT Values
+##### Demographics of Participants with ALT Values
 
 ```{r alt-demographics}
 alt.summary.gender <-
@@ -1207,7 +1209,7 @@ lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT")
 ```
 
-#### ALT Statistics
+##### ALT Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
@@ -1265,6 +1267,221 @@ lm(value ~ Cushings + Obesity + Cushings:Obesity,data=alt.data) |>
 lm(value ~ Cushings + BMI + Cushings:Obesity,data=alt.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT")
+```
+
+#### AST
+
+```{r ast-propensity}
+m.out.ast <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("AST")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+
+summary(m.out.ast, standardize = TRUE)  # Balance statistics[5]
+plot(m.out.ast, type = "jitter")  
+
+matched_data.ast <- match.data(m.out.ast)
+
+ast.data <- 
+  matched_data.ast |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity))
+```
+
+##### Demographics of Participants with AST Values
+
+```{r ast-demographics}
+ast.summary.gender <-
+  ast.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ast.summary.race.ethnicity <-
+  ast.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ast.summary.quant <-
+  ast.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+ast.summary.table <-
+  bind_rows(ast.summary.quant,
+          ast.summary.gender,
+          ast.summary.race.ethnicity)
+
+ast.summary.table |>
+  kable(caption="Demographic Summary for AST List") |>
+  kable_styling(full_width = FALSE, position = "center")
+
+write_csv(ast.summary.table,"Demographic Summary - AST Sample.csv")
+
+#statistics for BMI
+ast.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for AST sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+wilcox.test(BMI~Cushings,ast.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for AST sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+
+chisq.test(x=as.numeric(separate(ast.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the AST sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+```{r ast-analysis}
+ast.summary <-
+  ast.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+library(ggplot2)
+ggplot(ast.summary,
+       aes(y=mean,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(ast.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+
+library(knitr)
+ast.summary %>% kable(caption="Summary of AST levels by obesity and pre-existing Cushing's")
+library(broom)
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST")
+```
+
+##### AST Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+```{r ast-statistics}
+#used fully adjusted model
+lm.ast <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = ast.data)
+
+## 1. Adjusted means
+emm.ast <- emmeans(lm.ast, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "AST",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.ast <- contrast(emmeans(lm.ast, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "AST",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.ast <- tidy(lm.ast) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "AST",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.ast %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.ast <- means_wide %>%
+  left_join(contrast.ast, by = c("Outcome", "Obesity"))
+
+ast.summary %>% kable(caption="Summary of AST levels by obesity and pre-existing Cushing's")
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST")
+
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on AST")
 ```
 
 
@@ -1973,21 +2190,6 @@ table.dbp <- means_wide %>%
   left_join(contrast.dbp, by = c("Outcome", "Obesity"))
 ```
 
-## PRISMA Diagram
-Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
-
-```{r diagram}
-labresult_name<- c("Glucose","Hba1c","ALT","LDL","Blood Pressure","Mean Arterial Pressure","Systolic Arterial Pressure","Diastolic Arterial Pressure")
-
-n_people<- c(3639, 20, 326, 13, 19054, 23349, 23349, 23349 )
-
-summary_table<- data.frame(Lab_name=labresult_name, N_people=n_people)
-
-kable(summary_table)
-
-
-
-```
 
 ## Diagnostic Data on Propensity Mapping
 
@@ -1998,6 +2200,7 @@ outcomes <- list(
   `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
   ALT = m.out.alt,
+  AST = m.out.ast,
   HbA1c = m.out.a1c, 
   `LDL-C` = m.out.ldl
 )
@@ -2140,6 +2343,7 @@ table_summary <- bind_rows(
   table.glucose,
   table.hba1c,
   table.alt,
+  table.ast,
   table.ldl,
   table.map,
   table.sbp,
@@ -2157,6 +2361,7 @@ interaction_summary <- bind_rows(
   interaction_row.glucose,
   interaction_row.hba1c,
   interaction_row.alt,
+  interaction_row.ast,
   interaction_row.ldl,
   interaction_row.map,
   interaction_row.sbp,

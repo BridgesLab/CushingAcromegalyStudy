@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 8.299924e-33 </td>
+   <td style="text-align:right;"> 9.387347e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.213136e-66 </td>
+   <td style="text-align:right;"> 3.505826e-67 </td>
   </tr>
 </tbody>
 </table>
@@ -822,29 +822,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.812091e-30 </td>
-   <td style="text-align:right;"> 1.319296e-21 </td>
+   <td style="text-align:right;"> 1.575029e-30 </td>
+   <td style="text-align:right;"> 1.162099e-22 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.261358e-20 </td>
-   <td style="text-align:right;"> 5.474452e-37 </td>
+   <td style="text-align:right;"> 2.542493e-18 </td>
+   <td style="text-align:right;"> 1.828801e-38 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.456422e-25 </td>
-   <td style="text-align:right;"> 6.121648e-45 </td>
+   <td style="text-align:right;"> 1.289297e-23 </td>
+   <td style="text-align:right;"> 8.013149e-45 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.216629e-16 </td>
-   <td style="text-align:right;"> 5.846971e-71 </td>
+   <td style="text-align:right;"> 5.400390e-18 </td>
+   <td style="text-align:right;"> 1.179179e-71 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1377,11 +1377,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.230385e-37 </td>
+   <td style="text-align:right;"> 2.497479e-37 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.363598e-29 </td>
+   <td style="text-align:right;"> 6.864738e-29 </td>
   </tr>
 </tbody>
 </table>
@@ -2025,11 +2025,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.267794e-32 </td>
+   <td style="text-align:right;"> 5.254435e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.357619e-69 </td>
+   <td style="text-align:right;"> 2.287298e-66 </td>
   </tr>
 </tbody>
 </table>
@@ -2135,7 +2135,7 @@ ggplot(glucose.summary,
   labs(y="Glucose (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
-  theme(legend.position="none")
+  theme(legend.position=c(0.2,0.8))
 ```
 
 ::: {.cell-output-display}
@@ -2282,7 +2282,9 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Glucose
 
 
 
-### ALT
+### Liver Enzymes
+
+#### ALT
 
 
 
@@ -2397,7 +2399,7 @@ alt.data <-
 
 
 
-#### Demographics of Participants with ALT Values
+##### Demographics of Participants with ALT Values
 
 
 
@@ -2556,11 +2558,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.483461e-33 </td>
+   <td style="text-align:right;"> 7.064202e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.324769e-19 </td>
+   <td style="text-align:right;"> 2.754485e-19 </td>
   </tr>
 </tbody>
 </table>
@@ -2737,7 +2739,7 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on ALT
 
 
 
-#### ALT Statistics
+##### ALT Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
@@ -2848,6 +2850,580 @@ Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT
 |Cushings              | 36.0507907| 6.3190946|  5.705056| 0.0000000|
 |BMI                   |  0.5421501| 0.1042606|  5.199950| 0.0000002|
 |Cushings:ObesityObese | 35.4740470| 8.1117369|  4.373175| 0.0000129|
+
+
+:::
+:::
+
+
+
+
+#### AST
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+m.out.ast <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("AST")), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+
+summary(m.out.ast, standardize = TRUE)  # Balance statistics[5]
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+Call:
+matchit(formula = Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
+    data = filter(complete.data, RESULT_CODE %in% c("AST")), 
+    method = "nearest", exact = c("GenderCode", "RaceEthnicity"), 
+    ratio = fold)
+
+Summary of Balance for All Data:
+                                Means Treated Means Control Std. Mean Diff.
+distance                               0.0059        0.0024          0.7374
+AgeInYears                            48.4756       59.8821         -0.7057
+GenderCodeF                            0.8293        0.5606          0.7141
+GenderCodeM                            0.1707        0.4394         -0.7141
+RaceEthnicityAsian                     0.0030        0.0666         -1.1523
+RaceEthnicityBlack                     0.0152        0.1128         -0.7962
+RaceEthnicityHispanic or Latino        0.0335        0.0319          0.0093
+RaceEthnicityOther                     0.0091        0.0328         -0.2490
+RaceEthnicityWhite                     0.9390        0.7559          0.7653
+                                Var. Ratio eCDF Mean eCDF Max
+distance                            2.6234    0.2064   0.5181
+AgeInYears                          0.8539    0.1438   0.3224
+GenderCodeF                              .    0.2687   0.2687
+GenderCodeM                              .    0.2687   0.2687
+RaceEthnicityAsian                       .    0.0635   0.0635
+RaceEthnicityBlack                       .    0.0976   0.0976
+RaceEthnicityHispanic or Latino          .    0.0017   0.0017
+RaceEthnicityOther                       .    0.0237   0.0237
+RaceEthnicityWhite                       .    0.1831   0.1831
+
+Summary of Balance for Matched Data:
+                                Means Treated Means Control Std. Mean Diff.
+distance                               0.0059        0.0057          0.0390
+AgeInYears                            48.4756       48.8067         -0.0205
+GenderCodeF                            0.8293        0.8293          0.0000
+GenderCodeM                            0.1707        0.1707          0.0000
+RaceEthnicityAsian                     0.0030        0.0030          0.0000
+RaceEthnicityBlack                     0.0152        0.0152          0.0000
+RaceEthnicityHispanic or Latino        0.0335        0.0335          0.0000
+RaceEthnicityOther                     0.0091        0.0091          0.0000
+RaceEthnicityWhite                     0.9390        0.9390          0.0000
+                                Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
+distance                            1.2444    0.0005   0.0396          0.0392
+AgeInYears                          1.0983    0.0019   0.0540          0.0211
+GenderCodeF                              .    0.0000   0.0000          0.0000
+GenderCodeM                              .    0.0000   0.0000          0.0000
+RaceEthnicityAsian                       .    0.0000   0.0000          0.0000
+RaceEthnicityBlack                       .    0.0000   0.0000          0.0000
+RaceEthnicityHispanic or Latino          .    0.0000   0.0000          0.0000
+RaceEthnicityOther                       .    0.0000   0.0000          0.0000
+RaceEthnicityWhite                       .    0.0000   0.0000          0.0000
+
+Sample Sizes:
+          Control Treated
+All        136470     328
+Matched      3280     328
+Unmatched  133190       0
+Discarded       0       0
+```
+
+
+:::
+
+```{.r .cell-code}
+plot(m.out.ast, type = "jitter")  
+```
+
+::: {.cell-output-display}
+![](figures/ast-propensity-1.png){width=672}
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+To identify the units, use first mouse button; to stop, use second.
+```
+
+
+:::
+
+```{.r .cell-code}
+matched_data.ast <- match.data(m.out.ast)
+
+ast.data <- 
+  matched_data.ast |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity))
+```
+:::
+
+
+
+
+##### Demographics of Participants with AST Values
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+ast.summary.gender <-
+  ast.data |>
+  tabyl(GenderName,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=GenderName)|>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ast.summary.race.ethnicity <-
+  ast.data |>
+  tabyl(RaceEthnicity,Cushings) |>
+  adorn_percentages("col") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns(position = "front") %>%
+  mutate(across(starts_with("."), ~ paste0(.x))) %>%
+  mutate(across(starts_with("."), ~ gsub("(.+)% \\((.+)\\)", "\\2 (\\1%)", .x))) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=RaceEthnicity) |>
+  mutate(Cushings_count = as.numeric(str_extract(`Cushing's`, "^\\d+"))) |>
+  arrange(desc(Cushings_count)) |>
+  select(-Cushings_count)
+
+ast.summary.quant <-
+  ast.data |>
+  group_by(Cushings) %>%
+  summarise(
+    Age_Mean = mean(AgeInYears, na.rm = TRUE),
+    Age_SD = sd(AgeInYears),
+    BMI_Mean = mean(BMI, na.rm = TRUE),
+    BMI_SD = sd(BMI)
+  ) %>%
+  mutate(
+    Age = sprintf("%.2f ± %.2f", Age_Mean, Age_SD),
+    BMI = sprintf("%.2f ± %.2f", BMI_Mean, BMI_SD)
+  ) %>%
+  select(Cushings, Age, BMI)  |>
+  pivot_longer(cols=c('Age','BMI')) |>
+  pivot_wider(names_from=Cushings) |>
+  rename(Controls=`0`,
+         `Cushing's`=`1`,
+         Group=name)
+
+
+ast.summary.table <-
+  bind_rows(ast.summary.quant,
+          ast.summary.gender,
+          ast.summary.race.ethnicity)
+
+ast.summary.table |>
+  kable(caption="Demographic Summary for AST List") |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Demographic Summary for AST List</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:left;"> Controls </th>
+   <th style="text-align:left;"> Cushing's </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:left;"> 47.94 ± 14.99 </td>
+   <td style="text-align:left;"> 45.74 ± 17.68 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI </td>
+   <td style="text-align:left;"> 29.89 ± 7.65 </td>
+   <td style="text-align:left;"> 33.53 ± 9.36 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:left;"> 1,621 (84.47%) </td>
+   <td style="text-align:left;"> 67 (79.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> 298 (15.53%) </td>
+   <td style="text-align:left;"> 17 (20.24%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> White </td>
+   <td style="text-align:left;"> 1,788 (93.17%) </td>
+   <td style="text-align:left;"> 73 (86.90%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Black </td>
+   <td style="text-align:left;"> 42  (2.19%) </td>
+   <td style="text-align:left;"> 4  (4.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hispanic or Latino </td>
+   <td style="text-align:left;"> 61  (3.18%) </td>
+   <td style="text-align:left;"> 4  (4.76%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 18  (0.94%) </td>
+   <td style="text-align:left;"> 2  (2.38%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Asian </td>
+   <td style="text-align:left;"> 10  (0.52%) </td>
+   <td style="text-align:left;"> 1  (1.19%) </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+write_csv(ast.summary.table,"Demographic Summary - AST Sample.csv")
+
+#statistics for BMI
+ast.data |>
+  group_by(Cushings) |>
+  summarize(shapiro.p=shapiro.test(sample(BMI,3000,replace=T))$p.value) |>
+  kable(caption="Shapiro Wilk test for BMI for AST sample", digits=c(1,99)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Shapiro Wilk test for BMI for AST sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Cushings </th>
+   <th style="text-align:right;"> shapiro.p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1.876723e-31 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1.037299e-18 </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+wilcox.test(BMI~Cushings,ast.data) |>
+  tidy() |>
+  kable(caption="Mann Whitney test for effect of Cushing's on BMI for AST sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Mann Whitney test for effect of Cushing's on BMI for AST sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:left;"> method </th>
+   <th style="text-align:left;"> alternative </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 60855 </td>
+   <td style="text-align:right;"> 0.0001417433 </td>
+   <td style="text-align:left;"> Wilcoxon rank sum test with continuity correction </td>
+   <td style="text-align:left;"> two.sided </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
+chisq.test(x=as.numeric(separate(ast.summary.gender, `Cushing's`, sep=" ", into=c("n","Pct")) |>
+                          pull(n)),p=c(0.5,0.5)) |>
+  tidy() |>
+  kable(caption="Chi-squared test for equal proportions of males and females in the AST sample",
+        digits=c(1,99,1,1)) |>
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Chi-squared test for equal proportions of males and females in the AST sample</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> statistic </th>
+   <th style="text-align:right;"> p.value </th>
+   <th style="text-align:right;"> parameter </th>
+   <th style="text-align:left;"> method </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 29.8 </td>
+   <td style="text-align:right;"> 4.884973e-08 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Chi-squared test for given probabilities </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+:::
+
+::: {.cell}
+
+```{.r .cell-code}
+ast.summary <-
+  ast.data %>%
+  group_by(Cushings,Obesity) |>
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            sd=sd(value,na.rm=T),
+            n=length(value))
+
+library(ggplot2)
+ggplot(ast.summary,
+       aes(y=mean,
+           ymin=mean-1.96*se,
+           ymax=mean+1.96*se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ast-analysis-1.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(ast.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ast-analysis-2.png){width=672}
+:::
+
+```{.r .cell-code}
+library(knitr)
+ast.summary %>% kable(caption="Summary of AST levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of AST levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|        se|        sd|    n|
+|--------:|:---------|--------:|---------:|---------:|----:|
+|        0|Non-Obese | 27.41903|  2.850992|  94.25535| 1093|
+|        0|Obese     | 26.38257|  1.221533|  35.10713|  826|
+|        1|Non-Obese | 42.34375|  5.719697|  32.35549|   32|
+|        1|Obese     | 83.05769| 32.328517| 233.12425|   52|
+
+
+:::
+
+```{.r .cell-code}
+library(broom)
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST
+
+|term                  |  estimate| std.error|  statistic|   p.value|
+|:---------------------|---------:|---------:|----------:|---------:|
+|(Intercept)           | 27.419030|  2.487769| 11.0215356| 0.0000000|
+|Cushings              | 14.924720| 14.750653|  1.0118006| 0.3117559|
+|ObesityObese          | -1.036464|  3.791905| -0.2733359| 0.7846233|
+|Cushings:ObesityObese | 41.750406| 18.864230|  2.2132048| 0.0269961|
+
+
+:::
+:::
+
+
+
+
+##### AST Statistics
+
+Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+#used fully adjusted model
+lm.ast <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = ast.data)
+
+## 1. Adjusted means
+emm.ast <- emmeans(lm.ast, ~ Cushings | Obesity) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "AST",
+    Mean_CI = sprintf("%.2f (%.2f–%.2f)", emmean, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, Cushings, Mean_CI)
+
+## 2. Within-stratum Cushing–Control difference
+contrast.ast <- contrast(emmeans(lm.ast, ~ Cushings | Obesity),
+                             method = "revpairwise") %>%
+  summary(infer = TRUE) %>%
+  as.data.frame() %>%
+  mutate(
+    Outcome = "AST",
+    Diff_CI = sprintf("%.2f (%.2f–%.2f)", estimate, lower.CL, upper.CL)
+  ) %>%
+  select(Outcome, Obesity, contrast, Diff_CI, p.value)
+
+## 3. Interaction term
+interaction_row.ast <- tidy(lm.ast) %>%
+  filter(term == "Cushings:ObesityObese") %>%
+  mutate(
+    Outcome = "AST",
+    Interaction_CI = sprintf("%.2f (%.2f–%.2f)",
+                             estimate,
+                             estimate - 1.96 * std.error,
+                             estimate + 1.96 * std.error)
+  ) %>%
+  select(Outcome, term, estimate, std.error, statistic, p.value, Interaction_CI)
+
+## 4. Combine into one publication-style table:
+# Pivot adjusted means to wide format (Control vs Cushing side by side)
+means_wide <- emm.ast %>%
+  mutate(Cushings = ifelse(Cushings == 1, "Cushing", "Control")) %>%
+  pivot_wider(names_from = Cushings, values_from = Mean_CI)
+
+# Merge means with differences
+table.ast <- means_wide %>%
+  left_join(contrast.ast, by = c("Outcome", "Obesity"))
+
+ast.summary %>% kable(caption="Summary of AST levels by obesity and pre-existing Cushing's")
+```
+
+::: {.cell-output-display}
+
+
+Table: Summary of AST levels by obesity and pre-existing Cushing's
+
+| Cushings|Obesity   |     mean|        se|        sd|    n|
+|--------:|:---------|--------:|---------:|---------:|----:|
+|        0|Non-Obese | 27.41903|  2.850992|  94.25535| 1093|
+|        0|Obese     | 26.38257|  1.221533|  35.10713|  826|
+|        1|Non-Obese | 42.34375|  5.719697|  32.35549|   32|
+|        1|Obese     | 83.05769| 32.328517| 233.12425|   52|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + Obesity + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on AST
+
+|term                  |  estimate| std.error|  statistic|   p.value|
+|:---------------------|---------:|---------:|----------:|---------:|
+|(Intercept)           | 27.419030|  2.487769| 11.0215356| 0.0000000|
+|Cushings              | 14.924720| 14.750653|  1.0118006| 0.3117559|
+|ObesityObese          | -1.036464|  3.791905| -0.2733359| 0.7846233|
+|Cushings:ObesityObese | 41.750406| 18.864230|  2.2132048| 0.0269961|
+
+
+:::
+
+```{.r .cell-code}
+lm(value ~ Cushings + BMI + Cushings:Obesity,data=ast.data) |> 
+  tidy() |> 
+  kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on AST")
+```
+
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on AST
+
+|term                  |   estimate| std.error| statistic|   p.value|
+|:---------------------|----------:|---------:|---------:|---------:|
+|(Intercept)           | 24.0096571|  7.483368| 3.2084024| 0.0013559|
+|Cushings              | 15.9148667| 14.719938| 1.0811776| 0.2797485|
+|BMI                   |  0.0991493|  0.242383| 0.4090606| 0.6825390|
+|Cushings:ObesityObese | 39.2513118| 18.821520| 2.0854485| 0.0371552|
 
 
 :::
@@ -3111,11 +3687,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 3.739236e-40 </td>
+   <td style="text-align:right;"> 5.441435e-40 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.187969e-42 </td>
+   <td style="text-align:right;"> 4.808715e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -3813,11 +4389,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.938387e-36 </td>
+   <td style="text-align:right;"> 9.252332e-36 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.964948e-70 </td>
+   <td style="text-align:right;"> 1.216801e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -4442,44 +5018,6 @@ table.dbp <- means_wide %>%
 
 
 
-## PRISMA Diagram
-Here we will graphically illustrate how we arrived at the listed n number of people for each lab result.
-
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-labresult_name<- c("Glucose","Hba1c","ALT","LDL","Blood Pressure","Mean Arterial Pressure","Systolic Arterial Pressure","Diastolic Arterial Pressure")
-
-n_people<- c(3639, 20, 326, 13, 19054, 23349, 23349, 23349 )
-
-summary_table<- data.frame(Lab_name=labresult_name, N_people=n_people)
-
-kable(summary_table)
-```
-
-::: {.cell-output-display}
-
-
-|Lab_name                    | N_people|
-|:---------------------------|--------:|
-|Glucose                     |     3639|
-|Hba1c                       |       20|
-|ALT                         |      326|
-|LDL                         |       13|
-|Blood Pressure              |    19054|
-|Mean Arterial Pressure      |    23349|
-|Systolic Arterial Pressure  |    23349|
-|Diastolic Arterial Pressure |    23349|
-
-
-:::
-:::
-
-
-
 
 ## Diagnostic Data on Propensity Mapping
 
@@ -4495,6 +5033,7 @@ outcomes <- list(
   `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
   ALT = m.out.alt,
+  AST = m.out.ast,
   HbA1c = m.out.a1c, 
   `LDL-C` = m.out.ldl
 )
@@ -4603,6 +5142,24 @@ full_table_formatted %>%
    <td style="text-align:right;"> -0.02 </td>
    <td style="text-align:right;"> 48.61 </td>
    <td style="text-align:right;"> 48.27 </td>
+   <td style="text-align:right;"> 0.27 </td>
+   <td style="text-align:right;"> 0.89 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:right;"> -0.71 </td>
+   <td style="text-align:right;"> 59.88 </td>
+   <td style="text-align:right;"> 48.48 </td>
+   <td style="text-align:right;"> 0.05 </td>
+   <td style="text-align:right;"> 0.89 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:right;"> -0.02 </td>
+   <td style="text-align:right;"> 48.81 </td>
+   <td style="text-align:right;"> 48.48 </td>
    <td style="text-align:right;"> 0.27 </td>
    <td style="text-align:right;"> 0.89 </td>
   </tr>
@@ -4743,6 +5300,20 @@ kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensit
    <td style="text-align:left;"> Post-matching </td>
    <td style="text-align:left;"> 48.61 +/- 0.27 </td>
    <td style="text-align:left;"> 48.27 +/- 0.89 </td>
+   <td style="text-align:right;"> -0.02 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Pre-matching </td>
+   <td style="text-align:left;"> 59.88 +/- 0.05 </td>
+   <td style="text-align:left;"> 48.48 +/- 0.89 </td>
+   <td style="text-align:right;"> -0.71 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Post-matching </td>
+   <td style="text-align:left;"> 48.81 +/- 0.27 </td>
+   <td style="text-align:left;"> 48.48 +/- 0.89 </td>
    <td style="text-align:right;"> -0.02 </td>
   </tr>
   <tr>
@@ -4906,6 +5477,7 @@ table_summary <- bind_rows(
   table.glucose,
   table.hba1c,
   table.alt,
+  table.ast,
   table.ldl,
   table.map,
   table.sbp,
@@ -4981,6 +5553,22 @@ table_summary |>
    <td style="text-align:left;"> 102.59 (91.24–113.95) </td>
    <td style="text-align:left;"> 73.39 (63.37–83.40) </td>
    <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Non-Obese </td>
+   <td style="text-align:left;"> 23.00 (8.38–37.62) </td>
+   <td style="text-align:left;"> 39.92 (9.06–70.77) </td>
+   <td style="text-align:left;"> 16.91 (-12.16–45.99) </td>
+   <td style="text-align:right;"> 0.2540227 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> Obese </td>
+   <td style="text-align:left;"> 21.80 (6.90–36.69) </td>
+   <td style="text-align:left;"> 78.73 (52.49–104.97) </td>
+   <td style="text-align:left;"> 56.93 (33.85–80.02) </td>
+   <td style="text-align:right;"> 0.0000014 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> LDL-C </td>
@@ -5060,6 +5648,7 @@ interaction_summary <- bind_rows(
   interaction_row.glucose,
   interaction_row.hba1c,
   interaction_row.alt,
+  interaction_row.ast,
   interaction_row.ldl,
   interaction_row.map,
   interaction_row.sbp,
@@ -5100,6 +5689,11 @@ interaction_summary |>
    <td style="text-align:left;"> ALT </td>
    <td style="text-align:left;"> 38.26 (22.26–54.26) </td>
    <td style="text-align:right;"> 0.0000030 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AST </td>
+   <td style="text-align:left;"> 40.02 (2.93–77.11) </td>
+   <td style="text-align:right;"> 0.0345815 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> LDL-C </td>
