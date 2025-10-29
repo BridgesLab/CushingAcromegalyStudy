@@ -374,12 +374,46 @@ gender.unmatched.summary |>
   ) 
 
 gender.unmatched.summary |>
+  filter(Population=="Percent.Cases") |>
+  mutate(Label= paste0(GenderCode, " - ", round(Percent,0), "%")) |>
+  select(Label,GenderCode,`Cushing's Disease`) |>
+  ggplot(aes(x = 2, y = `Cushing's Disease`, fill = GenderCode)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  geom_text(aes(label = Label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 5) +
+  xlim(0.5, 2.5) +
+  scale_fill_manual(values=color_scheme) +
+  theme_classic(base_size = 16) +
+  theme(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none",
+    plot.background = element_rect(fill = "transparent", colour = NA)
+  ) 
+
+gender.unmatched.summary |>
   ggplot(aes(y=Percent,
              x=reorder(as.factor(GenderCode),Percent),
              fill=Population)) +
   geom_bar(stat='identity',position="dodge") +
   theme_classic(base_size=16) +
   scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+
+gender.unmatched.summary |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(GenderCode),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(labels=c("Cushing's Disease","Total Population"),values=color_scheme) +
   labs(y="Percent",x="",fill="") +
   theme(legend.position=c(0.15,0.95),
         legend.background = element_rect(fill = "transparent", colour = NA),
@@ -412,6 +446,18 @@ race.matching |>
   scale_fill_grey() +
   labs(y="Percent",x="",fill="") +
   theme(legend.position=c(0.75,0.75))
+
+race.matching |>
+  pivot_longer(cols=c(2:3), names_to = "Population", values_to = "Percent") |>
+  mutate(Population=relevel(as.factor(Population),ref="Total Population")) |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Race),-Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.75,0.75))
 ```
 
 - As we expected, participants with Cushing’s disease had a higher BMI than the controls, with **`r filter(totals.obesity, Obesity=="Obese")['Cases']/filter(totals.obesity, Obesity=="Total")['Cases']*100`**% of participants with Cushing’s disease having a BMI above 30 kg/m2, compared to only **`r filter(totals.obesity, Obesity=="Obese")['Controls']/filter(totals.obesity, Obesity=="Total")['Controls']*100`%** controls (p=**`r chisq.test(as.matrix(rbind(totals.obesity |> filter(Obesity=="Obese") |> select(Cases,Controls),totals.obesity |> filter(Obesity=="Non-Obese") |> select(Cases,Controls))))$p.value`**).  
@@ -430,6 +476,24 @@ totals.obesity |>
   geom_bar(stat='identity',position="dodge") +
   theme_classic(base_size=16) +
   scale_fill_grey(labels=c("Cushing's Disease","Total Population")) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+
+totals.obesity |>
+  mutate(Percent.Cases = Cases/Cases[Obesity=="Total"]*100,
+         Percent.Controls = Controls/Controls[Obesity=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(Obesity!="Total") |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Obesity),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(labels=c("Cushing's Disease","Total Population"),values=color_scheme) +
   labs(y="Percent",x="",fill="") +
   theme(legend.position=c(0.15,0.95),
         legend.background = element_rect(fill = "transparent", colour = NA),
@@ -591,7 +655,67 @@ matched.nonhl.cushings <- matched.total.cushings - matched.hl.cushings
 Details specified in the manuscript:
 
 - For example, among participants with a $BMI > 30 mg/m^2$, participants with Cushing’s disease had a higher BMI than controls (p=`r wilcox.test(BMI~Cushings, data=master.data |> filter(Obesity=="Obese"))$p.value`).
+
+```{r stratfied-demographics-obesity}
+master.data |>
+  group_by(Cushings,Obesity) |>
+  summarize(BMI.mean = mean(BMI,na.rm=T),
+            BMI.se = se(BMI),
+            BMI.n = length(!is.na(BMI))) -> matched.bmi.summary
+
+matched.bmi.summary |>
+  ggplot(aes(x=Obesity,
+             y=BMI.mean,
+             fill=as.factor(Cushings))) +
+  geom_bar(stat='identity',position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin=BMI.mean - BMI.se,
+                    ymax=BMI.mean + BMI.se),
+                position = position_dodge(width = 0.9),
+                width = 0.5) +
+  theme_classic(base_size=16) +
+  scale_fill_grey(name="",labels=c("Control","Cushing's Disease")) +
+  labs(y="BMI (kg/m2)",x="")
+
+matched.bmi.summary |>
+  ggplot(aes(x=Obesity,
+             y=BMI.mean,
+             fill=as.factor(Cushings))) +
+  geom_bar(stat='identity',position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin=BMI.mean - BMI.se,
+                    ymax=BMI.mean + BMI.se),
+                position = position_dodge(width = 0.9),
+                width = 0.5) +
+  theme_classic(base_size=16) +
+  scale_fill_manual(name="",labels=c("Control","Cushing's Disease"),values = color_scheme) +
+  labs(y="BMI (kg/m2)",x="")
+```
+
 - Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (`r matched.table.gender[[2]] |> mutate(Pct = Obese/(NonObese+Obese)*100) |> filter(GenderName=="Female")|> pull(Pct)`% of females with Cushing's disease had a $BMI>30$) than males (`r matched.table.gender[[2]] |> mutate(Pct = Obese/(NonObese+Obese)*100) |> filter(GenderName=="Male")|> pull(Pct)`%), p=`r chisq.test(matched.table.gender[[2]] |> select(-GenderName) |> as.matrix() )$p.value`).  
+
+```{r stratfied-demographics-gender}
+matched.table.gender[[2]] |> 
+  mutate(Pct = Obese/(NonObese+Obese)*100) |>
+  ggplot(aes(x=GenderName,
+             y=Pct,
+             fill=GenderName)) +
+  geom_bar(stat='identity') +
+  theme_classic(base_size=16) +
+  scale_fill_grey(name="") +
+  labs(y="Percent with BMI > 30 kg/m2",x="") +
+  theme(legend.position="none")
+
+matched.table.gender[[2]] |> 
+  mutate(Pct = Obese/(NonObese+Obese)*100) |>
+  ggplot(aes(x=GenderName,
+             y=Pct,
+             fill=GenderName)) +
+  geom_bar(stat='identity') +
+  theme_classic(base_size=16) +
+  scale_fill_manual(name="",values = color_scheme)  +
+  labs(y="Percent with BMI > 30 kg/m2",x="") +
+  theme(legend.position="none")
+```
+
 - Among participants with Cushing’s disease, Asian (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Asian")|> pull(Pct)`%) and Hispanic or Latino (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Hispanic or Latino")|> pull(Pct)`%) participants were more likely have a BMI  under 30 kg/m2 compared to the overall average (`r matched.table.raceethnicity.cushings |> filter(RaceEthnicity=="Total")|> pull(Pct)`%, p=`r fisher.test(as.matrix(rbind(matched.asian.cushings,matched.nonasian.cushings)))$p.value` and `r fisher.test(as.matrix(rbind(matched.hl.cushings,matched.nonhl.cushings)))$p.value` respectively).
 - The average age of participants with Cushing’s disease with or without obesity was similar.
 
@@ -726,8 +850,8 @@ hba1c.summary.iii <-
 library(ggplot2)
 ggplot(hba1c.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -740,10 +864,26 @@ ggplot(hba1c.summary,
   theme_classic(base_size=16) +
   theme(legend.position=c(0.1,0.9))
 
+ggplot(hba1c.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  scale_fill_manual(labels=c("Controls","Cases"),name="",values=color_scheme) +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.1,0.9))
+
 ggplot(hba1c.summary.iii,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=ObesityIII,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -756,6 +896,22 @@ ggplot(hba1c.summary.iii,
   scale_fill_grey() +
   theme(legend.position="none")
 
+ggplot(hba1c.summary.iii,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=ObesityIII,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
 ggplot(hba1c.data,
        aes(y=value,
            x=BMI,
@@ -764,6 +920,17 @@ ggplot(hba1c.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Hba1c (Percent)",x="") +
   scale_fill_grey() +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
+
+ggplot(hba1c.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Hba1c (Percent)",x="") +
+  scale_fill_manual(values=color_scheme) +
   theme_classic(base_size=16) +
   theme(legend.position="none")
 
@@ -966,8 +1133,8 @@ glucose.summary <-
 
 ggplot(glucose.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -980,6 +1147,22 @@ ggplot(glucose.summary,
   scale_fill_grey() +
   theme(legend.position="none")
 
+ggplot(glucose.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Glucose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
 ggplot(glucose.data,
        aes(y=value,
            x=BMI,
@@ -989,6 +1172,17 @@ ggplot(glucose.data,
   labs(y="Glucuose (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(glucose.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Glucuose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 ```
 
@@ -1175,8 +1369,8 @@ alt.summary <-
 library(ggplot2)
 ggplot(alt.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1184,6 +1378,33 @@ ggplot(alt.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(alt.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
+ggplot(alt.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
   labs(y="ALT (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
@@ -1197,7 +1418,7 @@ ggplot(alt.data,
   stat_smooth(method="loess", se=F) +
   labs(y="ALT (mg/dL)",x="") +
   theme_classic(base_size=16) +
-  scale_fill_grey() +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 
@@ -1390,8 +1611,8 @@ ast.summary <-
 library(ggplot2)
 ggplot(ast.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1399,6 +1620,33 @@ ggplot(ast.summary,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(ast.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
+ggplot(ast.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
   labs(y="AST (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
@@ -1412,7 +1660,7 @@ ggplot(ast.data,
   stat_smooth(method="loess", se=F) +
   labs(y="AST (mg/dL)",x="") +
   theme_classic(base_size=16) +
-  scale_fill_grey() +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 
@@ -1605,8 +1853,8 @@ ldl.summary <-
 
 ggplot(ldl.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1619,6 +1867,22 @@ ggplot(ldl.summary,
   scale_fill_grey() +
   theme(legend.position="none")
 
+ggplot(ldl.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="LDL Cholesterol (mg/dL)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
 ggplot(ldl.data,
        aes(y=value,
            x=BMI,
@@ -1628,6 +1892,17 @@ ggplot(ldl.data,
   labs(y="LDL Cholesterol (mg/dL)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(ldl.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="LDL Cholesterol (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 ldl.summary %>% kable(caption="Summary of LDL-C levels by obesity and pre-existing Cushing's")
@@ -1901,8 +2176,8 @@ bp.summary.map <-
 
 ggplot(bp.summary.map,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1915,6 +2190,22 @@ ggplot(bp.summary.map,
   scale_fill_grey() +
   theme(legend.position="none")
 
+ggplot(bp.summary.map,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
 ggplot(bp.data,
        aes(y=BPMeanNonInvasive,
            x=BMI,
@@ -1924,6 +2215,17 @@ ggplot(bp.data,
   labs(y="Blood Pressure (Mean; mmHg)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(bp.data,
+       aes(y=BPMeanNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 bp.summary.map %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Mean)")
@@ -2002,8 +2304,8 @@ bp.summary.sys <-
 
 ggplot(bp.summary.sys,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2011,6 +2313,33 @@ ggplot(bp.summary.sys,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(bp.summary.sys,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
+ggplot(bp.data,
+       aes(y=BPSysNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
@@ -2024,7 +2353,7 @@ ggplot(bp.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
   theme_classic(base_size=16) +
-  scale_fill_grey() +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 
@@ -2104,8 +2433,8 @@ bp.summary.dia <-
 
 ggplot(bp.summary.dia,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2113,6 +2442,33 @@ ggplot(bp.summary.dia,
     position = position_dodge(width = 0.9), # must match geom_col
     width = 0.5
   ) +
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_grey() +
+  theme(legend.position="none")
+
+ggplot(bp.summary.dia,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+
+ggplot(bp.data,
+       aes(y=BPDiaNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
   theme_classic(base_size=16) +
   scale_fill_grey() +
@@ -2126,7 +2482,7 @@ ggplot(bp.data,
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
   theme_classic(base_size=16) +
-  scale_fill_grey() +
+  scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 bp.summary.dia %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Diastoic)")
@@ -2319,6 +2675,41 @@ plots <- lapply(names(outcomes), function(name) {
       color = "Stage",
     ) +
     scale_color_grey() +
+    theme(legend.position = c(0.75,0.5))
+})
+
+# Example: display HbA1c plot
+plots[[1]]
+library(cowplot)
+
+combined_plot <- plot_grid(
+  plotlist = plots,   # your list of ggplot objects
+  ncol = 2,           # number of columns
+  labels = names(plots)  # optional: label each subplot with the outcome name
+)
+
+# Display
+combined_plot
+
+plots <- lapply(names(outcomes), function(name) {
+  # Generate Love plot, force only SMDs
+  gg <- love.plot(
+    outcomes[[name]],
+    stats = "mean.diffs",  # only standardized mean differences
+    threshold = 0.1,
+    abs = TRUE,
+    stars = "none"         # avoids mixing with raw differences
+  )
+  
+  # gg is now a ggplot object directly
+  gg + 
+    theme_classic(base_size=6) +
+    labs(
+      title = name,
+      x = "Standardized Mean Difference",
+      color = "Stage",
+    ) +
+    scale_color_manual(values=color_scheme) +
     theme(legend.position = c(0.75,0.5))
 })
 

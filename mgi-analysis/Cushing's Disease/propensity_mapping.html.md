@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.825153e-32 </td>
+   <td style="text-align:right;"> 1.195635e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.026226e-61 </td>
+   <td style="text-align:right;"> 1.389108e-63 </td>
   </tr>
 </tbody>
 </table>
@@ -687,6 +687,34 @@ gender.unmatched.summary |>
 
 ```{.r .cell-code}
 gender.unmatched.summary |>
+  filter(Population=="Percent.Cases") |>
+  mutate(Label= paste0(GenderCode, " - ", round(Percent,0), "%")) |>
+  select(Label,GenderCode,`Cushing's Disease`) |>
+  ggplot(aes(x = 2, y = `Cushing's Disease`, fill = GenderCode)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  geom_text(aes(label = Label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 5) +
+  xlim(0.5, 2.5) +
+  scale_fill_manual(values=color_scheme) +
+  theme_classic(base_size = 16) +
+  theme(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none",
+    plot.background = element_rect(fill = "transparent", colour = NA)
+  ) 
+```
+
+::: {.cell-output-display}
+![](figures/gender-matching-2.png){width=672}
+:::
+
+```{.r .cell-code}
+gender.unmatched.summary |>
   ggplot(aes(y=Percent,
              x=reorder(as.factor(GenderCode),Percent),
              fill=Population)) +
@@ -700,7 +728,25 @@ gender.unmatched.summary |>
 ```
 
 ::: {.cell-output-display}
-![](figures/gender-matching-2.png){width=672}
+![](figures/gender-matching-3.png){width=672}
+:::
+
+```{.r .cell-code}
+gender.unmatched.summary |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(GenderCode),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(labels=c("Cushing's Disease","Total Population"),values=color_scheme) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+```
+
+::: {.cell-output-display}
+![](figures/gender-matching-4.png){width=672}
 :::
 :::
 
@@ -743,6 +789,24 @@ race.matching |>
 ::: {.cell-output-display}
 ![](figures/race-matching-1.png){width=672}
 :::
+
+```{.r .cell-code}
+race.matching |>
+  pivot_longer(cols=c(2:3), names_to = "Population", values_to = "Percent") |>
+  mutate(Population=relevel(as.factor(Population),ref="Total Population")) |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Race),-Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.75,0.75))
+```
+
+::: {.cell-output-display}
+![](figures/race-matching-2.png){width=672}
+:::
 :::
 
 
@@ -777,6 +841,30 @@ totals.obesity |>
 
 ::: {.cell-output-display}
 ![](figures/obesity-matching-1.png){width=672}
+:::
+
+```{.r .cell-code}
+totals.obesity |>
+  mutate(Percent.Cases = Cases/Cases[Obesity=="Total"]*100,
+         Percent.Controls = Controls/Controls[Obesity=="Total"]*100) |>
+  pivot_longer(cols=starts_with('Percent'),
+               names_to = 'Population',
+               values_to = 'Percent') |>
+  filter(Obesity!="Total") |>
+  ggplot(aes(y=Percent,
+             x=reorder(as.factor(Obesity),Percent),
+             fill=Population)) +
+  geom_bar(stat='identity',position="dodge") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(labels=c("Cushing's Disease","Total Population"),values=color_scheme) +
+  labs(y="Percent",x="",fill="") +
+  theme(legend.position=c(0.15,0.95),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.box.background = element_rect(fill = "transparent", colour = NA))
+```
+
+::: {.cell-output-display}
+![](figures/obesity-matching-2.png){width=672}
 :::
 :::
 
@@ -822,29 +910,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.414479e-31 </td>
-   <td style="text-align:right;"> 4.774843e-21 </td>
+   <td style="text-align:right;"> 6.378724e-31 </td>
+   <td style="text-align:right;"> 1.052554e-22 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 9.699565e-20 </td>
-   <td style="text-align:right;"> 1.812209e-38 </td>
+   <td style="text-align:right;"> 1.461406e-17 </td>
+   <td style="text-align:right;"> 2.882114e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.118755e-25 </td>
-   <td style="text-align:right;"> 3.669934e-45 </td>
+   <td style="text-align:right;"> 6.606932e-24 </td>
+   <td style="text-align:right;"> 1.843982e-44 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.542532e-16 </td>
-   <td style="text-align:right;"> 3.166697e-70 </td>
+   <td style="text-align:right;"> 2.070486e-16 </td>
+   <td style="text-align:right;"> 4.450017e-71 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1107,7 +1195,105 @@ matched.nonhl.cushings <- matched.total.cushings - matched.hl.cushings
 Details specified in the manuscript:
 
 - For example, among participants with a $BMI > 30 mg/m^2$, participants with Cushing’s disease had a higher BMI than controls (p=5.426642\times 10^{-4}).
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+master.data |>
+  group_by(Cushings,Obesity) |>
+  summarize(BMI.mean = mean(BMI,na.rm=T),
+            BMI.se = se(BMI),
+            BMI.n = length(!is.na(BMI))) -> matched.bmi.summary
+
+matched.bmi.summary |>
+  ggplot(aes(x=Obesity,
+             y=BMI.mean,
+             fill=as.factor(Cushings))) +
+  geom_bar(stat='identity',position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin=BMI.mean - BMI.se,
+                    ymax=BMI.mean + BMI.se),
+                position = position_dodge(width = 0.9),
+                width = 0.5) +
+  theme_classic(base_size=16) +
+  scale_fill_grey(name="",labels=c("Control","Cushing's Disease")) +
+  labs(y="BMI (kg/m2)",x="")
+```
+
+::: {.cell-output-display}
+![](figures/stratfied-demographics-obesity-1.png){width=672}
+:::
+
+```{.r .cell-code}
+matched.bmi.summary |>
+  ggplot(aes(x=Obesity,
+             y=BMI.mean,
+             fill=as.factor(Cushings))) +
+  geom_bar(stat='identity',position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin=BMI.mean - BMI.se,
+                    ymax=BMI.mean + BMI.se),
+                position = position_dodge(width = 0.9),
+                width = 0.5) +
+  theme_classic(base_size=16) +
+  scale_fill_manual(name="",labels=c("Control","Cushing's Disease"),values = color_scheme) +
+  labs(y="BMI (kg/m2)",x="")
+```
+
+::: {.cell-output-display}
+![](figures/stratfied-demographics-obesity-2.png){width=672}
+:::
+:::
+
+
+
+
 - Females with Cushing’s disease were more likely to have a BMI over 30 kg/m2 (67.9442509% of females with Cushing's disease had a $BMI>30$) than males (51.3888889%), p=0.0128071).  
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+matched.table.gender[[2]] |> 
+  mutate(Pct = Obese/(NonObese+Obese)*100) |>
+  ggplot(aes(x=GenderName,
+             y=Pct,
+             fill=GenderName)) +
+  geom_bar(stat='identity') +
+  theme_classic(base_size=16) +
+  scale_fill_grey(name="") +
+  labs(y="Percent with BMI > 30 kg/m2",x="") +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/stratfied-demographics-gender-1.png){width=672}
+:::
+
+```{.r .cell-code}
+matched.table.gender[[2]] |> 
+  mutate(Pct = Obese/(NonObese+Obese)*100) |>
+  ggplot(aes(x=GenderName,
+             y=Pct,
+             fill=GenderName)) +
+  geom_bar(stat='identity') +
+  theme_classic(base_size=16) +
+  scale_fill_manual(name="",values = color_scheme)  +
+  labs(y="Percent with BMI > 30 kg/m2",x="") +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/stratfied-demographics-gender-2.png){width=672}
+:::
+:::
+
+
+
+
 - Among participants with Cushing’s disease, Asian (75%) and Hispanic or Latino (60%) participants were more likely have a BMI  under 30 kg/m2 compared to the overall average (35.3760446%, p=0.025386 and 0.175616 respectively).
 - The average age of participants with Cushing’s disease with or without obesity was similar.
 
@@ -1377,11 +1563,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.267234e-38 </td>
+   <td style="text-align:right;"> 5.577736e-38 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 5.637132e-30 </td>
+   <td style="text-align:right;"> 2.938574e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -1484,8 +1670,8 @@ hba1c.summary.iii <-
 library(ggplot2)
 ggplot(hba1c.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1504,10 +1690,32 @@ ggplot(hba1c.summary,
 :::
 
 ```{.r .cell-code}
+ggplot(hba1c.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  scale_fill_manual(labels=c("Controls","Cases"),name="",values=color_scheme) +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.1,0.9))
+```
+
+::: {.cell-output-display}
+![](figures/hba1c-analyses-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(hba1c.summary.iii,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=ObesityIII,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -1522,7 +1730,29 @@ ggplot(hba1c.summary.iii,
 ```
 
 ::: {.cell-output-display}
-![](figures/hba1c-analyses-2.png){width=672}
+![](figures/hba1c-analyses-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(hba1c.summary.iii,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=ObesityIII,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Hba1c (Percent)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/hba1c-analyses-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -1539,7 +1769,24 @@ ggplot(hba1c.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/hba1c-analyses-3.png){width=672}
+![](figures/hba1c-analyses-5.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(hba1c.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Hba1c (Percent)",x="") +
+  scale_fill_manual(values=color_scheme) +
+  theme_classic(base_size=16) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/hba1c-analyses-6.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -2025,11 +2272,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.785400e-34 </td>
+   <td style="text-align:right;"> 5.018910e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.603234e-66 </td>
+   <td style="text-align:right;"> 3.201316e-63 </td>
   </tr>
 </tbody>
 </table>
@@ -2123,8 +2370,8 @@ glucose.summary <-
 
 ggplot(glucose.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2143,6 +2390,28 @@ ggplot(glucose.summary,
 :::
 
 ```{.r .cell-code}
+ggplot(glucose.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Glucose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/glucose-analysis-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(glucose.data,
        aes(y=value,
            x=BMI,
@@ -2156,7 +2425,24 @@ ggplot(glucose.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/glucose-analysis-2.png){width=672}
+![](figures/glucose-analysis-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(glucose.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Glucuose (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/glucose-analysis-4.png){width=672}
 :::
 :::
 
@@ -2558,11 +2844,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.346330e-31 </td>
+   <td style="text-align:right;"> 1.132864e-30 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.327377e-19 </td>
+   <td style="text-align:right;"> 1.038970e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -2657,8 +2943,8 @@ alt.summary <-
 library(ggplot2)
 ggplot(alt.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -2677,6 +2963,28 @@ ggplot(alt.summary,
 :::
 
 ```{.r .cell-code}
+ggplot(alt.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/alt-analysis-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(alt.data,
        aes(y=value,
            x=BMI,
@@ -2690,7 +2998,24 @@ ggplot(alt.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/alt-analysis-2.png){width=672}
+![](figures/alt-analysis-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(alt.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="ALT (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/alt-analysis-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3132,11 +3457,11 @@ ast.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.776664e-30 </td>
+   <td style="text-align:right;"> 4.457938e-31 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.350455e-17 </td>
+   <td style="text-align:right;"> 1.410990e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -3231,8 +3556,8 @@ ast.summary <-
 library(ggplot2)
 ggplot(ast.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -3251,6 +3576,28 @@ ggplot(ast.summary,
 :::
 
 ```{.r .cell-code}
+ggplot(ast.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ast-analysis-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(ast.data,
        aes(y=value,
            x=BMI,
@@ -3264,7 +3611,24 @@ ggplot(ast.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/ast-analysis-2.png){width=672}
+![](figures/ast-analysis-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(ast.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="AST (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ast-analysis-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -3687,11 +4051,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.554374e-41 </td>
+   <td style="text-align:right;"> 1.883829e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 8.056180e-42 </td>
+   <td style="text-align:right;"> 3.745175e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -3785,8 +4149,8 @@ ldl.summary <-
 
 ggplot(ldl.summary,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -3805,6 +4169,28 @@ ggplot(ldl.summary,
 :::
 
 ```{.r .cell-code}
+ggplot(ldl.summary,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="LDL Cholesterol (mg/dL)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ldl-analysis-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(ldl.data,
        aes(y=value,
            x=BMI,
@@ -3818,7 +4204,24 @@ ggplot(ldl.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/ldl-analysis-2.png){width=672}
+![](figures/ldl-analysis-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(ldl.data,
+       aes(y=value,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="LDL Cholesterol (mg/dL)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/ldl-analysis-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -4389,11 +4792,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.067088e-34 </td>
+   <td style="text-align:right;"> 6.617634e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.343659e-67 </td>
+   <td style="text-align:right;"> 2.396184e-68 </td>
   </tr>
 </tbody>
 </table>
@@ -4496,8 +4899,8 @@ bp.summary.map <-
 
 ggplot(bp.summary.map,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -4516,6 +4919,28 @@ ggplot(bp.summary.map,
 :::
 
 ```{.r .cell-code}
+ggplot(bp.summary.map,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-map-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(bp.data,
        aes(y=BPMeanNonInvasive,
            x=BMI,
@@ -4529,7 +4954,24 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/bp-map-2.png){width=672}
+![](figures/bp-map-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(bp.data,
+       aes(y=BPMeanNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-map-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -4677,8 +5119,8 @@ bp.summary.sys <-
 
 ggplot(bp.summary.sys,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -4697,6 +5139,28 @@ ggplot(bp.summary.sys,
 :::
 
 ```{.r .cell-code}
+ggplot(bp.summary.sys,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-systolic-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(bp.data,
        aes(y=BPSysNonInvasive,
            x=BMI,
@@ -4710,7 +5174,24 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/bp-systolic-2.png){width=672}
+![](figures/bp-systolic-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(bp.data,
+       aes(y=BPSysNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-systolic-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -4857,8 +5338,8 @@ bp.summary.dia <-
 
 ggplot(bp.summary.dia,
        aes(y=mean,
-           ymin=mean-1.96*se,
-           ymax=mean+1.96*se,
+           ymin=mean- se,
+           ymax=mean+ se,
            x=Obesity,
            fill=as.factor(Cushings))) +
   geom_col(position = position_dodge(width = 0.9)) +
@@ -4877,6 +5358,28 @@ ggplot(bp.summary.dia,
 :::
 
 ```{.r .cell-code}
+ggplot(bp.summary.dia,
+       aes(y=mean,
+           ymin=mean- se,
+           ymax=mean+ se,
+           x=Obesity,
+           fill=as.factor(Cushings))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    position = position_dodge(width = 0.9), # must match geom_col
+    width = 0.5
+  ) +
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-diastolic-2.png){width=672}
+:::
+
+```{.r .cell-code}
 ggplot(bp.data,
        aes(y=BPDiaNonInvasive,
            x=BMI,
@@ -4890,7 +5393,24 @@ ggplot(bp.data,
 ```
 
 ::: {.cell-output-display}
-![](figures/bp-diastolic-2.png){width=672}
+![](figures/bp-diastolic-3.png){width=672}
+:::
+
+```{.r .cell-code}
+ggplot(bp.data,
+       aes(y=BPDiaNonInvasive,
+           x=BMI,
+           col=as.factor(Cushings))) +
+  geom_point() +
+  stat_smooth(method="loess", se=F) +
+  labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  theme_classic(base_size=16) +
+  scale_fill_manual(values=color_scheme) +
+  theme(legend.position="none")
+```
+
+::: {.cell-output-display}
+![](figures/bp-diastolic-4.png){width=672}
 :::
 
 ```{.r .cell-code}
@@ -5459,6 +5979,54 @@ combined_plot
 
 ::: {.cell-output-display}
 ![](figures/love-plots-2.png){width=672}
+:::
+
+```{.r .cell-code}
+plots <- lapply(names(outcomes), function(name) {
+  # Generate Love plot, force only SMDs
+  gg <- love.plot(
+    outcomes[[name]],
+    stats = "mean.diffs",  # only standardized mean differences
+    threshold = 0.1,
+    abs = TRUE,
+    stars = "none"         # avoids mixing with raw differences
+  )
+  
+  # gg is now a ggplot object directly
+  gg + 
+    theme_classic(base_size=6) +
+    labs(
+      title = name,
+      x = "Standardized Mean Difference",
+      color = "Stage",
+    ) +
+    scale_color_manual(values=color_scheme) +
+    theme(legend.position = c(0.75,0.5))
+})
+
+# Example: display HbA1c plot
+plots[[1]]
+```
+
+::: {.cell-output-display}
+![](figures/love-plots-3.png){width=672}
+:::
+
+```{.r .cell-code}
+library(cowplot)
+
+combined_plot <- plot_grid(
+  plotlist = plots,   # your list of ggplot objects
+  ncol = 2,           # number of columns
+  labels = names(plots)  # optional: label each subplot with the outcome name
+)
+
+# Display
+combined_plot
+```
+
+::: {.cell-output-display}
+![](figures/love-plots-4.png){width=672}
 :::
 :::
 
