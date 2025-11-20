@@ -1,0 +1,1 @@
+cmd = HFD_specific_500bp.bed mm10.fa . -bg shared_500bp.bed -size 500 -mask -p 4 -len 8,10,12

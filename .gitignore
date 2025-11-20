@@ -49,3 +49,7 @@ external-datasets/snATACseq/GSM7558107_S091_12_mmepiAT_LHC_ATAC_ER-3_GRCm38_bowt
 external-datasets/snATACseq/mm10.fa
 external-datasets/snATACseq/mm10.fa.fai
 external-datasets/snATACseq/JASPAR2022_CORE_non-redundant_pfms_meme.txt
+
+*.bam
+*.bai
+*.fa
