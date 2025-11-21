@@ -2735,7 +2735,6 @@ table_summary <- bind_rows(
   table.hba1c,
   table.alt,
   table.ast,
-  table.ldl,
   table.map,
   table.sbp,
   table.dbp
@@ -2753,7 +2752,6 @@ interaction_summary <- bind_rows(
   interaction_row.hba1c,
   interaction_row.alt,
   interaction_row.ast,
-  interaction_row.ldl,
   interaction_row.map,
   interaction_row.sbp,
   interaction_row.dbp
