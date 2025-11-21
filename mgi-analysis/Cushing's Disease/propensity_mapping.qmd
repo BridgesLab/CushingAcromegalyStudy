@@ -2073,8 +2073,32 @@ bp.data <-
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
-  filter(!is.na(Obesity)) 
+  filter(!is.na(Obesity)) |>
+  mutate(MAP_imputed = if_else(
+    is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive),
+    (BPSysNonInvasive + 2*BPDiaNonInvasive)/3,
+    BPMeanNonInvasive
+  ))
+
+# Calculate agreement statistics
+map_agreement <- bp.data %>%
+  filter(!is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive)) %>%
+  mutate(MAP_calc = (BPSysNonInvasive + 2*BPDiaNonInvasive)/3,
+         difference = BPMeanNonInvasive - MAP_calc) %>%
+  summarise(
+    mean_diff = round(mean(difference), 2),
+    sd_diff = round(sd(difference), 2),
+    correlation = round(cor(BPMeanNonInvasive, MAP_calc), 3)
+  )
+
+# Count how many will be imputed
+n_imputed <- bp.data %>%
+  filter(is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive)) %>%
+  nrow()
 ```
+
+Mean arterial pressure was directly measured in the majority of cases. When MAP was missing but systolic and diastolic BP were available (n=`r n_imputed`), MAP was calculated as (SBP + 2×DBP)/3. The calculated values showed high agreement with measured MAP (r=`r map_agreement$correlation`, mean difference=`r map_agreement$mean_diff` ± `r map_agreement$sd_diff` mmHg) in cases where both were available.
+
 
 #### Demographics of Participants with Blood Pressure Values
 
@@ -2169,10 +2193,10 @@ chisq.test(x=as.numeric(separate(bp.summary.gender, `Cushing's`, sep=" ", into=c
 bp.summary.map <-
   bp.data %>%
   group_by(Cushings,Obesity) |>
-  summarize(mean=mean(BPMeanNonInvasive,na.rm=T),
-            se=se(BPMeanNonInvasive),
-            sd=sd(BPMeanNonInvasive,na.rm=T),
-            n=length(BPMeanNonInvasive))
+  summarize(mean=mean(MAP_imputed,na.rm=T),
+            se=se(MAP_imputed),
+            sd=sd(MAP_imputed,na.rm=T),
+            n=length(MAP_imputed))
 
 ggplot(bp.summary.map,
        aes(y=mean,
@@ -2186,6 +2210,8 @@ ggplot(bp.summary.map,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -2202,38 +2228,44 @@ ggplot(bp.summary.map,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 ggplot(bp.data,
-       aes(y=BPMeanNonInvasive,
+       aes(y=MAP_imputed,
            x=BMI,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
 
 ggplot(bp.data,
-       aes(y=BPMeanNonInvasive,
+       aes(y=MAP_imputed,
            x=BMI,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
 
 bp.summary.map %>% kable(caption="Summary of blood pressure levels by obesity and pre-existing Cushing's (Mean)")
-lm(BPMeanNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
+lm(MAP_imputed ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Mean)")
 
-lm(BPMeanNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
+lm(MAP_imputed ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)")
 ```
@@ -2244,7 +2276,7 @@ Used the fully adjusted model to test the interaction between Cushings's diagnos
 
 ```{r map-statistics}
 #used fully adjusted model
-lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
+lm.map <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
 ## 1. Adjusted means
 emm.map <- emmeans(lm.map, ~ Cushings | Obesity) %>%
@@ -2314,6 +2346,8 @@ ggplot(bp.summary.sys,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -2330,6 +2364,8 @@ ggplot(bp.summary.sys,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -2341,6 +2377,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -2352,6 +2390,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -2443,6 +2483,8 @@ ggplot(bp.summary.dia,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -2459,6 +2501,8 @@ ggplot(bp.summary.dia,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -2470,6 +2514,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -2481,6 +2527,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")

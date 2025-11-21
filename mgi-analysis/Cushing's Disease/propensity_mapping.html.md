@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.195635e-33 </td>
+   <td style="text-align:right;"> 6.429486e-34 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.389108e-63 </td>
+   <td style="text-align:right;"> 1.055081e-66 </td>
   </tr>
 </tbody>
 </table>
@@ -910,29 +910,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.378724e-31 </td>
-   <td style="text-align:right;"> 1.052554e-22 </td>
+   <td style="text-align:right;"> 1.163841e-31 </td>
+   <td style="text-align:right;"> 3.203758e-22 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.461406e-17 </td>
-   <td style="text-align:right;"> 2.882114e-37 </td>
+   <td style="text-align:right;"> 1.595271e-18 </td>
+   <td style="text-align:right;"> 7.304873e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.606932e-24 </td>
-   <td style="text-align:right;"> 1.843982e-44 </td>
+   <td style="text-align:right;"> 4.212054e-25 </td>
+   <td style="text-align:right;"> 2.145011e-44 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.070486e-16 </td>
-   <td style="text-align:right;"> 4.450017e-71 </td>
+   <td style="text-align:right;"> 1.170558e-15 </td>
+   <td style="text-align:right;"> 3.662728e-72 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1563,11 +1563,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.577736e-38 </td>
+   <td style="text-align:right;"> 7.815754e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.938574e-30 </td>
+   <td style="text-align:right;"> 3.267116e-29 </td>
   </tr>
 </tbody>
 </table>
@@ -2272,11 +2272,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 5.018910e-35 </td>
+   <td style="text-align:right;"> 4.591861e-31 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.201316e-63 </td>
+   <td style="text-align:right;"> 8.141123e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -2844,11 +2844,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.132864e-30 </td>
+   <td style="text-align:right;"> 2.049019e-31 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.038970e-18 </td>
+   <td style="text-align:right;"> 3.635330e-19 </td>
   </tr>
 </tbody>
 </table>
@@ -3457,11 +3457,11 @@ ast.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.457938e-31 </td>
+   <td style="text-align:right;"> 2.029794e-30 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.410990e-18 </td>
+   <td style="text-align:right;"> 4.815709e-19 </td>
   </tr>
 </tbody>
 </table>
@@ -4051,11 +4051,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.883829e-39 </td>
+   <td style="text-align:right;"> 9.606608e-43 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.745175e-42 </td>
+   <td style="text-align:right;"> 2.079814e-42 </td>
   </tr>
 </tbody>
 </table>
@@ -4626,11 +4626,35 @@ bp.data <-
   distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
-  filter(!is.na(Obesity)) 
+  filter(!is.na(Obesity)) |>
+  mutate(MAP_imputed = if_else(
+    is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive),
+    (BPSysNonInvasive + 2*BPDiaNonInvasive)/3,
+    BPMeanNonInvasive
+  ))
+
+# Calculate agreement statistics
+map_agreement <- bp.data %>%
+  filter(!is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive)) %>%
+  mutate(MAP_calc = (BPSysNonInvasive + 2*BPDiaNonInvasive)/3,
+         difference = BPMeanNonInvasive - MAP_calc) %>%
+  summarise(
+    mean_diff = round(mean(difference), 2),
+    sd_diff = round(sd(difference), 2),
+    correlation = round(cor(BPMeanNonInvasive, MAP_calc), 3)
+  )
+
+# Count how many will be imputed
+n_imputed <- bp.data %>%
+  filter(is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive)) %>%
+  nrow()
 ```
 :::
 
 
+
+
+Mean arterial pressure was directly measured in the majority of cases. When MAP was missing but systolic and diastolic BP were available (n=22873), MAP was calculated as (SBP + 2×DBP)/3. The calculated values showed high agreement with measured MAP (r=0.963, mean difference=1.32 ± 3.38 mmHg) in cases where both were available.
 
 
 #### Demographics of Participants with Blood Pressure Values
@@ -4792,11 +4816,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.617634e-34 </td>
+   <td style="text-align:right;"> 4.090639e-37 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.396184e-68 </td>
+   <td style="text-align:right;"> 6.079581e-69 </td>
   </tr>
 </tbody>
 </table>
@@ -4892,10 +4916,10 @@ chisq.test(x=as.numeric(separate(bp.summary.gender, `Cushing's`, sep=" ", into=c
 bp.summary.map <-
   bp.data %>%
   group_by(Cushings,Obesity) |>
-  summarize(mean=mean(BPMeanNonInvasive,na.rm=T),
-            se=se(BPMeanNonInvasive),
-            sd=sd(BPMeanNonInvasive,na.rm=T),
-            n=length(BPMeanNonInvasive))
+  summarize(mean=mean(MAP_imputed,na.rm=T),
+            se=se(MAP_imputed),
+            sd=sd(MAP_imputed,na.rm=T),
+            n=length(MAP_imputed))
 
 ggplot(bp.summary.map,
        aes(y=mean,
@@ -4909,6 +4933,8 @@ ggplot(bp.summary.map,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -4931,6 +4957,8 @@ ggplot(bp.summary.map,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Mean; mmHg)", x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -4942,12 +4970,14 @@ ggplot(bp.summary.map,
 
 ```{.r .cell-code}
 ggplot(bp.data,
-       aes(y=BPMeanNonInvasive,
+       aes(y=MAP_imputed,
            x=BMI,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -4959,12 +4989,14 @@ ggplot(bp.data,
 
 ```{.r .cell-code}
 ggplot(bp.data,
-       aes(y=BPMeanNonInvasive,
+       aes(y=MAP_imputed,
            x=BMI,
            col=as.factor(Cushings))) +
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Mean; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -4985,16 +5017,16 @@ Table: Summary of blood pressure levels by obesity and pre-existing Cushing's (M
 
 | Cushings|Obesity   |     mean|        se|       sd|     n|
 |--------:|:---------|--------:|---------:|--------:|-----:|
-|        0|Non-Obese | 84.22283| 0.1035021| 12.63871| 14911|
-|        0|Obese     | 88.55882| 0.1340250| 12.08679|  8133|
-|        1|Non-Obese | 96.57143| 0.7212360|  7.39047|   105|
-|        1|Obese     | 91.25000| 0.8280360| 11.76860|   202|
+|        0|Non-Obese | 84.80288| 0.0864892| 10.56125| 14911|
+|        0|Obese     | 89.76108| 0.1178169| 10.62509|  8133|
+|        1|Non-Obese | 93.66228| 1.5800475| 16.19067|   105|
+|        1|Obese     | 91.35088| 1.0858501| 15.43283|   202|
 
 
 :::
 
 ```{.r .cell-code}
-lm(BPMeanNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
+lm(MAP_imputed ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Mean)")
 ```
@@ -5004,18 +5036,18 @@ lm(BPMeanNonInvasive ~ Cushings + Obesity + Cushings:Obesity,data=bp.data) |>
 
 Table: 2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Mean)
 
-|term                  |  estimate| std.error| statistic|   p.value|
-|:---------------------|---------:|---------:|---------:|---------:|
-|(Intercept)           | 84.222826| 0.9103038| 92.521672| 0.0000000|
-|Cushings              | 12.348603| 4.7550381|  2.596951| 0.0098738|
-|ObesityObese          |  4.335997| 1.5242958|  2.844590| 0.0047558|
-|Cushings:ObesityObese | -9.657426| 6.5699490| -1.469939| 0.1426367|
+|term                  |  estimate| std.error|  statistic| p.value|
+|:---------------------|---------:|---------:|----------:|-------:|
+|(Intercept)           | 84.802875| 0.0872824| 971.592267| 0.0e+00|
+|Cushings              |  8.859405| 1.2236746|   7.240001| 0.0e+00|
+|ObesityObese          |  4.958201| 0.1469389|  33.743279| 0.0e+00|
+|Cushings:ObesityObese | -7.269604| 1.5370897|  -4.729460| 2.3e-06|
 
 
 :::
 
 ```{.r .cell-code}
-lm(BPMeanNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
+lm(MAP_imputed ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |> 
   tidy() |> 
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)")
 ```
@@ -5025,12 +5057,12 @@ lm(BPMeanNonInvasive ~ Cushings + BMI + Cushings:Obesity,data=bp.data) |>
 
 Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)
 
-|term                  |   estimate| std.error| statistic|   p.value|
-|:---------------------|----------:|---------:|---------:|---------:|
-|(Intercept)           | 76.1005545| 3.0061454| 25.314994| 0.0000000|
-|Cushings              | 11.5581089| 4.7071340|  2.455445| 0.0146440|
-|BMI                   |  0.3334588| 0.1006026|  3.314613| 0.0010315|
-|Cushings:ObesityObese | -9.6570884| 6.4936771| -1.487153| 0.1380354|
+|term                  |   estimate| std.error|  statistic| p.value|
+|:---------------------|----------:|---------:|----------:|-------:|
+|(Intercept)           | 75.3560316| 0.2849814| 264.424357| 0.0e+00|
+|Cushings              |  8.0652749| 1.2103610|   6.663528| 0.0e+00|
+|BMI                   |  0.3907399| 0.0096453|  40.511018| 0.0e+00|
+|Cushings:ObesityObese | -6.9517828| 1.5188015|  -4.577150| 4.7e-06|
 
 
 :::
@@ -5050,7 +5082,7 @@ Used the fully adjusted model to test the interaction between Cushings's diagnos
 
 ```{.r .cell-code}
 #used fully adjusted model
-lm.map <- lm(BPMeanNonInvasive ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
+lm.map <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
 ## 1. Adjusted means
 emm.map <- emmeans(lm.map, ~ Cushings | Obesity) %>%
@@ -5129,6 +5161,8 @@ ggplot(bp.summary.sys,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -5151,6 +5185,8 @@ ggplot(bp.summary.sys,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -5168,6 +5204,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -5185,6 +5223,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Systolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -5348,6 +5388,8 @@ ggplot(bp.summary.dia,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -5370,6 +5412,8 @@ ggplot(bp.summary.dia,
     width = 0.5
   ) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -5387,6 +5431,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_grey() +
   theme(legend.position="none")
@@ -5404,6 +5450,8 @@ ggplot(bp.data,
   geom_point() +
   stat_smooth(method="loess", se=F) +
   labs(y="Blood Pressure (Diastolic; mmHg)",x="") +
+  geom_hline(yintercept = 60, linetype = "solid", color = "gray30") +
+  coord_cartesian(ylim = c(60, NA)) +  # Use this instead of scale_y_continuous
   theme_classic(base_size=16) +
   scale_fill_manual(values=color_scheme) +
   theme(legend.position="none")
@@ -6046,7 +6094,6 @@ table_summary <- bind_rows(
   table.hba1c,
   table.alt,
   table.ast,
-  table.ldl,
   table.map,
   table.sbp,
   table.dbp
@@ -6139,36 +6186,20 @@ table_summary |>
    <td style="text-align:right;"> 0.0000014 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Non-Obese </td>
-   <td style="text-align:left;"> 114.01 (104.84–123.18) </td>
-   <td style="text-align:left;"> 77.11 (30.37–123.86) </td>
-   <td style="text-align:left;"> -36.89 (-83.51–9.73) </td>
-   <td style="text-align:right;"> 0.1198533 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Obese </td>
-   <td style="text-align:left;"> 110.78 (100.17–121.39) </td>
-   <td style="text-align:left;"> 121.89 (96.85–146.92) </td>
-   <td style="text-align:left;"> 11.11 (-15.07–37.29) </td>
-   <td style="text-align:right;"> 0.4028015 </td>
-  </tr>
-  <tr>
    <td style="text-align:left;"> Mean Arterial Pressure </td>
    <td style="text-align:left;"> Non-Obese </td>
-   <td style="text-align:left;"> 82.54 (79.24–85.84) </td>
-   <td style="text-align:left;"> 94.43 (84.81–104.06) </td>
-   <td style="text-align:left;"> 11.89 (2.59–21.19) </td>
-   <td style="text-align:right;"> 0.0124101 </td>
+   <td style="text-align:left;"> 85.73 (85.39–86.08) </td>
+   <td style="text-align:left;"> 93.84 (91.51–96.17) </td>
+   <td style="text-align:left;"> 8.11 (5.78–10.43) </td>
+   <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Mean Arterial Pressure </td>
    <td style="text-align:left;"> Obese </td>
-   <td style="text-align:left;"> 86.65 (82.75–90.55) </td>
-   <td style="text-align:left;"> 89.94 (80.88–98.99) </td>
-   <td style="text-align:left;"> 3.29 (-5.60–12.18) </td>
-   <td style="text-align:right;"> 0.4669551 </td>
+   <td style="text-align:left;"> 90.04 (89.66–90.42) </td>
+   <td style="text-align:left;"> 91.57 (89.79–93.34) </td>
+   <td style="text-align:left;"> 1.53 (-0.24–3.29) </td>
+   <td style="text-align:right;"> 0.0900073 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Systolic Blood Pressure </td>
@@ -6217,7 +6248,6 @@ interaction_summary <- bind_rows(
   interaction_row.hba1c,
   interaction_row.alt,
   interaction_row.ast,
-  interaction_row.ldl,
   interaction_row.map,
   interaction_row.sbp,
   interaction_row.dbp
@@ -6264,14 +6294,9 @@ interaction_summary |>
    <td style="text-align:right;"> 0.0345815 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> 48.00 (-4.69–100.69) </td>
-   <td style="text-align:right;"> 0.0765542 </td>
-  </tr>
-  <tr>
    <td style="text-align:left;"> Mean Arterial Pressure </td>
-   <td style="text-align:left;"> -8.60 (-21.39–4.18) </td>
-   <td style="text-align:right;"> 0.1883613 </td>
+   <td style="text-align:left;"> -6.58 (-9.50–-3.66) </td>
+   <td style="text-align:right;"> 0.0000099 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Systolic Blood Pressure </td>

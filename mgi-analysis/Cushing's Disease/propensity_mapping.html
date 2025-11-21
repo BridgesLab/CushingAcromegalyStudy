@@ -596,11 +596,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.195635e-33</td>
+<td style="text-align: right;">6.429486e-34</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1.389108e-63</td>
+<td style="text-align: right;">1.055081e-66</td>
 </tr>
 </tbody>
 </table>
@@ -1008,29 +1008,29 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: left;">Non-Obese</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">6.378724e-31</td>
-<td style="text-align: right;">1.052554e-22</td>
+<td style="text-align: right;">1.163841e-31</td>
+<td style="text-align: right;">3.203758e-22</td>
 <td style="text-align: right;">4469</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Non-Obese</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1.461406e-17</td>
-<td style="text-align: right;">2.882114e-37</td>
+<td style="text-align: right;">1.595271e-18</td>
+<td style="text-align: right;">7.304873e-37</td>
 <td style="text-align: right;">127</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Obese</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">6.606932e-24</td>
-<td style="text-align: right;">1.843982e-44</td>
+<td style="text-align: right;">4.212054e-25</td>
+<td style="text-align: right;">2.145011e-44</td>
 <td style="text-align: right;">2962</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Obese</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">2.070486e-16</td>
-<td style="text-align: right;">4.450017e-71</td>
+<td style="text-align: right;">1.170558e-15</td>
+<td style="text-align: right;">3.662728e-72</td>
 <td style="text-align: right;">232</td>
 </tr>
 </tbody>
@@ -1626,11 +1626,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">5.577736e-38</td>
+<td style="text-align: right;">7.815754e-39</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">2.938574e-30</td>
+<td style="text-align: right;">3.267116e-29</td>
 </tr>
 </tbody>
 </table>
@@ -2528,11 +2528,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">5.018910e-35</td>
+<td style="text-align: right;">4.591861e-31</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">3.201316e-63</td>
+<td style="text-align: right;">8.141123e-65</td>
 </tr>
 </tbody>
 </table>
@@ -3159,11 +3159,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.132864e-30</td>
+<td style="text-align: right;">2.049019e-31</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1.038970e-18</td>
+<td style="text-align: right;">3.635330e-19</td>
 </tr>
 </tbody>
 </table>
@@ -3894,11 +3894,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">4.457938e-31</td>
+<td style="text-align: right;">2.029794e-30</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1.410990e-18</td>
+<td style="text-align: right;">4.815709e-19</td>
 </tr>
 </tbody>
 </table>
@@ -4610,11 +4610,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.883829e-39</td>
+<td style="text-align: right;">9.606608e-43</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">3.745175e-42</td>
+<td style="text-align: right;">2.079814e-42</td>
 </tr>
 </tbody>
 </table>
@@ -5349,9 +5349,31 @@ Discarded       0       0</code></pre>
 <span id="cb129-6"><a href="#cb129-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
 <span id="cb129-7"><a href="#cb129-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
 <span id="cb129-8"><a href="#cb129-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ObesityIII =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">40</span>, <span class="st">"Class III Obese"</span>,<span class="st">"All Others"</span>))  <span class="sc">|&gt;</span></span>
-<span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity)) <span class="sc">|&gt;</span></span>
+<span id="cb129-10"><a href="#cb129-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MAP_imputed =</span> <span class="fu">if_else</span>(</span>
+<span id="cb129-11"><a href="#cb129-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(BPMeanNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPSysNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPDiaNonInvasive),</span>
+<span id="cb129-12"><a href="#cb129-12" aria-hidden="true" tabindex="-1"></a>    (BPSysNonInvasive <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>BPDiaNonInvasive)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb129-13"><a href="#cb129-13" aria-hidden="true" tabindex="-1"></a>    BPMeanNonInvasive</span>
+<span id="cb129-14"><a href="#cb129-14" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb129-15"><a href="#cb129-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-16"><a href="#cb129-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate agreement statistics</span></span>
+<span id="cb129-17"><a href="#cb129-17" aria-hidden="true" tabindex="-1"></a>map_agreement <span class="ot">&lt;-</span> bp.data <span class="sc">%&gt;%</span></span>
+<span id="cb129-18"><a href="#cb129-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BPMeanNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPSysNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPDiaNonInvasive)) <span class="sc">%&gt;%</span></span>
+<span id="cb129-19"><a href="#cb129-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MAP_calc =</span> (BPSysNonInvasive <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>BPDiaNonInvasive)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb129-20"><a href="#cb129-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">difference =</span> BPMeanNonInvasive <span class="sc">-</span> MAP_calc) <span class="sc">%&gt;%</span></span>
+<span id="cb129-21"><a href="#cb129-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb129-22"><a href="#cb129-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_diff =</span> <span class="fu">round</span>(<span class="fu">mean</span>(difference), <span class="dv">2</span>),</span>
+<span id="cb129-23"><a href="#cb129-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_diff =</span> <span class="fu">round</span>(<span class="fu">sd</span>(difference), <span class="dv">2</span>),</span>
+<span id="cb129-24"><a href="#cb129-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">correlation =</span> <span class="fu">round</span>(<span class="fu">cor</span>(BPMeanNonInvasive, MAP_calc), <span class="dv">3</span>)</span>
+<span id="cb129-25"><a href="#cb129-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb129-26"><a href="#cb129-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-27"><a href="#cb129-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Count how many will be imputed</span></span>
+<span id="cb129-28"><a href="#cb129-28" aria-hidden="true" tabindex="-1"></a>n_imputed <span class="ot">&lt;-</span> bp.data <span class="sc">%&gt;%</span></span>
+<span id="cb129-29"><a href="#cb129-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(BPMeanNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPSysNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPDiaNonInvasive)) <span class="sc">%&gt;%</span></span>
+<span id="cb129-30"><a href="#cb129-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>Mean arterial pressure was directly measured in the majority of cases. When MAP was missing but systolic and diastolic BP were available (n=22873), MAP was calculated as (SBP + 2×DBP)/3. The calculated values showed high agreement with measured MAP (r=0.963, mean difference=1.32 ± 3.38 mmHg) in cases where both were available.</p>
 </section>
 <section id="demographics-of-participants-with-blood-pressure-values" class="level4">
 <h4 class="anchored" data-anchor-id="demographics-of-participants-with-blood-pressure-values">Demographics of Participants with Blood Pressure Values</h4>
@@ -5502,11 +5524,11 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">6.617634e-34</td>
+<td style="text-align: right;">4.090639e-37</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">2.396184e-68</td>
+<td style="text-align: right;">6.079581e-69</td>
 </tr>
 </tbody>
 </table>
@@ -5587,10 +5609,10 @@ Discarded       0       0</code></pre>
 <span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>bp.summary.map <span class="ot">&lt;-</span></span>
 <span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>  bp.data <span class="sc">%&gt;%</span></span>
 <span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Cushings,Obesity) <span class="sc">|&gt;</span></span>
-<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean=</span><span class="fu">mean</span>(BPMeanNonInvasive,<span class="at">na.rm=</span>T),</span>
-<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">se=</span><span class="fu">se</span>(BPMeanNonInvasive),</span>
-<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd=</span><span class="fu">sd</span>(BPMeanNonInvasive,<span class="at">na.rm=</span>T),</span>
-<span id="cb134-8"><a href="#cb134-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">n=</span><span class="fu">length</span>(BPMeanNonInvasive))</span>
+<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean=</span><span class="fu">mean</span>(MAP_imputed,<span class="at">na.rm=</span>T),</span>
+<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">se=</span><span class="fu">se</span>(MAP_imputed),</span>
+<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd=</span><span class="fu">sd</span>(MAP_imputed,<span class="at">na.rm=</span>T),</span>
+<span id="cb134-8"><a href="#cb134-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">n=</span><span class="fu">length</span>(MAP_imputed))</span>
 <span id="cb134-9"><a href="#cb134-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb134-10"><a href="#cb134-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bp.summary.map,</span>
 <span id="cb134-11"><a href="#cb134-11" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>mean,</span>
@@ -5604,9 +5626,11 @@ Discarded       0       0</code></pre>
 <span id="cb134-19"><a href="#cb134-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb134-20"><a href="#cb134-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb134-21"><a href="#cb134-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Mean; mmHg)"</span>, <span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb134-22"><a href="#cb134-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb134-23"><a href="#cb134-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb134-24"><a href="#cb134-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb134-22"><a href="#cb134-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb134-23"><a href="#cb134-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb134-24"><a href="#cb134-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb134-25"><a href="#cb134-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb134-26"><a href="#cb134-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5629,9 +5653,11 @@ Discarded       0       0</code></pre>
 <span id="cb135-10"><a href="#cb135-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb135-11"><a href="#cb135-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb135-12"><a href="#cb135-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Mean; mmHg)"</span>, <span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb135-13"><a href="#cb135-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb135-14"><a href="#cb135-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb135-15"><a href="#cb135-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb135-13"><a href="#cb135-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb135-14"><a href="#cb135-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb135-15"><a href="#cb135-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb135-16"><a href="#cb135-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb135-17"><a href="#cb135-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5643,15 +5669,17 @@ Discarded       0       0</code></pre>
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bp.data,</span>
-<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>BPMeanNonInvasive,</span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>MAP_imputed,</span>
 <span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>BMI,</span>
 <span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">col=</span><span class="fu">as.factor</span>(Cushings))) <span class="sc">+</span></span>
 <span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb136-6"><a href="#cb136-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb136-7"><a href="#cb136-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Mean; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb136-8"><a href="#cb136-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb136-9"><a href="#cb136-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb136-10"><a href="#cb136-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb136-8"><a href="#cb136-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb136-9"><a href="#cb136-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb136-10"><a href="#cb136-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb136-11"><a href="#cb136-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb136-12"><a href="#cb136-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5663,15 +5691,17 @@ Discarded       0       0</code></pre>
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bp.data,</span>
-<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>BPMeanNonInvasive,</span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>MAP_imputed,</span>
 <span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>BMI,</span>
 <span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">col=</span><span class="fu">as.factor</span>(Cushings))) <span class="sc">+</span></span>
 <span id="cb137-5"><a href="#cb137-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb137-6"><a href="#cb137-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb137-7"><a href="#cb137-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Mean; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb137-8"><a href="#cb137-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb137-9"><a href="#cb137-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb137-10"><a href="#cb137-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb137-8"><a href="#cb137-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb137-9"><a href="#cb137-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb137-10"><a href="#cb137-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb137-11"><a href="#cb137-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb137-12"><a href="#cb137-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5701,33 +5731,33 @@ Discarded       0       0</code></pre>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">84.22283</td>
-<td style="text-align: right;">0.1035021</td>
-<td style="text-align: right;">12.63871</td>
+<td style="text-align: right;">84.80288</td>
+<td style="text-align: right;">0.0864892</td>
+<td style="text-align: right;">10.56125</td>
 <td style="text-align: right;">14911</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">88.55882</td>
-<td style="text-align: right;">0.1340250</td>
-<td style="text-align: right;">12.08679</td>
+<td style="text-align: right;">89.76108</td>
+<td style="text-align: right;">0.1178169</td>
+<td style="text-align: right;">10.62509</td>
 <td style="text-align: right;">8133</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: right;">96.57143</td>
-<td style="text-align: right;">0.7212360</td>
-<td style="text-align: right;">7.39047</td>
+<td style="text-align: right;">93.66228</td>
+<td style="text-align: right;">1.5800475</td>
+<td style="text-align: right;">16.19067</td>
 <td style="text-align: right;">105</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: right;">91.25000</td>
-<td style="text-align: right;">0.8280360</td>
-<td style="text-align: right;">11.76860</td>
+<td style="text-align: right;">91.35088</td>
+<td style="text-align: right;">1.0858501</td>
+<td style="text-align: right;">15.43283</td>
 <td style="text-align: right;">202</td>
 </tr>
 </tbody>
@@ -5735,7 +5765,7 @@ Discarded       0       0</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(BPMeanNonInvasive <span class="sc">~</span> Cushings <span class="sc">+</span> Obesity <span class="sc">+</span> Cushings<span class="sc">:</span>Obesity,<span class="at">data=</span>bp.data) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> Cushings <span class="sc">+</span> Obesity <span class="sc">+</span> Cushings<span class="sc">:</span>Obesity,<span class="at">data=</span>bp.data) <span class="sc">|&gt;</span> </span>
 <span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"2x2 ANOVA with Interaction for effects of Obesity and Cushings on Blood Pressure (Mean)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -5754,38 +5784,38 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">84.222826</td>
-<td style="text-align: right;">0.9103038</td>
-<td style="text-align: right;">92.521672</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">84.802875</td>
+<td style="text-align: right;">0.0872824</td>
+<td style="text-align: right;">971.592267</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">12.348603</td>
-<td style="text-align: right;">4.7550381</td>
-<td style="text-align: right;">2.596951</td>
-<td style="text-align: right;">0.0098738</td>
+<td style="text-align: right;">8.859405</td>
+<td style="text-align: right;">1.2236746</td>
+<td style="text-align: right;">7.240001</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ObesityObese</td>
-<td style="text-align: right;">4.335997</td>
-<td style="text-align: right;">1.5242958</td>
-<td style="text-align: right;">2.844590</td>
-<td style="text-align: right;">0.0047558</td>
+<td style="text-align: right;">4.958201</td>
+<td style="text-align: right;">0.1469389</td>
+<td style="text-align: right;">33.743279</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-9.657426</td>
-<td style="text-align: right;">6.5699490</td>
-<td style="text-align: right;">-1.469939</td>
-<td style="text-align: right;">0.1426367</td>
+<td style="text-align: right;">-7.269604</td>
+<td style="text-align: right;">1.5370897</td>
+<td style="text-align: right;">-4.729460</td>
+<td style="text-align: right;">2.3e-06</td>
 </tr>
 </tbody>
 </table>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(BPMeanNonInvasive <span class="sc">~</span> Cushings <span class="sc">+</span> BMI <span class="sc">+</span> Cushings<span class="sc">:</span>Obesity,<span class="at">data=</span>bp.data) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> Cushings <span class="sc">+</span> BMI <span class="sc">+</span> Cushings<span class="sc">:</span>Obesity,<span class="at">data=</span>bp.data) <span class="sc">|&gt;</span> </span>
 <span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"2x2 ANOVA with Interaction for effects of Obesity and BMI on Blood Pressure (Mean)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -5804,31 +5834,31 @@ Discarded       0       0</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">76.1005545</td>
-<td style="text-align: right;">3.0061454</td>
-<td style="text-align: right;">25.314994</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">75.3560316</td>
+<td style="text-align: right;">0.2849814</td>
+<td style="text-align: right;">264.424357</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings</td>
-<td style="text-align: right;">11.5581089</td>
-<td style="text-align: right;">4.7071340</td>
-<td style="text-align: right;">2.455445</td>
-<td style="text-align: right;">0.0146440</td>
+<td style="text-align: right;">8.0652749</td>
+<td style="text-align: right;">1.2103610</td>
+<td style="text-align: right;">6.663528</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
-<td style="text-align: right;">0.3334588</td>
-<td style="text-align: right;">0.1006026</td>
-<td style="text-align: right;">3.314613</td>
-<td style="text-align: right;">0.0010315</td>
+<td style="text-align: right;">0.3907399</td>
+<td style="text-align: right;">0.0096453</td>
+<td style="text-align: right;">40.511018</td>
+<td style="text-align: right;">0.0e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cushings:ObesityObese</td>
-<td style="text-align: right;">-9.6570884</td>
-<td style="text-align: right;">6.4936771</td>
-<td style="text-align: right;">-1.487153</td>
-<td style="text-align: right;">0.1380354</td>
+<td style="text-align: right;">-6.9517828</td>
+<td style="text-align: right;">1.5188015</td>
+<td style="text-align: right;">-4.577150</td>
+<td style="text-align: right;">4.7e-06</td>
 </tr>
 </tbody>
 </table>
@@ -5841,7 +5871,7 @@ Discarded       0       0</code></pre>
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co">#used fully adjusted model</span></span>
-<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>lm.map <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPMeanNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> GenderName <span class="sc">+</span>                     Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data)</span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>lm.map <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> GenderName <span class="sc">+</span>                     Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data)</span>
 <span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a><span class="do">## 1. Adjusted means</span></span>
 <span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a>emm.map <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(lm.map, <span class="sc">~</span> Cushings <span class="sc">|</span> Obesity) <span class="sc">%&gt;%</span></span>
@@ -5914,9 +5944,11 @@ Discarded       0       0</code></pre>
 <span id="cb142-19"><a href="#cb142-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb142-20"><a href="#cb142-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb142-21"><a href="#cb142-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Systolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb142-22"><a href="#cb142-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb142-23"><a href="#cb142-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb142-24"><a href="#cb142-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb142-22"><a href="#cb142-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb142-23"><a href="#cb142-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb142-24"><a href="#cb142-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb142-25"><a href="#cb142-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb142-26"><a href="#cb142-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5939,9 +5971,11 @@ Discarded       0       0</code></pre>
 <span id="cb143-10"><a href="#cb143-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb143-11"><a href="#cb143-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb143-12"><a href="#cb143-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Systolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb143-13"><a href="#cb143-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb143-14"><a href="#cb143-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb143-15"><a href="#cb143-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb143-13"><a href="#cb143-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb143-14"><a href="#cb143-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb143-15"><a href="#cb143-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb143-16"><a href="#cb143-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb143-17"><a href="#cb143-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5959,9 +5993,11 @@ Discarded       0       0</code></pre>
 <span id="cb144-5"><a href="#cb144-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb144-6"><a href="#cb144-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb144-7"><a href="#cb144-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Systolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb144-8"><a href="#cb144-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb144-9"><a href="#cb144-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb144-10"><a href="#cb144-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb144-8"><a href="#cb144-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb144-9"><a href="#cb144-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb144-10"><a href="#cb144-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb144-11"><a href="#cb144-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb144-12"><a href="#cb144-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -5979,9 +6015,11 @@ Discarded       0       0</code></pre>
 <span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Systolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb145-9"><a href="#cb145-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb145-10"><a href="#cb145-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb145-9"><a href="#cb145-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb145-10"><a href="#cb145-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb145-11"><a href="#cb145-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb145-12"><a href="#cb145-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -6224,9 +6262,11 @@ Discarded       0       0</code></pre>
 <span id="cb150-19"><a href="#cb150-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb150-20"><a href="#cb150-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb150-21"><a href="#cb150-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Diastolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb150-22"><a href="#cb150-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb150-23"><a href="#cb150-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb150-24"><a href="#cb150-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb150-22"><a href="#cb150-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb150-23"><a href="#cb150-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb150-24"><a href="#cb150-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb150-25"><a href="#cb150-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb150-26"><a href="#cb150-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -6249,9 +6289,11 @@ Discarded       0       0</code></pre>
 <span id="cb151-10"><a href="#cb151-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.5</span></span>
 <span id="cb151-11"><a href="#cb151-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb151-12"><a href="#cb151-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Diastolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb151-13"><a href="#cb151-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb151-14"><a href="#cb151-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb151-15"><a href="#cb151-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb151-13"><a href="#cb151-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb151-14"><a href="#cb151-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb151-15"><a href="#cb151-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb151-16"><a href="#cb151-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb151-17"><a href="#cb151-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -6269,9 +6311,11 @@ Discarded       0       0</code></pre>
 <span id="cb152-5"><a href="#cb152-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb152-6"><a href="#cb152-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb152-7"><a href="#cb152-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Diastolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb152-8"><a href="#cb152-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb152-9"><a href="#cb152-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
-<span id="cb152-10"><a href="#cb152-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb152-8"><a href="#cb152-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb152-9"><a href="#cb152-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb152-10"><a href="#cb152-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb152-11"><a href="#cb152-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>() <span class="sc">+</span></span>
+<span id="cb152-12"><a href="#cb152-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -6289,9 +6333,11 @@ Discarded       0       0</code></pre>
 <span id="cb153-5"><a href="#cb153-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb153-6"><a href="#cb153-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">"loess"</span>, <span class="at">se=</span>F) <span class="sc">+</span></span>
 <span id="cb153-7"><a href="#cb153-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Blood Pressure (Diastolic; mmHg)"</span>,<span class="at">x=</span><span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb153-8"><a href="#cb153-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb153-9"><a href="#cb153-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
-<span id="cb153-10"><a href="#cb153-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb153-8"><a href="#cb153-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">color =</span> <span class="st">"gray30"</span>) <span class="sc">+</span></span>
+<span id="cb153-9"><a href="#cb153-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="cn">NA</span>)) <span class="sc">+</span>  <span class="co"># Use this instead of scale_y_continuous</span></span>
+<span id="cb153-10"><a href="#cb153-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb153-11"><a href="#cb153-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>color_scheme) <span class="sc">+</span></span>
+<span id="cb153-12"><a href="#cb153-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -7005,16 +7051,15 @@ Discarded       0       0</code></pre>
 <span id="cb165-3"><a href="#cb165-3" aria-hidden="true" tabindex="-1"></a>  table.hba1c,</span>
 <span id="cb165-4"><a href="#cb165-4" aria-hidden="true" tabindex="-1"></a>  table.alt,</span>
 <span id="cb165-5"><a href="#cb165-5" aria-hidden="true" tabindex="-1"></a>  table.ast,</span>
-<span id="cb165-6"><a href="#cb165-6" aria-hidden="true" tabindex="-1"></a>  table.ldl,</span>
-<span id="cb165-7"><a href="#cb165-7" aria-hidden="true" tabindex="-1"></a>  table.map,</span>
-<span id="cb165-8"><a href="#cb165-8" aria-hidden="true" tabindex="-1"></a>  table.sbp,</span>
-<span id="cb165-9"><a href="#cb165-9" aria-hidden="true" tabindex="-1"></a>  table.dbp</span>
-<span id="cb165-10"><a href="#cb165-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb165-11"><a href="#cb165-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>contrast)</span>
-<span id="cb165-12"><a href="#cb165-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-13"><a href="#cb165-13" aria-hidden="true" tabindex="-1"></a>table_summary <span class="sc">|&gt;</span></span>
-<span id="cb165-14"><a href="#cb165-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of contrasts for all outcomes"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb165-15"><a href="#cb165-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb165-6"><a href="#cb165-6" aria-hidden="true" tabindex="-1"></a>  table.map,</span>
+<span id="cb165-7"><a href="#cb165-7" aria-hidden="true" tabindex="-1"></a>  table.sbp,</span>
+<span id="cb165-8"><a href="#cb165-8" aria-hidden="true" tabindex="-1"></a>  table.dbp</span>
+<span id="cb165-9"><a href="#cb165-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb165-10"><a href="#cb165-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>contrast)</span>
+<span id="cb165-11"><a href="#cb165-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb165-12"><a href="#cb165-12" aria-hidden="true" tabindex="-1"></a>table_summary <span class="sc">|&gt;</span></span>
+<span id="cb165-13"><a href="#cb165-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of contrasts for all outcomes"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb165-14"><a href="#cb165-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
@@ -7095,36 +7140,20 @@ Discarded       0       0</code></pre>
 <td style="text-align: right;">0.0000014</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">114.01 (104.84–123.18)</td>
-<td style="text-align: left;">77.11 (30.37–123.86)</td>
-<td style="text-align: left;">-36.89 (-83.51–9.73)</td>
-<td style="text-align: right;">0.1198533</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">Obese</td>
-<td style="text-align: left;">110.78 (100.17–121.39)</td>
-<td style="text-align: left;">121.89 (96.85–146.92)</td>
-<td style="text-align: left;">11.11 (-15.07–37.29)</td>
-<td style="text-align: right;">0.4028015</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Mean Arterial Pressure</td>
 <td style="text-align: left;">Non-Obese</td>
-<td style="text-align: left;">82.54 (79.24–85.84)</td>
-<td style="text-align: left;">94.43 (84.81–104.06)</td>
-<td style="text-align: left;">11.89 (2.59–21.19)</td>
-<td style="text-align: right;">0.0124101</td>
+<td style="text-align: left;">85.73 (85.39–86.08)</td>
+<td style="text-align: left;">93.84 (91.51–96.17)</td>
+<td style="text-align: left;">8.11 (5.78–10.43)</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Mean Arterial Pressure</td>
 <td style="text-align: left;">Obese</td>
-<td style="text-align: left;">86.65 (82.75–90.55)</td>
-<td style="text-align: left;">89.94 (80.88–98.99)</td>
-<td style="text-align: left;">3.29 (-5.60–12.18)</td>
-<td style="text-align: right;">0.4669551</td>
+<td style="text-align: left;">90.04 (89.66–90.42)</td>
+<td style="text-align: left;">91.57 (89.79–93.34)</td>
+<td style="text-align: left;">1.53 (-0.24–3.29)</td>
+<td style="text-align: right;">0.0900073</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Systolic Blood Pressure</td>
@@ -7172,17 +7201,16 @@ Discarded       0       0</code></pre>
 <span id="cb166-5"><a href="#cb166-5" aria-hidden="true" tabindex="-1"></a>  interaction_row.hba1c,</span>
 <span id="cb166-6"><a href="#cb166-6" aria-hidden="true" tabindex="-1"></a>  interaction_row.alt,</span>
 <span id="cb166-7"><a href="#cb166-7" aria-hidden="true" tabindex="-1"></a>  interaction_row.ast,</span>
-<span id="cb166-8"><a href="#cb166-8" aria-hidden="true" tabindex="-1"></a>  interaction_row.ldl,</span>
-<span id="cb166-9"><a href="#cb166-9" aria-hidden="true" tabindex="-1"></a>  interaction_row.map,</span>
-<span id="cb166-10"><a href="#cb166-10" aria-hidden="true" tabindex="-1"></a>  interaction_row.sbp,</span>
-<span id="cb166-11"><a href="#cb166-11" aria-hidden="true" tabindex="-1"></a>  interaction_row.dbp</span>
-<span id="cb166-12"><a href="#cb166-12" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb166-13"><a href="#cb166-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Outcome,Interaction_CI,p.value) <span class="sc">|&gt;</span></span>
-<span id="cb166-14"><a href="#cb166-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Interaction Estimate</span><span class="st">`</span><span class="ot">=</span>Interaction_CI)</span>
-<span id="cb166-15"><a href="#cb166-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb166-16"><a href="#cb166-16" aria-hidden="true" tabindex="-1"></a>interaction_summary <span class="sc">|&gt;</span></span>
-<span id="cb166-17"><a href="#cb166-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of interactions for all outcomes as mean with 95% confidence interval"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb166-18"><a href="#cb166-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb166-8"><a href="#cb166-8" aria-hidden="true" tabindex="-1"></a>  interaction_row.map,</span>
+<span id="cb166-9"><a href="#cb166-9" aria-hidden="true" tabindex="-1"></a>  interaction_row.sbp,</span>
+<span id="cb166-10"><a href="#cb166-10" aria-hidden="true" tabindex="-1"></a>  interaction_row.dbp</span>
+<span id="cb166-11"><a href="#cb166-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb166-12"><a href="#cb166-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Outcome,Interaction_CI,p.value) <span class="sc">|&gt;</span></span>
+<span id="cb166-13"><a href="#cb166-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Interaction Estimate</span><span class="st">`</span><span class="ot">=</span>Interaction_CI)</span>
+<span id="cb166-14"><a href="#cb166-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-15"><a href="#cb166-15" aria-hidden="true" tabindex="-1"></a>interaction_summary <span class="sc">|&gt;</span></span>
+<span id="cb166-16"><a href="#cb166-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of interactions for all outcomes as mean with 95% confidence interval"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb166-17"><a href="#cb166-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
@@ -7216,21 +7244,16 @@ Discarded       0       0</code></pre>
 <td style="text-align: right;">0.0345815</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">LDL-C</td>
-<td style="text-align: left;">48.00 (-4.69–100.69)</td>
-<td style="text-align: right;">0.0765542</td>
+<td style="text-align: left;">Mean Arterial Pressure</td>
+<td style="text-align: left;">-6.58 (-9.50–-3.66)</td>
+<td style="text-align: right;">0.0000099</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Mean Arterial Pressure</td>
-<td style="text-align: left;">-8.60 (-21.39–4.18)</td>
-<td style="text-align: right;">0.1883613</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Systolic Blood Pressure</td>
 <td style="text-align: left;">-8.89 (-13.15–-4.63)</td>
 <td style="text-align: right;">0.0000440</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Diastolic Blood Pressure</td>
 <td style="text-align: left;">-5.48 (-8.32–-2.65)</td>
 <td style="text-align: right;">0.0001474</td>
