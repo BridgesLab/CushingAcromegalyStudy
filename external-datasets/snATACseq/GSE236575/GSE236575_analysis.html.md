@@ -62,7 +62,7 @@ deseq.results <- read_tsv(deseq.filename) #reads in the data
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2025-11-20.  This script was most recently updated on Thu Nov 20 09:38:59 2025.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2025-11-20.  This script was most recently updated on Thu Nov 20 09:59:01 2025.
 
 ## Analysis
 
@@ -70,28 +70,6 @@ There were 59586 regions analyzed in this dataset.  Of these, 14754 (24.7608499%
 
 Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of 1.0674128 +/- 0.0044553, while the NCD adipocytes had an average log2 fold change of -0.7118612 +/- 0.0026831.
 
-### Volcano Plots of Regions
-
-
-::: {.cell}
-
-```{.r .cell-code}
-library(ggplot2)
-ggplot(deseq.results, aes(x=log2FoldChange, y=-log10(pvalue))) +
-  geom_point(alpha=0.4) +
-  theme_minimal() +
-  xlab("Log2 Fold Change (HFD vs NCD)") +
-  ylab("-Log10 P-value") +
-  ggtitle("Differentially Accessible Regions") +
-  geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
-  geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
-  theme_classic(base_size=16)
-```
-
-::: {.cell-output-display}
-![](GSE236575_analysis_files/figure-html/volcano-regions-1.png){width=672}
-:::
-:::
 
 ### Annotation to known genes
 
@@ -116,11 +94,11 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2025-11-20 09:39:05 
->> identifying nearest features...		 2025-11-20 09:39:05 
->> calculating distance from peak to TSS...	 2025-11-20 09:39:06 
->> assigning genomic annotation...		 2025-11-20 09:39:06 
->> adding gene annotation...			 2025-11-20 09:39:15 
+>> preparing features information...		 2025-11-20 09:59:06 
+>> identifying nearest features...		 2025-11-20 09:59:07 
+>> calculating distance from peak to TSS...	 2025-11-20 09:59:07 
+>> assigning genomic annotation...		 2025-11-20 09:59:07 
+>> adding gene annotation...			 2025-11-20 09:59:20 
 ```
 
 
@@ -129,8 +107,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2025-11-20 09:39:15 
->> done...					 2025-11-20 09:39:15 
+>> assigning chromosome lengths			 2025-11-20 09:59:20 
+>> done...					 2025-11-20 09:59:20 
 ```
 
 
@@ -151,11 +129,11 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2025-11-20 09:39:15 
->> identifying nearest features...		 2025-11-20 09:39:15 
->> calculating distance from peak to TSS...	 2025-11-20 09:39:15 
->> assigning genomic annotation...		 2025-11-20 09:39:15 
->> adding gene annotation...			 2025-11-20 09:39:16 
+>> preparing features information...		 2025-11-20 09:59:20 
+>> identifying nearest features...		 2025-11-20 09:59:20 
+>> calculating distance from peak to TSS...	 2025-11-20 09:59:21 
+>> assigning genomic annotation...		 2025-11-20 09:59:21 
+>> adding gene annotation...			 2025-11-20 09:59:22 
 ```
 
 
@@ -164,8 +142,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2025-11-20 09:39:16 
->> done...					 2025-11-20 09:39:16 
+>> assigning chromosome lengths			 2025-11-20 09:59:22 
+>> done...					 2025-11-20 09:59:22 
 ```
 
 
@@ -174,11 +152,66 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ```{.r .cell-code}
 # Save annotation table with gene symbols and distance to TSS
 ncd.ann_df <- as.data.frame(ncd.annot)
+
+all.gr <- with(deseq.results |> mutate(chr.2 = paste0("chr", chr)), GRanges(seqnames=chr.2, ranges=IRanges(start+1, end)))
+all.ann_df <- as.data.frame(annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="org.Mm.eg.db"))
 ```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+>> preparing features information...		 2025-11-20 09:59:22 
+>> identifying nearest features...		 2025-11-20 09:59:22 
+>> calculating distance from peak to TSS...	 2025-11-20 09:59:23 
+>> assigning genomic annotation...		 2025-11-20 09:59:23 
+>> adding gene annotation...			 2025-11-20 09:59:25 
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+>> assigning chromosome lengths			 2025-11-20 09:59:25 
+>> done...					 2025-11-20 09:59:25 
+```
+
+
+:::
 :::
 
 
 These 7530 chromatin regions that were differentially opened by HFD were annotated as closest to 4128 unique genes, whereas the 7224 regions more accessible in NCD were annotated as closest to 4602 unique genes.  
+
+### Volcano Plots of Regions
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(ggplot2)
+library(ggrepel)
+deseq.results.annot <- deseq.results |> left_join(all.ann_df, by=c("end"="end"))
+
+ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
+  geom_point(alpha=0.4) +
+  theme_minimal() +
+  xlab("Log2 Fold Change (HFD vs NCD)") +
+  ylab("-Log10 P-value") +
+  ggtitle("Differentially Accessible Regions") +
+  ggrepel::geom_text_repel(data=deseq.results |> left_join(all.ann_df, by=c("end"="end")) |> filter(padj<0.05 & abs(log2FoldChange)>0.5) |> arrange(padj) |> head(10),
+                           aes(label=SYMBOL), size=5, max.overlaps=Inf) +
+  geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
+  geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
+  theme_classic(base_size=16)
+```
+
+::: {.cell-output-display}
+![](GSE236575_analysis_files/figure-html/volcano-regions-1.png){width=672}
+:::
+:::
+
 
 ### GSEA Analysis of nearest genes
 
@@ -352,28 +385,29 @@ other attached packages:
  [1] msigdbr_25.1.1                           
  [2] enrichplot_1.28.4                        
  [3] clusterProfiler_4.16.0                   
- [4] org.Mm.eg.db_3.21.0                      
- [5] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
- [6] GenomicFeatures_1.60.0                   
- [7] AnnotationDbi_1.70.0                     
- [8] Biobase_2.68.0                           
- [9] GenomicRanges_1.60.0                     
-[10] GenomeInfoDb_1.44.3                      
-[11] IRanges_2.42.0                           
-[12] S4Vectors_0.46.0                         
-[13] BiocGenerics_0.54.1                      
-[14] generics_0.1.4                           
-[15] ChIPseeker_1.44.0                        
-[16] lubridate_1.9.4                          
-[17] forcats_1.0.1                            
-[18] stringr_1.6.0                            
-[19] dplyr_1.1.4                              
-[20] purrr_1.2.0                              
-[21] readr_2.1.6                              
-[22] tidyr_1.3.1                              
-[23] tibble_3.3.0                             
-[24] ggplot2_4.0.1                            
-[25] tidyverse_2.0.0                          
+ [4] ggrepel_0.9.6                            
+ [5] org.Mm.eg.db_3.21.0                      
+ [6] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
+ [7] GenomicFeatures_1.60.0                   
+ [8] AnnotationDbi_1.70.0                     
+ [9] Biobase_2.68.0                           
+[10] GenomicRanges_1.60.0                     
+[11] GenomeInfoDb_1.44.3                      
+[12] IRanges_2.42.0                           
+[13] S4Vectors_0.46.0                         
+[14] BiocGenerics_0.54.1                      
+[15] generics_0.1.4                           
+[16] ChIPseeker_1.44.0                        
+[17] lubridate_1.9.4                          
+[18] forcats_1.0.1                            
+[19] stringr_1.6.0                            
+[20] dplyr_1.1.4                              
+[21] purrr_1.2.0                              
+[22] readr_2.1.6                              
+[23] tidyr_1.3.1                              
+[24] tibble_3.3.0                             
+[25] ggplot2_4.0.1                            
+[26] tidyverse_2.0.0                          
 
 loaded via a namespace (and not attached):
   [1] RColorBrewer_1.1-3                     
@@ -448,49 +482,48 @@ loaded via a namespace (and not attached):
  [70] data.table_1.17.8                      
  [71] hms_1.1.4                              
  [72] XVector_0.48.0                         
- [73] ggrepel_0.9.6                          
- [74] pillar_1.11.1                          
- [75] babelgene_22.9                         
- [76] yulab.utils_0.2.1                      
- [77] vroom_1.6.6                            
- [78] splines_4.5.2                          
- [79] treeio_1.32.0                          
- [80] lattice_0.22-7                         
- [81] rtracklayer_1.68.0                     
- [82] bit_4.6.0                              
- [83] tidyselect_1.2.1                       
- [84] GO.db_3.21.0                           
- [85] Biostrings_2.76.0                      
- [86] knitr_1.50                             
- [87] SummarizedExperiment_1.38.1            
- [88] xfun_0.54                              
- [89] matrixStats_1.5.0                      
- [90] stringi_1.8.7                          
- [91] UCSC.utils_1.4.0                       
- [92] lazyeval_0.2.2                         
- [93] ggfun_0.2.0                            
- [94] yaml_2.3.10                            
- [95] boot_1.3-32                            
- [96] evaluate_1.0.5                         
- [97] codetools_0.2-20                       
- [98] qvalue_2.40.0                          
- [99] ggplotify_0.1.3                        
-[100] cli_3.6.5                              
-[101] Rcpp_1.1.0                             
-[102] png_0.1-8                              
-[103] XML_3.99-0.20                          
-[104] parallel_4.5.2                         
-[105] assertthat_0.2.1                       
-[106] blob_1.2.4                             
-[107] DOSE_4.2.0                             
-[108] bitops_1.0-9                           
-[109] tidytree_0.4.6                         
-[110] scales_1.4.0                           
-[111] crayon_1.5.3                           
-[112] rlang_1.1.6                            
-[113] cowplot_1.2.0                          
-[114] fastmatch_1.1-6                        
-[115] KEGGREST_1.48.1                        
+ [73] pillar_1.11.1                          
+ [74] babelgene_22.9                         
+ [75] yulab.utils_0.2.1                      
+ [76] vroom_1.6.6                            
+ [77] splines_4.5.2                          
+ [78] treeio_1.32.0                          
+ [79] lattice_0.22-7                         
+ [80] rtracklayer_1.68.0                     
+ [81] bit_4.6.0                              
+ [82] tidyselect_1.2.1                       
+ [83] GO.db_3.21.0                           
+ [84] Biostrings_2.76.0                      
+ [85] knitr_1.50                             
+ [86] SummarizedExperiment_1.38.1            
+ [87] xfun_0.54                              
+ [88] matrixStats_1.5.0                      
+ [89] stringi_1.8.7                          
+ [90] UCSC.utils_1.4.0                       
+ [91] lazyeval_0.2.2                         
+ [92] ggfun_0.2.0                            
+ [93] yaml_2.3.10                            
+ [94] boot_1.3-32                            
+ [95] evaluate_1.0.5                         
+ [96] codetools_0.2-20                       
+ [97] qvalue_2.40.0                          
+ [98] ggplotify_0.1.3                        
+ [99] cli_3.6.5                              
+[100] Rcpp_1.1.0                             
+[101] png_0.1-8                              
+[102] XML_3.99-0.20                          
+[103] parallel_4.5.2                         
+[104] assertthat_0.2.1                       
+[105] blob_1.2.4                             
+[106] DOSE_4.2.0                             
+[107] bitops_1.0-9                           
+[108] tidytree_0.4.6                         
+[109] scales_1.4.0                           
+[110] crayon_1.5.3                           
+[111] rlang_1.1.6                            
+[112] cowplot_1.2.0                          
+[113] fastmatch_1.1-6                        
+[114] KEGGREST_1.48.1                        
 ```
 
 
