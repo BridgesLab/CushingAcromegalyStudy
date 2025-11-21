@@ -20,7 +20,10 @@ execute:
   warning: false
 ---
 
-```{r global_options}
+
+::: {.cell}
+
+```{.r .cell-code}
 # hide this code chunk
 #| echo: false
 #| message: false
@@ -36,6 +39,10 @@ library(tidyverse)
 # sets maize and blue color scheme
 color_scheme <- c("#00274c", "#ffcb05")
 ```
+:::
+
+
+
 
 ## Purpose
 
@@ -43,7 +50,12 @@ To perform sensitivity analyses for different models and populations
 
 ## Data Entry
 
-```{r data-entry}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 case.demographics.filename <- 'CaseDemographics.csv'
 control.demographics.filename <- 'ControlDemographics.csv'
 
@@ -124,14 +136,23 @@ complete.data  <-
 #number of controls per case
 fold <- 10
 ```
+:::
 
-We began with `r nrow(lab.results |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls who had lab data, and **`r nrow(lab.results |> filter(Cushings==1) |> distinct(DeID_PatientID))`** cases with Cushing's Disease.
 
-* **Had Laboratory Results**: We also removed `r nrow(lab.results |> filter(Cushings==1))-nrow(lab.results.filtered |> filter(Cushings==1))` lab results from Cushing's patients because they were outside of our acceptable window of `r procedure.result.interval` days before their procedure.  This eliminated a total of **`r lab.results |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow() - lab.results.filtered |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow()`** Cushings patients from our dataset.
 
-* **Missing Demographic Data** After filtering out missing demographic data we had `r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))` cases and `r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls with lab results.  The specific pieces of missing information are found here:
 
-```{r mising-demographics}
+We began with 69797 controls who had lab data, and **453** cases with Cushing's Disease.
+
+* **Had Laboratory Results**: We also removed 329 lab results from Cushing's patients because they were outside of our acceptable window of 365 days before their procedure.  This eliminated a total of **1** Cushings patients from our dataset.
+
+* **Missing Demographic Data** After filtering out missing demographic data we had 365 cases and 69273 controls with lab results.  The specific pieces of missing information are found here:
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lab.results.filtered |>
   filter(Cushings==1) |> #only for cushings data
   group_by(DeID_PatientID) %>%
@@ -152,17 +173,42 @@ library(knitr)
 missing.demographic.summary |> arrange(desc(n_patients_with_NA)) |> kable(caption="Summary of exclusions from Cushing's patient pool due to missing demographic data")
 ```
 
-Our final dataset therefore included **`r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))`** Cushing's patients, and we had the ability to draw from **`r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))`** Cushing's patients control patients.
+::: {.cell-output-display}
+
+
+Table: Summary of exclusions from Cushing's patient pool due to missing demographic data
+
+|field        | n_patients_with_NA|
+|:------------|------------------:|
+|Any_na       |                 90|
+|Ethnicity_na |                 85|
+|Gender_na    |                 18|
+|Race_na      |                 18|
+|Age_na       |                 12|
+
+
+:::
+:::
+
+
+
+
+Our final dataset therefore included **365** Cushing's patients, and we had the ability to draw from **69273** Cushing's patients control patients.
 
 ## Propensity Mapping
 
-Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  We wanted exact matches for everything except age, where we wanted the closest case that had a measurement.  We picked `r fold` matched controls for each case
+Used the R package `mapit` to match based on Age, Gender, Race, and Ethnicity.  We wanted exact matches for everything except age, where we wanted the closest case that had a measurement.  We picked 10 matched controls for each case
 
 ### Population Definitions
 
 We generated participant pools for all potential matched participants, then specifically for each outcome
 
-```{r total-population-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 library(MatchIt)
 m.out.all <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data,
@@ -180,11 +226,20 @@ master.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   filter(!is.na(Obesity)) 
 ```
+:::
+
+
+
 
 
 ### Hba1c
 
-```{r hba1c-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 m.out.a1c <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")), 
                  method = "nearest", 
@@ -202,12 +257,21 @@ hba1c.data <-
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
 ```
+:::
+
+
+
 
 #### HbA1c Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r aic-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 library(emmeans)
 #used fully adjusted model
 lm.hba1c <- lm(value ~ RaceEthnicity + AgeInYears + GenderName + Cushings * Obesity, data = hba1c.data)
@@ -259,9 +323,33 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=hba1c.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on HbA1c")
 ```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on HbA1c
+
+|term                  |   estimate| std.error|  statistic|   p.value|
+|:---------------------|----------:|---------:|----------:|---------:|
+|(Intercept)           |  4.1945228| 0.2517809| 16.6594132| 0.0000000|
+|Cushings              |  1.0794586| 0.4613284|  2.3398918| 0.0203221|
+|BMI                   |  0.0481857| 0.0078180|  6.1634688| 0.0000000|
+|Cushings:ObesityObese | -0.0432075| 0.5389931| -0.0801634| 0.9361912|
+
+
+:::
+:::
+
+
+
+
 ### Glucose
 
-```{r glucose-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 m.out.glucose <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("GLUC","GLUC_WB")), 
                  method = "nearest", 
@@ -279,12 +367,21 @@ glucose.data <-
   mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
   filter(!is.na(Obesity)) 
 ```
+:::
+
+
+
 
 #### Glucose Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r glucose-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.glucose <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +  Cushings * Obesity, data = glucose.data)
 
@@ -335,11 +432,35 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=glucose.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on Glucose")
 ```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on Glucose
+
+|term                  |   estimate| std.error|  statistic|   p.value|
+|:---------------------|----------:|---------:|----------:|---------:|
+|(Intercept)           | 81.2331245| 0.9760673| 83.2249192| 0.0000000|
+|Cushings              | 24.3684172| 2.7558656|  8.8423823| 0.0000000|
+|BMI                   |  0.6312709| 0.0320940| 19.6694382| 0.0000000|
+|Cushings:ObesityObese |  0.9259315| 3.4547262|  0.2680188| 0.7886883|
+
+
+:::
+:::
+
+
+
+
 ### Liver Enzymes
 
 #### ALT
 
-```{r alt-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 m.out.alt <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("ALT")), 
                  method = "nearest", 
@@ -355,13 +476,22 @@ alt.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   filter(!is.na(Obesity))
 ```
+:::
+
+
+
 
 
 ##### ALT Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r alt-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.alt <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +  Cushings * Obesity, data = alt.data)
 
@@ -412,9 +542,33 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=alt.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT")
 ```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on ALT
+
+|term                  |   estimate| std.error| statistic|   p.value|
+|:---------------------|----------:|---------:|---------:|---------:|
+|(Intercept)           |  9.5958441| 3.2222652|  2.977981| 0.0029366|
+|Cushings              | 36.0507907| 6.3190946|  5.705056| 0.0000000|
+|BMI                   |  0.5421501| 0.1042606|  5.199950| 0.0000002|
+|Cushings:ObesityObese | 35.4740470| 8.1117369|  4.373175| 0.0000129|
+
+
+:::
+:::
+
+
+
+
 #### AST
 
-```{r ast-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 m.out.ast <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = complete.data |> filter(RESULT_CODE %in% c("AST")), 
                  method = "nearest", 
@@ -431,12 +585,21 @@ ast.data <-
   mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
   filter(!is.na(Obesity))
 ```
+:::
+
+
+
 
 ##### AST Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r ast-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.ast <- lm(value ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = ast.data)
 
@@ -487,11 +650,35 @@ lm(value ~ Cushings + BMI + Cushings:Obesity,data=ast.data) |>
   kable(caption="2x2 ANOVA with Interaction for effects of Obesity and BMI on AST")
 ```
 
+::: {.cell-output-display}
+
+
+Table: 2x2 ANOVA with Interaction for effects of Obesity and BMI on AST
+
+|term                  |   estimate| std.error| statistic|   p.value|
+|:---------------------|----------:|---------:|---------:|---------:|
+|(Intercept)           | 24.0096571|  7.483368| 3.2084024| 0.0013559|
+|Cushings              | 15.9148667| 14.719938| 1.0811776| 0.2797485|
+|BMI                   |  0.0991493|  0.242383| 0.4090606| 0.6825390|
+|Cushings:ObesityObese | 39.2513118| 18.821520| 2.0854485| 0.0371552|
+
+
+:::
+:::
+
+
+
+
 ### Blood Pressure
 
-Blood pressure data is in a separate file (`r bp.filename.cases` and `r bp.filename.controls`).  We have mean noninvasive blood pressure, as well as systolic and diastolic.  These data, similar to lab results need to be mapped to encounter data 
+Blood pressure data is in a separate file (NursingStandardVitalSigns.csv and ../controls/NursingStandardVitalSigns.csv).  We have mean noninvasive blood pressure, as well as systolic and diastolic.  These data, similar to lab results need to be mapped to encounter data 
 
-```{r blood-pressure-data-cleaning}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 bp.data.cases <- read_csv(bp.filename.cases) |>
   left_join(case.encounters.all) |>
   left_join(case.demographics, by="DeID_PatientID") 
@@ -529,16 +716,25 @@ bp.data  <-
                                    RaceCode=="A"~"Asian",
                                    .default="Other")) #defined race/ethnicity categories
 ```
+:::
+
+
+
 
 #### Inclusion and Exclusion for Blood Pressure Data
 
-We began with `r nrow(bp.results |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls who had lab data, and **`r nrow(bp.results |> filter(Cushings==1) |> distinct(DeID_PatientID))`** cases with Cushing's Disease.
+We began with 97442 controls who had lab data, and **339** cases with Cushing's Disease.
 
-* **Had Laboratory Results**: We also removed `r nrow(bp.results |> filter(Cushings==1))-nrow(bp.results.filtered |> filter(Cushings==1))` lab results from Cushing's patients because they were outside of our acceptable window of `r procedure.result.interval` days before their procedure.  This eliminated a total of **`r bp.results |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow() - bp.results.filtered |> filter(Cushings==1) |> distinct(DeID_PatientID) |> nrow()`** Cushings patients from our dataset.
+* **Had Laboratory Results**: We also removed 168 lab results from Cushing's patients because they were outside of our acceptable window of 365 days before their procedure.  This eliminated a total of **1** Cushings patients from our dataset.
 
-* **Missing Demographic Data** After filtering out missing demographic data we had `r nrow(bp.data |> filter(Cushings==1) |> distinct(DeID_PatientID))` cases and `r nrow(bp.data |> filter(Cushings==0) |> distinct(DeID_PatientID))` controls with lab results.  The specific pieces of missing information are found here:
+* **Missing Demographic Data** After filtering out missing demographic data we had 311 cases and 96780 controls with lab results.  The specific pieces of missing information are found here:
 
-```{r mising-demographics-bp}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 bp.results.filtered |>
   filter(Cushings==1) |> #only for cushings data
   group_by(DeID_PatientID) %>%
@@ -559,12 +755,37 @@ library(knitr)
 missing.demographic.summary.bp |> arrange(desc(n_patients_with_NA)) |> kable(caption="Summary of exclusions from Cushing's patient pool due to missing demographic data, for blood pressure measures")
 ```
 
-Our final dataset for blood pressure therefore included **`r nrow(complete.data |> filter(Cushings==1) |> distinct(DeID_PatientID))`** Cushing's patients, and we had the ability to draw from **`r nrow(complete.data |> filter(Cushings==0) |> distinct(DeID_PatientID))`** control patients.
+::: {.cell-output-display}
+
+
+Table: Summary of exclusions from Cushing's patient pool due to missing demographic data, for blood pressure measures
+
+|field        | n_patients_with_NA|
+|:------------|------------------:|
+|Any_na       |                 34|
+|Ethnicity_na |                 24|
+|Gender_na    |                 15|
+|Race_na      |                 15|
+|Age_na       |                 12|
+
+
+:::
+:::
+
+
+
+
+Our final dataset for blood pressure therefore included **365** Cushing's patients, and we had the ability to draw from **69273** control patients.
 
 
 #### Blood Pressure Propensity Mapping
 
-```{r bp-propensity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 m.out.bp <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity, 
                  data = bp.data, 
                  method = "nearest", 
@@ -602,14 +823,23 @@ n_imputed <- bp.data %>%
   filter(is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive)) %>%
   nrow()
 ```
+:::
 
-Mean arterial pressure was directly measured in the majority of cases. When MAP was missing but systolic and diastolic BP were available (n=`r n_imputed`), MAP was calculated as (SBP + 2×DBP)/3. The calculated values showed high agreement with measured MAP (r=`r map_agreement$correlation`, mean difference=`r map_agreement$mean_diff` ± `r map_agreement$sd_diff` mmHg) in cases where both were available.
+
+
+
+Mean arterial pressure was directly measured in the majority of cases. When MAP was missing but systolic and diastolic BP were available (n=22873), MAP was calculated as (SBP + 2×DBP)/3. The calculated values showed high agreement with measured MAP (r=0.963, mean difference=1.32 ± 3.38 mmHg) in cases where both were available.
 
 #### Mean Arterial Pressure Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r map-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.map <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + GenderName +                     Cushings * Obesity, data = bp.data)
 
@@ -655,13 +885,22 @@ means_wide <- emm.map %>%
 table.map <- means_wide %>%
   left_join(contrast.map, by = c("Outcome", "Obesity"))
 ```
+:::
+
+
+
 
 
 #### Systolic Blood Pressure Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r sbp-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.sbp <- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + GenderName + Cushings * Obesity, data = bp.data)
 
@@ -707,12 +946,21 @@ means_wide <- emm.sbp %>%
 table.sbp <- means_wide %>%
   left_join(contrast.sbp, by = c("Outcome", "Obesity"))
 ```
+:::
+
+
+
 
 #### Diastolic Arterial Pressure Statistics
 
 Used the fully adjusted model to test the interaction between Cushings's diagnoses and obesity.
 
-```{r dbp-statistics}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 #used fully adjusted model
 lm.dbp <- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + GenderName + Cushings * Obesity, data = bp.data)
 
@@ -758,10 +1006,19 @@ means_wide <- emm.dbp %>%
 table.dbp <- means_wide %>%
   left_join(contrast.dbp, by = c("Outcome", "Obesity"))
 ```
+:::
+
+
+
 
 ## Summary of Interaction Effects
 
-```{r interaction-effects-summary}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 create_lm_summary_row <- function(model_name, lm.glucose = NULL, lm.hba1c = NULL, 
                                    lm.alt = NULL, lm.ast = NULL, 
                                    lm.map = NULL, lm.sbp = NULL, lm.dbp = NULL, 
@@ -826,6 +1083,10 @@ row1 <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 ## Alternate Models
 
@@ -835,7 +1096,12 @@ row1 <- create_lm_summary_row(
 
 This includes models with no covariates other than Cushings $\times$ Obesity
 
-```{r crude-models}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lm.hba1c.crude <- lm(value ~ Cushings * Obesity, data = hba1c.data )
 lm.glucose.crude <- lm(value ~ Cushings * Obesity, data = glucose.data )
 lm.alt.crude <- lm(value ~ Cushings * Obesity, data = alt.data )
@@ -856,10 +1122,19 @@ crude.models <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 #### Gender adjusted only
 
-```{r gender-only-models}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lm.hba1c.gender.only <- lm(value ~ GenderCode + Cushings * Obesity, data = hba1c.data )
 lm.glucose.gender.only <- lm(value ~ GenderCode + Cushings * Obesity, data = glucose.data )
 lm.alt.gender.only <- lm(value ~ GenderCode + Cushings * Obesity, data = alt.data )
@@ -880,10 +1155,19 @@ gender.only.models <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 #### Age adjusted only
 
-```{r age-only-models}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lm.hba1c.age.only <- lm(value ~ AgeInYears + Cushings * Obesity, data = hba1c.data )
 lm.glucose.age.only <- lm(value ~ AgeInYears + Cushings * Obesity, data = glucose.data )
 lm.alt.age.only <- lm(value ~ AgeInYears + Cushings * Obesity, data = alt.data )
@@ -904,10 +1188,19 @@ age.only.models <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 #### Race/ethnicity adjusted only
 
-```{r race-only-models}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lm.hba1c.race.only <- lm(value ~ RaceEthnicity + Cushings * Obesity, data = hba1c.data )
 lm.glucose.race.only <- lm(value ~ RaceEthnicity + Cushings * Obesity, data = glucose.data )
 lm.alt.race.only <- lm(value ~ RaceEthnicity + Cushings * Obesity, data = alt.data )
@@ -928,10 +1221,19 @@ race.only.models <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 ### Sex Stratified models
 
-```{r sex-stratified}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 lm.hba1c.m <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = hba1c.data |> filter(GenderCode=="M"))
 lm.glucose.m <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = glucose.data |> filter(GenderCode=="M"))
 lm.alt.m <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = alt.data |> filter(GenderCode=="M"))
@@ -974,25 +1276,134 @@ females.only <- create_lm_summary_row(
   coef_name = "Cushings:ObesityObese"
 )
 ```
+:::
+
+
+
 
 ## Summary of Sensitivity Analyses
 
-```{r summary-sensitivity}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 summary.sensitivity.data <- bind_rows(row1,crude.models,age.only.models, gender.only.models, race.only.models, males.only, females.only) 
 
 library(kableExtra)
 summary.sensitivity.data |>
   kable(caption="Summary of sensitivity analyses") |>
   kable_styling(full_width = FALSE, position = "center")
+```
 
+::: {.cell-output-display}
+
+`````{=html}
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Summary of sensitivity analyses</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Primary outcome </th>
+   <th style="text-align:left;"> Glucose </th>
+   <th style="text-align:left;"> HbA1c </th>
+   <th style="text-align:left;"> ALT </th>
+   <th style="text-align:left;"> AST </th>
+   <th style="text-align:left;"> MAP </th>
+   <th style="text-align:left;"> SBP </th>
+   <th style="text-align:left;"> DBP </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Main Analysis </td>
+   <td style="text-align:left;"> 2.26 [-4.45, 8.98] </td>
+   <td style="text-align:left;"> 0.47 [-0.65, 1.59] </td>
+   <td style="text-align:left;"> 38.26 [22.26, 54.26]* </td>
+   <td style="text-align:left;"> 40.02 [2.93, 77.11]* </td>
+   <td style="text-align:left;"> -6.58 [-9.50, -3.66]* </td>
+   <td style="text-align:left;"> -8.89 [-13.15, -4.63]* </td>
+   <td style="text-align:left;"> -5.48 [-8.32, -2.65]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Unadjusted Models </td>
+   <td style="text-align:left;"> 0.88 [-5.93, 7.69] </td>
+   <td style="text-align:left;"> 0.50 [-0.64, 1.63] </td>
+   <td style="text-align:left;"> 37.83 [21.84, 53.81]* </td>
+   <td style="text-align:left;"> 41.75 [4.78, 78.72]* </td>
+   <td style="text-align:left;"> -7.27 [-10.28, -4.26]* </td>
+   <td style="text-align:left;"> -10.16 [-14.65, -5.68]* </td>
+   <td style="text-align:left;"> -5.88 [-8.74, -3.01]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Adjusting for Age Only </td>
+   <td style="text-align:left;"> 1.56 [-5.17, 8.29] </td>
+   <td style="text-align:left;"> 0.40 [-0.70, 1.51] </td>
+   <td style="text-align:left;"> 37.71 [21.71, 53.70]* </td>
+   <td style="text-align:left;"> 40.97 [4.00, 77.94]* </td>
+   <td style="text-align:left;"> -6.72 [-9.66, -3.78]* </td>
+   <td style="text-align:left;"> -9.10 [-13.40, -4.80]* </td>
+   <td style="text-align:left;"> -5.59 [-8.44, -2.75]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Adjusting for Gender Only </td>
+   <td style="text-align:left;"> 1.70 [-5.08, 8.48] </td>
+   <td style="text-align:left;"> 0.52 [-0.63, 1.67] </td>
+   <td style="text-align:left;"> 38.23 [22.26, 54.20]* </td>
+   <td style="text-align:left;"> 41.62 [4.62, 78.61]* </td>
+   <td style="text-align:left;"> -7.07 [-10.06, -4.08]* </td>
+   <td style="text-align:left;"> -9.84 [-14.29, -5.39]* </td>
+   <td style="text-align:left;"> -5.74 [-8.59, -2.88]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Adjusting for Race and Ethnicity Only </td>
+   <td style="text-align:left;"> 0.91 [-5.90, 7.72] </td>
+   <td style="text-align:left;"> 0.45 [-0.70, 1.60] </td>
+   <td style="text-align:left;"> 37.86 [21.85, 53.86]* </td>
+   <td style="text-align:left;"> 40.83 [3.75, 77.91]* </td>
+   <td style="text-align:left;"> -7.32 [-10.33, -4.31]* </td>
+   <td style="text-align:left;"> -10.25 [-14.73, -5.77]* </td>
+   <td style="text-align:left;"> -5.91 [-8.77, -3.04]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Male Patients </td>
+   <td style="text-align:left;"> 7.50 [-9.19, 24.18] </td>
+   <td style="text-align:left;"> -0.74 [-2.72, 1.23] </td>
+   <td style="text-align:left;"> 23.62 [-6.00, 53.24] </td>
+   <td style="text-align:left;"> 25.76 [11.39, 40.14]* </td>
+   <td style="text-align:left;"> -4.02 [-10.32, 2.28] </td>
+   <td style="text-align:left;"> -3.68 [-12.63, 5.28] </td>
+   <td style="text-align:left;"> -4.27 [-10.46, 1.91] </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Female Patients </td>
+   <td style="text-align:left;"> 0.01 [-7.35, 7.37] </td>
+   <td style="text-align:left;"> 0.94 [-0.59, 2.47] </td>
+   <td style="text-align:left;"> 41.85 [23.31, 60.39]* </td>
+   <td style="text-align:left;"> 41.90 [-3.71, 87.52] </td>
+   <td style="text-align:left;"> -6.91 [-10.22, -3.61]* </td>
+   <td style="text-align:left;"> -9.76 [-14.62, -4.90]* </td>
+   <td style="text-align:left;"> -5.53 [-8.73, -2.33]* </td>
+  </tr>
+</tbody>
+</table>
+
+`````
+
+:::
+
+```{.r .cell-code}
 summary.sensitivity.data |> write_csv("Sensitivity Analyses.csv")
 ```
+:::
+
+
+
 
 - n = 1:1, 1:5
 - match by calendar year, not possible with existing data (recency bias)
 - imputed missing data
 - NB You should avoid imputing HbA1c because its missingness is plausibly missing not at random (MNAR): clinicians order HbA1c selectively when they suspect hyperglycaemia or known diabetes, so the probability a value is observed is directly related to the (unobserved) true HbA1c. Imputing under a MAR assumption will therefore produce biased estimates (and with only ~20 observed cases the imputations will be highly unstable), so treat HbA1c as a complete-case outcome or, if you must address missingness, use explicit MNAR sensitivity models (e.g., pattern-mixture or selection models) and report how much those assumptions would need to change to alter your conclusions.
-- Matching BMI
 - BMI - related:
   - BMI within group
   - BMI as linear
@@ -1004,6 +1415,63 @@ summary.sensitivity.data |> write_csv("Sensitivity Analyses.csv")
 
 ## Session Information
 
-```{r session-information}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
 sessionInfo()
 ```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+R version 4.4.3 (2025-02-28)
+Platform: x86_64-pc-linux-gnu
+Running under: Red Hat Enterprise Linux 8.10 (Ootpa)
+
+Matrix products: default
+BLAS:   /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRblas.so 
+LAPACK: /sw/pkgs/arc/stacks/gcc/13.2.0/R/4.4.3/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: America/Detroit
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] kableExtra_1.4.0 emmeans_1.11.2-8 MatchIt_4.7.1    knitr_1.48      
+ [5] broom_1.0.6      lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1   
+ [9] dplyr_1.1.4      purrr_1.0.2      readr_2.1.5      tidyr_1.3.1     
+[13] tibble_3.2.1     ggplot2_3.5.1    tidyverse_2.0.0 
+
+loaded via a namespace (and not attached):
+ [1] utf8_1.2.4         generics_0.1.3     xml2_1.3.6         lattice_0.22-6    
+ [5] stringi_1.8.4      hms_1.1.3          digest_0.6.36      magrittr_2.0.3    
+ [9] estimability_1.5.1 evaluate_0.24.0    grid_4.4.3         timechange_0.3.0  
+[13] mvtnorm_1.3-1      fastmap_1.2.0      jsonlite_1.8.8     backports_1.5.0   
+[17] fansi_1.0.6        viridisLite_0.4.2  scales_1.3.0       textshaping_0.4.0 
+[21] cli_3.6.3          chk_0.10.0         rlang_1.1.4        crayon_1.5.3      
+[25] bit64_4.0.5        munsell_0.5.1      withr_3.0.0        yaml_2.3.9        
+[29] tools_4.4.3        parallel_4.4.3     tzdb_0.4.0         coda_0.19-4.1     
+[33] colorspace_2.1-0   vctrs_0.6.5        R6_2.5.1           lifecycle_1.0.4   
+[37] htmlwidgets_1.6.4  bit_4.0.5          vroom_1.6.5        pkgconfig_2.0.3   
+[41] pillar_1.9.0       gtable_0.3.6       glue_1.8.0         Rcpp_1.0.14       
+[45] systemfonts_1.2.3  highr_0.11         xfun_0.45          tidyselect_1.2.1  
+[49] rstudioapi_0.16.0  xtable_1.8-4       htmltools_0.5.8.1  svglite_2.2.1     
+[53] rmarkdown_2.27     compiler_4.4.3    
+```
+
+
+:::
+:::
