@@ -88,6 +88,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data">Raw Data</a></li>
   <li><a href="#create-bigbed-files" id="toc-create-bigbed-files" class="nav-link" data-scroll-target="#create-bigbed-files">Create BigBed files</a></li>
   <li><a href="#peak-overlap" id="toc-peak-overlap" class="nav-link" data-scroll-target="#peak-overlap">Peak Overlap</a></li>
+  <li><a href="#genes-that-overlap" id="toc-genes-that-overlap" class="nav-link" data-scroll-target="#genes-that-overlap">Genes that overlap</a>
+  <ul class="collapse">
+  <li><a href="#high-fat-diet" id="toc-high-fat-diet" class="nav-link" data-scroll-target="#high-fat-diet">High Fat Diet</a></li>
+  <li><a href="#normal-chow-diet" id="toc-normal-chow-diet" class="nav-link" data-scroll-target="#normal-chow-diet">Normal Chow Diet</a></li>
+  </ul></li>
   <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information">Session Information</a></li>
   </ul>
 </nav>
@@ -260,12 +265,4119 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+<section id="genes-that-overlap" class="level2">
+<h2 class="anchored" data-anchor-id="genes-that-overlap">Genes that overlap</h2>
+<section id="high-fat-diet" class="level3">
+<h3 class="anchored" data-anchor-id="high-fat-diet">High Fat Diet</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get mouse gene annotation (GENCODE or Ensembl – GENCODE is preferred for mm10/GRCm38)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This pulls the latest GENCODE M25 (matches mm10 perfectly)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only protein-coding genes + lncRNAs if you want (optional)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> genes[genes<span class="sc">$</span>type <span class="sc">==</span> <span class="st">"gene"</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> genes[genes<span class="sc">$</span>gene_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"protein_coding"</span>)] <span class="co">#not, "lincRNA", "antisense", "processed_pseudogene")]</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract transcription start sites (TSS)</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>tss <span class="ot">&lt;-</span> <span class="fu">promoters</span>(genes, <span class="at">upstream =</span> <span class="dv">0</span>, <span class="at">downstream =</span> <span class="dv">1</span>)   <span class="co"># 1-bp region at TSS</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tss) <span class="ot">&lt;-</span> genes<span class="sc">$</span>gene_name                              <span class="co"># use gene symbols</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Find closest TSS for each ChIP peak</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>hfd.nearest_tss_idx   <span class="ot">&lt;-</span> <span class="fu">nearest</span>(hfd.chip_peaks_that_overlap_ATAC, tss)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>hfd.distance_to_tss   <span class="ot">&lt;-</span> <span class="fu">distance</span>(hfd.chip_peaks_that_overlap_ATAC, tss[hfd.nearest_tss_idx])</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the final annotation table</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>hfd.annotation <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">peak_id         =</span> <span class="fu">names</span>(hfd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr             =</span> <span class="fu">seqnames</span>(hfd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">start           =</span> <span class="fu">start</span>(hfd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">end             =</span> <span class="fu">end</span>(hfd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">nearest_gene    =</span> <span class="fu">names</span>(tss)[hfd.nearest_tss_idx],</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene_strand     =</span> <span class="fu">as.character</span>(<span class="fu">strand</span>(tss[hfd.nearest_tss_idx])),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance_to_TSS =</span> hfd.distance_to_tss,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene_id         =</span> genes<span class="sc">$</span>gene_id[hfd.nearest_tss_idx],</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(hfd.distance_to_tss)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(hfd.annotation,<span class="at">caption=</span><span class="st">"ChIP peaks overlapping HFD-specific ATAC peaks and their nearest genes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>ChIP peaks overlapping HFD-specific ATAC peaks and their nearest genes</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 12%">
+<col style="width: 16%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">peak_id</th>
+<th style="text-align: left;">chr</th>
+<th style="text-align: right;">start</th>
+<th style="text-align: right;">end</th>
+<th style="text-align: left;">nearest_gene</th>
+<th style="text-align: left;">gene_strand</th>
+<th style="text-align: right;">distance_to_TSS</th>
+<th style="text-align: left;">gene_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2066</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">67818689</td>
+<td style="text-align: right;">67818944</td>
+<td style="text-align: left;">Zfp273</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">4948</td>
+<td style="text-align: left;">ENSMUSG00000030446.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8560</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">92255247</td>
+<td style="text-align: right;">92255507</td>
+<td style="text-align: left;">Plscr1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">5496</td>
+<td style="text-align: left;">ENSMUSG00000032369.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7276</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">24127980</td>
+<td style="text-align: right;">24128483</td>
+<td style="text-align: left;">Zfp235</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">5685</td>
+<td style="text-align: left;">ENSMUSG00000047603.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7248</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">149303333</td>
+<td style="text-align: right;">149303629</td>
+<td style="text-align: left;">Resf1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">5784</td>
+<td style="text-align: left;">ENSMUSG00000032712.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7275</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">24127261</td>
+<td style="text-align: right;">24127418</td>
+<td style="text-align: left;">Zfp235</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">6750</td>
+<td style="text-align: left;">ENSMUSG00000047603.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2560</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">27674153</td>
+<td style="text-align: right;">27674564</td>
+<td style="text-align: left;">Otulinl</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">7014</td>
+<td style="text-align: left;">ENSMUSG00000056069.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1910</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">32957908</td>
+<td style="text-align: right;">32958096</td>
+<td style="text-align: left;">Serpinb6b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">7112</td>
+<td style="text-align: left;">ENSMUSG00000042842.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_26</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">23931291</td>
+<td style="text-align: right;">23931746</td>
+<td style="text-align: left;">Smap1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">8973</td>
+<td style="text-align: left;">ENSMUSG00000026155.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4143</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">27312627</td>
+<td style="text-align: right;">27313284</td>
+<td style="text-align: left;">Kcnv2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">9303</td>
+<td style="text-align: left;">ENSMUSG00000047298.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4697</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">79698262</td>
+<td style="text-align: right;">79698457</td>
+<td style="text-align: left;">Ppp1r1c</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">9322</td>
+<td style="text-align: left;">ENSMUSG00000034683.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1711</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">87031745</td>
+<td style="text-align: right;">87032016</td>
+<td style="text-align: left;">Tmem63c</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">10404</td>
+<td style="text-align: left;">ENSMUSG00000034145.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3802</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">12295036</td>
+<td style="text-align: right;">12295307</td>
+<td style="text-align: left;">Ankrd29</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">10489</td>
+<td style="text-align: left;">ENSMUSG00000057766.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2350</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">45000157</td>
+<td style="text-align: right;">45000352</td>
+<td style="text-align: left;">Ptger2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">11961</td>
+<td style="text-align: left;">ENSMUSG00000037759.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2351</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">45000357</td>
+<td style="text-align: right;">45000635</td>
+<td style="text-align: left;">Ptger2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">12161</td>
+<td style="text-align: left;">ENSMUSG00000037759.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4096</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">18619101</td>
+<td style="text-align: right;">18619307</td>
+<td style="text-align: left;">Ostf1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">12515</td>
+<td style="text-align: left;">ENSMUSG00000024725.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8724</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">53383170</td>
+<td style="text-align: right;">53383568</td>
+<td style="text-align: left;">Mospd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">12667</td>
+<td style="text-align: left;">ENSMUSG00000023074.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7258</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">7196469</td>
+<td style="text-align: right;">7196695</td>
+<td style="text-align: left;">Zfp772</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">13302</td>
+<td style="text-align: left;">ENSMUSG00000066838.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_296</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">134276279</td>
+<td style="text-align: right;">134276457</td>
+<td style="text-align: left;">Myog</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">13531</td>
+<td style="text-align: left;">ENSMUSG00000026459.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3840</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">35676272</td>
+<td style="text-align: right;">35676557</td>
+<td style="text-align: left;">Spata24</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">14085</td>
+<td style="text-align: left;">ENSMUSG00000024352.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6647</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">6592766</td>
+<td style="text-align: right;">6593153</td>
+<td style="text-align: left;">Sem1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">14102</td>
+<td style="text-align: left;">ENSMUSG00000042541.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5545</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">154582068</td>
+<td style="text-align: right;">154582438</td>
+<td style="text-align: left;">Cryz</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">14272</td>
+<td style="text-align: left;">ENSMUSG00000028199.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3879</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">52600524</td>
+<td style="text-align: right;">52600917</td>
+<td style="text-align: left;">Zfp474</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">14997</td>
+<td style="text-align: left;">ENSMUSG00000046886.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4062</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">9119694</td>
+<td style="text-align: right;">9119975</td>
+<td style="text-align: left;">Asrgl1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">15660</td>
+<td style="text-align: left;">ENSMUSG00000024654.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5870</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">115534851</td>
+<td style="text-align: right;">115535092</td>
+<td style="text-align: left;">Cyp4a10</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">16586</td>
+<td style="text-align: left;">ENSMUSG00000066072.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2122</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">98654385</td>
+<td style="text-align: right;">98654629</td>
+<td style="text-align: left;">Tmem174</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">16974</td>
+<td style="text-align: left;">ENSMUSG00000046082.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_906</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">115333557</td>
+<td style="text-align: right;">115333970</td>
+<td style="text-align: left;">Rab21</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">17962</td>
+<td style="text-align: left;">ENSMUSG00000020132.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_878</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">97587007</td>
+<td style="text-align: right;">97587163</td>
+<td style="text-align: left;">Kera</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">19715</td>
+<td style="text-align: left;">ENSMUSG00000019932.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4055</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">8702492</td>
+<td style="text-align: right;">8702672</td>
+<td style="text-align: left;">Slc3a2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">20696</td>
+<td style="text-align: left;">ENSMUSG00000010095.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2680</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">58344897</td>
+<td style="text-align: right;">58345207</td>
+<td style="text-align: left;">Klhl38</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">20727</td>
+<td style="text-align: left;">ENSMUSG00000022357.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8287</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">32657094</td>
+<td style="text-align: right;">32657401</td>
+<td style="text-align: left;">Ets1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">20872</td>
+<td style="text-align: left;">ENSMUSG00000032035.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6523</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">134154308</td>
+<td style="text-align: right;">134154676</td>
+<td style="text-align: left;">Rcc1l</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">22097</td>
+<td style="text-align: left;">ENSMUSG00000061979.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7474</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">92897187</td>
+<td style="text-align: right;">92897457</td>
+<td style="text-align: left;">Prcp</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">22716</td>
+<td style="text-align: left;">ENSMUSG00000061119.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">10255474</td>
+<td style="text-align: right;">10255689</td>
+<td style="text-align: left;">Arfgef1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">22803</td>
+<td style="text-align: left;">ENSMUSG00000067851.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8726</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">53694032</td>
+<td style="text-align: right;">53694344</td>
+<td style="text-align: left;">Rtl8b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">23623</td>
+<td style="text-align: left;">ENSMUSG00000067924.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_34</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">33645720</td>
+<td style="text-align: right;">33646029</td>
+<td style="text-align: left;">Prim2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">23765</td>
+<td style="text-align: left;">ENSMUSG00000026134.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8723</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">53213952</td>
+<td style="text-align: right;">53214228</td>
+<td style="text-align: left;">Plac1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">25882</td>
+<td style="text-align: left;">ENSMUSG00000061082.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_100</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">53680044</td>
+<td style="text-align: right;">53680248</td>
+<td style="text-align: left;">Dnah7a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">26535</td>
+<td style="text-align: left;">ENSMUSG00000096141.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_699</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">58418423</td>
+<td style="text-align: right;">58418876</td>
+<td style="text-align: left;">Ranbp2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">28043</td>
+<td style="text-align: left;">ENSMUSG00000003226.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2758</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">68287116</td>
+<td style="text-align: right;">68287307</td>
+<td style="text-align: left;">Zfat</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">28259</td>
+<td style="text-align: left;">ENSMUSG00000022335.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4076</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">11995026</td>
+<td style="text-align: right;">11995212</td>
+<td style="text-align: left;">Osbp</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">29084</td>
+<td style="text-align: left;">ENSMUSG00000024687.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_698</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">58416774</td>
+<td style="text-align: right;">58416972</td>
+<td style="text-align: left;">Ranbp2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">29947</td>
+<td style="text-align: left;">ENSMUSG00000003226.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8747</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">72887902</td>
+<td style="text-align: right;">72888163</td>
+<td style="text-align: left;">Cetn2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">30247</td>
+<td style="text-align: left;">ENSMUSG00000031347.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5621</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">43350296</td>
+<td style="text-align: right;">43350515</td>
+<td style="text-align: left;">Rusc2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">31463</td>
+<td style="text-align: left;">ENSMUSG00000035969.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_211</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">90876549</td>
+<td style="text-align: right;">90876800</td>
+<td style="text-align: left;">Col6a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">32577</td>
+<td style="text-align: left;">ENSMUSG00000048126.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7252</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">3457315</td>
+<td style="text-align: right;">3457604</td>
+<td style="text-align: left;">Cacng6</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">33119</td>
+<td style="text-align: left;">ENSMUSG00000078815.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5752</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">86712579</td>
+<td style="text-align: right;">86713007</td>
+<td style="text-align: left;">Dennd4c</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">35547</td>
+<td style="text-align: left;">ENSMUSG00000038024.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5563</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">6239590</td>
+<td style="text-align: right;">6239847</td>
+<td style="text-align: left;">Cyp7a1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">35785</td>
+<td style="text-align: left;">ENSMUSG00000028240.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3207</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">50552573</td>
+<td style="text-align: right;">50552763</td>
+<td style="text-align: left;">Ccdc54</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">38390</td>
+<td style="text-align: left;">ENSMUSG00000050685.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7253</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">3463304</td>
+<td style="text-align: right;">3463625</td>
+<td style="text-align: left;">Tarm1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">38998</td>
+<td style="text-align: left;">ENSMUSG00000053338.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6777</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">41911720</td>
+<td style="text-align: right;">41911985</td>
+<td style="text-align: left;">Sval1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">39644</td>
+<td style="text-align: left;">ENSMUSG00000029865.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">11033656</td>
+<td style="text-align: right;">11033905</td>
+<td style="text-align: left;">Prex2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">40190</td>
+<td style="text-align: left;">ENSMUSG00000048960.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4911</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">140107687</td>
+<td style="text-align: right;">140108024</td>
+<td style="text-align: left;">Tasp1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">40881</td>
+<td style="text-align: left;">ENSMUSG00000039033.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4912</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">140108119</td>
+<td style="text-align: right;">140108318</td>
+<td style="text-align: left;">Tasp1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">41313</td>
+<td style="text-align: left;">ENSMUSG00000039033.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5425</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">115845784</td>
+<td style="text-align: right;">115846085</td>
+<td style="text-align: left;">Dph5</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">41751</td>
+<td style="text-align: left;">ENSMUSG00000033554.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7452</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">83541547</td>
+<td style="text-align: right;">83541839</td>
+<td style="text-align: left;">Tmc3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">43087</td>
+<td style="text-align: left;">ENSMUSG00000038540.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4141</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">27260184</td>
+<td style="text-align: right;">27260625</td>
+<td style="text-align: left;">Vldlr</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">43699</td>
+<td style="text-align: left;">ENSMUSG00000024924.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4142</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">27260666</td>
+<td style="text-align: right;">27261066</td>
+<td style="text-align: left;">Vldlr</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">44181</td>
+<td style="text-align: left;">ENSMUSG00000024924.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_325</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">143823851</td>
+<td style="text-align: right;">143824141</td>
+<td style="text-align: left;">Uchl5</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">46578</td>
+<td style="text-align: left;">ENSMUSG00000018189.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3640</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">71134677</td>
+<td style="text-align: right;">71134895</td>
+<td style="text-align: left;">Lpin2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">47664</td>
+<td style="text-align: left;">ENSMUSG00000024052.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7247</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">149260928</td>
+<td style="text-align: right;">149261261</td>
+<td style="text-align: left;">Resf1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">48152</td>
+<td style="text-align: left;">ENSMUSG00000032712.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8416</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">57391250</td>
+<td style="text-align: right;">57391439</td>
+<td style="text-align: left;">Ppcdc</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48684</td>
+<td style="text-align: left;">ENSMUSG00000063849.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8415</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">57390905</td>
+<td style="text-align: right;">57391141</td>
+<td style="text-align: left;">Ppcdc</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48982</td>
+<td style="text-align: left;">ENSMUSG00000063849.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3092</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">26630724</td>
+<td style="text-align: right;">26631013</td>
+<td style="text-align: left;">Il1rap</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">49019</td>
+<td style="text-align: left;">ENSMUSG00000022514.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7552</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">111730369</td>
+<td style="text-align: right;">111730674</td>
+<td style="text-align: left;">Galnt18</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">49302</td>
+<td style="text-align: left;">ENSMUSG00000038296.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_396</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">160100940</td>
+<td style="text-align: right;">160101381</td>
+<td style="text-align: left;">Tnn</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">52198</td>
+<td style="text-align: left;">ENSMUSG00000026725.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4373</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">3166899</td>
+<td style="text-align: right;">3167178</td>
+<td style="text-align: left;">Fam171a1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">52674</td>
+<td style="text-align: left;">ENSMUSG00000050530.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7551</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">111726880</td>
+<td style="text-align: right;">111727117</td>
+<td style="text-align: left;">Galnt18</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">52859</td>
+<td style="text-align: left;">ENSMUSG00000038296.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4710</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">90521869</td>
+<td style="text-align: right;">90522195</td>
+<td style="text-align: left;">Ptprj</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">58451</td>
+<td style="text-align: left;">ENSMUSG00000025314.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6379</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">104567282</td>
+<td style="text-align: right;">104567491</td>
+<td style="text-align: left;">Thoc2l</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">58931</td>
+<td style="text-align: left;">ENSMUSG00000097392.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7550</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">111719992</td>
+<td style="text-align: right;">111720249</td>
+<td style="text-align: left;">Galnt18</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">59727</td>
+<td style="text-align: left;">ENSMUSG00000038296.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2246</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">19887597</td>
+<td style="text-align: right;">19887901</td>
+<td style="text-align: left;">Rtraf</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">63772</td>
+<td style="text-align: left;">ENSMUSG00000021807.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4220</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">38753962</td>
+<td style="text-align: right;">38754335</td>
+<td style="text-align: left;">Noc3l</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">64901</td>
+<td style="text-align: left;">ENSMUSG00000024999.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_13</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">14244823</td>
+<td style="text-align: right;">14245100</td>
+<td style="text-align: left;">Eya1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">65134</td>
+<td style="text-align: left;">ENSMUSG00000025932.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4085</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">15880938</td>
+<td style="text-align: right;">15881155</td>
+<td style="text-align: left;">Psat1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">66181</td>
+<td style="text-align: left;">ENSMUSG00000024640.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7904</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">57722075</td>
+<td style="text-align: right;">57722384</td>
+<td style="text-align: left;">Galnt7</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">69042</td>
+<td style="text-align: left;">ENSMUSG00000031608.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7385</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">66294591</td>
+<td style="text-align: right;">66294737</td>
+<td style="text-align: left;">Gm10974</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">71167</td>
+<td style="text-align: left;">ENSMUSG00000078677.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4426</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">18473490</td>
+<td style="text-align: right;">18473750</td>
+<td style="text-align: left;">Dnajc1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">80659</td>
+<td style="text-align: left;">ENSMUSG00000026740.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6646</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">6496823</td>
+<td style="text-align: right;">6497053</td>
+<td style="text-align: left;">Sem1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">81609</td>
+<td style="text-align: left;">ENSMUSG00000042541.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_418</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">163171807</td>
+<td style="text-align: right;">163172068</td>
+<td style="text-align: left;">Mroh9</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">86136</td>
+<td style="text-align: left;">ENSMUSG00000071890.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6245</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">67011999</td>
+<td style="text-align: right;">67012331</td>
+<td style="text-align: left;">Phox2b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">86969</td>
+<td style="text-align: left;">ENSMUSG00000012520.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6991</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">92609775</td>
+<td style="text-align: right;">92609973</td>
+<td style="text-align: left;">Prickle2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">96181</td>
+<td style="text-align: left;">ENSMUSG00000030020.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6990</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">92609037</td>
+<td style="text-align: right;">92609322</td>
+<td style="text-align: left;">Prickle2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">96832</td>
+<td style="text-align: left;">ENSMUSG00000030020.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_131</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">61539990</td>
+<td style="text-align: right;">61540311</td>
+<td style="text-align: left;">Pard3b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">98512</td>
+<td style="text-align: left;">ENSMUSG00000052062.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7797</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">23511208</td>
+<td style="text-align: right;">23511335</td>
+<td style="text-align: left;">Sfrp1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">99705</td>
+<td style="text-align: left;">ENSMUSG00000031548.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7840</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">34255001</td>
+<td style="text-align: right;">34255257</td>
+<td style="text-align: left;">Saraf</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">100437</td>
+<td style="text-align: left;">ENSMUSG00000031532.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1607</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">70553852</td>
+<td style="text-align: right;">70554150</td>
+<td style="text-align: left;">Tmx1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">100756</td>
+<td style="text-align: left;">ENSMUSG00000021072.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3754</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">4523021</td>
+<td style="text-align: right;">4523422</td>
+<td style="text-align: left;">Jcad</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">111455</td>
+<td style="text-align: left;">ENSMUSG00000033960.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_733</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">63541746</td>
+<td style="text-align: right;">63542097</td>
+<td style="text-align: left;">Ctnna3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">111647</td>
+<td style="text-align: left;">ENSMUSG00000060843.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4116</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">21890331</td>
+<td style="text-align: right;">21890659</td>
+<td style="text-align: left;">Cemip2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">111988</td>
+<td style="text-align: left;">ENSMUSG00000024754.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_897</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">108896662</td>
+<td style="text-align: right;">108896833</td>
+<td style="text-align: left;">Syt1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">114148</td>
+<td style="text-align: left;">ENSMUSG00000035864.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6891</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">73587693</td>
+<td style="text-align: right;">73588028</td>
+<td style="text-align: left;">4931417E11Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">118025</td>
+<td style="text-align: left;">ENSMUSG00000056197.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1456</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">9688865</td>
+<td style="text-align: right;">9689094</td>
+<td style="text-align: left;">Osr1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">118748</td>
+<td style="text-align: left;">ENSMUSG00000048387.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1457</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">9689550</td>
+<td style="text-align: right;">9689802</td>
+<td style="text-align: left;">Osr1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">119433</td>
+<td style="text-align: left;">ENSMUSG00000048387.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3554</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">44653247</td>
+<td style="text-align: right;">44653475</td>
+<td style="text-align: left;">Supt3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">123676</td>
+<td style="text-align: left;">ENSMUSG00000038954.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7850</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">35968294</td>
+<td style="text-align: right;">35968679</td>
+<td style="text-align: left;">Prag1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">126148</td>
+<td style="text-align: left;">ENSMUSG00000050271.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1560</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">36510004</td>
+<td style="text-align: right;">36510274</td>
+<td style="text-align: left;">Crppa</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">128553</td>
+<td style="text-align: left;">ENSMUSG00000043153.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2899</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">96830114</td>
+<td style="text-align: right;">96830416</td>
+<td style="text-align: left;">Slc38a2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">130383</td>
+<td style="text-align: left;">ENSMUSG00000022462.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2223</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">118800239</td>
+<td style="text-align: right;">118800464</td>
+<td style="text-align: left;">Fgf10</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">130447</td>
+<td style="text-align: left;">ENSMUSG00000021732.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4871</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">131723272</td>
+<td style="text-align: right;">131723554</td>
+<td style="text-align: left;">Erv3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">136192</td>
+<td style="text-align: left;">ENSMUSG00000037482.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2682</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">58685093</td>
+<td style="text-align: right;">58685450</td>
+<td style="text-align: left;">Tmem65</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">138187</td>
+<td style="text-align: left;">ENSMUSG00000062373.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4105</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">21106236</td>
+<td style="text-align: right;">21106475</td>
+<td style="text-align: left;">Tmc1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">152033</td>
+<td style="text-align: left;">ENSMUSG00000024749.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_39</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">35914352</td>
+<td style="text-align: right;">35914676</td>
+<td style="text-align: left;">Hs6st1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">153723</td>
+<td style="text-align: left;">ENSMUSG00000045216.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5214</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">54517630</td>
+<td style="text-align: right;">54517906</td>
+<td style="text-align: left;">Postn</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">156520</td>
+<td style="text-align: left;">ENSMUSG00000027750.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8007</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">87043949</td>
+<td style="text-align: right;">87044116</td>
+<td style="text-align: left;">N4bp1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">158690</td>
+<td style="text-align: left;">ENSMUSG00000031652.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5181</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">38322433</td>
+<td style="text-align: right;">38322635</td>
+<td style="text-align: left;">Ankrd50</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">162208</td>
+<td style="text-align: left;">ENSMUSG00000044864.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4199</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">33355314</td>
+<td style="text-align: right;">33355504</td>
+<td style="text-align: left;">Lipo4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">162275</td>
+<td style="text-align: left;">ENSMUSG00000079344.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6313</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">92882221</td>
+<td style="text-align: right;">92882469</td>
+<td style="text-align: left;">Sowahb</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">162552</td>
+<td style="text-align: left;">ENSMUSG00000045314.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4422</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">14768235</td>
+<td style="text-align: right;">14768440</td>
+<td style="text-align: left;">Cacnb2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">165146</td>
+<td style="text-align: left;">ENSMUSG00000057914.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8154</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">121376502</td>
+<td style="text-align: right;">121376819</td>
+<td style="text-align: left;">1700018B08Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">167500</td>
+<td style="text-align: left;">ENSMUSG00000031809.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5479</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">131911318</td>
+<td style="text-align: right;">131911658</td>
+<td style="text-align: left;">Dkk2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">173633</td>
+<td style="text-align: left;">ENSMUSG00000028031.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4909</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">139891787</td>
+<td style="text-align: right;">139892002</td>
+<td style="text-align: left;">Tasp1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">174802</td>
+<td style="text-align: left;">ENSMUSG00000039033.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6294</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">89278424</td>
+<td style="text-align: right;">89278640</td>
+<td style="text-align: left;">Gc</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">179257</td>
+<td style="text-align: left;">ENSMUSG00000035540.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2165</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">103589716</td>
+<td style="text-align: right;">103589941</td>
+<td style="text-align: left;">Srek1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">184666</td>
+<td style="text-align: left;">ENSMUSG00000032621.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7835</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">33199371</td>
+<td style="text-align: right;">33199538</td>
+<td style="text-align: left;">Wrn</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">185988</td>
+<td style="text-align: left;">ENSMUSG00000031583.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8288</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">32835186</td>
+<td style="text-align: right;">32835535</td>
+<td style="text-align: left;">Ets1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">198964</td>
+<td style="text-align: left;">ENSMUSG00000032035.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1853</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">15804081</td>
+<td style="text-align: right;">15804293</td>
+<td style="text-align: left;">Inhba</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">207557</td>
+<td style="text-align: left;">ENSMUSG00000041324.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2089</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">81094650</td>
+<td style="text-align: right;">81094815</td>
+<td style="text-align: left;">Arrdc3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">211265</td>
+<td style="text-align: left;">ENSMUSG00000074794.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1905</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">32553209</td>
+<td style="text-align: right;">32553497</td>
+<td style="text-align: left;">Gmds</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">214468</td>
+<td style="text-align: left;">ENSMUSG00000038372.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4178</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">31531308</td>
+<td style="text-align: right;">31531802</td>
+<td style="text-align: left;">Prkg1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">233230</td>
+<td style="text-align: left;">ENSMUSG00000052920.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3751</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">89450637</td>
+<td style="text-align: right;">89451055</td>
+<td style="text-align: left;">Fshr</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">249961</td>
+<td style="text-align: left;">ENSMUSG00000032937.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2602</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">42128981</td>
+<td style="text-align: right;">42129329</td>
+<td style="text-align: left;">Abra</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">259260</td>
+<td style="text-align: left;">ENSMUSG00000042895.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8289</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">32899917</td>
+<td style="text-align: right;">32900187</td>
+<td style="text-align: left;">Ets1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">263695</td>
+<td style="text-align: left;">ENSMUSG00000032035.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1719</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">95420980</td>
+<td style="text-align: right;">95421284</td>
+<td style="text-align: left;">Flrt2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">270941</td>
+<td style="text-align: left;">ENSMUSG00000047414.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1874</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">29575912</td>
+<td style="text-align: right;">29576508</td>
+<td style="text-align: left;">Cdkal1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">279165</td>
+<td style="text-align: left;">ENSMUSG00000006191.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1040</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">40402608</td>
+<td style="text-align: right;">40402839</td>
+<td style="text-align: left;">Mat2b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">292363</td>
+<td style="text-align: left;">ENSMUSG00000042032.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5290</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">80501191</td>
+<td style="text-align: right;">80501432</td>
+<td style="text-align: left;">Gria2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">301402</td>
+<td style="text-align: left;">ENSMUSG00000033981.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4590</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">50833806</td>
+<td style="text-align: right;">50834160</td>
+<td style="text-align: left;">Rnd3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">314950</td>
+<td style="text-align: left;">ENSMUSG00000017144.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1551</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">34327620</td>
+<td style="text-align: right;">34327811</td>
+<td style="text-align: left;">Twist1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">369948</td>
+<td style="text-align: left;">ENSMUSG00000035799.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5531</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">148595648</td>
+<td style="text-align: right;">148595876</td>
+<td style="text-align: left;">Adgrl2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">394678</td>
+<td style="text-align: left;">ENSMUSG00000028184.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5461</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">127099897</td>
+<td style="text-align: right;">127100103</td>
+<td style="text-align: left;">Ank2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">399246</td>
+<td style="text-align: left;">ENSMUSG00000032826.19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8061</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">103698971</td>
+<td style="text-align: right;">103699453</td>
+<td style="text-align: left;">Cdh5</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">402171</td>
+<td style="text-align: left;">ENSMUSG00000031871.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5135</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">21669742</td>
+<td style="text-align: right;">21670078</td>
+<td style="text-align: left;">Tbl1xr1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">406573</td>
+<td style="text-align: left;">ENSMUSG00000027630.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8768</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">90340376</td>
+<td style="text-align: right;">90340547</td>
+<td style="text-align: left;">4930415L06Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">407523</td>
+<td style="text-align: left;">ENSMUSG00000035387.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1978</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">47561325</td>
+<td style="text-align: right;">47561718</td>
+<td style="text-align: left;">Rnf144b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">438668</td>
+<td style="text-align: left;">ENSMUSG00000038068.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5750</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">85974465</td>
+<td style="text-align: right;">85974747</td>
+<td style="text-align: left;">Adamtsl1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">460292</td>
+<td style="text-align: left;">ENSMUSG00000066113.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2082</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">78697953</td>
+<td style="text-align: right;">78698196</td>
+<td style="text-align: left;">Nr2f1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">498195</td>
+<td style="text-align: left;">ENSMUSG00000069171.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2069</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">71376388</td>
+<td style="text-align: right;">71376587</td>
+<td style="text-align: left;">Adamts16</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">534576</td>
+<td style="text-align: left;">ENSMUSG00000049538.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2070</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">71377500</td>
+<td style="text-align: right;">71377758</td>
+<td style="text-align: left;">Adamts16</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">535688</td>
+<td style="text-align: left;">ENSMUSG00000049538.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7221</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">143916834</td>
+<td style="text-align: right;">143917032</td>
+<td style="text-align: left;">Etnk1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">749612</td>
+<td style="text-align: left;">ENSMUSG00000030275.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4395</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">8660455</td>
+<td style="text-align: right;">8660846</td>
+<td style="text-align: left;">Celf2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1150891</td>
+<td style="text-align: left;">ENSMUSG00000002107.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_574</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">16139294</td>
+<td style="text-align: right;">16139467</td>
+<td style="text-align: left;">Gje1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1421079</td>
+<td style="text-align: left;">ENSMUSG00000019867.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="normal-chow-diet" class="level3">
+<h3 class="anchored" data-anchor-id="normal-chow-diet">Normal Chow Diet</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find closest TSS for each ChIP peak</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ncd.nearest_tss_idx   <span class="ot">&lt;-</span> <span class="fu">nearest</span>(ncd.chip_peaks_that_overlap_ATAC, tss)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ncd.distance_to_tss   <span class="ot">&lt;-</span> <span class="fu">distance</span>(ncd.chip_peaks_that_overlap_ATAC, tss[ncd.nearest_tss_idx])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the final annotation table</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ncd.annotation <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">peak_id         =</span> <span class="fu">names</span>(ncd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr             =</span> <span class="fu">seqnames</span>(ncd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">start           =</span> <span class="fu">start</span>(ncd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">end             =</span> <span class="fu">end</span>(ncd.chip_peaks_that_overlap_ATAC),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">nearest_gene    =</span> <span class="fu">names</span>(tss)[ncd.nearest_tss_idx],</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene_strand     =</span> <span class="fu">as.character</span>(<span class="fu">strand</span>(tss[ncd.nearest_tss_idx])),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance_to_TSS =</span> ncd.distance_to_tss,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene_id         =</span> genes<span class="sc">$</span>gene_id[ncd.nearest_tss_idx],</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(ncd.distance_to_tss)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(ncd.annotation,<span class="at">caption=</span><span class="st">"ChIP peaks overlapping NCD-specific ATAC peaks and their nearest genes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>ChIP peaks overlapping NCD-specific ATAC peaks and their nearest genes</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 12%">
+<col style="width: 16%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">peak_id</th>
+<th style="text-align: left;">chr</th>
+<th style="text-align: right;">start</th>
+<th style="text-align: right;">end</th>
+<th style="text-align: left;">nearest_gene</th>
+<th style="text-align: left;">gene_strand</th>
+<th style="text-align: right;">distance_to_TSS</th>
+<th style="text-align: left;">gene_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2929</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">99875139</td>
+<td style="text-align: right;">99875679</td>
+<td style="text-align: left;">Lima1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">ENSMUSG00000023022.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6298</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">90640673</td>
+<td style="text-align: right;">90641234</td>
+<td style="text-align: left;">Rassf6</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">ENSMUSG00000029370.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2135</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101768313</td>
+<td style="text-align: right;">101768545</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6432</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">114145906</td>
+<td style="text-align: right;">114146392</td>
+<td style="text-align: left;">Acacb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">142</td>
+<td style="text-align: left;">ENSMUSG00000042010.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4018</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4497640</td>
+<td style="text-align: right;">4498000</td>
+<td style="text-align: left;">2010003K11Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">582</td>
+<td style="text-align: left;">ENSMUSG00000042041.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7488</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">97418832</td>
+<td style="text-align: right;">97419134</td>
+<td style="text-align: left;">Thrsp</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1101</td>
+<td style="text-align: left;">ENSMUSG00000035686.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1102</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">60044760</td>
+<td style="text-align: right;">60045178</td>
+<td style="text-align: left;">Pemt</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1310</td>
+<td style="text-align: left;">ENSMUSG00000000301.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_425</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">164798502</td>
+<td style="text-align: right;">164798806</td>
+<td style="text-align: left;">Dpt</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">1857</td>
+<td style="text-align: left;">ENSMUSG00000026574.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1414</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">120798322</td>
+<td style="text-align: right;">120798533</td>
+<td style="text-align: left;">Dus1l</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1918</td>
+<td style="text-align: left;">ENSMUSG00000025155.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7160</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">125234528</td>
+<td style="text-align: right;">125234710</td>
+<td style="text-align: left;">Cd27</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">2299</td>
+<td style="text-align: left;">ENSMUSG00000030336.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7489</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">97420367</td>
+<td style="text-align: right;">97420739</td>
+<td style="text-align: left;">Thrsp</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">2636</td>
+<td style="text-align: left;">ENSMUSG00000035686.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1415</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">120821192</td>
+<td style="text-align: right;">120821407</td>
+<td style="text-align: left;">Fasn</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">3139</td>
+<td style="text-align: left;">ENSMUSG00000025153.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7490</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">97420927</td>
+<td style="text-align: right;">97421392</td>
+<td style="text-align: left;">Thrsp</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">3196</td>
+<td style="text-align: left;">ENSMUSG00000035686.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7491</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">97421687</td>
+<td style="text-align: right;">97422177</td>
+<td style="text-align: left;">Thrsp</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">3956</td>
+<td style="text-align: left;">ENSMUSG00000035686.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4322</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">55122557</td>
+<td style="text-align: right;">55122740</td>
+<td style="text-align: left;">Gpam</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">4497</td>
+<td style="text-align: left;">ENSMUSG00000024978.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4019</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4515310</td>
+<td style="text-align: right;">4515663</td>
+<td style="text-align: left;">Pcx</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">4837</td>
+<td style="text-align: left;">ENSMUSG00000024892.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4498</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">32255025</td>
+<td style="text-align: right;">32255175</td>
+<td style="text-align: left;">Uck1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">4983</td>
+<td style="text-align: left;">ENSMUSG00000002550.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4017</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4492875</td>
+<td style="text-align: right;">4493334</td>
+<td style="text-align: left;">2010003K11Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">5248</td>
+<td style="text-align: left;">ENSMUSG00000042041.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4959</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">152741579</td>
+<td style="text-align: right;">152742163</td>
+<td style="text-align: left;">Id1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">5327</td>
+<td style="text-align: left;">ENSMUSG00000042745.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4016</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4492630</td>
+<td style="text-align: right;">4492824</td>
+<td style="text-align: left;">2010003K11Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">5758</td>
+<td style="text-align: left;">ENSMUSG00000042041.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3904</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">60495244</td>
+<td style="text-align: right;">60495969</td>
+<td style="text-align: left;">Smim3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">6017</td>
+<td style="text-align: left;">ENSMUSG00000038059.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1416</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">120830593</td>
+<td style="text-align: right;">120831090</td>
+<td style="text-align: left;">Fasn</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">6045</td>
+<td style="text-align: left;">ENSMUSG00000025153.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_662</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">40333071</td>
+<td style="text-align: right;">40333469</td>
+<td style="text-align: left;">Cdk19</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">6094</td>
+<td style="text-align: left;">ENSMUSG00000038481.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_414</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">162891968</td>
+<td style="text-align: right;">162892452</td>
+<td style="text-align: left;">Fmo2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">6273</td>
+<td style="text-align: left;">ENSMUSG00000040170.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_946</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">3921175</td>
+<td style="text-align: right;">3921494</td>
+<td style="text-align: left;">Slc35e4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">6510</td>
+<td style="text-align: left;">ENSMUSG00000048807.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4497</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">32252632</td>
+<td style="text-align: right;">32253048</td>
+<td style="text-align: left;">Uck1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">7110</td>
+<td style="text-align: left;">ENSMUSG00000002550.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8188</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">124583863</td>
+<td style="text-align: right;">124584405</td>
+<td style="text-align: left;">Capn9</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">7751</td>
+<td style="text-align: left;">ENSMUSG00000031981.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_945</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">3903109</td>
+<td style="text-align: right;">3903715</td>
+<td style="text-align: left;">Dusp18</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">7868</td>
+<td style="text-align: left;">ENSMUSG00000047205.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1303</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">100553941</td>
+<td style="text-align: right;">100554212</td>
+<td style="text-align: left;">Ttc25</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">8333</td>
+<td style="text-align: left;">ENSMUSG00000006784.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4261</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">44416233</td>
+<td style="text-align: right;">44416685</td>
+<td style="text-align: left;">Scd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">8353</td>
+<td style="text-align: left;">ENSMUSG00000037071.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_455</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">173622311</td>
+<td style="text-align: right;">173622559</td>
+<td style="text-align: left;">Ifi209</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">8357</td>
+<td style="text-align: left;">ENSMUSG00000043263.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4854</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">130003703</td>
+<td style="text-align: right;">130003981</td>
+<td style="text-align: left;">Tgm3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">8367</td>
+<td style="text-align: left;">ENSMUSG00000027401.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8189</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">124584679</td>
+<td style="text-align: right;">124584952</td>
+<td style="text-align: left;">Capn9</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">8567</td>
+<td style="text-align: left;">ENSMUSG00000031981.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7620</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">125500600</td>
+<td style="text-align: right;">125500880</td>
+<td style="text-align: left;">Nsmce1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">9003</td>
+<td style="text-align: left;">ENSMUSG00000030750.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2398</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">63934050</td>
+<td style="text-align: right;">63934299</td>
+<td style="text-align: left;">Sox7</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">9373</td>
+<td style="text-align: left;">ENSMUSG00000063060.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8190</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">124585905</td>
+<td style="text-align: right;">124586495</td>
+<td style="text-align: left;">Capn9</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">9793</td>
+<td style="text-align: left;">ENSMUSG00000031981.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8136</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">120002380</td>
+<td style="text-align: right;">120002664</td>
+<td style="text-align: left;">Crispld2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">9941</td>
+<td style="text-align: left;">ENSMUSG00000031825.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8458</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">62526567</td>
+<td style="text-align: right;">62526987</td>
+<td style="text-align: left;">Coro2b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">10056</td>
+<td style="text-align: left;">ENSMUSG00000041729.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2844</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">84133441</td>
+<td style="text-align: right;">84133922</td>
+<td style="text-align: left;">Pnpla5</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">10265</td>
+<td style="text-align: left;">ENSMUSG00000018868.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6433</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">114157270</td>
+<td style="text-align: right;">114157598</td>
+<td style="text-align: left;">Acacb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">10734</td>
+<td style="text-align: left;">ENSMUSG00000042010.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2847</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">84312949</td>
+<td style="text-align: right;">84313225</td>
+<td style="text-align: left;">Parvg</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">10800</td>
+<td style="text-align: left;">ENSMUSG00000022439.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6845</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">55463076</td>
+<td style="text-align: right;">55463403</td>
+<td style="text-align: left;">Adcyap1r1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">11097</td>
+<td style="text-align: left;">ENSMUSG00000029778.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_661</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">40327950</td>
+<td style="text-align: right;">40328446</td>
+<td style="text-align: left;">Cdk19</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">11117</td>
+<td style="text-align: left;">ENSMUSG00000038481.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8137</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">120004259</td>
+<td style="text-align: right;">120004723</td>
+<td style="text-align: left;">Crispld2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">11820</td>
+<td style="text-align: left;">ENSMUSG00000031825.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4323</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">55139242</td>
+<td style="text-align: right;">55139780</td>
+<td style="text-align: left;">Gpam</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">12003</td>
+<td style="text-align: left;">ENSMUSG00000024978.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3657</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">73962437</td>
+<td style="text-align: right;">73963124</td>
+<td style="text-align: left;">Xdh</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">12240</td>
+<td style="text-align: left;">ENSMUSG00000024066.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8191</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">124589488</td>
+<td style="text-align: right;">124589766</td>
+<td style="text-align: left;">Capn9</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">13376</td>
+<td style="text-align: left;">ENSMUSG00000031981.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4262</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">44422136</td>
+<td style="text-align: right;">44422998</td>
+<td style="text-align: left;">Scd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">14256</td>
+<td style="text-align: left;">ENSMUSG00000037071.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3766</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5320202</td>
+<td style="text-align: right;">5320414</td>
+<td style="text-align: left;">Zfp438</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">14392</td>
+<td style="text-align: left;">ENSMUSG00000050945.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_454</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">173550791</td>
+<td style="text-align: right;">173550990</td>
+<td style="text-align: left;">Ifi214</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">14833</td>
+<td style="text-align: left;">ENSMUSG00000070501.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6434</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">114161616</td>
+<td style="text-align: right;">114161829</td>
+<td style="text-align: left;">Acacb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">15080</td>
+<td style="text-align: left;">ENSMUSG00000042010.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4024</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4599360</td>
+<td style="text-align: right;">4599579</td>
+<td style="text-align: left;">Lrfn4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">16087</td>
+<td style="text-align: left;">ENSMUSG00000045045.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2845</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">84139838</td>
+<td style="text-align: right;">84140045</td>
+<td style="text-align: left;">Pnpla5</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">16662</td>
+<td style="text-align: left;">ENSMUSG00000018868.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8081</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">106185671</td>
+<td style="text-align: right;">106186033</td>
+<td style="text-align: left;">Slc7a6</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">16813</td>
+<td style="text-align: left;">ENSMUSG00000031904.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6846</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">55469155</td>
+<td style="text-align: right;">55469644</td>
+<td style="text-align: left;">Adcyap1r1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">17176</td>
+<td style="text-align: left;">ENSMUSG00000029778.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4023</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4597863</td>
+<td style="text-align: right;">4598135</td>
+<td style="text-align: left;">Lrfn4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">17531</td>
+<td style="text-align: left;">ENSMUSG00000045045.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4260</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">44389524</td>
+<td style="text-align: right;">44389956</td>
+<td style="text-align: left;">Scd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">17922</td>
+<td style="text-align: left;">ENSMUSG00000037071.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4259</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">44388748</td>
+<td style="text-align: right;">44389345</td>
+<td style="text-align: left;">Scd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">18533</td>
+<td style="text-align: left;">ENSMUSG00000037071.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6999</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">92850194</td>
+<td style="text-align: right;">92850767</td>
+<td style="text-align: left;">Gm15737</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">18589</td>
+<td style="text-align: left;">ENSMUSG00000079462.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8684</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">10734532</td>
+<td style="text-align: right;">10734833</td>
+<td style="text-align: left;">Mid1ip1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">19518</td>
+<td style="text-align: left;">ENSMUSG00000008035.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6550</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">136226408</td>
+<td style="text-align: right;">136226944</td>
+<td style="text-align: left;">Sh2b2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">19611</td>
+<td style="text-align: left;">ENSMUSG00000005057.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8082</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">106191087</td>
+<td style="text-align: right;">106191287</td>
+<td style="text-align: left;">Slc7a6os</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">19647</td>
+<td style="text-align: left;">ENSMUSG00000033106.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6429</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">113670154</td>
+<td style="text-align: right;">113670356</td>
+<td style="text-align: left;">Cmklr1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">19727</td>
+<td style="text-align: left;">ENSMUSG00000042190.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7702</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">140717693</td>
+<td style="text-align: right;">140717966</td>
+<td style="text-align: left;">Olfr541</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">20425</td>
+<td style="text-align: left;">ENSMUSG00000057997.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4794</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">118500385</td>
+<td style="text-align: right;">118500643</td>
+<td style="text-align: left;">Srp14</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">20673</td>
+<td style="text-align: left;">ENSMUSG00000009549.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3568</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">46053321</td>
+<td style="text-align: right;">46053874</td>
+<td style="text-align: left;">Vegfa</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">20951</td>
+<td style="text-align: left;">ENSMUSG00000023951.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2531</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">8689426</td>
+<td style="text-align: right;">8689660</td>
+<td style="text-align: left;">Slc1a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">21103</td>
+<td style="text-align: left;">ENSMUSG00000005360.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8076</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">105729315</td>
+<td style="text-align: right;">105729499</td>
+<td style="text-align: left;">Enkd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">21104</td>
+<td style="text-align: left;">ENSMUSG00000013155.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4022</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4593751</td>
+<td style="text-align: right;">4594144</td>
+<td style="text-align: left;">Lrfn4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">21522</td>
+<td style="text-align: left;">ENSMUSG00000045045.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6549</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">136224398</td>
+<td style="text-align: right;">136224942</td>
+<td style="text-align: left;">Sh2b2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">21613</td>
+<td style="text-align: left;">ENSMUSG00000005057.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6430</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">113672462</td>
+<td style="text-align: right;">113673134</td>
+<td style="text-align: left;">Cmklr1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">22035</td>
+<td style="text-align: left;">ENSMUSG00000042190.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8822</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">160412866</td>
+<td style="text-align: right;">160413207</td>
+<td style="text-align: left;">Adgrg2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">22175</td>
+<td style="text-align: left;">ENSMUSG00000031298.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7771</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">13517285</td>
+<td style="text-align: right;">13517988</td>
+<td style="text-align: left;">Gas6</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">22794</td>
+<td style="text-align: left;">ENSMUSG00000031451.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5400</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">106505240</td>
+<td style="text-align: right;">106505531</td>
+<td style="text-align: left;">Dennd2d</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">22834</td>
+<td style="text-align: left;">ENSMUSG00000027901.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8823</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">160413868</td>
+<td style="text-align: right;">160414280</td>
+<td style="text-align: left;">Adgrg2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">23177</td>
+<td style="text-align: left;">ENSMUSG00000031298.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_526</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193232505</td>
+<td style="text-align: right;">193232733</td>
+<td style="text-align: left;">Lamb3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">24805</td>
+<td style="text-align: left;">ENSMUSG00000026639.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6610</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">149020375</td>
+<td style="text-align: right;">149020730</td>
+<td style="text-align: left;">Gm42791</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">25227</td>
+<td style="text-align: left;">ENSMUSG00000106892.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8426</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">58092906</td>
+<td style="text-align: right;">58093301</td>
+<td style="text-align: left;">Ccdc33</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">25521</td>
+<td style="text-align: left;">ENSMUSG00000037716.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1043</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">43927224</td>
+<td style="text-align: right;">43927448</td>
+<td style="text-align: left;">Adra1b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">26013</td>
+<td style="text-align: left;">ENSMUSG00000050541.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1194</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">77814069</td>
+<td style="text-align: right;">77814260</td>
+<td style="text-align: left;">Gm10277</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">26321</td>
+<td style="text-align: left;">ENSMUSG00000069804.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4021</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4588615</td>
+<td style="text-align: right;">4588916</td>
+<td style="text-align: left;">Lrfn4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">26750</td>
+<td style="text-align: left;">ENSMUSG00000045045.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7772</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">13521450</td>
+<td style="text-align: right;">13521826</td>
+<td style="text-align: left;">Gas6</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">26959</td>
+<td style="text-align: left;">ENSMUSG00000031451.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1138</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">67667735</td>
+<td style="text-align: right;">67668059</td>
+<td style="text-align: left;">Rcvrn</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">27266</td>
+<td style="text-align: left;">ENSMUSG00000020907.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2827</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">81774561</td>
+<td style="text-align: right;">81774965</td>
+<td style="text-align: left;">Tef</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">27455</td>
+<td style="text-align: left;">ENSMUSG00000022389.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2530</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">8682906</td>
+<td style="text-align: right;">8683227</td>
+<td style="text-align: left;">Slc1a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">27536</td>
+<td style="text-align: left;">ENSMUSG00000005360.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1044</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">43929157</td>
+<td style="text-align: right;">43929450</td>
+<td style="text-align: left;">Adra1b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">27946</td>
+<td style="text-align: left;">ENSMUSG00000050541.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3897</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">56735956</td>
+<td style="text-align: right;">56736251</td>
+<td style="text-align: left;">Lmnb1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">28142</td>
+<td style="text-align: left;">ENSMUSG00000024590.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2421</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">67101009</td>
+<td style="text-align: right;">67101303</td>
+<td style="text-align: left;">Ppp2r2a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">28564</td>
+<td style="text-align: left;">ENSMUSG00000022052.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8810</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">143365347</td>
+<td style="text-align: right;">143365501</td>
+<td style="text-align: left;">Chrdl1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">28760</td>
+<td style="text-align: left;">ENSMUSG00000031283.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7966</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">77487140</td>
+<td style="text-align: right;">77487422</td>
+<td style="text-align: left;">Arhgap10</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">30530</td>
+<td style="text-align: left;">ENSMUSG00000037148.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4894</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">136682121</td>
+<td style="text-align: right;">136682579</td>
+<td style="text-align: left;">Snap25</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">30873</td>
+<td style="text-align: left;">ENSMUSG00000027273.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7774</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">13531205</td>
+<td style="text-align: right;">13531457</td>
+<td style="text-align: left;">1700029H14Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">31003</td>
+<td style="text-align: left;">ENSMUSG00000031452.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7773</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">13529098</td>
+<td style="text-align: right;">13530368</td>
+<td style="text-align: left;">1700029H14Rik</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">32092</td>
+<td style="text-align: left;">ENSMUSG00000031452.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3569</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">46064885</td>
+<td style="text-align: right;">46065205</td>
+<td style="text-align: left;">Vegfa</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">32515</td>
+<td style="text-align: left;">ENSMUSG00000023951.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6435</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">114179586</td>
+<td style="text-align: right;">114180008</td>
+<td style="text-align: left;">Acacb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">33050</td>
+<td style="text-align: left;">ENSMUSG00000042010.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6436</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">114180425</td>
+<td style="text-align: right;">114180562</td>
+<td style="text-align: left;">Acacb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">33889</td>
+<td style="text-align: left;">ENSMUSG00000042010.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4893</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">136678616</td>
+<td style="text-align: right;">136678909</td>
+<td style="text-align: left;">Snap25</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">34543</td>
+<td style="text-align: left;">ENSMUSG00000027273.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6764</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">39241525</td>
+<td style="text-align: right;">39241772</td>
+<td style="text-align: left;">Kdm7a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">34735</td>
+<td style="text-align: left;">ENSMUSG00000042599.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1546</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">33057541</td>
+<td style="text-align: right;">33057830</td>
+<td style="text-align: left;">Cdhr3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">35044</td>
+<td style="text-align: left;">ENSMUSG00000035860.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6765</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">39242980</td>
+<td style="text-align: right;">39243291</td>
+<td style="text-align: left;">Kdm7a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">36190</td>
+<td style="text-align: left;">ENSMUSG00000042599.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_287</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">133871509</td>
+<td style="text-align: right;">133871776</td>
+<td style="text-align: left;">Optc</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">36222</td>
+<td style="text-align: left;">ENSMUSG00000010311.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2040</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">59859543</td>
+<td style="text-align: right;">59860056</td>
+<td style="text-align: left;">Tut7</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">36395</td>
+<td style="text-align: left;">ENSMUSG00000035248.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4020</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">4578819</td>
+<td style="text-align: right;">4579118</td>
+<td style="text-align: left;">Lrfn4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">36548</td>
+<td style="text-align: left;">ENSMUSG00000045045.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6766</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">39243498</td>
+<td style="text-align: right;">39243902</td>
+<td style="text-align: left;">Kdm7a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">36708</td>
+<td style="text-align: left;">ENSMUSG00000042599.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2846</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">84269280</td>
+<td style="text-align: right;">84269650</td>
+<td style="text-align: left;">Parvb</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">37236</td>
+<td style="text-align: left;">ENSMUSG00000022438.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_528</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193310785</td>
+<td style="text-align: right;">193311147</td>
+<td style="text-align: left;">G0s2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">37567</td>
+<td style="text-align: left;">ENSMUSG00000009633.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7503</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">99419526</td>
+<td style="text-align: right;">99419732</td>
+<td style="text-align: left;">Gdpd5</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">38111</td>
+<td style="text-align: left;">ENSMUSG00000035314.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_529</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193311660</td>
+<td style="text-align: right;">193311904</td>
+<td style="text-align: left;">G0s2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">38442</td>
+<td style="text-align: left;">ENSMUSG00000009633.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2134</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101728455</td>
+<td style="text-align: right;">101728630</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">39586</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5039</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">165938612</td>
+<td style="text-align: right;">165938788</td>
+<td style="text-align: left;">Zmynd8</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">39595</td>
+<td style="text-align: left;">ENSMUSG00000039671.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4450</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">27207111</td>
+<td style="text-align: right;">27207566</td>
+<td style="text-align: left;">Sardh</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">40770</td>
+<td style="text-align: left;">ENSMUSG00000009614.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_530</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193316009</td>
+<td style="text-align: right;">193316319</td>
+<td style="text-align: left;">G0s2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">42791</td>
+<td style="text-align: left;">ENSMUSG00000009633.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_525</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193086503</td>
+<td style="text-align: right;">193086909</td>
+<td style="text-align: left;">Utp25</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">43362</td>
+<td style="text-align: left;">ENSMUSG00000016181.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2136</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101811854</td>
+<td style="text-align: right;">101812355</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">43636</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3925</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">62135919</td>
+<td style="text-align: right;">62136093</td>
+<td style="text-align: left;">Adrb2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">43865</td>
+<td style="text-align: left;">ENSMUSG00000045730.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2529</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">8665977</td>
+<td style="text-align: right;">8666324</td>
+<td style="text-align: left;">Slc1a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">44439</td>
+<td style="text-align: left;">ENSMUSG00000005360.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_531</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">193323687</td>
+<td style="text-align: right;">193324071</td>
+<td style="text-align: left;">Camk1g</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">46226</td>
+<td style="text-align: left;">ENSMUSG00000016179.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6175</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">36544839</td>
+<td style="text-align: right;">36545231</td>
+<td style="text-align: left;">Tbc1d14</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48044</td>
+<td style="text-align: left;">ENSMUSG00000029192.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2133</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101719350</td>
+<td style="text-align: right;">101719710</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48506</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1418</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">120884009</td>
+<td style="text-align: right;">120884351</td>
+<td style="text-align: left;">Ccdc57</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48520</td>
+<td style="text-align: left;">ENSMUSG00000048445.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1417</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">120883699</td>
+<td style="text-align: right;">120883967</td>
+<td style="text-align: left;">Ccdc57</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">48904</td>
+<td style="text-align: left;">ENSMUSG00000048445.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8138</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">120042745</td>
+<td style="text-align: right;">120043209</td>
+<td style="text-align: left;">Crispld2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">50306</td>
+<td style="text-align: left;">ENSMUSG00000031825.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8215</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">126895006</td>
+<td style="text-align: right;">126895523</td>
+<td style="text-align: left;">Tomm20</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">50320</td>
+<td style="text-align: left;">ENSMUSG00000093904.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8139</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">120043798</td>
+<td style="text-align: right;">120044207</td>
+<td style="text-align: left;">Crispld2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">51359</td>
+<td style="text-align: left;">ENSMUSG00000031825.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6809</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">52063972</td>
+<td style="text-align: right;">52064271</td>
+<td style="text-align: left;">Skap2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">51422</td>
+<td style="text-align: left;">ENSMUSG00000059182.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6810</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">52064309</td>
+<td style="text-align: right;">52064639</td>
+<td style="text-align: left;">Skap2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">51759</td>
+<td style="text-align: left;">ENSMUSG00000059182.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2528</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">8658353</td>
+<td style="text-align: right;">8658581</td>
+<td style="text-align: left;">Slc1a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">52182</td>
+<td style="text-align: left;">ENSMUSG00000005360.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3128</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">32555571</td>
+<td style="text-align: right;">32555850</td>
+<td style="text-align: left;">Tfrc</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">53069</td>
+<td style="text-align: left;">ENSMUSG00000022797.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7892</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">47768747</td>
+<td style="text-align: right;">47768996</td>
+<td style="text-align: left;">Cldn24</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">53146</td>
+<td style="text-align: left;">ENSMUSG00000061974.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1197</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">79039670</td>
+<td style="text-align: right;">79039858</td>
+<td style="text-align: left;">Lgals9</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">54723</td>
+<td style="text-align: left;">ENSMUSG00000001123.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6811</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">52067338</td>
+<td style="text-align: right;">52067714</td>
+<td style="text-align: left;">Skap2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">54788</td>
+<td style="text-align: left;">ENSMUSG00000059182.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1059</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">45795786</td>
+<td style="text-align: right;">45796243</td>
+<td style="text-align: left;">Clint1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">55720</td>
+<td style="text-align: left;">ENSMUSG00000006169.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1994</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">51906149</td>
+<td style="text-align: right;">51906391</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">59470</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2961</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">103627042</td>
+<td style="text-align: right;">103627572</td>
+<td style="text-align: left;">Glycam1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">61960</td>
+<td style="text-align: left;">ENSMUSG00000022491.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1521</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">32123727</td>
+<td style="text-align: right;">32123951</td>
+<td style="text-align: left;">Prkar2b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">62430</td>
+<td style="text-align: left;">ENSMUSG00000002997.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2202</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">112529909</td>
+<td style="text-align: right;">112530084</td>
+<td style="text-align: left;">Il31ra</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">64275</td>
+<td style="text-align: left;">ENSMUSG00000050377.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_561</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">8951212</td>
+<td style="text-align: right;">8951792</td>
+<td style="text-align: left;">Sash1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">65141</td>
+<td style="text-align: left;">ENSMUSG00000015305.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2518</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">3648704</td>
+<td style="text-align: right;">3649094</td>
+<td style="text-align: left;">Ghr</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">65211</td>
+<td style="text-align: left;">ENSMUSG00000055737.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4898</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">137049966</td>
+<td style="text-align: right;">137050304</td>
+<td style="text-align: left;">Jag1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">66339</td>
+<td style="text-align: left;">ENSMUSG00000027276.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4942</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">148510356</td>
+<td style="text-align: right;">148510984</td>
+<td style="text-align: left;">Cd93</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">66792</td>
+<td style="text-align: left;">ENSMUSG00000027435.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3507</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">31788299</td>
+<td style="text-align: right;">31788677</td>
+<td style="text-align: left;">Sik1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">67126</td>
+<td style="text-align: left;">ENSMUSG00000024042.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1974</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">47190004</td>
+<td style="text-align: right;">47190362</td>
+<td style="text-align: left;">Rnf144b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">67347</td>
+<td style="text-align: left;">ENSMUSG00000038068.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2157</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102625217</td>
+<td style="text-align: right;">102625899</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">67658</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3560</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">45364769</td>
+<td style="text-align: right;">45365081</td>
+<td style="text-align: left;">Cdc5l</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">68655</td>
+<td style="text-align: left;">ENSMUSG00000023932.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2132</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101697995</td>
+<td style="text-align: right;">101698286</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">69930</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2532</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">8781243</td>
+<td style="text-align: right;">8781509</td>
+<td style="text-align: left;">Slc1a3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">70478</td>
+<td style="text-align: left;">ENSMUSG00000005360.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3743</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">87353875</td>
+<td style="text-align: right;">87354123</td>
+<td style="text-align: left;">Ttc7</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">70988</td>
+<td style="text-align: left;">ENSMUSG00000036918.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_999</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">22438674</td>
+<td style="text-align: right;">22438950</td>
+<td style="text-align: left;">Tmem17</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">73137</td>
+<td style="text-align: left;">ENSMUSG00000049904.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_179</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">82159177</td>
+<td style="text-align: right;">82159496</td>
+<td style="text-align: left;">Gm9747</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">73615</td>
+<td style="text-align: left;">ENSMUSG00000022591.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3286</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">87278434</td>
+<td style="text-align: right;">87278954</td>
+<td style="text-align: left;">N6amt1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">75230</td>
+<td style="text-align: left;">ENSMUSG00000044442.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1975</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">47200002</td>
+<td style="text-align: right;">47200349</td>
+<td style="text-align: left;">Rnf144b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">77345</td>
+<td style="text-align: left;">ENSMUSG00000038068.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7115</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">116072891</td>
+<td style="text-align: right;">116073324</td>
+<td style="text-align: left;">Plxnd1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">77885</td>
+<td style="text-align: left;">ENSMUSG00000030123.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8523</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">77838676</td>
+<td style="text-align: right;">77839114</td>
+<td style="text-align: left;">Elovl5</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">78249</td>
+<td style="text-align: left;">ENSMUSG00000032349.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3807</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">12861710</td>
+<td style="text-align: right;">12862111</td>
+<td style="text-align: left;">Osbpl1a</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">79729</td>
+<td style="text-align: left;">ENSMUSG00000044252.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1995</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">51930156</td>
+<td style="text-align: right;">51930744</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">83477</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4336</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">56202882</td>
+<td style="text-align: right;">56203080</td>
+<td style="text-align: left;">Habp2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">84056</td>
+<td style="text-align: left;">ENSMUSG00000025075.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5677</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">56654422</td>
+<td style="text-align: right;">56654736</td>
+<td style="text-align: left;">Gm26657</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">85333</td>
+<td style="text-align: left;">ENSMUSG00000096930.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5676</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">56653089</td>
+<td style="text-align: right;">56653306</td>
+<td style="text-align: left;">Gm26657</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">86763</td>
+<td style="text-align: left;">ENSMUSG00000096930.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1632</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">77049043</td>
+<td style="text-align: right;">77049217</td>
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">86841</td>
+<td style="text-align: left;">ENSMUSG00000059436.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8783</td>
+<td style="text-align: left;">chrX</td>
+<td style="text-align: right;">101983666</td>
+<td style="text-align: right;">101984060</td>
+<td style="text-align: left;">Rtl5</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">87243</td>
+<td style="text-align: left;">ENSMUSG00000049191.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1922</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">36959025</td>
+<td style="text-align: right;">36959345</td>
+<td style="text-align: left;">F13a1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">90898</td>
+<td style="text-align: left;">ENSMUSG00000039109.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7243</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">147954973</td>
+<td style="text-align: right;">147955286</td>
+<td style="text-align: left;">Far2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">91972</td>
+<td style="text-align: left;">ENSMUSG00000030303.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8278</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">30829243</td>
+<td style="text-align: right;">30830073</td>
+<td style="text-align: left;">Adamts15</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">92378</td>
+<td style="text-align: left;">ENSMUSG00000033453.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1976</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">47216947</td>
+<td style="text-align: right;">47217325</td>
+<td style="text-align: left;">Rnf144b</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">94290</td>
+<td style="text-align: left;">ENSMUSG00000038068.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2156</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102599078</td>
+<td style="text-align: right;">102599236</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">94321</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1633</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">77061575</td>
+<td style="text-align: right;">77061965</td>
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">99373</td>
+<td style="text-align: left;">ENSMUSG00000059436.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2155</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102593284</td>
+<td style="text-align: right;">102594142</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">99415</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7978</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">82669293</td>
+<td style="text-align: right;">82669484</td>
+<td style="text-align: left;">Zfp330</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">104675</td>
+<td style="text-align: left;">ENSMUSG00000031711.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2154</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102586285</td>
+<td style="text-align: right;">102586611</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">106946</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8451</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">61806016</td>
+<td style="text-align: right;">61806228</td>
+<td style="text-align: left;">Rplp1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">108313</td>
+<td style="text-align: left;">ENSMUSG00000007892.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1971</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">46165106</td>
+<td style="text-align: right;">46165341</td>
+<td style="text-align: left;">Stmnd1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">108379</td>
+<td style="text-align: left;">ENSMUSG00000063529.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1970</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">46164639</td>
+<td style="text-align: right;">46165089</td>
+<td style="text-align: left;">Stmnd1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">108631</td>
+<td style="text-align: left;">ENSMUSG00000063529.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8277</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">30809208</td>
+<td style="text-align: right;">30809478</td>
+<td style="text-align: left;">Adamts15</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">112973</td>
+<td style="text-align: left;">ENSMUSG00000033453.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8276</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">30808905</td>
+<td style="text-align: right;">30809077</td>
+<td style="text-align: left;">Adamts15</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">113374</td>
+<td style="text-align: left;">ENSMUSG00000033453.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2153</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102578710</td>
+<td style="text-align: right;">102579228</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">114329</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8275</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">30806381</td>
+<td style="text-align: right;">30806609</td>
+<td style="text-align: left;">Adamts15</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">115842</td>
+<td style="text-align: left;">ENSMUSG00000033453.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5825</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">106199782</td>
+<td style="text-align: right;">106200168</td>
+<td style="text-align: left;">Usp24</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">116044</td>
+<td style="text-align: left;">ENSMUSG00000028514.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6729</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">32167861</td>
+<td style="text-align: right;">32168161</td>
+<td style="text-align: left;">1700012A03Rik</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">117614</td>
+<td style="text-align: left;">ENSMUSG00000029766.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_369</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">154080532</td>
+<td style="text-align: right;">154080845</td>
+<td style="text-align: left;">Zfp648</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">120341</td>
+<td style="text-align: left;">ENSMUSG00000066797.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_368</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">154076962</td>
+<td style="text-align: right;">154077398</td>
+<td style="text-align: left;">Zfp648</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">123788</td>
+<td style="text-align: left;">ENSMUSG00000066797.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8167</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">122133886</td>
+<td style="text-align: right;">122134272</td>
+<td style="text-align: left;">Zfp469</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">124347</td>
+<td style="text-align: left;">ENSMUSG00000043903.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3579</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">47135548</td>
+<td style="text-align: right;">47135746</td>
+<td style="text-align: left;">Ubr2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">124991</td>
+<td style="text-align: left;">ENSMUSG00000023977.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3720</td>
+<td style="text-align: left;">chr17</td>
+<td style="text-align: right;">84320494</td>
+<td style="text-align: right;">84320918</td>
+<td style="text-align: left;">Zfp36l2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">132546</td>
+<td style="text-align: left;">ENSMUSG00000045817.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3226</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">58273455</td>
+<td style="text-align: right;">58273648</td>
+<td style="text-align: left;">Dcbld2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">134794</td>
+<td style="text-align: left;">ENSMUSG00000035107.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_367</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">154065898</td>
+<td style="text-align: right;">154066350</td>
+<td style="text-align: left;">Zfp648</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">134836</td>
+<td style="text-align: left;">ENSMUSG00000066797.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3890</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">55133716</td>
+<td style="text-align: right;">55134294</td>
+<td style="text-align: left;">Zfp608</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">141160</td>
+<td style="text-align: left;">ENSMUSG00000052713.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_509</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">188118141</td>
+<td style="text-align: right;">188118385</td>
+<td style="text-align: left;">Ush2a</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">143637</td>
+<td style="text-align: left;">ENSMUSG00000026609.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8625</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">116324367</td>
+<td style="text-align: right;">116324643</td>
+<td style="text-align: left;">Tgfbr2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">149006</td>
+<td style="text-align: left;">ENSMUSG00000032440.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8626</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">116324672</td>
+<td style="text-align: right;">116324956</td>
+<td style="text-align: left;">Tgfbr2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">149311</td>
+<td style="text-align: left;">ENSMUSG00000032440.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_4333</td>
+<td style="text-align: left;">chr19</td>
+<td style="text-align: right;">56135552</td>
+<td style="text-align: right;">56136094</td>
+<td style="text-align: left;">Habp2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">151042</td>
+<td style="text-align: left;">ENSMUSG00000025075.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8627</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">116328317</td>
+<td style="text-align: right;">116328557</td>
+<td style="text-align: left;">Tgfbr2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">152956</td>
+<td style="text-align: left;">ENSMUSG00000032440.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1529</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">32661881</td>
+<td style="text-align: right;">32662435</td>
+<td style="text-align: left;">Nampt</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">157109</td>
+<td style="text-align: left;">ENSMUSG00000020572.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2542</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">11746817</td>
+<td style="text-align: right;">11747230</td>
+<td style="text-align: left;">Npr3</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">160056</td>
+<td style="text-align: left;">ENSMUSG00000022206.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1075</td>
+<td style="text-align: left;">chr11</td>
+<td style="text-align: right;">52602030</td>
+<td style="text-align: right;">52602394</td>
+<td style="text-align: left;">Fstl4</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">162239</td>
+<td style="text-align: left;">ENSMUSG00000036264.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8009</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">87308242</td>
+<td style="text-align: right;">87308612</td>
+<td style="text-align: left;">Cbln1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">163996</td>
+<td style="text-align: left;">ENSMUSG00000031654.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5703</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">62727808</td>
+<td style="text-align: right;">62728211</td>
+<td style="text-align: left;">Rgs3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">167960</td>
+<td style="text-align: left;">ENSMUSG00000059810.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_851</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">95152543</td>
+<td style="text-align: right;">95153031</td>
+<td style="text-align: left;">Cradd</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">171101</td>
+<td style="text-align: left;">ENSMUSG00000045867.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_850</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">95151067</td>
+<td style="text-align: right;">95151411</td>
+<td style="text-align: left;">Cradd</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">172721</td>
+<td style="text-align: left;">ENSMUSG00000045867.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3224</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">57927844</td>
+<td style="text-align: right;">57928131</td>
+<td style="text-align: left;">Col8a1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">173106</td>
+<td style="text-align: left;">ENSMUSG00000068196.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3764</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5161103</td>
+<td style="text-align: right;">5161341</td>
+<td style="text-align: left;">Zfp438</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">173465</td>
+<td style="text-align: left;">ENSMUSG00000050945.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3225</td>
+<td style="text-align: left;">chr16</td>
+<td style="text-align: right;">57928223</td>
+<td style="text-align: right;">57928919</td>
+<td style="text-align: left;">Col8a1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">173485</td>
+<td style="text-align: left;">ENSMUSG00000068196.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3763</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5159434</td>
+<td style="text-align: right;">5159805</td>
+<td style="text-align: left;">Zfp438</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">175001</td>
+<td style="text-align: left;">ENSMUSG00000050945.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_6829</td>
+<td style="text-align: left;">chr6</td>
+<td style="text-align: right;">53645013</td>
+<td style="text-align: right;">53645296</td>
+<td style="text-align: left;">Tril</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">175533</td>
+<td style="text-align: left;">ENSMUSG00000043496.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2106</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">90727853</td>
+<td style="text-align: right;">90728361</td>
+<td style="text-align: left;">Atp6ap1l</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">176993</td>
+<td style="text-align: left;">ENSMUSG00000078958.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_3762</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5155940</td>
+<td style="text-align: right;">5156403</td>
+<td style="text-align: left;">Zfp438</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">178403</td>
+<td style="text-align: left;">ENSMUSG00000050945.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1920</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">36302771</td>
+<td style="text-align: right;">36302965</td>
+<td style="text-align: left;">Lyrm4</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">185244</td>
+<td style="text-align: left;">ENSMUSG00000046573.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5704</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">62745984</td>
+<td style="text-align: right;">62746465</td>
+<td style="text-align: left;">Rgs3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">186136</td>
+<td style="text-align: left;">ENSMUSG00000059810.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3761</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5141478</td>
+<td style="text-align: right;">5142102</td>
+<td style="text-align: left;">Zfp438</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">192704</td>
+<td style="text-align: left;">ENSMUSG00000050945.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2260</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">22215433</td>
+<td style="text-align: right;">22215660</td>
+<td style="text-align: left;">Lrmda</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">195720</td>
+<td style="text-align: left;">ENSMUSG00000063458.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_6327</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">97834707</td>
+<td style="text-align: right;">97835138</td>
+<td style="text-align: left;">Antxr2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">195904</td>
+<td style="text-align: left;">ENSMUSG00000029338.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2261</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">22215853</td>
+<td style="text-align: right;">22216258</td>
+<td style="text-align: left;">Lrmda</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">196140</td>
+<td style="text-align: left;">ENSMUSG00000063458.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8546</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">85551844</td>
+<td style="text-align: right;">85552093</td>
+<td style="text-align: left;">Ibtk</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">197240</td>
+<td style="text-align: left;">ENSMUSG00000035941.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5817</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">105364490</td>
+<td style="text-align: right;">105364983</td>
+<td style="text-align: left;">Plpp3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">207142</td>
+<td style="text-align: left;">ENSMUSG00000028517.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5818</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">105365061</td>
+<td style="text-align: right;">105365464</td>
+<td style="text-align: left;">Plpp3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">207713</td>
+<td style="text-align: left;">ENSMUSG00000028517.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_492</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">184519553</td>
+<td style="text-align: right;">184519957</td>
+<td style="text-align: left;">Hlx</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">212661</td>
+<td style="text-align: left;">ENSMUSG00000039377.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1999</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">52060734</td>
+<td style="text-align: right;">52060944</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">214055</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8448</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">61595500</td>
+<td style="text-align: right;">61595862</td>
+<td style="text-align: left;">Tle3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">223133</td>
+<td style="text-align: left;">ENSMUSG00000032280.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_8449</td>
+<td style="text-align: left;">chr9</td>
+<td style="text-align: right;">61596826</td>
+<td style="text-align: right;">61597048</td>
+<td style="text-align: left;">Tle3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">224459</td>
+<td style="text-align: left;">ENSMUSG00000032280.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5674</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">56514721</td>
+<td style="text-align: right;">56514953</td>
+<td style="text-align: left;">Gm26657</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">225116</td>
+<td style="text-align: left;">ENSMUSG00000096930.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_3767</td>
+<td style="text-align: left;">chr18</td>
+<td style="text-align: right;">5818872</td>
+<td style="text-align: right;">5819171</td>
+<td style="text-align: left;">Zeb1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">227011</td>
+<td style="text-align: left;">ENSMUSG00000024238.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5673</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">56503777</td>
+<td style="text-align: right;">56504014</td>
+<td style="text-align: left;">Gm26657</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">236055</td>
+<td style="text-align: left;">ENSMUSG00000096930.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5764</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">95289109</td>
+<td style="text-align: right;">95289414</td>
+<td style="text-align: left;">Jun</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">236886</td>
+<td style="text-align: left;">ENSMUSG00000052684.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5765</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">95290253</td>
+<td style="text-align: right;">95290625</td>
+<td style="text-align: left;">Jun</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">238030</td>
+<td style="text-align: left;">ENSMUSG00000052684.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_585</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">17481534</td>
+<td style="text-align: right;">17481726</td>
+<td style="text-align: left;">Cited2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">241491</td>
+<td style="text-align: left;">ENSMUSG00000039910.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_584</td>
+<td style="text-align: left;">chr10</td>
+<td style="text-align: right;">17480919</td>
+<td style="text-align: right;">17481327</td>
+<td style="text-align: left;">Cited2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">241890</td>
+<td style="text-align: left;">ENSMUSG00000039910.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2131</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101524276</td>
+<td style="text-align: right;">101524527</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">243689</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2714</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">62229871</td>
+<td style="text-align: right;">62230257</td>
+<td style="text-align: left;">Myc</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">244479</td>
+<td style="text-align: left;">ENSMUSG00000022346.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5483</td>
+<td style="text-align: left;">chr3</td>
+<td style="text-align: right;">132382240</td>
+<td style="text-align: right;">132382578</td>
+<td style="text-align: left;">Gimd1</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">247241</td>
+<td style="text-align: left;">ENSMUSG00000091721.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1771</td>
+<td style="text-align: left;">chr12</td>
+<td style="text-align: right;">107752991</td>
+<td style="text-align: right;">107753484</td>
+<td style="text-align: left;">Bcl11b</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">250117</td>
+<td style="text-align: left;">ENSMUSG00000048251.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7638</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">129847181</td>
+<td style="text-align: right;">129847417</td>
+<td style="text-align: left;">Wdr11</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">255317</td>
+<td style="text-align: left;">ENSMUSG00000042055.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2666</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">56952236</td>
+<td style="text-align: right;">56952540</td>
+<td style="text-align: left;">Has2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">257696</td>
+<td style="text-align: left;">ENSMUSG00000022367.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2130</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">101092450</td>
+<td style="text-align: right;">101092812</td>
+<td style="text-align: left;">Slc30a5</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">259022</td>
+<td style="text-align: left;">ENSMUSG00000021629.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_1962</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">44469035</td>
+<td style="text-align: right;">44469234</td>
+<td style="text-align: left;">Jarid2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">260239</td>
+<td style="text-align: left;">ENSMUSG00000038518.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5779</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">98122556</td>
+<td style="text-align: right;">98122945</td>
+<td style="text-align: left;">Tm2d1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">260360</td>
+<td style="text-align: left;">ENSMUSG00000028563.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2667</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">56956665</td>
+<td style="text-align: right;">56957047</td>
+<td style="text-align: left;">Has2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">262125</td>
+<td style="text-align: left;">ENSMUSG00000022367.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7999</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">86301897</td>
+<td style="text-align: right;">86302113</td>
+<td style="text-align: left;">Abcc12</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">278572</td>
+<td style="text-align: left;">ENSMUSG00000036872.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2145</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102050456</td>
+<td style="text-align: right;">102050867</td>
+<td style="text-align: left;">Pik3r1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">282238</td>
+<td style="text-align: left;">ENSMUSG00000041417.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2717</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">62269505</td>
+<td style="text-align: right;">62269863</td>
+<td style="text-align: left;">Myc</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">284113</td>
+<td style="text-align: left;">ENSMUSG00000022346.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7642</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">129876162</td>
+<td style="text-align: right;">129876767</td>
+<td style="text-align: left;">Wdr11</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">284298</td>
+<td style="text-align: left;">ENSMUSG00000042055.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_7549</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">111370398</td>
+<td style="text-align: right;">111370836</td>
+<td style="text-align: left;">Eif4g2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">287367</td>
+<td style="text-align: left;">ENSMUSG00000005610.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_5820</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">105457217</td>
+<td style="text-align: right;">105457437</td>
+<td style="text-align: left;">Plpp3</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">299869</td>
+<td style="text-align: left;">ENSMUSG00000028517.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2669</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">57172555</td>
+<td style="text-align: right;">57172949</td>
+<td style="text-align: left;">Slc22a22</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">304675</td>
+<td style="text-align: left;">ENSMUSG00000022366.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2003</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">52153627</td>
+<td style="text-align: right;">52153893</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">306948</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2004</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">52154213</td>
+<td style="text-align: right;">52154492</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">307534</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2005</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">52155380</td>
+<td style="text-align: right;">52155859</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">308701</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2608</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">42366829</td>
+<td style="text-align: right;">42367167</td>
+<td style="text-align: left;">Angpt1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">309809</td>
+<td style="text-align: left;">ENSMUSG00000022309.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2607</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">42365047</td>
+<td style="text-align: right;">42365284</td>
+<td style="text-align: left;">Angpt1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">311692</td>
+<td style="text-align: left;">ENSMUSG00000022309.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_1961</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">44409486</td>
+<td style="text-align: right;">44409723</td>
+<td style="text-align: left;">Jarid2</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">319750</td>
+<td style="text-align: left;">ENSMUSG00000038518.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_7645</td>
+<td style="text-align: left;">chr7</td>
+<td style="text-align: right;">129918852</td>
+<td style="text-align: right;">129919131</td>
+<td style="text-align: left;">Wdr11</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">326988</td>
+<td style="text-align: left;">ENSMUSG00000042055.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5771</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">97439257</td>
+<td style="text-align: right;">97439593</td>
+<td style="text-align: left;">Nfia</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">333140</td>
+<td style="text-align: left;">ENSMUSG00000028565.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2007</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">52188729</td>
+<td style="text-align: right;">52188995</td>
+<td style="text-align: left;">Gadd45g</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">342050</td>
+<td style="text-align: left;">ENSMUSG00000021453.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_5744</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">83949704</td>
+<td style="text-align: right;">83950099</td>
+<td style="text-align: left;">Ccdc171</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">424158</td>
+<td style="text-align: left;">ENSMUSG00000052407.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_2151</td>
+<td style="text-align: left;">chr13</td>
+<td style="text-align: right;">102253459</td>
+<td style="text-align: right;">102254010</td>
+<td style="text-align: left;">Cd180</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">439547</td>
+<td style="text-align: left;">ENSMUSG00000021624.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2631</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">51363373</td>
+<td style="text-align: right;">51363725</td>
+<td style="text-align: left;">Trps1</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">472909</td>
+<td style="text-align: left;">ENSMUSG00000038679.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_8133</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">118778339</td>
+<td style="text-align: right;">118778764</td>
+<td style="text-align: left;">Cdh13</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">494605</td>
+<td style="text-align: left;">ENSMUSG00000031841.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChIP_2266</td>
+<td style="text-align: left;">chr14</td>
+<td style="text-align: right;">22952153</td>
+<td style="text-align: right;">22952353</td>
+<td style="text-align: left;">Lrmda</td>
+<td style="text-align: left;">+</td>
+<td style="text-align: right;">932440</td>
+<td style="text-align: left;">ENSMUSG00000063458.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChIP_4568</td>
+<td style="text-align: left;">chr2</td>
+<td style="text-align: right;">46371110</td>
+<td style="text-align: right;">46371313</td>
+<td style="text-align: left;">Zeb2</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: right;">1253714</td>
+<td style="text-align: left;">ENSMUSG00000026872.18</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
 <section id="session-information" class="level2">
 <h2 class="anchored" data-anchor-id="session-information">Session Information</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.5.2 (2025-10-31)
@@ -287,12 +4399,13 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] rtracklayer_1.68.0   GenomicRanges_1.60.0 GenomeInfoDb_1.44.3 
- [4] IRanges_2.42.0       S4Vectors_0.46.0     BiocGenerics_0.54.1 
- [7] generics_0.1.4       readxl_1.4.5         lubridate_1.9.4     
-[10] forcats_1.0.1        stringr_1.6.0        dplyr_1.1.4         
-[13] purrr_1.2.0          readr_2.1.6          tidyr_1.3.1         
-[16] tibble_3.3.0         ggplot2_4.0.1        tidyverse_2.0.0     
+ [1] knitr_1.50           rtracklayer_1.68.0   GenomicRanges_1.60.0
+ [4] GenomeInfoDb_1.44.3  IRanges_2.42.0       S4Vectors_0.46.0    
+ [7] BiocGenerics_0.54.1  generics_0.1.4       readxl_1.4.5        
+[10] lubridate_1.9.4      forcats_1.0.1        stringr_1.6.0       
+[13] dplyr_1.1.4          purrr_1.2.0          readr_2.1.6         
+[16] tidyr_1.3.1          tibble_3.3.0         ggplot2_4.0.1       
+[19] tidyverse_2.0.0     
 
 loaded via a namespace (and not attached):
  [1] SummarizedExperiment_1.38.1 gtable_0.3.6               
@@ -323,11 +4436,11 @@ loaded via a namespace (and not attached):
 [51] httr_1.4.7                  matrixStats_1.5.0          
 [53] bit_4.6.0                   cellranger_1.1.0           
 [55] hms_1.1.4                   evaluate_1.0.5             
-[57] knitr_1.50                  BiocIO_1.18.0              
-[59] rlang_1.1.6                 glue_1.8.0                 
-[61] vroom_1.6.6                 rstudioapi_0.17.1          
-[63] jsonlite_2.0.0              R6_2.6.1                   
-[65] MatrixGenerics_1.20.0       GenomicAlignments_1.44.0   </code></pre>
+[57] BiocIO_1.18.0               rlang_1.1.6                
+[59] glue_1.8.0                  vroom_1.6.6                
+[61] rstudioapi_0.17.1           jsonlite_2.0.0             
+[63] R6_2.6.1                    MatrixGenerics_1.20.0      
+[65] GenomicAlignments_1.44.0   </code></pre>
 </div>
 </div>
 </section>

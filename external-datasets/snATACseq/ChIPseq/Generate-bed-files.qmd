@@ -142,6 +142,67 @@ cat(sprintf("%d out of %d ChIP-seq peaks (%.1f%%) overlap at least one ATAC-seq 
 
 ```
 
+## Genes that overlap
+
+### High Fat Diet
+
+```{r hfd-overlap}
+# Get mouse gene annotation (GENCODE or Ensembl – GENCODE is preferred for mm10/GRCm38)
+# This pulls the latest GENCODE M25 (matches mm10 perfectly)
+genes <- import("https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz")
+
+# Keep only protein-coding genes + lncRNAs if you want (optional)
+genes <- genes[genes$type == "gene"]
+genes <- genes[genes$gene_type %in% c("protein_coding")] #not, "lincRNA", "antisense", "processed_pseudogene")]
+
+# Extract transcription start sites (TSS)
+tss <- promoters(genes, upstream = 0, downstream = 1)   # 1-bp region at TSS
+names(tss) <- genes$gene_name                              # use gene symbols
+
+# Find closest TSS for each ChIP peak
+hfd.nearest_tss_idx   <- nearest(hfd.chip_peaks_that_overlap_ATAC, tss)
+hfd.distance_to_tss   <- distance(hfd.chip_peaks_that_overlap_ATAC, tss[hfd.nearest_tss_idx])
+
+# Build the final annotation table
+hfd.annotation <- data.frame(
+  peak_id         = names(hfd.chip_peaks_that_overlap_ATAC),
+  chr             = seqnames(hfd.chip_peaks_that_overlap_ATAC),
+  start           = start(hfd.chip_peaks_that_overlap_ATAC),
+  end             = end(hfd.chip_peaks_that_overlap_ATAC),
+  nearest_gene    = names(tss)[hfd.nearest_tss_idx],
+  gene_strand     = as.character(strand(tss[hfd.nearest_tss_idx])),
+  distance_to_TSS = hfd.distance_to_tss,
+  gene_id         = genes$gene_id[hfd.nearest_tss_idx],
+  stringsAsFactors = FALSE
+) %>% arrange(hfd.distance_to_tss)
+
+library(knitr)
+kable(hfd.annotation,caption="ChIP peaks overlapping HFD-specific ATAC peaks and their nearest genes")
+```
+### Normal Chow Diet
+
+```{r ncd-overlap}
+# Find closest TSS for each ChIP peak
+ncd.nearest_tss_idx   <- nearest(ncd.chip_peaks_that_overlap_ATAC, tss)
+ncd.distance_to_tss   <- distance(ncd.chip_peaks_that_overlap_ATAC, tss[ncd.nearest_tss_idx])
+
+# Build the final annotation table
+ncd.annotation <- data.frame(
+  peak_id         = names(ncd.chip_peaks_that_overlap_ATAC),
+  chr             = seqnames(ncd.chip_peaks_that_overlap_ATAC),
+  start           = start(ncd.chip_peaks_that_overlap_ATAC),
+  end             = end(ncd.chip_peaks_that_overlap_ATAC),
+  nearest_gene    = names(tss)[ncd.nearest_tss_idx],
+  gene_strand     = as.character(strand(tss[ncd.nearest_tss_idx])),
+  distance_to_TSS = ncd.distance_to_tss,
+  gene_id         = genes$gene_id[ncd.nearest_tss_idx],
+  stringsAsFactors = FALSE
+) %>% arrange(ncd.distance_to_tss)
+
+library(knitr)
+kable(ncd.annotation,caption="ChIP peaks overlapping NCD-specific ATAC peaks and their nearest genes")
+```
+
 ## Session Information
 
 ```{r session-information}
