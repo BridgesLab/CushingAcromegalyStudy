@@ -1,0 +1,149 @@
+---
+title: "Generation of UCSC formatted BigBed files"
+author: "Dave Bridges"
+date: "2025-11-22"
+editor: source
+format: 
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+    fig-path: "figures/"
+theme: journal
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+# sets maize and blue color scheme
+color_scheme <- c("#00274c", "#ffcb05")
+```
+
+## Purpose
+
+Convert into excel files into BED files
+
+## Experimental Details
+
+
+## Raw Data
+
+Data from Ying *et al.,* 2010 at http://dx.doi.org/10.1371/journal.pone.0015188
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- "pone.0015188.s001.xls" #input file(s)
+
+exp.data <- read_excel(filename, skip=1)
+#BiocManager::install("rtracklayer")
+library(rtracklayer)
+bed <- exp.data |>
+  mutate(chrom= `chromosome number`,
+         chromsStart = startpeak - 1,  # convert to 0-based
+         chromEnd   = endpeak,
+         name = `user defined string`,
+         score = 0,
+         strand = '.') |>
+  select(chrom, chromsStart, chromEnd, name, score, strand) |>
+  na.omit()
+
+bed.filename <- "pone.0015188.s001.bed"
+write_tsv(bed, bed.filename, col_names = FALSE)
+```
+
+Had to convert this from mm9 to mm10 by liftover at https://genome.ucsc.edu/cgi-bin/hgLiftOver.  
+
+Then converted to bigbed with this command
+
+```{r GSE236575-bed-files}
+read_tsv('../GSE236575/results/motif_analysis/bed_files/HFD_specific_chr.bed', 
+         col_names = c('chrom','chromStart','chromEnd')) |>
+  mutate(name = paste0('HFD_specific_', row_number()),
+         score = 0,
+         strand = '.') |>
+  write_tsv('GSE236575_HFD_specific.bed', col_names = FALSE)
+
+read_tsv('../GSE236575/results/motif_analysis/bed_files/CHD_specific_chr.bed', 
+         col_names = c('chrom','chromStart','chromEnd')) |>
+  mutate(name = paste0('NCD_specific_', row_number()),
+         score = 0,
+         strand = '.') |>
+  write_tsv('GSE236575_CHD_specific.bed', col_names = FALSE)
+
+read_tsv('../GSE236575/results/motif_analysis/bed_files/shared_chr.bed', 
+         col_names = c('chrom','chromStart','chromEnd')) |>
+  mutate(name = paste0('shared_', row_number()),
+         score = 0,
+         strand = '.') |>
+  write_tsv('GSE236575_shared.bed', col_names = FALSE)
+
+```
+
+## Create BigBed files
+
+` bedToBigBed -type=bed6 -sort pone.0015188.s001_mm10.bed mm10.chrom.sizes pone.0015188.s001.bb`
+`bedToBigBed -type=bed6 -sort GSE236575_shared.bed mm10.chrom.sizes GSE236575_shared.bb`
+`bedToBigBed -type=bed6 -sort GSE236575_CHD_specific.bed mm10.chrom.sizes GSE236575_CHD_specific.bb`
+`bedToBigBed -type=bed6 -sort GSE236575_HFD_specific.bed mm10.chrom.sizes GSE236575_HFD_specific.bb`
+
+## Peak Overlap
+
+```{r peak-overlap}
+library(rtracklayer)
+library(GenomicRanges)
+library(dplyr)
+
+# 1. Read your two BED files (automatically handles .bed, .bed.gz, etc.)
+hfd.atac_peaks  <- import("GSE236575_HFD_specific.bed")   # your ATAC peaks
+ncd.atac_peaks  <- import("GSE236575_CHD_specific.bed")   # your ATAC peaks
+chip_peaks  <- import("pone.0015188.s001_mm10.bed")
+
+# 2. Make sure they are proper GRanges with names (optional but very useful)
+# If your BED files have a 4th column with peak IDs, they will be used as names
+# Otherwise we give them unique IDs:
+if (is.null(names(hfd.atac_peaks)))  names(hfd.atac_peaks) <- paste0("ATAC_", 1:length(hfd.atac_peaks))
+if (is.null(names(hfd.atac_peaks)))  names(ncd.atac_peaks) <- paste0("ATAC_", 1:length(ncd.atac_peaks))
+if (is.null(names(chip_peaks)))  names(chip_peaks) <- paste0("ChIP_", 1:length(chip_peaks))
+
+# 3. Find overlaps
+# hits = which ChIP-seq peaks overlap at least one ATAC-seq peak
+hfd.hits <- findOverlaps(chip_peaks, hfd.atac_peaks, type = "any", select = "all")
+ncd.hits <- findOverlaps(chip_peaks, ncd.atac_peaks, type = "any", select = "all")
+
+# 4. Extract the overlapping ChIP-seq peaks
+hfd.chip_peaks_that_overlap_ATAC <- chip_peaks[queryHits(hfd.hits)]
+ncd.chip_peaks_that_overlap_ATAC <- chip_peaks[queryHits(ncd.hits)]
+
+# 5. How many ChIP-seq peaks overlap ATAC?
+cat(sprintf("%d out of %d ChIP-seq peaks (%.1f%%) overlap at least one ATAC-seq peak from HFD\n",
+      length(unique(queryHits(hfd.hits))),
+      length(chip_peaks),
+      100 * length(unique(queryHits(hfd.hits))) / length(chip_peaks)))
+
+cat(sprintf("%d out of %d ChIP-seq peaks (%.1f%%) overlap at least one ATAC-seq peak from NCD\n",
+      length(unique(queryHits(ncd.hits))),
+      length(chip_peaks),
+      100 * length(unique(queryHits(ncd.hits))) / length(chip_peaks)))
+
+```
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```
