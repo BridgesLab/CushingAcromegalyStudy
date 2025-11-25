@@ -127,6 +127,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#modifying-covariates" id="toc-modifying-covariates" class="nav-link" data-scroll-target="#modifying-covariates">Modifying Covariates</a></li>
   <li><a href="#sex-stratified-models" id="toc-sex-stratified-models" class="nav-link" data-scroll-target="#sex-stratified-models">Sex Stratified models</a></li>
+  <li><a href="#different-treatment-of-bmi" id="toc-different-treatment-of-bmi" class="nav-link" data-scroll-target="#different-treatment-of-bmi">Different Treatment of BMI</a></li>
   </ul></li>
   <li><a href="#summary-of-sensitivity-analyses" id="toc-summary-of-sensitivity-analyses" class="nav-link" data-scroll-target="#summary-of-sensitivity-analyses">Summary of Sensitivity Analyses</a></li>
   <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information">Session Information</a></li>
@@ -1416,25 +1417,448 @@ window.Quarto = {
 </details>
 </div>
 </section>
+<section id="different-treatment-of-bmi" class="level3">
+<h3 class="anchored" data-anchor-id="different-treatment-of-bmi">Different Treatment of BMI</h3>
+<section id="bmi-after-group-based-stratification" class="level4">
+<h4 class="anchored" data-anchor-id="bmi-after-group-based-stratification">BMI after group-based stratification</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>lm.hba1c.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> hba1c.data )</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>lm.glucose.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> glucose.data )</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lm.alt.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> alt.data )</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>lm.ast.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> ast.data )</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>lm.map.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data )</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>lm.sbp.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> bp.data )</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>lm.dbp.bmi.within.group <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity <span class="sc">+</span> BMI, <span class="at">data =</span> bp.data )</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>bmi.within.group.models <span class="ot">&lt;-</span> <span class="fu">create_lm_summary_row</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_name =</span> <span class="st">"Adjusting for BMI within Group"</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.glucose =</span> lm.glucose.bmi.within.group,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.hba1c =</span> lm.hba1c.bmi.within.group,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.alt =</span> lm.alt.bmi.within.group,</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.ast =</span> lm.ast.bmi.within.group,</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.map =</span> lm.map.bmi.within.group,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.sbp =</span> lm.sbp.bmi.within.group,</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.dbp =</span> lm.dbp.bmi.within.group,</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_name =</span> <span class="st">"Cushings:ObesityObese"</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bmi-as-linear" class="level4">
+<h4 class="anchored" data-anchor-id="bmi-as-linear">BMI as linear</h4>
+<p>In sensitivity analyses modeling BMI as a continuous predictor (using either a linear term or restricted cubic splines), the obesity effect and its interaction with Cushing’s syndrome were summarized by contrasting predicted outcomes at two BMI values: the observed mean BMI among participants with BMI <span class="math inline">\(geq\)</span>≥30 kg/m<span class="math inline">\(^2\)</span> and the observed mean BMI among participants with BMI $&lt;<span class="math inline">\(30 kg/m\)</span>^2$. Predictions were generated from the fitted model while averaging over all other covariates. This contrast yields a clinically interpretable estimate directly comparable to the coefficient obtained from models that use a dichotomous BMI <span class="math inline">\(geq\)</span>≥30 kg/m<span class="math inline">\(^2\)</span> indicator. Results are reported as mean differences with 95% confidence intervals, with statistical significance denoted by * (<span class="math inline">\(p &lt; 0.05\)</span>).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>lm.hba1c.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> hba1c.data )</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>lm.glucose.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> glucose.data )</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>lm.alt.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> alt.data )</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>lm.ast.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> ast.data )</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>lm.map.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> bp.data )</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>lm.sbp.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> bp.data )</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>lm.dbp.bmi.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> BMI, <span class="at">data =</span> bp.data )</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#calculating contrasts between lean and obese for nonlinear and linear BMI models</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>bmi_obese_vs_lean_contrast <span class="ot">&lt;-</span> <span class="cf">function</span>(model, <span class="at">data =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(data)) data <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(model)</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute mean BMI for &lt;30 and &gt;=30</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  means_bmi <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">obese =</span> BMI <span class="sc">&gt;=</span> <span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(obese) <span class="sc">%&gt;%</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_bmi =</span> <span class="fu">mean</span>(BMI), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  bmi_lean  <span class="ot">&lt;-</span> means_bmi<span class="sc">$</span>mean_bmi[means_bmi<span class="sc">$</span>obese <span class="sc">==</span> <span class="cn">FALSE</span>]</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  bmi_obese <span class="ot">&lt;-</span> means_bmi<span class="sc">$</span>mean_bmi[means_bmi<span class="sc">$</span>obese <span class="sc">==</span> <span class="cn">TRUE</span>]</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use emtrends for numeric BMI</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  emm <span class="ot">&lt;-</span> <span class="fu">emtrends</span>(</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">specs =</span> <span class="sc">~</span> Cushings,</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">var =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">at =</span> <span class="fu">list</span>(<span class="at">BMI =</span> <span class="fu">c</span>(bmi_lean, bmi_obese)),</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">infer =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Contrast obese vs lean BMI</span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>  contr <span class="ot">&lt;-</span> <span class="fu">contrast</span>(</span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>    emm,</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="fu">list</span>(<span class="st">"Obese – Lean"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>)),</span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">infer =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(contr))</span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Detect CI column names</span></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>  possible_lower <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lower.CL"</span>,<span class="st">"asymp.LCL"</span>,<span class="st">"LCL"</span>,<span class="st">"lower"</span>)</span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>  possible_upper <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"upper.CL"</span>,<span class="st">"asymp.UCL"</span>,<span class="st">"UCL"</span>,<span class="st">"upper"</span>)</span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>  low  <span class="ot">&lt;-</span> <span class="fu">intersect</span>(possible_lower, <span class="fu">names</span>(s))[<span class="dv">1</span>]</span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>  high <span class="ot">&lt;-</span> <span class="fu">intersect</span>(possible_upper, <span class="fu">names</span>(s))[<span class="dv">1</span>]</span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Build formatted string</span></span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a>  formatted <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f [%.2f, %.2f]%s"</span>,</span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a>                       s<span class="sc">$</span>estimate,</span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a>                       s[[low]],</span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a>                       s[[high]],</span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>(s<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">""</span>))</span>
+<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return only the formatted string</span></span>
+<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(formatted)</span>
+<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a><span class="fu">bmi_obese_vs_lean_contrast</span>(lm.glucose.bmi.linear, <span class="at">data =</span> glucose.data) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "0.35 [0.10, 0.59]*"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bmi.linear.models <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Glucose =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.glucose.bmi.linear, <span class="at">data =</span> glucose.data) ,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">HbA1c =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.hba1c.bmi.linear, <span class="at">data =</span> hba1c.data) ,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ALT =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.alt.bmi.linear, <span class="at">data =</span> alt.data),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">AST =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.ast.bmi.linear, <span class="at">data =</span> ast.data),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">MAP =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.map.bmi.linear, <span class="at">data =</span> bp.data),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">SBP =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.sbp.bmi.linear, <span class="at">data =</span> bp.data),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">DBP =</span> <span class="fu">bmi_obese_vs_lean_contrast</span>(lm.dbp.bmi.linear, <span class="at">data =</span> bp.data)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bmi-as-splined-nonlinear-covariate" class="level4">
+<h4 class="anchored" data-anchor-id="bmi-as-splined-nonlinear-covariate">BMI as splined nonlinear covariate</h4>
+<p>Used the splines package. <code>ns(BMI, df = 4)</code> fits a natural (restricted) cubic spline with 4 total degrees of freedom, which places 3 interior knots (by default at the 5th, 50th, and 95th percentiles of BMI) and forces the function to be linear beyond the outermost knots. This creates a smooth, flexible curve that can bend up to three times but remains well-behaved and avoids wild extrapolations at the extremes.</p>
+<p>Decades of epidemiological research (Framingham, Nurses’ Health, ARIC, UK Biobank, <em>etc.</em>) have repeatedly shown that 4 df are sufficient to capture the true non-linear shapes of BMI with outcomes like diabetes, cardiovascular events, and mortality, without overfitting noise. It reliably reproduces the typical pattern of slowly rising risk at low-to-normal BMI, steepening in the overweight/obese range, and occasional flattening at very high BMI, while keeping confidence intervals honest in the tails where data are sparse. Using fewer df ($$3) often forces an oversimplified shape that misses real curvature, whereas more than 5 df rarely improves fit meaningfully and risks spurious wiggles unless you have thousands of observations.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>lm.hba1c.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> hba1c.data )</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>lm.glucose.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> glucose.data )</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>lm.alt.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> alt.data )</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>lm.ast.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> ast.data )</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>lm.map.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> bp.data )</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>lm.sbp.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> bp.data )</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>lm.dbp.bmi.non.linear <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> <span class="fu">ns</span>(BMI, <span class="at">df =</span> <span class="dv">4</span>), <span class="at">data =</span> bp.data )</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>bmi_obese_vs_lean_contrast_spline <span class="ot">&lt;-</span> <span class="cf">function</span>(model, <span class="at">data =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(data)) data <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(model)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Compute mean BMI values within lean vs obese groups</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  means_bmi <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">obese =</span> BMI <span class="sc">&gt;=</span> <span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(obese) <span class="sc">%&gt;%</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_bmi =</span> <span class="fu">mean</span>(BMI), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>  bmi_lean  <span class="ot">&lt;-</span> means_bmi<span class="sc">$</span>mean_bmi[<span class="sc">!</span>means_bmi<span class="sc">$</span>obese]</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>  bmi_obese <span class="ot">&lt;-</span> means_bmi<span class="sc">$</span>mean_bmi[means_bmi<span class="sc">$</span>obese]</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Build reference grid explicitly so splines reconstruct correctly</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>  rg <span class="ot">&lt;-</span> <span class="fu">ref_grid</span>(</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data,</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">at =</span> <span class="fu">list</span>(<span class="at">BMI =</span> <span class="fu">c</span>(bmi_lean, bmi_obese)),</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">cov.reduce =</span> <span class="cn">FALSE</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Predicted means for Cushing × BMI combinations</span></span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>  emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(rg, <span class="sc">~</span> Cushings <span class="sc">*</span> BMI)</span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Contrast vectors (must match row order in emm)</span></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Order is:</span></span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   Cushing=0,BMI=lean</span></span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   Cushing=0,BMI=obese</span></span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   Cushing=1,BMI=lean</span></span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   Cushing=1,BMI=obese</span></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>  obesity_main     <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,  <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>,  <span class="dv">1</span>)</span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a>  cushing_interact <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">0</span>,  <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>,  <span class="dv">1</span>) <span class="sc">-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,  <span class="dv">1</span>,  <span class="dv">0</span>,  <span class="dv">0</span>)</span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a>  contr_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">Obesity_main     =</span> obesity_main,</span>
+<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">Cushing_interact =</span> cushing_interact</span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a>  contr <span class="ot">&lt;-</span> <span class="fu">contrast</span>(emm, <span class="at">method =</span> contr_list, <span class="at">infer =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(contr))</span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only the interaction contrast</span></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> s[s<span class="sc">$</span>contrast <span class="sc">==</span> <span class="st">"Cushing_interact"</span>, ]</span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Detect CI columns</span></span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a>  ci_lower <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"lower.CL"</span>,<span class="st">"asymp.LCL"</span>,<span class="st">"LCL"</span>,<span class="st">"lower"</span>), <span class="fu">names</span>(s))[<span class="dv">1</span>]</span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a>  ci_upper <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"upper.CL"</span>,<span class="st">"asymp.UCL"</span>,<span class="st">"UCL"</span>,<span class="st">"upper"</span>), <span class="fu">names</span>(s))[<span class="dv">1</span>]</span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format for results table</span></span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a>  formatted <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"%.2f [%.2f, %.2f]%s"</span>,</span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a>    s<span class="sc">$</span>estimate,</span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a>    s[[ci_lower]],</span>
+<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a>    s[[ci_upper]],</span>
+<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ifelse</span>(s<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
+<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(formatted)</span>
+<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-76"><a href="#cb29-76" aria-hidden="true" tabindex="-1"></a>bmi.non.linear.models <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb29-77"><a href="#cb29-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">Glucose =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.glucose.bmi.non.linear, <span class="at">data =</span> glucose.data) ,</span>
+<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">HbA1c =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.hba1c.bmi.non.linear, <span class="at">data =</span> hba1c.data) ,</span>
+<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">ALT =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.alt.bmi.non.linear, <span class="at">data =</span> alt.data),</span>
+<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">AST =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.ast.bmi.non.linear, <span class="at">data =</span> ast.data),</span>
+<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">MAP =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.map.bmi.non.linear, <span class="at">data =</span> bp.data),</span>
+<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">SBP =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.sbp.bmi.non.linear, <span class="at">data =</span> bp.data),</span>
+<span id="cb29-83"><a href="#cb29-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">DBP =</span> <span class="fu">bmi_obese_vs_lean_contrast_spline</span>(lm.dbp.bmi.non.linear, <span class="at">data =</span> bp.data)</span>
+<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bmi-as-categories" class="level4">
+<h4 class="anchored" data-anchor-id="bmi-as-categories">BMI as categories</h4>
+<section id="bmi-class-i" class="level5">
+<h5 class="anchored" data-anchor-id="bmi-class-i">BMI Class I</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>lm.hba1c.ci <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> hba1c.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>lm.glucose.ci <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> glucose.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>lm.alt.ci <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> alt.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>lm.ast.ci <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> ast.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>lm.map.ci <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>lm.sbp.ci<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>lm.dbp.ci<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI<span class="sc">&lt;=</span><span class="dv">35</span>))</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>classI.obesity.only <span class="ot">&lt;-</span> <span class="fu">create_lm_summary_row</span>(</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_name =</span> <span class="st">"Class I Obesity"</span>,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.glucose =</span> lm.glucose.ci,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.hba1c =</span> lm.hba1c.ci,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.alt =</span> lm.alt.ci,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.ast =</span> lm.ast.ci,</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.map =</span> lm.map.ci,</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.sbp =</span> lm.sbp.ci,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.dbp =</span> lm.dbp.ci,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_name =</span> <span class="st">"Cushings:ObesityObese"</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bmi-class-ii" class="level5">
+<h5 class="anchored" data-anchor-id="bmi-class-ii">BMI Class II</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>lm.hba1c.cii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> hba1c.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>lm.glucose.cii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> glucose.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>lm.alt.cii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> alt.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>lm.ast.cii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> ast.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>lm.map.cii <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>lm.sbp.cii<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>lm.dbp.cii<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> (BMI <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> BMI <span class="sc">&lt;</span> <span class="dv">40</span>)))</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>classII.obesity.only <span class="ot">&lt;-</span> <span class="fu">create_lm_summary_row</span>(</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_name =</span> <span class="st">"Class II Obesity"</span>,</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.glucose =</span> lm.glucose.cii,</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.hba1c =</span> lm.hba1c.cii,</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.alt =</span> lm.alt.cii,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.ast =</span> lm.ast.cii,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.map =</span> lm.map.cii,</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.sbp =</span> lm.sbp.cii,</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.dbp =</span> lm.dbp.cii,</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_name =</span> <span class="st">"Cushings:ObesityObese"</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bmi-class-iii" class="level5">
+<h5 class="anchored" data-anchor-id="bmi-class-iii">BMI Class III</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>lm.hba1c.ciii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> hba1c.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lm.glucose.ciii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> glucose.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>lm.alt.ciii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> alt.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>lm.ast.ciii <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> ast.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>lm.map.ciii <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>lm.sbp.ciii<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>lm.dbp.ciii<span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> RaceEthnicity <span class="sc">+</span> AgeInYears <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(BMI <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">|</span> BMI <span class="sc">&gt;=</span> <span class="dv">40</span>))</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>classIII.obesity.only <span class="ot">&lt;-</span> <span class="fu">create_lm_summary_row</span>(</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_name =</span> <span class="st">"Class III Obesity"</span>,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.glucose =</span> lm.glucose.ciii,</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.hba1c =</span> lm.hba1c.ciii,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.alt =</span> lm.alt.ciii,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.ast =</span> lm.ast.ciii,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.map =</span> lm.map.ciii,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.sbp =</span> lm.sbp.ciii,</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.dbp =</span> lm.dbp.ciii,</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_name =</span> <span class="st">"Cushings:ObesityObese"</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="matching-participants-by-bmi" class="level4">
+<h4 class="anchored" data-anchor-id="matching-participants-by-bmi">Matching Participants by BMI</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>m.out.a1c.bmi <span class="ot">&lt;-</span> <span class="fu">matchit</span>(Cushings <span class="sc">~</span> AgeInYears <span class="sc">+</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> BMI, </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> complete.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(RESULT_CODE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"A1C"</span>, <span class="st">"XXA1C"</span>, <span class="st">"A1C EX"</span>, <span class="st">"X0022"</span>)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(BMI)), </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"nearest"</span>, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">exact =</span> <span class="fu">c</span>(<span class="st">"GenderCode"</span>, <span class="st">"RaceEthnicity"</span>),<span class="co"># Force exact matches</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ratio=</span>fold) </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>matched_data.a1c.bmi <span class="ot">&lt;-</span> <span class="fu">match.data</span>(m.out.a1c.bmi)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>hba1c.data.bmi <span class="ot">&lt;-</span> </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  matched_data.a1c.bmi <span class="sc">|&gt;</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">as.numeric</span>(VALUE)) <span class="sc">%&gt;%</span> <span class="co">#forced into numeric form  </span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(DeID_AdmitDate)) <span class="sc">%&gt;%</span> <span class="co">#sort by date</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ObesityIII =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">40</span>, <span class="st">"Class III Obese"</span>,<span class="st">"All Others"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity)) </span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>m.out.glucose.bmi <span class="ot">&lt;-</span> <span class="fu">matchit</span>(Cushings <span class="sc">~</span> AgeInYears <span class="sc">+</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> BMI, </span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> complete.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(RESULT_CODE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"GLUC"</span>,<span class="st">"GLUC_WB"</span>))<span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(BMI)), </span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"nearest"</span>, </span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">exact =</span> <span class="fu">c</span>(<span class="st">"GenderCode"</span>, <span class="st">"RaceEthnicity"</span>),<span class="co"># Force exact matches</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ratio=</span>fold) </span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>matched_data.glucose.bmi <span class="ot">&lt;-</span> <span class="fu">match.data</span>(m.out.glucose.bmi)</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>glucose.data.bmi <span class="ot">&lt;-</span> </span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  matched_data.glucose.bmi <span class="sc">|&gt;</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">as.numeric</span>(VALUE)) <span class="sc">%&gt;%</span> <span class="co">#forced into numeric form  </span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(DeID_AdmitDate)) <span class="sc">%&gt;%</span> <span class="co">#sort by date</span></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ObesityIII =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">40</span>, <span class="st">"Class III Obese"</span>,<span class="st">"All Others"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity))</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>m.out.alt.bmi <span class="ot">&lt;-</span> <span class="fu">matchit</span>(Cushings <span class="sc">~</span> AgeInYears <span class="sc">+</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> BMI, </span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> complete.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(RESULT_CODE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"ALT"</span>))<span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(BMI)), </span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"nearest"</span>, </span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>                 <span class="at">exact =</span> <span class="fu">c</span>(<span class="st">"GenderCode"</span>, <span class="st">"RaceEthnicity"</span>),</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ratio=</span>fold) <span class="co"># Force exact matches</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>matched_data.alt.bmi <span class="ot">&lt;-</span> <span class="fu">match.data</span>(m.out.alt.bmi)</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>alt.data.bmi <span class="ot">&lt;-</span> </span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>  matched_data.alt.bmi <span class="sc">|&gt;</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">as.numeric</span>(VALUE)) <span class="sc">%&gt;%</span> <span class="co">#forced into numeric form  </span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(DeID_AdmitDate)) <span class="sc">%&gt;%</span> <span class="co">#sort by date</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity))</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>m.out.ast.bmi <span class="ot">&lt;-</span> <span class="fu">matchit</span>(Cushings <span class="sc">~</span> AgeInYears <span class="sc">+</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> BMI, </span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> complete.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(RESULT_CODE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"AST"</span>))<span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(BMI)), </span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"nearest"</span>, </span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>                 <span class="at">exact =</span> <span class="fu">c</span>(<span class="st">"GenderCode"</span>, <span class="st">"RaceEthnicity"</span>),</span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ratio=</span>fold) <span class="co"># Force exact matches</span></span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a>matched_data.ast.bmi <span class="ot">&lt;-</span> <span class="fu">match.data</span>(m.out.ast.bmi)</span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a>ast.data.bmi <span class="ot">&lt;-</span> </span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a>  matched_data.ast.bmi <span class="sc">|&gt;</span></span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">as.numeric</span>(VALUE)) <span class="sc">%&gt;%</span> <span class="co">#forced into numeric form  </span></span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(DeID_AdmitDate)) <span class="sc">%&gt;%</span> <span class="co">#sort by date</span></span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity))</span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-65"><a href="#cb33-65" aria-hidden="true" tabindex="-1"></a>m.out.bp.bmi <span class="ot">&lt;-</span> <span class="fu">matchit</span>(Cushings <span class="sc">~</span> AgeInYears <span class="sc">+</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> BMI, </span>
+<span id="cb33-66"><a href="#cb33-66" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> bp.data <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(BMI)) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>weights,<span class="sc">-</span>distance, <span class="sc">-</span>subclass), </span>
+<span id="cb33-67"><a href="#cb33-67" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"nearest"</span>, </span>
+<span id="cb33-68"><a href="#cb33-68" aria-hidden="true" tabindex="-1"></a>                 <span class="at">exact =</span> <span class="fu">c</span>(<span class="st">"GenderCode"</span>, <span class="st">"RaceEthnicity"</span>),<span class="co"># Force exact matches</span></span>
+<span id="cb33-69"><a href="#cb33-69" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ratio=</span>fold) </span>
+<span id="cb33-70"><a href="#cb33-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-71"><a href="#cb33-71" aria-hidden="true" tabindex="-1"></a>matched_data.bp.bmi <span class="ot">&lt;-</span> <span class="fu">match.data</span>(m.out.bp.bmi)</span>
+<span id="cb33-72"><a href="#cb33-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-73"><a href="#cb33-73" aria-hidden="true" tabindex="-1"></a>bp.data.bmi <span class="ot">&lt;-</span> </span>
+<span id="cb33-74"><a href="#cb33-74" aria-hidden="true" tabindex="-1"></a>  matched_data.bp.bmi <span class="sc">|&gt;</span></span>
+<span id="cb33-75"><a href="#cb33-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(DeID_AdmitDate)) <span class="sc">%&gt;%</span> <span class="co">#sort by date</span></span>
+<span id="cb33-76"><a href="#cb33-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(DeID_PatientID,<span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span> <span class="co">#unique cases</span></span>
+<span id="cb33-77"><a href="#cb33-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Obesity =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">30</span>, <span class="st">"Obese"</span>,<span class="st">"Non-Obese"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-78"><a href="#cb33-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ObesityIII =</span> <span class="fu">if_else</span>(BMI<span class="sc">&gt;</span><span class="dv">40</span>, <span class="st">"Class III Obese"</span>,<span class="st">"All Others"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb33-79"><a href="#cb33-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Obesity)) <span class="sc">|&gt;</span></span>
+<span id="cb33-80"><a href="#cb33-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MAP_imputed =</span> <span class="fu">if_else</span>(</span>
+<span id="cb33-81"><a href="#cb33-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(BPMeanNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPSysNonInvasive) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BPDiaNonInvasive),</span>
+<span id="cb33-82"><a href="#cb33-82" aria-hidden="true" tabindex="-1"></a>    (BPSysNonInvasive <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>BPDiaNonInvasive)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb33-83"><a href="#cb33-83" aria-hidden="true" tabindex="-1"></a>    BPMeanNonInvasive</span>
+<span id="cb33-84"><a href="#cb33-84" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb33-85"><a href="#cb33-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a>lm.hba1c.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> hba1c.data.bmi )</span>
+<span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a>lm.glucose.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> glucose.data.bmi )</span>
+<span id="cb33-88"><a href="#cb33-88" aria-hidden="true" tabindex="-1"></a>lm.alt.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> alt.data.bmi )</span>
+<span id="cb33-89"><a href="#cb33-89" aria-hidden="true" tabindex="-1"></a>lm.ast.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> ast.data.bmi )</span>
+<span id="cb33-90"><a href="#cb33-90" aria-hidden="true" tabindex="-1"></a>lm.map.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(MAP_imputed <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data.bmi )</span>
+<span id="cb33-91"><a href="#cb33-91" aria-hidden="true" tabindex="-1"></a>lm.sbp.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data.bmi )</span>
+<span id="cb33-92"><a href="#cb33-92" aria-hidden="true" tabindex="-1"></a>lm.dbp.bmi.matched <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPDiaNonInvasive <span class="sc">~</span> GenderCode <span class="sc">+</span> RaceEthnicity <span class="sc">+</span> Cushings <span class="sc">*</span> Obesity, <span class="at">data =</span> bp.data.bmi )</span>
+<span id="cb33-93"><a href="#cb33-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-94"><a href="#cb33-94" aria-hidden="true" tabindex="-1"></a>bmi.matched.models <span class="ot">&lt;-</span> <span class="fu">create_lm_summary_row</span>(</span>
+<span id="cb33-95"><a href="#cb33-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_name =</span> <span class="st">"Matching for BMI"</span>,</span>
+<span id="cb33-96"><a href="#cb33-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.glucose =</span> lm.glucose.bmi.matched,</span>
+<span id="cb33-97"><a href="#cb33-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.hba1c =</span> lm.hba1c.bmi.matched,</span>
+<span id="cb33-98"><a href="#cb33-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.alt =</span> lm.alt.bmi.matched,</span>
+<span id="cb33-99"><a href="#cb33-99" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.ast =</span> lm.ast.bmi.matched,</span>
+<span id="cb33-100"><a href="#cb33-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.map =</span> lm.map.bmi.matched,</span>
+<span id="cb33-101"><a href="#cb33-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.sbp =</span> lm.sbp.bmi.matched,</span>
+<span id="cb33-102"><a href="#cb33-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm.dbp =</span> lm.dbp.bmi.matched,</span>
+<span id="cb33-103"><a href="#cb33-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_name =</span> <span class="st">"Cushings:ObesityObese"</span></span>
+<span id="cb33-104"><a href="#cb33-104" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
 </section>
 <section id="summary-of-sensitivity-analyses" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-sensitivity-analyses">Summary of Sensitivity Analyses</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(row1,crude.models,age.only.models, gender.only.models, race.only.models, males.only, females.only) </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="sc">|&gt;</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of sensitivity analyses"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(row1,</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                                      crude.models,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                                      age.only.models, </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                                      gender.only.models, </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                                      race.only.models, </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                                      males.only, </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                                      females.only,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                                      bmi.within.group.models,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="co">#bmi.linear.models |&gt; mutate(bmi.linear.models,`Primary outcome`="BMI (Linear)"),</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>                                      bmi.non.linear.models<span class="sc">|&gt;</span> <span class="fu">mutate</span>(bmi.linear.models,<span class="st">`</span><span class="at">Primary outcome</span><span class="st">`</span><span class="ot">=</span><span class="st">"BMI (Non-Linear)"</span>),</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>                                      bmi.matched.models,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>                                      classI.obesity.only,</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>                                      classII.obesity.only,</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>                                      classIII.obesity.only</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>                                      ) <span class="sc">|&gt;</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Model =</span> <span class="st">`</span><span class="at">Primary outcome</span><span class="st">`</span>)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="sc">|&gt;</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Summary of sensitivity analyses"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"center"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Summary of sensitivity analyses</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Primary outcome</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Model</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Glucose</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">HbA1c</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">ALT</th>
@@ -1515,6 +1939,66 @@ window.Quarto = {
 <td style="text-align: left;">-9.76 [-14.62, -4.90]*</td>
 <td style="text-align: left;">-5.53 [-8.73, -2.33]*</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Adjusting for BMI within Group</td>
+<td style="text-align: left;">0.93 [-5.83, 7.69]</td>
+<td style="text-align: left;">0.11 [-0.95, 1.16]</td>
+<td style="text-align: left;">36.50 [20.55, 52.45]*</td>
+<td style="text-align: left;">39.69 [2.54, 76.83]*</td>
+<td style="text-align: left;">-7.09 [-10.08, -4.11]*</td>
+<td style="text-align: left;">-9.86 [-14.25, -5.47]*</td>
+<td style="text-align: left;">-5.74 [-8.57, -2.90]*</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BMI (Non-Linear)</td>
+<td style="text-align: left;">0.35 [0.10, 0.59]*</td>
+<td style="text-align: left;">-0.04 [-0.09, -0.00]*</td>
+<td style="text-align: left;">-3.36 [-4.19, -2.53]*</td>
+<td style="text-align: left;">-4.41 [-6.36, -2.46]*</td>
+<td style="text-align: left;">0.47 [0.31, 0.64]*</td>
+<td style="text-align: left;">0.62 [0.37, 0.87]*</td>
+<td style="text-align: left;">0.40 [0.24, 0.57]*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Matching for BMI</td>
+<td style="text-align: left;">-0.05 [-7.33, 7.22]</td>
+<td style="text-align: left;">0.34 [-0.73, 1.42]</td>
+<td style="text-align: left;">34.69 [13.73, 55.65]*</td>
+<td style="text-align: left;">38.20 [18.80, 57.61]*</td>
+<td style="text-align: left;">-6.41 [-9.64, -3.19]*</td>
+<td style="text-align: left;">-9.16 [-13.99, -4.32]*</td>
+<td style="text-align: left;">-5.09 [-8.18, -1.99]*</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Class I Obesity</td>
+<td style="text-align: left;">-4.58 [-12.15, 2.99]</td>
+<td style="text-align: left;">-0.47 [-1.35, 0.40]</td>
+<td style="text-align: left;">-12.78 [-27.24, 1.68]</td>
+<td style="text-align: left;">-6.36 [-55.39, 42.66]</td>
+<td style="text-align: left;">-5.25 [-8.75, -1.76]*</td>
+<td style="text-align: left;">-8.27 [-13.37, -3.17]*</td>
+<td style="text-align: left;">-3.98 [-7.34, -0.62]*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Class II Obesity</td>
+<td style="text-align: left;">3.03 [-5.76, 11.82]</td>
+<td style="text-align: left;">-0.19 [-1.09, 0.71]</td>
+<td style="text-align: left;">30.27 [11.10, 49.44]*</td>
+<td style="text-align: left;">1.75 [-51.78, 55.27]</td>
+<td style="text-align: left;">-7.73 [-11.88, -3.57]*</td>
+<td style="text-align: left;">-10.10 [-16.17, -4.03]*</td>
+<td style="text-align: left;">-6.31 [-10.30, -2.31]*</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Class III Obesity</td>
+<td style="text-align: left;">5.90 [-2.13, 13.94]</td>
+<td style="text-align: left;">0.64 [-0.69, 1.97]</td>
+<td style="text-align: left;">80.07 [59.70, 100.45]*</td>
+<td style="text-align: left;">112.16 [55.49, 168.84]*</td>
+<td style="text-align: left;">-9.02 [-13.06, -4.97]*</td>
+<td style="text-align: left;">-11.18 [-17.09, -5.28]*</td>
+<td style="text-align: left;">-7.97 [-11.86, -4.09]*</td>
+</tr>
 </tbody>
 </table>
 
@@ -1522,32 +2006,17 @@ window.Quarto = {
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="st">"Sensitivity Analyses.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>summary.sensitivity.data <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="st">"Sensitivity Analyses.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<ul>
-<li>n = 1:1, 1:5</li>
-<li>match by calendar year, not possible with existing data (recency bias)</li>
-<li>imputed missing data</li>
-<li>NB You should avoid imputing HbA1c because its missingness is plausibly missing not at random (MNAR): clinicians order HbA1c selectively when they suspect hyperglycaemia or known diabetes, so the probability a value is observed is directly related to the (unobserved) true HbA1c. Imputing under a MAR assumption will therefore produce biased estimates (and with only ~20 observed cases the imputations will be highly unstable), so treat HbA1c as a complete-case outcome or, if you must address missingness, use explicit MNAR sensitivity models (e.g., pattern-mixture or selection models) and report how much those assumptions would need to change to alter your conclusions.</li>
-<li>BMI - related:
-<ul>
-<li>BMI within group</li>
-<li>BMI as linear</li>
-<li>BMI as spline</li>
-<li>BMI as categories</li>
-</ul></li>
-<li>Gender term?</li>
-<li>Stratified by adrenal/pituitary</li>
-<li>Including “non-treated”</li>
-</ul>
+<p>Changes in matching - n = 1:1, 1:5 - match by calendar year, not possible with existing data (recency bias) - imputed missing data - NB You should avoid imputing HbA1c because its missingness is plausibly missing not at random (MNAR): clinicians order HbA1c selectively when they suspect hyperglycaemia or known diabetes, so the probability a value is observed is directly related to the (unobserved) true HbA1c. Imputing under a MAR assumption will therefore produce biased estimates (and with only ~20 observed cases the imputations will be highly unstable), so treat HbA1c as a complete-case outcome or, if you must address missingness, use explicit MNAR sensitivity models (e.g., pattern-mixture or selection models) and report how much those assumptions would need to change to alter your conclusions. - Gender term - Stratified by adrenal/pituitary - Including “non-treated”</p>
 </section>
 <section id="session-information" class="level2">
 <h2 class="anchored" data-anchor-id="session-information">Session Information</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.3 (2025-02-28)
@@ -1570,7 +2039,8 @@ time zone: America/Detroit
 tzcode source: system (glibc)
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] splines   stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
  [1] kableExtra_1.4.0 emmeans_1.11.2-8 MatchIt_4.7.1    knitr_1.48      

@@ -1281,6 +1281,465 @@ females.only <- create_lm_summary_row(
 
 
 
+### Different Treatment of BMI
+
+#### BMI after group-based stratification
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+lm.hba1c.bmi.within.group <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = hba1c.data )
+lm.glucose.bmi.within.group <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = glucose.data )
+lm.alt.bmi.within.group <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = alt.data )
+lm.ast.bmi.within.group <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = ast.data )
+lm.map.bmi.within.group <- lm(MAP_imputed ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = bp.data )
+lm.sbp.bmi.within.group <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = bp.data )
+lm.dbp.bmi.within.group <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * Obesity + BMI, data = bp.data )
+
+bmi.within.group.models <- create_lm_summary_row(
+  model_name = "Adjusting for BMI within Group",
+  lm.glucose = lm.glucose.bmi.within.group,
+  lm.hba1c = lm.hba1c.bmi.within.group,
+  lm.alt = lm.alt.bmi.within.group,
+  lm.ast = lm.ast.bmi.within.group,
+  lm.map = lm.map.bmi.within.group,
+  lm.sbp = lm.sbp.bmi.within.group,
+  lm.dbp = lm.dbp.bmi.within.group,
+  coef_name = "Cushings:ObesityObese"
+)
+```
+:::
+
+
+
+
+#### BMI as linear
+
+In sensitivity analyses modeling BMI as a continuous predictor (using either a linear term or restricted cubic splines), the obesity effect and its interaction with Cushing’s syndrome were summarized by contrasting predicted outcomes at two BMI values: the observed mean BMI among participants with BMI $geq$≥30 kg/m$^2$ and the observed mean BMI among participants with BMI $<$30 kg/m$^2$. Predictions were generated from the fitted model while averaging over all other covariates. This contrast yields a clinically interpretable estimate directly comparable to the coefficient obtained from models that use a dichotomous BMI $geq$≥30 kg/m$^2$ indicator. Results are reported as mean differences with 95% confidence intervals, with statistical significance denoted by * ($p < 0.05$).
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+lm.hba1c.bmi.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * BMI, data = hba1c.data )
+lm.glucose.bmi.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * BMI, data = glucose.data )
+lm.alt.bmi.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * BMI, data = alt.data )
+lm.ast.bmi.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * BMI, data = ast.data )
+lm.map.bmi.linear <- lm(MAP_imputed ~ GenderCode + RaceEthnicity + Cushings * BMI, data = bp.data )
+lm.sbp.bmi.linear <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings * BMI, data = bp.data )
+lm.dbp.bmi.linear <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * BMI, data = bp.data )
+
+
+#calculating contrasts between lean and obese for nonlinear and linear BMI models
+library(emmeans)
+
+bmi_obese_vs_lean_contrast <- function(model, data = NULL) {
+  
+  if (is.null(data)) data <- model.frame(model)
+  
+  # Compute mean BMI for <30 and >=30
+  means_bmi <- data %>%
+    filter(!is.na(BMI)) %>%
+    mutate(obese = BMI >= 30) %>%
+    group_by(obese) %>%
+    summarise(mean_bmi = mean(BMI), .groups = "drop")
+  
+  bmi_lean  <- means_bmi$mean_bmi[means_bmi$obese == FALSE]
+  bmi_obese <- means_bmi$mean_bmi[means_bmi$obese == TRUE]
+  
+  # Use emtrends for numeric BMI
+  emm <- emtrends(
+    model,
+    specs = ~ Cushings,
+    var = "BMI",
+    at = list(BMI = c(bmi_lean, bmi_obese)),
+    infer = c(TRUE, TRUE)
+  )
+  
+  # Contrast obese vs lean BMI
+  contr <- contrast(
+    emm,
+    method = list("Obese – Lean" = c(1, -1)),
+    infer = c(TRUE, TRUE)
+  )
+  
+  s <- as.data.frame(summary(contr))
+  
+  # Detect CI column names
+  possible_lower <- c("lower.CL","asymp.LCL","LCL","lower")
+  possible_upper <- c("upper.CL","asymp.UCL","UCL","upper")
+  low  <- intersect(possible_lower, names(s))[1]
+  high <- intersect(possible_upper, names(s))[1]
+  
+  # Build formatted string
+  formatted <- sprintf("%.2f [%.2f, %.2f]%s",
+                       s$estimate,
+                       s[[low]],
+                       s[[high]],
+                       ifelse(s$p.value < 0.05, "*", ""))
+  
+  # Return only the formatted string
+  return(formatted)
+}
+
+
+
+bmi_obese_vs_lean_contrast(lm.glucose.bmi.linear, data = glucose.data) 
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+[1] "0.35 [0.10, 0.59]*"
+```
+
+
+:::
+
+```{.r .cell-code}
+bmi.linear.models <- data.frame(
+  Glucose = bmi_obese_vs_lean_contrast(lm.glucose.bmi.linear, data = glucose.data) ,
+  HbA1c = bmi_obese_vs_lean_contrast(lm.hba1c.bmi.linear, data = hba1c.data) ,
+  ALT = bmi_obese_vs_lean_contrast(lm.alt.bmi.linear, data = alt.data),
+  AST = bmi_obese_vs_lean_contrast(lm.ast.bmi.linear, data = ast.data),
+  MAP = bmi_obese_vs_lean_contrast(lm.map.bmi.linear, data = bp.data),
+  SBP = bmi_obese_vs_lean_contrast(lm.sbp.bmi.linear, data = bp.data),
+  DBP = bmi_obese_vs_lean_contrast(lm.dbp.bmi.linear, data = bp.data)
+)
+```
+:::
+
+
+
+
+#### BMI as splined nonlinear covariate
+
+Used the splines package.  `ns(BMI, df = 4)` fits a natural (restricted) cubic spline with 4 total degrees of freedom, which places 3 interior knots (by default at the 5th, 50th, and 95th percentiles of BMI) and forces the function to be linear beyond the outermost knots. This creates a smooth, flexible curve that can bend up to three times but remains well-behaved and avoids wild extrapolations at the extremes.
+
+Decades of epidemiological research (Framingham, Nurses’ Health, ARIC, UK Biobank, *etc.*) have repeatedly shown that 4 df are sufficient to capture the true non-linear shapes of BMI with outcomes like diabetes, cardiovascular events, and mortality, without overfitting noise. It reliably reproduces the typical pattern of slowly rising risk at low-to-normal BMI, steepening in the overweight/obese range, and occasional flattening at very high BMI, while keeping confidence intervals honest in the tails where data are sparse. Using fewer df ($\leq$3) often forces an oversimplified shape that misses real curvature, whereas more than 5 df rarely improves fit meaningfully and risks spurious wiggles unless you have thousands of observations.
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(splines)
+lm.hba1c.bmi.non.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = hba1c.data )
+lm.glucose.bmi.non.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = glucose.data )
+lm.alt.bmi.non.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = alt.data )
+lm.ast.bmi.non.linear <- lm(value ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = ast.data )
+lm.map.bmi.non.linear <- lm(MAP_imputed ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = bp.data )
+lm.sbp.bmi.non.linear <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = bp.data )
+lm.dbp.bmi.non.linear <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = bp.data )
+
+library(emmeans)
+library(dplyr)
+library(splines)
+
+bmi_obese_vs_lean_contrast_spline <- function(model, data = NULL) {
+  
+  if (is.null(data)) data <- model.frame(model)
+  
+  # 1. Compute mean BMI values within lean vs obese groups
+  means_bmi <- data %>%
+    filter(!is.na(BMI)) %>%
+    mutate(obese = BMI >= 30) %>%
+    group_by(obese) %>%
+    summarise(mean_bmi = mean(BMI), .groups = "drop")
+  
+  bmi_lean  <- means_bmi$mean_bmi[!means_bmi$obese]
+  bmi_obese <- means_bmi$mean_bmi[means_bmi$obese]
+  
+  # 2. Build reference grid explicitly so splines reconstruct correctly
+  rg <- ref_grid(
+    model,
+    data = data,
+    at = list(BMI = c(bmi_lean, bmi_obese)),
+    cov.reduce = FALSE
+  )
+  
+  # 3. Predicted means for Cushing × BMI combinations
+  emm <- emmeans(rg, ~ Cushings * BMI)
+  
+  # 4. Contrast vectors (must match row order in emm)
+  # Order is:
+  #   Cushing=0,BMI=lean
+  #   Cushing=0,BMI=obese
+  #   Cushing=1,BMI=lean
+  #   Cushing=1,BMI=obese
+  obesity_main     <- c(-1,  1, -1,  1)
+  cushing_interact <- c( 0,  0, -1,  1) - c(-1,  1,  0,  0)
+  
+  contr_list <- list(
+    Obesity_main     = obesity_main,
+    Cushing_interact = cushing_interact
+  )
+  
+  contr <- contrast(emm, method = contr_list, infer = TRUE)
+  s <- as.data.frame(summary(contr))
+  
+  # Keep only the interaction contrast
+  s <- s[s$contrast == "Cushing_interact", ]
+  
+  # Detect CI columns
+  ci_lower <- intersect(c("lower.CL","asymp.LCL","LCL","lower"), names(s))[1]
+  ci_upper <- intersect(c("upper.CL","asymp.UCL","UCL","upper"), names(s))[1]
+  
+  # Format for results table
+  formatted <- sprintf(
+    "%.2f [%.2f, %.2f]%s",
+    s$estimate,
+    s[[ci_lower]],
+    s[[ci_upper]],
+    ifelse(s$p.value < 0.05, "*", "")
+  )
+  
+  return(formatted)
+}
+
+
+bmi.non.linear.models <- data.frame(
+  Glucose = bmi_obese_vs_lean_contrast_spline(lm.glucose.bmi.non.linear, data = glucose.data) ,
+  HbA1c = bmi_obese_vs_lean_contrast_spline(lm.hba1c.bmi.non.linear, data = hba1c.data) ,
+  ALT = bmi_obese_vs_lean_contrast_spline(lm.alt.bmi.non.linear, data = alt.data),
+  AST = bmi_obese_vs_lean_contrast_spline(lm.ast.bmi.non.linear, data = ast.data),
+  MAP = bmi_obese_vs_lean_contrast_spline(lm.map.bmi.non.linear, data = bp.data),
+  SBP = bmi_obese_vs_lean_contrast_spline(lm.sbp.bmi.non.linear, data = bp.data),
+  DBP = bmi_obese_vs_lean_contrast_spline(lm.dbp.bmi.non.linear, data = bp.data)
+)
+```
+:::
+
+
+
+
+#### BMI as categories
+
+##### BMI Class I
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+lm.hba1c.ci <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = hba1c.data |> filter(BMI<=35))
+lm.glucose.ci <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = glucose.data |> filter(BMI<=35))
+lm.alt.ci <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = alt.data |> filter(BMI<=35))
+lm.ast.ci <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = ast.data |> filter(BMI<=35))
+lm.map.ci <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI<=35))
+lm.sbp.ci<- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI<=35))
+lm.dbp.ci<- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI<=35))
+
+classI.obesity.only <- create_lm_summary_row(
+  model_name = "Class I Obesity",
+  lm.glucose = lm.glucose.ci,
+  lm.hba1c = lm.hba1c.ci,
+  lm.alt = lm.alt.ci,
+  lm.ast = lm.ast.ci,
+  lm.map = lm.map.ci,
+  lm.sbp = lm.sbp.ci,
+  lm.dbp = lm.dbp.ci,
+  coef_name = "Cushings:ObesityObese"
+)
+```
+:::
+
+
+
+
+##### BMI Class II
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+lm.hba1c.cii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = hba1c.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.glucose.cii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = glucose.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.alt.cii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = alt.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.ast.cii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = ast.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.map.cii <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.sbp.cii<- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+lm.dbp.cii<- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | (BMI >= 35 & BMI < 40)))
+
+classII.obesity.only <- create_lm_summary_row(
+  model_name = "Class II Obesity",
+  lm.glucose = lm.glucose.cii,
+  lm.hba1c = lm.hba1c.cii,
+  lm.alt = lm.alt.cii,
+  lm.ast = lm.ast.cii,
+  lm.map = lm.map.cii,
+  lm.sbp = lm.sbp.cii,
+  lm.dbp = lm.dbp.cii,
+  coef_name = "Cushings:ObesityObese"
+)
+```
+:::
+
+
+
+
+##### BMI Class III
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+lm.hba1c.ciii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = hba1c.data |> filter(BMI < 30 | BMI >= 40))
+lm.glucose.ciii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = glucose.data |> filter(BMI < 30 | BMI >= 40))
+lm.alt.ciii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = alt.data |> filter(BMI < 30 | BMI >= 40))
+lm.ast.ciii <- lm(value ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = ast.data |> filter(BMI < 30 | BMI >= 40))
+lm.map.ciii <- lm(MAP_imputed ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | BMI >= 40))
+lm.sbp.ciii<- lm(BPSysNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | BMI >= 40))
+lm.dbp.ciii<- lm(BPDiaNonInvasive ~ RaceEthnicity + AgeInYears + Cushings * Obesity, data = bp.data |> filter(BMI < 30 | BMI >= 40))
+
+classIII.obesity.only <- create_lm_summary_row(
+  model_name = "Class III Obesity",
+  lm.glucose = lm.glucose.ciii,
+  lm.hba1c = lm.hba1c.ciii,
+  lm.alt = lm.alt.ciii,
+  lm.ast = lm.ast.ciii,
+  lm.map = lm.map.ciii,
+  lm.sbp = lm.sbp.ciii,
+  lm.dbp = lm.dbp.ciii,
+  coef_name = "Cushings:ObesityObese"
+)
+```
+:::
+
+
+
+
+
+#### Matching Participants by BMI
+
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+m.out.a1c.bmi <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity + BMI, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")) |> filter(!is.na(BMI)) |> filter(is.finite(BMI)), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+matched_data.a1c.bmi <- match.data(m.out.a1c.bmi)
+
+hba1c.data.bmi <- 
+  matched_data.a1c.bmi |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity)) 
+
+m.out.glucose.bmi <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity + BMI, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("GLUC","GLUC_WB"))|> filter(!is.na(BMI)) |> filter(is.finite(BMI)), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+matched_data.glucose.bmi <- match.data(m.out.glucose.bmi)
+
+glucose.data.bmi <- 
+  matched_data.glucose.bmi |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity))
+
+m.out.alt.bmi <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity + BMI, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("ALT"))|> filter(!is.na(BMI)) |> filter(is.finite(BMI)), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+matched_data.alt.bmi <- match.data(m.out.alt.bmi)
+
+alt.data.bmi <- 
+  matched_data.alt.bmi |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity))
+
+m.out.ast.bmi <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity + BMI, 
+                 data = complete.data |> filter(RESULT_CODE %in% c("AST"))|> filter(!is.na(BMI)) |> filter(is.finite(BMI)), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),
+                 ratio=fold) # Force exact matches
+matched_data.ast.bmi <- match.data(m.out.ast.bmi)
+
+ast.data.bmi <- 
+  matched_data.ast.bmi |>
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  filter(!is.na(Obesity))
+
+m.out.bp.bmi <- matchit(Cushings ~ AgeInYears + GenderCode + RaceEthnicity + BMI, 
+                 data = bp.data |> filter(!is.na(BMI)) |> filter(is.finite(BMI)) |> select(-weights,-distance, -subclass), 
+                 method = "nearest", 
+                 exact = c("GenderCode", "RaceEthnicity"),# Force exact matches
+                 ratio=fold) 
+
+matched_data.bp.bmi <- match.data(m.out.bp.bmi)
+
+bp.data.bmi <- 
+  matched_data.bp.bmi |>
+  arrange(desc(DeID_AdmitDate)) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese"))  |>
+  mutate(ObesityIII = if_else(BMI>40, "Class III Obese","All Others"))  |>
+  filter(!is.na(Obesity)) |>
+  mutate(MAP_imputed = if_else(
+    is.na(BPMeanNonInvasive) & !is.na(BPSysNonInvasive) & !is.na(BPDiaNonInvasive),
+    (BPSysNonInvasive + 2*BPDiaNonInvasive)/3,
+    BPMeanNonInvasive
+  ))
+
+lm.hba1c.bmi.matched <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = hba1c.data.bmi )
+lm.glucose.bmi.matched <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = glucose.data.bmi )
+lm.alt.bmi.matched <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = alt.data.bmi )
+lm.ast.bmi.matched <- lm(value ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = ast.data.bmi )
+lm.map.bmi.matched <- lm(MAP_imputed ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = bp.data.bmi )
+lm.sbp.bmi.matched <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = bp.data.bmi )
+lm.dbp.bmi.matched <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * Obesity, data = bp.data.bmi )
+
+bmi.matched.models <- create_lm_summary_row(
+  model_name = "Matching for BMI",
+  lm.glucose = lm.glucose.bmi.matched,
+  lm.hba1c = lm.hba1c.bmi.matched,
+  lm.alt = lm.alt.bmi.matched,
+  lm.ast = lm.ast.bmi.matched,
+  lm.map = lm.map.bmi.matched,
+  lm.sbp = lm.sbp.bmi.matched,
+  lm.dbp = lm.dbp.bmi.matched,
+  coef_name = "Cushings:ObesityObese"
+)
+```
+:::
+
+
+
+
+
 ## Summary of Sensitivity Analyses
 
 
@@ -1289,7 +1748,22 @@ females.only <- create_lm_summary_row(
 ::: {.cell}
 
 ```{.r .cell-code}
-summary.sensitivity.data <- bind_rows(row1,crude.models,age.only.models, gender.only.models, race.only.models, males.only, females.only) 
+summary.sensitivity.data <- bind_rows(row1,
+                                      crude.models,
+                                      age.only.models, 
+                                      gender.only.models, 
+                                      race.only.models, 
+                                      males.only, 
+                                      females.only,
+                                      bmi.within.group.models,
+                                      #bmi.linear.models |> mutate(bmi.linear.models,`Primary outcome`="BMI (Linear)"),
+                                      bmi.non.linear.models|> mutate(bmi.linear.models,`Primary outcome`="BMI (Non-Linear)"),
+                                      bmi.matched.models,
+                                      classI.obesity.only,
+                                      classII.obesity.only,
+                                      classIII.obesity.only
+                                      ) |>
+  rename(Model = `Primary outcome`)
 
 library(kableExtra)
 summary.sensitivity.data |>
@@ -1304,7 +1778,7 @@ summary.sensitivity.data |>
 <caption>Summary of sensitivity analyses</caption>
  <thead>
   <tr>
-   <th style="text-align:left;"> Primary outcome </th>
+   <th style="text-align:left;"> Model </th>
    <th style="text-align:left;"> Glucose </th>
    <th style="text-align:left;"> HbA1c </th>
    <th style="text-align:left;"> ALT </th>
@@ -1385,6 +1859,66 @@ summary.sensitivity.data |>
    <td style="text-align:left;"> -9.76 [-14.62, -4.90]* </td>
    <td style="text-align:left;"> -5.53 [-8.73, -2.33]* </td>
   </tr>
+  <tr>
+   <td style="text-align:left;"> Adjusting for BMI within Group </td>
+   <td style="text-align:left;"> 0.93 [-5.83, 7.69] </td>
+   <td style="text-align:left;"> 0.11 [-0.95, 1.16] </td>
+   <td style="text-align:left;"> 36.50 [20.55, 52.45]* </td>
+   <td style="text-align:left;"> 39.69 [2.54, 76.83]* </td>
+   <td style="text-align:left;"> -7.09 [-10.08, -4.11]* </td>
+   <td style="text-align:left;"> -9.86 [-14.25, -5.47]* </td>
+   <td style="text-align:left;"> -5.74 [-8.57, -2.90]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI (Non-Linear) </td>
+   <td style="text-align:left;"> 0.35 [0.10, 0.59]* </td>
+   <td style="text-align:left;"> -0.04 [-0.09, -0.00]* </td>
+   <td style="text-align:left;"> -3.36 [-4.19, -2.53]* </td>
+   <td style="text-align:left;"> -4.41 [-6.36, -2.46]* </td>
+   <td style="text-align:left;"> 0.47 [0.31, 0.64]* </td>
+   <td style="text-align:left;"> 0.62 [0.37, 0.87]* </td>
+   <td style="text-align:left;"> 0.40 [0.24, 0.57]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Matching for BMI </td>
+   <td style="text-align:left;"> -0.05 [-7.33, 7.22] </td>
+   <td style="text-align:left;"> 0.34 [-0.73, 1.42] </td>
+   <td style="text-align:left;"> 34.69 [13.73, 55.65]* </td>
+   <td style="text-align:left;"> 38.20 [18.80, 57.61]* </td>
+   <td style="text-align:left;"> -6.41 [-9.64, -3.19]* </td>
+   <td style="text-align:left;"> -9.16 [-13.99, -4.32]* </td>
+   <td style="text-align:left;"> -5.09 [-8.18, -1.99]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Class I Obesity </td>
+   <td style="text-align:left;"> -4.58 [-12.15, 2.99] </td>
+   <td style="text-align:left;"> -0.47 [-1.35, 0.40] </td>
+   <td style="text-align:left;"> -12.78 [-27.24, 1.68] </td>
+   <td style="text-align:left;"> -6.36 [-55.39, 42.66] </td>
+   <td style="text-align:left;"> -5.25 [-8.75, -1.76]* </td>
+   <td style="text-align:left;"> -8.27 [-13.37, -3.17]* </td>
+   <td style="text-align:left;"> -3.98 [-7.34, -0.62]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Class II Obesity </td>
+   <td style="text-align:left;"> 3.03 [-5.76, 11.82] </td>
+   <td style="text-align:left;"> -0.19 [-1.09, 0.71] </td>
+   <td style="text-align:left;"> 30.27 [11.10, 49.44]* </td>
+   <td style="text-align:left;"> 1.75 [-51.78, 55.27] </td>
+   <td style="text-align:left;"> -7.73 [-11.88, -3.57]* </td>
+   <td style="text-align:left;"> -10.10 [-16.17, -4.03]* </td>
+   <td style="text-align:left;"> -6.31 [-10.30, -2.31]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Class III Obesity </td>
+   <td style="text-align:left;"> 5.90 [-2.13, 13.94] </td>
+   <td style="text-align:left;"> 0.64 [-0.69, 1.97] </td>
+   <td style="text-align:left;"> 80.07 [59.70, 100.45]* </td>
+   <td style="text-align:left;"> 112.16 [55.49, 168.84]* </td>
+   <td style="text-align:left;"> -9.02 [-13.06, -4.97]* </td>
+   <td style="text-align:left;"> -11.18 [-17.09, -5.28]* </td>
+   <td style="text-align:left;"> -7.97 [-11.86, -4.09]* </td>
+  </tr>
 </tbody>
 </table>
 
@@ -1400,16 +1934,12 @@ summary.sensitivity.data |> write_csv("Sensitivity Analyses.csv")
 
 
 
+Changes in matching
 - n = 1:1, 1:5
 - match by calendar year, not possible with existing data (recency bias)
 - imputed missing data
 - NB You should avoid imputing HbA1c because its missingness is plausibly missing not at random (MNAR): clinicians order HbA1c selectively when they suspect hyperglycaemia or known diabetes, so the probability a value is observed is directly related to the (unobserved) true HbA1c. Imputing under a MAR assumption will therefore produce biased estimates (and with only ~20 observed cases the imputations will be highly unstable), so treat HbA1c as a complete-case outcome or, if you must address missingness, use explicit MNAR sensitivity models (e.g., pattern-mixture or selection models) and report how much those assumptions would need to change to alter your conclusions.
-- BMI - related:
-  - BMI within group
-  - BMI as linear
-  - BMI as spline 
-  - BMI as categories
-- Gender term?
+- Gender term
 - Stratified by adrenal/pituitary
 - Including "non-treated"
 
@@ -1447,7 +1977,8 @@ time zone: America/Detroit
 tzcode source: system (glibc)
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] splines   stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
  [1] kableExtra_1.4.0 emmeans_1.11.2-8 MatchIt_4.7.1    knitr_1.48      
