@@ -3,7 +3,10 @@ This documemt shows where the results and tables are generated from.  Files are 
 | No. | Title / Description                                                       | Source File | Filename |
 |-----|---------------------------------------------------------------------------|-------------|----------|
 | Figure 1  | Flow diagram of case/control identification and exclusions (CONSORT-style)|             |          |
-| Figure 2 | Adjusted means of outcomes by Cushing’s × Obesity groups (panel plot)     |             |          |
+| Figure 2 | Adjusted means of outcomes by Cushing’s × Obesity groups (glucose) |   propensity_mapping.qmd |    glucose-analyses-1.pdf    |
+| Figure 2 | Adjusted means of outcomes by Cushing’s × Obesity groups (HbA1c) |  propensity_mapping.qmd  |     hba1c-analyses-1.pdf     |
+| Figure 2 | Adjusted means of outcomes by Cushing’s × Obesity groups (ALT) |  propensity_mapping.qmd  |  alt-analyses-1.pdf    |
+| Figure 2 | Adjusted means of outcomes by Cushing’s × Obesity groups (AST)  |  propensity_mapping.qmd  |  ast-analyses-1.pdf   |
 | Figure 3 | Forest plot of interaction (difference-in-differences across outcomes)    |             |          |
 | Figure 4 (optional) | Distribution plots of raw outcomes (e.g., HbA1c)                          |             |          |
 | Table 1 |  Baseline characteristics of cases vs. controls (matched sample)           | propensity-mapping.qmd | Demographic Summary - Master Sample.csv|
