@@ -104,20 +104,20 @@ The average follow up period is `r follow.up.data %>% mean(FollowUp, na.rm=T)`.
 
 # Defining BMI Data
 
-We will use the median BMI measure if there are multiple in the encounters file.
+We will use the last BMI measure if there are multiple in the encounters file.
 
 ```{r bmi-measurements}
 bmi.cutoff <- 129
 bmi.lower <- 9
 
-bmi.data.median <- 
+bmi.data.last <- 
   bmi.data %>%
   group_by(DeID_PatientID) %>%
-  summarize(BMI = median(BMI,na.rm=T),
+  summarize(BMI = last(BMI,na.rm=T),
             BMI.n = length(BMI)) 
 
 bmi.data.complete <-
-  bmi.data.median %>%
+  bmi.data.last %>%
   filter(!(is.na(BMI)))  # remove rows where there is no BMI data
 
 bmi.data.cutoff <-
@@ -126,7 +126,7 @@ bmi.data.cutoff <-
   filter(BMI>bmi.lower) #remove BMI above cutoff
 ```
 
-Based on this procedure we had `r nrow(bmi.data.median)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.median)-nrow(bmi.data.complete)` participants).  We then removed anyone who's median BMI was >`r bmi.cutoff` or <`r bmi.lower`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
+Based on this procedure we had `r nrow(bmi.data.last)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.last)-nrow(bmi.data.complete)` participants).  We then removed anyone who's last BMI was >`r bmi.cutoff` or <`r bmi.lower`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
 
 ## Analysis of BMI
 
@@ -161,20 +161,20 @@ bmi.data.cutoff %>%
 
 # Validation and Checking for Outliers
 
-We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highest and lowest BMI were
+We filtered out all BMI that the last was \>`r bmi.cutoff`. After this the highest and lowest BMI were
 
 ```{r BMI-outliers}
 bmi.data.cutoff %>%
   arrange(desc(BMI)) %>%
   select(BMI,BMI.n) %>%
   head(10) %>%
-  kable(caption="Top 50 median BMI values and number of encounters")
+  kable(caption="Top 50 last BMI values and number of encounters")
 
 bmi.data.cutoff %>%
   arrange(BMI) %>%
   select(BMI,BMI.n) %>%
   head(10) %>%
-  kable(caption="Top 50 median BMI values and number of encounters")
+  kable(caption="Top 50 last BMI values and number of encounters")
 ```
 
 # Output
