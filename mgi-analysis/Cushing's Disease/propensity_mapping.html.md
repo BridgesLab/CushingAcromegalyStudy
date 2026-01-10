@@ -478,11 +478,11 @@ master.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 6.429486e-34 </td>
+   <td style="text-align:right;"> 5.034219e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.055081e-66 </td>
+   <td style="text-align:right;"> 1.525814e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -910,29 +910,29 @@ master.data.dist |>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.163841e-31 </td>
-   <td style="text-align:right;"> 3.203758e-22 </td>
+   <td style="text-align:right;"> 2.461569e-30 </td>
+   <td style="text-align:right;"> 1.572743e-21 </td>
    <td style="text-align:right;"> 4469 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Non-Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.595271e-18 </td>
-   <td style="text-align:right;"> 7.304873e-37 </td>
+   <td style="text-align:right;"> 1.403319e-20 </td>
+   <td style="text-align:right;"> 1.177955e-37 </td>
    <td style="text-align:right;"> 127 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.212054e-25 </td>
-   <td style="text-align:right;"> 2.145011e-44 </td>
+   <td style="text-align:right;"> 3.715149e-25 </td>
+   <td style="text-align:right;"> 2.393850e-45 </td>
    <td style="text-align:right;"> 2962 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Obese </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 1.170558e-15 </td>
-   <td style="text-align:right;"> 3.662728e-72 </td>
+   <td style="text-align:right;"> 5.172822e-16 </td>
+   <td style="text-align:right;"> 3.771553e-71 </td>
    <td style="text-align:right;"> 232 </td>
   </tr>
 </tbody>
@@ -1563,11 +1563,11 @@ hba1c.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 7.815754e-39 </td>
+   <td style="text-align:right;"> 3.694078e-38 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.267116e-29 </td>
+   <td style="text-align:right;"> 2.820932e-30 </td>
   </tr>
 </tbody>
 </table>
@@ -2272,11 +2272,11 @@ glucose.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.591861e-31 </td>
+   <td style="text-align:right;"> 2.723624e-32 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 8.141123e-65 </td>
+   <td style="text-align:right;"> 1.998746e-59 </td>
   </tr>
 </tbody>
 </table>
@@ -2844,11 +2844,11 @@ alt.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.049019e-31 </td>
+   <td style="text-align:right;"> 4.626186e-33 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 3.635330e-19 </td>
+   <td style="text-align:right;"> 1.552823e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -3457,11 +3457,11 @@ ast.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 2.029794e-30 </td>
+   <td style="text-align:right;"> 6.945998e-29 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 4.815709e-19 </td>
+   <td style="text-align:right;"> 3.692298e-18 </td>
   </tr>
 </tbody>
 </table>
@@ -4051,11 +4051,11 @@ ldl.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 9.606608e-43 </td>
+   <td style="text-align:right;"> 9.051297e-39 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 2.079814e-42 </td>
+   <td style="text-align:right;"> 1.213013e-41 </td>
   </tr>
 </tbody>
 </table>
@@ -4816,11 +4816,11 @@ bp.data |>
 <tbody>
   <tr>
    <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 4.090639e-37 </td>
+   <td style="text-align:right;"> 1.557906e-35 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 6.079581e-69 </td>
+   <td style="text-align:right;"> 6.599160e-65 </td>
   </tr>
 </tbody>
 </table>
@@ -5595,15 +5595,14 @@ table.dbp <- means_wide %>%
 ::: {.cell}
 
 ```{.r .cell-code}
-# List of matchit objects by outcome
+# List of matchit objects by outcome does not include LDLc
 outcomes <- list(
   `Any Outcome` = m.out.all,
-  `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
+    HbA1c = m.out.a1c,
   ALT = m.out.alt,
   AST = m.out.ast,
-  HbA1c = m.out.a1c, 
-  `LDL-C` = m.out.ldl
+  `Blood Pressure` = m.out.bp
 )
 
 # Function to extract age means ± SE per group
@@ -5803,24 +5802,6 @@ full_table_formatted %>%
    <td style="text-align:right;"> 1.01 </td>
    <td style="text-align:right;"> 3.25 </td>
   </tr>
-  <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Pre-matching </td>
-   <td style="text-align:right;"> -0.97 </td>
-   <td style="text-align:right;"> 57.92 </td>
-   <td style="text-align:right;"> 40.85 </td>
-   <td style="text-align:right;"> 0.06 </td>
-   <td style="text-align:right;"> 4.87 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Post-matching </td>
-   <td style="text-align:right;"> -0.04 </td>
-   <td style="text-align:right;"> 41.62 </td>
-   <td style="text-align:right;"> 40.85 </td>
-   <td style="text-align:right;"> 1.38 </td>
-   <td style="text-align:right;"> 4.87 </td>
-  </tr>
 </tbody>
 </table>
 
@@ -5831,6 +5812,12 @@ full_table_formatted %>%
 ```{.r .cell-code}
 propensity.diagnostics.table.pub <-
   full_table_formatted |>
+  mutate(
+    Mean_Control = sapply(Mean_Control, `[`, 1),   # takes first element
+    Mean_Cushing = sapply(Mean_Cushing, `[`, 1),
+    SE_Control   = sapply(SE_Control,   `[`, 1),
+    SE_Cushing   = sapply(SE_Cushing,   `[`, 1)
+  ) |>
   mutate(Controls= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
          `Cushing's`= paste0(round(Mean_Cushing,2)," +/- ",round(SE_Cushing,2))) |>
   rename(`Standardized Mean Difference`=SMD_Age) |>
@@ -5940,20 +5927,6 @@ kable(propensity.diagnostics.table.pub,caption="Publication Version of Propensit
    <td style="text-align:left;"> 46.8 +/- 3.25 </td>
    <td style="text-align:right;"> 0.00 </td>
   </tr>
-  <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Pre-matching </td>
-   <td style="text-align:left;"> 57.92 +/- 0.06 </td>
-   <td style="text-align:left;"> 40.85 +/- 4.87 </td>
-   <td style="text-align:right;"> -0.97 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> LDL-C </td>
-   <td style="text-align:left;"> Post-matching </td>
-   <td style="text-align:left;"> 41.62 +/- 1.38 </td>
-   <td style="text-align:left;"> 40.85 +/- 4.87 </td>
-   <td style="text-align:right;"> -0.04 </td>
-  </tr>
 </tbody>
 </table>
 
@@ -6001,10 +5974,10 @@ plots <- lapply(names(outcomes), function(name) {
       color = "Stage",
     ) +
     scale_color_grey() +
-    theme(legend.position = c(0.75,0.5))
+    theme(legend.position = "none")
 })
 
-# Example: display HbA1c plot
+# Example: display master plot
 plots[[1]]
 ```
 
@@ -6049,7 +6022,10 @@ plots <- lapply(names(outcomes), function(name) {
       color = "Stage",
     ) +
     scale_color_manual(values=color_scheme) +
-    theme(legend.position = c(0.75,0.5))
+    theme(legend.position = c(0.75,0.5),
+    legend.background = element_rect(fill = "transparent"),
+    legend.box.background = element_rect(fill = "transparent")
+  )
 })
 
 # Example: display HbA1c plot

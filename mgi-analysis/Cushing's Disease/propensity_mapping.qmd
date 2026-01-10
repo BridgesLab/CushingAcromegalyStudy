@@ -2598,15 +2598,14 @@ table.dbp <- means_wide %>%
 ## Diagnostic Data on Propensity Mapping
 
 ```{r propensity-mapping-diagnostics}
-# List of matchit objects by outcome
+# List of matchit objects by outcome does not include LDLc
 outcomes <- list(
   `Any Outcome` = m.out.all,
-  `Blood Pressure` = m.out.bp, 
   Glucose = m.out.glucose, 
+    HbA1c = m.out.a1c,
   ALT = m.out.alt,
   AST = m.out.ast,
-  HbA1c = m.out.a1c, 
-  `LDL-C` = m.out.ldl
+  `Blood Pressure` = m.out.bp
 )
 
 # Function to extract age means ± SE per group
@@ -2682,6 +2681,12 @@ full_table_formatted %>%
 
 propensity.diagnostics.table.pub <-
   full_table_formatted |>
+  mutate(
+    Mean_Control = sapply(Mean_Control, `[`, 1),   # takes first element
+    Mean_Cushing = sapply(Mean_Cushing, `[`, 1),
+    SE_Control   = sapply(SE_Control,   `[`, 1),
+    SE_Cushing   = sapply(SE_Cushing,   `[`, 1)
+  ) |>
   mutate(Controls= paste0(round(Mean_Control,2)," +/- ",round(SE_Control,2)),
          `Cushing's`= paste0(round(Mean_Cushing,2)," +/- ",round(SE_Cushing,2))) |>
   rename(`Standardized Mean Difference`=SMD_Age) |>
@@ -2723,10 +2728,10 @@ plots <- lapply(names(outcomes), function(name) {
       color = "Stage",
     ) +
     scale_color_grey() +
-    theme(legend.position = c(0.75,0.5))
+    theme(legend.position = "none")
 })
 
-# Example: display HbA1c plot
+# Example: display master plot
 plots[[1]]
 library(cowplot)
 
@@ -2758,7 +2763,10 @@ plots <- lapply(names(outcomes), function(name) {
       color = "Stage",
     ) +
     scale_color_manual(values=color_scheme) +
-    theme(legend.position = c(0.75,0.5))
+    theme(legend.position = c(0.75,0.5),
+    legend.background = element_rect(fill = "transparent"),
+    legend.box.background = element_rect(fill = "transparent")
+  )
 })
 
 # Example: display HbA1c plot
