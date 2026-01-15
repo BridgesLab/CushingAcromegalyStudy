@@ -21,3 +21,4 @@ This documemt shows where the results and tables are generated from.  Files are 
 | Supplementary Table S4 | Baseline characteristics of cases vs. controls (matched sample - ALT)           | propensity-mapping.qmd | Demographic Summary - ALT Sample.csv|
 | Supplementary Table S5 | Baseline characteristics of cases vs. controls (matched sample - AST)           | propensity-mapping.qmd | Demographic Summary - AST Sample.csv|
 | Supplementary Table S6 | Baseline characteristics of cases vs. controls (matched sample - Blood Pressure)           | propensity-mapping.qmd | Demographic Summary - Blood Pressure Sample.csv|
+
