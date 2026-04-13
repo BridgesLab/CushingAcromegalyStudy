@@ -2,4 +2,4 @@ This documemt shows where the results and tables are generated from.  Files are 
 
 | No. | Title / Description  | Source File | Filename |
 |-----|---------------------------------------------------------------------------|-------------|----------|
-| Figure 1  |  |  | |
+| Figure 1  | Experimental Design.  | NA | Timeline.jpg |
