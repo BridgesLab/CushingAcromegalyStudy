@@ -1318,7 +1318,7 @@ bmi.within.group.models <- create_lm_summary_row(
 
 #### BMI as linear
 
-In sensitivity analyses modeling BMI as a continuous predictor (using either a linear term or restricted cubic splines), the obesity effect and its interaction with Cushing’s syndrome were summarized by contrasting predicted outcomes at two BMI values: the observed mean BMI among participants with BMI $geq$≥30 kg/m$^2$ and the observed mean BMI among participants with BMI $<$30 kg/m$^2$. Predictions were generated from the fitted model while averaging over all other covariates. This contrast yields a clinically interpretable estimate directly comparable to the coefficient obtained from models that use a dichotomous BMI $geq$≥30 kg/m$^2$ indicator. Results are reported as mean differences with 95% confidence intervals, with statistical significance denoted by * ($p < 0.05$).
+In sensitivity analyses modelling BMI as a continuous predictor (linear term or restricted cubic spline), the Cushing's × obesity interaction is summarised on the **obese-minus-lean shift scale** so that it is directly comparable to the dichotomous BMI ≥30 interaction reported elsewhere in Table 4. Specifically, we fit the model `outcome ~ covariates + Cushings * BMI` (or `... * ns(BMI, df = 4)` for the spline version), then contrast predicted outcomes at the mean BMI among participants with BMI ≥30 versus the mean BMI among those with BMI <30. The reported estimate is the difference-in-differences `[Cushings effect at obese-mean BMI] − [Cushings effect at lean-mean BMI]`, which uses the same sign convention as the `Cushings:ObesityObese` coefficient in the dichotomous model (positive = synergy, Cushings effect amplified at higher BMI). Estimates are reported in native outcome units with 95% confidence intervals; `*` indicates `p < 0.05`.
 
 
 
@@ -1335,67 +1335,92 @@ lm.sbp.bmi.linear <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings
 lm.dbp.bmi.linear <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * BMI, data = bp.data )
 
 
-#calculating contrasts between lean and obese for nonlinear and linear BMI models
+# Unified helper: Cushing's x BMI interaction on the obese-minus-lean scale,
+# in native outcome units, signed so positive = synergy. Same sign/scale
+# convention as the Cushings:ObesityObese coefficient in the dichotomous model,
+# so rows using this helper are directly comparable to the rest of Table 4.
+#
+# Works for both linear (Cushings * BMI) and spline (Cushings * ns(BMI, df=4))
+# models because ref_grid + emmeans handle prediction machinery identically.
 library(emmeans)
+library(splines)
 
-bmi_obese_vs_lean_contrast <- function(model, data = NULL) {
-  
+bmi_interaction_contrast <- function(model, data = NULL) {
+
   if (is.null(data)) data <- model.frame(model)
-  
-  # Compute mean BMI for <30 and >=30
+
+  # Mean BMI within lean (<30) and obese (>=30) subgroups
   means_bmi <- data %>%
     filter(!is.na(BMI)) %>%
     mutate(obese = BMI >= 30) %>%
     group_by(obese) %>%
     summarise(mean_bmi = mean(BMI), .groups = "drop")
-  
-  bmi_lean  <- means_bmi$mean_bmi[means_bmi$obese == FALSE]
-  bmi_obese <- means_bmi$mean_bmi[means_bmi$obese == TRUE]
-  
-  # Use emtrends for numeric BMI
-  emm <- emtrends(
+
+  bmi_lean  <- means_bmi$mean_bmi[!means_bmi$obese]
+  bmi_obese <- means_bmi$mean_bmi[ means_bmi$obese]
+
+  # Reference grid at the two BMI anchor points, crossed with Cushings levels
+  rg <- ref_grid(
     model,
-    specs = ~ Cushings,
-    var = "BMI",
-    at = list(BMI = c(bmi_lean, bmi_obese)),
-    infer = c(TRUE, TRUE)
+    data = data,
+    at   = list(BMI = c(bmi_lean, bmi_obese)),
+    cov.reduce = FALSE
   )
-  
-  # Contrast obese vs lean BMI
+
+  emm <- emmeans(rg, ~ Cushings * BMI)
+
+  # Row order of emm: (C=0,lean), (C=0,obese), (C=1,lean), (C=1,obese)
+  # Interaction = [(C=1,obese) - (C=0,obese)] - [(C=1,lean) - (C=0,lean)]
+  #             = c(1, -1, -1, 1) applied in that row order.
+  # Positive estimate = Cushings effect amplified in obese stratum (synergy).
   contr <- contrast(
     emm,
-    method = list("Obese – Lean" = c(1, -1)),
-    infer = c(TRUE, TRUE)
+    method = list(
+      `Cushings_x_Obesity` = c(1, -1, -1, 1)
+    ),
+    infer = TRUE
   )
-  
+
   s <- as.data.frame(summary(contr))
-  
-  # Detect CI column names
-  possible_lower <- c("lower.CL","asymp.LCL","LCL","lower")
-  possible_upper <- c("upper.CL","asymp.UCL","UCL","upper")
-  low  <- intersect(possible_lower, names(s))[1]
-  high <- intersect(possible_upper, names(s))[1]
-  
-  # Build formatted string
-  formatted <- sprintf("%.2f [%.2f, %.2f]%s",
-                       s$estimate,
-                       s[[low]],
-                       s[[high]],
-                       ifelse(s$p.value < 0.05, "*", ""))
-  
-  # Return only the formatted string
-  return(formatted)
+
+  ci_lower <- intersect(c("lower.CL", "asymp.LCL", "LCL", "lower"), names(s))[1]
+  ci_upper <- intersect(c("upper.CL", "asymp.UCL", "UCL", "upper"), names(s))[1]
+
+  sprintf("%.2f [%.2f, %.2f]%s",
+          s$estimate,
+          s[[ci_lower]],
+          s[[ci_upper]],
+          ifelse(s$p.value < 0.05, "*", ""))
 }
 
-
-
-bmi_obese_vs_lean_contrast(lm.glucose.bmi.linear, data = glucose.data) 
+# Sanity check: compare helper output to direct Cushings:BMI coefficient
+# scaled by (mean_obese - mean_lean). These should match closely for the
+# linear model.
+.sanity_lean  <- mean(glucose.data$BMI[glucose.data$BMI <  30], na.rm = TRUE)
+.sanity_obese <- mean(glucose.data$BMI[glucose.data$BMI >= 30], na.rm = TRUE)
+.sanity_coef  <- coef(lm.glucose.bmi.linear)["Cushings:BMI"]
+cat("Direct Cushings:BMI coef * (mean_obese - mean_lean) = ",
+    round(.sanity_coef * (.sanity_obese - .sanity_lean), 3), "\n")
 ```
 
 ::: {.cell-output .cell-output-stdout}
 
 ```
-[1] "0.35 [0.10, 0.59]*"
+Direct Cushings:BMI coef * (mean_obese - mean_lean) =  -4.187 
+```
+
+
+:::
+
+```{.r .cell-code}
+cat("Helper output for glucose linear model           = ",
+    bmi_interaction_contrast(lm.glucose.bmi.linear, data = glucose.data), "\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Helper output for glucose linear model           =  -4.19 [-7.11, -1.26]* 
 ```
 
 
@@ -1403,13 +1428,13 @@ bmi_obese_vs_lean_contrast(lm.glucose.bmi.linear, data = glucose.data)
 
 ```{.r .cell-code}
 bmi.linear.models <- data.frame(
-  Glucose = bmi_obese_vs_lean_contrast(lm.glucose.bmi.linear, data = glucose.data) ,
-  HbA1c = bmi_obese_vs_lean_contrast(lm.hba1c.bmi.linear, data = hba1c.data) ,
-  ALT = bmi_obese_vs_lean_contrast(lm.alt.bmi.linear, data = alt.data),
-  AST = bmi_obese_vs_lean_contrast(lm.ast.bmi.linear, data = ast.data),
-  MAP = bmi_obese_vs_lean_contrast(lm.map.bmi.linear, data = bp.data),
-  SBP = bmi_obese_vs_lean_contrast(lm.sbp.bmi.linear, data = bp.data),
-  DBP = bmi_obese_vs_lean_contrast(lm.dbp.bmi.linear, data = bp.data)
+  Glucose = bmi_interaction_contrast(lm.glucose.bmi.linear, data = glucose.data),
+  HbA1c   = bmi_interaction_contrast(lm.hba1c.bmi.linear,   data = hba1c.data),
+  ALT     = bmi_interaction_contrast(lm.alt.bmi.linear,     data = alt.data),
+  AST     = bmi_interaction_contrast(lm.ast.bmi.linear,     data = ast.data),
+  MAP     = bmi_interaction_contrast(lm.map.bmi.linear,     data = bp.data),
+  SBP     = bmi_interaction_contrast(lm.sbp.bmi.linear,     data = bp.data),
+  DBP     = bmi_interaction_contrast(lm.dbp.bmi.linear,     data = bp.data)
 )
 ```
 :::
@@ -1438,80 +1463,18 @@ lm.map.bmi.non.linear <- lm(MAP_imputed ~ GenderCode + RaceEthnicity + Cushings 
 lm.sbp.bmi.non.linear <- lm(BPSysNonInvasive ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = bp.data )
 lm.dbp.bmi.non.linear <- lm(BPDiaNonInvasive ~ GenderCode + RaceEthnicity + Cushings * ns(BMI, df = 4), data = bp.data )
 
-library(emmeans)
-library(dplyr)
-library(splines)
-
-bmi_obese_vs_lean_contrast_spline <- function(model, data = NULL) {
-  
-  if (is.null(data)) data <- model.frame(model)
-  
-  # 1. Compute mean BMI values within lean vs obese groups
-  means_bmi <- data %>%
-    filter(!is.na(BMI)) %>%
-    mutate(obese = BMI >= 30) %>%
-    group_by(obese) %>%
-    summarise(mean_bmi = mean(BMI), .groups = "drop")
-  
-  bmi_lean  <- means_bmi$mean_bmi[!means_bmi$obese]
-  bmi_obese <- means_bmi$mean_bmi[means_bmi$obese]
-  
-  # 2. Build reference grid explicitly so splines reconstruct correctly
-  rg <- ref_grid(
-    model,
-    data = data,
-    at = list(BMI = c(bmi_lean, bmi_obese)),
-    cov.reduce = FALSE
-  )
-  
-  # 3. Predicted means for Cushing × BMI combinations
-  emm <- emmeans(rg, ~ Cushings * BMI)
-  
-  # 4. Contrast vectors (must match row order in emm)
-  # Order is:
-  #   Cushing=0,BMI=lean
-  #   Cushing=0,BMI=obese
-  #   Cushing=1,BMI=lean
-  #   Cushing=1,BMI=obese
-  obesity_main     <- c(-1,  1, -1,  1)
-  cushing_interact <- c( 0,  0, -1,  1) - c(-1,  1,  0,  0)
-  
-  contr_list <- list(
-    Obesity_main     = obesity_main,
-    Cushing_interact = cushing_interact
-  )
-  
-  contr <- contrast(emm, method = contr_list, infer = TRUE)
-  s <- as.data.frame(summary(contr))
-  
-  # Keep only the interaction contrast
-  s <- s[s$contrast == "Cushing_interact", ]
-  
-  # Detect CI columns
-  ci_lower <- intersect(c("lower.CL","asymp.LCL","LCL","lower"), names(s))[1]
-  ci_upper <- intersect(c("upper.CL","asymp.UCL","UCL","upper"), names(s))[1]
-  
-  # Format for results table
-  formatted <- sprintf(
-    "%.2f [%.2f, %.2f]%s",
-    s$estimate,
-    s[[ci_lower]],
-    s[[ci_upper]],
-    ifelse(s$p.value < 0.05, "*", "")
-  )
-  
-  return(formatted)
-}
-
-
+# Apply the same unified helper defined in the BMI-linear chunk.
+# Because the helper uses ref_grid + emmeans, it handles spline models
+# transparently. Outputs are on the obese-minus-lean scale in native units,
+# directly comparable to the BMI (Linear) row and to the dichotomous rows.
 bmi.non.linear.models <- data.frame(
-  Glucose = bmi_obese_vs_lean_contrast_spline(lm.glucose.bmi.non.linear, data = glucose.data) ,
-  HbA1c = bmi_obese_vs_lean_contrast_spline(lm.hba1c.bmi.non.linear, data = hba1c.data) ,
-  ALT = bmi_obese_vs_lean_contrast_spline(lm.alt.bmi.non.linear, data = alt.data),
-  AST = bmi_obese_vs_lean_contrast_spline(lm.ast.bmi.non.linear, data = ast.data),
-  MAP = bmi_obese_vs_lean_contrast_spline(lm.map.bmi.non.linear, data = bp.data),
-  SBP = bmi_obese_vs_lean_contrast_spline(lm.sbp.bmi.non.linear, data = bp.data),
-  DBP = bmi_obese_vs_lean_contrast_spline(lm.dbp.bmi.non.linear, data = bp.data)
+  Glucose = bmi_interaction_contrast(lm.glucose.bmi.non.linear, data = glucose.data),
+  HbA1c   = bmi_interaction_contrast(lm.hba1c.bmi.non.linear,   data = hba1c.data),
+  ALT     = bmi_interaction_contrast(lm.alt.bmi.non.linear,     data = alt.data),
+  AST     = bmi_interaction_contrast(lm.ast.bmi.non.linear,     data = ast.data),
+  MAP     = bmi_interaction_contrast(lm.map.bmi.non.linear,     data = bp.data),
+  SBP     = bmi_interaction_contrast(lm.sbp.bmi.non.linear,     data = bp.data),
+  DBP     = bmi_interaction_contrast(lm.dbp.bmi.non.linear,     data = bp.data)
 )
 ```
 :::
@@ -1756,8 +1719,8 @@ summary.sensitivity.data <- bind_rows(row1,
                                       males.only, 
                                       females.only,
                                       bmi.within.group.models,
-                                      #bmi.linear.models |> mutate(bmi.linear.models,`Primary outcome`="BMI (Linear)"),
-                                      bmi.non.linear.models|> mutate(bmi.linear.models,`Primary outcome`="BMI (Non-Linear)"),
+                                      bmi.linear.models     |> mutate(`Primary outcome` = "BMI (Linear, obese-lean shift)"),
+                                      bmi.non.linear.models |> mutate(`Primary outcome` = "BMI (Spline ns df=4, obese-lean shift)"),
                                       bmi.matched.models,
                                       classI.obesity.only,
                                       classII.obesity.only,
@@ -1870,14 +1833,24 @@ summary.sensitivity.data |>
    <td style="text-align:left;"> -5.74 [-8.57, -2.90]* </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> BMI (Non-Linear) </td>
-   <td style="text-align:left;"> 0.35 [0.10, 0.59]* </td>
-   <td style="text-align:left;"> -0.04 [-0.09, -0.00]* </td>
-   <td style="text-align:left;"> -3.36 [-4.19, -2.53]* </td>
-   <td style="text-align:left;"> -4.41 [-6.36, -2.46]* </td>
-   <td style="text-align:left;"> 0.47 [0.31, 0.64]* </td>
-   <td style="text-align:left;"> 0.62 [0.37, 0.87]* </td>
-   <td style="text-align:left;"> 0.40 [0.24, 0.57]* </td>
+   <td style="text-align:left;"> BMI (Linear, obese-lean shift) </td>
+   <td style="text-align:left;"> -4.19 [-7.11, -1.26]* </td>
+   <td style="text-align:left;"> 0.60 [0.03, 1.18]* </td>
+   <td style="text-align:left;"> 41.87 [31.54, 52.19]* </td>
+   <td style="text-align:left;"> 54.89 [30.65, 79.14]* </td>
+   <td style="text-align:left;"> -5.71 [-7.73, -3.69]* </td>
+   <td style="text-align:left;"> -7.48 [-10.48, -4.48]* </td>
+   <td style="text-align:left;"> -4.86 [-6.80, -2.93]* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI (Spline ns df=4, obese-lean shift) </td>
+   <td style="text-align:left;"> 0.31 [-8.35, 8.96] </td>
+   <td style="text-align:left;"> -0.46 [-1.85, 0.93] </td>
+   <td style="text-align:left;"> 29.06 [8.70, 49.42]* </td>
+   <td style="text-align:left;"> 30.81 [-17.26, 78.87] </td>
+   <td style="text-align:left;"> -11.13 [-15.66, -6.60]* </td>
+   <td style="text-align:left;"> -16.05 [-22.78, -9.32]* </td>
+   <td style="text-align:left;"> -8.57 [-12.91, -4.22]* </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Matching for BMI </td>
@@ -1982,8 +1955,8 @@ attached base packages:
 
 other attached packages:
  [1] kableExtra_1.4.0 emmeans_1.11.2-8 MatchIt_4.7.1    knitr_1.48      
- [5] broom_1.0.6      lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1   
- [9] dplyr_1.1.4      purrr_1.0.2      readr_2.1.5      tidyr_1.3.1     
+ [5] broom_1.0.12     lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1   
+ [9] dplyr_1.2.0      purrr_1.0.2      readr_2.1.5      tidyr_1.3.1     
 [13] tibble_3.2.1     ggplot2_3.5.1    tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
@@ -1992,13 +1965,13 @@ loaded via a namespace (and not attached):
  [9] estimability_1.5.1 evaluate_0.24.0    grid_4.4.3         timechange_0.3.0  
 [13] mvtnorm_1.3-1      fastmap_1.2.0      jsonlite_1.8.8     backports_1.5.0   
 [17] fansi_1.0.6        viridisLite_0.4.2  scales_1.3.0       textshaping_0.4.0 
-[21] cli_3.6.3          chk_0.10.0         rlang_1.1.4        crayon_1.5.3      
+[21] cli_3.6.3          chk_0.10.0         rlang_1.1.7        crayon_1.5.3      
 [25] bit64_4.0.5        munsell_0.5.1      withr_3.0.0        yaml_2.3.9        
 [29] tools_4.4.3        parallel_4.4.3     tzdb_0.4.0         coda_0.19-4.1     
-[33] colorspace_2.1-0   vctrs_0.6.5        R6_2.5.1           lifecycle_1.0.4   
+[33] colorspace_2.1-0   vctrs_0.7.1        R6_2.5.1           lifecycle_1.0.5   
 [37] htmlwidgets_1.6.4  bit_4.0.5          vroom_1.6.5        pkgconfig_2.0.3   
 [41] pillar_1.9.0       gtable_0.3.6       glue_1.8.0         Rcpp_1.0.14       
-[45] systemfonts_1.2.3  highr_0.11         xfun_0.45          tidyselect_1.2.1  
+[45] systemfonts_1.3.1  highr_0.11         xfun_0.45          tidyselect_1.2.1  
 [49] rstudioapi_0.16.0  xtable_1.8-4       htmltools_0.5.8.1  svglite_2.2.1     
 [53] rmarkdown_2.27     compiler_4.4.3    
 ```
