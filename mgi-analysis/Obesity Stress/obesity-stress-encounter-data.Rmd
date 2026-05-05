@@ -1,0 +1,193 @@
+---
+title: "Summarizing the Encounter Level Data to Define BMI"
+author: "Dave Bridges"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+```{r input-data}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+encounters.datafile <- 'EncounterAnthropometricsBMI.csv'
+encounters.datefile <- 'EncounterAll.csv'
+```
+
+The input data file is in `r encounters.datafile`. This includes the BMI for each patient, potentially at multiple time points. This script takes this file and pulls out just the first BMI measure
+
+```{r data-entry}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+#get encounter data
+bmi.data.raw <- read_csv(encounters.datafile) 
+encounter.data <- read_csv(encounters.datefile)
+
+library(lubridate)
+#annotating bmi data with encounters
+bmi.data <- 
+  left_join(bmi.data.raw,encounter.data,by=c('DeID_PatientID','DeID_EncounterID')) %>%
+  mutate(EncounterDate = mdy_hm(DeID_AdmitDate))%>%
+  mutate(EncounterYear = year(EncounterDate)) 
+```
+
+# Summarizing BMI Data
+
+```{r encounter-range}
+library(ggplot2)
+
+ggplot(bmi.data,
+       aes(x=EncounterYear)) +
+  geom_bar() +
+  theme_classic() +
+  scale_fill_grey() +
+  labs(y="Encounters",
+       x="Year") +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.75))
+
+bmi.data %>%
+  group_by(EncounterYear) %>%
+  count %>%
+  kable(caption="Total Encounters by Year")
+```
+
+## Time of Follow Up
+
+```{r encounter-followup}
+follow.up.data <-
+  bmi.data %>%
+  filter(!(is.na(EncounterDate))) %>%
+  #filter(EncounterDate>today()) %>% #implausible follow up
+  arrange(DeID_PatientID,EncounterDate) %>%
+  group_by(DeID_PatientID) %>%
+  summarize(First= first(EncounterDate),
+            Last = last(EncounterDate)) %>%
+  mutate(FollowUp = round(time_length(date(Last)-date(First),unit="years"),0),
+         FollowUpNow = round(time_length(as.Date(today()) -date(First),unit="years"),0)) 
+
+follow.up.data %>%
+  group_by(FollowUp) %>%
+  count %>% 
+  ungroup %>%
+  arrange(-FollowUp) %>%
+  mutate(cumulative = cumsum(n)) %>%
+  kable(caption="Participant follow up duration")
+
+ggplot(follow.up.data,
+       aes(x=FollowUp)) +
+  geom_bar() +
+  theme_classic() +
+  scale_fill_grey() +
+  labs(y="Participants",
+       x="Years of Follow Up") +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.75))
+```
+
+The average follow up period is `r follow.up.data %>% mean(FollowUp, na.rm=T)`.
+
+# Defining BMI Data
+
+We will use the median BMI measure if there are multiple in the encounters file.
+
+```{r bmi-measurements}
+bmi.cutoff <- 129
+bmi.lower <- 9
+
+bmi.data.median <- 
+  bmi.data %>%
+  group_by(DeID_PatientID) %>%
+  summarize(BMI = median(BMI,na.rm=T),
+            BMI.n = length(BMI)) 
+
+bmi.data.complete <-
+  bmi.data.median %>%
+  filter(!(is.na(BMI)))  # remove rows where there is no BMI data
+
+bmi.data.cutoff <-
+  bmi.data.complete %>%
+  filter(BMI<bmi.cutoff) %>% #remove BMI under cutoff
+  filter(BMI>bmi.lower) #remove BMI above cutoff
+```
+
+Based on this procedure we had `r nrow(bmi.data.median)` participants in the initial dataset.  After removing individuals with no BMI measure we had `r nrow(bmi.data.complete)` (a loss of `r nrow(bmi.data.median)-nrow(bmi.data.complete)` participants).  We then removed anyone who's median BMI was >`r bmi.cutoff` or <`r bmi.lower`, a loss of `r nrow(bmi.data.complete)-nrow(bmi.data.cutoff)` participants.  This resulted in a final dataset of `r nrow(bmi.data.cutoff)`.
+
+## Analysis of BMI
+
+```{r bmi-analysis}
+library(ggplot2)
+bmi.data.cutoff %>%
+  ggplot(aes(x=BMI)) +
+  geom_density() +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+bmi.data.cutoff %>%
+  ggplot(aes(x=BMI)) +
+  geom_histogram() +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+bmi.data.cutoff %>%
+  summarize(mean=mean(BMI,na.rm=T),
+             min=min(BMI, na.rm=T),
+             max=max(BMI,na.rm=T),
+             sd=sd(BMI,na.rm=T),
+             n=length(BMI)) %>%
+  kable(caption="Summary statistics for the BMI measurements used in this study")
+```
+
+# Validation and Checking for Outliers
+
+We filtered out all BMI that the median was \>`r bmi.cutoff`. After this the highest and lowest BMI were
+
+```{r BMI-outliers}
+bmi.data.cutoff %>%
+  arrange(desc(BMI)) %>%
+  select(BMI,BMI.n) %>%
+  head(10) %>%
+  kable(caption="Top 50 median BMI values and number of encounters")
+
+bmi.data.cutoff %>%
+  arrange(BMI) %>%
+  select(BMI,BMI.n) %>%
+  head(10) %>%
+  kable(caption="Top 50 median BMI values and number of encounters")
+```
+
+# Output
+
+```{r output}
+output.file <- 'MedianEncounterAnthropometricsBMI.csv'
+write_csv(bmi.data.cutoff, file=output.file)
+```
+
+These data were written out to `r output.file`. This is the input file for the other scripts.
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```

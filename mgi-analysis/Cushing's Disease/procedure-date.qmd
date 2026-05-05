@@ -1,0 +1,271 @@
+---
+title: "Defining the Diagnosis and Surgery Dates"
+author: "Dave Bridges and Trey Carr"
+date: "March 3, 2025"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+    fig-path: "figures/"
+  pdf: default
+#theme: journal
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+# sets maize and blue color scheme
+color_scheme <- c("#00274c", "#ffcb05")
+```
+
+## Purpose
+
+To load in the participant data about their Cushing's diagnoses and the procedures.  This is an important landmark for defining effects before or after.
+
+## Experimental Details
+
+```{r input-files}
+encounter.datafile <- "EncounterAll.csv" 
+procedure.datafile <- "ProceduresComprehensive.csv" 
+diagnosis.datafile <- "DiagnosesComprehensiveAll.csv" 
+
+library(readr) #for loading csv files
+library(dplyr) #for data cleaning
+library(lubridate) #for date cleaning
+library(knitr) #for kables
+encounter.data <- read_csv(encounter.datafile) |>
+  mutate(DeID_AdmitDate_Clean = as_date(mdy_hm(DeID_AdmitDate))) #clean and format into just dates not times
+procedure.data <- read_csv(procedure.datafile)
+diagnosis.data <- read_csv(diagnosis.datafile)
+```
+
+## Raw Data
+
+Relevant patient data is in these files:
+
+* **Procedures** are in `r procedure.datafile`.  This includes patient ID, encouter ID, TermCodeMapped (ICD code).
+* **Diagnoses** are in `r diagnosis.datafile`.  This includes patient ID, encouter ID, TermCodeMapped (ICD code).
+* The `r encounter.datafile` contains metadata about encounters including dates and BMIs
+
+
+
+Describe your raw data files, including what the columns mean (and what units they are in).
+
+
+This files was most recently updated on `r format(file.info(procedure.datafile)$mtime, "%Y-%m-%d")`.  This script was most recently updated on `r date()`.
+
+## Data Cleaning
+
+### Procedures
+
+Procedures are defined by ICD codes. 
+
+```{r procedure-codes}
+procedure_codes <- c("07.6", "07.61", "07.62", "07.63", "07.64", "07.65", "07.68", "07.69", "07.15", "07.72", "0GB00ZZ", "0GT00ZZ", "0GB03ZZ", "0GB04ZZ", "0GT04ZZ", "0GC00ZZ", "0GC03ZZ", "0GC04ZZ", "0GT00ZZ", "0GT04ZZ")
+```
+
+We used these ICD codes to define the procedures `r paste(procedure_codes,collapse=",")`.
+
+```{r procedure-cleaning}
+cushings.procedures <-
+  procedure.data |>
+  filter(TermCodeMapped %in% procedure_codes)
+
+#several procedures are not in procedure codes
+```
+
+#### Unmapped Procedures
+
+Several procedures are not in our procedure codes. 
+
+```{r unmapped-procedures}
+procedure.data |>
+  filter(!(TermCodeMapped %in% procedure_codes)) |>
+  group_by(TermNameMapped) |>
+  count() |>
+  arrange(desc(n)) |>
+  kable(caption="Unmapped procedures and number of times they occured")
+
+```
+
+These all seem like reasonable procedures so I am going to keep all of them in the dataset.
+
+#### All Procedures
+
+```{r all-procedures}
+procedure.data |>
+  group_by(TermNameMapped) |>
+  count() |>
+  arrange(desc(n)) |>
+  kable(caption="All procedures and number of times they occured")
+
+first.cushings.procedure <-
+  procedure.data |>
+    left_join(encounter.data, by=c("DeID_PatientID","DeID_EncounterID")) |> #added in data about encounters
+  arrange(DeID_PatientID,DeID_AdmitDate_Clean) |>
+  distinct(DeID_PatientID, .keep_all = T)
+```
+
+#### Summary of Cushing's Procedures in the Dataset
+
+First checked which year the procedure first occured.
+
+```{r cushings-summary-year}
+first.cushings.procedure |>
+  summarize(Year = year(DeID_AdmitDate_Clean)) |>
+  group_by(Year) |>
+  count() -> procedures.by.year
+
+procedures.by.year |>
+  kable(caption="Diagnoses per year")
+
+library(ggplot2)
+procedures.by.year |>
+  ggplot(aes(x=Year,
+         y=n)) +
+  geom_bar(stat='identity') +
+  labs(y="First-Time Cushing's Procedures",
+       x="") +
+  theme_classic(base_size=16)
+```
+
+Next evaluated the age at first diagnosis
+
+```{r cushings-summary-age}
+first.cushings.procedure |>
+  group_by(AgeInYears) |>
+  count() -> procedures.by.age
+
+#cushings.by.age |>
+#  kable(caption="Diagnoses per age")
+
+library(ggplot2)
+procedures.by.age |>
+  ggplot(aes(x=AgeInYears,
+         y=n)) +
+  geom_bar(stat='identity') +
+  labs(y="First-Time Cushing's Procedures",
+       x="") +
+  theme_classic(base_size=16)
+```
+The average age of the first recorded diagnosis of Cushings is `r mean(first.cushings.procedure$AgeInYears,na.rm=T)` $\pm$ `r sd(first.cushings.procedure$AgeInYears,na.rm=T)` (mean $\pm$ SD).
+
+### Diagnoses
+
+Procedures are defined by ICD codes.  We used E24.0  for ICD10 coding and 255.0  for ICD9 coding
+
+```{r diagnosis-cleaning}
+library(dplyr)
+cushings.diagnosis.data <-
+  diagnosis.data |>
+  filter(TermCodeMapped %in% c('255.0','E24.0')) |>
+  left_join(encounter.data, by=c("DeID_PatientID","DeID_EncounterID")) |> #added in data about encounters
+  arrange(DeID_PatientID,DeID_AdmitDate_Clean) |>
+  distinct(DeID_PatientID, .keep_all = T) #onbly take the first diagnosis date for each patient
+```
+
+#### Summary of Cushing's Diagnoses in the Dataset
+
+First checked which year the diagnoses first occured.
+
+```{r procedure-summary-year}
+library(knitr)
+cushings.diagnosis.data |>
+  summarize(Year = year(DeID_AdmitDate_Clean)) |>
+  group_by(Year) |>
+  count() -> cushings.by.year
+
+cushings.by.year |>
+  kable(caption="Diagnoses per year")
+
+library(ggplot2)
+cushings.by.year |>
+  ggplot(aes(x=Year,
+         y=n)) +
+  geom_bar(stat='identity') +
+  labs(y="First-Time Cushing's Diagnoses",
+       x="") +
+  theme_classic(base_size=16)
+```
+
+Next evaluated the age at first diagnosis
+
+```{r procedure-summary-age}
+cushings.diagnosis.data |>
+  group_by(AgeInYears) |>
+  count() -> cushings.by.age
+
+#cushings.by.age |>
+#  kable(caption="Diagnoses per age")
+
+library(ggplot2)
+cushings.by.age |>
+  ggplot(aes(x=AgeInYears,
+         y=n)) +
+  geom_bar(stat='identity') +
+  labs(y="First-Time Cushing's Diagnoses",
+       x="") +
+  theme_classic(base_size=16)
+```
+
+The average age of the first recorded diagnosis of Cushings is `r mean(cushings.diagnosis.data$AgeInYears,na.rm=T)` $\pm$ `r sd(cushings.diagnosis.data$AgeInYears,na.rm=T)` (mean $\pm$ SD).
+
+### Matching Procedures to Diagnoses
+
+```{r procedure-diagnosis-matching}
+combined.treatment.data <- left_join(first.cushings.procedure,cushings.diagnosis.data,
+                                     by=c("DeID_PatientID"),
+                                     suffix=c("_procedure","_diagnosis")) |>
+  mutate(TreatmentInterval = DeID_AdmitDate_Clean_procedure - DeID_AdmitDate_Clean_diagnosis)
+
+combined.treatment.data.clean <-
+  combined.treatment.data |>
+  filter(!is.na(TreatmentInterval)) |> #remove patients with missing dates
+  filter(TreatmentInterval >=0 ) #remove patients with negative dates
+```
+
+Out of `r nrow(combined.treatment.data)` participants, there were `r sum(combined.treatment.data$TreatmentInterval <0, na.rm=T)` patients with errors in this data (treatment appears to have occured before diagnosis).  A few were missing procedure or diagnosis dates (n=`r sum(is.na(combined.treatment.data$TreatmentInterval))`).  The remaining `r sum(combined.treatment.data$TreatmentInterval >=0, na.rm=T)` were reasonable.  Surprisingly `r sum(combined.treatment.data.clean$TreatmentInterval ==0, na.rm=T)` patients had diagnoses and procedures on the same day.
+
+The average treatment interval, excluding these was `r mean(combined.treatment.data.clean$TreatmentInterval,na.rm=T)` $\pm$ `r sd(combined.treatment.data.clean$TreatmentInterval,na.rm=T)` days
+
+```{r treatment-interval-histogram}
+combined.treatment.data |>
+  ggplot(aes(x=TreatmentInterval)) +
+  geom_histogram(binwidth=1) +
+  theme_classic(base_size=16)
+```
+```{r output-file}
+output_file <- 'CushingsDataClean.csv'
+
+combined.treatment.data.clean |>
+  select(DeID_PatientID, 
+         DeID_AdmitDate_Clean_procedure,
+         DeID_AdmitDate_Clean_diagnosis,
+         AgeInYears_procedure,
+         TreatmentInterval) |>
+  write_csv(output_file)
+```
+
+A file containing diagnosis dates, age and treatment intervals were written into `r output_file`.  This can be used to anchor other diagnoses and lab results to before or after their Cushing's treatments.
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```

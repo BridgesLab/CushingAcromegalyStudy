@@ -1,0 +1,83 @@
+---
+title: "Summarizing the Encounter Level Data to Define BMI"
+author: "Dave Bridges"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To test the effect modification of obesity on the stress-diabetes relationships. This script collects the the raw data files, processes and merges them. This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+```{r input-data}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+encounters.datafile <- 'EncounterAnthropometricsBMI.csv'
+encounters.datefile <- 'EncounterAll.csv'
+mgi.survey.datafile <- 'MGIPatientReportedSurveys.csv'
+```
+
+The input data file is in `r encounters.datafile`. This includes the BMI for each patient, potentially at multiple time points. This script takes this file and pulls out just the first BMI measure
+
+```{r data-entry}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(lubridate)
+
+#get encounter data
+bmi.data.raw <- read_csv(encounters.datafile) 
+encounter.data <- read_csv(encounters.datefile)
+survey.data <- read_csv(mgi.survey.datafile)
+
+library(lubridate)
+#annotating bmi data with encounters and survey data
+bmi.data <- 
+  left_join(survey.data, encounter.data, by=c('DeID_PatientID')) %>%
+  left_join(bmi.data.raw,by=c('DeID_PatientID','DeID_EncounterID')) %>%
+  mutate(EncounterDate = mdy_hm(DeID_AdmitDate))%>%
+  mutate(EncounterYear = year(EncounterDate)) %>%
+  mutate(Survey_Date = mdy_hm(DeID_Survey_Date))
+```
+
+# Finding BMI close to Survey Data
+
+```{r survey-encounter-match}
+survey.bmi.data <-
+  bmi.data %>%
+  filter(!is.na(BMI)) %>%
+  mutate(Time.from.Survey = abs((Survey_Date %--% EncounterDate)/ddays(1))) %>%
+  group_by(DeID_PatientID) %>%
+  filter(Time.from.Survey == min(Time.from.Survey,na.rm=T)) %>%
+  rename(Survey.BMI = BMI)
+
+range <- 365
+range.bmi.data <-
+  survey.bmi.data %>%
+  filter(Time.from.Survey < range)
+```
+
+There was `r `nrow survey.bmi.data` participants with BMI data.  After filtering out those without a BMI within `r range` days from the survey we were left with `r `nrow range.bmi.data` participants.
+
+
+```{r output}
+output.file <- 'SurveyAnthropometricsBMI.csv'
+write_csv(range.bmi.data, file=output.file)
+```
+
+These data were written out to `r output.file`. This is the input file for the other scripts.
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```

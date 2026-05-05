@@ -1,0 +1,485 @@
+---
+title: "Rates of Diabetes and Hba1c Prior to Procedures"
+author: "Dave Bridges and Trey Carr"
+date: "March 3, 2025"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+    fig-path: "figures/"
+  pdf: default
+#theme: journal
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+# sets maize and blue color scheme
+color_scheme <- c("#00274c", "#ffcb05")
+```
+
+## Purpose
+
+To load in the participant data about their Cushing's diagnoses and the procedures.  
+
+## Experimental Details
+
+```{r input-files}
+encounter.datafile <- "EncounterAll.csv" 
+encounter.bmi.datafile <- "EncounterAnthropometricsBMI.csv" 
+diagnosis.datafile <- "DiagnosesComprehensiveAll.csv" 
+charlson.datafile <- "ComorbiditiesCharlsonComprehensive.csv"
+elixhauser.datafile <- "ComorbiditiesElixhauserComprehensive.csv"
+LabResults.datafile <- "LabResults.csv"
+cushings.datafile <- "CushingsDataClean.csv"
+
+library(readr) #for loading csv files
+library(dplyr) #for data cleaning
+library(lubridate) #for date cleaning
+library(knitr) #for kables
+cushings.data <- read_csv(cushings.datafile) %>%
+  rename(ProcedureDate = "DeID_AdmitDate_Clean_procedure")#loaded in data about when their cushings procedures were 
+encounter.bmi.data <- read_csv(encounter.bmi.datafile)
+
+encounter.data <- read_csv(encounter.datafile) |>
+  mutate(DeID_AdmitDate_Clean = as_date(mdy_hm(DeID_AdmitDate))) %>% #clean and format into just dates not times
+  left_join(encounter.bmi.data, ,by=c("DeID_PatientID","DeID_EncounterID")) %>% #add in BMI data for each encounter 
+  left_join(cushings.data,by="DeID_PatientID") %>% # added in time of cushings diagnosis
+  mutate(TimePoint = case_when(ProcedureDate <= DeID_AdmitDate_Clean ~ "Before",
+                               ProcedureDate > DeID_AdmitDate_Clean ~ "After",
+                               .default="Unknown")) %>% # defined each encounter as before or after
+  mutate(ProcedureFollowUp = ProcedureDate - DeID_AdmitDate_Clean)
+
+diagnosis.data <- read_csv(diagnosis.datafile) %>%
+  left_join(encounter.data,by=c("DeID_PatientID","DeID_EncounterID"))
+charlson.data <- read_csv(charlson.datafile) %>%
+  left_join(encounter.data,by=c("DeID_PatientID","DeID_EncounterID"))
+elixhauser.data <- read_csv(elixhauser.datafile) %>%
+  left_join(encounter.data,by=c("DeID_PatientID","DeID_EncounterID"))
+LabResults.data <- read_csv(LabResults.datafile) %>%
+  left_join(encounter.data,by=c("DeID_PatientID","DeID_EncounterID"))
+
+total.participants <-
+  distinct(encounter.data, DeID_PatientID) %>%
+  nrow()
+
+```
+
+## Raw Data
+
+Relevant patient data is in these files:
+
+##Go back and describe each data file. Elixhauser, charlson, labresults
+
+* **Diagnoses** are in `r diagnosis.datafile`.  This includes patient ID, encouter ID, TermCodeMapped (ICD code).
+* The `r encounter.datafile` contains metadata about encounters including dates and BMIs
+
+
+This files was most recently updated on `r format(file.info(diagnosis.datafile)$mtime, "%Y-%m-%d")`.  This script was most recently updated on `r date()`.
+
+## Lab Results
+
+There are `r total.participants` unique patients in this data set.
+
+```{r lab-measures-summary}
+LabResults.data |>
+  count(RESULT_CODE) |>
+  arrange(-n) |>
+  kable(caption="Total number of lab results for cases.")
+```
+
+
+### Type 2 Diabetes Lab Results
+
+#### Glucose Measurements
+
+```{r glucose}
+glucose.data <-
+  LabResults.data %>%
+  filter(RESULT_CODE %in% c("GLUC","GLUC_WB")) %>%
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(DeID_AdmitDate_Clean) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese")) 
+
+glucose.summary <-
+  glucose.data %>%
+  group_by(TimePoint) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+glucose.summary %>% kable(caption="Summary of glucose levels before and after procedures")
+```
+
+We found `r nrow(glucose.data)` patients that had a lab result for a HbA1c test. 
+
+Now looking at the effect of BMI
+
+```{r before_t2d_glucose_bmi}
+glucose.summary.bmi <-
+  glucose.data %>%
+  group_by(TimePoint,Obesity) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+glucose.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  kable(caption="Summary of Hb1ac levels before and after procedures")
+
+library(ggplot2)
+glucose.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  ggplot(aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  geom_hline(yintercept=126, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="Glucose (mg/dL)",
+       x="") +
+  theme_classic(base_size=16)
+
+glucose.data%>% 
+  filter(TimePoint=="Before") %>%
+  ggplot(aes(y=value,
+           x=BMI)) +
+  geom_point() +
+  geom_smooth() +
+  geom_hline(yintercept=126, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="Glucose (mg/dL)",
+       x="") +
+  theme_classic(base_size=16)
+
+library(broom)
+library(mgcv)
+gam(value~s(BMI),
+   data=glucose.data %>% filter(TimePoint=="Before"),
+   REML=TRUE) -> gam.glucose
+
+lm(value~BMI,
+   data=glucose.data %>% filter(TimePoint=="Before")) -> lm.glucose
+
+AIC(lm.glucose, gam.glucose) %>% kable(caption="Glucose for linear and nonlinear models,lower AIC indicates better model fit")
+
+gam.glucose %>%
+  tidy %>%
+  kable()
+
+lm.glucose %>%
+  tidy %>%
+  kable(caption="Linear model for glucose prior to intervention")
+
+plot(gam.glucose, pages = 1, residuals = TRUE)
+```
+ 
+```{r before_t2d_hba1c}
+hba1c.data <-
+  LabResults.data %>%
+  filter(RESULT_CODE %in% c("A1C", "XXA1C", "A1C EX", "X0022")) %>%
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(DeID_AdmitDate_Clean) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese")) 
+
+hba1c.summary <-
+  hba1c.data %>%
+  group_by(TimePoint) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+hba1c.summary %>% kable(caption="Summary of Hb1ac levels before and after procedures")
+```
+
+We found `r nrow(hba1c.data)` patients that had a lab result for a HbA1c test. 
+
+Now looking at the effect of BMI
+
+```{r before_t2d_hba1c_bmi}
+hba1c.summary.bmi <-
+  hba1c.data %>%
+  group_by(TimePoint,Obesity) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+hba1c.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  kable(caption="Summary of Hb1ac levels before and after procedures")
+
+library(ggplot2)
+hba1c.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  ggplot(aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  geom_hline(yintercept=6.5, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="HbA1c (%)",
+       x="") +
+  theme_classic(base_size=16)
+
+hba1c.data%>% 
+  filter(TimePoint=="Before") %>%
+  ggplot(aes(y=value,
+           x=BMI)) +
+  geom_point() +
+  geom_smooth() +
+  geom_hline(yintercept=6.5, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="HbA1c (%)",
+       x="") +
+  theme_classic(base_size=16)
+
+library(broom)
+library(mgcv)
+gam(value~s(BMI)+AgeInYears,
+   data=hba1c.data %>% filter(TimePoint=="Before"),
+   REML=TRUE) -> gam.hba1c
+
+lm(value~BMI+AgeInYears,
+   data=hba1c.data %>% filter(TimePoint=="Before")) -> lm.hba1c
+
+AIC(lm.hba1c, gam.hba1c) %>% kable(caption="AIC for linear and nonlinear models,lower AIC indicates better model fit")
+
+gam.hba1c %>%
+  tidy %>%
+  kable()
+
+plot(gam.hba1c, pages = 1, residuals = TRUE)
+```
+
+Used a generalized additive model with a splined term for BMI. The EDF for this was `r summary(gam.hba1c)$s.table[, "edf"]`, where $edf > 1$ suggests nonlinearity, this was a better model fit based on the AIC.
+
+### ALT
+ 
+```{r before_alt}
+alt.data <-
+  LabResults.data %>%
+  filter(RESULT_CODE %in% c("ALT")) %>%
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(DeID_AdmitDate_Clean) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese")) 
+
+alt.summary <-
+  alt.data %>%
+  group_by(TimePoint) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+alt.summary %>% kable(caption="Summary of ALT levels before and after procedures")
+```
+
+We found `r nrow(alt.data)` patients that had a lab result for a ALT test. 
+
+
+### AST
+ 
+```{r before_ast}
+ast.data <-
+  LabResults.data %>%
+  filter(RESULT_CODE %in% c("AST")) %>%
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(DeID_AdmitDate_Clean) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese")) 
+
+ast.summary <-
+  ast.data %>%
+  group_by(TimePoint) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+ast.summary %>% kable(caption="Summary of AST levels before and after procedures")
+```
+
+We found `r nrow(ast.data)` patients that had a lab result for a AST test. 
+
+
+
+
+Now looking at the effect of BMI
+
+```{r before_alt_bmi}
+alt.summary.bmi <-
+  alt.data %>%
+  group_by(TimePoint,Obesity) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+alt.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  kable(caption="Summary of ALT levels before and after procedures")
+
+alt.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  ggplot(aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  geom_hline(yintercept=30, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="ALT (IU/L)",
+       x="") +
+  theme_classic(base_size=16)
+
+alt.data%>% 
+  filter(TimePoint=="Before") %>%
+  ggplot(aes(y=value,
+           x=BMI)) +
+  geom_point() +
+  geom_smooth() +
+  geom_hline(yintercept=30, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="ALT (IU/L)",
+       x="") +
+  theme_classic(base_size=16)
+
+library(broom)
+library(mgcv)
+gam(value~s(BMI)+AgeInYears,
+   data=alt.data %>% filter(TimePoint=="Before"),
+   REML=TRUE) -> gam.alt
+
+lm(value~BMI+AgeInYears,
+   data=alt.data %>% filter(TimePoint=="Before")) -> lm.alt
+
+AIC(lm.alt, gam.alt) %>% kable(caption="AIC for linear and nonlinear models,lower AIC indicates better model fit for ALT levels")
+
+gam.alt %>%
+  tidy %>%
+  kable()
+
+plot(gam.alt, pages = 1, residuals = TRUE)
+```
+
+Used a generalized additive model with a splined term for BMI. The EDF for this was `r summary(gam.alt)$s.table[, "edf"]`, where $edf > 1$ suggests nonlinearity, this was a better model fit based on the AIC.
+
+### LDL Cholesterol
+ 
+```{r before_ldl}
+ldl.data <-
+  LabResults.data %>%
+  filter(RESULT_CODE %in% c("LDLC", "DLDL")) %>%
+  mutate(value = as.numeric(VALUE)) %>% #forced into numeric form  
+  arrange(DeID_AdmitDate_Clean) %>% #sort by date
+  distinct(DeID_PatientID,.keep_all = T) %>% #unique cases
+  mutate(Obesity = if_else(BMI>30, "Obese","Non-Obese")) 
+
+ldl.summary <-
+  ldl.data %>%
+  group_by(TimePoint) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+ldl.summary %>% kable(caption="Summary of LDL-C levels before and after procedures")
+```
+
+We found `r nrow(ldl.data)` patients that had a lab result for a LDL-C test. 
+
+Now looking at the effect of BMI
+
+```{r before_ldl_bmi}
+ldl.summary.bmi <-
+  ldl.data %>%
+  group_by(TimePoint,Obesity) %>%
+  summarize(mean=mean(value,na.rm=T),
+            se=se(value),
+            n=length(value))
+
+ldl.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  kable(caption="Summary of Hb1ac levels before and after procedures")
+
+library(ggplot2)
+ldl.summary.bmi %>% 
+  filter(TimePoint=="Before") %>%
+  filter(!(is.na(Obesity))) %>%
+  ggplot(aes(y=mean,
+           ymin=mean-se,
+           ymax=mean+se,
+           x=Obesity)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  geom_hline(yintercept=160, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="LDL (mg/dL)",
+       x="") +
+  theme_classic(base_size=16)
+
+ldl.data%>% 
+  filter(TimePoint=="Before") %>%
+  ggplot(aes(y=value,
+           x=BMI)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  geom_hline(yintercept=160, lty="dashed") +
+  labs(title="Cushing's Patients Only",
+       y="LDL (mg/dL)",
+       x="") +
+  theme_classic(base_size=16)
+
+library(broom)
+library(mgcv)
+gam(value~s(BMI)+AgeInYears,
+   data=ldl.data %>% filter(TimePoint=="Before"),
+   REML=TRUE) -> gam.ldl
+
+lm(value~BMI+AgeInYears,
+   data=ldl.data %>% filter(TimePoint=="Before")) -> lm.ldl
+
+AIC(lm.ldl, gam.ldl) %>% kable(caption="AIC for linear and nonlinear models,lower AIC indicates better model fit")
+
+gam.ldl %>%
+  tidy %>%
+  kable()
+
+plot(gam.ldl, pages = 1, residuals = TRUE)
+```
+
+Used a generalized additive model with a splined term for BMI. The EDF for this was `r summary(gam.ldl)$s.table[, "edf"]`, where $edf > 1$ suggests nonlinearity, this was a better model fit based on the AIC.
+
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```

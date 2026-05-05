@@ -1,0 +1,370 @@
+---
+title: "Summary of Demographic Factors for Type 2 Diabetes Diagnosis"
+author: "Dave Bridges"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To define covariates for stress-obesity relationships, referring to associations with the outcome (diabetes risk).
+
+```{r data-entry}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+input.file <- 'data-combined.csv'
+combined.data <- read_csv(input.file) %>% #set reference values for each group
+  mutate(Race.Ethnicity = relevel(as.factor(Race.Ethnicity),ref="White")) %>%
+  mutate(Gender = relevel(as.factor(Gender),ref="F")) %>%
+  mutate(BMI_cat = factor(as.factor(BMI_cat),levels=c("Underweight","Normal","Overweight","Class I Obese","Class II Obese","Class III Obese")))%>%
+  filter(!(is.na(HypertensionAny))) %>%
+  filter(!(is.na(Stress))) %>%
+  filter(Stress!="NA")
+```
+
+Loaded in the cleaned data from `r input.file`. This script can be found in `r getwd()` and was most recently run on `r date()`. This dataset has `r dim(combined.data)[1]` values.
+
+Performed univariate analyses on the categorical associations with diabetes incidence. Treated both age and BMI as both linear and categorical variables.
+
+## By Race and Ethnicity
+
+```{r diabetes-type2-counts-race-ethnicity}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Race.Ethnicity,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=Race.Ethnicity,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.race
+
+diabetes.race %>%
+  ggplot(aes(y=Prevalence,x=Race.Ethnicity)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+diabetes.race %>%
+  knitr::kable(caption="Number of participants by diabetes diagnosis and race/ethnicity",
+               digits =c(0,2,3,2,99))
+```
+
+```{r diabetes-type2-counts-race-ethnicity-stats}
+library(broom)
+glm(Type2Diabetes~Race.Ethnicity, 
+    family="binomial",
+    data=combined.data) -> race.glm
+
+race.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of ethicity on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+race.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of ethicity on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Gender
+
+```{r diabetes-type2-counts-gender}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=Gender,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  diabetes.gender
+
+diabetes.gender %>%
+  ggplot(aes(y=Prevalence,x=Gender)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+
+diabetes.gender %>% 
+  knitr::kable(caption="Number of participants by diabetes diagnosis and gender",
+               digits =c(0,2,3,2,99))
+```
+
+## Interaction Between Gender and BMI
+
+Modelling shows a significant interaction between BMI and gender with respect to diabetes risk
+
+```{r gender-bmi-stats-type2}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Gender,Type2Diabetes,BMI_cat.Ob.NonOb) %>%
+  count %>%
+  pivot_wider(id_cols=c(Gender,BMI_cat.Ob.NonOb),
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> 
+  diabetes.gender.bmi
+
+glm(Type2Diabetes~Gender+BMI_cat.Ob.NonOb+BMI_cat.Ob.NonOb:Gender, 
+    family="binomial",
+    data=combined.data) -> gender.bmi.glm
+
+kable(diabetes.gender.bmi, caption="Prevalence of diabetes by obesity and gender")
+
+gender.bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender:BMI interaction on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+gender.bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender:BMI on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+```{r diabetes-type2-counts-gender-bmi}
+diabetes.gender.bmi %>%
+  ggplot(aes(y=Prevalence,x=Gender,fill=BMI_cat.Ob.NonOb)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))
+```
+
+
+```{r diabetes-type2-counts-gender-stats}
+library(broom)
+glm(Type2Diabetes~Gender, 
+    family="binomial",
+    data=combined.data) -> gender.glm
+
+gender.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of gender on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+gender.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of gender on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Age
+
+```{r diabetes-type2-counts-age}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(Age.group,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=Age.group,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.age
+
+
+diabetes.age %>%
+  ggplot(aes(y=Prevalence,x=Age.group)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.age %>%
+  knitr::kable(caption="Number of participants by diabetes diagnosis and age")
+```
+
+```{r diabetes-type2-counts-age-stats}
+glm(Type2Diabetes~Age.group, 
+    family="binomial",
+    data=combined.data) -> age.glm
+
+age.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of age group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+age.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of age group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+
+glm(Type2Diabetes~age, data=combined.data) %>% 
+  tidy %>%
+  kable(caption="Binomial regression estimates of age (continuous) on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Neighborhood Disadvantage
+
+```{r diabetes-type2-counts-disadvantage}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(disadvantage13_17_qrtl,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=disadvantage13_17_qrtl,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0")%>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.disadvantage
+
+
+diabetes.disadvantage %>%
+  ggplot(aes(y=Prevalence,x=disadvantage13_17_qrtl)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.disadvantage %>%
+  knitr::kable(caption="Number of participants by diabetes neighborhood disadvantage")
+```
+
+```{r diabetes-type2-counts-disadvantage-stats}
+glm(Type2Diabetes~disadvantage13_17_qrtl, 
+    family="binomial",
+    data=combined.data) -> disadvantage.glm
+
+disadvantage.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of neighborhood disadvantage group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+disadvantage.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of neighborhood disadvantage group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+```
+
+## By Body Mass Index
+
+```{r diabetes-type2-counts-bmi}
+combined.data %>%
+  filter(!(is.na(Stress))) %>%
+  filter(!(is.na(BMI_cat.Ob.NonOb))) %>%
+  group_by(BMI_cat,Type2Diabetes) %>%
+  count %>%
+  pivot_wider(id_cols=BMI_cat,
+              names_from=Type2Diabetes,
+              values_from = n,
+              names_prefix='Diabetes') %>%
+  rename("Yes"="Diabetes1",
+         "No"="Diabetes0") %>%
+  mutate(Prevalence=Yes/(Yes+No)*100) -> diabetes.bmi
+
+diabetes.bmi %>%
+  ggplot(aes(y=Prevalence,x=BMI_cat)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Percent Diabetes",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+        legend.position = c(0.1,0.85))  
+
+diabetes.bmi %>%
+  knitr::kable(caption="Number of participants by diabetes diagnosis and BMI category")
+```
+
+```{r diabetes-type2-counts-bmi-stats}
+glm(Type2Diabetes~BMI_cat, 
+    family="binomial",
+    data=combined.data) -> bmi.glm
+
+bmi.glm %>% 
+  anova(test="Chisq") %>% 
+  tidy %>% 
+  kable(caption="Binomial regression of BMI group on diabetes incidence",
+        digits =c(0,0,0,0,0,99))
+
+bmi.glm %>% 
+  tidy %>% 
+  kable(caption="Binomial regression estimates of BMI group on diabetes incidence", 
+        digits =c(0,2,3,2,99))
+
+glm(Type2Diabetes~BMI, data=combined.data) %>% 
+  tidy %>%
+  kable(caption="Binomial regression estimates of BMI on diabetes incidence",
+        digits =c(0,2,3,2,99))
+```
+
+# Summary Table
+
+```{r summary-table}
+rbind(diabetes.race %>% rename("Group"="Race.Ethnicity"),
+      diabetes.gender %>% rename("Group"="Gender"),
+      diabetes.bmi %>% rename("Group"="BMI_cat"),
+      diabetes.disadvantage %>% rename("Group"="disadvantage13_17_qrtl") %>%
+        mutate(Group=as.factor(Group)),
+      diabetes.age %>% rename("Group"="Age.group")) %>%
+  mutate(Total=No+Yes) %>%
+  select(Group,Total,No,Yes,Prevalence)-> summary.table
+
+kable(summary.table, caption="Summary of demographic variables by diabetes incidence")
+write_csv(summary.table, "Type 2 Diabetes Demographics Table.csv")
+```
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```

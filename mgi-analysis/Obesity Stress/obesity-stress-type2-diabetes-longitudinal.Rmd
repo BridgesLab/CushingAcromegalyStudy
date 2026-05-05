@@ -1,0 +1,168 @@
+---
+title: "Longitudinal Association of Obesity and Stress with Type 2 Diabetes"
+author: "Dave Bridges"
+date: "2024-07-17"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+## Purpose
+
+To test the effect modification of obesity on the stress-diabetes relationships in a longitudinal manner.
+
+```{r data-entry}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-longitudinal/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(broom)
+
+input.file <- 'data-combined.csv'
+combined.data <- read_csv(input.file)
+
+#enrollment specific data
+enrollment.datafile <- 'SurveyAnthropometricsBMI.csv'
+enrollment.data <- read_csv(enrollment.datafile)
+
+#combined.data <-
+#  left_join(combined.data,enrollment.data,by="DeID_PatientID")
+```
+
+Loaded in the cleaned data from `r input.file`. This script can be found in `r getwd()` and was most recently run on `r date()`. This dataset has `r dim(combined.data)[1]` values.
+
+The diagnosis of Type 2 Diabetes is shown in the `DeID_Diabetes_Diagnosis` field.  
+
+```{r data-cleaning}
+library(forcats)
+combined.data <- 
+  combined.data %>%
+  mutate(BMI_cat= factor(BMI_cat, 
+                         levels=c("Underweight",
+                                  "Normal",
+                                  "Overweight",
+                                  'Class I Obese',
+                                  'Class II Obese',
+                                  'Class III Obese'))) %>%
+  mutate(BMI_cat.obese= factor(BMI_cat.obese, 
+                               levels=c("Underweight",
+                                        "Normal",
+                                        "Overweight",
+                                        'Obese'))) %>%
+  mutate(BMI_cat.Ob.NonOb= factor(BMI_cat.Ob.NonOb, 
+                                  levels=c("Non-Obese",
+                                           'Obese'))) %>%
+  mutate(Stress=relevel(as.factor(High.Stress),ref="Low")) %>% #set low as reference value
+    mutate(Race.Ethnicity=relevel(as.factor(Race.Ethnicity),ref="White")) %>% #set white as reference value
+  mutate(Stress.quartile=fct_recode(as.factor(Stress.quartile),
+                                    "Q1"="(-0.016,4]",
+                                    "Q2"="(4,8]",
+                                    "Q3"="(8,12]",
+                                    "Q4"="(12,16]")) %>%
+    mutate(Stress.quartile= factor(Stress.quartile, 
+                                  levels=c("Q1","Q2","Q3","Q4"))) 
+  
+```
+
+# Creating a Longitudinal Dataset
+
+## Baseline characteristics
+
+The baseline is the date at which they did the survey (`DeID_SurveyDate`).  At this stage they needed a PSS score and needed not to be diagnosed with type 2 diabetes before that survey.
+
+```{r removing-existing-t2d}
+#Remove baseline diabetes
+library(lubridate)
+combined.data <-
+  combined.data %>%
+  mutate(Diabetes.Diagnosis = ymd_hms(DeID_Diabetes_Diagnosis),
+         Survey.Date = mdy_hm(DeID_Survey_Date),
+         DeID_DeceasedDate = mdy_hm(DeID_DeceasedDate)) %>%
+  mutate(Time.to.Diabetes = (Survey.Date %--% Diabetes.Diagnosis)/ddays(1)) %>%
+  mutate(Follow.Up = case_when(
+    !(is.na(DeID_DeceasedDate))~(Survey.Date %--% DeID_DeceasedDate)/ddays(1),
+    is.na(DeID_DeceasedDate)~(Survey.Date %--% today())/ddays(1))) #should be last encounter
+
+combined.data %>%
+  filter(Type2Diabetes==1,
+         Time.to.Diabetes>0) %>%
+  select(Survey.Date,Diabetes.Diagnosis,DeID_DeceasedDate,Time.to.Diabetes,Follow.Up) %>% 
+  kable(caption="Patients who were diagnosed with diabetes after their survey")
+
+combined.data %>%
+  group_by(Time.to.Diabetes>0) %>%
+  count %>%
+  kable(caption="Summary of patients and type 2 diabetes.  True is got diabetes after the survey, False is got diabetes before the survey.  NA never got diabetes")
+
+with(combined.data, table(Time.to.Diabetes>0,Type2Diabetes)) %>% kable(caption="Confirmation that every patient with diabetes is categorized into before or after")
+
+non.diabetes.data <- 
+  combined.data %>%
+  filter(is.na(Time.to.Diabetes) | Time.to.Diabetes>0)
+
+#need death data for censoring
+#need BMI data near survey event
+#need last encounter
+```
+
+From the `r nrow(combined.data)` dataset, `r nrow(non.diabetes.data)` people did not have diabetes at baseline.  The mean follow up time was `r round(mean(combined.data$Follow.Up)/365,2)` years.
+
+## Removing no PSS Score
+
+```{r no-pss}
+baseline.participants <-
+  non.diabetes.data %>%
+  filter(!is.na(Stress_d1))
+```
+
+Among the `r nrow(non.diabetes.data)`, `r nrow(baseline.participants)` had a value for PSS score.
+
+# Defining the Intervals
+
+The endpoint is one of:
+
+* Diagnosed with diabetes (time from survey to time from diabetes)
+* Last encounter, but still alive (time from survey to last encounter)
+* Death (time from survey to date of death)
+
+```{r endpoint}
+library(survival)
+# event.data <-
+#   baseline.participants %>%
+#   mutate(status=case_when(Type2Diabetes==1~1,
+#                          Type2Diabetes==0~1)) %>%
+#   mutate(time=case_when(Type2Diabetes==1~Time.to.Diabetes,
+#                         Type2Diabetes==0~All.Time))
+# 
+# #with(event.data, Surv(time,status))[1:100] #lots of missing All.Time
+# 
+# #event.data %>% select(All.Time, Time.to.Diabetes, time, Type2Diabetes, status, Survey.Date,DeID_Survey_Date) %>% head
+# 
+# s1 <- survfit(Surv(time, status) ~ 1, data = event.data)
+# library(ggsurvfit)
+# 
+# survfit2(Surv(time, status) ~ BMI_cat.Ob.NonOb, data = event.data) %>% 
+#   ggsurvfit(type="risk") +
+#   labs(
+#     x = "Days",
+#     y = "Diabetes Diagnoses"
+#   )  +
+#   add_confidence_interval() +
+#   add_risktable() +
+#   add_quantile(y_value = 0.6, color = "gray50", linewidth = 0.75) +
+#   scale_ggsurvfit()
+```
+
+# Session Information
+
+```{r sessioninfo}
+sessionInfo()
+```
