@@ -812,11 +812,9 @@ workflow {
     GENOME_SIZES(DOWNLOAD_GENOME.out.fasta)
     DOWNLOAD_BLACKLIST()
 
-    // Convert single-emission outputs to value channels so they can be reused
-    // across all per-sample process invocations.
-    blacklist_v = DOWNLOAD_BLACKLIST.out.bed.first()
-    genome_v    = DOWNLOAD_GENOME.out.fasta.first()
-    index_v     = BUILD_BOWTIE2_INDEX.out.index.collect()
+    // Single-emission process outputs are already value channels in modern
+    // Nextflow; they can be reused across per-sample invocations directly.
+    index_v = BUILD_BOWTIE2_INDEX.out.index.collect()
 
     // Hinte peaks for concordance check only
     DOWNLOAD_GEO_PEAKS()
@@ -826,7 +824,7 @@ workflow {
     DOWNLOAD_AND_ALIGN(sra_ch, index_v)
 
     // Filter (dedup, MAPQ, chrM, blacklist)
-    FILTER_BAM(DOWNLOAD_AND_ALIGN.out.bam, blacklist_v)
+    FILTER_BAM(DOWNLOAD_AND_ALIGN.out.bam, DOWNLOAD_BLACKLIST.out.bed)
 
     // MACS2 per sample
     CALL_PEAKS_MACS2(FILTER_BAM.out.bam)
@@ -834,11 +832,8 @@ workflow {
     // Union peaks (post-blacklist)
     CREATE_UNION_PEAKS(
         CALL_PEAKS_MACS2.out.peaks.map { id, cond, p -> p }.collect(),
-        blacklist_v
+        DOWNLOAD_BLACKLIST.out.bed
     )
-
-    union_saf_v   = CREATE_UNION_PEAKS.out.union_saf.first()
-    union_peaks_v = CREATE_UNION_PEAKS.out.union_peaks.first()
 
     // Concordance: MACS2 vs Hinte. EXTRACT_BED_FILES already emits a single
     // list of files (path output with glob), so no extra .collect() needed.
@@ -848,7 +843,7 @@ workflow {
     )
 
     // Count reads in union peaks
-    COUNT_PEAKS(FILTER_BAM.out.bam, union_saf_v)
+    COUNT_PEAKS(FILTER_BAM.out.bam, CREATE_UNION_PEAKS.out.union_saf)
 
     // ATAC QC: join BAM tuple (id, cond, bam, bai) with summary tuple (id, summary)
     // on sample_id so each task gets a matched pair.
@@ -871,7 +866,7 @@ workflow {
     DESEQ2_ANALYSIS(
         COMBINE_COUNTS.out.count_matrix,
         COMBINE_COUNTS.out.metadata,
-        union_peaks_v
+        CREATE_UNION_PEAKS.out.union_peaks
     )
 
     // Motif analysis: foreground vs background
@@ -885,8 +880,7 @@ workflow {
 
     RESIZE_PEAKS(bed_files_ch)
     DOWNLOAD_JASPAR()
-    jaspar_v = DOWNLOAD_JASPAR.out.jaspar.first()
-    EXTRACT_FASTA(RESIZE_PEAKS.out.bed, genome_v)
+    EXTRACT_FASTA(RESIZE_PEAKS.out.bed, DOWNLOAD_GENOME.out.fasta)
 
     fasta_map = EXTRACT_FASTA.out.fasta
         .map    { bt, fa -> [bt, fa] }
@@ -900,7 +894,7 @@ workflow {
             ['CHD_vs_shared', m['CHD_specific'], m['shared']]
         ]
     }
-    RUN_AME(ame_comparisons, jaspar_v)
+    RUN_AME(ame_comparisons, DOWNLOAD_JASPAR.out.jaspar)
 
     bed_map = RESIZE_PEAKS.out.bed
         .map    { bt, b -> [bt, b] }
@@ -914,7 +908,7 @@ workflow {
             ['CHD_vs_shared', m['CHD_specific'], m['shared']]
         ]
     }
-    RUN_HOMER(homer_comparisons, genome_v)
+    RUN_HOMER(homer_comparisons, DOWNLOAD_GENOME.out.fasta)
 }
 
 workflow.onComplete {
