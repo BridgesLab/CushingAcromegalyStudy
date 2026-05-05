@@ -47,7 +47,7 @@ Describe your raw data files, including what the columns mean (and what units th
 ```{r data-input}
 library(readr) #loads the readr package
 deseq.filename <- "results/deseq2/deseq2_results.txt" #input file(s)
-deseq.counts.filename <- "results/deseq2/deseq2_counts.txt"
+deseq.counts.filename <- "results/deseq2/deseq2_normalized_counts.txt"
 
 deseq.results <- read_tsv(deseq.filename) #reads in the data
 ```
@@ -69,29 +69,23 @@ library(GenomicRanges)
 library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 
-hfd.peaks <- deseq.results |> filter(padj<0.05,log2FoldChange>0) |>
-  mutate(chr.2 = paste0("chr", chr))
-hfd.gr <- with(hfd.peaks, GRanges(seqnames=chr.2, ranges=IRanges(start+1, end))) # if 0-based BED; add +1 to start for GRanges
+# BED files from main.nf use UCSC-style chr-prefixed naming (chr1, chrM, ...)
+# so deseq.results$chr is already "chr1" etc. — no extra prefixing needed.
+hfd.peaks <- deseq.results |> filter(padj<0.05, log2FoldChange>0)
+hfd.gr <- with(hfd.peaks, GRanges(seqnames=chr, ranges=IRanges(start+1, end))) # 0-based BED -> 1-based GRanges
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 
-# Annotate peaks
 hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="org.Mm.eg.db")
-
-# Save annotation table with gene symbols and distance to TSS
 hfd.ann_df <- as.data.frame(hfd.annot)
 
-ncd.peaks <- deseq.results |> filter(padj<0.05,log2FoldChange<0) |>
-  mutate(chr.2 = paste0("chr", chr))
-ncd.gr <- with(ncd.peaks, GRanges(seqnames=chr.2, ranges=IRanges(start+1, end))) # if 0-based BED; add +1 to start for GRanges
+ncd.peaks <- deseq.results |> filter(padj<0.05, log2FoldChange<0)
+ncd.gr <- with(ncd.peaks, GRanges(seqnames=chr, ranges=IRanges(start+1, end)))
 
-# Annotate peaks
 ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="org.Mm.eg.db")
-
-# Save annotation table with gene symbols and distance to TSS
 ncd.ann_df <- as.data.frame(ncd.annot)
 
-all.gr <- with(deseq.results |> mutate(chr.2 = paste0("chr", chr)), GRanges(seqnames=chr.2, ranges=IRanges(start+1, end)))
-all.ann_df <- as.data.frame(annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="org.Mm.eg.db"))
+all.gr <- with(deseq.results, GRanges(seqnames=chr, ranges=IRanges(start+1, end)))
+all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="org.Mm.eg.db"))
 ```
 
 These `r nrow(hfd.peaks)` chromatin regions that were differentially opened by HFD were annotated as closest to `r length(unique(hfd.ann_df$SYMBOL))` unique genes, whereas the `r nrow(ncd.peaks)` regions more accessible in NCD were annotated as closest to `r length(unique(ncd.ann_df$SYMBOL))` unique genes.  
@@ -101,7 +95,10 @@ These `r nrow(hfd.peaks)` chromatin regions that were differentially opened by H
 ```{r volcano-regions}
 library(ggplot2)
 library(ggrepel)
-deseq.results.annot <- deseq.results |> left_join(all.ann_df, by=c("end"="end"))
+# Join on chromosome AND end so peaks on different chromosomes can't collide.
+# all.ann_df$seqnames == deseq.results$chr; all.ann_df$end == deseq.results$end.
+deseq.results.annot <- deseq.results |>
+  left_join(all.ann_df, by=c("chr"="seqnames", "end"="end"))
 
 ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
   geom_point(alpha=0.4) +
@@ -109,8 +106,11 @@ ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
   xlab("Log2 Fold Change (HFD vs NCD)") +
   ylab("-Log10 P-value") +
   ggtitle("Differentially Accessible Regions") +
-  ggrepel::geom_text_repel(data=deseq.results |> left_join(all.ann_df, by=c("end"="end")) |> filter(padj<0.05 & abs(log2FoldChange)>0.5) |> arrange(padj) |> head(10),
-                           aes(label=SYMBOL), size=5, max.overlaps=Inf) +
+  ggrepel::geom_text_repel(
+    data = deseq.results.annot |>
+      filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
+      arrange(padj) |> head(10),
+    aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
   geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
   geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
   theme_classic(base_size=16)
