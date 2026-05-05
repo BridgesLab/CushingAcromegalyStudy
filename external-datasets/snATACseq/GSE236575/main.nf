@@ -149,8 +149,17 @@ process DOWNLOAD_GEO_PEAKS {
 }
 
 /*
- * Extract Hinte CHD/HFD BED files. Uses an explicit allowlist of sample IDs
- * rather than substring matching so LCHD/LHFD/CC/HC cannot leak through.
+ * Extract Hinte CHD/HFD BED files for the concordance check.
+ *
+ * GEO supplementary file naming is not 100% reliable across studies, so we
+ * use a substring filter: keep filenames containing CHD or HFD, but exclude
+ * LCHD, LHFD, CC, HC (other arms of the study). All replicates within a
+ * condition are merged into hinte_CHD.bed / hinte_HFD.bed -- the concordance
+ * check operates per condition rather than per replicate, so we don't need
+ * to parse replicate numbers out of arbitrary filename conventions.
+ *
+ * file_list.txt records which input files contributed to which condition
+ * for traceability.
  */
 process EXTRACT_BED_FILES {
     publishDir "${params.outdir}/bed_files", mode: 'copy'
@@ -163,24 +172,32 @@ process EXTRACT_BED_FILES {
     path "file_list.txt", emit: file_list
 
     script:
-    def keep_ids = params.sra_samples.collect { it.id }.join(' ')
     """
+    set -e
     mkdir -p _all
     tar -xf ${tar_file} -C _all
 
-    > file_list.txt
-    for id in ${keep_ids}; do
-        # Match files containing the sample ID surrounded by non-alphanumerics
-        # (e.g. GSMxxxx_CHD_1_peaks.bed.gz) but NOT LCHD_1, LHFD_1, etc.
-        match=\$(ls _all/*.bed.gz 2>/dev/null | grep -E "[^A-Za-z]\${id}[^0-9A-Za-z]" || true)
-        if [ -z "\$match" ]; then
-            echo "WARNING: no GEO BED matching sample \${id}"
-            continue
+    echo "=== All BED files in tar ===" > file_list.txt
+    ls _all/*.bed.gz 2>/dev/null | sort >> file_list.txt || true
+
+    for cond in CHD HFD; do
+        # Substring match for the condition, excluding the other study arms
+        files=\$(ls _all/*.bed.gz 2>/dev/null | grep "\${cond}" | grep -v -E '(LCHD|LHFD|CC|HC)' || true)
+
+        if [ -z "\$files" ]; then
+            echo "ERROR: no \${cond} BED files found in tar." >&2
+            echo "Files present:" >&2
+            ls _all/ >&2
+            exit 1
         fi
-        for f in \$match; do
-            base=\$(basename "\$f" .bed.gz)
-            gunzip -c "\$f" > "hinte_\${id}.bed.tmp"
-            # Convert Ensembl-style (1, 2, MT, X, Y) to UCSC-style (chr1, chrM, ...)
+
+        echo "" >> file_list.txt
+        echo "=== \${cond} files used ===" >> file_list.txt
+        echo "\$files" | tr ' ' '\\n' >> file_list.txt
+
+        # Merge all replicates for this condition, normalize Ensembl->UCSC chr
+        # naming, sort, and bedtools merge.
+        gunzip -c \$files | \
             awk 'BEGIN{OFS="\\t"}
                  {
                    c=\$1
@@ -188,14 +205,16 @@ process EXTRACT_BED_FILES {
                    else if (c ~ /^(chr|GL|JH)/) c=c
                    else c="chr"c
                    print c, \$2, \$3
-                 }' "hinte_\${id}.bed.tmp" > "hinte_\${id}.bed"
-            rm "hinte_\${id}.bed.tmp"
-            echo "\${id}\t\$f" >> file_list.txt
-        done
+                 }' | \
+            sort -k1,1 -k2,2n | \
+            bedtools merge -i - > "hinte_\${cond}.bed"
+
+        echo "hinte_\${cond}.bed: \$(wc -l < hinte_\${cond}.bed) merged peaks" >> file_list.txt
     done
 
-    echo "Hinte BED files (chr-normalized):"
-    wc -l hinte_*.bed
+    echo ""
+    echo "=== file_list.txt ==="
+    cat file_list.txt
     """
 }
 
@@ -377,7 +396,11 @@ process CREATE_UNION_PEAKS {
 
 /*
  * Concordance check: how well do MACS2 peaks recapitulate Hinte's pre-called peaks?
- * Reports per-sample overlap counts and Jaccard.
+ *
+ * Hinte BEDs are merged-per-condition (hinte_CHD.bed, hinte_HFD.bed). For each
+ * MACS2 sample we report overlap and Jaccard against the matching condition's
+ * Hinte set. Also reports condition-level merged MACS2 vs Hinte for an overall
+ * comparison.
  */
 process COMPARE_TO_HINTE {
     publishDir "${params.outdir}/hinte_concordance", mode: 'copy'
@@ -392,24 +415,47 @@ process COMPARE_TO_HINTE {
 
     script:
     """
+    set -e
     > concordance_report.txt
+    echo -e "level\\tsample\\tMACS2_peaks\\tHinte_peaks\\tMACS2_overlapping\\tJaccard" >> concordance_report.txt
+
     for s in CHD_1 CHD_2 CHD_3 HFD_1 HFD_2 HFD_3; do
         macs="\${s}_peaks.narrowPeak"
-        hin="hinte_\${s}.bed"
-        if [ ! -s \$macs ] || [ ! -s \$hin ]; then
-            echo "MISSING \$macs or \$hin" >> concordance_report.txt
+        cond=\$(echo \$s | cut -d_ -f1)
+        hin="hinte_\${cond}.bed"
+        if [ ! -s "\$macs" ] || [ ! -s "\$hin" ]; then
+            echo -e "per-sample\\t\${s}\\tMISSING (\$macs or \$hin)" >> concordance_report.txt
             continue
         fi
-        macs_n=\$(wc -l < \$macs)
-        hin_n=\$(wc -l < \$hin)
-        sort -k1,1 -k2,2n \$macs | cut -f1-3 > _m.bed
-        sort -k1,1 -k2,2n \$hin > _h.bed
+        macs_n=\$(wc -l < "\$macs")
+        hin_n=\$(wc -l < "\$hin")
+        sort -k1,1 -k2,2n "\$macs" | cut -f1-3 > _m.bed
+        sort -k1,1 -k2,2n "\$hin"  > _h.bed
         overlap=\$(bedtools intersect -u -a _m.bed -b _h.bed | wc -l)
         jacc=\$(bedtools jaccard -a _m.bed -b _h.bed | tail -n1 | awk '{print \$3}')
-        bedtools jaccard -a _m.bed -b _h.bed > \${s}_jaccard.txt
-        echo -e "\${s}\\tMACS2_peaks:\${macs_n}\\tHinte_peaks:\${hin_n}\\tMACS2_overlapping:\${overlap}\\tJaccard:\${jacc}" >> concordance_report.txt
+        bedtools jaccard -a _m.bed -b _h.bed > "\${s}_jaccard.txt"
+        echo -e "per-sample\\t\${s}\\t\${macs_n}\\t\${hin_n}\\t\${overlap}\\t\${jacc}" >> concordance_report.txt
         rm _m.bed _h.bed
     done
+
+    # Condition-level overall comparison: union of MACS2 calls per condition vs Hinte's merged set
+    for cond in CHD HFD; do
+        macs_files=\$(ls \${cond}_*_peaks.narrowPeak 2>/dev/null || true)
+        hin="hinte_\${cond}.bed"
+        if [ -z "\$macs_files" ] || [ ! -s "\$hin" ]; then
+            echo -e "condition\\t\${cond}\\tMISSING" >> concordance_report.txt
+            continue
+        fi
+        cat \$macs_files | cut -f1-3 | sort -k1,1 -k2,2n | bedtools merge -i - > _macs_cond.bed
+        macs_n=\$(wc -l < _macs_cond.bed)
+        hin_n=\$(wc -l < "\$hin")
+        overlap=\$(bedtools intersect -u -a _macs_cond.bed -b "\$hin" | wc -l)
+        jacc=\$(bedtools jaccard -a _macs_cond.bed -b "\$hin" | tail -n1 | awk '{print \$3}')
+        bedtools jaccard -a _macs_cond.bed -b "\$hin" > "\${cond}_merged_jaccard.txt"
+        echo -e "condition\\t\${cond}\\t\${macs_n}\\t\${hin_n}\\t\${overlap}\\t\${jacc}" >> concordance_report.txt
+        rm _macs_cond.bed
+    done
+
     cat concordance_report.txt
     """
 }

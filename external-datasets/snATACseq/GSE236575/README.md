@@ -66,7 +66,7 @@ URL: `https://github.com/Boyle-Lab/Blacklist/raw/master/lists/mm10-blacklist.v2.
 
 Downloads `GSE236575_RAW.tar` from GEO. The included BED files were called by the authors at "FDR 0.01% stringent" (peak-caller and exact parameters: see Hinte et al. 2023 Methods). These are **not** used for the differential analysis here — only for the `COMPARE_TO_HINTE` concordance check.
 
-Sample-ID-based allowlist filter uses an explicit list of `CHD_1, CHD_2, CHD_3, HFD_1, HFD_2, HFD_3` with a regex requiring non-alphabetic characters before/after the ID, so `LCHD_*` and `LHFD_*` cannot leak through. Chromosome names are normalized to UCSC form on extraction.
+GEO supplementary filename conventions are unreliable across studies, so the filter uses substring matching: keep filenames containing `CHD` or `HFD`, exclude `LCHD`, `LHFD`, `CC`, `HC` (other arms of the study). All replicates within a condition are then merged into `hinte_CHD.bed` / `hinte_HFD.bed` — concordance is computed per condition rather than per replicate, which avoids needing to parse replicate numbers out of arbitrary filenames. Chromosome names are normalized to UCSC form on extraction. The full list of input files used is recorded in `bed_files/file_list.txt`.
 
 ### 4. Read alignment
 
@@ -119,13 +119,14 @@ Per-sample narrow peak calling on cleaned BAMs.
 
 **Process**: `COMPARE_TO_HINTE`
 
-For each of the 6 samples, reports:
-- MACS2 peak count
-- Hinte peak count
-- Number of MACS2 peaks overlapping at least one Hinte peak
-- Bedtools Jaccard index between the two sets
+Two levels of comparison:
 
-Output: `hinte_concordance/concordance_report.txt` plus per-sample `*_jaccard.txt`.
+1. **Per-sample**: each of the 6 MACS2 sample peak sets vs the matching condition's merged Hinte set (`hinte_CHD.bed` or `hinte_HFD.bed`).
+2. **Per-condition**: the union of all MACS2 peaks for a condition (all 3 reps merged) vs the matching merged Hinte set.
+
+Each comparison reports MACS2 peak count, Hinte peak count, number of MACS2 peaks overlapping a Hinte peak, and bedtools Jaccard index.
+
+Output: `hinte_concordance/concordance_report.txt` plus per-sample / per-condition `*_jaccard.txt`.
 
 Concordance lets you decide whether MACS2 stringency matches Hinte's well enough for downstream comparisons; large divergence is a flag to revisit MACS2 settings.
 
