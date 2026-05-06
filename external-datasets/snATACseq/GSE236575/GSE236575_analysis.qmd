@@ -42,7 +42,7 @@ This script analyses the results from a DESeq2 and MEME analysis of GSE236575.  
 
 ## Raw Data
 
-Describe your raw data files, including what the columns mean (and what units they are in).
+The DESeq2 analysis was done on the remote server (see `main.nf` for commands).  This script loads in both those results and the raw counts that were used for that analysis.  
 
 ```{r data-input}
 library(readr) #loads the readr package

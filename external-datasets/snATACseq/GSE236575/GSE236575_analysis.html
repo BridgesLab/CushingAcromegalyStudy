@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Analysis of DESeq and MEME analysis of GSE236575</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -67,10 +70,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="GSE236575_analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="GSE236575_analysis_files/libs/quarto-html/anchor.min.js"></script>
 <link href="GSE236575_analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="GSE236575_analysis_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="GSE236575_analysis_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="GSE236575_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="GSE236575_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="GSE236575_analysis_files/libs/bootstrap/bootstrap-ff7067f47e26017551bec3c0280d8ab3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="GSE236575_analysis_files/libs/bootstrap/bootstrap-d4791fd432f8730d65180f3796899ee9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -133,7 +136,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide this code chunk</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide this code chunk</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -146,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># sets maize and blue color scheme</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#00274c"</span>, <span class="st">"#ffcb05"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#00274c"</span>, <span class="st">"#ffcb05"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="purpose" class="level2">
@@ -155,117 +158,128 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="raw-data" class="level2">
 <h2 class="anchored" data-anchor-id="raw-data">Raw Data</h2>
-<p>Describe your raw data files, including what the columns mean (and what units they are in).</p>
+<p>The DESeq2 analysis was done on the remote server (see <code>main.nf</code> for commands). This script loads in both those results and the raw counts that were used for that analysis.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co">#loads the readr package</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co">#loads the readr package</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>deseq.filename <span class="ot">&lt;-</span> <span class="st">"results/deseq2/deseq2_results.txt"</span> <span class="co">#input file(s)</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>deseq.counts.filename <span class="ot">&lt;-</span> <span class="st">"results/deseq2/deseq2_counts.txt"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>deseq.counts.filename <span class="ot">&lt;-</span> <span class="st">"results/deseq2/deseq2_normalized_counts.txt"</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>deseq.results <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(deseq.filename) <span class="co">#reads in the data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>deseq.results <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(deseq.filename) <span class="co">#reads in the data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2025-11-20. This script was most recently updated on Thu Nov 20 09:59:01 2025.</p>
+<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2026-05-06. This script was most recently updated on Wed May 6 17:20:36 2026.</p>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-<p>There were 59586 regions analyzed in this dataset. Of these, 14754 (24.7608499%) were found to be significantly differentially accessible comparing the NCD to HFD adipocytes at an FDR of 0.05. Of those significant regions, 7530 (51.0370069%) were upregulated in HFD adipocytes and (48.9629931%) were more accessible in NCD adipocytes.</p>
-<p>Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of 1.0674128 +/- 0.0044553, while the NCD adipocytes had an average log2 fold change of -0.7118612 +/- 0.0026831.</p>
+<p>There were 61619 regions analyzed in this dataset. Of these, 14872 (24.1354128%) were found to be significantly differentially accessible comparing the NCD to HFD adipocytes at an FDR of 0.05. Of those significant regions, 8612 (57.9074771%) were upregulated in HFD adipocytes and (42.0925229%) were more accessible in NCD adipocytes.</p>
+<p>Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of 1.5394525 +/- 0.0065426, while the NCD adipocytes had an average log2 fold change of -0.817636 +/- 0.0037877.</p>
 <section id="annotation-to-known-genes" class="level3">
 <h3 class="anchored" data-anchor-id="annotation-to-known-genes">Annotation to known genes</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ChIPseeker)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ChIPseeker)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TxDb.Mmusculus.UCSC.mm10.knownGene)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(org.Mm.eg.db)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>hfd.peaks <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span> <span class="fu">filter</span>(padj<span class="sc">&lt;</span><span class="fl">0.05</span>,log2FoldChange<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">chr.2 =</span> <span class="fu">paste0</span>(<span class="st">"chr"</span>, chr))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>hfd.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(hfd.peaks, <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr<span class="fl">.2</span>, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end))) <span class="co"># if 0-based BED; add +1 to start for GRanges</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>txdb <span class="ot">&lt;-</span> TxDb.Mmusculus.UCSC.mm10.knownGene</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotate peaks</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>hfd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(hfd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># BED files from main.nf use UCSC-style chr-prefixed naming (chr1, chrM, ...)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># so deseq.results$chr is already "chr1" etc. — no extra prefixing needed.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>hfd.peaks <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span> <span class="fu">filter</span>(padj<span class="sc">&lt;</span><span class="fl">0.05</span>, log2FoldChange<span class="sc">&gt;</span><span class="dv">0</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>hfd.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(hfd.peaks, <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end))) <span class="co"># 0-based BED -&gt; 1-based GRanges</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>txdb <span class="ot">&lt;-</span> TxDb.Mmusculus.UCSC.mm10.knownGene</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>hfd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(hfd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2025-11-20 09:59:06 
-&gt;&gt; identifying nearest features...       2025-11-20 09:59:07 
-&gt;&gt; calculating distance from peak to TSS...  2025-11-20 09:59:07 
-&gt;&gt; assigning genomic annotation...       2025-11-20 09:59:07 
-&gt;&gt; adding gene annotation...             2025-11-20 09:59:20 </code></pre>
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:41 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; identifying nearest features...       2026-05-06 17:20:41 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:42 
+&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:42 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; adding gene annotation...             2026-05-06 17:20:51 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2025-11-20 09:59:20 
-&gt;&gt; done...                   2025-11-20 09:59:20 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:51 
+&gt;&gt; done...                   2026-05-06 17:20:51 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save annotation table with gene symbols and distance to TSS</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>hfd.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(hfd.annot)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ncd.peaks <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span> <span class="fu">filter</span>(padj<span class="sc">&lt;</span><span class="fl">0.05</span>,log2FoldChange<span class="sc">&lt;</span><span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">chr.2 =</span> <span class="fu">paste0</span>(<span class="st">"chr"</span>, chr))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ncd.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(ncd.peaks, <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr<span class="fl">.2</span>, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end))) <span class="co"># if 0-based BED; add +1 to start for GRanges</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotate peaks</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ncd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(ncd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hfd.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(hfd.annot)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ncd.peaks <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span> <span class="fu">filter</span>(padj<span class="sc">&lt;</span><span class="fl">0.05</span>, log2FoldChange<span class="sc">&lt;</span><span class="dv">0</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ncd.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(ncd.peaks, <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end)))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ncd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(ncd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2025-11-20 09:59:20 
-&gt;&gt; identifying nearest features...       2025-11-20 09:59:20 
-&gt;&gt; calculating distance from peak to TSS...  2025-11-20 09:59:21 
-&gt;&gt; assigning genomic annotation...       2025-11-20 09:59:21 
-&gt;&gt; adding gene annotation...             2025-11-20 09:59:22 </code></pre>
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:51 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; identifying nearest features...       2026-05-06 17:20:51 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:52 
+&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:52 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; adding gene annotation...             2026-05-06 17:20:53 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2025-11-20 09:59:22 
-&gt;&gt; done...                   2025-11-20 09:59:22 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:53 
+&gt;&gt; done...                   2026-05-06 17:20:53 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save annotation table with gene symbols and distance to TSS</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ncd.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ncd.annot)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>all.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(deseq.results <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">chr.2 =</span> <span class="fu">paste0</span>(<span class="st">"chr"</span>, chr)), <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr<span class="fl">.2</span>, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end)))</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>all.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">annotatePeak</span>(hfd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ncd.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ncd.annot)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>all.gr <span class="ot">&lt;-</span> <span class="fu">with</span>(deseq.results, <span class="fu">GRanges</span>(<span class="at">seqnames=</span>chr, <span class="at">ranges=</span><span class="fu">IRanges</span>(start<span class="sc">+</span><span class="dv">1</span>, end)))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>all.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">annotatePeak</span>(all.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2025-11-20 09:59:22 
-&gt;&gt; identifying nearest features...       2025-11-20 09:59:22 
-&gt;&gt; calculating distance from peak to TSS...  2025-11-20 09:59:23 
-&gt;&gt; assigning genomic annotation...       2025-11-20 09:59:23 
-&gt;&gt; adding gene annotation...             2025-11-20 09:59:25 </code></pre>
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:53 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; identifying nearest features...       2026-05-06 17:20:53 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:54 
+&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:54 
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; adding gene annotation...             2026-05-06 17:20:55 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2025-11-20 09:59:25 
-&gt;&gt; done...                   2025-11-20 09:59:25 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:56 
+&gt;&gt; done...                   2026-05-06 17:20:56 </code></pre>
 </div>
 </div>
-<p>These 7530 chromatin regions that were differentially opened by HFD were annotated as closest to 4128 unique genes, whereas the 7224 regions more accessible in NCD were annotated as closest to 4602 unique genes.</p>
+<p>These 8612 chromatin regions that were differentially opened by HFD were annotated as closest to 4632 unique genes, whereas the 6260 regions more accessible in NCD were annotated as closest to 3560 unique genes.</p>
 </section>
 <section id="volcano-plots-of-regions" class="level3">
 <h3 class="anchored" data-anchor-id="volcano-plots-of-regions">Volcano Plots of Regions</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>deseq.results.annot <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span> <span class="fu">left_join</span>(all.ann_df, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"end"</span><span class="ot">=</span><span class="st">"end"</span>))</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(deseq.results.annot, <span class="fu">aes</span>(<span class="at">x=</span>log2FoldChange, <span class="at">y=</span><span class="sc">-</span><span class="fu">log10</span>(pvalue))) <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Log2 Fold Change (HFD vs NCD)"</span>) <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"-Log10 P-value"</span>) <span class="sc">+</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Differentially Accessible Regions"</span>) <span class="sc">+</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data=</span>deseq.results <span class="sc">|&gt;</span> <span class="fu">left_join</span>(all.ann_df, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"end"</span><span class="ot">=</span><span class="st">"end"</span>)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(padj<span class="sc">&lt;</span><span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(log2FoldChange)<span class="sc">&gt;</span><span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(padj) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>),</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label=</span>SYMBOL), <span class="at">size=</span><span class="dv">5</span>, <span class="at">max.overlaps=</span><span class="cn">Inf</span>) <span class="sc">+</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">color=</span><span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">color=</span><span class="st">"blue"</span>) <span class="sc">+</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Join on chromosome AND end so peaks on different chromosomes can't collide.</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># all.ann_df$seqnames == deseq.results$chr; all.ann_df$end == deseq.results$end.</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>deseq.results.annot <span class="ot">&lt;-</span> deseq.results <span class="sc">|&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(all.ann_df, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"chr"</span><span class="ot">=</span><span class="st">"seqnames"</span>, <span class="st">"end"</span><span class="ot">=</span><span class="st">"end"</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(deseq.results.annot, <span class="fu">aes</span>(<span class="at">x=</span>log2FoldChange, <span class="at">y=</span><span class="sc">-</span><span class="fu">log10</span>(pvalue))) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Log2 Fold Change (HFD vs NCD)"</span>) <span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"-Log10 P-value"</span>) <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Differentially Accessible Regions"</span>) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> deseq.results.annot <span class="sc">|&gt;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(log2FoldChange) <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(padj) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>),</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> SYMBOL), <span class="at">size =</span> <span class="dv">5</span>, <span class="at">max.overlaps =</span> <span class="cn">Inf</span>) <span class="sc">+</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">color=</span><span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">color=</span><span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -281,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>hfd.gobp <span class="ot">&lt;-</span> <span class="fu">enrichGO</span>(<span class="at">gene          =</span> <span class="fu">bitr</span>(<span class="fu">unique</span>(hfd.ann_df<span class="sc">$</span>SYMBOL), </span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fromType =</span> <span class="st">"SYMBOL"</span>,</span>
@@ -295,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">qvalueCutoff  =</span> <span class="fl">0.05</span>,</span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">readable      =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -306,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -317,8 +331,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(enrichplot)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">emapplot</span>(<span class="fu">pairwise_termsim</span>(hfd.gobp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(enrichplot)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">emapplot</span>(<span class="fu">pairwise_termsim</span>(hfd.gobp))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -329,8 +343,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#transfac</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(msigdbr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#transfac</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(msigdbr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="gene-transcription-regulation-database" class="level4">
@@ -338,7 +352,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gtrd <span class="ot">&lt;-</span> <span class="fu">msigdbr</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gtrd <span class="ot">&lt;-</span> <span class="fu">msigdbr</span>(</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">db_species=</span><span class="st">"MM"</span>,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">species =</span> <span class="st">"Mus musculus"</span>,</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">subcollection=</span><span class="st">"GTRD"</span></span>
@@ -349,7 +363,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(hfd.ann_df<span class="sc">$</span>SYMBOL),                              <span class="co"># your ENTREZ or SYMBOL list</span></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">TERM2GENE =</span> gtrd[, <span class="fu">c</span>(<span class="st">"gs_name"</span>, <span class="st">"gene_symbol"</span>)]</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -360,7 +374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -371,13 +385,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#emapplot(pairwise_termsim(hfd.gobp.gtrd))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#emapplot(pairwise_termsim(hfd.gobp.gtrd))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ncd.gobp <span class="ot">&lt;-</span> <span class="fu">enrichGO</span>(<span class="at">gene          =</span> <span class="fu">bitr</span>(<span class="fu">unique</span>(ncd.ann_df<span class="sc">$</span>SYMBOL), </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ncd.gobp <span class="ot">&lt;-</span> <span class="fu">enrichGO</span>(<span class="at">gene          =</span> <span class="fu">bitr</span>(<span class="fu">unique</span>(ncd.ann_df<span class="sc">$</span>SYMBOL), </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fromType =</span> <span class="st">"SYMBOL"</span>,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">toType =</span> <span class="st">"ENTREZID"</span>,</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">OrgDb =</span> org.Mm.eg.db)<span class="sc">$</span>ENTREZID,</span>
@@ -389,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">qvalueCutoff  =</span> <span class="fl">0.05</span>,</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">readable      =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(ncd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(ncd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -400,7 +414,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(ncd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(ncd.gobp, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -411,7 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emapplot</span>(<span class="fu">pairwise_termsim</span>(ncd.gobp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emapplot</span>(<span class="fu">pairwise_termsim</span>(ncd.gobp))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -437,16 +451,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.5.2 (2025-10-31)
-Platform: aarch64-apple-darwin20
-Running under: macOS Tahoe 26.1
+<pre><code>R version 4.6.0 (2026-04-24)
+Platform: aarch64-apple-darwin23
+Running under: macOS Tahoe 26.4.1
 
 Matrix products: default
-BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
-LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -459,148 +473,161 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] msigdbr_25.1.1                           
- [2] enrichplot_1.28.4                        
- [3] clusterProfiler_4.16.0                   
- [4] ggrepel_0.9.6                            
- [5] org.Mm.eg.db_3.21.0                      
+ [1] msigdbr_26.1.0                           
+ [2] enrichplot_1.32.0                        
+ [3] clusterProfiler_4.20.0                   
+ [4] ggrepel_0.9.8                            
+ [5] org.Mm.eg.db_3.23.0                      
  [6] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
- [7] GenomicFeatures_1.60.0                   
- [8] AnnotationDbi_1.70.0                     
- [9] Biobase_2.68.0                           
-[10] GenomicRanges_1.60.0                     
-[11] GenomeInfoDb_1.44.3                      
-[12] IRanges_2.42.0                           
-[13] S4Vectors_0.46.0                         
-[14] BiocGenerics_0.54.1                      
+ [7] GenomicFeatures_1.64.0                   
+ [8] AnnotationDbi_1.74.0                     
+ [9] Biobase_2.72.0                           
+[10] GenomicRanges_1.64.0                     
+[11] Seqinfo_1.2.0                            
+[12] IRanges_2.46.0                           
+[13] S4Vectors_0.50.0                         
+[14] BiocGenerics_0.58.0                      
 [15] generics_0.1.4                           
-[16] ChIPseeker_1.44.0                        
-[17] lubridate_1.9.4                          
+[16] ChIPseeker_1.48.0                        
+[17] lubridate_1.9.5                          
 [18] forcats_1.0.1                            
 [19] stringr_1.6.0                            
-[20] dplyr_1.1.4                              
-[21] purrr_1.2.0                              
-[22] readr_2.1.6                              
-[23] tidyr_1.3.1                              
-[24] tibble_3.3.0                             
-[25] ggplot2_4.0.1                            
+[20] dplyr_1.2.1                              
+[21] purrr_1.2.2                              
+[22] readr_2.2.0                              
+[23] tidyr_1.3.2                              
+[24] tibble_3.3.1                             
+[25] ggplot2_4.0.3                            
 [26] tidyverse_2.0.0                          
 
 loaded via a namespace (and not attached):
-  [1] RColorBrewer_1.1-3                     
-  [2] rstudioapi_0.17.1                      
-  [3] jsonlite_2.0.0                         
-  [4] magrittr_2.0.4                         
-  [5] ggtangle_0.0.8                         
-  [6] farver_2.1.2                           
-  [7] rmarkdown_2.30                         
-  [8] fs_1.6.6                               
-  [9] BiocIO_1.18.0                          
- [10] vctrs_0.6.5                            
- [11] memoise_2.0.1                          
- [12] Rsamtools_2.24.1                       
- [13] RCurl_1.98-1.17                        
- [14] ggtree_3.16.3                          
- [15] htmltools_0.5.8.1                      
- [16] S4Arrays_1.8.1                         
- [17] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
- [18] plotrix_3.8-13                         
- [19] curl_7.0.0                             
- [20] SparseArray_1.8.1                      
- [21] gridGraphics_0.5-1                     
- [22] KernSmooth_2.23-26                     
- [23] htmlwidgets_1.6.4                      
- [24] plyr_1.8.9                             
- [25] cachem_1.1.0                           
- [26] GenomicAlignments_1.44.0               
- [27] igraph_2.2.1                           
- [28] lifecycle_1.0.4                        
- [29] pkgconfig_2.0.3                        
- [30] gson_0.1.0                             
- [31] Matrix_1.7-4                           
- [32] R6_2.6.1                               
- [33] fastmap_1.2.0                          
- [34] GenomeInfoDbData_1.2.14                
- [35] MatrixGenerics_1.20.0                  
- [36] digest_0.6.38                          
- [37] aplot_0.2.9                            
- [38] patchwork_1.3.2                        
- [39] RSQLite_2.4.4                          
- [40] labeling_0.4.3                         
- [41] timechange_0.3.0                       
- [42] httr_1.4.7                             
- [43] abind_1.4-8                            
- [44] compiler_4.5.2                         
- [45] bit64_4.6.0-1                          
- [46] withr_3.0.2                            
- [47] S7_0.2.1                               
- [48] BiocParallel_1.42.2                    
- [49] DBI_1.2.3                              
- [50] gplots_3.2.0                           
- [51] R.utils_2.13.0                         
- [52] rappdirs_0.3.3                         
- [53] DelayedArray_0.34.1                    
- [54] rjson_0.2.23                           
- [55] caTools_1.18.3                         
- [56] gtools_3.9.5                           
- [57] tools_4.5.2                            
- [58] ape_5.8-1                              
- [59] R.oo_1.27.1                            
- [60] glue_1.8.0                             
- [61] restfulr_0.0.16                        
- [62] nlme_3.1-168                           
- [63] GOSemSim_2.34.0                        
- [64] grid_4.5.2                             
- [65] reshape2_1.4.5                         
- [66] fgsea_1.34.2                           
- [67] gtable_0.3.6                           
- [68] tzdb_0.5.0                             
- [69] R.methodsS3_1.8.2                      
- [70] data.table_1.17.8                      
- [71] hms_1.1.4                              
- [72] XVector_0.48.0                         
- [73] pillar_1.11.1                          
- [74] babelgene_22.9                         
- [75] yulab.utils_0.2.1                      
- [76] vroom_1.6.6                            
- [77] splines_4.5.2                          
- [78] treeio_1.32.0                          
- [79] lattice_0.22-7                         
- [80] rtracklayer_1.68.0                     
- [81] bit_4.6.0                              
- [82] tidyselect_1.2.1                       
- [83] GO.db_3.21.0                           
- [84] Biostrings_2.76.0                      
- [85] knitr_1.50                             
- [86] SummarizedExperiment_1.38.1            
- [87] xfun_0.54                              
- [88] matrixStats_1.5.0                      
- [89] stringi_1.8.7                          
- [90] UCSC.utils_1.4.0                       
- [91] lazyeval_0.2.2                         
- [92] ggfun_0.2.0                            
- [93] yaml_2.3.10                            
- [94] boot_1.3-32                            
- [95] evaluate_1.0.5                         
- [96] codetools_0.2-20                       
- [97] qvalue_2.40.0                          
- [98] ggplotify_0.1.3                        
- [99] cli_3.6.5                              
-[100] Rcpp_1.1.0                             
-[101] png_0.1-8                              
-[102] XML_3.99-0.20                          
-[103] parallel_4.5.2                         
-[104] assertthat_0.2.1                       
-[105] blob_1.2.4                             
-[106] DOSE_4.2.0                             
-[107] bitops_1.0-9                           
-[108] tidytree_0.4.6                         
-[109] scales_1.4.0                           
-[110] crayon_1.5.3                           
-[111] rlang_1.1.6                            
-[112] cowplot_1.2.0                          
-[113] fastmatch_1.1-6                        
-[114] KEGGREST_1.48.1                        </code></pre>
+  [1] RColorBrewer_1.1-3                      
+  [2] rstudioapi_0.18.0                       
+  [3] jsonlite_2.0.0                          
+  [4] tidydr_0.0.6                            
+  [5] magrittr_2.0.5                          
+  [6] ggtangle_0.1.2                          
+  [7] farver_2.1.2                            
+  [8] rmarkdown_2.31                          
+  [9] fs_2.1.0                                
+ [10] BiocIO_1.22.0                           
+ [11] vctrs_0.7.3                             
+ [12] memoise_2.0.1                           
+ [13] Rsamtools_2.28.0                        
+ [14] RCurl_1.98-1.18                         
+ [15] ggtree_4.2.0                            
+ [16] htmltools_0.5.9                         
+ [17] S4Arrays_1.12.0                         
+ [18] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
+ [19] plotrix_3.8-14                          
+ [20] curl_7.1.0                              
+ [21] SparseArray_1.12.2                      
+ [22] gridGraphics_0.5-1                      
+ [23] KernSmooth_2.23-26                      
+ [24] htmlwidgets_1.6.4                       
+ [25] httr2_1.2.2                             
+ [26] plyr_1.8.9                              
+ [27] cachem_1.1.0                            
+ [28] GenomicAlignments_1.48.0                
+ [29] igraph_2.3.1                            
+ [30] lifecycle_1.0.5                         
+ [31] pkgconfig_2.0.3                         
+ [32] gson_0.1.0                              
+ [33] Matrix_1.7-5                            
+ [34] R6_2.6.1                                
+ [35] fastmap_1.2.0                           
+ [36] MatrixGenerics_1.24.0                   
+ [37] digest_0.6.39                           
+ [38] aplot_0.2.9                             
+ [39] ggnewscale_0.5.2                        
+ [40] aisdk_1.1.0                             
+ [41] patchwork_1.3.2                         
+ [42] RSQLite_2.4.6                           
+ [43] labeling_0.4.3                          
+ [44] timechange_0.4.0                        
+ [45] polyclip_1.10-7                         
+ [46] httr_1.4.8                              
+ [47] abind_1.4-8                             
+ [48] compiler_4.6.0                          
+ [49] bit64_4.8.0                             
+ [50] fontquiver_0.2.1                        
+ [51] withr_3.0.2                             
+ [52] S7_0.2.2                                
+ [53] BiocParallel_1.46.0                     
+ [54] DBI_1.3.0                               
+ [55] gplots_3.3.0                            
+ [56] ggforce_0.5.0                           
+ [57] MASS_7.3-65                             
+ [58] rappdirs_0.3.4                          
+ [59] DelayedArray_0.38.1                     
+ [60] rjson_0.2.23                            
+ [61] caTools_1.18.3                          
+ [62] gtools_3.9.5                            
+ [63] tools_4.6.0                             
+ [64] scatterpie_0.2.6                        
+ [65] ape_5.8-1                               
+ [66] glue_1.8.1                              
+ [67] callr_3.7.6                             
+ [68] restfulr_0.0.16                         
+ [69] nlme_3.1-169                            
+ [70] GOSemSim_2.38.0                         
+ [71] grid_4.6.0                              
+ [72] cluster_2.1.8.2                         
+ [73] reshape2_1.4.5                          
+ [74] gtable_0.3.6                            
+ [75] tzdb_0.5.0                              
+ [76] hms_1.1.4                               
+ [77] XVector_0.52.0                          
+ [78] pillar_1.11.1                           
+ [79] babelgene_22.9                          
+ [80] yulab.utils_0.2.4                       
+ [81] vroom_1.7.1                             
+ [82] splines_4.6.0                           
+ [83] tweenr_2.0.3                            
+ [84] treeio_1.36.1                           
+ [85] lattice_0.22-9                          
+ [86] rtracklayer_1.72.0                      
+ [87] bit_4.6.0                               
+ [88] tidyselect_1.2.1                        
+ [89] fontLiberation_0.1.0                    
+ [90] GO.db_3.23.1                            
+ [91] Biostrings_2.80.0                       
+ [92] knitr_1.51                              
+ [93] fontBitstreamVera_0.1.1                 
+ [94] SummarizedExperiment_1.42.0             
+ [95] xfun_0.57                               
+ [96] matrixStats_1.5.0                       
+ [97] stringi_1.8.7                           
+ [98] UCSC.utils_1.8.0                        
+ [99] lazyeval_0.2.3                          
+[100] ggfun_0.2.0                             
+[101] yaml_2.3.12                             
+[102] boot_1.3-32                             
+[103] evaluate_1.0.5                          
+[104] codetools_0.2-20                        
+[105] cigarillo_1.2.0                         
+[106] qvalue_2.44.0                           
+[107] gdtools_0.5.0                           
+[108] ggplotify_0.1.3                         
+[109] cli_3.6.6                               
+[110] systemfonts_1.3.2                       
+[111] processx_3.9.0                          
+[112] Rcpp_1.1.1-1.1                          
+[113] GenomeInfoDb_1.48.0                     
+[114] png_0.1-9                               
+[115] XML_3.99-0.23                           
+[116] parallel_4.6.0                          
+[117] assertthat_0.2.1                        
+[118] blob_1.3.0                              
+[119] DOSE_4.6.0                              
+[120] bitops_1.0-9                            
+[121] tidytree_0.4.7                          
+[122] ggiraph_0.9.6                           
+[123] enrichit_0.1.4                          
+[124] scales_1.4.0                            
+[125] crayon_1.5.3                            
+[126] rlang_1.2.0                             
+[127] KEGGREST_1.52.0                         </code></pre>
 </div>
 </div>
 </section>
@@ -658,13 +685,14 @@ loaded via a namespace (and not attached):
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
