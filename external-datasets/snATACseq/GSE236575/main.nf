@@ -768,9 +768,13 @@ process RUN_AME {
 
     script:
     """
+    # --scoring avg --method ranksum produced degenerate output (every motif
+    # showed pos=N, neg=0, p=0) on adipocyte open chromatin where most
+    # peaks contain hits for many motifs and rank-sum scores saturate.
+    # Switched to totalhits + Fisher exact, which is robust to that case.
     ame --control ${background_fasta} \
         --oc . \
-        --scoring avg --method ranksum \
+        --scoring totalhits --method fisher \
         --hit-lo-fraction 0.25 \
         --evalue-report-threshold 10 \
         --verbose 1 \
