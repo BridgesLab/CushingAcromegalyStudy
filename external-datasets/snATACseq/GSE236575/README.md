@@ -130,6 +130,31 @@ Output: `hinte_concordance/concordance_report.txt` plus per-sample / per-conditi
 
 Concordance lets you decide whether MACS2 stringency matches Hinte's well enough for downstream comparisons; large divergence is a flag to revisit MACS2 settings.
 
+#### Interpreting the report — Jaccard vs overlap rate
+
+The two columns answer different questions and can disagree dramatically. **Use the overlap rate, not the Jaccard, to judge whether the peak sets agree on locations.**
+
+- **`MACS2_overlapping / MACS2_peaks`** — fraction of our peaks that fall inside any Hinte peak. This is the biologically meaningful concordance metric.
+- **`Jaccard`** — `intersection_bp / union_bp`. This is dominated by *peak width*, not by location agreement. A narrow peak sitting entirely inside a broader one contributes a Jaccard equal to (narrow width / broad width), even though location agreement is perfect.
+
+In our run (May 2026), per-sample overlap rates were 97–99% but Jaccard was 0.07–0.14. The reason is a peak-width mismatch:
+
+| metric | MACS2 (ours) | Hinte (per-condition merged) | ratio |
+|---|---|---|---|
+| n peaks | 61,619 (union) | 52,385 (CHD) / 54,778 (HFD) | ~1.2 |
+| median width | 835 bp | 3,906 bp | 4.7x |
+| p90 width | 1,498 bp | 11,781 bp | 7.9x |
+
+Hinte's GEO BEDs are kilobase-scale regions (likely either MACS2 `--broad` mode, an HMM-based caller like HMMRATAC/Genrich, or post-call merging/extension), and the per-condition merge of 3 replicates widens them further. Our MACS2 narrowPeaks are higher-resolution, which is **preferred** for downstream motif enrichment (AME/HOMER) and overlap with reference ChIP-seq peaks (Soccio, Hu, etc.). Just be aware of the width difference if comparing peak counts/widths to Hinte's published numbers.
+
+To check peak widths yourself:
+```bash
+awk '{print $3-$2}' results/peaks/union_peaks.bed | sort -n | \
+  awk 'BEGIN{c=0;s=0}{a[c++]=$1;s+=$1}END{print "n="c,"median="a[int(c/2)],"mean="s/c,"p90="a[int(c*0.9)]}'
+awk '{print $3-$2}' results/bed_files/hinte_CHD.bed | sort -n | \
+  awk 'BEGIN{c=0;s=0}{a[c++]=$1;s+=$1}END{print "n="c,"median="a[int(c/2)],"mean="s/c,"p90="a[int(c*0.9)]}'
+```
+
 ### 9. Read counting
 
 **Process**: `COUNT_PEAKS`
