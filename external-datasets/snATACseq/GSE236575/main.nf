@@ -331,6 +331,7 @@ process FILTER_BAM {
  */
 process CALL_PEAKS_MACS2 {
     tag "${sample_id}"
+    module 'Bioinformatics:py-macs2'
     publishDir "${params.outdir}/macs2_peaks/${sample_id}", mode: 'copy'
 
     input:
