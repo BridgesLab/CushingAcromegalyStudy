@@ -169,7 +169,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>deseq.results <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(deseq.filename) <span class="co">#reads in the data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2026-05-06. This script was most recently updated on Wed May 6 17:20:36 2026.</p>
+<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2026-05-06. This script was most recently updated on Wed May 6 18:56:51 2026.</p>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
@@ -194,18 +194,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>hfd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(hfd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:41 
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 18:56:57 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-06 17:20:41 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:42 
-&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:42 
+&gt;&gt; identifying nearest features...       2026-05-06 18:56:57 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 18:56:58 
+&gt;&gt; assigning genomic annotation...       2026-05-06 18:56:58 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-06 17:20:51 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-06 18:57:07 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:51 
-&gt;&gt; done...                   2026-05-06 17:20:51 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 18:57:07 
+&gt;&gt; done...                   2026-05-06 18:57:07 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -217,18 +217,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ncd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(ncd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:51 
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 18:57:07 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-06 17:20:51 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:52 
-&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:52 
+&gt;&gt; identifying nearest features...       2026-05-06 18:57:07 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 18:57:07 
+&gt;&gt; assigning genomic annotation...       2026-05-06 18:57:07 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-06 17:20:53 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-06 18:57:08 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:53 
-&gt;&gt; done...                   2026-05-06 17:20:53 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 18:57:08 
+&gt;&gt; done...                   2026-05-06 18:57:08 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -238,18 +238,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>all.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">annotatePeak</span>(all.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-06 17:20:53 
+<pre><code>&gt;&gt; preparing features information...         2026-05-06 18:57:08 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-06 17:20:53 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-06 17:20:54 
-&gt;&gt; assigning genomic annotation...       2026-05-06 17:20:54 
+&gt;&gt; identifying nearest features...       2026-05-06 18:57:08 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-06 18:57:10 
+&gt;&gt; assigning genomic annotation...       2026-05-06 18:57:10 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-06 17:20:55 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-06 18:57:11 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 17:20:56 
-&gt;&gt; done...                   2026-05-06 17:20:56 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-06 18:57:12 
+&gt;&gt; done...                   2026-05-06 18:57:12 </code></pre>
 </div>
 </div>
 <p>These 8612 chromatin regions that were differentially opened by HFD were annotated as closest to 4632 unique genes, whereas the 6260 regions more accessible in NCD were annotated as closest to 3560 unique genes.</p>
@@ -363,7 +363,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(hfd.ann_df<span class="sc">$</span>SYMBOL),                              <span class="co"># your ENTREZ or SYMBOL list</span></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">TERM2GENE =</span> gtrd[, <span class="fu">c</span>(<span class="st">"gs_name"</span>, <span class="st">"gene_symbol"</span>)]</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GTRD Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -374,7 +374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GO-BP Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(hfd.gobp.gtrd, <span class="at">showCategory=</span><span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"GTRD Enrichment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>

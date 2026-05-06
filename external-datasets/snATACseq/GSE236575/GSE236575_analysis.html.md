@@ -62,7 +62,7 @@ deseq.results <- read_tsv(deseq.filename) #reads in the data
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Wed May  6 17:20:36 2026.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Wed May  6 18:56:51 2026.
 
 ## Analysis
 
@@ -94,14 +94,14 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-06 17:20:41 
+>> preparing features information...		 2026-05-06 18:56:57 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-06 17:20:41 
->> calculating distance from peak to TSS...	 2026-05-06 17:20:42 
->> assigning genomic annotation...		 2026-05-06 17:20:42 
+>> identifying nearest features...		 2026-05-06 18:56:57 
+>> calculating distance from peak to TSS...	 2026-05-06 18:56:58 
+>> assigning genomic annotation...		 2026-05-06 18:56:58 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-06 17:20:51 
+>> adding gene annotation...			 2026-05-06 18:57:07 
 ```
 
 
@@ -110,8 +110,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-06 17:20:51 
->> done...					 2026-05-06 17:20:51 
+>> assigning chromosome lengths			 2026-05-06 18:57:07 
+>> done...					 2026-05-06 18:57:07 
 ```
 
 
@@ -129,14 +129,14 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-06 17:20:51 
+>> preparing features information...		 2026-05-06 18:57:07 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-06 17:20:51 
->> calculating distance from peak to TSS...	 2026-05-06 17:20:52 
->> assigning genomic annotation...		 2026-05-06 17:20:52 
+>> identifying nearest features...		 2026-05-06 18:57:07 
+>> calculating distance from peak to TSS...	 2026-05-06 18:57:07 
+>> assigning genomic annotation...		 2026-05-06 18:57:07 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-06 17:20:53 
+>> adding gene annotation...			 2026-05-06 18:57:08 
 ```
 
 
@@ -145,8 +145,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-06 17:20:53 
->> done...					 2026-05-06 17:20:53 
+>> assigning chromosome lengths			 2026-05-06 18:57:08 
+>> done...					 2026-05-06 18:57:08 
 ```
 
 
@@ -162,14 +162,14 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-06 17:20:53 
+>> preparing features information...		 2026-05-06 18:57:08 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-06 17:20:53 
->> calculating distance from peak to TSS...	 2026-05-06 17:20:54 
->> assigning genomic annotation...		 2026-05-06 17:20:54 
+>> identifying nearest features...		 2026-05-06 18:57:08 
+>> calculating distance from peak to TSS...	 2026-05-06 18:57:10 
+>> assigning genomic annotation...		 2026-05-06 18:57:10 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-06 17:20:55 
+>> adding gene annotation...			 2026-05-06 18:57:11 
 ```
 
 
@@ -178,8 +178,8 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-06 17:20:56 
->> done...					 2026-05-06 17:20:56 
+>> assigning chromosome lengths			 2026-05-06 18:57:12 
+>> done...					 2026-05-06 18:57:12 
 ```
 
 
@@ -292,7 +292,7 @@ hfd.gobp.gtrd <- enricher(
     unique(hfd.ann_df$SYMBOL),                              # your ENTREZ or SYMBOL list
     TERM2GENE = gtrd[, c("gs_name", "gene_symbol")]
 )
-dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
+dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
 ```
 
 ::: {.cell-output-display}
@@ -300,7 +300,7 @@ dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
 :::
 
 ```{.r .cell-code}
-barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
+barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
 ```
 
 ::: {.cell-output-display}

@@ -156,8 +156,8 @@ hfd.gobp.gtrd <- enricher(
     unique(hfd.ann_df$SYMBOL),                              # your ENTREZ or SYMBOL list
     TERM2GENE = gtrd[, c("gs_name", "gene_symbol")]
 )
-dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
-barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
+dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
+barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
 #emapplot(pairwise_termsim(hfd.gobp.gtrd))
 
 ```
