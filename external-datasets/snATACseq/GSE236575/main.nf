@@ -896,31 +896,55 @@ process COMPOSITE_MOTIF_SCAN {
          ${jaspar_db} ${fasta}
     cp fimo_out/fimo.tsv ${bed_type}_fimo.tsv
 
-    # Collapse per-peak motif counts, including zero-hit peaks
-    python3 - "${fasta}" "${bed_type}_fimo.tsv" "${bed_type}_per_peak_motifs.tsv" <<'PY'
-import sys, collections
-fasta_path, fimo_path, out_path = sys.argv[1:4]
+    # FIMO 5.5.x auto-parses FASTA headers shaped like "chr:start-end" and
+    # reports matches with sequence_name = chromosome and start/stop in
+    # GENOMIC coordinates. We need to map those hits back to the original
+    # peaks (one peak per FASTA record), so we reconstruct the peak BED
+    # from FASTA headers, convert FIMO output to a hits BED, and use
+    # bedtools intersect to associate each motif occurrence with its peak.
 
-# All peak IDs from the FASTA (so zero-hit peaks aren't lost)
+    # 1. Peak BED with peak_id (= FASTA header) as the 4th column
+    grep '^>' ${fasta} | sed 's/^>//' | \
+    awk 'BEGIN{OFS="\\t"} {
+        c = index(\$0, ":")
+        if (!c) next
+        chrom = substr(\$0, 1, c-1)
+        rest  = substr(\$0, c+1)
+        d = index(rest, "-")
+        if (!d) next
+        print chrom, substr(rest, 1, d-1), substr(rest, d+1), \$0
+    }' > peaks.bed
+
+    # 2. FIMO hits BED (motif_id in column 4). FIMO is 1-based inclusive;
+    #    BED is 0-based half-open, so subtract 1 from start.
+    tail -n +2 fimo_out/fimo.tsv | grep -v '^#' | grep -v '^\$' | \
+    awk -F'\\t' 'BEGIN{OFS="\\t"} NF >= 5 {print \$3, \$4 - 1, \$5, \$1}' > fimo_hits.bed
+
+    # 3. Intersect: keep (peak_id, motif_id) pairs for each motif occurrence
+    bedtools intersect -a fimo_hits.bed -b peaks.bed -wa -wb | \
+    awk 'BEGIN{OFS="\\t"} {print \$8, \$4}' > peak_motif_pairs.tsv
+
+    # 4. Collapse to per-peak motif counts (zero-hit peaks retained)
+    python3 - "${fasta}" peak_motif_pairs.tsv "${bed_type}_per_peak_motifs.tsv" <<'PY'
+import sys, collections
+fasta_path, pairs_path, out_path = sys.argv[1:4]
+
+# All peak IDs from the FASTA so zero-hit peaks are kept
 all_peaks = []
 with open(fasta_path) as f:
     for line in f:
         if line.startswith('>'):
             all_peaks.append(line[1:].strip().split()[0])
 
-# Motif counts per peak from FIMO output
 counts = collections.defaultdict(lambda: collections.Counter())
 motifs = set()
-with open(fimo_path) as f:
-    next(f)  # header
+with open(pairs_path) as f:
     for line in f:
-        if line.startswith('#') or not line.strip():
-            continue
         cols = line.rstrip('\\n').split('\\t')
-        if len(cols) < 3:
+        if len(cols) < 2:
             continue
-        motif_id, _, peak = cols[0], cols[1], cols[2]
-        counts[peak][motif_id] += 1
+        peak_id, motif_id = cols[0], cols[1]
+        counts[peak_id][motif_id] += 1
         motifs.add(motif_id)
 
 motifs = sorted(motifs)
@@ -930,7 +954,9 @@ with open(out_path, 'w') as out:
         c = counts.get(peak, collections.Counter())
         out.write(peak + '\\t' + '\\t'.join(str(c.get(m, 0)) for m in motifs) + '\\n')
 
+n_with_hits = sum(1 for p in counts if any(counts[p].values()))
 print(f"Wrote {len(all_peaks)} peaks x {len(motifs)} motifs", file=sys.stderr)
+print(f"Peaks with at least one motif hit: {n_with_hits}", file=sys.stderr)
 PY
     """
 }
