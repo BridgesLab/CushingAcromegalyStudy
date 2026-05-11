@@ -195,14 +195,19 @@ library(stringr)
 hfd.motifs    <- read_tsv("results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv")
 shared.motifs <- read_tsv("results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv")
 
-# JASPAR ID -> friendly TF name
+# JASPAR ID -> friendly TF name. PGR motifs are included as GR-class proxies
+# because NR3C1 (MA0113.4) is often pruned from JASPAR's non-redundant subset
+# due to motif similarity with PGR/AR. PGR's IR3 motif is biochemically
+# essentially identical to GR's, so we treat PGR signal as has_gr.
 motif_map <- c(
   "MA0148.5" = "FOXA1",
   "MA0047.5" = "FOXA2",
   "MA0466.4" = "CEBPB",
   "MA0102.5" = "CEBPA",
   "MA0480.3" = "FOXO1",
-  "MA0113.4" = "GR"
+  "MA0113.4" = "NR3C1",
+  "MA2327.1" = "PGR_h",
+  "MA2323.1" = "PGR_m"
 )
 rename_motif_cols <- function(df) {
   names(df) <- ifelse(names(df) %in% names(motif_map), motif_map[names(df)], names(df))
@@ -219,7 +224,8 @@ classify_peaks <- function(df) {
   df$has_foxa <- has("FOXA1") | has("FOXA2")
   df$has_cebp <- has("CEBPA") | has("CEBPB")
   df$has_foxo <- has("FOXO1")
-  df$has_gr   <- has("GR")
+  # GR-class: NR3C1 directly, or PGR (human/mouse) as IR3 proxy
+  df$has_gr   <- has("NR3C1") | has("PGR_h") | has("PGR_m")
   df$foxa_gr  <- df$has_foxa & df$has_gr
   df$cebp_gr  <- df$has_cebp & df$has_gr
   df$foxo_gr  <- df$has_foxo & df$has_gr
