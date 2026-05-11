@@ -962,6 +962,105 @@ PY
 }
 
 /*
+ * Full-database motif scan for data-driven sensitizer-TF discovery.
+ *
+ * Unlike COMPOSITE_MOTIF_SCAN which is hypothesis-driven (tests a curated set
+ * of pioneer / cooperator motifs), FULL_MOTIF_SCAN runs FIMO with NO --motif
+ * filter against the entire JASPAR file, producing per-peak occurrence counts
+ * for all ~600 motifs. The qmd then performs a two-axis ranking:
+ *
+ *   Axis 1: HFD-specific enrichment relative to CHD-specific
+ *           (taken from existing RUN_AME(HFD_vs_CHD) output)
+ *   Axis 2: GR-class motif co-occurrence within HFD-specific peaks
+ *           (computed in R from this process's per-peak count table)
+ *
+ * Motifs scoring on both axes are the data-driven sensitizer candidates -
+ * TFs that are both HFD-enriched and tend to co-occur with GR.
+ *
+ * Run only on the smaller peak sets (HFD-specific n~6900, CHD-specific n~1300)
+ * to keep compute manageable; we don't need shared-peak full scans for the
+ * two-axis analysis.
+ */
+process FULL_MOTIF_SCAN {
+    tag "${bed_type}"
+    publishDir "${params.outdir}/motif_analysis/full_motif_scan/${bed_type}", mode: 'copy'
+
+    input:
+    tuple val(bed_type), path(fasta)
+    path jaspar_db
+
+    output:
+    tuple val(bed_type), path("${bed_type}_fimo_all.tsv"),            emit: fimo
+    tuple val(bed_type), path("${bed_type}_per_peak_all_motifs.tsv"), emit: counts
+
+    script:
+    """
+    set -e
+
+    # FIMO with no --motif filter scans every motif in the JASPAR file.
+    # --max-stored-scores raised for q-value calculation across many motifs.
+    fimo --thresh 1e-4 \
+         --max-stored-scores 50000000 \
+         --oc fimo_out \
+         ${jaspar_db} ${fasta}
+    cp fimo_out/fimo.tsv ${bed_type}_fimo_all.tsv
+
+    # As in COMPOSITE_MOTIF_SCAN: reconstruct peak BED from FASTA headers,
+    # convert FIMO output to a hits BED, intersect to map genomic-coordinate
+    # FIMO hits back to source peaks.
+    grep '^>' ${fasta} | sed 's/^>//' | \
+    awk 'BEGIN{OFS="\\t"} {
+        c = index(\$0, ":")
+        if (!c) next
+        chrom = substr(\$0, 1, c-1)
+        rest  = substr(\$0, c+1)
+        d = index(rest, "-")
+        if (!d) next
+        print chrom, substr(rest, 1, d-1), substr(rest, d+1), \$0
+    }' > peaks.bed
+
+    tail -n +2 ${bed_type}_fimo_all.tsv | grep -v '^#' | grep -v '^\$' | \
+    awk -F'\\t' 'BEGIN{OFS="\\t"} NF >= 5 {print \$3, \$4 - 1, \$5, \$1}' > fimo_hits.bed
+
+    bedtools intersect -a fimo_hits.bed -b peaks.bed -wa -wb | \
+    awk 'BEGIN{OFS="\\t"} {print \$8, \$4}' > peak_motif_pairs.tsv
+
+    python3 - "${fasta}" peak_motif_pairs.tsv "${bed_type}_per_peak_all_motifs.tsv" <<'PY'
+import sys, collections
+fasta_path, pairs_path, out_path = sys.argv[1:4]
+
+all_peaks = []
+with open(fasta_path) as f:
+    for line in f:
+        if line.startswith('>'):
+            all_peaks.append(line[1:].strip().split()[0])
+
+counts = collections.defaultdict(lambda: collections.Counter())
+motifs = set()
+with open(pairs_path) as f:
+    for line in f:
+        cols = line.rstrip('\\n').split('\\t')
+        if len(cols) < 2:
+            continue
+        peak_id, motif_id = cols[0], cols[1]
+        counts[peak_id][motif_id] += 1
+        motifs.add(motif_id)
+
+motifs = sorted(motifs)
+with open(out_path, 'w') as out:
+    out.write('peak\\t' + '\\t'.join(motifs) + '\\n')
+    for peak in all_peaks:
+        c = counts.get(peak, collections.Counter())
+        out.write(peak + '\\t' + '\\t'.join(str(c.get(m, 0)) for m in motifs) + '\\n')
+
+n_with_hits = sum(1 for p in counts if any(counts[p].values()))
+print(f"Wrote {len(all_peaks)} peaks x {len(motifs)} motifs", file=sys.stderr)
+print(f"Peaks with at least one motif hit: {n_with_hits}", file=sys.stderr)
+PY
+    """
+}
+
+/*
  * Main workflow
  */
 workflow {
@@ -1060,6 +1159,15 @@ workflow {
     // Operates on the same FASTA sets that AME uses (HFD_specific, CHD_specific, shared)
     // and emits per-peak motif occurrence tables for downstream qmd analysis.
     COMPOSITE_MOTIF_SCAN(EXTRACT_FASTA.out.fasta, DOWNLOAD_JASPAR.out.jaspar)
+
+    // Full-database scan for data-driven sensitizer-TF discovery. Run only on
+    // condition-specific peak sets (skip shared) - the two-axis ranking only
+    // needs HFD-specific and CHD-specific, and shared has 53k peaks which is
+    // too slow to scan against 600+ JASPAR motifs.
+    EXTRACT_FASTA.out.fasta
+        .filter { bt, fa -> bt != 'shared' }
+        .set { fasta_non_shared }
+    FULL_MOTIF_SCAN(fasta_non_shared, DOWNLOAD_JASPAR.out.jaspar)
 
     bed_map = RESIZE_PEAKS.out.bed
         .map    { bt, b -> [bt, b] }
