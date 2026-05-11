@@ -646,8 +646,10 @@ two_axis <- two_axis |>
   ) |>
   arrange(desc(combined_score))
 
-# Top candidate sensitizer-pioneer TFs (top-right quadrant, ranked by combined score)
-top_candidates <- two_axis |>
+# Strict pass: both axes individually significant. Bonferroni-strength
+# correction across ~770 motifs makes this very harsh - typically only
+# 0-5 motifs pass. Kept for completeness.
+top_strict <- two_axis |>
   filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
   arrange(desc(combined_score)) |>
   select(motif_id, motif_alt_ID,
@@ -655,9 +657,23 @@ top_candidates <- two_axis |>
          n_with_m, n_m_and_gr, cooc_or, cooc_q,
          combined_score) |>
   head(40)
+knitr::kable(top_strict, digits = c(0,0,2,2,3,4,0,0,3,4,3),
+             caption = "Strict: HFD-enriched (adj_p<0.05) AND GR-coenriched (q<0.05)")
 
-knitr::kable(top_candidates, digits = c(0,0,2,2,3,4,0,0,3,4,3),
-             caption = "Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)")
+# Relaxed pass: top-right quadrant, ranked by combined score. No strict
+# q thresholds - the q-value distribution is dominated by multiple-testing
+# burden across ~770 motifs. Combined-score ranking surfaces the
+# biologically meaningful cloud the user can see in the scatter plot.
+top_relaxed <- two_axis |>
+  filter(in_quadrant_TR) |>
+  arrange(desc(combined_score)) |>
+  select(motif_id, motif_alt_ID,
+         pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
+         n_with_m, n_m_and_gr, cooc_or, cooc_p, cooc_q,
+         combined_score) |>
+  head(40)
+knitr::kable(top_relaxed, digits = c(0,0,2,2,3,4,0,0,3,4,4,3),
+             caption = "Relaxed: top 40 in top-right quadrant by combined score (no strict q thresholds)")
 
 # Save full ranked table
 dir.create("results/motif_analysis/full_motif_scan", recursive = TRUE, showWarnings = FALSE)
@@ -665,35 +681,88 @@ write_tsv(two_axis |> arrange(desc(combined_score)),
           "results/motif_analysis/full_motif_scan/data_driven_sensitizer_ranking.tsv")
 ```
 
+### TF family aggregation
+
+Looking at family-level signal — even if no single member is significant, multiple members clustering in the top-right is meaningful.
+
+```{r data-driven-family-summary}
+# Family classification (broadened to capture more TFs in "Other")
+classify_family <- function(name) {
+  case_when(
+    grepl("^FOXA",  name, ignore.case = TRUE) ~ "FoxA",
+    grepl("^FOXO",  name, ignore.case = TRUE) ~ "FoxO",
+    grepl("^FOX",   name, ignore.case = TRUE) ~ "Fox (other)",
+    grepl("^CEBP",  name, ignore.case = TRUE) ~ "C/EBP",
+    grepl("^NR3C1$|^Pgr$|^PGR$|^AR$|^MR$",   name)             ~ "GR/PGR/AR",
+    grepl("^MEF2",  name, ignore.case = TRUE) ~ "MEF2",
+    grepl("^FOS|^JUN|^BATF|^FRA[0-9]?",  name, ignore.case = TRUE) ~ "AP-1",
+    grepl("^ATF[0-9]?$|^ATF$",       name, ignore.case = TRUE) ~ "ATF",
+    grepl("^CREB",  name, ignore.case = TRUE) ~ "CREB",
+    grepl("^DDIT3$|^CHOP$",          name, ignore.case = TRUE) ~ "DDIT3/CHOP",
+    grepl("^NFE2|^NRF|^MAF",         name, ignore.case = TRUE) ~ "NRF/NFE2/MAF",
+    grepl("^KLF",   name, ignore.case = TRUE) ~ "KLF",
+    grepl("^SP[0-9]$",               name)             ~ "SP",
+    grepl("^STAT",  name, ignore.case = TRUE) ~ "STAT",
+    grepl("^IRF",   name, ignore.case = TRUE) ~ "IRF",
+    grepl("^HIF",   name, ignore.case = TRUE) ~ "HIF",
+    grepl("^NF.?KB|^REL",            name, ignore.case = TRUE) ~ "NF-kB",
+    grepl("^RXR|^PPAR|^LXR|^NR[0-9]|^HNF4|^ESR|^ERR|^THR",  name, ignore.case = TRUE) ~ "Nuclear receptor",
+    grepl("^TEAD",  name, ignore.case = TRUE) ~ "TEAD/Hippo",
+    grepl("^SREBF|^SREBP",           name, ignore.case = TRUE) ~ "SREBP",
+    grepl("^DMRT",  name, ignore.case = TRUE) ~ "DMRT",
+    grepl("^ZNF|^Zfp|^ZFP",          name)             ~ "Zinc finger",
+    grepl("^HOX|^DLX|^MSX|^NKX|^LBX|^VAX|^EVX|^PHOX|^PITX|^OTX|^LHX|^EMX|^GBX|^ALX|^ARX|^ISL|^MEIS|^PBX|^CDX|^GSX|^HMX|^GSC|^MIXL|^NOTO|^RAX|^SHOX|^TLX|^UNCX|^VSX|^BARX|^BARHL|^EN[0-9]|^ESX|^PAX|^POU|^PRRX|^SATB|^BSX|^DRGX|^ARID|^BARH",
+         name, ignore.case = TRUE) ~ "Homeobox/AT-rich",
+    grepl("^SOX",   name, ignore.case = TRUE) ~ "SOX",
+    grepl("^GATA",  name, ignore.case = TRUE) ~ "GATA",
+    grepl("^TCF|^LEF",               name, ignore.case = TRUE) ~ "TCF/LEF",
+    grepl("^CTCF",  name, ignore.case = TRUE) ~ "CTCF",
+    grepl("^E2F",   name, ignore.case = TRUE) ~ "E2F",
+    grepl("^ETV|^ELF|^ELK|^GABP|^EHF|^FEV|^ERF|^SPDEF|^FLI1|^ERG|^ETS",
+         name, ignore.case = TRUE) ~ "ETS",
+    TRUE                                                ~ "Other"
+  )
+}
+
+family_summary <- two_axis |>
+  mutate(family = classify_family(motif_alt_ID)) |>
+  filter(family != "Other") |>
+  group_by(family) |>
+  summarize(
+    n_motifs        = n(),
+    n_top_right     = sum(log2_enrich_hvc > 0 & log2_or > 0, na.rm = TRUE),
+    pct_top_right   = round(100 * n_top_right / n_motifs, 1),
+    median_axis1    = round(median(log2_enrich_hvc, na.rm = TRUE), 3),
+    median_axis2    = round(median(log2_or,        na.rm = TRUE), 3),
+    best_axis1      = round(max(log2_enrich_hvc, na.rm = TRUE),   3),
+    best_axis2      = round(max(log2_or,        na.rm = TRUE),   3),
+    best_combined   = round(max(combined_score, na.rm = TRUE),   3),
+    .groups = "drop"
+  ) |>
+  arrange(desc(best_combined))
+
+knitr::kable(family_summary, caption = "TF family aggregation: how many family members land in the top-right quadrant, and best within-family scores")
+```
+
 ### Two-axis scatter plot
 
 ```{r data-driven-scatter, fig.width=11, fig.height=8}
 library(ggrepel)
 
-# Label top hits on both axes
+# Label top hits in top-right quadrant by combined score, regardless of strict
+# q thresholds. Multiple-testing correction across 770 motifs is too punishing
+# to drive labeling - the user can see structured signal in the scatter that
+# the strict filter hides.
 label_set <- two_axis |>
-  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  head(25) |>
+  head(30) |>
   pull(motif_id)
 
 two_axis_plot <- two_axis |>
   mutate(
     label_flag = motif_id %in% label_set,
-    family = case_when(
-      grepl("^FOXA",  motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
-      grepl("^FOXO",  motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
-      grepl("^CEBP",  motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
-      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)        ~ "GR/PGR",
-      grepl("^MEF2",  motif_alt_ID, ignore.case = TRUE) ~ "MEF2",
-      grepl("^FOS|^JUN|^BATF|^ATF[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "AP-1 / ATF",
-      grepl("^KLF",   motif_alt_ID, ignore.case = TRUE) ~ "KLF",
-      grepl("^NFE2|^NRF",  motif_alt_ID, ignore.case = TRUE) ~ "NRF/NFE2",
-      grepl("^STAT",  motif_alt_ID, ignore.case = TRUE) ~ "STAT",
-      grepl("^HIF",   motif_alt_ID, ignore.case = TRUE) ~ "HIF",
-      grepl("^RXR|^PPAR|^LXR|^NR[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "Nuclear receptor",
-      TRUE                                                ~ "Other"
-    )
+    family     = classify_family(motif_alt_ID)
   )
 
 ggplot(two_axis_plot, aes(x = log2_enrich_hvc, y = log2_or)) +
@@ -723,10 +792,13 @@ ggplot(two_axis_plot, aes(x = log2_enrich_hvc, y = log2_or)) +
 For the top 5 data-driven sensitizer TF candidates, list HFD-specific peaks containing both the candidate motif AND a GR motif, then annotate to nearest TSS.
 
 ```{r data-driven-top-candidates-genes, eval=TRUE}
+# Top 10 by combined score within the top-right quadrant. Loosened from the
+# strict-pass filter (which usually returns only 0-1 motifs) so we annotate
+# the structured cloud of HFD-enriched x GR-coenriched TFs.
 top5 <- two_axis |>
-  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  head(5) |>
+  head(10) |>
   pull(motif_id)
 
 cat("Top 5 candidates by combined score:\n")
