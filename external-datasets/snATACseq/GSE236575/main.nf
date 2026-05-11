@@ -807,6 +807,111 @@ process RUN_HOMER {
 }
 
 /*
+ * Composite motif co-occurrence scan.
+ *
+ * Tests the sensitization hypothesis: does HFD-opened chromatin contain
+ * an enriched fraction of pioneer-factor + glucocorticoid receptor (GR)
+ * composite enhancers? Such peaks are candidates for HFD-licensed GR
+ * binding sites that could potentiate downstream cortisol signaling.
+ *
+ * Motifs (JASPAR 2024 IDs):
+ *   FOXA1 / FOXA2 - canonical steroid-receptor pioneers
+ *   CEBPA / CEBPB - established adipocyte GR pioneers (Madsen 2014;
+ *                   Siersbaek 2011)
+ *   FOXO1         - direct GR cofactor
+ *   NR3C1         - GR itself
+ *
+ * Outputs a per-peak motif occurrence matrix for each peak class
+ * (HFD-specific, CHD-specific, shared) that the qmd consumes for
+ * Fisher-exact co-occurrence tests and gene annotation of composite
+ * peaks. Peaks with zero motif hits are kept in the output (with
+ * zero counts) so denominators are correct in the downstream tests.
+ */
+process COMPOSITE_MOTIF_SCAN {
+    tag "${bed_type}"
+    publishDir "${params.outdir}/motif_analysis/composite_scan/${bed_type}", mode: 'copy'
+
+    input:
+    tuple val(bed_type), path(fasta)
+    path jaspar_db
+
+    output:
+    tuple val(bed_type), path("${bed_type}_fimo.tsv"),            emit: fimo
+    tuple val(bed_type), path("${bed_type}_per_peak_motifs.tsv"), emit: counts
+    path "${bed_type}_motifs_used.txt",                           emit: motifs_used
+
+    script:
+    def motif_ids = [
+        'MA0148.5',  // FOXA1
+        'MA0047.5',  // FOXA2
+        'MA0466.4',  // CEBPB
+        'MA0102.5',  // CEBPA
+        'MA0480.3',  // FOXO1
+        'MA0113.4',  // NR3C1 (GR)
+    ]
+    def id_args = motif_ids.collect { "-id ${it}" }.join(' ')
+    """
+    set -e
+
+    # Extract our motifs of interest from the full JASPAR file.
+    # meme-get-motif silently skips IDs not found, so we verify below.
+    meme-get-motif ${id_args} ${jaspar_db} > selected_motifs.meme
+
+    found=\$(grep -c '^MOTIF' selected_motifs.meme || true)
+    {
+        echo "Requested ${motif_ids.size()} motifs; meme-get-motif extracted \${found}"
+        grep '^MOTIF' selected_motifs.meme || true
+    } > ${bed_type}_motifs_used.txt
+    cat ${bed_type}_motifs_used.txt
+    [ "\${found}" -gt 0 ] || { echo "ERROR: no motifs extracted" >&2; exit 1; }
+
+    # FIMO scan
+    fimo --thresh 1e-4 \
+         --max-stored-scores 10000000 \
+         --oc fimo_out \
+         selected_motifs.meme ${fasta}
+    cp fimo_out/fimo.tsv ${bed_type}_fimo.tsv
+
+    # Collapse per-peak motif counts, including zero-hit peaks
+    python3 - "${fasta}" "${bed_type}_fimo.tsv" "${bed_type}_per_peak_motifs.tsv" <<'PY'
+import sys, collections
+fasta_path, fimo_path, out_path = sys.argv[1:4]
+
+# All peak IDs from the FASTA (so zero-hit peaks aren't lost)
+all_peaks = []
+with open(fasta_path) as f:
+    for line in f:
+        if line.startswith('>'):
+            all_peaks.append(line[1:].strip().split()[0])
+
+# Motif counts per peak from FIMO output
+counts = collections.defaultdict(lambda: collections.Counter())
+motifs = set()
+with open(fimo_path) as f:
+    next(f)  # header
+    for line in f:
+        if line.startswith('#') or not line.strip():
+            continue
+        cols = line.rstrip('\n').split('\t')
+        if len(cols) < 3:
+            continue
+        motif_id, _, peak = cols[0], cols[1], cols[2]
+        counts[peak][motif_id] += 1
+        motifs.add(motif_id)
+
+motifs = sorted(motifs)
+with open(out_path, 'w') as out:
+    out.write('peak\t' + '\t'.join(motifs) + '\n')
+    for peak in all_peaks:
+        c = counts.get(peak, collections.Counter())
+        out.write(peak + '\t' + '\t'.join(str(c.get(m, 0)) for m in motifs) + '\n')
+
+print(f"Wrote {len(all_peaks)} peaks x {len(motifs)} motifs", file=sys.stderr)
+PY
+    """
+}
+
+/*
  * Main workflow
  */
 workflow {
@@ -900,6 +1005,11 @@ workflow {
         ]
     }
     RUN_AME(ame_comparisons, DOWNLOAD_JASPAR.out.jaspar)
+
+    // Pioneer-factor + GR composite-motif scan for sensitization hypothesis.
+    // Operates on the same FASTA sets that AME uses (HFD_specific, CHD_specific, shared)
+    // and emits per-peak motif occurrence tables for downstream qmd analysis.
+    COMPOSITE_MOTIF_SCAN(EXTRACT_FASTA.out.fasta, DOWNLOAD_JASPAR.out.jaspar)
 
     bed_map = RESIZE_PEAKS.out.bed
         .map    { bt, b -> [bt, b] }
