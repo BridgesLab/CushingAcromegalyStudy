@@ -83,11 +83,23 @@ All three are testable. None of them addresses the **coactivator drive** (NCOA1)
 
 ## Next steps
 
-### Immediate (motif-level, can be done with current outputs)
+### Immediate — composite motif scan (IMPLEMENTED, 2026-05-11)
 
-1. **FoxA1 + GRE composite scan** — for each HFD-specific peak, scan for FoxA1 and GRE motif co-occurrence. Peaks with both are direct candidates for sensitizing enhancers and would be a near-publication figure. HOMER `annotatePeaks.pl -m foxa1.motif -m gre.motif` against `HFD_specific_500bp.bed`.
-2. **C/EBP + GRE composite scan** — same approach for the well-established adipocyte pioneer.
-3. **FoxO1 + GRE composite scan** — distinct from pioneer mechanism; test cooperation hypothesis.
+The composite scan for FoxA + GR, C/EBP + GR, and FoxO + GR co-occurrence is now a step in the pipeline (`COMPOSITE_MOTIF_SCAN` in `main.nf`). It uses FIMO against JASPAR 2024 motifs (FOXA1 MA0148.5, FOXA2 MA0047.5, CEBPB MA0466.4, CEBPA MA0102.5, FOXO1 MA0480.3, NR3C1 MA0113.4) on the same HFD-specific / CHD-specific / shared FASTAs used by AME.
+
+Outputs land in `composite_scan/<bed_type>/`:
+- `<bed_type>_fimo.tsv` — every motif occurrence (positions, scores, p-values)
+- `<bed_type>_per_peak_motifs.tsv` — per-peak motif occurrence counts (zero-hit peaks retained for correct denominators)
+- `<bed_type>_motifs_used.txt` — sanity-check log of which requested JASPAR IDs were actually found
+
+Downstream interpretation lives in the qmd (`GSE236575_analysis.qmd`, new "Pioneer + GR Composite Motif Analysis" section):
+- Fisher exact tests for each pioneer/cooperator + GR co-occurrence in HFD-specific vs shared peaks
+- ChIPseeker nearest-TSS annotation of composite peaks
+- GO-BP enrichment of FoxA + GR composite genes
+- Sanity-check table for known GR-pathway genes (HSD11B1, NR3C1, NCOA1, FKBP5, etc.)
+
+### Other motif-level follow-ups (still planned)
+
 4. **Distance-stratified motif enrichment** — re-run AME/HOMER restricted to (a) promoter-proximal HFD peaks (TSS ± 2kb) vs (b) distal enhancers. Pioneer-mediated GR sensitization should be enriched in distal enhancers.
 
 ### Targeted gene-locus analysis (current pipeline outputs sufficient)

@@ -180,6 +180,198 @@ barplot(ncd.gobp, showCategory=20) + ggtitle("GO-BP Enrichment")
 emapplot(pairwise_termsim(ncd.gobp))
 ```
 
+## Pioneer + GR Composite Motif Analysis
+
+Tests the sensitization hypothesis from `results/motif_analysis/SUMMARY.md`:
+do HFD-opened peaks contain an enriched fraction of pioneer-factor + GR composite enhancers? These would be candidate sites where HFD-driven chromatin remodeling licenses GR binding that would otherwise be inaccessible.
+
+Inputs come from the `COMPOSITE_MOTIF_SCAN` Nextflow process, which uses FIMO to scan HFD-specific and shared peak FASTAs against JASPAR 2024 motifs for FOXA1, FOXA2, CEBPA, CEBPB, FOXO1, and NR3C1.
+
+```{r composite-motif-load}
+library(readr)
+library(dplyr)
+library(stringr)
+
+hfd.motifs    <- read_tsv("results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv")
+shared.motifs <- read_tsv("results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv")
+
+# JASPAR ID -> friendly TF name
+motif_map <- c(
+  "MA0148.5" = "FOXA1",
+  "MA0047.5" = "FOXA2",
+  "MA0466.4" = "CEBPB",
+  "MA0102.5" = "CEBPA",
+  "MA0480.3" = "FOXO1",
+  "MA0113.4" = "GR"
+)
+rename_motif_cols <- function(df) {
+  names(df) <- ifelse(names(df) %in% names(motif_map), motif_map[names(df)], names(df))
+  df
+}
+hfd    <- rename_motif_cols(hfd.motifs)
+shared <- rename_motif_cols(shared.motifs)
+
+# Classify peaks by presence of pioneer/cooperator and GR motifs.
+# A motif is "present" if FIMO found >= 1 occurrence within the 500-bp peak window.
+classify_peaks <- function(df) {
+  cols <- names(df)
+  has <- function(tf) if (tf %in% cols) df[[tf]] > 0 else rep(FALSE, nrow(df))
+  df$has_foxa <- has("FOXA1") | has("FOXA2")
+  df$has_cebp <- has("CEBPA") | has("CEBPB")
+  df$has_foxo <- has("FOXO1")
+  df$has_gr   <- has("GR")
+  df$foxa_gr  <- df$has_foxa & df$has_gr
+  df$cebp_gr  <- df$has_cebp & df$has_gr
+  df$foxo_gr  <- df$has_foxo & df$has_gr
+  df$any_pioneer    <- df$has_foxa | df$has_cebp | df$has_foxo
+  df$any_pioneer_gr <- df$any_pioneer & df$has_gr
+  df
+}
+hfd.c    <- classify_peaks(hfd)
+shared.c <- classify_peaks(shared)
+```
+
+### Co-occurrence Fisher tests
+
+Is the rate of pioneer+GR co-occurrence enriched in HFD-opened peaks vs the shared background? A significant odds ratio > 1 means HFD-opened chromatin disproportionately contains composite enhancers — the direct prediction of the pioneer-mediated sensitization model.
+
+```{r composite-motif-fisher}
+fisher_2x2 <- function(label, hfd_pos, hfd_n, sh_pos, sh_n) {
+  tab <- matrix(c(hfd_pos, hfd_n - hfd_pos,
+                  sh_pos,  sh_n  - sh_pos), nrow = 2)
+  ft <- fisher.test(tab, alternative = "greater")
+  tibble(
+    comparison    = label,
+    hfd_with      = hfd_pos,
+    hfd_total     = hfd_n,
+    hfd_pct       = round(100 * hfd_pos / hfd_n, 2),
+    shared_with   = sh_pos,
+    shared_total  = sh_n,
+    shared_pct    = round(100 * sh_pos / sh_n, 2),
+    odds_ratio    = unname(ft$estimate),
+    p_value       = ft$p.value
+  )
+}
+
+cooc <- bind_rows(
+  fisher_2x2("FoxA + GR",  sum(hfd.c$foxa_gr), nrow(hfd.c), sum(shared.c$foxa_gr), nrow(shared.c)),
+  fisher_2x2("C/EBP + GR", sum(hfd.c$cebp_gr), nrow(hfd.c), sum(shared.c$cebp_gr), nrow(shared.c)),
+  fisher_2x2("FoxO + GR",  sum(hfd.c$foxo_gr), nrow(hfd.c), sum(shared.c$foxo_gr), nrow(shared.c)),
+  fisher_2x2("Any pioneer + GR", sum(hfd.c$any_pioneer_gr), nrow(hfd.c), sum(shared.c$any_pioneer_gr), nrow(shared.c))
+)
+knitr::kable(cooc, digits = c(0,0,0,2,0,0,2,3,4))
+```
+
+### Gene annotation of candidate sensitizing enhancers
+
+For HFD-opened peaks containing both a pioneer motif and a GR motif, annotate to the nearest TSS — these are candidate genes whose chromatin opening under HFD may license potentiated GR binding.
+
+```{r composite-motif-annotate}
+parse_peaks_to_gr <- function(peak_ids) {
+  m <- str_match(peak_ids, "^(.+):(\\d+)-(\\d+)$")
+  GRanges(
+    seqnames = m[, 2],
+    ranges = IRanges(start = as.integer(m[, 3]) + 1, end = as.integer(m[, 4]))
+  )
+}
+
+annotate_composite <- function(df, field, label) {
+  peaks <- df %>% filter(.data[[field]]) %>% pull(peak)
+  if (length(peaks) == 0) return(tibble())
+  gr <- parse_peaks_to_gr(peaks)
+  ann <- annotatePeak(
+    gr,
+    TxDb = TxDb.Mmusculus.UCSC.mm10.knownGene,
+    tssRegion = c(-2000, 500),
+    annoDb = "org.Mm.eg.db",
+    verbose = FALSE
+  )
+  as.data.frame(ann) %>%
+    mutate(composite = label) %>%
+    arrange(abs(distanceToTSS))
+}
+
+foxa_gr.ann <- annotate_composite(hfd.c, "foxa_gr",  "FoxA + GR")
+cebp_gr.ann <- annotate_composite(hfd.c, "cebp_gr",  "C/EBP + GR")
+foxo_gr.ann <- annotate_composite(hfd.c, "foxo_gr",  "FoxO + GR")
+```
+
+#### Top candidate genes — FoxA + GR composite peaks
+
+FoxA1 is the canonical GR pioneer in steroid-responsive tissues. Genes near FoxA+GR composite enhancers in HFD-opened chromatin are the highest-priority candidates for HFD-driven GR sensitization.
+
+```{r composite-motif-foxa-genes}
+foxa_gr.top <- foxa_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  distinct(SYMBOL, .keep_all = TRUE) %>%
+  arrange(abs(distanceToTSS)) %>%
+  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
+  head(40)
+knitr::kable(foxa_gr.top)
+```
+
+#### Top candidate genes — C/EBP + GR composite peaks
+
+C/EBPβ is the established adipocyte GR pioneer (Madsen 2014; Siersbæk 2011).
+
+```{r composite-motif-cebp-genes}
+cebp_gr.top <- cebp_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  distinct(SYMBOL, .keep_all = TRUE) %>%
+  arrange(abs(distanceToTSS)) %>%
+  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
+  head(40)
+knitr::kable(cebp_gr.top)
+```
+
+#### Pathway enrichment of FoxA + GR composite genes
+
+```{r composite-motif-foxa-pathway}
+foxa_gr.symbols <- foxa_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  pull(SYMBOL) %>%
+  unique()
+
+if (length(foxa_gr.symbols) >= 10) {
+  foxa_gr.entrez <- bitr(foxa_gr.symbols,
+                         fromType = "SYMBOL",
+                         toType   = "ENTREZID",
+                         OrgDb    = org.Mm.eg.db)$ENTREZID
+  foxa_gr.gobp <- enrichGO(gene          = foxa_gr.entrez,
+                           OrgDb         = org.Mm.eg.db,
+                           keyType       = "ENTREZID",
+                           ont           = "BP",
+                           pAdjustMethod = "BH",
+                           pvalueCutoff  = 0.05,
+                           qvalueCutoff  = 0.05,
+                           readable      = TRUE)
+  if (!is.null(foxa_gr.gobp) && nrow(as.data.frame(foxa_gr.gobp)) > 0) {
+    dotplot(foxa_gr.gobp, showCategory = 20) + ggtitle("FoxA + GR composite genes — GO-BP")
+  }
+}
+```
+
+### Sanity check on key GR-pathway genes
+
+Quick look at whether known glucocorticoid-sensitization genes appear in our composite-peak gene lists:
+
+```{r composite-motif-sanity}
+gr_pathway_genes <- c("Hsd11b1", "Nr3c1", "Ncoa1", "Ncoa2", "Fkbp5",
+                      "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1",
+                      "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
+all_composite_genes <- bind_rows(foxa_gr.ann, cebp_gr.ann, foxo_gr.ann) %>%
+  filter(!is.na(SYMBOL))
+sanity <- tibble(gene = gr_pathway_genes) %>%
+  rowwise() %>%
+  mutate(
+    foxa_gr = gene %in% foxa_gr.ann$SYMBOL,
+    cebp_gr = gene %in% cebp_gr.ann$SYMBOL,
+    foxo_gr = gene %in% foxo_gr.ann$SYMBOL
+  ) %>%
+  ungroup()
+knitr::kable(sanity)
+```
+
 ## Interpretation
 
 A brief summary of what the interpretation of these results were
