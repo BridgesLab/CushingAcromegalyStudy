@@ -841,35 +841,59 @@ process COMPOSITE_MOTIF_SCAN {
     path "${bed_type}_motifs_used.txt",                           emit: motifs_used
 
     script:
+    // JASPAR 2024 motif IDs. NR3C1 (GR) is often pruned from JASPAR's
+    // "non-redundant" set because its IR3 motif is near-identical to other
+    // NR3C/PGR/AR motifs, so we also include PGR (mouse + human) which uses
+    // the same IR3 element and is a reliable GR-class proxy. The qmd ORs
+    // these signals into a single has_gr classifier.
     def motif_ids = [
         'MA0148.5',  // FOXA1
         'MA0047.5',  // FOXA2
         'MA0466.4',  // CEBPB
         'MA0102.5',  // CEBPA
         'MA0480.3',  // FOXO1
-        'MA0113.4',  // NR3C1 (GR)
+        'MA0113.4',  // NR3C1 (GR) - may not be in non-redundant subset
+        'MA2327.1',  // PGR human - GR-class IR3 proxy
+        'MA2323.1',  // Pgr mouse - GR-class IR3 proxy
     ]
-    def id_args = motif_ids.collect { "-id ${it}" }.join(' ')
+    def ids_str = motif_ids.join(' ')
     """
     set -e
 
-    # Extract our motifs of interest from the full JASPAR file.
-    # meme-get-motif silently skips IDs not found, so we verify below.
-    meme-get-motif ${id_args} ${jaspar_db} > selected_motifs.meme
+    # Identify which of the requested motifs actually exist in JASPAR.
+    # The MEME 5.5.5 build on this cluster doesn't ship meme-get-motif, so we
+    # use awk against the JASPAR file directly (the MEME format is well-defined:
+    # each motif starts with a "MOTIF <id> <name>" line).
+    found_ids=\$(awk -v wanted="${ids_str}" '
+        BEGIN { n=split(wanted, a, " "); for (i=1; i<=n; i++) w[a[i]] = 1 }
+        /^MOTIF[ \t]/ && (\$2 in w) { print \$2 }
+    ' ${jaspar_db})
 
-    found=\$(grep -c '^MOTIF' selected_motifs.meme || true)
     {
-        echo "Requested ${motif_ids.size()} motifs; meme-get-motif extracted \${found}"
-        grep '^MOTIF' selected_motifs.meme || true
+        echo "Requested motifs (${motif_ids.size()}): ${ids_str}"
+        echo "Found in JASPAR:"
+        echo "\$found_ids" | tr ' ' '\\n' | sed 's/^/  /' | grep -v '^\$' || echo "  (none)"
     } > ${bed_type}_motifs_used.txt
     cat ${bed_type}_motifs_used.txt
-    [ "\${found}" -gt 0 ] || { echo "ERROR: no motifs extracted" >&2; exit 1; }
 
-    # FIMO scan
-    fimo --thresh 1e-4 \
+    if [ -z "\$found_ids" ]; then
+        echo "ERROR: none of the requested motifs are in the JASPAR file" >&2
+        exit 1
+    fi
+
+    # Build --motif flags for FIMO; it accepts repeated --motif <id> to
+    # select specific motifs from the input file.
+    motif_args=""
+    for id in \$found_ids; do
+        motif_args="\$motif_args --motif \$id"
+    done
+
+    # FIMO scan with only the selected motifs
+    fimo \$motif_args \
+         --thresh 1e-4 \
          --max-stored-scores 10000000 \
          --oc fimo_out \
-         selected_motifs.meme ${fasta}
+         ${jaspar_db} ${fasta}
     cp fimo_out/fimo.tsv ${bed_type}_fimo.tsv
 
     # Collapse per-peak motif counts, including zero-hit peaks
