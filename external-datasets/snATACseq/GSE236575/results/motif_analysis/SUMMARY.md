@@ -92,36 +92,61 @@ Outputs in `composite_scan/<bed_type>/`:
 - `<bed_type>_per_peak_motifs.tsv` — per-peak motif counts (zero-hit peaks retained for correct denominators)
 - `<bed_type>_motifs_used.txt` — sanity log of which requested JASPAR IDs were found
 
-### Key finding — C/EBP + GR composite enrichment is HFD-specific
+### First-pass candidate-driven result — C/EBP+GR enrichment is NOT HFD-specific
 
-Fisher exact tests (one-sided "greater") for pioneer + GR motif co-occurrence in **HFD-specific (6,900 peaks) vs shared (53,397 peaks)**:
+Fisher exact tests (one-sided "greater") for pioneer + GR motif co-occurrence:
 
-| Composite          |   N (HFD) | %HFD | %shared | Odds ratio | p-value |
-|--------------------|-----------|------|---------|-----------:|--------:|
-| **C/EBP + GR**     | **310**   | 4.49 | 3.22    | **1.42**   | **< 1e-4** |
-| Any pioneer + GR   |  400      | 5.80 | 4.52    | 1.30       | < 1e-4  |
-| FoxA + GR          |  115      | 1.67 | 1.56    | 1.07       | 0.27    |
-| FoxO + GR          |  115      | 1.67 | 1.56    | 1.07       | 0.27    |
+**HFD-specific (6,900 peaks) vs shared (53,397 peaks):**
 
-**The C/EBP + GR result is the meaningful one.** FoxA+GR and FoxO+GR are *not* enriched in HFD-opened chromatin relative to shared peaks, which actually makes biological sense:
+| Composite          |   N (HFD) | %HFD | %shared | OR    | p-value |
+|--------------------|-----------|------|---------|------:|--------:|
+| **C/EBP + GR**     | **310**   | 4.49 | 3.22    | 1.42  | < 1e-4  |
+| Any pioneer + GR   |  400      | 5.80 | 4.52    | 1.30  | < 1e-4  |
+| FoxA + GR          |  115      | 1.67 | 1.56    | 1.07  | 0.27    |
+| FoxO + GR          |  115      | 1.67 | 1.56    | 1.07  | 0.27    |
 
-- **FoxA1 is a constitutive adipocyte pioneer.** Its binding repertoire is set by the lineage program and doesn't expand with HFD. The AME run shows FoxA1 motif highly enriched overall (p=1.23e-144) in adipocyte open chromatin, but the *co-occurrence with GR motifs* is the same in HFD-specific and shared peaks. FoxA1 cooperates with GR throughout adipocyte chromatin, not selectively in HFD-induced regions.
-- **FoxO1 has a similar story.** Highly enriched overall (p=2.40e-162) but no HFD-specific composite enrichment.
-- **C/EBPβ is stress-responsive.** HFD activates C/EBPβ via inflammation, ER stress, and elevated FFAs, expanding its binding repertoire. This produces *new* enhancers containing latent GR sites that weren't previously accessible — the chromatin-level mechanism for HFD potentiation of GR signaling.
+**CHD-specific (1,322 peaks) vs shared — negative control:**
 
-**The 310 candidate sensitizing enhancers** (HFD-specific peaks with both C/EBP and GR motifs) are listed at `composite_scan/HFD_specific_cebp_gr_genes.tsv` after the qmd renders.
+| Composite          |   N (CHD) | %CHD | %shared | OR    | p-value |
+|--------------------|-----------|------|---------|------:|--------:|
+| **C/EBP + GR**     | **60**    | 4.54 | 3.22    | 1.43  | 0.0065  |
+| Any pioneer + GR   |  79       | 5.98 | 4.52    | 1.34  | 0.0091  |
+| FoxA + GR          |  26       | 1.97 | 1.56    | 1.27  | 0.14    |
+| FoxO + GR          |  26       | 1.97 | 1.56    | 1.26  | 0.15    |
 
-### Mechanistic claim
+**The C/EBP+GR enrichment is identical in HFD-specific and CHD-specific peaks** (4.49% vs 4.54%; OR 1.42 vs 1.43). The p-value gap reflects sample size (310 vs 60), not effect size. **So this candidate-driven approach failed to identify HFD-specific sensitizing enhancers.** What we're actually seeing is a "condition-specific peak vs constitutively-open" signal — both HFD-opened and CHD-opened peaks are enhancer-biased, while shared peaks are promoter-biased, and pioneer+GR motifs cluster in enhancers.
 
-> HFD-opened adipocyte chromatin is selectively enriched for C/EBP + GR composite enhancers (OR = 1.42, p < 0.0001) but not for FoxA + GR or FoxO + GR composites. C/EBPβ — a stress-responsive bZIP factor activated by HFD-induced inflammation and ER stress — is the candidate pioneer factor expanding the GR-accessible enhancer landscape in obese adipocytes. The 310 HFD-specific peaks containing both motifs are candidate sensitizing enhancers for downstream functional validation.
+**FoxA1 and FoxO1 — the two best-established GR pioneers in the literature — were not enriched in either direction.** FoxA1's adipocyte binding repertoire is constitutive (set by lineage); it cooperates with GR throughout adipocyte chromatin, not selectively in HFD-opened regions.
 
-### Pending validations in the qmd (the new chunks added 2026-05-11)
+**Quantitative argument that partially survives**: HFD opens 5× more condition-specific peaks than CHD does (6,900 vs 1,322). At equal per-peak rate, that's still a net gain of ~250 C/EBP+GR composite enhancers under HFD. So HFD remodels chromatin to expose ~250 additional pioneer+GR composite sites, but the mechanism is broad chromatin opening rather than selective creation of pioneer+GR enhancers.
 
-- **CHD-specific negative control**: same Fisher tests on the 776 CHD-specific peaks vs shared. The pioneer-mediated sensitization hypothesis predicts C/EBP + GR enrichment should *not* be present in CHD-specific peaks. (If it is, the signal is just "condition-specific peak" rather than "HFD-driven sensitization".)
-- **GO-BP pathway enrichment** of the 310 C/EBP + GR composite genes.
-- **Full gene list** of all 310 composite-peak nearest genes, sorted by distance to TSS.
-- **Wider sanity check** (±50 kb windows around GR-pathway gene loci) replacing the too-strict nearest-TSS sanity check that returned all FALSE.
-- **TF enrichment volcano** highlighting FoxA, FoxO, C/EBP, and GR/PGR motif families against all ~600 JASPAR motifs (from the AME results).
+### Pivot to data-driven sensitizer-TF discovery (IMPLEMENTED, 2026-05-11)
+
+Rather than picking candidate TFs from the literature, let the data choose. Added `FULL_MOTIF_SCAN` Nextflow process: FIMO scan of HFD-specific and CHD-specific peaks against the **full** JASPAR file (no `--motif` filter), producing per-peak occurrence counts for all ~600 motifs.
+
+qmd's new "Data-driven sensitizer-TF discovery" section then ranks TFs on two independent axes:
+
+- **Axis 1** — HFD-specific enrichment vs CHD-specific (from existing `RUN_AME(HFD_vs_CHD)` output). Identifies TFs that distinguish HFD-driven chromatin from CHD-driven, controlling for the "condition-specific peak is enhancer-biased" confounder above.
+- **Axis 2** — GR-class motif co-occurrence within HFD-specific peaks. For each motif M, Fisher exact ("is GR-motif presence higher in M-containing HFD peaks vs non-M-containing HFD peaks").
+
+TFs scoring on both axes are candidate sensitizer pioneers picked by the data. From the HFD_vs_CHD AME alone (before the GR co-occurrence step), the top fold-enrichment hits are biologically promising — these are now what the two-axis ranking will test for GR cooperation:
+
+- **MEF2B / MEF2D** (log2 fold 1.05 / 1.00) — top by fold enrichment; MEF2 family is a documented GR cooperator in muscle/adipose
+- **AP-1 family**: FOSL1::JUN (0.71), FOSB::JUNB (0.64) — stress-responsive bZIPs with well-described GR composite enhancers
+- **NFE2 / NRF2-class** (0.71) — oxidative stress
+- **CEBPD** (0.68) — the δ isoform (distinct from CEBPB/A which we already tested); CEBPD is the inflammation-induced C/EBP
+- **RXRG** (0.81) — retinoid X receptor, NR heterodimer partner
+
+The new analysis produces:
+- `full_motif_scan/<bed_type>/<bed_type>_fimo_all.tsv` — every motif occurrence
+- `full_motif_scan/<bed_type>/<bed_type>_per_peak_all_motifs.tsv` — per-peak count matrix for all motifs
+- `full_motif_scan/data_driven_sensitizer_ranking.tsv` — ranked TF table (qmd output)
+- `full_motif_scan/<motif>_GR_composite_genes.tsv` — gene lists for top candidates (qmd output)
+- Two-axis scatter plot in the rendered qmd
+
+### Mechanistic claim (revised after candidate-driven failure)
+
+> Candidate-driven testing of three literature-derived GR pioneers (FoxA1, FoxO1, C/EBPβ) did not identify pioneer + GR composite enhancers selectively enriched in HFD-opened chromatin. C/EBP+GR composites *are* enriched in HFD-specific vs shared peaks (OR=1.42, p<1e-4) but show identical enrichment in CHD-specific peaks (OR=1.43, p=0.007), indicating the signal reflects condition-specific peak biology rather than HFD-driven sensitization. A data-driven scan of all ~600 JASPAR motifs has been added to identify TFs that are both (1) enriched in HFD-opened vs CHD-opened chromatin AND (2) co-occur with GR motifs within HFD-opened peaks. Preliminary inspection of the HFD-vs-CHD enrichment data points to MEF2 family, AP-1 family (FOSL1::JUN, FOSB::JUNB), NFE2/NRF2, CEBPD, and RXRG as the top axis-1 hits; the two-axis Fisher analysis in the qmd will test which of these co-localize with GR motifs in HFD-opened chromatin.
 
 ### Other motif-level follow-ups (still planned)
 

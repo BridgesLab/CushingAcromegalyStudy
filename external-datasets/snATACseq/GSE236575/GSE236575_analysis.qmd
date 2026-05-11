@@ -539,6 +539,223 @@ ggplot(ame, aes(x = log2_enrich, y = neg_log10_padj)) +
   )
 ```
 
+## Data-driven sensitizer-TF discovery
+
+The candidate-driven approach (FoxA, FoxO, C/EBP — picked from the GR-pioneer literature) failed: C/EBP+GR composite enrichment was the same in HFD-specific (OR=1.42) and CHD-specific (OR=1.43) peaks, so the signal isn't HFD-induced — it's a generic "condition-specific peak vs constitutive" signal. FoxA and FoxO weren't enriched at all.
+
+Pivoting to a fully data-driven approach: find TFs that score on **two independent axes**.
+
+- **Axis 1**: Motif enrichment in HFD-specific vs CHD-specific peaks (from `RUN_AME(HFD_vs_CHD)`). This identifies TFs whose binding sites distinguish HFD-driven from CHD-driven chromatin remodeling, controlling for "condition-specific peak" being enhancer-biased.
+- **Axis 2**: Motif co-occurrence with GR-class motifs (NR3C1, PGR) within HFD-specific peaks. For each motif M, test whether GR-motif presence rate is higher in M-containing HFD peaks than in non-M-containing HFD peaks (Fisher exact, conditional on being HFD-specific).
+
+A TF scoring on both axes is a candidate sensitizer pioneer chosen by the data rather than priors.
+
+```{r data-driven-load}
+library(readr)
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+# Axis 1: HFD vs CHD AME results
+ame.hvc <- read_tsv("results/motif_analysis/ame_results/HFD_vs_CHD/ame.tsv",
+                    comment = "#",
+                    show_col_types = FALSE) |>
+  filter(!is.na(rank)) |>
+  mutate(
+    log2_enrich_hvc    = log2((`%TP` + 0.5) / (`%FP` + 0.5)),
+    neg_log10_padj_hvc = -log10(pmax(`adj_p-value`, 1e-300)),
+    motif_id           = motif_ID
+  ) |>
+  select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
+         pct_HFD = `%TP`, pct_CHD = `%FP`, adj_p_hvc = `adj_p-value`)
+
+# Axis 2: full per-peak motif occurrence matrix in HFD-specific peaks
+hfd.all <- read_tsv("results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv",
+                    show_col_types = FALSE)
+cat("HFD-specific peaks scanned:", nrow(hfd.all),
+    "; motifs with >=1 hit somewhere:", ncol(hfd.all) - 1, "\n")
+```
+
+### GR co-occurrence within HFD-specific peaks (axis 2)
+
+```{r data-driven-gr-cooccurrence}
+# GR-class motif IDs (NR3C1 plus PGR human/mouse as IR3 proxies)
+gr_motif_ids <- c("MA0113.4", "MA2327.1", "MA2323.1")
+gr_cols      <- intersect(gr_motif_ids, names(hfd.all))
+hfd.all$has_gr <- if (length(gr_cols) > 0) {
+  rowSums(hfd.all[, gr_cols, drop = FALSE]) > 0
+} else {
+  rep(FALSE, nrow(hfd.all))
+}
+cat("HFD peaks with at least one GR-class motif:", sum(hfd.all$has_gr),
+    "/", nrow(hfd.all),
+    sprintf("(%.1f%%)\n", 100 * mean(hfd.all$has_gr)))
+
+# For each non-GR motif M: Fisher exact for GR present | M present vs M absent.
+# Restricted to HFD-specific peaks (so we're testing co-occurrence within
+# HFD-opened chromatin, not the marginal enrichment of M itself).
+motif_cols <- setdiff(names(hfd.all), c("peak", "has_gr", gr_cols))
+
+gr_cooc <- lapply(motif_cols, function(m) {
+  m_pres <- hfd.all[[m]] > 0
+  a <- sum(m_pres &  hfd.all$has_gr)   # M+ GR+
+  b <- sum(m_pres & !hfd.all$has_gr)   # M+ GR-
+  c <- sum(!m_pres &  hfd.all$has_gr)  # M- GR+
+  d <- sum(!m_pres & !hfd.all$has_gr)  # M- GR-
+  if (a + b < 30 || c + d < 30) {
+    return(tibble(motif_id = m, n_with_m = a+b, n_m_and_gr = a,
+                  cooc_or = NA_real_, cooc_p = NA_real_))
+  }
+  ft <- fisher.test(matrix(c(a, b, c, d), nrow = 2), alternative = "greater")
+  tibble(motif_id = m, n_with_m = a+b, n_m_and_gr = a,
+         cooc_or = unname(ft$estimate),
+         cooc_p  = ft$p.value)
+}) |> bind_rows() |>
+  filter(!is.na(cooc_or)) |>
+  mutate(cooc_q   = p.adjust(cooc_p, method = "BH"),
+         log2_or  = log2(pmax(cooc_or, 1e-3)),
+         neg_log10_q = -log10(pmax(cooc_q, 1e-300)))
+
+cat("Motifs tested for GR co-occurrence:", nrow(gr_cooc), "\n")
+cat("Significant at q<0.05:", sum(gr_cooc$cooc_q < 0.05, na.rm=TRUE), "\n")
+```
+
+### Two-axis ranking — HFD enrichment × GR co-occurrence
+
+```{r data-driven-twoaxis}
+two_axis <- gr_cooc |>
+  left_join(ame.hvc, by = "motif_id") |>
+  filter(!is.na(log2_enrich_hvc))
+
+# Combined score: only meaningful when BOTH axes are positive
+two_axis <- two_axis |>
+  mutate(
+    combined_score = pmax(log2_enrich_hvc, 0) * pmax(log2_or, 0),
+    in_quadrant_TR = log2_enrich_hvc > 0 & log2_or > 0  # top-right quadrant
+  ) |>
+  arrange(desc(combined_score))
+
+# Top candidate sensitizer-pioneer TFs (top-right quadrant, ranked by combined score)
+top_candidates <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  select(motif_id, motif_alt_ID,
+         pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
+         n_with_m, n_m_and_gr, cooc_or, cooc_q,
+         combined_score) |>
+  head(40)
+
+knitr::kable(top_candidates, digits = c(0,0,2,2,3,4,0,0,3,4,3),
+             caption = "Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)")
+
+# Save full ranked table
+dir.create("results/motif_analysis/full_motif_scan", recursive = TRUE, showWarnings = FALSE)
+write_tsv(two_axis |> arrange(desc(combined_score)),
+          "results/motif_analysis/full_motif_scan/data_driven_sensitizer_ranking.tsv")
+```
+
+### Two-axis scatter plot
+
+```{r data-driven-scatter, fig.width=11, fig.height=8}
+library(ggrepel)
+
+# Label top hits on both axes
+label_set <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  head(25) |>
+  pull(motif_id)
+
+two_axis_plot <- two_axis |>
+  mutate(
+    label_flag = motif_id %in% label_set,
+    family = case_when(
+      grepl("^FOXA",  motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
+      grepl("^FOXO",  motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
+      grepl("^CEBP",  motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
+      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)        ~ "GR/PGR",
+      grepl("^MEF2",  motif_alt_ID, ignore.case = TRUE) ~ "MEF2",
+      grepl("^FOS|^JUN|^BATF|^ATF[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "AP-1 / ATF",
+      grepl("^KLF",   motif_alt_ID, ignore.case = TRUE) ~ "KLF",
+      grepl("^NFE2|^NRF",  motif_alt_ID, ignore.case = TRUE) ~ "NRF/NFE2",
+      grepl("^STAT",  motif_alt_ID, ignore.case = TRUE) ~ "STAT",
+      grepl("^HIF",   motif_alt_ID, ignore.case = TRUE) ~ "HIF",
+      grepl("^RXR|^PPAR|^LXR|^NR[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "Nuclear receptor",
+      TRUE                                                ~ "Other"
+    )
+  )
+
+ggplot(two_axis_plot, aes(x = log2_enrich_hvc, y = log2_or)) +
+  geom_point(data = filter(two_axis_plot, family == "Other"),
+             alpha = 0.25, size = 0.8, color = "grey70") +
+  geom_point(data = filter(two_axis_plot, family != "Other"),
+             aes(color = family), alpha = 0.9, size = 2.2) +
+  geom_text_repel(
+    data = filter(two_axis_plot, label_flag),
+    aes(label = motif_alt_ID, color = family),
+    size = 3.2, max.overlaps = 50, show.legend = FALSE
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  theme_classic(base_size = 14) +
+  labs(
+    x     = "Axis 1: log2(%HFD-specific / %CHD-specific)  →  HFD-enriched",
+    y     = "Axis 2: log2(odds ratio for GR co-occurrence in HFD peaks)  →  GR co-enriched",
+    title = "Data-driven sensitizer-TF candidates",
+    subtitle = "Top-right quadrant: HFD-enriched AND co-occurring with GR motifs in HFD-opened chromatin",
+    color = "TF family"
+  )
+```
+
+### Pathway enrichment of the top candidates
+
+For the top 5 data-driven sensitizer TF candidates, list HFD-specific peaks containing both the candidate motif AND a GR motif, then annotate to nearest TSS.
+
+```{r data-driven-top-candidates-genes, eval=TRUE}
+top5 <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  head(5) |>
+  pull(motif_id)
+
+cat("Top 5 candidates by combined score:\n")
+print(two_axis |> filter(motif_id %in% top5) |>
+        select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
+
+# For each top candidate, get the peaks containing both that motif and GR
+for (mid in top5) {
+  if (!mid %in% names(hfd.all)) next
+  cand_peaks <- hfd.all |>
+    filter(.data[[mid]] > 0 & has_gr) |>
+    pull(peak)
+  if (length(cand_peaks) < 10) {
+    cat("\n", mid, ": only", length(cand_peaks), "composite peaks - skipping\n")
+    next
+  }
+  cand_gr <- parse_peaks_to_gr(cand_peaks)
+  cand_ann <- as.data.frame(annotatePeak(
+    cand_gr,
+    TxDb     = TxDb.Mmusculus.UCSC.mm10.knownGene,
+    tssRegion = c(-2000, 500),
+    annoDb    = "org.Mm.eg.db",
+    verbose   = FALSE
+  ))
+  cand_genes <- cand_ann |>
+    filter(!is.na(SYMBOL)) |>
+    distinct(SYMBOL, .keep_all = TRUE) |>
+    arrange(abs(distanceToTSS))
+  alt_name <- two_axis$motif_alt_ID[two_axis$motif_id == mid][1]
+  cat("\n=== ", mid, " (", alt_name, ") + GR composite peaks ===\n", sep = "")
+  cat("  Composite peaks:", length(cand_peaks),
+      "; unique nearest genes:", nrow(cand_genes), "\n")
+  print(head(cand_genes |> select(SYMBOL, distanceToTSS), 20))
+
+  write_tsv(cand_genes,
+            sprintf("results/motif_analysis/full_motif_scan/%s_GR_composite_genes.tsv",
+                    gsub("[^A-Za-z0-9._-]", "_", paste0(alt_name, "_", mid))))
+}
+```
+
 ## Interpretation
 
 A brief summary of what the interpretation of these results were
