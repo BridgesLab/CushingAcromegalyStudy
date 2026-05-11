@@ -916,7 +916,7 @@ with open(fimo_path) as f:
     for line in f:
         if line.startswith('#') or not line.strip():
             continue
-        cols = line.rstrip('\n').split('\t')
+        cols = line.rstrip('\\n').split('\\t')
         if len(cols) < 3:
             continue
         motif_id, _, peak = cols[0], cols[1], cols[2]
@@ -925,10 +925,10 @@ with open(fimo_path) as f:
 
 motifs = sorted(motifs)
 with open(out_path, 'w') as out:
-    out.write('peak\t' + '\t'.join(motifs) + '\n')
+    out.write('peak\\t' + '\\t'.join(motifs) + '\\n')
     for peak in all_peaks:
         c = counts.get(peak, collections.Counter())
-        out.write(peak + '\t' + '\t'.join(str(c.get(m, 0)) for m in motifs) + '\n')
+        out.write(peak + '\\t' + '\\t'.join(str(c.get(m, 0)) for m in motifs) + '\\n')
 
 print(f"Wrote {len(all_peaks)} peaks x {len(motifs)} motifs", file=sys.stderr)
 PY
