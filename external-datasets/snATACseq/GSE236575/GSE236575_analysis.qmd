@@ -17,6 +17,17 @@ theme: journal
 execute:
   echo: true
   warning: false
+  
+knitr:
+  opts_chunk:
+    fig-path: "figures/"          # folder for all figure files
+    dev: ["png", "pdf"]           # both formats for every plot
+    dpi: 300                      # ← this is the correct place for resolution
+    dev.args:
+      png:
+        type: "cairo-png"         # better anti-aliasing / font rendering (optional but recommended)
+      pdf:
+        family: "sans"            # font family (optional)
 ---
 
 ```{r global_options}
@@ -756,13 +767,6 @@ for (mid in top5) {
 }
 ```
 
-## Interpretation
-
-A brief summary of what the interpretation of these results were
-
-## References
-
-If needed you will need a *.bib file.  See the details at <https://quarto.org/docs/authoring/citations.html>
 
 ## Session Information
 

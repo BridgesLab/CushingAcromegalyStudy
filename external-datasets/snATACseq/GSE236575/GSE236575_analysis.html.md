@@ -11,6 +11,13 @@ format:
     code-fold: true
     code-summary: "Show the code"
     fig-path: "figures/"
+  gfm:
+    html-math-method: webtex
+theme: journal
+execute:
+  echo: true
+  warning: false
+  
 knitr:
   opts_chunk:
     fig-path: "figures/"          # folder for all figure files
@@ -38,27 +45,7 @@ se <- function(x) {
 
 #load these packages, nearly always needed
 library(tidyverse)
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.2.1     ✔ readr     2.2.0
-✔ forcats   1.0.1     ✔ stringr   1.6.0
-✔ ggplot2   4.0.3     ✔ tibble    3.3.1
-✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-✔ purrr     1.2.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-```
-
-
-:::
-
-```{.r .cell-code}
 # sets maize and blue color scheme
 color_scheme <- c("#00274c", "#ffcb05")
 ```
@@ -71,7 +58,7 @@ This script analyses the results from a DESeq2 and MEME analysis of GSE236575.  
 
 ## Raw Data
 
-The DESeq2 analysis was done on the remote server (see `main.nf` for commands).  This script loads in both those results and the raw counts that were used for that analysis.  
+Describe your raw data files, including what the columns mean (and what units they are in).
 
 
 ::: {.cell}
@@ -83,26 +70,10 @@ deseq.counts.filename <- "results/deseq2/deseq2_normalized_counts.txt"
 
 deseq.results <- read_tsv(deseq.filename) #reads in the data
 ```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Rows: 61619 Columns: 10
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: "\t"
-chr (2): chr, peak_id
-dbl (8): start, end, baseMean, log2FoldChange, lfcSE, stat, pvalue, padj
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
-
-
-:::
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Mon May 11 12:11:19 2026.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Mon May 11 18:57:21 2026.
 
 ## Analysis
 
@@ -118,369 +89,10 @@ Out of the differentially regulated subset, the HFD adipocytes had an average lo
 
 ```{.r .cell-code}
 library(ChIPseeker)
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-ChIPseeker v1.48.0 Learn more at https://yulab-smu.top/contribution-knowledge-mining/
-
-Please cite:
-
-Qianwen Wang, Ming Li, Tianzhi Wu, Li Zhan, Lin Li, Meijun Chen, Wenqin
-Xie, Zijing Xie, Erqiang Hu, Shuangbin Xu, Guangchuang Yu. Exploring
-epigenomic datasets by ChIPseeker. Current Protocols. 2022, 2(10): e585
-```
-
-
-:::
-
-```{.r .cell-code}
 library(GenomicRanges)
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: stats4
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: BiocGenerics
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: generics
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'generics'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:lubridate':
-
-    as.difftime
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:dplyr':
-
-    explain
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:base':
-
-    as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,
-    setequal, union
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'BiocGenerics'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:dplyr':
-
-    combine
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:stats':
-
-    IQR, mad, sd, var, xtabs
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:base':
-
-    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
-    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
-    get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,
-    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-    rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,
-    unsplit, which.max, which.min
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: S4Vectors
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'S4Vectors'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:lubridate':
-
-    second, second<-
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:dplyr':
-
-    first, rename
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:tidyr':
-
-    expand
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:utils':
-
-    findMatches
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:base':
-
-    expand.grid, I, unname
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: IRanges
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'IRanges'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:lubridate':
-
-    %within%
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following objects are masked from 'package:dplyr':
-
-    collapse, desc, slice
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:purrr':
-
-    reduce
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: Seqinfo
-```
-
-
-:::
-
-```{.r .cell-code}
 library(TxDb.Mmusculus.UCSC.mm10.knownGene)
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: GenomicFeatures
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: AnnotationDbi
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Loading required package: Biobase
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    'browseVignettes()'. To cite Bioconductor, see
-    'citation("Biobase")', and for packages 'citation("pkgname")'.
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'AnnotationDbi'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:dplyr':
-
-    select
-```
-
-
-:::
-
-```{.r .cell-code}
 library(org.Mm.eg.db)
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-
-```
-
-
-:::
-
-```{.r .cell-code}
 # BED files from main.nf use UCSC-style chr-prefixed naming (chr1, chrM, ...)
 # so deseq.results$chr is already "chr1" etc. — no extra prefixing needed.
 hfd.peaks <- deseq.results |> filter(padj<0.05, log2FoldChange>0)
@@ -493,23 +105,14 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 12:11:24 
+>> preparing features information...		 2026-05-11 18:57:26 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 12:11:24 
->> calculating distance from peak to TSS...	 2026-05-11 12:11:25 
->> assigning genomic annotation...		 2026-05-11 12:11:25 
+>> identifying nearest features...		 2026-05-11 18:57:26 
+>> calculating distance from peak to TSS...	 2026-05-11 18:57:27 
+>> assigning genomic annotation...		 2026-05-11 18:57:27 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 12:11:33 
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:many mapping between keys and columns
+>> adding gene annotation...			 2026-05-11 18:57:36 
 ```
 
 
@@ -518,8 +121,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 12:11:34 
->> done...					 2026-05-11 12:11:34 
+>> assigning chromosome lengths			 2026-05-11 18:57:36 
+>> done...					 2026-05-11 18:57:36 
 ```
 
 
@@ -537,23 +140,14 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 12:11:34 
+>> preparing features information...		 2026-05-11 18:57:36 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 12:11:34 
->> calculating distance from peak to TSS...	 2026-05-11 12:11:34 
->> assigning genomic annotation...		 2026-05-11 12:11:34 
+>> identifying nearest features...		 2026-05-11 18:57:36 
+>> calculating distance from peak to TSS...	 2026-05-11 18:57:36 
+>> assigning genomic annotation...		 2026-05-11 18:57:36 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 12:11:35 
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:many mapping between keys and columns
+>> adding gene annotation...			 2026-05-11 18:57:37 
 ```
 
 
@@ -562,8 +156,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 12:11:35 
->> done...					 2026-05-11 12:11:35 
+>> assigning chromosome lengths			 2026-05-11 18:57:37 
+>> done...					 2026-05-11 18:57:37 
 ```
 
 
@@ -579,23 +173,14 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 12:11:35 
+>> preparing features information...		 2026-05-11 18:57:37 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 12:11:35 
->> calculating distance from peak to TSS...	 2026-05-11 12:11:35 
->> assigning genomic annotation...		 2026-05-11 12:11:35 
+>> identifying nearest features...		 2026-05-11 18:57:37 
+>> calculating distance from peak to TSS...	 2026-05-11 18:57:37 
+>> assigning genomic annotation...		 2026-05-11 18:57:37 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 12:11:37 
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:many mapping between keys and columns
+>> adding gene annotation...			 2026-05-11 18:57:39 
 ```
 
 
@@ -604,8 +189,8 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 12:11:37 
->> done...					 2026-05-11 12:11:37 
+>> assigning chromosome lengths			 2026-05-11 18:57:39 
+>> done...					 2026-05-11 18:57:39 
 ```
 
 
@@ -629,15 +214,16 @@ deseq.results.annot <- deseq.results |>
   left_join(all.ann_df, by=c("chr"="seqnames", "end"="end"))
 
 ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
-  geom_point(alpha=0.4,size=1) +
+  geom_point(alpha=0.4) +
+  theme_minimal() +
   xlab("Log2 Fold Change (HFD vs NCD)") +
   ylab("-Log10 P-value") +
   ggtitle("Differentially Accessible Regions") +
-  #ggrepel::geom_text_repel(
-  #  data = deseq.results.annot |>
-  #    filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
-  #    arrange(padj) |> head(10),
-  #  aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
+  ggrepel::geom_text_repel(
+    data = deseq.results.annot |>
+      filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
+      arrange(padj) |> head(10),
+    aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
   geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
   geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
   theme_classic(base_size=16)
@@ -656,89 +242,7 @@ ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
 
 ```{.r .cell-code}
 library(clusterProfiler)
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-clusterProfiler v4.20.0 Learn more at https://yulab-smu.top/contribution-knowledge-mining/
-
-Please cite:
-
-S Xu, E Hu, Y Cai, Z Xie, X Luo, L Zhan, W Tang, Q Wang, B Liu, R Wang,
-W Xie, T Wu, L Xie, G Yu. Using clusterProfiler to characterize
-multiomics data. Nature Protocols. 2024, 19(11):3292-3320
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-
-Attaching package: 'clusterProfiler'
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:AnnotationDbi':
-
-    select
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:IRanges':
-
-    slice
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:S4Vectors':
-
-    rename
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:purrr':
-
-    simplify
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-The following object is masked from 'package:stats':
-
-    filter
-```
-
-
-:::
-
-```{.r .cell-code}
 hfd.gobp <- enrichGO(gene          = bitr(unique(hfd.ann_df$SYMBOL), 
                  fromType = "SYMBOL",
                  toType = "ENTREZID",
@@ -750,28 +254,7 @@ hfd.gobp <- enrichGO(gene          = bitr(unique(hfd.ann_df$SYMBOL),
                 pvalueCutoff  = 0.05,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Warning in bitr(unique(hfd.ann_df$SYMBOL), fromType = "SYMBOL", toType =
-"ENTREZID", : 0.02% of input gene IDs are fail to map...
-```
-
-
-:::
-
-```{.r .cell-code}
 dotplot(hfd.gobp, showCategory=20) + ggtitle("GO-BP Enrichment")
 ```
 
@@ -789,25 +272,6 @@ barplot(hfd.gobp, showCategory=20) + ggtitle("GO-BP Enrichment")
 
 ```{.r .cell-code}
 library(enrichplot)
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-enrichplot v1.32.0 Learn more at https://yulab-smu.top/contribution-knowledge-mining/
-
-Please cite:
-
-Guangchuang Yu, Li-Gen Wang, Yanyan Han and Qing-Yu He.
-clusterProfiler: an R package for comparing biological themes among
-gene clusters. OMICS: A Journal of Integrative Biology. 2012,
-16(5):284-287
-```
-
-
-:::
-
-```{.r .cell-code}
 emapplot(pairwise_termsim(hfd.gobp))
 ```
 
@@ -839,7 +303,7 @@ hfd.gobp.gtrd <- enricher(
     unique(hfd.ann_df$SYMBOL),                              # your ENTREZ or SYMBOL list
     TERM2GENE = gtrd[, c("gs_name", "gene_symbol")]
 )
-dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
+dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
 ```
 
 ::: {.cell-output-display}
@@ -847,7 +311,7 @@ dotplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
 :::
 
 ```{.r .cell-code}
-barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GTRD Enrichment")
+barplot(hfd.gobp.gtrd, showCategory=20) + ggtitle("GO-BP Enrichment")
 ```
 
 ::: {.cell-output-display}
@@ -875,28 +339,7 @@ ncd.gobp <- enrichGO(gene          = bitr(unique(ncd.ann_df$SYMBOL),
                 pvalueCutoff  = 0.05,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Warning in bitr(unique(ncd.ann_df$SYMBOL), fromType = "SYMBOL", toType =
-"ENTREZID", : 0.03% of input gene IDs are fail to map...
-```
-
-
-:::
-
-```{.r .cell-code}
 dotplot(ncd.gobp, showCategory=20) + ggtitle("GO-BP Enrichment")
 ```
 
@@ -938,45 +381,8 @@ library(dplyr)
 library(stringr)
 
 hfd.motifs    <- read_tsv("results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv")
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-Rows: 6900 Columns: 8
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: "\t"
-chr (1): peak
-dbl (7): MA0102.5, MA0113.4, MA0148.5, MA0466.4, MA0480.3, MA2323.1, MA2327.1
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
-
-
-:::
-
-```{.r .cell-code}
 shared.motifs <- read_tsv("results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv")
-```
 
-::: {.cell-output .cell-output-stderr}
-
-```
-Rows: 53397 Columns: 8
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: "\t"
-chr (1): peak
-dbl (7): MA0102.5, MA0113.4, MA0148.5, MA0466.4, MA0480.3, MA2323.1, MA2327.1
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
-
-
-:::
-
-```{.r .cell-code}
 # JASPAR ID -> friendly TF name. PGR motifs are included as GR-class proxies
 # because NR3C1 (MA0113.4) is often pruned from JASPAR's non-redundant subset
 # due to motif similarity with PGR/AR. PGR's IR3 motif is biochemically
@@ -1116,15 +522,6 @@ foxa_gr.ann <- annotate_composite(hfd.c, "foxa_gr",  "FoxA + GR")
 
 :::
 
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
-```
-
-
-:::
-
 ```{.r .cell-code}
 cebp_gr.ann <- annotate_composite(hfd.c, "cebp_gr",  "C/EBP + GR")
 ```
@@ -1140,15 +537,6 @@ cebp_gr.ann <- annotate_composite(hfd.c, "cebp_gr",  "C/EBP + GR")
 
 :::
 
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
-```
-
-
-:::
-
 ```{.r .cell-code}
 foxo_gr.ann <- annotate_composite(hfd.c, "foxo_gr",  "FoxO + GR")
 ```
@@ -1159,15 +547,6 @@ foxo_gr.ann <- annotate_composite(hfd.c, "foxo_gr",  "FoxO + GR")
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
-```
-
-
-:::
-
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
 ```
 
 
@@ -1340,67 +719,975 @@ if (length(foxa_gr.symbols) >= 10) {
   }
 }
 ```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-'select()' returned 1:1 mapping between keys and columns
-```
-
-
-:::
 :::
 
 
-### Sanity check on key GR-pathway genes
+### Pathway enrichment of C/EBP + GR composite genes
 
-Quick look at whether known glucocorticoid-sensitization genes appear in our composite-peak gene lists:
+GO Biological Process enrichment for the 310 nearest-TSS genes of HFD-specific C/EBP + GR composite peaks. These are the candidate sensitizing enhancers' target genes — the pathways they regulate should reflect HFD-induced glucocorticoid-responsive biology.
 
 
 ::: {.cell}
 
 ```{.r .cell-code}
-gr_pathway_genes <- c("Hsd11b1", "Nr3c1", "Ncoa1", "Ncoa2", "Fkbp5",
-                      "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1","Pnpla2",
-                      "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
-all_composite_genes <- bind_rows(foxa_gr.ann, cebp_gr.ann, foxo_gr.ann) %>%
-  filter(!is.na(SYMBOL))
-sanity <- tibble(gene = gr_pathway_genes) %>%
-  rowwise() %>%
-  mutate(
-    foxa_gr = gene %in% foxa_gr.ann$SYMBOL,
-    cebp_gr = gene %in% cebp_gr.ann$SYMBOL,
-    foxo_gr = gene %in% foxo_gr.ann$SYMBOL
-  ) %>%
-  ungroup()
-knitr::kable(sanity)
+cebp_gr.symbols <- cebp_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  pull(SYMBOL) %>%
+  unique()
+
+if (length(cebp_gr.symbols) >= 10) {
+  cebp_gr.entrez <- bitr(cebp_gr.symbols,
+                         fromType = "SYMBOL",
+                         toType   = "ENTREZID",
+                         OrgDb    = org.Mm.eg.db)$ENTREZID
+  cebp_gr.gobp <- enrichGO(gene          = cebp_gr.entrez,
+                           OrgDb         = org.Mm.eg.db,
+                           keyType       = "ENTREZID",
+                           ont           = "BP",
+                           pAdjustMethod = "BH",
+                           pvalueCutoff  = 0.05,
+                           qvalueCutoff  = 0.05,
+                           readable      = TRUE)
+  if (!is.null(cebp_gr.gobp) && nrow(as.data.frame(cebp_gr.gobp)) > 0) {
+    dotplot(cebp_gr.gobp, showCategory = 20) +
+      ggtitle("GO-BP: C/EBP + GR composite genes (HFD-specific)")
+  } else {
+    cat("No significant GO-BP terms at FDR < 0.05.\n")
+  }
+}
+```
+
+::: {.cell-output-display}
+![](figures/composite-motif-cebp-pathway-1.png){width=2100}
+:::
+:::
+
+
+### Full list of C/EBP + GR composite genes
+
+All unique nearest genes for the 310 HFD-specific C/EBP + GR composite peaks, sorted by distance to TSS. Also written to a TSV for downstream use.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+cebp_gr_list <- cebp_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  distinct(SYMBOL, .keep_all = TRUE) %>%
+  arrange(abs(distanceToTSS)) %>%
+  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
+
+dir.create("results/motif_analysis/composite_scan", recursive = TRUE, showWarnings = FALSE)
+write_tsv(cebp_gr_list, "results/motif_analysis/composite_scan/HFD_specific_cebp_gr_genes.tsv")
+cat("Unique nearest genes:", nrow(cebp_gr_list), "\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Unique nearest genes: 296 
+```
+
+
+:::
+
+```{.r .cell-code}
+knitr::kable(cebp_gr_list,
+             caption = "All C/EBP + GR composite-peak nearest genes (HFD-specific)")
 ```
 
 ::: {.cell-output-display}
 
 
-|gene    |foxa_gr |cebp_gr |foxo_gr |
-|:-------|:-------|:-------|:-------|
-|Hsd11b1 |FALSE   |FALSE   |FALSE   |
-|Nr3c1   |FALSE   |FALSE   |FALSE   |
-|Ncoa1   |FALSE   |FALSE   |FALSE   |
-|Ncoa2   |FALSE   |FALSE   |FALSE   |
-|Fkbp5   |FALSE   |FALSE   |FALSE   |
-|Foxa1   |FALSE   |FALSE   |FALSE   |
-|Foxa2   |FALSE   |FALSE   |FALSE   |
-|Cebpb   |FALSE   |FALSE   |FALSE   |
-|Cebpa   |FALSE   |FALSE   |FALSE   |
-|Foxo1   |FALSE   |FALSE   |FALSE   |
-|Pnpla2  |FALSE   |FALSE   |FALSE   |
-|Tsc22d3 |FALSE   |FALSE   |FALSE   |
-|Per1    |FALSE   |FALSE   |FALSE   |
-|Zbtb16  |FALSE   |FALSE   |FALSE   |
-|Klf15   |FALSE   |FALSE   |FALSE   |
-|Angptl4 |FALSE   |FALSE   |FALSE   |
+Table: All C/EBP + GR composite-peak nearest genes (HFD-specific)
+
+|SYMBOL        | distanceToTSS|annotation                                                         |seqnames       |     start|       end|
+|:-------------|-------------:|:------------------------------------------------------------------|:--------------|---------:|---------:|
+|1700003L19Rik |           -20|Promoter (<=1kb)                                                   |chr16          |  12810871|  12811370|
+|Vmn1r180      |          -419|Promoter (<=1kb)                                                   |chr7           |  23949714|  23950213|
+|Palb2         |           495|Promoter (<=1kb)                                                   |chr7           | 122123451| 122123950|
+|Pdlim1        |          -559|Promoter (<=1kb)                                                   |chr19          |  40231364|  40231863|
+|Rab23         |           628|3' UTR                                                             |chr1           |  33738765|  33739264|
+|Cyp4a10       |           882|Exon (ENSMUST00000058785.9/13117, exon 2 of 13)                    |chr4           | 115519170| 115519669|
+|Or1ab2        |         -1151|Promoter (1-2kb)                                                   |chr8           |  72105390|  72105889|
+|Obsl1         |         -1869|Promoter (1-2kb)                                                   |chr1           |  75494936|  75495435|
+|Gcfc2         |          1884|3' UTR                                                             |chr6           |  81943238|  81943737|
+|Fpr2          |          1984|Intron (ENSMUST00000149944.1/14289, intron 1 of 2)                 |chr17          |  17889872|  17890371|
+|Kncn          |         -2031|Distal Intergenic                                                  |chr4           | 115881870| 115882369|
+|2310002D06Rik |         -2080|Distal Intergenic                                                  |chr12          |  80504627|  80505126|
+|Tsen15        |          2191|Distal Intergenic                                                  |chr1           | 152369392| 152369891|
+|Dnajc6        |         -2852|Intron (ENSMUST00000154120.8/72685, intron 1 of 11)                |chr4           | 101504520| 101505019|
+|Pde4d         |         -3005|Intron (ENSMUST00000122041.7/238871, intron 3 of 16)               |chr13          | 109577901| 109578400|
+|Cobl          |         -3102|Intron (ENSMUST00000172919.7/12808, intron 2 of 7)                 |chr11          |  12381380|  12381879|
+|Ms4a15        |         -3164|Distal Intergenic                                                  |chr19          |  10996414|  10996913|
+|Il16          |         -3352|Intron (ENSMUST00000001792.11/16170, intron 12 of 18)              |chr7           |  83658847|  83659346|
+|Setd3         |          3516|Intron (ENSMUST00000071095.13/52690, intron 4 of 12)               |chr12          | 108158994| 108159493|
+|Zfp1003       |          3522|Intron (ENSMUST00000108935.7/665205, intron 1 of 2)                |chr2           | 177900618| 177901117|
+|Gm36283       |         -4133|Intron (ENSMUST00000217857.1/102640148, intron 1 of 2)             |chr10          | 108432033| 108432532|
+|Cntn1         |          4487|Intron (ENSMUST00000141187.7/12805, intron 1 of 8)                 |chr15          |  92165844|  92166343|
+|Acbd3         |          5114|Intron (ENSMUST00000027780.5/170760, intron 3 of 7)                |chr1           | 180734971| 180735470|
+|Psd3          |          5448|Intron (ENSMUST00000127631.1/ENSMUST00000127631.1, intron 2 of 3)  |chr8           |  67968627|  67969126|
+|Cul5          |          5461|Intron (ENSMUST00000166367.7/75717, intron 6 of 17)                |chr9           |  53640852|  53641351|
+|Impact        |         -5521|Intron (ENSMUST00000234763.1/16210, intron 1 of 5)                 |chr18          |  12965903|  12966402|
+|Rmnd5a        |         -5658|Distal Intergenic                                                  |chr6           |  71446295|  71446794|
+|Tbl1xr1       |         -5927|Intron (ENSMUST00000193734.5/81004, intron 11 of 16)               |chr3           |  22196766|  22197265|
+|Hipk1         |         -6169|Intron (ENSMUST00000118317.7/15257, intron 8 of 15)                |chr3           | 103757183| 103757682|
+|Ggta1         |         -6419|Intron (ENSMUST00000113002.8/14594, intron 1 of 7)                 |chr2           |  35452252|  35452751|
+|Stim2         |          6798|Intron (ENSMUST00000117661.8/116873, intron 1 of 11)               |chr5           |  54005363|  54005862|
+|Stxbp6        |          6995|Intron (ENSMUST00000053768.13/217517, intron 2 of 5)               |chr12          |  45005470|  45005969|
+|Dhx15         |          7050|3' UTR                                                             |chr5           |  52150254|  52150753|
+|Snapc1        |          7145|Intron (ENSMUST00000021532.5/75627, intron 8 of 9)                 |chr12          |  73979041|  73979540|
+|Hivep3        |          7262|Intron (ENSMUST00000106307.8/16656, intron 4 of 8)                 |chr4           | 120101751| 120102250|
+|Emilin2       |         -7534|Intron (ENSMUST00000233188.1/ENSMUST00000233188.1, intron 1 of 2)  |chr17          |  71319090|  71319589|
+|Smap2         |          7589|Intron (ENSMUST00000043200.7/69780, intron 1 of 9)                 |chr4           | 121009159| 121009658|
+|Prdm2         |         -7779|Distal Intergenic                                                  |chr4           | 143220774| 143221273|
+|Sh2d4a        |         -7986|Distal Intergenic                                                  |chr8           |  68268082|  68268581|
+|Fmn1          |          8410|Intron (ENSMUST00000099576.8/14260, intron 4 of 18)                |chr2           | 113449474| 113449973|
+|Palld         |         -8433|Intron (ENSMUST00000133752.1/ENSMUST00000133752.1, intron 2 of 2)  |chr8           |  61911123|  61911622|
+|Cntln         |          8473|Intron (ENSMUST00000047023.12/338349, intron 2 of 25)              |chr4           |  84892938|  84893437|
+|Exoc1l        |          8564|Intron (ENSMUST00000191515.7/639545, intron 2 of 3)                |chr5           |  76492895|  76493394|
+|Adgra2        |         -8571|Intron (ENSMUST00000178514.7/78560, intron 2 of 15)                |chr8           |  27105063|  27105562|
+|Grid1         |         -8742|Intron (ENSMUST00000043349.6/14803, intron 13 of 15)               |chr14          |  35560753|  35561252|
+|Myo18a        |          8819|5' UTR                                                             |chr11          |  77786135|  77786634|
+|Gng4          |         -8825|Intron (ENSMUST00000110559.2/17101, intron 50 of 52)               |chr13          |  13774735|  13775234|
+|Serpinb2      |         -8898|Distal Intergenic                                                  |chr1           | 107502026| 107502525|
+|Hdac9         |         -8939|Distal Intergenic                                                  |chr12          |  34926034|  34926533|
+|Ppp1r1c       |         -9297|Distal Intergenic                                                  |chr2           |  79697984|  79698483|
+|Nucb2         |         -9463|Distal Intergenic                                                  |chr7           | 116494407| 116494906|
+|Kcnv2         |         -9490|Distal Intergenic                                                  |chr19          |  27312599|  27313098|
+|Tns3          |         -9670|Distal Intergenic                                                  |chr11          |   8674351|   8674850|
+|Nmu           |         -9693|Distal Intergenic                                                  |chr5           |  76373481|  76373980|
+|Stox2         |         -9761|Intron (ENSMUST00000079195.5/71069, intron 1 of 3)                 |chr8           |  47229996|  47230495|
+|Lrrc1         |         -9798|Exon (ENSMUST00000183873.7/214345, exon 9 of 14)                   |chr9           |  77452289|  77452788|
+|Acta2         |          9811|Intron (ENSMUST00000039631.9/11475, intron 7 of 8)                 |chr19          |  34243920|  34244419|
+|4930519L02Rik |          9943|Exon (ENSMUST00000200254.1/102636203, exon 5 of 5)                 |chr3           | 143040557| 143041056|
+|Pcca          |        -10036|Intron (ENSMUST00000148172.1/110821, intron 4 of 4)                |chr14          | 122572149| 122572648|
+|Gatm          |         10159|Distal Intergenic                                                  |chr2           | 122587876| 122588375|
+|Cerk          |        -10294|Intron (ENSMUST00000044332.15/223753, intron 1 of 12)              |chr15          |  86169762|  86170261|
+|Mir1983       |        -10405|Distal Intergenic                                                  |chr13          |  21907454|  21907953|
+|Sec24d        |        -10618|Distal Intergenic                                                  |chr3           | 123256338| 123256837|
+|Il20rb        |         10666|Intron (ENSMUST00000187637.1/ENSMUST00000187637.1, intron 1 of 1)  |chr9           | 100450570| 100451069|
+|Tram2         |        -10915|Distal Intergenic                                                  |chr1           |  21090144|  21090643|
+|Erich3        |         10935|Intron (ENSMUST00000098496.8/209601, intron 8 of 13)               |chr3           | 154722800| 154723299|
+|Cyp4b1        |        -11280|Distal Intergenic                                                  |chr4           | 115659003| 115659502|
+|Mgmt          |        -11618|Distal Intergenic                                                  |chr7           | 136882497| 136882996|
+|Mak           |        -11655|Exon (ENSMUST00000225084.1/17152, exon 5 of 14)                    |chr13          |  41051426|  41051925|
+|Ap4s1         |        -12014|Intron (ENSMUST00000013130.14/94186, intron 1 of 17)               |chr12          |  51678520|  51679019|
+|Catsperb      |         12844|Exon (ENSMUST00000221965.1/271036, exon 3 of 5)                    |chr12          | 101417596| 101418095|
+|Parp14        |         13379|Exon (ENSMUST00000042665.8/547253, exon 6 of 17)                   |chr16          |  35857504|  35858003|
+|Gm5893        |        -13654|Distal Intergenic                                                  |chr7           |  24804642|  24805141|
+|AU022793      |         13920|Distal Intergenic                                                  |chr15          |  39976569|  39977068|
+|Rab38         |         13982|Intron (ENSMUST00000107256.3/72433, intron 1 of 2)                 |chr7           |  88444376|  88444875|
+|Rbm26         |         14071|Intron (ENSMUST00000163545.7/74213, intron 1 of 21)                |chr14          | 105162290| 105162789|
+|Lrp2bp        |         14142|Intron (ENSMUST00000170416.7/102141, intron 15 of 17)              |chr8           |  46036622|  46037121|
+|4930555K19Rik |        -14160|Distal Intergenic                                                  |chr15          |  41158828|  41159327|
+|Rab1a         |        -14231|Distal Intergenic                                                  |chr11          |  20186702|  20187201|
+|Arhgap15      |         14611|Intron (ENSMUST00000112824.7/76117, intron 1 of 14)                |chr2           |  43763481|  43763980|
+|Gm10421       |        -14781|Intron (ENSMUST00000190247.6/19276, intron 13 of 22)               |chr12          | 117166050| 117166549|
+|Mir100hg      |         14997|Intron (ENSMUST00000233562.1/73144, intron 6 of 6)                 |chr9           |  41490057|  41490556|
+|Trim9         |         15051|Intron (ENSMUST00000110522.9/94090, intron 1 of 13)                |chr12          |  70300705|  70301204|
+|Eapp          |         15464|Intron (ENSMUST00000161592.7/66266, intron 4 of 5)                 |chr12          |  54679858|  54680357|
+|Shroom3       |        -15547|Intron (ENSMUST00000113055.8/27428, intron 2 of 10)                |chr5           |  92881947|  92882446|
+|Fhip1a        |        -15782|Intron (ENSMUST00000154148.7/99889, intron 1 of 9)                 |chr3           |  85833073|  85833572|
+|Vav3          |        -16143|Intron (ENSMUST00000046864.13/57257, intron 2 of 26)               |chr3           | 109478142| 109478641|
+|4930528H21Rik |         16373|Distal Intergenic                                                  |chr6           |   4030713|   4031212|
+|Pam           |         16510|Intron (ENSMUST00000058762.14/18484, intron 3 of 25)               |chr1           |  97960059|  97960558|
+|Bst1          |        -16562|Intron (ENSMUST00000114047.9/242960, intron 1 of 10)               |chr5           |  43801824|  43802323|
+|Nvl           |         17047|Exon (ENSMUST00000027797.8/67459, exon 10 of 23)                   |chr1           | 181126658| 181127157|
+|Arhgap18      |        -17306|Intron (ENSMUST00000176060.7/73910, intron 1 of 4)                 |chr10          |  26804797|  26805296|
+|Ctsc          |        -17575|Distal Intergenic                                                  |chr7           |  88260011|  88260510|
+|Zbtb14        |        -17799|Distal Intergenic                                                  |chr17          |  69364752|  69365251|
+|2610203C22Rik |        -17971|Distal Intergenic                                                  |chr1           |   9649146|   9649645|
+|Scel          |        -18185|Intron (ENSMUST00000227693.1/ENSMUST00000227693.1, intron 1 of 2)  |chr14          | 103494658| 103495157|
+|Mir6337       |        -18185|Distal Intergenic                                                  |chr2           |  65382585|  65383084|
+|Hhip          |         18216|3' UTR                                                             |chr8           |  79971634|  79972133|
+|Zfp507        |        -18219|Intron (ENSMUST00000187873.1/78547, intron 2 of 2)                 |chr7           |  35821208|  35821707|
+|Paqr9         |         18519|Distal Intergenic                                                  |chr9           |  95578176|  95578675|
+|Ehmt1         |         18552|Distal Intergenic                                                  |chr2           |  24787304|  24787803|
+|Ddx3x         |         18648|Distal Intergenic                                                  |chrX           |  13306433|  13306932|
+|Cnot2         |         19040|Intron (ENSMUST00000220305.1/ENSMUST00000220305.1, intron 2 of 2)  |chr10          | 116529624| 116530123|
+|Sfmbt2        |        -19189|Intron (ENSMUST00000137351.1/ENSMUST00000137351.1, intron 1 of 3)  |chr2           |  10350822|  10351321|
+|Nyap2         |         19380|Intron (ENSMUST00000137862.7/241134, intron 3 of 6)                |chr1           |  81096963|  81097462|
+|Ldlrad4       |        -19614|Intron (ENSMUST00000063775.4/52662, intron 3 of 5)                 |chr18          |  68207954|  68208453|
+|Wincr1        |         19709|Intron (ENSMUST00000146678.1/100040617, intron 2 of 2)             |chr4           |  89078505|  89079004|
+|Chst4         |         20211|Distal Intergenic                                                  |chr8           | 110018644| 110019143|
+|Tbc1d23       |        -20377|Distal Intergenic                                                  |chr16          |  57251881|  57252380|
+|Myo9b         |        -20728|Intron (ENSMUST00000212935.1/17925, intron 2 of 39)                |chr8           |  71312590|  71313089|
+|Pisd-ps3      |         20882|Distal Intergenic                                                  |chrUn_JH584304 |     38286|     38785|
+|Gm13043       |        -21263|Distal Intergenic                                                  |chr4           | 143489581| 143490080|
+|Mir101b       |         21398|Distal Intergenic                                                  |chr19          |  29156677|  29157176|
+|Prcp          |         21584|Intron (ENSMUST00000076052.7/72461, intron 1 of 8)                 |chr7           |  92896884|  92897383|
+|Ppp1r36dn     |         22269|Distal Intergenic                                                  |chr12          |  76466829|  76467328|
+|4930554I06Rik |         22431|Intron (ENSMUST00000237231.1/ENSMUST00000237231.1, intron 2 of 4)  |chr19          |  21127141|  21127640|
+|AI115009      |        -22606|Intron (ENSMUST00000045262.10/229949, intron 5 of 13)              |chr3           | 152643808| 152644307|
+|Arfgef1       |        -22685|Distal Intergenic                                                  |chr1           |  10255355|  10255854|
+|Insyn2b       |         22807|Intron (ENSMUST00000165963.8/574403, intron 1 of 3)                |chr11          |  34337629|  34338128|
+|Rapgef4       |         23056|Intron (ENSMUST00000090826.11/56508, intron 4 of 30)               |chr2           |  72078041|  72078540|
+|Niban1        |        -23282|Intron (ENSMUST00000148810.7/63913, intron 5 of 13)                |chr1           | 151653386| 151653885|
+|Wrn           |        -23828|Intron (ENSMUST00000033991.12/22427, intron 1 of 33)               |chr8           |  33354378|  33354877|
+|Tenm3         |         24246|Intron (ENSMUST00000211812.1/23965, intron 1 of 2)                 |chr8           |  48819206|  48819705|
+|Ank2          |         24574|Intron (ENSMUST00000182078.8/109676, intron 3 of 45)               |chr3           | 127099789| 127100288|
+|Rybp          |        -24692|Exon (ENSMUST00000204906.1/ENSMUST00000204906.1, exon 1 of 1)      |chr6           | 100257823| 100258322|
+|Tex13b        |        -24756|Distal Intergenic                                                  |chrX           | 140838189| 140838688|
+|Pde1c         |         25945|Intron (ENSMUST00000044505.13/18575, intron 16 of 18)              |chr6           |  56096564|  56097063|
+|Usp13         |         26601|Intron (ENSMUST00000072312.11/72607, intron 2 of 20)               |chr3           |  32844312|  32844811|
+|Pawr          |         27544|Intron (ENSMUST00000095313.4/114774, intron 2 of 6)                |chr10          | 108360361| 108360860|
+|Gpbp1         |        -27986|Intron (ENSMUST00000231096.1/73274, intron 1 of 7)                 |chr13          | 111518097| 111518596|
+|Pex5l         |        -28113|Intron (ENSMUST00000108226.7/58869, intron 1 of 12)                |chr3           |  33111173|  33111672|
+|Epb41l4aos    |        -28234|Distal Intergenic                                                  |chr18          |  33766159|  33766658|
+|Gm8013        |         28606|Distal Intergenic                                                  |chr5           |  96949878|  96950377|
+|Cd200         |         28854|Distal Intergenic                                                  |chr16          |  45370959|  45371458|
+|Ctnnd2        |        -28954|Intron (ENSMUST00000081728.6/18163, intron 19 of 22)               |chr15          |  30975343|  30975842|
+|Slc5a7        |        -30102|Distal Intergenic                                                  |chr17          |  54329136|  54329635|
+|Dusp6         |        -30134|Exon (ENSMUST00000220253.1/ENSMUST00000220253.1, exon 3 of 3)      |chr10          |  99232598|  99233097|
+|Zbtb10        |        -32475|Distal Intergenic                                                  |chr3           |   9217628|   9218127|
+|Cdh9          |         32685|Intron (ENSMUST00000228307.1/12565, intron 2 of 11)                |chr15          |  16810786|  16811285|
+|Chl1          |         33006|Intron (ENSMUST00000203912.2/12661, intron 1 of 26)                |chr6           | 103544336| 103544835|
+|Anxa3         |        -33113|Exon (ENSMUST00000036019.4/231470, exon 63 of 74)                  |chr5           |  96759727|  96760226|
+|Cdh2          |         33560|Exon (ENSMUST00000025166.13/12558, exon 2 of 16)                   |chr18          |  16774403|  16774902|
+|Macroh2a1     |         33566|Intron (ENSMUST00000237678.1/ENSMUST00000237678.1, intron 5 of 5)  |chr13          |  56050456|  56050955|
+|Tasl2         |         34951|Distal Intergenic                                                  |chrX           | 109231709| 109232208|
+|Cd2ap         |        -35121|Distal Intergenic                                                  |chr17          |  42911786|  42912285|
+|H2ap          |        -36874|Distal Intergenic                                                  |chrX           |   9809555|   9810054|
+|Ednra         |        -38638|Intron (ENSMUST00000153937.1/ENSMUST00000153937.1, intron 7 of 7)  |chr8           |  77763102|  77763601|
+|Marchf4       |         38905|Intron (ENSMUST00000047786.5/381270, intron 1 of 3)                |chr1           |  72497526|  72498025|
+|Tjp1          |        -39442|Intron (ENSMUST00000206228.1/21872, intron 2 of 4)                 |chr7           |  65410681|  65411180|
+|Gm26579       |        -40722|Distal Intergenic                                                  |chr10          | 116633370| 116633869|
+|Celf4         |        -41546|Distal Intergenic                                                  |chr18          |  25795703|  25796202|
+|Ptprj         |        -42911|Intron (ENSMUST00000168621.2/19271, intron 1 of 23)                |chr2           |  90522081|  90522580|
+|Marchf1       |        -43100|Intron (ENSMUST00000152320.7/72925, intron 5 of 8)                 |chr8           |  66342695|  66343194|
+|Slc25a26      |        -43776|Distal Intergenic                                                  |chr6           |  94456056|  94456555|
+|Abhd2         |         44664|Intron (ENSMUST00000037315.12/54608, intron 3 of 10)               |chr7           |  79317918|  79318417|
+|Resf1         |        -48009|Distal Intergenic                                                  |chr6           | 149260906| 149261405|
+|Itga4         |        -48927|Distal Intergenic                                                  |chr2           |  79206000|  79206499|
+|Etaa1os       |         49012|Distal Intergenic                                                  |chr11          |  18003016|  18003515|
+|Pde7b         |         50561|Intron (ENSMUST00000020165.13/29863, intron 1 of 12)               |chr10          |  20673636|  20674135|
+|Pir           |         50654|Intron (ENSMUST00000145412.7/69656, intron 5 of 8)                 |chrX           | 164320227| 164320726|
+|Serpinb8      |         51830|Distal Intergenic                                                  |chr1           | 107657710| 107658209|
+|Ube2e3        |         51859|Distal Intergenic                                                  |chr2           |  78970252|  78970751|
+|Limch1        |         52528|Intron (ENSMUST00000201852.3/77569, intron 1 of 7)                 |chr5           |  66798417|  66798916|
+|4930448C13Rik |         52888|Intron (ENSMUST00000221439.1/73972, intron 3 of 3)                 |chr12          |  14997002|  14997501|
+|Arid5b        |        -53894|Intron (ENSMUST00000219238.1/71371, intron 3 of 9)                 |chr10          |  68190520|  68191019|
+|Mir28b        |        -56861|Intron (ENSMUST00000004497.10/16795, intron 6 of 14)               |chr8           |  72959152|  72959651|
+|9430014N10Rik |        -58307|Distal Intergenic                                                  |chr15          |  93985418|  93985917|
+|Lsm14a        |        -59365|Intron (ENSMUST00000140298.1/ENSMUST00000140298.1, intron 1 of 2)  |chr7           |  34452680|  34453179|
+|Aff2          |        -60258|Intron (ENSMUST00000033532.6/14266, intron 8 of 19)                |chrX           |  69795938|  69796437|
+|Arl14ep       |         60448|Distal Intergenic                                                  |chr2           | 106908330| 106908829|
+|Dera          |         60660|Distal Intergenic                                                  |chr6           | 137897512| 137898011|
+|4930474N05Rik |         60945|Distal Intergenic                                                  |chr14          |  36155914|  36156413|
+|Rnf217        |         62367|Intron (ENSMUST00000081989.7/268291, intron 1 of 5)                |chr10          |  31546318|  31546817|
+|Sema6a        |         64612|Intron (ENSMUST00000234124.1/69456, intron 6 of 6)                 |chr18          |  47216084|  47216583|
+|Nfkbiz        |         64701|Distal Intergenic                                                  |chr16          |  55756938|  55757437|
+|1110015O18Rik |         66552|Distal Intergenic                                                  |chr3           |   4866045|   4866544|
+|Itprid2       |        -67528|Distal Intergenic                                                  |chr2           |  79567325|  79567824|
+|Exoc4         |        -67597|Intron (ENSMUST00000052266.14/20336, intron 11 of 17)              |chr6           |  33794004|  33794503|
+|D030045P18Rik |         68624|Distal Intergenic                                                  |chr10          |  45906504|  45907003|
+|Ttc27         |         69673|Distal Intergenic                                                  |chr17          |  74931594|  74932093|
+|Abtb2         |        -70511|Intron (ENSMUST00000076212.3/99382, intron 1 of 16)                |chr2           | 103644025| 103644524|
+|Bckdhb        |         71223|Distal Intergenic                                                  |chr9           |  84178730|  84179229|
+|5730522E02Rik |         71402|Intron (ENSMUST00000125773.7/70626, intron 1 of 5)                 |chr11          |  26009699|  26010198|
+|Zbtb18        |         72108|Distal Intergenic                                                  |chr1           | 177517929| 177518428|
+|Nuak1         |         72376|Distal Intergenic                                                  |chr10          |  84319513|  84320012|
+|Atp8b4        |         72402|Intron (ENSMUST00000040128.11/241633, intron 9 of 27)              |chr2           | 126418652| 126419151|
+|Smc2os        |         72808|Distal Intergenic                                                  |chr4           |  52365658|  52366157|
+|Spata6        |        -73956|Intron (ENSMUST00000106592.7/78933, intron 11 of 12)               |chr4           | 111645529| 111646028|
+|Ttc39b        |         78465|Distal Intergenic                                                  |chr4           |  83154206|  83154705|
+|Irf2          |         78837|Distal Intergenic                                                  |chr8           |  46886067|  46886566|
+|Klf3          |        -80865|Intron (ENSMUST00000180912.5/ENSMUST00000180912.5, intron 1 of 4)  |chr5           |  64722024|  64722523|
+|Runx2         |         80895|Intron (ENSMUST00000162816.7/12393, intron 3 of 5)                 |chr17          |  44653299|  44653798|
+|CK137956      |         81478|Distal Intergenic                                                  |chr4           | 127888974| 127889473|
+|Adgrg2        |        -82642|Distal Intergenic                                                  |chrX           | 160307549| 160308048|
+|Hira          |         83891|Distal Intergenic                                                  |chr16          |  19025437|  19025936|
+|Gm31592       |        -86003|Distal Intergenic                                                  |chr10          |  91802327|  91802826|
+|Mroh9         |        -86098|Distal Intergenic                                                  |chr1           | 163171768| 163172267|
+|Cntnap5c      |         88615|Intron (ENSMUST00000076038.6/620292, intron 1 of 23)               |chr17          |  57858185|  57858684|
+|Aoah          |        -89984|Intron (ENSMUST00000021757.4/27052, intron 11 of 20)               |chr13          |  20920150|  20920649|
+|L3mbtl4       |        -90092|Exon (ENSMUST00000233387.1/ENSMUST00000233387.1, exon 3 of 5)      |chr17          |  68183206|  68183705|
+|Eya1          |         91571|Distal Intergenic                                                  |chr1           |  14139422|  14139921|
+|Mettl4        |         92882|Distal Intergenic                                                  |chr17          |  94656511|  94657010|
+|Fhod3         |         92970|Intron (ENSMUST00000037097.8/225288, intron 3 of 26)               |chr18          |  24802415|  24802914|
+|Epha3         |        -94093|Distal Intergenic                                                  |chr16          |  63958268|  63958767|
+|Lurap1l       |         95271|Distal Intergenic                                                  |chr4           |  81005917|  81006416|
+|Gm17399       |         95439|Distal Intergenic                                                  |chr9           | 118245670| 118246169|
+|Syt1          |         96144|Intron (ENSMUST00000105276.7/20979, intron 2 of 11)                |chr10          | 108912457| 108912956|
+|Fam204a       |        -98941|Distal Intergenic                                                  |chr19          |  60325642|  60326141|
+|Tdrd3         |         98954|Distal Intergenic                                                  |chr14          |  87638053|  87638552|
+|Aebp2         |        101857|Intron (ENSMUST00000111844.1/ENSMUST00000111844.1, intron 1 of 1)  |chr6           | 140748674| 140749173|
+|Mrps30        |        105882|Distal Intergenic                                                  |chr13          | 118280871| 118281370|
+|Large1        |        108077|Intron (ENSMUST00000004497.10/16795, intron 1 of 14)               |chr8           |  73243980|  73244479|
+|Hmgn3         |       -111513|Distal Intergenic                                                  |chr9           |  83258198|  83258697|
+|Epha5         |        118588|Intron (ENSMUST00000053733.14/13839, intron 3 of 15)               |chr5           |  84297719|  84298218|
+|Cldn34b3      |       -122598|Distal Intergenic                                                  |chrX           |  76141207|  76141706|
+|Rprm          |       -129961|Distal Intergenic                                                  |chr2           |  54215513|  54216012|
+|Atp10a        |        131338|Intron (ENSMUST00000168747.2/11982, intron 7 of 20)                |chr7           |  58789584|  58790083|
+|G6pd2         |        131571|Distal Intergenic                                                  |chr5           |  61940387|  61940886|
+|Gm5524        |        135827|Distal Intergenic                                                  |chr1           |  28019873|  28020372|
+|4930520P13Rik |        136738|Distal Intergenic                                                  |chr13          |  70369560|  70370059|
+|Plscr5        |       -136810|Distal Intergenic                                                  |chr9           |  92055627|  92056126|
+|2900079G21Rik |        137466|Intron (ENSMUST00000216779.1/ENSMUST00000216779.1, intron 1 of 1)  |chr9           | 112394040| 112394539|
+|Nrxn3         |        138513|Intron (ENSMUST00000190626.6/18191, intron 5 of 18)                |chr12          |  89331619|  89332118|
+|1700010I02Rik |        138672|Distal Intergenic                                                  |chr3           |   7815711|   7816210|
+|Ptprd         |       -141422|Intron (ENSMUST00000107287.8/19266, intron 9 of 14)                |chr4           |  76735721|  76736220|
+|4930533P14Rik |        142978|Distal Intergenic                                                  |chr1           |  96519096|  96519595|
+|4930567K20Rik |        143449|Intron (ENSMUST00000044306.12/14816, intron 3 of 8)                |chr10          |  10894529|  10895028|
+|Hs6st2        |        152832|Intron (ENSMUST00000088172.11/50786, intron 2 of 4)                |chrX           |  51527234|  51527733|
+|Rims1         |        153292|Intron (ENSMUST00000081544.12/116837, intron 2 of 31)              |chr1           |  22651933|  22652432|
+|Snx7          |       -155405|Distal Intergenic                                                  |chr3           | 118024341| 118024840|
+|Sstr4         |       -158357|Distal Intergenic                                                  |chr2           | 148236488| 148236987|
+|Platr4        |        160376|Distal Intergenic                                                  |chr3           |  41332315|  41332814|
+|Unc13c        |        175592|Exon (ENSMUST00000184666.7/208898, exon 6 of 33)                   |chr9           |  73757476|  73757975|
+|Hrh4          |        179264|Distal Intergenic                                                  |chr18          |  13186301|  13186800|
+|Mnd1-ps       |        184595|Intron (ENSMUST00000161302.7/14198, intron 2 of 6)                 |chr14          |  10070621|  10071120|
+|Tpbg          |        187362|Distal Intergenic                                                  |chr9           |  86030723|  86031222|
+|Prep          |       -189681|Distal Intergenic                                                  |chr10          |  44877023|  44877522|
+|Adcy2         |        191367|Intron (ENSMUST00000022013.7/210044, intron 3 of 24)               |chr13          |  68807675|  68808174|
+|Sec61b        |        195601|Distal Intergenic                                                  |chr4           |  47670549|  47671048|
+|Kcne4         |        199680|Intron (ENSMUST00000189296.1/102636764, intron 2 of 3)             |chr1           |  79016607|  79017106|
+|Ipo5          |       -205256|Distal Intergenic                                                  |chr14          | 120705469| 120705968|
+|Snora33       |        210172|Intron (ENSMUST00000219823.1/ENSMUST00000219823.1, intron 3 of 4)  |chr10          |  23574804|  23575303|
+|Speer2        |       -215438|Intron (ENSMUST00000231343.1/ENSMUST00000231343.1, intron 1 of 4)  |chr16          |  70079182|  70079681|
+|Nmbr          |        217635|Distal Intergenic                                                  |chr10          |  14977854|  14978353|
+|Nlgn1         |        230198|Intron (ENSMUST00000193603.5/192167, intron 5 of 7)                |chr3           |  25903037|  25903536|
+|Rack1         |       -236715|Distal Intergenic                                                  |chr11          |  48563118|  48563617|
+|Oca2          |        236875|Distal Intergenic                                                  |chr7           |  56543113|  56543612|
+|Pcdh20        |        237700|Distal Intergenic                                                  |chr14          |  88233147|  88233646|
+|Gm12381       |       -243300|Distal Intergenic                                                  |chr4           |  39098783|  39099282|
+|Tram1l1       |       -244073|Distal Intergenic                                                  |chr3           | 124076283| 124076782|
+|Plxdc2        |        246017|Distal Intergenic                                                  |chr2           |  16884713|  16885212|
+|Gria1         |       -248185|Distal Intergenic                                                  |chr11          |  56762703|  56763202|
+|Mir6378       |       -261604|Distal Intergenic                                                  |chr3           |  35184255|  35184754|
+|Mir466f-4     |        266037|Distal Intergenic                                                  |chr13          |  71373126|  71373625|
+|Dync2h1       |        273087|Distal Intergenic                                                  |chr9           |   6683103|   6683602|
+|Tpk1          |       -274526|Distal Intergenic                                                  |chr6           |  43940804|  43941303|
+|Gpat3         |        274613|Distal Intergenic                                                  |chr5           | 101121030| 101121529|
+|1700066C05Rik |       -278139|Distal Intergenic                                                  |chr16          |  79720738|  79721237|
+|4930486I03Rik |       -286308|Intron (ENSMUST00000088448.11/241035, intron 66 of 66)             |chr1           |  20069645|  20070144|
+|Abca13        |        288317|Intron (ENSMUST00000042740.12/268379, intron 41 of 61)             |chr11          |   9481768|   9482267|
+|Robo1         |        310856|Intron (ENSMUST00000232549.1/ENSMUST00000232549.1, intron 3 of 5)  |chr16          |  73294611|  73295110|
+|Cnbd1         |        346955|Intron (ENSMUST00000133363.1/ENSMUST00000133363.1, intron 4 of 10) |chr4           |  18775072|  18775571|
+|Iftap         |        369452|Distal Intergenic                                                  |chr2           | 101206174| 101206673|
+|Lrrc4c        |       -378005|Intron (ENSMUST00000135431.7/241568, intron 3 of 6)                |chr2           |  97089153|  97089652|
+|D3Ertd751e    |        380421|Distal Intergenic                                                  |chr3           |  42131617|  42132116|
+|Aga           |       -380926|Distal Intergenic                                                  |chr8           |  53130302|  53130801|
+|Robo2         |        386814|Distal Intergenic                                                  |chr16          |  73512572|  73513071|
+|S100a7l2      |       -392454|Distal Intergenic                                                  |chr3           |  91483257|  91483756|
+|Otol1         |        397139|Distal Intergenic                                                  |chr3           |  70404752|  70405251|
+|1700101O22Rik |        411902|Distal Intergenic                                                  |chr12          |   6967929|   6968428|
+|Caap1         |        417591|Intron (ENSMUST00000126270.1/ENSMUST00000126270.1, intron 4 of 5)  |chr4           |  94138676|  94139175|
+|Ccng1         |       -447100|Distal Intergenic                                                  |chr11          |  41202411|  41202910|
+|Ccser1        |        459653|Distal Intergenic                                                  |chr6           |  62416342|  62416841|
+|Unc5d         |        479990|Intron (ENSMUST00000168630.3/210801, intron 8 of 17)               |chr8           |  28738938|  28739437|
+|Slitrk5       |        481350|Distal Intergenic                                                  |chr14          | 112157199| 112157698|
+|4930474G06Rik |       -494432|Distal Intergenic                                                  |chr18          |  28367919|  28368418|
+|Zfp960        |       -519834|Distal Intergenic                                                  |chr17          |  16543780|  16544279|
+|Brinp3        |       -521845|Distal Intergenic                                                  |chr1           | 145972416| 145972915|
+|Sorcs3        |        559661|Distal Intergenic                                                  |chr19          |  49263877|  49264376|
+|Slit2         |       -562080|Distal Intergenic                                                  |chr5           |  47420559|  47421058|
+|Got2          |       -564553|Distal Intergenic                                                  |chr8           |  96453100|  96453599|
+|Dipk2a        |        567998|Distal Intergenic                                                  |chr9           |  93969584|  93970083|
+|Crim1         |       -570351|Distal Intergenic                                                  |chr17          |  77629398|  77629897|
+|Rab28         |        582388|Distal Intergenic                                                  |chr5           |  41044615|  41045114|
+|Celf2         |       -669085|Distal Intergenic                                                  |chr2           |   8178648|   8179147|
+|Cbln2         |        686564|Distal Intergenic                                                  |chr18          |  87399612|  87400111|
+|Slitrk1       |       -696500|Distal Intergenic                                                  |chr14          | 109610658| 109611157|
+|Mms22l        |       -722828|Distal Intergenic                                                  |chr4           |  23773124|  23773623|
+|Cadm2         |       -818314|Distal Intergenic                                                  |chr16          |  68439222|  68439721|
+|Gm2516        |        828432|Distal Intergenic                                                  |chr8           |  51196544|  51197043|
+|Chordc1       |       -840320|Distal Intergenic                                                  |chr9           |  17451306|  17451805|
+|Mdga2         |       -855791|Distal Intergenic                                                  |chr12          |  68078340|  68078839|
+|Zpld1         |       1018285|Distal Intergenic                                                  |chr16          |  54264453|  54264952|
+|Acvr2a        |      -1057639|Distal Intergenic                                                  |chr2           |  47755971|  47756470|
+|Ncam2         |       1107078|Distal Intergenic                                                  |chr16          |  82572701|  82573200|
+|Gm10440       |       1420473|Distal Intergenic                                                  |chr5           |  55770464|  55770963|
 
 
 :::
 :::
+
+
+### CHD-specific negative control
+
+The pioneer-mediated sensitization hypothesis predicts that C/EBP+GR composite enrichment is specific to HFD-driven chromatin remodeling. If the same enrichment also appears in CHD-specific peaks, the signal isn't HFD-induced — it's a property of any condition-specific peak. Run the same Fisher tests on the 776 CHD-specific peaks vs shared background.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+chd.motifs <- read_tsv("results/motif_analysis/composite_scan/CHD_specific/CHD_specific_per_peak_motifs.tsv",
+                       show_col_types = FALSE)
+chd    <- rename_motif_cols(chd.motifs)
+chd.c  <- classify_peaks(chd)
+
+cooc.chd <- bind_rows(
+  fisher_2x2("FoxA + GR",        sum(chd.c$foxa_gr),        nrow(chd.c), sum(shared.c$foxa_gr),        nrow(shared.c)),
+  fisher_2x2("C/EBP + GR",       sum(chd.c$cebp_gr),        nrow(chd.c), sum(shared.c$cebp_gr),        nrow(shared.c)),
+  fisher_2x2("FoxO + GR",        sum(chd.c$foxo_gr),        nrow(chd.c), sum(shared.c$foxo_gr),        nrow(shared.c)),
+  fisher_2x2("Any pioneer + GR", sum(chd.c$any_pioneer_gr), nrow(chd.c), sum(shared.c$any_pioneer_gr), nrow(shared.c))
+)
+knitr::kable(cooc.chd, digits = c(0,0,0,2,0,0,2,3,4),
+             caption = "Composite motif co-occurrence: CHD-specific vs shared")
+```
+
+::: {.cell-output-display}
+
+
+Table: Composite motif co-occurrence: CHD-specific vs shared
+
+|comparison       | hfd_with| hfd_total| hfd_pct| shared_with| shared_total| shared_pct| odds_ratio| p_value|
+|:----------------|--------:|---------:|-------:|-----------:|------------:|----------:|----------:|-------:|
+|FoxA + GR        |       26|      1322|    1.97|         833|        53397|       1.56|      1.266|  0.1444|
+|C/EBP + GR       |       60|      1322|    4.54|        1718|        53397|       3.22|      1.430|  0.0065|
+|FoxO + GR        |       26|      1322|    1.97|         834|        53397|       1.56|      1.264|  0.1457|
+|Any pioneer + GR |       79|      1322|    5.98|        2412|        53397|       4.52|      1.343|  0.0091|
+
+
+:::
+
+```{.r .cell-code}
+cooc.compare <- bind_rows(
+  cooc     |> mutate(direction = "HFD-specific"),
+  cooc.chd |> mutate(direction = "CHD-specific")
+) |>
+  select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
+knitr::kable(cooc.compare, digits = c(0, 0, 2, 2, 3, 4),
+             caption = "HFD vs CHD enrichment side by side")
+```
+
+::: {.cell-output-display}
+
+
+Table: HFD vs CHD enrichment side by side
+
+|direction    |comparison       | fg_pct| shared_pct| odds_ratio| p_value|
+|:------------|:----------------|------:|----------:|----------:|-------:|
+|HFD-specific |FoxA + GR        |   1.67|       1.56|      1.070|  0.2654|
+|HFD-specific |C/EBP + GR       |   4.49|       3.22|      1.415|  0.0000|
+|HFD-specific |FoxO + GR        |   1.67|       1.56|      1.068|  0.2694|
+|HFD-specific |Any pioneer + GR |   5.80|       4.52|      1.301|  0.0000|
+|CHD-specific |FoxA + GR        |   1.97|       1.56|      1.266|  0.1444|
+|CHD-specific |C/EBP + GR       |   4.54|       3.22|      1.430|  0.0065|
+|CHD-specific |FoxO + GR        |   1.97|       1.56|      1.264|  0.1457|
+|CHD-specific |Any pioneer + GR |   5.98|       4.52|      1.343|  0.0091|
+
+
+:::
+:::
+
+
+### Sanity check (wider ±50 kb window) on key GR-pathway genes
+
+The earlier nearest-TSS sanity check was too strict — composite enhancers often act tens of kilobases from their target gene. This wider check counts how many HFD-specific composite peaks fall within ±50 kb of each gene's transcriptional unit. Useful for asking "does this gene have a candidate sensitizing enhancer in its regulatory landscape?" rather than "is this gene the closest TSS to a composite peak?"
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+
+gr_pathway_genes <- c("Hsd11b1", "Nr3c1", "Ncoa1", "Ncoa2", "Fkbp5",
+                      "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1",
+                      "Pnpla2", "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
+
+sym2entrez <- bitr(gr_pathway_genes,
+                   fromType = "SYMBOL",
+                   toType   = "ENTREZID",
+                   OrgDb    = org.Mm.eg.db)
+
+txdb       <- TxDb.Mmusculus.UCSC.mm10.knownGene
+gene_gr    <- genes(txdb, single.strand.genes.only = FALSE)
+gene_gr    <- gene_gr[names(gene_gr) %in% sym2entrez$ENTREZID]
+
+# Map ENTREZID -> SYMBOL
+entrez2sym <- setNames(sym2entrez$SYMBOL, sym2entrez$ENTREZID)
+names(gene_gr) <- entrez2sym[names(gene_gr)]
+
+# Extend each gene's locus by ±50 kb
+gene_windows <- resize(gene_gr,
+                       width = width(gene_gr) + 100000,
+                       fix   = "center")
+
+# Build per-composite peak GRanges (HFD-specific)
+foxa_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(foxa_gr) |> pull(peak))
+cebp_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(cebp_gr) |> pull(peak))
+foxo_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(foxo_gr) |> pull(peak))
+
+count_overlaps_safe <- function(windows, peaks) {
+  if (length(peaks) == 0) return(rep(0L, length(windows)))
+  as.integer(countOverlaps(windows, peaks))
+}
+
+sanity_wide <- tibble(
+  gene                = names(gene_windows),
+  foxa_gr_within_50kb = count_overlaps_safe(gene_windows, foxa_hfd_gr),
+  cebp_gr_within_50kb = count_overlaps_safe(gene_windows, cebp_hfd_gr),
+  foxo_gr_within_50kb = count_overlaps_safe(gene_windows, foxo_hfd_gr)
+) |>
+  arrange(desc(cebp_gr_within_50kb + foxa_gr_within_50kb + foxo_gr_within_50kb))
+
+knitr::kable(sanity_wide,
+             caption = "HFD-specific composite peaks within ±50 kb of GR-pathway gene loci")
+```
+
+::: {.cell-output-display}
+
+
+Table: HFD-specific composite peaks within ±50 kb of GR-pathway gene loci
+
+|gene    | foxa_gr_within_50kb| cebp_gr_within_50kb| foxo_gr_within_50kb|
+|:-------|-------------------:|-------------------:|-------------------:|
+|Cebpa   |                   0|                   0|                   0|
+|Cebpb   |                   0|                   0|                   0|
+|Fkbp5   |                   0|                   0|                   0|
+|Tsc22d3 |                   0|                   0|                   0|
+|Nr3c1   |                   0|                   0|                   0|
+|Foxa1   |                   0|                   0|                   0|
+|Foxa2   |                   0|                   0|                   0|
+|Hsd11b1 |                   0|                   0|                   0|
+|Ncoa1   |                   0|                   0|                   0|
+|Ncoa2   |                   0|                   0|                   0|
+|Per1    |                   0|                   0|                   0|
+|Zbtb16  |                   0|                   0|                   0|
+|Foxo1   |                   0|                   0|                   0|
+|Angptl4 |                   0|                   0|                   0|
+|Klf15   |                   0|                   0|                   0|
+|Pnpla2  |                   0|                   0|                   0|
+
+
+:::
+:::
+
+
+### TF motif enrichment volcano
+
+Visualization of the broader AME enrichment landscape (HFD-specific vs shared). Each point is one JASPAR motif. Highlighting the four TF families relevant to the sensitization hypothesis — FoxA, FoxO, C/EBP, and GR/PGR — shows where they sit in significance and fold enrichment relative to all other tested motifs.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(ggrepel)
+
+ame <- read_tsv("results/motif_analysis/ame_results/HFD_vs_shared/ame.tsv",
+                comment = "#",
+                show_col_types = FALSE) |>
+  filter(!is.na(rank))
+
+ame <- ame |>
+  mutate(
+    log2_enrich     = log2((`%TP` + 0.5) / (`%FP` + 0.5)),
+    neg_log10_padj  = -log10(pmax(`adj_p-value`, 1e-300)),
+    tf_family = case_when(
+      grepl("^FOXA", motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
+      grepl("^FOXO", motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
+      grepl("^CEBP", motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
+      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)       ~ "GR/PGR",
+      TRUE                                              ~ "Other"
+    )
+  )
+
+ggplot(ame, aes(x = log2_enrich, y = neg_log10_padj)) +
+  geom_point(data = filter(ame, tf_family == "Other"),
+             alpha = 0.3, size = 0.8, color = "grey70") +
+  geom_point(data = filter(ame, tf_family != "Other"),
+             aes(color = tf_family), alpha = 0.9, size = 2.5) +
+  ggrepel::geom_text_repel(
+    data = filter(ame, tf_family != "Other"),
+    aes(label = motif_alt_ID, color = tf_family),
+    size = 3, max.overlaps = 50,
+    show.legend = FALSE
+  ) +
+  scale_color_manual(values = c(
+    "FoxA"   = "#1f77b4",
+    "FoxO"   = "#2ca02c",
+    "C/EBP"  = "#d62728",
+    "GR/PGR" = "#ff7f0e"
+  )) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  theme_classic(base_size = 14) +
+  labs(
+    x     = "log2(% foreground / % background)",
+    y     = "-log10(adj. p-value)",
+    title = "TF motif enrichment in HFD-opened peaks (AME, JASPAR 2024)",
+    color = "TF family"
+  )
+```
+
+::: {.cell-output-display}
+![](figures/ame-volcano-1.png){width=3000}
+:::
+:::
+
+
+## Data-driven sensitizer-TF discovery
+
+The candidate-driven approach (FoxA, FoxO, C/EBP — picked from the GR-pioneer literature) failed: C/EBP+GR composite enrichment was the same in HFD-specific (OR=1.42) and CHD-specific (OR=1.43) peaks, so the signal isn't HFD-induced — it's a generic "condition-specific peak vs constitutive" signal. FoxA and FoxO weren't enriched at all.
+
+Pivoting to a fully data-driven approach: find TFs that score on **two independent axes**.
+
+- **Axis 1**: Motif enrichment in HFD-specific vs CHD-specific peaks (from `RUN_AME(HFD_vs_CHD)`). This identifies TFs whose binding sites distinguish HFD-driven from CHD-driven chromatin remodeling, controlling for "condition-specific peak" being enhancer-biased.
+- **Axis 2**: Motif co-occurrence with GR-class motifs (NR3C1, PGR) within HFD-specific peaks. For each motif M, test whether GR-motif presence rate is higher in M-containing HFD peaks than in non-M-containing HFD peaks (Fisher exact, conditional on being HFD-specific).
+
+A TF scoring on both axes is a candidate sensitizer pioneer chosen by the data rather than priors.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(readr)
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+# Axis 1: HFD vs CHD AME results
+ame.hvc <- read_tsv("results/motif_analysis/ame_results/HFD_vs_CHD/ame.tsv",
+                    comment = "#",
+                    show_col_types = FALSE) |>
+  filter(!is.na(rank)) |>
+  mutate(
+    log2_enrich_hvc    = log2((`%TP` + 0.5) / (`%FP` + 0.5)),
+    neg_log10_padj_hvc = -log10(pmax(`adj_p-value`, 1e-300)),
+    motif_id           = motif_ID
+  ) |>
+  select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
+         pct_HFD = `%TP`, pct_CHD = `%FP`, adj_p_hvc = `adj_p-value`)
+
+# Axis 2: full per-peak motif occurrence matrix in HFD-specific peaks
+hfd.all <- read_tsv("results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv",
+                    show_col_types = FALSE)
+cat("HFD-specific peaks scanned:", nrow(hfd.all),
+    "; motifs with >=1 hit somewhere:", ncol(hfd.all) - 1, "\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+HFD-specific peaks scanned: 6900 ; motifs with >=1 hit somewhere: 775 
+```
+
+
+:::
+:::
+
+
+### GR co-occurrence within HFD-specific peaks (axis 2)
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# GR-class motif IDs (NR3C1 plus PGR human/mouse as IR3 proxies)
+gr_motif_ids <- c("MA0113.4", "MA2327.1", "MA2323.1")
+gr_cols      <- intersect(gr_motif_ids, names(hfd.all))
+hfd.all$has_gr <- if (length(gr_cols) > 0) {
+  rowSums(hfd.all[, gr_cols, drop = FALSE]) > 0
+} else {
+  rep(FALSE, nrow(hfd.all))
+}
+cat("HFD peaks with at least one GR-class motif:", sum(hfd.all$has_gr),
+    "/", nrow(hfd.all),
+    sprintf("(%.1f%%)\n", 100 * mean(hfd.all$has_gr)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+HFD peaks with at least one GR-class motif: 1526 / 6900 (22.1%)
+```
+
+
+:::
+
+```{.r .cell-code}
+# For each non-GR motif M: Fisher exact for GR present | M present vs M absent.
+# Restricted to HFD-specific peaks (so we're testing co-occurrence within
+# HFD-opened chromatin, not the marginal enrichment of M itself).
+motif_cols <- setdiff(names(hfd.all), c("peak", "has_gr", gr_cols))
+
+gr_cooc <- lapply(motif_cols, function(m) {
+  m_pres <- hfd.all[[m]] > 0
+  a <- sum(m_pres &  hfd.all$has_gr)   # M+ GR+
+  b <- sum(m_pres & !hfd.all$has_gr)   # M+ GR-
+  c <- sum(!m_pres &  hfd.all$has_gr)  # M- GR+
+  d <- sum(!m_pres & !hfd.all$has_gr)  # M- GR-
+  if (a + b < 30 || c + d < 30) {
+    return(tibble(motif_id = m, n_with_m = a+b, n_m_and_gr = a,
+                  cooc_or = NA_real_, cooc_p = NA_real_))
+  }
+  ft <- fisher.test(matrix(c(a, b, c, d), nrow = 2), alternative = "greater")
+  tibble(motif_id = m, n_with_m = a+b, n_m_and_gr = a,
+         cooc_or = unname(ft$estimate),
+         cooc_p  = ft$p.value)
+}) |> bind_rows() |>
+  filter(!is.na(cooc_or)) |>
+  mutate(cooc_q   = p.adjust(cooc_p, method = "BH"),
+         log2_or  = log2(pmax(cooc_or, 1e-3)),
+         neg_log10_q = -log10(pmax(cooc_q, 1e-300)))
+
+cat("Motifs tested for GR co-occurrence:", nrow(gr_cooc), "\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Motifs tested for GR co-occurrence: 772 
+```
+
+
+:::
+
+```{.r .cell-code}
+cat("Significant at q<0.05:", sum(gr_cooc$cooc_q < 0.05, na.rm=TRUE), "\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Significant at q<0.05: 5 
+```
+
+
+:::
+:::
+
+
+### Two-axis ranking — HFD enrichment × GR co-occurrence
+
+
+::: {.cell}
+
+```{.r .cell-code}
+two_axis <- gr_cooc |>
+  left_join(ame.hvc, by = "motif_id") |>
+  filter(!is.na(log2_enrich_hvc))
+
+# Combined score: only meaningful when BOTH axes are positive
+two_axis <- two_axis |>
+  mutate(
+    combined_score = pmax(log2_enrich_hvc, 0) * pmax(log2_or, 0),
+    in_quadrant_TR = log2_enrich_hvc > 0 & log2_or > 0  # top-right quadrant
+  ) |>
+  arrange(desc(combined_score))
+
+# Top candidate sensitizer-pioneer TFs (top-right quadrant, ranked by combined score)
+top_candidates <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  select(motif_id, motif_alt_ID,
+         pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
+         n_with_m, n_m_and_gr, cooc_or, cooc_q,
+         combined_score) |>
+  head(40)
+
+knitr::kable(top_candidates, digits = c(0,0,2,2,3,4,0,0,3,4,3),
+             caption = "Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)")
+```
+
+::: {.cell-output-display}
+
+
+Table: Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)
+
+|motif_id |motif_alt_ID | pct_HFD| pct_CHD| log2_enrich_hvc| adj_p_hvc| n_with_m| n_m_and_gr| cooc_or| cooc_q| combined_score|
+|:--------|:------------|-------:|-------:|---------------:|---------:|--------:|----------:|-------:|------:|--------------:|
+|MA1603.2 |Dmrt1        |      60|   42.89|            0.48|         0|      773|        215|   1.415| 0.0116|           0.24|
+
+
+:::
+
+```{.r .cell-code}
+# Save full ranked table
+dir.create("results/motif_analysis/full_motif_scan", recursive = TRUE, showWarnings = FALSE)
+write_tsv(two_axis |> arrange(desc(combined_score)),
+          "results/motif_analysis/full_motif_scan/data_driven_sensitizer_ranking.tsv")
+```
+:::
+
+
+### Two-axis scatter plot
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(ggrepel)
+
+# Label top hits on both axes
+label_set <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  head(25) |>
+  pull(motif_id)
+
+two_axis_plot <- two_axis |>
+  mutate(
+    label_flag = motif_id %in% label_set,
+    family = case_when(
+      grepl("^FOXA",  motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
+      grepl("^FOXO",  motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
+      grepl("^CEBP",  motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
+      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)        ~ "GR/PGR",
+      grepl("^MEF2",  motif_alt_ID, ignore.case = TRUE) ~ "MEF2",
+      grepl("^FOS|^JUN|^BATF|^ATF[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "AP-1 / ATF",
+      grepl("^KLF",   motif_alt_ID, ignore.case = TRUE) ~ "KLF",
+      grepl("^NFE2|^NRF",  motif_alt_ID, ignore.case = TRUE) ~ "NRF/NFE2",
+      grepl("^STAT",  motif_alt_ID, ignore.case = TRUE) ~ "STAT",
+      grepl("^HIF",   motif_alt_ID, ignore.case = TRUE) ~ "HIF",
+      grepl("^RXR|^PPAR|^LXR|^NR[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "Nuclear receptor",
+      TRUE                                                ~ "Other"
+    )
+  )
+
+ggplot(two_axis_plot, aes(x = log2_enrich_hvc, y = log2_or)) +
+  geom_point(data = filter(two_axis_plot, family == "Other"),
+             alpha = 0.25, size = 0.8, color = "grey70") +
+  geom_point(data = filter(two_axis_plot, family != "Other"),
+             aes(color = family), alpha = 0.9, size = 2.2) +
+  geom_text_repel(
+    data = filter(two_axis_plot, label_flag),
+    aes(label = motif_alt_ID, color = family),
+    size = 3.2, max.overlaps = 50, show.legend = FALSE
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  theme_classic(base_size = 14) +
+  labs(
+    x     = "Axis 1: log2(%HFD-specific / %CHD-specific)  →  HFD-enriched",
+    y     = "Axis 2: log2(odds ratio for GR co-occurrence in HFD peaks)  →  GR co-enriched",
+    title = "Data-driven sensitizer-TF candidates",
+    subtitle = "Top-right quadrant: HFD-enriched AND co-occurring with GR motifs in HFD-opened chromatin",
+    color = "TF family"
+  )
+```
+
+::: {.cell-output-display}
+![](figures/data-driven-scatter-1.png){width=3300}
+:::
+:::
+
+
+### Pathway enrichment of the top candidates
+
+For the top 5 data-driven sensitizer TF candidates, list HFD-specific peaks containing both the candidate motif AND a GR motif, then annotate to nearest TSS.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+top5 <- two_axis |>
+  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  arrange(desc(combined_score)) |>
+  head(5) |>
+  pull(motif_id)
+
+cat("Top 5 candidates by combined score:\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Top 5 candidates by combined score:
+```
+
+
+:::
+
+```{.r .cell-code}
+print(two_axis |> filter(motif_id %in% top5) |>
+        select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+# A tibble: 1 × 5
+  motif_id motif_alt_ID log2_enrich_hvc log2_or combined_score
+  <chr>    <chr>                  <dbl>   <dbl>          <dbl>
+1 MA1603.2 Dmrt1                  0.480   0.501          0.240
+```
+
+
+:::
+
+```{.r .cell-code}
+# For each top candidate, get the peaks containing both that motif and GR
+for (mid in top5) {
+  if (!mid %in% names(hfd.all)) next
+  cand_peaks <- hfd.all |>
+    filter(.data[[mid]] > 0 & has_gr) |>
+    pull(peak)
+  if (length(cand_peaks) < 10) {
+    cat("\n", mid, ": only", length(cand_peaks), "composite peaks - skipping\n")
+    next
+  }
+  cand_gr <- parse_peaks_to_gr(cand_peaks)
+  cand_ann <- as.data.frame(annotatePeak(
+    cand_gr,
+    TxDb     = TxDb.Mmusculus.UCSC.mm10.knownGene,
+    tssRegion = c(-2000, 500),
+    annoDb    = "org.Mm.eg.db",
+    verbose   = FALSE
+  ))
+  cand_genes <- cand_ann |>
+    filter(!is.na(SYMBOL)) |>
+    distinct(SYMBOL, .keep_all = TRUE) |>
+    arrange(abs(distanceToTSS))
+  alt_name <- two_axis$motif_alt_ID[two_axis$motif_id == mid][1]
+  cat("\n=== ", mid, " (", alt_name, ") + GR composite peaks ===\n", sep = "")
+  cat("  Composite peaks:", length(cand_peaks),
+      "; unique nearest genes:", nrow(cand_genes), "\n")
+  print(head(cand_genes |> select(SYMBOL, distanceToTSS), 20))
+
+  write_tsv(cand_genes,
+            sprintf("results/motif_analysis/full_motif_scan/%s_GR_composite_genes.tsv",
+                    gsub("[^A-Za-z0-9._-]", "_", paste0(alt_name, "_", mid))))
+}
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA1603.2 (Dmrt1) + GR composite peaks ===
+  Composite peaks: 215 ; unique nearest genes: 206 
+          SYMBOL distanceToTSS
+1        Dennd4b             0
+2           Cnn3             0
+3           Pltp           460
+4        Tmem52b          -483
+5          Strbp          -570
+6        Rhobtb3          -717
+7        Slco1b2           801
+8           Ell2         -1080
+9          Ephb3         -1549
+10        Tsg101          1811
+11         Gcfc2          1884
+12 2310002D06Rik         -2080
+13          Erc1          2082
+14         Sgip1          2155
+15        Tsen15          2191
+16         Adam8         -2329
+17        Drosha         -2600
+18          Ssh1          2630
+19 A630001G21Rik          2847
+20        Popdc1         -3007
+```
+
+
+:::
+:::
+
 
 
 ## Session Information
@@ -1539,57 +1826,58 @@ loaded via a namespace (and not attached):
  [75] gtable_0.3.6                            
  [76] tzdb_0.5.0                              
  [77] hms_1.1.4                               
- [78] XVector_0.52.0                          
- [79] pillar_1.11.1                           
- [80] babelgene_22.9                          
- [81] yulab.utils_0.2.4                       
- [82] vroom_1.7.1                             
- [83] splines_4.6.0                           
- [84] tweenr_2.0.3                            
- [85] treeio_1.36.1                           
- [86] lattice_0.22-9                          
- [87] rtracklayer_1.72.0                      
- [88] bit_4.6.0                               
- [89] tidyselect_1.2.1                        
- [90] fontLiberation_0.1.0                    
- [91] GO.db_3.23.1                            
- [92] Biostrings_2.80.0                       
- [93] knitr_1.51                              
- [94] fontBitstreamVera_0.1.1                 
- [95] SummarizedExperiment_1.42.0             
- [96] xfun_0.57                               
- [97] matrixStats_1.5.0                       
- [98] stringi_1.8.7                           
- [99] UCSC.utils_1.8.0                        
-[100] lazyeval_0.2.3                          
-[101] ggfun_0.2.0                             
-[102] yaml_2.3.12                             
-[103] boot_1.3-32                             
-[104] evaluate_1.0.5                          
-[105] codetools_0.2-20                        
-[106] cigarillo_1.2.0                         
-[107] qvalue_2.44.0                           
-[108] gdtools_0.5.0                           
-[109] ggplotify_0.1.3                         
-[110] cli_3.6.6                               
-[111] systemfonts_1.3.2                       
-[112] processx_3.9.0                          
-[113] Rcpp_1.1.1-1.1                          
-[114] GenomeInfoDb_1.48.0                     
-[115] png_0.1-9                               
-[116] XML_3.99-0.23                           
-[117] parallel_4.6.0                          
-[118] assertthat_0.2.1                        
-[119] blob_1.3.0                              
-[120] DOSE_4.6.0                              
-[121] bitops_1.0-9                            
-[122] tidytree_0.4.7                          
-[123] ggiraph_0.9.6                           
-[124] enrichit_0.1.4                          
-[125] scales_1.4.0                            
-[126] crayon_1.5.3                            
-[127] rlang_1.2.0                             
-[128] KEGGREST_1.52.0                         
+ [78] utf8_1.2.6                              
+ [79] XVector_0.52.0                          
+ [80] pillar_1.11.1                           
+ [81] babelgene_22.9                          
+ [82] yulab.utils_0.2.4                       
+ [83] vroom_1.7.1                             
+ [84] splines_4.6.0                           
+ [85] tweenr_2.0.3                            
+ [86] treeio_1.36.1                           
+ [87] lattice_0.22-9                          
+ [88] rtracklayer_1.72.0                      
+ [89] bit_4.6.0                               
+ [90] tidyselect_1.2.1                        
+ [91] fontLiberation_0.1.0                    
+ [92] GO.db_3.23.1                            
+ [93] Biostrings_2.80.0                       
+ [94] knitr_1.51                              
+ [95] fontBitstreamVera_0.1.1                 
+ [96] SummarizedExperiment_1.42.0             
+ [97] xfun_0.57                               
+ [98] matrixStats_1.5.0                       
+ [99] stringi_1.8.7                           
+[100] UCSC.utils_1.8.0                        
+[101] lazyeval_0.2.3                          
+[102] ggfun_0.2.0                             
+[103] yaml_2.3.12                             
+[104] boot_1.3-32                             
+[105] evaluate_1.0.5                          
+[106] codetools_0.2-20                        
+[107] cigarillo_1.2.0                         
+[108] qvalue_2.44.0                           
+[109] gdtools_0.5.0                           
+[110] ggplotify_0.1.3                         
+[111] cli_3.6.6                               
+[112] systemfonts_1.3.2                       
+[113] processx_3.9.0                          
+[114] Rcpp_1.1.1-1.1                          
+[115] GenomeInfoDb_1.48.0                     
+[116] png_0.1-9                               
+[117] XML_3.99-0.23                           
+[118] parallel_4.6.0                          
+[119] assertthat_0.2.1                        
+[120] blob_1.3.0                              
+[121] DOSE_4.6.0                              
+[122] bitops_1.0-9                            
+[123] tidytree_0.4.7                          
+[124] ggiraph_0.9.6                           
+[125] enrichit_0.1.4                          
+[126] scales_1.4.0                            
+[127] crayon_1.5.3                            
+[128] rlang_1.2.0                             
+[129] KEGGREST_1.52.0                         
 ```
 
 
