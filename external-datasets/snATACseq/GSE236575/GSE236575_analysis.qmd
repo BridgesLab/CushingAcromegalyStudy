@@ -11,12 +11,16 @@ format:
     code-fold: true
     code-summary: "Show the code"
     fig-path: "figures/"
-  gfm:
-    html-math-method: webtex
-theme: journal
-execute:
-  echo: true
-  warning: false
+knitr:
+  opts_chunk:
+    fig-path: "figures/"          # folder for all figure files
+    dev: ["png", "pdf"]           # both formats for every plot
+    dpi: 300                      # ← this is the correct place for resolution
+    dev.args:
+      png:
+        type: "cairo-png"         # better anti-aliasing / font rendering (optional but recommended)
+      pdf:
+        family: "sans"            # font family (optional)
 ---
 
 ```{r global_options}
@@ -101,16 +105,15 @@ deseq.results.annot <- deseq.results |>
   left_join(all.ann_df, by=c("chr"="seqnames", "end"="end"))
 
 ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
-  geom_point(alpha=0.4) +
-  theme_minimal() +
+  geom_point(alpha=0.4,size=1) +
   xlab("Log2 Fold Change (HFD vs NCD)") +
   ylab("-Log10 P-value") +
   ggtitle("Differentially Accessible Regions") +
-  ggrepel::geom_text_repel(
-    data = deseq.results.annot |>
-      filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
-      arrange(padj) |> head(10),
-    aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
+  #ggrepel::geom_text_repel(
+  #  data = deseq.results.annot |>
+  #    filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
+  #    arrange(padj) |> head(10),
+  #  aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
   geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
   geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
   theme_classic(base_size=16)
@@ -363,7 +366,7 @@ Quick look at whether known glucocorticoid-sensitization genes appear in our com
 
 ```{r composite-motif-sanity}
 gr_pathway_genes <- c("Hsd11b1", "Nr3c1", "Ncoa1", "Ncoa2", "Fkbp5",
-                      "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1",
+                      "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1","Pnpla2",
                       "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
 all_composite_genes <- bind_rows(foxa_gr.ann, cebp_gr.ann, foxo_gr.ann) %>%
   filter(!is.na(SYMBOL))
@@ -377,14 +380,6 @@ sanity <- tibble(gene = gr_pathway_genes) %>%
   ungroup()
 knitr::kable(sanity)
 ```
-
-## Interpretation
-
-A brief summary of what the interpretation of these results were
-
-## References
-
-If needed you will need a *.bib file.  See the details at <https://quarto.org/docs/authoring/citations.html>
 
 ## Session Information
 
