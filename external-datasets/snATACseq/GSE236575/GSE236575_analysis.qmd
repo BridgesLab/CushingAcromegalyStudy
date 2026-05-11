@@ -357,25 +357,186 @@ if (length(foxa_gr.symbols) >= 10) {
 }
 ```
 
-### Sanity check on key GR-pathway genes
+### Pathway enrichment of C/EBP + GR composite genes
 
-Quick look at whether known glucocorticoid-sensitization genes appear in our composite-peak gene lists:
+GO Biological Process enrichment for the 310 nearest-TSS genes of HFD-specific C/EBP + GR composite peaks. These are the candidate sensitizing enhancers' target genes — the pathways they regulate should reflect HFD-induced glucocorticoid-responsive biology.
 
-```{r composite-motif-sanity}
+```{r composite-motif-cebp-pathway}
+cebp_gr.symbols <- cebp_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  pull(SYMBOL) %>%
+  unique()
+
+if (length(cebp_gr.symbols) >= 10) {
+  cebp_gr.entrez <- bitr(cebp_gr.symbols,
+                         fromType = "SYMBOL",
+                         toType   = "ENTREZID",
+                         OrgDb    = org.Mm.eg.db)$ENTREZID
+  cebp_gr.gobp <- enrichGO(gene          = cebp_gr.entrez,
+                           OrgDb         = org.Mm.eg.db,
+                           keyType       = "ENTREZID",
+                           ont           = "BP",
+                           pAdjustMethod = "BH",
+                           pvalueCutoff  = 0.05,
+                           qvalueCutoff  = 0.05,
+                           readable      = TRUE)
+  if (!is.null(cebp_gr.gobp) && nrow(as.data.frame(cebp_gr.gobp)) > 0) {
+    dotplot(cebp_gr.gobp, showCategory = 20) +
+      ggtitle("GO-BP: C/EBP + GR composite genes (HFD-specific)")
+  } else {
+    cat("No significant GO-BP terms at FDR < 0.05.\n")
+  }
+}
+```
+
+### Full list of C/EBP + GR composite genes
+
+All unique nearest genes for the 310 HFD-specific C/EBP + GR composite peaks, sorted by distance to TSS. Also written to a TSV for downstream use.
+
+```{r composite-motif-cebp-full-list}
+cebp_gr_list <- cebp_gr.ann %>%
+  filter(!is.na(SYMBOL)) %>%
+  distinct(SYMBOL, .keep_all = TRUE) %>%
+  arrange(abs(distanceToTSS)) %>%
+  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
+
+dir.create("results/motif_analysis/composite_scan", recursive = TRUE, showWarnings = FALSE)
+write_tsv(cebp_gr_list, "results/motif_analysis/composite_scan/HFD_specific_cebp_gr_genes.tsv")
+cat("Unique nearest genes:", nrow(cebp_gr_list), "\n")
+knitr::kable(cebp_gr_list,
+             caption = "All C/EBP + GR composite-peak nearest genes (HFD-specific)")
+```
+
+### CHD-specific negative control
+
+The pioneer-mediated sensitization hypothesis predicts that C/EBP+GR composite enrichment is specific to HFD-driven chromatin remodeling. If the same enrichment also appears in CHD-specific peaks, the signal isn't HFD-induced — it's a property of any condition-specific peak. Run the same Fisher tests on the 776 CHD-specific peaks vs shared background.
+
+```{r composite-motif-chd-control}
+chd.motifs <- read_tsv("results/motif_analysis/composite_scan/CHD_specific/CHD_specific_per_peak_motifs.tsv",
+                       show_col_types = FALSE)
+chd    <- rename_motif_cols(chd.motifs)
+chd.c  <- classify_peaks(chd)
+
+cooc.chd <- bind_rows(
+  fisher_2x2("FoxA + GR",        sum(chd.c$foxa_gr),        nrow(chd.c), sum(shared.c$foxa_gr),        nrow(shared.c)),
+  fisher_2x2("C/EBP + GR",       sum(chd.c$cebp_gr),        nrow(chd.c), sum(shared.c$cebp_gr),        nrow(shared.c)),
+  fisher_2x2("FoxO + GR",        sum(chd.c$foxo_gr),        nrow(chd.c), sum(shared.c$foxo_gr),        nrow(shared.c)),
+  fisher_2x2("Any pioneer + GR", sum(chd.c$any_pioneer_gr), nrow(chd.c), sum(shared.c$any_pioneer_gr), nrow(shared.c))
+)
+knitr::kable(cooc.chd, digits = c(0,0,0,2,0,0,2,3,4),
+             caption = "Composite motif co-occurrence: CHD-specific vs shared")
+
+cooc.compare <- bind_rows(
+  cooc     |> mutate(direction = "HFD-specific"),
+  cooc.chd |> mutate(direction = "CHD-specific")
+) |>
+  select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
+knitr::kable(cooc.compare, digits = c(0, 0, 2, 2, 3, 4),
+             caption = "HFD vs CHD enrichment side by side")
+```
+
+### Sanity check (wider ±50 kb window) on key GR-pathway genes
+
+The earlier nearest-TSS sanity check was too strict — composite enhancers often act tens of kilobases from their target gene. This wider check counts how many HFD-specific composite peaks fall within ±50 kb of each gene's transcriptional unit. Useful for asking "does this gene have a candidate sensitizing enhancer in its regulatory landscape?" rather than "is this gene the closest TSS to a composite peak?"
+
+```{r composite-motif-sanity-wide}
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+
 gr_pathway_genes <- c("Hsd11b1", "Nr3c1", "Ncoa1", "Ncoa2", "Fkbp5",
                       "Foxa1", "Foxa2", "Cebpb", "Cebpa", "Foxo1",
-                      "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
-all_composite_genes <- bind_rows(foxa_gr.ann, cebp_gr.ann, foxo_gr.ann) %>%
-  filter(!is.na(SYMBOL))
-sanity <- tibble(gene = gr_pathway_genes) %>%
-  rowwise() %>%
+                      "Pnpla2", "Tsc22d3", "Per1", "Zbtb16", "Klf15", "Angptl4")
+
+sym2entrez <- bitr(gr_pathway_genes,
+                   fromType = "SYMBOL",
+                   toType   = "ENTREZID",
+                   OrgDb    = org.Mm.eg.db)
+
+txdb       <- TxDb.Mmusculus.UCSC.mm10.knownGene
+gene_gr    <- genes(txdb, single.strand.genes.only = FALSE)
+gene_gr    <- gene_gr[names(gene_gr) %in% sym2entrez$ENTREZID]
+
+# Map ENTREZID -> SYMBOL
+entrez2sym <- setNames(sym2entrez$SYMBOL, sym2entrez$ENTREZID)
+names(gene_gr) <- entrez2sym[names(gene_gr)]
+
+# Extend each gene's locus by ±50 kb
+gene_windows <- resize(gene_gr,
+                       width = width(gene_gr) + 100000,
+                       fix   = "center")
+
+# Build per-composite peak GRanges (HFD-specific)
+foxa_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(foxa_gr) |> pull(peak))
+cebp_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(cebp_gr) |> pull(peak))
+foxo_hfd_gr <- parse_peaks_to_gr(hfd.c |> filter(foxo_gr) |> pull(peak))
+
+count_overlaps_safe <- function(windows, peaks) {
+  if (length(peaks) == 0) return(rep(0L, length(windows)))
+  as.integer(countOverlaps(windows, peaks))
+}
+
+sanity_wide <- tibble(
+  gene                = names(gene_windows),
+  foxa_gr_within_50kb = count_overlaps_safe(gene_windows, foxa_hfd_gr),
+  cebp_gr_within_50kb = count_overlaps_safe(gene_windows, cebp_hfd_gr),
+  foxo_gr_within_50kb = count_overlaps_safe(gene_windows, foxo_hfd_gr)
+) |>
+  arrange(desc(cebp_gr_within_50kb + foxa_gr_within_50kb + foxo_gr_within_50kb))
+
+knitr::kable(sanity_wide,
+             caption = "HFD-specific composite peaks within ±50 kb of GR-pathway gene loci")
+```
+
+### TF motif enrichment volcano
+
+Visualization of the broader AME enrichment landscape (HFD-specific vs shared). Each point is one JASPAR motif. Highlighting the four TF families relevant to the sensitization hypothesis — FoxA, FoxO, C/EBP, and GR/PGR — shows where they sit in significance and fold enrichment relative to all other tested motifs.
+
+```{r ame-volcano, fig.width=10, fig.height=7}
+library(ggrepel)
+
+ame <- read_tsv("results/motif_analysis/ame_results/HFD_vs_shared/ame.tsv",
+                comment = "#",
+                show_col_types = FALSE) |>
+  filter(!is.na(rank))
+
+ame <- ame |>
   mutate(
-    foxa_gr = gene %in% foxa_gr.ann$SYMBOL,
-    cebp_gr = gene %in% cebp_gr.ann$SYMBOL,
-    foxo_gr = gene %in% foxo_gr.ann$SYMBOL
-  ) %>%
-  ungroup()
-knitr::kable(sanity)
+    log2_enrich     = log2((`%TP` + 0.5) / (`%FP` + 0.5)),
+    neg_log10_padj  = -log10(pmax(`adj_p-value`, 1e-300)),
+    tf_family = case_when(
+      grepl("^FOXA", motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
+      grepl("^FOXO", motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
+      grepl("^CEBP", motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
+      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)       ~ "GR/PGR",
+      TRUE                                              ~ "Other"
+    )
+  )
+
+ggplot(ame, aes(x = log2_enrich, y = neg_log10_padj)) +
+  geom_point(data = filter(ame, tf_family == "Other"),
+             alpha = 0.3, size = 0.8, color = "grey70") +
+  geom_point(data = filter(ame, tf_family != "Other"),
+             aes(color = tf_family), alpha = 0.9, size = 2.5) +
+  ggrepel::geom_text_repel(
+    data = filter(ame, tf_family != "Other"),
+    aes(label = motif_alt_ID, color = tf_family),
+    size = 3, max.overlaps = 50,
+    show.legend = FALSE
+  ) +
+  scale_color_manual(values = c(
+    "FoxA"   = "#1f77b4",
+    "FoxO"   = "#2ca02c",
+    "C/EBP"  = "#d62728",
+    "GR/PGR" = "#ff7f0e"
+  )) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  theme_classic(base_size = 14) +
+  labs(
+    x     = "log2(% foreground / % background)",
+    y     = "-log10(adj. p-value)",
+    title = "TF motif enrichment in HFD-opened peaks (AME, JASPAR 2024)",
+    color = "TF family"
+  )
 ```
 
 ## Interpretation

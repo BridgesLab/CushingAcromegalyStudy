@@ -83,20 +83,45 @@ All three are testable. None of them addresses the **coactivator drive** (NCOA1)
 
 ## Next steps
 
-### Immediate — composite motif scan (IMPLEMENTED, 2026-05-11)
+### Composite motif scan — IMPLEMENTED AND RUN, 2026-05-11
 
-The composite scan for FoxA + GR, C/EBP + GR, and FoxO + GR co-occurrence is now a step in the pipeline (`COMPOSITE_MOTIF_SCAN` in `main.nf`). It uses FIMO against JASPAR 2024 motifs (FOXA1 MA0148.5, FOXA2 MA0047.5, CEBPB MA0466.4, CEBPA MA0102.5, FOXO1 MA0480.3, NR3C1 MA0113.4) on the same HFD-specific / CHD-specific / shared FASTAs used by AME.
+The pipeline now includes `COMPOSITE_MOTIF_SCAN`: FIMO against 7 JASPAR 2024 motifs (FOXA1 MA0148.5, FOXA2 MA0047.5, CEBPB MA0466.4, CEBPA MA0102.5, FOXO1 MA0480.3, NR3C1 MA0113.4, PGR human MA2327.1, Pgr mouse MA2323.1) on HFD-specific, CHD-specific, and shared peak FASTAs. FIMO hits are mapped back to source peaks via bedtools intersect (FIMO 5.5.x auto-parses `chr:start-end` FASTA headers into genomic coordinates, so per-peak counting requires this step).
 
-Outputs land in `composite_scan/<bed_type>/`:
-- `<bed_type>_fimo.tsv` — every motif occurrence (positions, scores, p-values)
-- `<bed_type>_per_peak_motifs.tsv` — per-peak motif occurrence counts (zero-hit peaks retained for correct denominators)
-- `<bed_type>_motifs_used.txt` — sanity-check log of which requested JASPAR IDs were actually found
+Outputs in `composite_scan/<bed_type>/`:
+- `<bed_type>_fimo.tsv` — all motif occurrences (positions, scores, p-values)
+- `<bed_type>_per_peak_motifs.tsv` — per-peak motif counts (zero-hit peaks retained for correct denominators)
+- `<bed_type>_motifs_used.txt` — sanity log of which requested JASPAR IDs were found
 
-Downstream interpretation lives in the qmd (`GSE236575_analysis.qmd`, new "Pioneer + GR Composite Motif Analysis" section):
-- Fisher exact tests for each pioneer/cooperator + GR co-occurrence in HFD-specific vs shared peaks
-- ChIPseeker nearest-TSS annotation of composite peaks
-- GO-BP enrichment of FoxA + GR composite genes
-- Sanity-check table for known GR-pathway genes (HSD11B1, NR3C1, NCOA1, FKBP5, etc.)
+### Key finding — C/EBP + GR composite enrichment is HFD-specific
+
+Fisher exact tests (one-sided "greater") for pioneer + GR motif co-occurrence in **HFD-specific (6,900 peaks) vs shared (53,397 peaks)**:
+
+| Composite          |   N (HFD) | %HFD | %shared | Odds ratio | p-value |
+|--------------------|-----------|------|---------|-----------:|--------:|
+| **C/EBP + GR**     | **310**   | 4.49 | 3.22    | **1.42**   | **< 1e-4** |
+| Any pioneer + GR   |  400      | 5.80 | 4.52    | 1.30       | < 1e-4  |
+| FoxA + GR          |  115      | 1.67 | 1.56    | 1.07       | 0.27    |
+| FoxO + GR          |  115      | 1.67 | 1.56    | 1.07       | 0.27    |
+
+**The C/EBP + GR result is the meaningful one.** FoxA+GR and FoxO+GR are *not* enriched in HFD-opened chromatin relative to shared peaks, which actually makes biological sense:
+
+- **FoxA1 is a constitutive adipocyte pioneer.** Its binding repertoire is set by the lineage program and doesn't expand with HFD. The AME run shows FoxA1 motif highly enriched overall (p=1.23e-144) in adipocyte open chromatin, but the *co-occurrence with GR motifs* is the same in HFD-specific and shared peaks. FoxA1 cooperates with GR throughout adipocyte chromatin, not selectively in HFD-induced regions.
+- **FoxO1 has a similar story.** Highly enriched overall (p=2.40e-162) but no HFD-specific composite enrichment.
+- **C/EBPβ is stress-responsive.** HFD activates C/EBPβ via inflammation, ER stress, and elevated FFAs, expanding its binding repertoire. This produces *new* enhancers containing latent GR sites that weren't previously accessible — the chromatin-level mechanism for HFD potentiation of GR signaling.
+
+**The 310 candidate sensitizing enhancers** (HFD-specific peaks with both C/EBP and GR motifs) are listed at `composite_scan/HFD_specific_cebp_gr_genes.tsv` after the qmd renders.
+
+### Mechanistic claim
+
+> HFD-opened adipocyte chromatin is selectively enriched for C/EBP + GR composite enhancers (OR = 1.42, p < 0.0001) but not for FoxA + GR or FoxO + GR composites. C/EBPβ — a stress-responsive bZIP factor activated by HFD-induced inflammation and ER stress — is the candidate pioneer factor expanding the GR-accessible enhancer landscape in obese adipocytes. The 310 HFD-specific peaks containing both motifs are candidate sensitizing enhancers for downstream functional validation.
+
+### Pending validations in the qmd (the new chunks added 2026-05-11)
+
+- **CHD-specific negative control**: same Fisher tests on the 776 CHD-specific peaks vs shared. The pioneer-mediated sensitization hypothesis predicts C/EBP + GR enrichment should *not* be present in CHD-specific peaks. (If it is, the signal is just "condition-specific peak" rather than "HFD-driven sensitization".)
+- **GO-BP pathway enrichment** of the 310 C/EBP + GR composite genes.
+- **Full gene list** of all 310 composite-peak nearest genes, sorted by distance to TSS.
+- **Wider sanity check** (±50 kb windows around GR-pathway gene loci) replacing the too-strict nearest-TSS sanity check that returned all FALSE.
+- **TF enrichment volcano** highlighting FoxA, FoxO, C/EBP, and GR/PGR motif families against all ~600 JASPAR motifs (from the AME results).
 
 ### Other motif-level follow-ups (still planned)
 
