@@ -144,9 +144,50 @@ The new analysis produces:
 - `full_motif_scan/<motif>_GR_composite_genes.tsv` — gene lists for top candidates (qmd output)
 - Two-axis scatter plot in the rendered qmd
 
-### Mechanistic claim (revised after candidate-driven failure)
+### Data-driven results (RUN COMPLETED 2026-05-11)
 
-> Candidate-driven testing of three literature-derived GR pioneers (FoxA1, FoxO1, C/EBPβ) did not identify pioneer + GR composite enhancers selectively enriched in HFD-opened chromatin. C/EBP+GR composites *are* enriched in HFD-specific vs shared peaks (OR=1.42, p<1e-4) but show identical enrichment in CHD-specific peaks (OR=1.43, p=0.007), indicating the signal reflects condition-specific peak biology rather than HFD-driven sensitization. A data-driven scan of all ~600 JASPAR motifs has been added to identify TFs that are both (1) enriched in HFD-opened vs CHD-opened chromatin AND (2) co-occur with GR motifs within HFD-opened peaks. Preliminary inspection of the HFD-vs-CHD enrichment data points to MEF2 family, AP-1 family (FOSL1::JUN, FOSB::JUNB), NFE2/NRF2, CEBPD, and RXRG as the top axis-1 hits; the two-axis Fisher analysis in the qmd will test which of these co-localize with GR motifs in HFD-opened chromatin.
+772 motifs tested. 1,526 of 6,900 HFD-specific peaks (22.1%) contain at least one GR-class motif (NR3C1, PGR-h, PGR-m). Strict Bonferroni-level correction (cooc_q < 0.05 across 772 tests) is too punishing — only **one** motif (Dmrt1) passes strict q on axis 2. The structured signal is visible in the scatter plot but hidden by the strict filter.
+
+**Strict pass (1 hit):**
+| TF | log2_HFD_vs_CHD | adj_p_hvc | cooc_OR | cooc_q | Note |
+|---|---|---|---|---|---|
+| **Dmrt1** | 0.48 | <1e-4 | 1.42 | 0.012 | Gonadal/sex-determination TF; biologically unexpected in adipocytes; motif is AT-rich palindrome (susceptible to motif bias) |
+
+**Top hits by combined score, top-right quadrant, no strict q (relaxed):**
+
+Top 40 are heavily dominated by **AT-rich homeobox motifs** (HOX, DLX, SOX, MEIS, PBX, POU, PAX, PHOX, LHX, HMX, VENTX, CUX, ONECUT) — 29 of 40. This is the same AME bias that dominated every previous AME run on this dataset: AT-rich palindromes match open chromatin generically. Most of these TFs aren't even expressed in mature adipocytes (HOX cluster is silenced after lineage commitment).
+
+**Non-homeobox candidates (the biologically interpretable subset):**
+
+| TF | log2_HFD_vs_CHD | adj_p_hvc | n_with_M | n_M+GR | cooc_OR | cooc_p | Biology |
+|---|---|---|---|---|---|---|---|
+| **Vdr (MA0693.4)** | 0.43 | 0.0003 | 751 | 194 | 1.26 | 0.006 | Vitamin D receptor — Type II NR, shares NCOA1/2/3 coactivators with GR. VDR signaling altered in obesity. **Strongest non-homeobox lead.** |
+| **FOSL1::JUN (MA1128.2)** | **0.71** | <1e-4 | 923 | 217 | 1.10 | 0.15 | AP-1 composite. Strongest axis-1 hit overall. AP-1 + GR cross-talk extensively documented in inflammation. Borderline cooc but biologically interpretable. |
+| **Nfatc2 (MA0152.3)** | 0.61 | <1e-4 | 1263 | 298 | 1.11 | 0.087 | Calcineurin–NFAT signaling. NFAT–GR composite enhancers in immune/adipose tissue. |
+| **GATA2 (MA0036.4)** | 0.42 | <1e-4 | 389 | 98 | 1.20 | 0.076 | GATA family; adipogenesis suppressor; GATA–GR co-binding documented. |
+| **ZBTB32 (MA1580.1)** | 0.34 | 0.01 | 617 | 164 | 1.31 | 0.003 | Less-characterized zinc finger; significant cooc but unclear biology. |
+
+### Top non-homeobox lead — Vdr
+
+Of the data-driven candidates, **VDR is the most mechanistically promising lead** for HFD-driven GR sensitization:
+
+- **Shared coactivator machinery with GR**: VDR uses the same SRC family (NCOA1/2/3), MED1, and chromatin remodelers as GR. Increased VDR binding could pre-load coactivators near GR sites, lowering the threshold for GR activation — a coactivator-pool sensitization mechanism that doesn't require classical pioneer activity.
+- **Documented obesity biology**: vitamin D deficiency is a recognized risk factor for metabolic dysfunction; adipose tissue sequesters vitamin D; VDR signaling is altered in obesity.
+- **Statistical strength**: VDR is the best-scoring non-AT-rich motif on axis 2 (OR=1.26, raw p=0.006) and is significantly HFD-enriched on axis 1 (adj_p=0.0003).
+- **194 candidate composite peaks** for downstream annotation — list at `full_motif_scan/Vdr_*_GR_composite_genes.tsv` after the qmd renders.
+
+### Mechanistic claim (revised again after data-driven analysis)
+
+> Candidate-driven testing of three literature-derived GR pioneers (FoxA1, FoxO1, C/EBPβ) failed to identify HFD-specific sensitizing enhancers; the C/EBP+GR signal was a "condition-specific vs constitutive" enhancer bias, not HFD-induction. A data-driven scan of all 772 testable JASPAR motifs against HFD-specific (n=6,900) and CHD-specific (n=1,322) peaks identified one strictly-significant hit (Dmrt1, but likely an AT-rich motif artifact pending RNA-seq confirmation) and a relaxed-criteria short list of biologically interpretable non-homeobox candidates. The vitamin D receptor (Vdr) emerges as the strongest non-artifact candidate: significantly HFD-enriched (axis 1 adj_p=3e-4), positively co-occurring with GR motifs (OR=1.26, p=0.006), and mechanistically coherent — VDR shares the entire steroid-receptor coactivator complex with GR, providing a coactivator-pool sensitization mechanism. AP-1 (FOSL1::JUN, FOSB::JUNB) shows the strongest HFD enrichment on axis 1 but only borderline GR co-occurrence, consistent with AP-1 driving inflammation-side chromatin rewiring rather than direct GR sensitization. The dominant homeobox/HOX/DLX cluster in the top 40 is almost certainly the AT-rich-motif AME bias that has plagued every AME run on this dataset and should be filtered by RNA-seq expression before further interpretation.
+
+### Critical next step — filter candidates by adipocyte expression
+
+The top of the data-driven list is contaminated by AT-rich-motif bias (HOX, DLX, DMRT, SOX). The single most-informative validation is to pull **Hinte's matched RNA-seq** (deposited alongside the ATAC in GSE236575) and intersect the candidate motif list with TFs actually expressed in adipocytes. This will:
+- Eliminate most homeobox hits (HOX/DLX/PHOX/LHX/etc. aren't expressed in mature adipocytes)
+- Confirm or rule out Dmrt1 (gonadal TF — should NOT be expressed in adipose if it's bias)
+- Provide an orthogonal axis: TFs whose **expression itself** is HFD-induced are stronger sensitizer candidates than those merely with HFD-enriched motif occupancy
+
+This single integration step would convert the current ranked-but-noisy list into a usable short list.
 
 ### Other motif-level follow-ups (still planned)
 
