@@ -1144,40 +1144,63 @@ process BUILD_STAR_INDEX {
 }
 
 /*
- * Download TRAP-seq FASTQ and trim adapters.
- * Trim Galore auto-detects Illumina adapters and trims low-quality ends.
- * Template switching (Maxima H Minus RT) may leave TSO artifact at 5';
- * quality trimming with --length 30 removes most of these.
+ * Download TRAP-seq FASTQ from SRA (no module needed; fasterq-dump is in
+ * the default environment). Kept separate from trimming so the trimgalore
+ * module directive does not shadow fasterq-dump in PATH.
  */
-process RNASEQ_DOWNLOAD_AND_TRIM {
-    module 'Bioinformatics:trimgalore'
+process RNASEQ_DOWNLOAD {
     tag "${sample.id}"
-    publishDir "${params.rnaseq_outdir}/trimmed/${sample.id}", mode: 'copy',
-               pattern: "*.{log,txt,html,zip}"
+    publishDir "${params.rnaseq_outdir}/raw/${sample.id}", mode: 'copy',
+               pattern: "*.fastq.gz"
 
     input:
     val sample
 
     output:
     tuple val(sample.id), val(sample.condition),
-          path("${sample.srr}_1_val_1.fq.gz"), path("${sample.srr}_2_val_2.fq.gz"), emit: reads
-    path "*_trimming_report.txt", emit: trim_report
+          path("${sample.srr}_1.fastq.gz"), path("${sample.srr}_2.fastq.gz"), emit: reads
 
     script:
     def threads = task.cpus > 0 ? task.cpus : 4
     """
     set -e
     fasterq-dump ${sample.srr} --threads ${threads} --split-files --progress
+    gzip ${sample.srr}_1.fastq ${sample.srr}_2.fastq
+    echo "Download complete for ${sample.id}"
+    """
+}
 
+/*
+ * Trim adapters from TRAP-seq FASTQs.
+ * Trim Galore auto-detects Illumina adapters and trims low-quality ends.
+ * Template switching (Maxima H Minus RT) may leave TSO artifact at 5';
+ * quality trimming with --length 30 removes most of these.
+ */
+process RNASEQ_TRIM {
+    module 'Bioinformatics:trimgalore'
+    tag "${sample_id}"
+    publishDir "${params.rnaseq_outdir}/trimmed/${sample_id}", mode: 'copy',
+               pattern: "*.{log,txt,html,zip}"
+
+    input:
+    tuple val(sample_id), val(condition), path(r1_raw), path(r2_raw)
+
+    output:
+    tuple val(sample_id), val(condition),
+          path("*_val_1.fq.gz"), path("*_val_2.fq.gz"), emit: reads
+    path "*_trimming_report.txt", emit: trim_report
+
+    script:
+    def threads = task.cpus > 0 ? task.cpus : 4
+    """
+    set -e
     trim_galore --paired \\
                 --quality 20 \\
                 --length 30 \\
                 --cores ${threads} \\
                 --gzip \\
-                ${sample.srr}_1.fastq ${sample.srr}_2.fastq
-
-    rm -f ${sample.srr}_1.fastq ${sample.srr}_2.fastq
-    echo "Trimming complete for ${sample.id}"
+                ${r1_raw} ${r2_raw}
+    echo "Trimming complete for ${sample_id}"
     """
 }
 
@@ -1694,8 +1717,9 @@ workflow {
     BUILD_STAR_INDEX(DOWNLOAD_GENOME.out.fasta, DOWNLOAD_GTF.out.gtf)
 
     trap_ch = Channel.from(params.trap_samples)
-    RNASEQ_DOWNLOAD_AND_TRIM(trap_ch)
-    RNASEQ_ALIGN(RNASEQ_DOWNLOAD_AND_TRIM.out.reads, BUILD_STAR_INDEX.out.index)
+    RNASEQ_DOWNLOAD(trap_ch)
+    RNASEQ_TRIM(RNASEQ_DOWNLOAD.out.reads)
+    RNASEQ_ALIGN(RNASEQ_TRIM.out.reads, BUILD_STAR_INDEX.out.index)
 
     RNASEQ_BIGWIG(RNASEQ_ALIGN.out.bam, DOWNLOAD_BLACKLIST.out.bed, GENOME_SIZES.out.sizes)
 
