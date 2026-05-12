@@ -390,14 +390,161 @@ Enriched motifs suggest:
 4. Validation of key findings with ChIP-seq for specific TFs
 5. Functional validation of candidate regulatory regions
 
+---
+
+## RNA-seq (TRAP) Integration Branch
+
+### Overview
+
+A parallel RNA-seq branch processes **GSE236578 [TRAP]**, the companion
+TRAP-seq dataset from the same AdipER-Cre/NuTRAP eWAT adipocytes used for
+ATAC-seq (Hinte et al. 2024; PMID 39558077; part of super-series GSE236580).
+TRAP-seq captures actively translated transcripts specifically from adipocytes,
+avoiding stromal-vascular contamination.
+
+### RNA-seq Samples
+
+| Sample ID | GSM | SRR | Condition |
+|-----------|-----|-----|-----------|
+| CHD_1 | GSM7558266 | SRR25152278 | Chow diet |
+| CHD_2 | GSM7558271 | SRR25152274 | Chow diet |
+| CHD_3 | GSM7558276 | SRR25152266 | Chow diet |
+| HFD_1 | GSM7558267 | SRR25152277 | High-fat diet |
+| HFD_2 | GSM7558272 | SRR25152273 | High-fat diet |
+| HFD_3 | GSM7558277 | SRR25152265 | High-fat diet |
+
+Library: PE150, template switching (Maxima H Minus RT), unstranded.
+
+### RNA-seq Pipeline Steps
+
+#### 13. GTF download — `DOWNLOAD_GTF`
+
+Downloads **GENCODE vM25** annotation (last mm10/GRCm38 release) from EBI.
+URL: `https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz`
+
+#### 14. STAR index — `BUILD_STAR_INDEX`
+
+Builds STAR index from mm10 FASTA + GENCODE vM25 GTF.
+- `--sjdbOverhang 149` (PE150 − 1)
+- Requires ~32 GB RAM; run on a high-memory node.
+
+#### 15. FASTQ download and trimming — `RNASEQ_DOWNLOAD_AND_TRIM`
+
+`fasterq-dump` → Trim Galore paired-end:
+- Auto-detects Illumina adapters
+- Quality trimming: `--quality 20 --length 30`
+- Gzip output
+
+Template-switching libraries (Maxima H Minus RT) may have TSO artifact
+bases at the 5' end; quality trimming with `--length 30` removes most.
+
+#### 16. STAR alignment — `RNASEQ_ALIGN`
+
+Paired-end alignment to mm10:
+- `--outFilterMultimapNmax 1` — unique mappers only
+- Output: coordinate-sorted BAM + `Log.final.out` alignment summary
+
+#### 17. BigWig generation
+
+- **`RNASEQ_BIGWIG`**: CPM-normalised, 50 bp bins, blacklist-excluded.
+  Output: `results/rnaseq/bigwig/<sample_id>.CPM.bw`
+- **`ATAC_BIGWIG`**: RPGC-normalised (mm10 effective gs = 2,494,787,188),
+  10 bp bins, read-extended.
+  Output: `results/bigwig/atac/<sample_id>.RPGC.bw`
+
+Both BigWig sets are produced for locus-track visualization at
+Hsd11b1, Fkbp5, Vdr, Junb, Fosl2.
+
+#### 18. Gene quantification — `RNASEQ_COUNT_GENES`
+
+featureCounts gene-level quantification:
+- GTF: GENCODE vM25
+- Feature grouping: `gene_name`
+- Strandness: `-s 0` (unstranded; confirmed for template-switching libraries)
+- Paired-end: `-p --countReadPairs -B -C`
+
+#### 19. Count matrix — `RNASEQ_COMBINE_COUNTS`
+
+Python merge of per-sample featureCounts files into `rnaseq_count_matrix.txt`
+(same logic as `COMBINE_COUNTS` in the ATAC branch).
+
+#### 20. DESeq2 differential expression — `RNASEQ_DESEQ2`
+
+DESeq2 HFD vs CHD (CHD reference). FDR < 0.05, |LFC| > 0.585 (log2(1.5)).
+
+**Targeted gene table** (`rnaseq_targeted_genes.tsv`): 40 genes across five
+categories with log2FC, padj, and Bayesian posterior statistics computed via
+analytical Normal(0,1) conjugate update on the DESeq2 Wald estimates:
+
+| Column | Definition |
+|--------|------------|
+| `bayes_P_HFD_gt_CHD` | Posterior P(β > 0), i.e. P(HFD > CHD) |
+| `bayes_ER` | Evidence ratio P(β>0)/P(β<0) |
+| `bayes_CrI_lo/hi` | 95% credible interval on log2FC |
+
+These statistics are equivalent to brms posteriors under Normal(0,1) priors
+on fixed effects with a Gaussian likelihood from the DESeq2 Wald test.
+
+### RNA-seq Integration Analysis
+
+`rnaseq-integration.qmd` implements:
+
+1. **Dataset confirmation** — sample table and library metadata
+2. **Global DE summary** — volcano plot with targeted genes highlighted
+3. **Targeted gene table** — all 40 candidates with Bayesian stats and category labels
+4. **ATAC × RNA-seq integration** — peak annotation to nearest gene, Fisher
+   enrichment test (HFD-up ATAC near HFD-up RNA), motif-class stratification
+5. **Decision outputs** — automated verdict for:
+   - AP-1 lead (Junb vs Fosl2)
+   - DMRT family expression status (artifact verification)
+   - Coactivator (NCOA1/2/3, MED1) and HSD11B1 expression status
+
+### New Software Dependencies
+
+| Tool | Version | Use |
+|------|---------|-----|
+| STAR | 2.7.x | RNA-seq alignment |
+| Trim Galore | 0.6.x | Adapter/quality trimming |
+| deepTools | 3.5.x | BigWig generation (`bamCoverage`) |
+| wiggletools | 1.2.x | Condition-merged BigWig tracks (optional; shell step in QMD) |
+
+Existing tools (featureCounts, DESeq2, R, samtools) are reused from the ATAC branch.
+
+### RNA-seq Output Directory Structure
+
+```
+results/
+└── rnaseq/
+    ├── trimmed/<sample>/       # Trim Galore reports
+    ├── bam/<sample>/           # STAR BAMs + alignment logs
+    ├── bigwig/                 # <sample_id>.CPM.bw per-sample tracks
+    ├── counts/                 # featureCounts per-sample
+    ├── count_matrix/           # rnaseq_count_matrix.txt + rnaseq_sample_metadata.txt
+    └── deseq2/
+        ├── rnaseq_deseq2_results.txt       # Full DE results
+        ├── rnaseq_normalized_counts.txt    # DESeq2 normalised counts
+        ├── rnaseq_targeted_genes.tsv       # 40-gene targeted table
+        └── rnaseq_deseq2_plots.pdf         # MA, volcano, PCA, forest plot
+
+results/bigwig/atac/           # <sample_id>.RPGC.bw ATAC tracks
+results/genome/
+    ├── gencode.vM25.annotation.gtf        # NEW (GENCODE vM25)
+    └── star_index/                        # NEW (STAR mm10 index)
+```
+
+---
+
 ## Citation
 
 If you use this pipeline, please cite:
 
-- Original study: Hinte et al., [Publication details]
+- Original study: Hinte et al. (2024) PMID 39558077
 - DESeq2: Love, Huber, and Anders (2014) Genome Biology
 - JASPAR 2024: Castro-Mondragon et al. (2024) Nucleic Acids Research
 - MEME Suite: Bailey et al. (2015) Nucleic Acids Research
 - HOMER: Heinz et al. (2010) Molecular Cell
 - Bowtie2: Langmead and Salzberg (2012) Nature Methods
+- STAR: Dobin et al. (2013) Bioinformatics
+- deepTools: Ramírez et al. (2016) Nucleic Acids Research
+- Trim Galore: Krueger (2023) https://github.com/FelixKrueger/TrimGalore
 
