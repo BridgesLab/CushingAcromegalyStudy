@@ -73,7 +73,7 @@ deseq.results <- read_tsv(deseq.filename) #reads in the data
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Mon May 11 18:57:21 2026.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Tue May 12 12:33:33 2026.
 
 ## Analysis
 
@@ -105,14 +105,14 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 18:57:26 
+>> preparing features information...		 2026-05-12 12:33:38 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 18:57:26 
->> calculating distance from peak to TSS...	 2026-05-11 18:57:27 
->> assigning genomic annotation...		 2026-05-11 18:57:27 
+>> identifying nearest features...		 2026-05-12 12:33:39 
+>> calculating distance from peak to TSS...	 2026-05-12 12:33:39 
+>> assigning genomic annotation...		 2026-05-12 12:33:39 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 18:57:36 
+>> adding gene annotation...			 2026-05-12 12:33:48 
 ```
 
 
@@ -121,8 +121,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 18:57:36 
->> done...					 2026-05-11 18:57:36 
+>> assigning chromosome lengths			 2026-05-12 12:33:48 
+>> done...					 2026-05-12 12:33:48 
 ```
 
 
@@ -140,14 +140,14 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 18:57:36 
+>> preparing features information...		 2026-05-12 12:33:48 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 18:57:36 
->> calculating distance from peak to TSS...	 2026-05-11 18:57:36 
->> assigning genomic annotation...		 2026-05-11 18:57:36 
+>> identifying nearest features...		 2026-05-12 12:33:48 
+>> calculating distance from peak to TSS...	 2026-05-12 12:33:48 
+>> assigning genomic annotation...		 2026-05-12 12:33:48 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 18:57:37 
+>> adding gene annotation...			 2026-05-12 12:33:49 
 ```
 
 
@@ -156,8 +156,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 18:57:37 
->> done...					 2026-05-11 18:57:37 
+>> assigning chromosome lengths			 2026-05-12 12:33:49 
+>> done...					 2026-05-12 12:33:49 
 ```
 
 
@@ -173,14 +173,14 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-11 18:57:37 
+>> preparing features information...		 2026-05-12 12:33:49 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-11 18:57:37 
->> calculating distance from peak to TSS...	 2026-05-11 18:57:37 
->> assigning genomic annotation...		 2026-05-11 18:57:37 
+>> identifying nearest features...		 2026-05-12 12:33:49 
+>> calculating distance from peak to TSS...	 2026-05-12 12:33:50 
+>> assigning genomic annotation...		 2026-05-12 12:33:50 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-11 18:57:39 
+>> adding gene annotation...			 2026-05-12 12:33:51 
 ```
 
 
@@ -189,8 +189,8 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-11 18:57:39 
->> done...					 2026-05-11 18:57:39 
+>> assigning chromosome lengths			 2026-05-12 12:33:51 
+>> done...					 2026-05-12 12:33:51 
 ```
 
 
@@ -1399,6 +1399,65 @@ HFD peaks with at least one GR-class motif: 1526 / 6900 (22.1%)
 :::
 
 ```{.r .cell-code}
+# Fisher test for GR enrichment
+# You need the GR motif count in your background (shared/non-HFD) peaks
+n_hfd      <- nrow(hfd.all)
+n_hfd_gr   <- sum(hfd.all$has_gr)
+n_bg       <- nrow(shared.motifs)   # shared peaks — adjust if different
+n_bg_gr    <- shared.motifs |>
+  mutate(has_gr = if_any(all_of(gr_motif_ids), ~ . > 0)) |>
+  summarise(sum(has_gr)) |>
+  pull()     # GR motif count in background peaks 
+
+gr.hfd.mat <- matrix(
+  c(n_hfd_gr,        n_hfd - n_hfd_gr,
+    n_bg_gr,         n_bg - n_bg_gr),
+  nrow = 2, byrow = TRUE,
+  dimnames = list(c("GR+", "GR-"), c("HFD", "Background"))
+)
+
+library(knitr)
+library(broom)
+kable(gr.hfd.mat, caption="GR motifs vs HFD background")
+```
+
+::: {.cell-output-display}
+
+
+Table: GR motifs vs HFD background
+
+|    |   HFD| Background|
+|:---|-----:|----------:|
+|GR+ |  1526|       5374|
+|GR- | 10920|      42477|
+
+
+:::
+
+```{.r .cell-code}
+hfd.gr.ft <- fisher.test(gr.hfd.mat) 
+
+with(hfd.gr.ft,tibble(
+  OR      = estimate,
+  ci_low  = conf.int[1],
+  ci_high = conf.int[2],
+  p_value = p.value
+)) |> kable(caption="Fisher test for GR enrichment in HFD")
+```
+
+::: {.cell-output-display}
+
+
+Table: Fisher test for GR enrichment in HFD
+
+|       OR|   ci_low|  ci_high|   p_value|
+|--------:|--------:|--------:|---------:|
+| 1.104569| 1.038888| 1.173921| 0.0014089|
+
+
+:::
+
+```{.r .cell-code}
 # For each non-GR motif M: Fisher exact for GR present | M present vs M absent.
 # Restricted to HFD-specific peaks (so we're testing co-occurrence within
 # HFD-opened chromatin, not the marginal enrichment of M itself).
@@ -1469,8 +1528,10 @@ two_axis <- two_axis |>
   ) |>
   arrange(desc(combined_score))
 
-# Top candidate sensitizer-pioneer TFs (top-right quadrant, ranked by combined score)
-top_candidates <- two_axis |>
+# Strict pass: both axes individually significant. Bonferroni-strength
+# correction across ~770 motifs makes this very harsh - typically only
+# 0-5 motifs pass. Kept for completeness.
+top_strict <- two_axis |>
   filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
   arrange(desc(combined_score)) |>
   select(motif_id, motif_alt_ID,
@@ -1478,19 +1539,86 @@ top_candidates <- two_axis |>
          n_with_m, n_m_and_gr, cooc_or, cooc_q,
          combined_score) |>
   head(40)
-
-knitr::kable(top_candidates, digits = c(0,0,2,2,3,4,0,0,3,4,3),
-             caption = "Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)")
+knitr::kable(top_strict, digits = c(0,0,2,2,3,4,0,0,3,4,3),
+             caption = "Strict: HFD-enriched (adj_p<0.05) AND GR-coenriched (q<0.05)")
 ```
 
 ::: {.cell-output-display}
 
 
-Table: Top data-driven sensitizer-pioneer candidates (both HFD-enriched and GR-coenriched)
+Table: Strict: HFD-enriched (adj_p<0.05) AND GR-coenriched (q<0.05)
 
 |motif_id |motif_alt_ID | pct_HFD| pct_CHD| log2_enrich_hvc| adj_p_hvc| n_with_m| n_m_and_gr| cooc_or| cooc_q| combined_score|
 |:--------|:------------|-------:|-------:|---------------:|---------:|--------:|----------:|-------:|------:|--------------:|
 |MA1603.2 |Dmrt1        |      60|   42.89|            0.48|         0|      773|        215|   1.415| 0.0116|           0.24|
+
+
+:::
+
+```{.r .cell-code}
+# Relaxed pass: top-right quadrant, ranked by combined score. No strict
+# q thresholds - the q-value distribution is dominated by multiple-testing
+# burden across ~770 motifs. Combined-score ranking surfaces the
+# biologically meaningful cloud the user can see in the scatter plot.
+top_relaxed <- two_axis |>
+  filter(in_quadrant_TR) |>
+  arrange(desc(combined_score)) |>
+  select(motif_id, motif_alt_ID,
+         pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
+         n_with_m, n_m_and_gr, cooc_or, cooc_p, cooc_q,
+         combined_score) |>
+  head(40)
+knitr::kable(top_relaxed, digits = c(0,0,2,2,3,4,0,0,3,4,4,3),
+             caption = "Relaxed: top 40 in top-right quadrant by combined score (no strict q thresholds)")
+```
+
+::: {.cell-output-display}
+
+
+Table: Relaxed: top 40 in top-right quadrant by combined score (no strict q thresholds)
+
+|motif_id |motif_alt_ID | pct_HFD| pct_CHD| log2_enrich_hvc| adj_p_hvc| n_with_m| n_m_and_gr| cooc_or| cooc_p| cooc_q| combined_score|
+|:--------|:------------|-------:|-------:|---------------:|---------:|--------:|----------:|-------:|------:|------:|--------------:|
+|MA1603.2 |Dmrt1        |   60.00|   42.89|           0.480|    0.0000|      773|        215|   1.415| 0.0000| 0.0116|          0.240|
+|MA0896.2 |Hmx1         |   42.49|   29.95|           0.498|    0.0000|      486|        133|   1.358| 0.0027| 0.1753|          0.220|
+|MA0713.1 |PHOX2A       |   38.91|   23.07|           0.742|    0.0000|      475|        121|   1.221| 0.0399| 0.5703|          0.214|
+|MA2095.1 |Sox7         |   25.14|   15.13|           0.714|    0.0000|      929|        235|   1.228| 0.0073| 0.2694|          0.211|
+|MA0911.2 |Hoxa11       |   50.90|   33.81|           0.583|    0.0000|      283|         75|   1.284| 0.0428| 0.6004|          0.210|
+|MA1500.2 |HOXB6        |   63.58|   43.19|           0.553|    0.0000|      359|         95|   1.285| 0.0259| 0.4899|          0.200|
+|MA1640.2 |MEIS2        |   52.97|   36.23|           0.542|    0.0000|      617|        160|   1.260| 0.0104| 0.3200|          0.181|
+|MA0594.3 |HOXA9        |   71.29|   50.91|           0.482|    0.0000|       41|         11|   1.293| 0.2861| 1.0000|          0.179|
+|MA1502.2 |HOXB8        |   61.00|   43.34|           0.488|    0.0000|      359|         95|   1.285| 0.0259| 0.4899|          0.177|
+|MA0084.2 |SRY          |   70.71|   46.75|           0.592|    0.0000|      792|        200|   1.218| 0.0142| 0.3428|          0.169|
+|MA0793.2 |POU6F2       |   58.03|   45.16|           0.358|    0.0000|      512|        141|   1.373| 0.0016| 0.1233|          0.164|
+|MA0898.2 |Hmx3         |   50.84|   36.61|           0.468|    0.0000|      409|        107|   1.266| 0.0259| 0.4899|          0.160|
+|MA1549.2 |POU6F1       |   60.20|   47.28|           0.345|    0.0000|      526|        145|   1.376| 0.0013| 0.1233|          0.159|
+|MA0873.2 |HOXD12       |   27.65|   20.73|           0.407|    0.0001|      212|         57|   1.306| 0.0554| 0.6361|          0.157|
+|MA0681.3 |PHOX2B       |   60.52|   42.97|           0.489|    0.0000|      697|        178|   1.235| 0.0132| 0.3390|          0.149|
+|MA0693.4 |Vdr          |   26.28|   19.36|           0.431|    0.0003|      751|        194|   1.260| 0.0059| 0.2562|          0.144|
+|MA0485.3 |HOXC9        |   16.78|   12.10|           0.456|    0.0099|      309|         80|   1.243| 0.0606| 0.6683|          0.143|
+|MA1113.3 |PBX2         |   50.49|   34.87|           0.528|    0.0000|      576|        145|   1.204| 0.0377| 0.5532|          0.141|
+|MA1978.2 |ZNF354A      |   57.25|   35.93|           0.665|    0.0000|     1187|        288|   1.158| 0.0282| 0.4899|          0.141|
+|MA1518.3 |Lhx1         |   35.96|   27.91|           0.360|    0.0000|      193|         52|   1.309| 0.0628| 0.6743|          0.140|
+|MA1476.3 |Dlx5         |   51.19|   35.85|           0.508|    0.0000|      347|         88|   1.209| 0.0782| 0.7193|          0.139|
+|MA0908.2 |HOXD11       |   61.17|   46.97|           0.378|    0.0000|      275|         73|   1.286| 0.0437| 0.6024|          0.137|
+|MA1580.1 |ZBTB32       |   27.13|   21.33|           0.340|    0.0100|      617|        164|   1.308| 0.0034| 0.1767|          0.132|
+|MA1503.2 |HOXB9        |   29.91|   22.62|           0.395|    0.0001|      308|         80|   1.249| 0.0568| 0.6361|          0.127|
+|MA0885.3 |Dlx2         |   56.32|   41.15|           0.448|    0.0000|      347|         88|   1.209| 0.0782| 0.7193|          0.122|
+|MA0780.1 |PAX3         |   19.77|   14.07|           0.476|    0.0006|      207|         52|   1.188| 0.1651| 0.9156|          0.118|
+|MA0868.3 |SOX8         |   71.00|   47.88|           0.564|    0.0000|      640|        156|   1.150| 0.0824| 0.7465|          0.114|
+|MA0078.3 |Sox17        |   51.88|   36.91|           0.486|    0.0000|      918|        226|   1.176| 0.0284| 0.4899|          0.114|
+|MA1974.2 |ZNF211       |   44.96|   34.11|           0.393|    0.0000|      392|        100|   1.220| 0.0559| 0.6361|          0.113|
+|MA0036.4 |GATA2        |   35.58|   26.40|           0.424|    0.0000|      389|         98|   1.199| 0.0761| 0.7193|          0.111|
+|MA0757.2 |ONECUT3      |   25.77|   19.82|           0.371|    0.0035|      551|        140|   1.220| 0.0309| 0.4967|          0.106|
+|MA1562.2 |SOX14        |   45.55|   33.66|           0.431|    0.0000|      385|         96|   1.181| 0.0965| 0.7682|          0.104|
+|MA0906.2 |HOXC12       |   31.67|   24.05|           0.390|    0.0000|      269|         68|   1.200| 0.1160| 0.8450|          0.103|
+|MA0135.2 |Lhx3         |   33.01|   21.94|           0.579|    0.0000|      632|        152|   1.128| 0.1197| 0.8453|          0.100|
+|MA0790.2 |POU4F1       |   74.43|   56.81|           0.387|    0.0000|      734|        183|   1.193| 0.0300| 0.4928|          0.098|
+|MA0627.3 |POU2F3       |   62.48|   44.86|           0.473|    0.0000|      921|        224|   1.154| 0.0465| 0.6111|          0.098|
+|MA0724.1 |VENTX        |   45.16|   33.28|           0.435|    0.0000|      275|         68|   1.164| 0.1608| 0.9156|          0.095|
+|MA1128.2 |FOSL1::JUN   |   18.26|   10.97|           0.710|    0.0000|      923|        217|   1.096| 0.1461| 0.8878|          0.094|
+|MA0754.3 |CUX1         |   50.91|   41.75|           0.283|    0.0000|      195|         51|   1.256| 0.1000| 0.7805|          0.093|
+|MA0152.3 |Nfatc2       |   32.48|   21.18|           0.605|    0.0000|     1263|        298|   1.109| 0.0870| 0.7538|          0.090|
 
 
 :::
@@ -1504,6 +1632,104 @@ write_tsv(two_axis |> arrange(desc(combined_score)),
 :::
 
 
+### TF family aggregation
+
+Looking at family-level signal — even if no single member is significant, multiple members clustering in the top-right is meaningful.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# Family classification (broadened to capture more TFs in "Other")
+classify_family <- function(name) {
+  case_when(
+    grepl("^FOXA",  name, ignore.case = TRUE) ~ "FoxA",
+    grepl("^FOXO",  name, ignore.case = TRUE) ~ "FoxO",
+    grepl("^FOX",   name, ignore.case = TRUE) ~ "Fox (other)",
+    grepl("^CEBP",  name, ignore.case = TRUE) ~ "C/EBP",
+    grepl("^NR3C1$|^Pgr$|^PGR$|^AR$|^MR$",   name)             ~ "GR/PGR/AR",
+    grepl("^MEF2",  name, ignore.case = TRUE) ~ "MEF2",
+    grepl("^FOS|^JUN|^BATF|^FRA[0-9]?",  name, ignore.case = TRUE) ~ "AP-1",
+    grepl("^ATF[0-9]?$|^ATF$",       name, ignore.case = TRUE) ~ "ATF",
+    grepl("^CREB",  name, ignore.case = TRUE) ~ "CREB",
+    grepl("^DDIT3$|^CHOP$",          name, ignore.case = TRUE) ~ "DDIT3/CHOP",
+    grepl("^NFE2|^NRF|^MAF",         name, ignore.case = TRUE) ~ "NRF/NFE2/MAF",
+    grepl("^KLF",   name, ignore.case = TRUE) ~ "KLF",
+    grepl("^SP[0-9]$",               name)             ~ "SP",
+    grepl("^STAT",  name, ignore.case = TRUE) ~ "STAT",
+    grepl("^IRF",   name, ignore.case = TRUE) ~ "IRF",
+    grepl("^HIF",   name, ignore.case = TRUE) ~ "HIF",
+    grepl("^NF.?KB|^REL",            name, ignore.case = TRUE) ~ "NF-kB",
+    grepl("^RXR|^PPAR|^LXR|^NR[0-9]|^HNF4|^ESR|^ERR|^THR",  name, ignore.case = TRUE) ~ "Nuclear receptor",
+    grepl("^TEAD",  name, ignore.case = TRUE) ~ "TEAD/Hippo",
+    grepl("^SREBF|^SREBP",           name, ignore.case = TRUE) ~ "SREBP",
+    grepl("^DMRT",  name, ignore.case = TRUE) ~ "DMRT",
+    grepl("^ZNF|^Zfp|^ZFP",          name)             ~ "Zinc finger",
+    grepl("^HOX|^DLX|^MSX|^NKX|^LBX|^VAX|^EVX|^PHOX|^PITX|^OTX|^LHX|^EMX|^GBX|^ALX|^ARX|^ISL|^MEIS|^PBX|^CDX|^GSX|^HMX|^GSC|^MIXL|^NOTO|^RAX|^SHOX|^TLX|^UNCX|^VSX|^BARX|^BARHL|^EN[0-9]|^ESX|^PAX|^POU|^PRRX|^SATB|^BSX|^DRGX|^ARID|^BARH",
+         name, ignore.case = TRUE) ~ "Homeobox/AT-rich",
+    grepl("^SOX",   name, ignore.case = TRUE) ~ "SOX",
+    grepl("^GATA",  name, ignore.case = TRUE) ~ "GATA",
+    grepl("^TCF|^LEF",               name, ignore.case = TRUE) ~ "TCF/LEF",
+    grepl("^CTCF",  name, ignore.case = TRUE) ~ "CTCF",
+    grepl("^E2F",   name, ignore.case = TRUE) ~ "E2F",
+    grepl("^ETV|^ELF|^ELK|^GABP|^EHF|^FEV|^ERF|^SPDEF|^FLI1|^ERG|^ETS",
+         name, ignore.case = TRUE) ~ "ETS",
+    TRUE                                                ~ "Other"
+  )
+}
+
+family_summary <- two_axis |>
+  mutate(family = classify_family(motif_alt_ID)) |>
+  filter(family != "Other") |>
+  group_by(family) |>
+  summarize(
+    n_motifs        = n(),
+    n_top_right     = sum(log2_enrich_hvc > 0 & log2_or > 0, na.rm = TRUE),
+    pct_top_right   = round(100 * n_top_right / n_motifs, 1),
+    median_axis1    = round(median(log2_enrich_hvc, na.rm = TRUE), 3),
+    median_axis2    = round(median(log2_or,        na.rm = TRUE), 3),
+    best_axis1      = round(max(log2_enrich_hvc, na.rm = TRUE),   3),
+    best_axis2      = round(max(log2_or,        na.rm = TRUE),   3),
+    best_combined   = round(max(combined_score, na.rm = TRUE),   3),
+    .groups = "drop"
+  ) |>
+  arrange(desc(best_combined))
+
+knitr::kable(family_summary, caption = "TF family aggregation: how many family members land in the top-right quadrant, and best within-family scores")
+```
+
+::: {.cell-output-display}
+
+
+Table: TF family aggregation: how many family members land in the top-right quadrant, and best within-family scores
+
+|family           | n_motifs| n_top_right| pct_top_right| median_axis1| median_axis2| best_axis1| best_axis2| best_combined|
+|:----------------|--------:|-----------:|-------------:|------------:|------------:|----------:|----------:|-------------:|
+|DMRT             |        4|           4|         100.0|        0.254|        0.221|      0.480|      0.501|         0.240|
+|Homeobox/AT-rich |       86|          64|          74.4|        0.457|        0.106|      0.742|      0.460|         0.220|
+|SOX              |       12|           7|          58.3|        0.441|        0.090|      0.760|      0.296|         0.211|
+|Zinc finger      |        6|           5|          83.3|        0.522|        0.187|      0.799|      0.287|         0.141|
+|GATA             |        4|           3|          75.0|        0.412|        0.126|      0.522|      0.262|         0.111|
+|AP-1             |       21|          19|          90.5|        0.325|        0.080|      0.710|      0.193|         0.094|
+|C/EBP            |        3|           2|          66.7|        0.492|        0.037|      0.678|      0.211|         0.082|
+|NRF/NFE2/MAF     |        2|           1|          50.0|        0.557|        0.002|      0.709|      0.107|         0.076|
+|Fox (other)      |       25|          14|          56.0|        0.414|        0.043|      0.675|      0.133|         0.056|
+|ATF              |        2|           2|         100.0|        0.292|        0.146|      0.390|      0.275|         0.054|
+|Nuclear receptor |        2|           1|          50.0|        0.583|        0.009|      0.806|      0.131|         0.047|
+|MEF2             |        4|           2|          50.0|        0.760|        0.001|      1.052|      0.082|         0.039|
+|FoxA             |        3|           3|         100.0|        0.415|        0.043|      0.439|      0.077|         0.034|
+|STAT             |        2|           2|         100.0|        0.342|        0.090|      0.342|      0.099|         0.034|
+|TCF/LEF          |        3|           1|          33.3|        0.343|       -0.062|      0.511|      0.126|         0.034|
+|FoxO             |        4|           4|         100.0|        0.366|        0.043|      0.457|      0.043|         0.020|
+|TEAD/Hippo       |        3|           1|          33.3|        0.249|       -0.013|      0.271|      0.072|         0.018|
+|IRF              |        2|           2|         100.0|        0.375|        0.028|      0.414|      0.035|         0.015|
+|CREB             |        1|           1|         100.0|        0.170|        0.064|      0.170|      0.064|         0.011|
+
+
+:::
+:::
+
+
 ### Two-axis scatter plot
 
 
@@ -1512,30 +1738,20 @@ write_tsv(two_axis |> arrange(desc(combined_score)),
 ```{.r .cell-code}
 library(ggrepel)
 
-# Label top hits on both axes
+# Label top hits in top-right quadrant by combined score, regardless of strict
+# q thresholds. Multiple-testing correction across 770 motifs is too punishing
+# to drive labeling - the user can see structured signal in the scatter that
+# the strict filter hides.
 label_set <- two_axis |>
-  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  head(25) |>
+  head(30) |>
   pull(motif_id)
 
 two_axis_plot <- two_axis |>
   mutate(
     label_flag = motif_id %in% label_set,
-    family = case_when(
-      grepl("^FOXA",  motif_alt_ID, ignore.case = TRUE) ~ "FoxA",
-      grepl("^FOXO",  motif_alt_ID, ignore.case = TRUE) ~ "FoxO",
-      grepl("^CEBP",  motif_alt_ID, ignore.case = TRUE) ~ "C/EBP",
-      grepl("^NR3C1$|^Pgr$|^PGR$", motif_alt_ID)        ~ "GR/PGR",
-      grepl("^MEF2",  motif_alt_ID, ignore.case = TRUE) ~ "MEF2",
-      grepl("^FOS|^JUN|^BATF|^ATF[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "AP-1 / ATF",
-      grepl("^KLF",   motif_alt_ID, ignore.case = TRUE) ~ "KLF",
-      grepl("^NFE2|^NRF",  motif_alt_ID, ignore.case = TRUE) ~ "NRF/NFE2",
-      grepl("^STAT",  motif_alt_ID, ignore.case = TRUE) ~ "STAT",
-      grepl("^HIF",   motif_alt_ID, ignore.case = TRUE) ~ "HIF",
-      grepl("^RXR|^PPAR|^LXR|^NR[0-9]", motif_alt_ID, ignore.case = TRUE) ~ "Nuclear receptor",
-      TRUE                                                ~ "Other"
-    )
+    family     = classify_family(motif_alt_ID)
   )
 
 ggplot(two_axis_plot, aes(x = log2_enrich_hvc, y = log2_or)) +
@@ -1574,11 +1790,17 @@ For the top 5 data-driven sensitizer TF candidates, list HFD-specific peaks cont
 ::: {.cell}
 
 ```{.r .cell-code}
+# Top 10 by combined score within the top-right quadrant. Loosened from the
+# strict-pass filter (which usually returns only 0-1 motifs) so we annotate
+# the structured cloud of HFD-enriched x GR-coenriched TFs.
 top5 <- two_axis |>
-  filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
+  filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  head(5) |>
+  head(10) |>
   pull(motif_id)
+
+#added candidate genes to top5
+top5 <- c(top5,"MA0693.4",'MA1128.2') #added vdr and FOSL1/JUN
 
 cat("Top 5 candidates by combined score:\n")
 ```
@@ -1600,10 +1822,21 @@ print(two_axis |> filter(motif_id %in% top5) |>
 ::: {.cell-output .cell-output-stdout}
 
 ```
-# A tibble: 1 × 5
-  motif_id motif_alt_ID log2_enrich_hvc log2_or combined_score
-  <chr>    <chr>                  <dbl>   <dbl>          <dbl>
-1 MA1603.2 Dmrt1                  0.480   0.501          0.240
+# A tibble: 12 × 5
+   motif_id motif_alt_ID log2_enrich_hvc log2_or combined_score
+   <chr>    <chr>                  <dbl>   <dbl>          <dbl>
+ 1 MA1603.2 Dmrt1                  0.480   0.501         0.240 
+ 2 MA0896.2 Hmx1                   0.498   0.441         0.220 
+ 3 MA0713.1 PHOX2A                 0.742   0.288         0.214 
+ 4 MA2095.1 Sox7                   0.714   0.296         0.211 
+ 5 MA0911.2 Hoxa11                 0.583   0.360         0.210 
+ 6 MA1500.2 HOXB6                  0.553   0.362         0.200 
+ 7 MA1640.2 MEIS2                  0.542   0.334         0.181 
+ 8 MA0594.3 HOXA9                  0.482   0.371         0.179 
+ 9 MA1502.2 HOXB8                  0.488   0.362         0.177 
+10 MA0084.2 SRY                    0.592   0.285         0.169 
+11 MA0693.4 Vdr                    0.431   0.333         0.144 
+12 MA1128.2 FOSL1::JUN             0.710   0.132         0.0939
 ```
 
 
@@ -1682,6 +1915,382 @@ for (mid in top5) {
 18          Ssh1          2630
 19 A630001G21Rik          2847
 20        Popdc1         -3007
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0896.2 (Hmx1) + GR composite peaks ===
+  Composite peaks: 133 ; unique nearest genes: 131 
+          SYMBOL distanceToTSS
+1  2210408F21Rik             0
+2          Iftap         -1680
+3           Trio          2269
+4         Snhg14          2278
+5           Wwp2         -3531
+6        Commd10          3536
+7          Fcho2         -3922
+8         Osbpl8         -4232
+9        Sostdc1         -4983
+10         Atg2b          5214
+11        Prss58          5242
+12       Prpf38b         -5321
+13         Gm826          5507
+14       Tbl1xr1         -5927
+15 D030068K23Rik          6099
+16       Tmem247          6209
+17       Pyroxd1         -6253
+18           Pam          6430
+19         Mcph1         -6625
+20        Resp18         -6684
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0713.1 (PHOX2A) + GR composite peaks ===
+  Composite peaks: 121 ; unique nearest genes: 118 
+          SYMBOL distanceToTSS
+1           Xpot             0
+2  1700061I17Rik           -25
+3         Tsen15           280
+4        Tmem52b          -483
+5         Ndfip2          -967
+6           Tex9          1087
+7         Trim16         -1676
+8          Lims1         -1756
+9           Kncn         -2031
+10       Or52s19         -2892
+11       Commd10          3536
+12        Osbpl8         -4232
+13       Ankrd44          5026
+14         Fnip2          5807
+15         Cadps          5930
+16        Itprip         -6271
+17         Elmo1          7339
+18       Slc30a8          7564
+19          Chd6         -8708
+20         Hdac9         -8939
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA2095.1 (Sox7) + GR composite peaks ===
+  Composite peaks: 235 ; unique nearest genes: 223 
+          SYMBOL distanceToTSS
+1         Adgrg1          -170
+2          Acbd5           416
+3        Aldh3a1          -680
+4          Cdk14           766
+5          Cbln4           928
+6    D16Ertd472e          1299
+7  4933405E24Rik         -1347
+8           Cux2          1370
+9  2410137M14Rik          1724
+10 2310002D06Rik         -2080
+11        Snhg14          2278
+12         Adam8         -2329
+13          Oas3         -2435
+14         Palld         -2862
+15          Asb5         -2888
+16        Ms4a15         -3164
+17         Vstm4          3258
+18          Il16         -3352
+19         Resf1          3730
+20         Fcho2         -3922
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0911.2 (Hoxa11) + GR composite peaks ===
+  Composite peaks: 75 ; unique nearest genes: 74 
+          SYMBOL distanceToTSS
+1           Tcf4             0
+2  1700003L19Rik           -20
+3          Ccar1          -280
+4         Ndfip2          -967
+5         Dnajc6         -2852
+6        Eif2ak4          3352
+7          Samd4         -3858
+8          Cntn1          4487
+9        Ankrd44          5026
+10          Siae         -5545
+11         Resf1         -5549
+12          Spic          6119
+13         Sumf1          7545
+14        Rabep1          7726
+15       Tnfaip8         -8296
+16       Morrbid         -8568
+17         Prkcq         -8917
+18 4930534H03Rik         -9350
+19 4930402F06Rik         10535
+20        Sec24d        -10618
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA1500.2 (HOXB6) + GR composite peaks ===
+  Composite peaks: 95 ; unique nearest genes: 93 
+          SYMBOL distanceToTSS
+1          Strbp          -570
+2          Iftap         -1680
+3           Kncn         -2031
+4         Snhg14          2278
+5          Palld         -2862
+6         Ms4a15         -3164
+7          Fcho2         -3922
+8         Thnsl2         -4905
+9           Sv2b         -4922
+10       Sostdc1         -4983
+11          Mylk         -5132
+12         Atg2b          5214
+13        Prss58          5242
+14        Sacm1l         -5742
+15 D030068K23Rik          6099
+16         Mcph1         -6625
+17        Resp18         -6684
+18     Serpinb6b         -6805
+19        Stxbp6          6995
+20          Ctsl          7367
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA1640.2 (MEIS2) + GR composite peaks ===
+  Composite peaks: 160 ; unique nearest genes: 151 
+          SYMBOL distanceToTSS
+1          Plce1             0
+2           Cnn3             0
+3  2210408F21Rik             0
+4         Tsen15           280
+5           Pltp           460
+6          Rab23          -989
+7           Erc1          2082
+8         Drosha         -2600
+9  C730014E05Rik          2661
+10          Asb5         -2888
+11         Setd3          3516
+12          Epg5         -4108
+13       Gm36283         -4133
+14         Hbegf          5081
+15         Acbd3          5114
+16        Sacm1l         -5742
+17 1700123M08Rik          5901
+18          Spic          6119
+19        Osbpl3         -6139
+20           Pam          6430
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0594.3 (HOXA9) + GR composite peaks ===
+  Composite peaks: 11 ; unique nearest genes: 11 
+          SYMBOL distanceToTSS
+1         Mir759          4093
+2        Tmem63c          4996
+3        Dpy19l1         11366
+4        Exoc3l2         11634
+5         Map4k4        -16321
+6        Ppp2r5e         20282
+7          Cep44         25628
+8          Man1a        -43812
+9       Tbc1d22a         58590
+10           Nnt        140216
+11 4930405L22Rik       -293636
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA1502.2 (HOXB8) + GR composite peaks ===
+  Composite peaks: 95 ; unique nearest genes: 93 
+          SYMBOL distanceToTSS
+1          Strbp          -570
+2          Iftap         -1680
+3           Kncn         -2031
+4         Snhg14          2278
+5          Palld         -2862
+6         Ms4a15         -3164
+7          Fcho2         -3922
+8         Thnsl2         -4905
+9           Sv2b         -4922
+10       Sostdc1         -4983
+11          Mylk         -5132
+12         Atg2b          5214
+13        Prss58          5242
+14        Sacm1l         -5742
+15 D030068K23Rik          6099
+16         Mcph1         -6625
+17        Resp18         -6684
+18     Serpinb6b         -6805
+19        Stxbp6          6995
+20          Ctsl          7367
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0084.2 (SRY) + GR composite peaks ===
+  Composite peaks: 200 ; unique nearest genes: 189 
+          SYMBOL distanceToTSS
+1          Lrch1             0
+2          Kif14          -401
+3        Tmem52b          -483
+4         Hivep3           658
+5        Aldh3a1          -680
+6  4933405E24Rik         -1347
+7          Ephb3         -1549
+8        Tmem192         -1708
+9         Pla2r1         -2028
+10          Erc1          2082
+11         Pcdh1         -2297
+12 A630001G21Rik          2847
+13          Ttc3         -2996
+14        Ms4a15         -3164
+15          Tln2         -3358
+16         Fcho2         -3922
+17       Gm36283         -4133
+18         Cntn1          4487
+19          Ddi1          4571
+20         Med30         -4658
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA0693.4 (Vdr) + GR composite peaks ===
+  Composite peaks: 194 ; unique nearest genes: 192 
+    SYMBOL distanceToTSS
+1  Fam186a             0
+2    Tcp11             0
+3     Pltp           460
+4   Ccdc62          -605
+5   Cep104           775
+6   Vps35l           853
+7    Atp9b           961
+8    Rab23          -989
+9     Tex9          1087
+10   Ephb3         -1549
+11 Tmem192         -1708
+12   Lims1         -1756
+13  Tsg101          1811
+14  Dnaaf9          2028
+15   Adam8         -2329
+16   Palld         -2862
+17  Popdc1         -3007
+18 Zfp1003          3522
+19   Manba          3671
+20  Wrap73          3958
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+>> Using Genome: mm10 ...
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+=== MA1128.2 (FOSL1::JUN) + GR composite peaks ===
+  Composite peaks: 217 ; unique nearest genes: 210 
+          SYMBOL distanceToTSS
+1           Cnn3             0
+2          Fkbp9           -43
+3        Aldh3a1           289
+4           Ric3           358
+5        Rhobtb3          -717
+6          Cdk14           766
+7  4933405E24Rik         -1347
+8          Pcnx1         -1401
+9           Elf2         -1421
+10        Trim16         -1676
+11         Gcfc2          1884
+12          Fpr2          1984
+13         Sgip1          2155
+14         Pcdh1         -2297
+15         Adam8         -2329
+16 A630001G21Rik          2847
+17         Hmgn2          3798
+18          Epg5         -4108
+19         Galns         -4520
+20         Med30         -4658
 ```
 
 
@@ -1704,7 +2313,7 @@ sessionInfo()
 ```
 R version 4.6.0 (2026-04-24)
 Platform: aarch64-apple-darwin23
-Running under: macOS Tahoe 26.4.1
+Running under: macOS Tahoe 26.5
 
 Matrix products: default
 BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
@@ -1721,32 +2330,34 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] msigdbr_26.1.0                           
- [2] enrichplot_1.32.0                        
- [3] clusterProfiler_4.20.0                   
- [4] ggrepel_0.9.8                            
- [5] org.Mm.eg.db_3.23.0                      
- [6] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
- [7] GenomicFeatures_1.64.0                   
- [8] AnnotationDbi_1.74.0                     
- [9] Biobase_2.72.0                           
-[10] GenomicRanges_1.64.0                     
-[11] Seqinfo_1.2.0                            
-[12] IRanges_2.46.0                           
-[13] S4Vectors_0.50.0                         
-[14] BiocGenerics_0.58.0                      
-[15] generics_0.1.4                           
-[16] ChIPseeker_1.48.0                        
-[17] lubridate_1.9.5                          
-[18] forcats_1.0.1                            
-[19] stringr_1.6.0                            
-[20] dplyr_1.2.1                              
-[21] purrr_1.2.2                              
-[22] readr_2.2.0                              
-[23] tidyr_1.3.2                              
-[24] tibble_3.3.1                             
-[25] ggplot2_4.0.3                            
-[26] tidyverse_2.0.0                          
+ [1] broom_1.0.12                             
+ [2] knitr_1.51                               
+ [3] msigdbr_26.1.0                           
+ [4] enrichplot_1.32.0                        
+ [5] clusterProfiler_4.20.0                   
+ [6] ggrepel_0.9.8                            
+ [7] org.Mm.eg.db_3.23.0                      
+ [8] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
+ [9] GenomicFeatures_1.64.0                   
+[10] AnnotationDbi_1.74.0                     
+[11] Biobase_2.72.0                           
+[12] GenomicRanges_1.64.0                     
+[13] Seqinfo_1.2.0                            
+[14] IRanges_2.46.0                           
+[15] S4Vectors_0.50.0                         
+[16] BiocGenerics_0.58.0                      
+[17] generics_0.1.4                           
+[18] ChIPseeker_1.48.0                        
+[19] lubridate_1.9.5                          
+[20] forcats_1.0.1                            
+[21] stringr_1.6.0                            
+[22] dplyr_1.2.1                              
+[23] purrr_1.2.2                              
+[24] readr_2.2.0                              
+[25] tidyr_1.3.2                              
+[26] tibble_3.3.1                             
+[27] ggplot2_4.0.3                            
+[28] tidyverse_2.0.0                          
 
 loaded via a namespace (and not attached):
   [1] RColorBrewer_1.1-3                      
@@ -1800,49 +2411,49 @@ loaded via a namespace (and not attached):
  [49] bit64_4.8.0                             
  [50] fontquiver_0.2.1                        
  [51] withr_3.0.2                             
- [52] S7_0.2.2                                
- [53] BiocParallel_1.46.0                     
- [54] DBI_1.3.0                               
- [55] gplots_3.3.0                            
- [56] ggforce_0.5.0                           
- [57] MASS_7.3-65                             
- [58] rappdirs_0.3.4                          
- [59] DelayedArray_0.38.1                     
- [60] rjson_0.2.23                            
- [61] caTools_1.18.3                          
- [62] gtools_3.9.5                            
- [63] tools_4.6.0                             
- [64] otel_0.2.0                              
- [65] scatterpie_0.2.6                        
- [66] ape_5.8-1                               
- [67] glue_1.8.1                              
- [68] callr_3.7.6                             
- [69] restfulr_0.0.16                         
- [70] nlme_3.1-169                            
- [71] GOSemSim_2.38.0                         
- [72] grid_4.6.0                              
- [73] cluster_2.1.8.2                         
- [74] reshape2_1.4.5                          
- [75] gtable_0.3.6                            
- [76] tzdb_0.5.0                              
- [77] hms_1.1.4                               
- [78] utf8_1.2.6                              
- [79] XVector_0.52.0                          
- [80] pillar_1.11.1                           
- [81] babelgene_22.9                          
- [82] yulab.utils_0.2.4                       
- [83] vroom_1.7.1                             
- [84] splines_4.6.0                           
- [85] tweenr_2.0.3                            
- [86] treeio_1.36.1                           
- [87] lattice_0.22-9                          
- [88] rtracklayer_1.72.0                      
- [89] bit_4.6.0                               
- [90] tidyselect_1.2.1                        
- [91] fontLiberation_0.1.0                    
- [92] GO.db_3.23.1                            
- [93] Biostrings_2.80.0                       
- [94] knitr_1.51                              
+ [52] backports_1.5.1                         
+ [53] S7_0.2.2                                
+ [54] BiocParallel_1.46.0                     
+ [55] DBI_1.3.0                               
+ [56] gplots_3.3.0                            
+ [57] ggforce_0.5.0                           
+ [58] MASS_7.3-65                             
+ [59] rappdirs_0.3.4                          
+ [60] DelayedArray_0.38.1                     
+ [61] rjson_0.2.23                            
+ [62] caTools_1.18.3                          
+ [63] gtools_3.9.5                            
+ [64] tools_4.6.0                             
+ [65] otel_0.2.0                              
+ [66] scatterpie_0.2.6                        
+ [67] ape_5.8-1                               
+ [68] glue_1.8.1                              
+ [69] callr_3.7.6                             
+ [70] restfulr_0.0.16                         
+ [71] nlme_3.1-169                            
+ [72] GOSemSim_2.38.0                         
+ [73] grid_4.6.0                              
+ [74] cluster_2.1.8.2                         
+ [75] reshape2_1.4.5                          
+ [76] gtable_0.3.6                            
+ [77] tzdb_0.5.0                              
+ [78] hms_1.1.4                               
+ [79] utf8_1.2.6                              
+ [80] XVector_0.52.0                          
+ [81] pillar_1.11.1                           
+ [82] babelgene_22.9                          
+ [83] yulab.utils_0.2.4                       
+ [84] vroom_1.7.1                             
+ [85] splines_4.6.0                           
+ [86] tweenr_2.0.3                            
+ [87] treeio_1.36.1                           
+ [88] lattice_0.22-9                          
+ [89] rtracklayer_1.72.0                      
+ [90] bit_4.6.0                               
+ [91] tidyselect_1.2.1                        
+ [92] fontLiberation_0.1.0                    
+ [93] GO.db_3.23.1                            
+ [94] Biostrings_2.80.0                       
  [95] fontBitstreamVera_0.1.1                 
  [96] SummarizedExperiment_1.42.0             
  [97] xfun_0.57                               

@@ -602,6 +602,36 @@ cat("HFD peaks with at least one GR-class motif:", sum(hfd.all$has_gr),
     "/", nrow(hfd.all),
     sprintf("(%.1f%%)\n", 100 * mean(hfd.all$has_gr)))
 
+# Fisher test for GR enrichment
+# You need the GR motif count in your background (shared/non-HFD) peaks
+n_hfd      <- nrow(hfd.all)
+n_hfd_gr   <- sum(hfd.all$has_gr)
+n_bg       <- nrow(shared.motifs)   # shared peaks — adjust if different
+n_bg_gr    <- shared.motifs |>
+  mutate(has_gr = if_any(all_of(gr_motif_ids), ~ . > 0)) |>
+  summarise(sum(has_gr)) |>
+  pull()     # GR motif count in background peaks 
+
+gr.hfd.mat <- matrix(
+  c(n_hfd_gr,        n_hfd - n_hfd_gr,
+    n_bg_gr,         n_bg - n_bg_gr),
+  nrow = 2, byrow = TRUE,
+  dimnames = list(c("GR+", "GR-"), c("HFD", "Background"))
+)
+
+library(knitr)
+library(broom)
+kable(gr.hfd.mat, caption="GR motifs vs HFD background")
+
+hfd.gr.ft <- fisher.test(gr.hfd.mat) 
+
+with(hfd.gr.ft,tibble(
+  OR      = estimate,
+  ci_low  = conf.int[1],
+  ci_high = conf.int[2],
+  p_value = p.value
+)) |> kable(caption="Fisher test for GR enrichment in HFD")
+
 # For each non-GR motif M: Fisher exact for GR present | M present vs M absent.
 # Restricted to HFD-specific peaks (so we're testing co-occurrence within
 # HFD-opened chromatin, not the marginal enrichment of M itself).
@@ -800,6 +830,9 @@ top5 <- two_axis |>
   arrange(desc(combined_score)) |>
   head(10) |>
   pull(motif_id)
+
+#added candidate genes to top5
+top5 <- c(top5,"MA0693.4",'MA1128.2') #added vdr and FOSL1/JUN
 
 cat("Top 5 candidates by combined score:\n")
 print(two_axis |> filter(motif_id %in% top5) |>
