@@ -1149,6 +1149,7 @@ process BUILD_STAR_INDEX {
  * module directive does not shadow fasterq-dump in PATH.
  */
 process RNASEQ_DOWNLOAD {
+    module 'Bioinformatics:sratoolkit/3.1.1'
     tag "${sample.id}"
     publishDir "${params.rnaseq_outdir}/raw/${sample.id}", mode: 'copy',
                pattern: "*.fastq.gz"
