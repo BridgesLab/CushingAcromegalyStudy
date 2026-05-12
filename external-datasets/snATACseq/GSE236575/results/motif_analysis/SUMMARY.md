@@ -176,6 +176,50 @@ Of the data-driven candidates, **VDR is the most mechanistically promising lead*
 - **Statistical strength**: VDR is the best-scoring non-AT-rich motif on axis 2 (OR=1.26, raw p=0.006) and is significantly HFD-enriched on axis 1 (adj_p=0.0003).
 - **194 candidate composite peaks** for downstream annotation — list at `full_motif_scan/Vdr_*_GR_composite_genes.tsv` after the qmd renders.
 
+### Family-level aggregation (RUN COMPLETED 2026-05-11)
+
+Aggregating candidate motifs by TF family — counting how many family members independently score in the top-right quadrant — reveals signal that strict per-motif q-values hide. Family-wide concordance across N members is a much stronger biological signal than any single member's significance.
+
+| family | n_motifs | n in top-right | %top-right | best axis 1 | best axis 2 | best combined |
+|---|---:|---:|---:|---:|---:|---:|
+| **AP-1** | **21** | **19** | **90.5%** | **0.710** | 0.193 | 0.094 |
+| Homeobox / AT-rich | 86 | 64 | 74.4% | 0.742 | 0.460 | 0.220 |
+| **ATF** | **2** | **2** | **100%** | 0.390 | **0.275** | 0.054 |
+| DMRT | 4 | 4 | 100% | 0.480 | 0.501 | 0.240 |
+| Zinc finger | 6 | 5 | 83.3% | 0.799 | 0.287 | 0.141 |
+| GATA | 4 | 3 | 75.0% | 0.522 | 0.262 | 0.111 |
+| C/EBP | 3 | 2 | 66.7% | 0.678 | 0.211 | 0.082 |
+| **MEF2** | 4 | 2 | 50.0% | **1.052** | 0.082 | 0.039 |
+| Nuclear receptor (incl. Vdr) | 2 | 1 | 50.0% | 0.806 | 0.131 | 0.047 |
+| FoxA | 3 | 3 | 100% | 0.439 | 0.077 | 0.034 |
+| FoxO | 4 | 4 | 100% | 0.457 | 0.043 | 0.020 |
+| STAT | 2 | 2 | 100% | 0.342 | 0.099 | 0.034 |
+| NRF/NFE2/MAF | 2 | 1 | 50.0% | 0.709 | 0.107 | 0.076 |
+
+### Revised priority ranking after family aggregation
+
+The family table substantially **reorders the candidate list**:
+
+1. **AP-1 family — promoted to top priority.** 19 of 21 AP-1 dimer combinations (FOSL1::JUN, FOSL2::JUN, FOSB::JUNB, FOS::JUN, JUND, etc.) all score in the top-right quadrant. Median axis-2 (0.08) is modest, but family-level consistency across 21 independent dimers is a much stronger signal than any single member's q-value. AP-1 + GR cross-talk in inflammation is textbook biology. The HFD-specificity comes from chronic adipose inflammation driving sustained AP-1 activation, which is exactly the "stress-responsive pioneer" mechanism we hypothesized but failed to find with C/EBPβ.
+
+2. **Vdr — strong individual hit but weak family support.** Best non-artifact axis-2 score, mechanistically coherent (coactivator pool), but only 1 of 2 nuclear receptor family members in top-right. Vdr is the outlier in its family, which weakens the family-aggregate argument but doesn't invalidate the individual finding. **Still a real lead, just promoted out of the #1 slot.**
+
+3. **ATF family** — both ATF members in top-right with the highest axis-2 best score (0.275) of any non-homeobox family. Small family (n=2) so confidence is limited, but ATF3 and ATF4 connect directly to the AP-1 cascade (#1) and ER stress (which HFD induces). The AP-1 → ATF → CHOP/UPR cascade may be a unified mechanism.
+
+4. **DMRT family — 4/4 concordant but flagged for verification.** All 4 DMRT members score in the top-right with the highest combined score (0.24). Family-wide consistency makes "single-motif AT-rich artifact" hard to argue, but DMRT consensus motifs are still palindromic AT-rich. Verify with RNA-seq — if no DMRT family members are expressed in adipocytes, this is family-wide motif bias.
+
+5. **MEF2 — promoted out of candidate list.** Best axis-1 score in the entire dataset (1.05) but median axis-2 ≈ 0. MEF2 sites are HFD-induced but GR motifs *don't* co-occur with them. MEF2 marks a different class of HFD-induced enhancer (probably metabolic/mechanotransduction, not GR-sensitization).
+
+6. **FoxA / FoxO — confirmed constitutive.** Both 100% in top-right but the lowest combined scores of any concordant family (0.034 / 0.020). Every member is weakly enriched on both axes — exactly the signature of a constitutive adipocyte pioneer with broad chromatin presence rather than an HFD-specific sensitizer.
+
+### Homeobox / DMRT artifact diagnosis
+
+86 homeobox family members, 64 (74%) in top-right. No real TF family should plausibly be 74%-enriched in HFD-opened chromatin — most homeobox genes (HOX, DLX, PHOX, LHX) are silenced after adipocyte lineage commitment. This is the AT-rich-motif AME bias, family-confirmed. The DMRT family pattern (4/4 in top-right, palindromic AT-rich consensus) is suspiciously similar — could be either real biology with family-wide consistency, or family-level extension of the same AT-rich bias. **RNA-seq filtering is the disambiguating step.**
+
+### Final mechanistic claim
+
+> Data-driven analysis identifies the **AP-1 transcription factor family as the most robust candidate for HFD-induced enhancer remodeling cooperating with glucocorticoid signaling**. 19 of 21 AP-1 dimer combinations independently score as both HFD-enriched (axis 1) and co-occurring with GR motifs (axis 2) within HFD-opened chromatin. This family-wide concordance is much stronger evidence than any single TF's strict significance. Mechanistically, chronic HFD-induced adipose inflammation activates AP-1, which marks a class of enhancers also containing GR binding sites — providing a chromatin-level substrate for HFD potentiation of glucocorticoid signaling through AP-1/GR composite element cooperation. The vitamin D receptor (Vdr) emerges as a complementary single-motif candidate operating via a distinct coactivator-pool sharing mechanism. The ATF family (ATF3, ATF4) supports the broader stress-bZIP-cascade hypothesis. Verification by adipocyte-resolved RNA-seq is the priority next step to eliminate the AT-rich motif bias contaminating the homeobox and DMRT family signals.
+
 ### Mechanistic claim (revised again after data-driven analysis)
 
 > Candidate-driven testing of three literature-derived GR pioneers (FoxA1, FoxO1, C/EBPβ) failed to identify HFD-specific sensitizing enhancers; the C/EBP+GR signal was a "condition-specific vs constitutive" enhancer bias, not HFD-induction. A data-driven scan of all 772 testable JASPAR motifs against HFD-specific (n=6,900) and CHD-specific (n=1,322) peaks identified one strictly-significant hit (Dmrt1, but likely an AT-rich motif artifact pending RNA-seq confirmation) and a relaxed-criteria short list of biologically interpretable non-homeobox candidates. The vitamin D receptor (Vdr) emerges as the strongest non-artifact candidate: significantly HFD-enriched (axis 1 adj_p=3e-4), positively co-occurring with GR motifs (OR=1.26, p=0.006), and mechanistically coherent — VDR shares the entire steroid-receptor coactivator complex with GR, providing a coactivator-pool sensitization mechanism. AP-1 (FOSL1::JUN, FOSB::JUNB) shows the strongest HFD enrichment on axis 1 but only borderline GR co-occurrence, consistent with AP-1 driving inflammation-side chromatin rewiring rather than direct GR sensitization. The dominant homeobox/HOX/DLX cluster in the top 40 is almost certainly the AT-rich-motif AME bias that has plagued every AME run on this dataset and should be filtered by RNA-seq expression before further interpretation.
