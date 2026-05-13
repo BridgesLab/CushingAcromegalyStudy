@@ -1210,7 +1210,7 @@ process RNASEQ_TRIM {
  * --outFilterMultimapNmax 1 discards multi-mappers (strict unique mapping).
  */
 process RNASEQ_ALIGN {
-    module 'Bioinformatics:star'
+    module 'Bioinformatics:star:samtools/1.21'
     tag "${sample_id}"
     publishDir "${params.rnaseq_outdir}/bam/${sample_id}", mode: 'copy',
                pattern: "*.{bam,bai,log,tab}"
