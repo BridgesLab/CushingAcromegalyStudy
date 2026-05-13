@@ -135,7 +135,7 @@ tg_display <- tg |>
     across(c(bayes_P_HFD_gt_CHD, bayes_ER), ~round(., 3)),
     across(c(mean_norm_CHD, mean_norm_HFD), ~round(., 1))
   ) |>
-  select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
+  dplyr::select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
          mean_norm_CHD, mean_norm_HFD, detected,
          bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)
 
@@ -150,7 +150,7 @@ knitr::kable(tg_display,
 ap1 <- tg |> filter(category == "AP-1") |>
   arrange(desc(log2FoldChange))
 
-knitr::kable(ap1 |> select(gene, log2FoldChange, padj, pvalue,
+knitr::kable(ap1 |> dplyr::select(gene, log2FoldChange, padj, pvalue,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="AP-1 family members — ranked by HFD log2FC",
@@ -180,7 +180,7 @@ ggplot(ap1_ok, aes(x=reorder(gene, log2FoldChange), y=log2FoldChange)) +
 ```{r vdr-table}
 vdr <- tg |> filter(category == "VDR_pathway") |> arrange(gene)
 
-knitr::kable(vdr |> select(gene, log2FoldChange, padj,
+knitr::kable(vdr |> dplyr::select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="VDR pathway and coactivators",
@@ -192,7 +192,7 @@ knitr::kable(vdr |> select(gene, log2FoldChange, padj,
 ```{r demoted-table}
 dem <- tg |> filter(category == "demoted") |> arrange(gene)
 
-knitr::kable(dem |> select(gene, log2FoldChange, padj,
+knitr::kable(dem |> dplyr::select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Demoted candidates — expected to show no significant HFD upregulation",
@@ -204,7 +204,7 @@ knitr::kable(dem |> select(gene, log2FoldChange, padj,
 ```{r dmrt-table}
 dmrt <- tg |> filter(category == "artifact_check")
 
-knitr::kable(dmrt |> select(gene, log2FoldChange, padj,
+knitr::kable(dmrt |> dplyr::select(gene, log2FoldChange, padj,
                              mean_norm_CHD, mean_norm_HFD, detected),
   caption="DMRT family — expected to be undetected if motif enrichment was an AT-rich artifact",
   digits=c(0,3,3,1,1,0))
@@ -215,7 +215,7 @@ knitr::kable(dmrt |> select(gene, log2FoldChange, padj,
 ```{r gr-target-table}
 gr_tg <- tg |> filter(category == "GR_target") |> arrange(desc(log2FoldChange))
 
-knitr::kable(gr_tg |> select(gene, log2FoldChange, padj,
+knitr::kable(gr_tg |> dplyr::select(gene, log2FoldChange, padj,
                               mean_norm_CHD, mean_norm_HFD,
                               bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Functional GR targets — expected HFD upregulation if GR signalling is sensitized",
@@ -283,24 +283,36 @@ atac_rna <- atac_full |>
 ### Enrichment: are HFD-up ATAC peaks enriched near HFD-upregulated genes?
 
 ```{r enrichment-test}
-# HFD-upregulated gene set (any LFC>0, padj<0.05)
-hfd_genes <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
+# HFD-upregulated gene set.  With n=3, padj<0.05 may return 0 genes;
+# fall back progressively so the table is always testable.
+hfd_genes_strict  <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
+hfd_genes_relaxed <- deseq |> filter(!is.na(padj) & padj < 0.10 & log2FoldChange > 0) |> pull(gene)
+hfd_genes_nominal <- deseq |> filter(!is.na(pvalue) & pvalue < 0.05 & log2FoldChange > 0) |> pull(gene)
+
+if (length(hfd_genes_strict) >= 50) {
+  hfd_genes  <- hfd_genes_strict;  hfd_label <- "FDR<0.05"
+} else if (length(hfd_genes_relaxed) >= 50) {
+  hfd_genes  <- hfd_genes_relaxed; hfd_label <- "FDR<0.10"
+} else {
+  hfd_genes  <- hfd_genes_nominal; hfd_label <- "nominal p<0.05"
+}
+
+cat(sprintf("Gene set threshold used: %s  (%d genes)\n", hfd_label, length(hfd_genes)))
 
 peak_near_hfd_gene <- atac_rna |>
-  mutate(near_hfd_gene = SYMBOL %in% hfd_genes)
+  mutate(near_hfd_gene = !is.na(SYMBOL) & SYMBOL %in% hfd_genes)
 
-# Diagnostics — print before table construction so we can debug if needed
-cat(sprintf("HFD-up RNA genes (padj<0.05, LFC>0): %d\n", length(hfd_genes)))
-cat(sprintf("Peaks with SYMBOL not NA: %d / %d\n",
+# Diagnostics
+cat(sprintf("Peaks with SYMBOL annotated: %d / %d\n",
             sum(!is.na(peak_near_hfd_gene$SYMBOL)), nrow(peak_near_hfd_gene)))
-cat(sprintf("Peaks near an HFD-up gene: %d\n", sum(peak_near_hfd_gene$near_hfd_gene)))
-cat(sprintf("ATAC HFD_up peaks: %d\n", sum(peak_near_hfd_gene$atac_dir == "HFD_up")))
+cat(sprintf("Peaks near an HFD-up gene  : %d\n", sum(peak_near_hfd_gene$near_hfd_gene)))
+cat(sprintf("ATAC HFD_up peaks          : %d\n", sum(peak_near_hfd_gene$atac_dir == "HFD_up")))
 
 # 2×2 contingency: atac_dir (HFD_up vs rest) × near_hfd_gene (T/F)
 tab <- with(peak_near_hfd_gene,
   table(
-    atac    = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
-    rna_up  = near_hfd_gene
+    atac   = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
+    rna_up = near_hfd_gene
   )
 )
 cat("\nContingency table (ATAC direction × nearest gene HFD-up):\n")
@@ -311,8 +323,7 @@ if (all(dim(tab) >= 2)) {
   cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
   cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
 } else {
-  cat("\nFisher test skipped: contingency table is degenerate (a margin is all-zero).\n")
-  cat("Check diagnostics above — likely hfd_genes is empty or SYMBOL join failed.\n")
+  cat("\nFisher test skipped: table is degenerate — see diagnostics above.\n")
 }
 ```
 
