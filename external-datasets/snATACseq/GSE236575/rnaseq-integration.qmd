@@ -81,8 +81,7 @@ library(readr)
 library(dplyr)
 
 deseq <- read_tsv(deseq_file, show_col_types=FALSE) |>
-  rownames_to_column("gene") |>
-  rename(gene = 1)
+  rename(gene = 1)   # col 1 is the row-names field written by write.table
 
 cat("Total genes tested:", nrow(deseq), "\n")
 cat("HFD-up   (padj<0.05, LFC>0.585):",
