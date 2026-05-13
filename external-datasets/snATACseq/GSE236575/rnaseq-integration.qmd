@@ -234,21 +234,28 @@ library(ChIPseeker)
 library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 
-atac <- read_tsv(atac_deseq, show_col_types=FALSE)
+atac <- read_tsv(atac_deseq, show_col_types=FALSE) |>
+  mutate(.row = row_number())
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 
-# Build GRanges for all tested ATAC peaks
+# Build GRanges; carry .row so we can left_join after annotation.
+# annotatePeak drops peaks on non-standard contigs (chrUn_*, random) so
+# positional bind_cols would fail — left_join on .row preserves all peaks
+# and gives NA annotations for any that were silently dropped.
 atac_gr <- GRanges(
   seqnames = atac$chr,
-  ranges   = IRanges(atac$start + 1, atac$end)
+  ranges   = IRanges(atac$start + 1, atac$end),
+  .row     = atac$.row
 )
 
 atac_ann <- annotatePeak(atac_gr, TxDb=txdb, tssRegion=c(-5000, 500),
                          annoDb="org.Mm.eg.db", verbose=FALSE)
 atac_ann_df <- as.data.frame(atac_ann)
 
-atac_full <- bind_cols(atac, atac_ann_df |>
-  select(SYMBOL, distanceToTSS, annotation))
+atac_full <- atac |>
+  left_join(atac_ann_df |> dplyr::select(.row, SYMBOL, distanceToTSS, annotation),
+            by = ".row") |>
+  select(-.row)
 ```
 
 ### Classify ATAC peaks and merge with RNA-seq
