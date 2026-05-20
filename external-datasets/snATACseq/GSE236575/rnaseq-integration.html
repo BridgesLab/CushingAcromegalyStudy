@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Dave Bridges">
+<meta name="dcterms.date" content="2026-05-12">
+
+<title>GSE236575 RNA-seq × ATAC-seq Integration</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="rnaseq-integration_files/libs/clipboard/clipboard.min.js"></script>
+<script src="rnaseq-integration_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="rnaseq-integration_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="rnaseq-integration_files/libs/quarto-html/popper.min.js"></script>
+<script src="rnaseq-integration_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="rnaseq-integration_files/libs/quarto-html/anchor.min.js"></script>
+<link href="rnaseq-integration_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="rnaseq-integration_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="rnaseq-integration_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="rnaseq-integration_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="rnaseq-integration_files/libs/bootstrap/bootstrap-d4791fd432f8730d65180f3796899ee9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#dataset-overview" id="toc-dataset-overview" class="nav-link active" data-scroll-target="#dataset-overview">Dataset overview</a>
+  <ul class="collapse">
+  <li><a href="#rna-seq-data-source" id="toc-rna-seq-data-source" class="nav-link" data-scroll-target="#rna-seq-data-source">RNA-seq data source</a></li>
+  <li><a href="#pipeline-output-files" id="toc-pipeline-output-files" class="nav-link" data-scroll-target="#pipeline-output-files">Pipeline output files</a></li>
+  </ul></li>
+  <li><a href="#deseq2-differential-expression-global-summary" id="toc-deseq2-differential-expression-global-summary" class="nav-link" data-scroll-target="#deseq2-differential-expression-global-summary">1. DESeq2 differential expression — global summary</a></li>
+  <li><a href="#targeted-gene-analysis" id="toc-targeted-gene-analysis" class="nav-link" data-scroll-target="#targeted-gene-analysis">2. Targeted gene analysis</a>
+  <ul class="collapse">
+  <li><a href="#load-and-display-results" id="toc-load-and-display-results" class="nav-link" data-scroll-target="#load-and-display-results">Load and display results</a></li>
+  <li><a href="#ap-1-candidates-key-comparison" id="toc-ap-1-candidates-key-comparison" class="nav-link" data-scroll-target="#ap-1-candidates-key-comparison">AP-1 candidates — key comparison</a></li>
+  <li><a href="#ap-1-forest-plot" id="toc-ap-1-forest-plot" class="nav-link" data-scroll-target="#ap-1-forest-plot">AP-1 forest plot</a></li>
+  <li><a href="#vdr-pathway-and-gr-coactivators" id="toc-vdr-pathway-and-gr-coactivators" class="nav-link" data-scroll-target="#vdr-pathway-and-gr-coactivators">VDR pathway and GR coactivators</a></li>
+  <li><a href="#demoted-candidates-verification" id="toc-demoted-candidates-verification" class="nav-link" data-scroll-target="#demoted-candidates-verification">Demoted candidates (verification)</a></li>
+  <li><a href="#artifact-check-dmrt-family" id="toc-artifact-check-dmrt-family" class="nav-link" data-scroll-target="#artifact-check-dmrt-family">Artifact check (DMRT family)</a></li>
+  <li><a href="#functional-gr-targets" id="toc-functional-gr-targets" class="nav-link" data-scroll-target="#functional-gr-targets">Functional GR targets</a></li>
+  </ul></li>
+  <li><a href="#atac-rna-seq-integration" id="toc-atac-rna-seq-integration" class="nav-link" data-scroll-target="#atac-rna-seq-integration">3. ATAC × RNA-seq integration</a>
+  <ul class="collapse">
+  <li><a href="#annotate-atac-peaks-to-nearest-gene" id="toc-annotate-atac-peaks-to-nearest-gene" class="nav-link" data-scroll-target="#annotate-atac-peaks-to-nearest-gene">Annotate ATAC peaks to nearest gene</a></li>
+  <li><a href="#classify-atac-peaks-and-merge-with-rna-seq" id="toc-classify-atac-peaks-and-merge-with-rna-seq" class="nav-link" data-scroll-target="#classify-atac-peaks-and-merge-with-rna-seq">Classify ATAC peaks and merge with RNA-seq</a></li>
+  <li><a href="#enrichment-are-hfd-up-atac-peaks-enriched-near-hfd-upregulated-genes" id="toc-enrichment-are-hfd-up-atac-peaks-enriched-near-hfd-upregulated-genes" class="nav-link" data-scroll-target="#enrichment-are-hfd-up-atac-peaks-enriched-near-hfd-upregulated-genes">Enrichment: are HFD-up ATAC peaks enriched near HFD-upregulated genes?</a></li>
+  <li><a href="#motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation" id="toc-motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation" class="nav-link" data-scroll-target="#motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation">Motif stratification: which motif class best predicts paired gene upregulation?</a></li>
+  </ul></li>
+  <li><a href="#locus-tracks" id="toc-locus-tracks" class="nav-link" data-scroll-target="#locus-tracks">4. Locus tracks</a></li>
+  <li><a href="#decision-outputs" id="toc-decision-outputs" class="nav-link" data-scroll-target="#decision-outputs">5. Decision outputs</a>
+  <ul class="collapse">
+  <li><a href="#ap-1-lead-candidate-junb-vs-fosl2" id="toc-ap-1-lead-candidate-junb-vs-fosl2" class="nav-link" data-scroll-target="#ap-1-lead-candidate-junb-vs-fosl2">5.1 AP-1 lead candidate (Junb vs Fosl2)</a></li>
+  <li><a href="#dmrt-family-expression-status" id="toc-dmrt-family-expression-status" class="nav-link" data-scroll-target="#dmrt-family-expression-status">5.2 DMRT family expression status</a></li>
+  <li><a href="#coactivator-and-hsd11b1-expression-status" id="toc-coactivator-and-hsd11b1-expression-status" class="nav-link" data-scroll-target="#coactivator-and-hsd11b1-expression-status">5.3 Coactivator and HSD11B1 expression status</a></li>
+  </ul></li>
+  <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information">Session information</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="rnaseq-integration.md"><i class="bi bi-file-code"></i>Github (GFM)</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">GSE236575 RNA-seq × ATAC-seq Integration</h1>
+<p class="subtitle lead">TRAP-seq HFD vs CHD — targeted gene analysis, ATAC peak annotation, motif stratification</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dave Bridges </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 12, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="dataset-overview" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-overview">Dataset overview</h2>
+<section id="rna-seq-data-source" class="level3">
+<h3 class="anchored" data-anchor-id="rna-seq-data-source">RNA-seq data source</h3>
+<p>The matched RNA-seq data are from <strong>GSE236578 [TRAP]</strong>, a sub-series of the super-series GSE236580 (“Adipose tissue retains an epigenetic memory of obesity after weight loss”; PMID 39558077). The same AdipER-Cre/NuTRAP mice and eWAT adipocyte preparations were used for both ATAC-seq (GSE236575) and TRAP-seq (GSE236578). TRAP-seq captures actively translated transcripts specifically from adipocytes, avoiding contamination from stromal-vascular cells.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Sample ID</th>
+<th>GSM</th>
+<th>SRR</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CHD_1</td>
+<td>GSM7558266</td>
+<td>SRR25152278</td>
+<td>Chow diet</td>
+</tr>
+<tr class="even">
+<td>CHD_2</td>
+<td>GSM7558271</td>
+<td>SRR25152274</td>
+<td>Chow diet</td>
+</tr>
+<tr class="odd">
+<td>CHD_3</td>
+<td>GSM7558276</td>
+<td>SRR25152266</td>
+<td>Chow diet</td>
+</tr>
+<tr class="even">
+<td>HFD_1</td>
+<td>GSM7558267</td>
+<td>SRR25152277</td>
+<td>High-fat diet</td>
+</tr>
+<tr class="odd">
+<td>HFD_2</td>
+<td>GSM7558272</td>
+<td>SRR25152273</td>
+<td>High-fat diet</td>
+</tr>
+<tr class="even">
+<td>HFD_3</td>
+<td>GSM7558277</td>
+<td>SRR25152265</td>
+<td>High-fat diet</td>
+</tr>
+</tbody>
+</table>
+<p>Library: paired-end 150 bp, template switching (Maxima H Minus RT), unstranded. Alignment: STAR → mm10/GENCODE vM25, unique mappers only. Quantification: featureCounts, gene_name, unstranded (-s 0).</p>
+</section>
+<section id="pipeline-output-files" class="level3">
+<h3 class="anchored" data-anchor-id="pipeline-output-files">Pipeline output files</h3>
+<p>All files are generated by the <code>RNASEQ_DESEQ2</code> Nextflow process.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>deseq_file    <span class="ot">&lt;-</span> <span class="st">"results/rnaseq/deseq2/rnaseq_deseq2_results.txt"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>targeted_file <span class="ot">&lt;-</span> <span class="st">"results/rnaseq/deseq2/rnaseq_targeted_genes.tsv"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>norm_file     <span class="ot">&lt;-</span> <span class="st">"results/rnaseq/deseq2/rnaseq_normalized_counts.txt"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>atac_deseq    <span class="ot">&lt;-</span> <span class="st">"results/deseq2/deseq2_results.txt"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="deseq2-differential-expression-global-summary" class="level2">
+<h2 class="anchored" data-anchor-id="deseq2-differential-expression-global-summary">1. DESeq2 differential expression — global summary</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>deseq <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(deseq_file, <span class="at">show_col_types=</span><span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">gene =</span> <span class="dv">1</span>)   <span class="co"># col 1 is the row-names field written by write.table</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total genes tested:"</span>, <span class="fu">nrow</span>(deseq), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total genes tested: 22901 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"HFD-up   (padj&lt;0.05, LFC&gt;0.585):"</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(deseq<span class="sc">$</span>padj) <span class="sc">&amp;</span> deseq<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> deseq<span class="sc">$</span>log2FoldChange <span class="sc">&gt;</span> <span class="fl">0.585</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>HFD-up   (padj&lt;0.05, LFC&gt;0.585): 4466 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"HFD-down (padj&lt;0.05, LFC&lt; -0.585):"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(deseq<span class="sc">$</span>padj) <span class="sc">&amp;</span> deseq<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> deseq<span class="sc">$</span>log2FoldChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.585</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>HFD-down (padj&lt;0.05, LFC&lt; -0.585): 0 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>tg_genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Fos"</span>,<span class="st">"Jun"</span>,<span class="st">"Junb"</span>,<span class="st">"Jund"</span>,<span class="st">"Fosl1"</span>,<span class="st">"Fosl2"</span>,<span class="st">"Batf"</span>,<span class="st">"Batf3"</span>,<span class="st">"Atf3"</span>,<span class="st">"Atf4"</span>,<span class="st">"Ddit3"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Vdr"</span>,<span class="st">"Ncoa1"</span>,<span class="st">"Ncoa2"</span>,<span class="st">"Ncoa3"</span>,<span class="st">"Med1"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Hsd11b1"</span>,<span class="st">"Nr3c1"</span>,<span class="st">"Fkbp5"</span>,<span class="st">"Sgk1"</span>,<span class="st">"Tsc22d3"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>deseq_plot <span class="ot">&lt;-</span> deseq <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sig =</span> <span class="sc">!</span><span class="fu">is.na</span>(padj) <span class="sc">&amp;</span> padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(log2FoldChange) <span class="sc">&gt;</span> <span class="fl">0.585</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">ifelse</span>(gene <span class="sc">%in%</span> tg_genes, gene, <span class="cn">NA_character_</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(deseq_plot, <span class="fu">aes</span>(log2FoldChange, <span class="sc">-</span><span class="fu">log10</span>(pvalue))) <span class="sc">+</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color=</span>sig), <span class="at">alpha=</span><span class="fl">0.4</span>, <span class="at">size=</span><span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"FALSE"</span><span class="ot">=</span><span class="st">"grey70"</span>,<span class="st">"TRUE"</span><span class="ot">=</span><span class="st">"#d62728"</span>), <span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label=</span>label), <span class="at">size=</span><span class="dv">3</span>, <span class="at">max.overlaps=</span><span class="dv">40</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">segment.color=</span><span class="st">"grey60"</span>) <span class="sc">+</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>), <span class="at">lty=</span><span class="dv">2</span>, <span class="at">color=</span><span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.585</span>, <span class="fl">0.585</span>), <span class="at">lty=</span><span class="dv">2</span>, <span class="at">color=</span><span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"log2FC (HFD / CHD)"</span>, <span class="at">y=</span><span class="st">"-log10(p-value)"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">title=</span><span class="st">"TRAP-seq: HFD vs CHD differential expression"</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">"Red = FDR&lt;0.05, |LFC|&gt;0.585; labelled genes = targeted candidates"</span>) <span class="sc">+</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">13</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="figures/rnaseq/volcano-global-1.png" class="img-fluid figure-img" width="2700"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="targeted-gene-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="targeted-gene-analysis">2. Targeted gene analysis</h2>
+<section id="load-and-display-results" class="level3">
+<h3 class="anchored" data-anchor-id="load-and-display-results">Load and display results</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tg <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(targeted_file, <span class="at">show_col_types=</span><span class="cn">FALSE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Format for display</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>tg_display <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(log2FoldChange, lfcSE, bayes_CrI_lo, bayes_CrI_hi), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>)),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(pvalue, padj), <span class="sc">~</span><span class="fu">signif</span>(., <span class="dv">3</span>)),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(bayes_P_HFD_gt_CHD, bayes_ER), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>)),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(mean_norm_CHD, mean_norm_HFD), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">1</span>))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(category, gene, log2FoldChange, lfcSE, padj, pvalue,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>         mean_norm_CHD, mean_norm_HFD, detected,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>         bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(tg_display,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"Targeted gene-level TRAP-seq results (HFD vs CHD). Bayes stats use Normal(0,1) prior on log2FC (analytical conjugate update)."</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Targeted gene-level TRAP-seq results (HFD vs CHD). Bayes stats use Normal(0,1) prior on log2FC (analytical conjugate update).</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 5%">
+<col style="width: 10%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 6%">
+<col style="width: 12%">
+<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">category</th>
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">lfcSE</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">pvalue</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: left;">detected</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+<th style="text-align: right;">bayes_CrI_lo</th>
+<th style="text-align: right;">bayes_CrI_hi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Atf3</td>
+<td style="text-align: right;">1.931</td>
+<td style="text-align: right;">0.715</td>
+<td style="text-align: right;">0.053</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">67.2</td>
+<td style="text-align: right;">256.4</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.986</td>
+<td style="text-align: right;">70.13</td>
+<td style="text-align: right;">0.137</td>
+<td style="text-align: right;">2.418</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Atf4</td>
+<td style="text-align: right;">-0.575</td>
+<td style="text-align: right;">0.403</td>
+<td style="text-align: right;">0.386</td>
+<td style="text-align: right;">0.154</td>
+<td style="text-align: right;">3406.8</td>
+<td style="text-align: right;">2287.6</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.093</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">-1.227</td>
+<td style="text-align: right;">0.238</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Batf</td>
+<td style="text-align: right;">2.167</td>
+<td style="text-align: right;">1.420</td>
+<td style="text-align: right;">0.346</td>
+<td style="text-align: right;">0.127</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;">20.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.810</td>
+<td style="text-align: right;">4.27</td>
+<td style="text-align: right;">-0.883</td>
+<td style="text-align: right;">2.321</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Batf3</td>
+<td style="text-align: right;">-0.098</td>
+<td style="text-align: right;">0.660</td>
+<td style="text-align: right;">0.953</td>
+<td style="text-align: right;">0.882</td>
+<td style="text-align: right;">129.7</td>
+<td style="text-align: right;">121.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.451</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">-1.148</td>
+<td style="text-align: right;">1.012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Ddit3</td>
+<td style="text-align: right;">1.051</td>
+<td style="text-align: right;">0.429</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">407.1</td>
+<td style="text-align: right;">843.8</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.988</td>
+<td style="text-align: right;">81.05</td>
+<td style="text-align: right;">0.115</td>
+<td style="text-align: right;">1.661</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Fos</td>
+<td style="text-align: right;">1.866</td>
+<td style="text-align: right;">0.642</td>
+<td style="text-align: right;">0.034</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">80.8</td>
+<td style="text-align: right;">294.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.993</td>
+<td style="text-align: right;">136.55</td>
+<td style="text-align: right;">0.261</td>
+<td style="text-align: right;">2.380</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Fosl1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Fosl2</td>
+<td style="text-align: right;">-0.112</td>
+<td style="text-align: right;">0.415</td>
+<td style="text-align: right;">0.910</td>
+<td style="text-align: right;">0.788</td>
+<td style="text-align: right;">945.9</td>
+<td style="text-align: right;">875.2</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.402</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">-0.846</td>
+<td style="text-align: right;">0.656</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Jun</td>
+<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">0.437</td>
+<td style="text-align: right;">0.827</td>
+<td style="text-align: right;">0.637</td>
+<td style="text-align: right;">637.0</td>
+<td style="text-align: right;">735.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">-0.612</td>
+<td style="text-align: right;">0.958</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Junb</td>
+<td style="text-align: right;">1.927</td>
+<td style="text-align: right;">0.572</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">36.3</td>
+<td style="text-align: right;">137.4</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">582.90</td>
+<td style="text-align: right;">0.480</td>
+<td style="text-align: right;">2.425</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AP-1</td>
+<td style="text-align: left;">Jund</td>
+<td style="text-align: right;">0.377</td>
+<td style="text-align: right;">0.567</td>
+<td style="text-align: right;">0.740</td>
+<td style="text-align: right;">0.505</td>
+<td style="text-align: right;">445.2</td>
+<td style="text-align: right;">578.8</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.719</td>
+<td style="text-align: right;">2.56</td>
+<td style="text-align: right;">-0.680</td>
+<td style="text-align: right;">1.252</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artifact_check</td>
+<td style="text-align: left;">Dmrt1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artifact_check</td>
+<td style="text-align: left;">Dmrt2</td>
+<td style="text-align: right;">-1.699</td>
+<td style="text-align: right;">0.774</td>
+<td style="text-align: right;">0.135</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">1620.4</td>
+<td style="text-align: right;">499.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.041</td>
+<td style="text-align: right;">0.04</td>
+<td style="text-align: right;">-2.262</td>
+<td style="text-align: right;">0.137</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artifact_check</td>
+<td style="text-align: left;">Dmrt3</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artifact_check</td>
+<td style="text-align: left;">Dmrt4</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Cebpa</td>
+<td style="text-align: right;">0.348</td>
+<td style="text-align: right;">0.759</td>
+<td style="text-align: right;">0.833</td>
+<td style="text-align: right;">0.647</td>
+<td style="text-align: right;">2655.5</td>
+<td style="text-align: right;">3380.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.643</td>
+<td style="text-align: right;">1.80</td>
+<td style="text-align: right;">-0.964</td>
+<td style="text-align: right;">1.406</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Cebpb</td>
+<td style="text-align: right;">-0.503</td>
+<td style="text-align: right;">0.641</td>
+<td style="text-align: right;">0.684</td>
+<td style="text-align: right;">0.433</td>
+<td style="text-align: right;">1218.0</td>
+<td style="text-align: right;">860.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.254</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">-1.414</td>
+<td style="text-align: right;">0.701</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Cebpd</td>
+<td style="text-align: right;">0.909</td>
+<td style="text-align: right;">0.520</td>
+<td style="text-align: right;">0.263</td>
+<td style="text-align: right;">0.080</td>
+<td style="text-align: right;">167.3</td>
+<td style="text-align: right;">314.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.940</td>
+<td style="text-align: right;">15.54</td>
+<td style="text-align: right;">-0.189</td>
+<td style="text-align: right;">1.620</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Foxa1</td>
+<td style="text-align: right;">-2.635</td>
+<td style="text-align: right;">2.282</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.248</td>
+<td style="text-align: right;">3.7</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">0.321</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">-2.220</td>
+<td style="text-align: right;">1.371</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Foxa2</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Foxo1</td>
+<td style="text-align: right;">-0.060</td>
+<td style="text-align: right;">0.454</td>
+<td style="text-align: right;">0.959</td>
+<td style="text-align: right;">0.895</td>
+<td style="text-align: right;">1983.4</td>
+<td style="text-align: right;">1902.8</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.452</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">-0.861</td>
+<td style="text-align: right;">0.761</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Foxo3</td>
+<td style="text-align: right;">0.116</td>
+<td style="text-align: right;">0.313</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: right;">0.711</td>
+<td style="text-align: right;">566.1</td>
+<td style="text-align: right;">613.4</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.638</td>
+<td style="text-align: right;">1.76</td>
+<td style="text-align: right;">-0.480</td>
+<td style="text-align: right;">0.691</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Klf13</td>
+<td style="text-align: right;">0.530</td>
+<td style="text-align: right;">0.347</td>
+<td style="text-align: right;">0.345</td>
+<td style="text-align: right;">0.127</td>
+<td style="text-align: right;">1193.4</td>
+<td style="text-align: right;">1723.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.925</td>
+<td style="text-align: right;">12.42</td>
+<td style="text-align: right;">-0.169</td>
+<td style="text-align: right;">1.115</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">demoted</td>
+<td style="text-align: left;">Prrx1</td>
+<td style="text-align: right;">0.991</td>
+<td style="text-align: right;">0.363</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">499.2</td>
+<td style="text-align: right;">991.8</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.995</td>
+<td style="text-align: right;">195.39</td>
+<td style="text-align: right;">0.208</td>
+<td style="text-align: right;">1.544</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Angptl4</td>
+<td style="text-align: right;">1.949</td>
+<td style="text-align: right;">0.482</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1978.5</td>
+<td style="text-align: right;">7638.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">7329.34</td>
+<td style="text-align: right;">0.730</td>
+<td style="text-align: right;">2.433</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Fkbp5</td>
+<td style="text-align: right;">-1.292</td>
+<td style="text-align: right;">0.376</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">1414.6</td>
+<td style="text-align: right;">578.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">-1.822</td>
+<td style="text-align: right;">-0.443</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Hsd11b1</td>
+<td style="text-align: right;">-0.933</td>
+<td style="text-align: right;">0.403</td>
+<td style="text-align: right;">0.110</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">1719.2</td>
+<td style="text-align: right;">900.1</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">-1.535</td>
+<td style="text-align: right;">-0.070</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Hsd11b2</td>
+<td style="text-align: right;">0.914</td>
+<td style="text-align: right;">1.025</td>
+<td style="text-align: right;">0.634</td>
+<td style="text-align: right;">0.372</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">13.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.733</td>
+<td style="text-align: right;">2.75</td>
+<td style="text-align: right;">-0.957</td>
+<td style="text-align: right;">1.849</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Lep</td>
+<td style="text-align: right;">2.009</td>
+<td style="text-align: right;">0.612</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">14331.1</td>
+<td style="text-align: right;">57685.3</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.997</td>
+<td style="text-align: right;">388.36</td>
+<td style="text-align: right;">0.438</td>
+<td style="text-align: right;">2.485</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Nr3c1</td>
+<td style="text-align: right;">-0.303</td>
+<td style="text-align: right;">0.449</td>
+<td style="text-align: right;">0.736</td>
+<td style="text-align: right;">0.499</td>
+<td style="text-align: right;">4396.3</td>
+<td style="text-align: right;">3563.4</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.269</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">-1.055</td>
+<td style="text-align: right;">0.550</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Pnpla2</td>
+<td style="text-align: right;">0.319</td>
+<td style="text-align: right;">0.727</td>
+<td style="text-align: right;">0.842</td>
+<td style="text-align: right;">0.661</td>
+<td style="text-align: right;">3987.8</td>
+<td style="text-align: right;">4973.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.639</td>
+<td style="text-align: right;">1.77</td>
+<td style="text-align: right;">-0.944</td>
+<td style="text-align: right;">1.361</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Sgk1</td>
+<td style="text-align: right;">1.770</td>
+<td style="text-align: right;">0.425</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">323.4</td>
+<td style="text-align: right;">1103.2</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">16083.07</td>
+<td style="text-align: right;">0.734</td>
+<td style="text-align: right;">2.266</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GR_target</td>
+<td style="text-align: left;">Tsc22d3</td>
+<td style="text-align: right;">-0.034</td>
+<td style="text-align: right;">0.523</td>
+<td style="text-align: right;">0.981</td>
+<td style="text-align: right;">0.947</td>
+<td style="text-align: right;">5323.0</td>
+<td style="text-align: right;">5197.6</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.477</td>
+<td style="text-align: right;">0.91</td>
+<td style="text-align: right;">-0.935</td>
+<td style="text-align: right;">0.881</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VDR_pathway</td>
+<td style="text-align: left;">Med1</td>
+<td style="text-align: right;">-0.426</td>
+<td style="text-align: right;">0.323</td>
+<td style="text-align: right;">0.433</td>
+<td style="text-align: right;">0.186</td>
+<td style="text-align: right;">636.9</td>
+<td style="text-align: right;">474.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.12</td>
+<td style="text-align: right;">-0.988</td>
+<td style="text-align: right;">0.216</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VDR_pathway</td>
+<td style="text-align: left;">Ncoa1</td>
+<td style="text-align: right;">-0.572</td>
+<td style="text-align: right;">0.411</td>
+<td style="text-align: right;">0.401</td>
+<td style="text-align: right;">0.164</td>
+<td style="text-align: right;">856.1</td>
+<td style="text-align: right;">575.9</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.099</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">-1.235</td>
+<td style="text-align: right;">0.256</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VDR_pathway</td>
+<td style="text-align: left;">Ncoa2</td>
+<td style="text-align: right;">-0.471</td>
+<td style="text-align: right;">0.388</td>
+<td style="text-align: right;">0.483</td>
+<td style="text-align: right;">0.225</td>
+<td style="text-align: right;">688.8</td>
+<td style="text-align: right;">496.8</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">-1.119</td>
+<td style="text-align: right;">0.300</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VDR_pathway</td>
+<td style="text-align: left;">Ncoa3</td>
+<td style="text-align: right;">-0.075</td>
+<td style="text-align: right;">0.389</td>
+<td style="text-align: right;">0.939</td>
+<td style="text-align: right;">0.848</td>
+<td style="text-align: right;">644.2</td>
+<td style="text-align: right;">611.4</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.429</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">-0.775</td>
+<td style="text-align: right;">0.646</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VDR_pathway</td>
+<td style="text-align: left;">Vdr</td>
+<td style="text-align: right;">-0.115</td>
+<td style="text-align: right;">0.833</td>
+<td style="text-align: right;">0.956</td>
+<td style="text-align: right;">0.890</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.458</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">-1.322</td>
+<td style="text-align: right;">1.186</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="ap-1-candidates-key-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="ap-1-candidates-key-comparison">AP-1 candidates — key comparison</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ap1 <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"AP-1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(log2FoldChange))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(ap1 <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj, pvalue,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                            mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                            bayes_P_HFD_gt_CHD, bayes_ER),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"AP-1 family members — ranked by HFD log2FC"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>AP-1 family members — ranked by HFD log2FC</caption>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 16%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 21%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">pvalue</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Batf</td>
+<td style="text-align: right;">2.167</td>
+<td style="text-align: right;">0.346</td>
+<td style="text-align: right;">0.127</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;">20.1</td>
+<td style="text-align: right;">0.810</td>
+<td style="text-align: right;">4.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Atf3</td>
+<td style="text-align: right;">1.931</td>
+<td style="text-align: right;">0.053</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">67.2</td>
+<td style="text-align: right;">256.4</td>
+<td style="text-align: right;">0.986</td>
+<td style="text-align: right;">70.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Junb</td>
+<td style="text-align: right;">1.927</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">36.3</td>
+<td style="text-align: right;">137.4</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">582.90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fos</td>
+<td style="text-align: right;">1.866</td>
+<td style="text-align: right;">0.034</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">80.8</td>
+<td style="text-align: right;">294.0</td>
+<td style="text-align: right;">0.993</td>
+<td style="text-align: right;">136.55</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ddit3</td>
+<td style="text-align: right;">1.051</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">407.1</td>
+<td style="text-align: right;">843.8</td>
+<td style="text-align: right;">0.988</td>
+<td style="text-align: right;">81.05</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jund</td>
+<td style="text-align: right;">0.377</td>
+<td style="text-align: right;">0.740</td>
+<td style="text-align: right;">0.505</td>
+<td style="text-align: right;">445.2</td>
+<td style="text-align: right;">578.8</td>
+<td style="text-align: right;">0.719</td>
+<td style="text-align: right;">2.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jun</td>
+<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">0.827</td>
+<td style="text-align: right;">0.637</td>
+<td style="text-align: right;">637.0</td>
+<td style="text-align: right;">735.1</td>
+<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">2.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Batf3</td>
+<td style="text-align: right;">-0.098</td>
+<td style="text-align: right;">0.953</td>
+<td style="text-align: right;">0.882</td>
+<td style="text-align: right;">129.7</td>
+<td style="text-align: right;">121.1</td>
+<td style="text-align: right;">0.451</td>
+<td style="text-align: right;">0.82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fosl2</td>
+<td style="text-align: right;">-0.112</td>
+<td style="text-align: right;">0.910</td>
+<td style="text-align: right;">0.788</td>
+<td style="text-align: right;">945.9</td>
+<td style="text-align: right;">875.2</td>
+<td style="text-align: right;">0.402</td>
+<td style="text-align: right;">0.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Atf4</td>
+<td style="text-align: right;">-0.575</td>
+<td style="text-align: right;">0.386</td>
+<td style="text-align: right;">0.154</td>
+<td style="text-align: right;">3406.8</td>
+<td style="text-align: right;">2287.6</td>
+<td style="text-align: right;">0.093</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fosl1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="ap-1-forest-plot" class="level3">
+<h3 class="anchored" data-anchor-id="ap-1-forest-plot">AP-1 forest plot</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ap1_ok <span class="ot">&lt;-</span> ap1 <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(log2FoldChange))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ap1_ok, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(gene, log2FoldChange), <span class="at">y=</span>log2FoldChange)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill=</span>log2FoldChange <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="at">width=</span><span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>bayes_CrI_lo, <span class="at">ymax=</span>bayes_CrI_hi), <span class="at">width=</span><span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">lty=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"TRUE"</span><span class="ot">=</span><span class="st">"#d62728"</span>,<span class="st">"FALSE"</span><span class="ot">=</span><span class="st">"#1f77b4"</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"TRUE"</span><span class="ot">=</span><span class="st">"HFD up"</span>,<span class="st">"FALSE"</span><span class="ot">=</span><span class="st">"CHD up"</span>), <span class="at">name=</span><span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="st">"log2FC (HFD / CHD), 95% CrI"</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title=</span><span class="st">"AP-1 family — TRAP-seq HFD vs CHD"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">"Bars = posterior mean; error bars = 95% CrI (Normal(0,1) prior)"</span>) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">12</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="figures/rnaseq/ap1-forest-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="vdr-pathway-and-gr-coactivators" class="level3">
+<h3 class="anchored" data-anchor-id="vdr-pathway-and-gr-coactivators">VDR pathway and GR coactivators</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>vdr <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"VDR_pathway"</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(gene)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(vdr <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                            mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                            bayes_P_HFD_gt_CHD, bayes_ER),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"VDR pathway and coactivators"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>VDR pathway and coactivators</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 18%">
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Med1</td>
+<td style="text-align: right;">-0.426</td>
+<td style="text-align: right;">0.433</td>
+<td style="text-align: right;">636.9</td>
+<td style="text-align: right;">474.0</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ncoa1</td>
+<td style="text-align: right;">-0.572</td>
+<td style="text-align: right;">0.401</td>
+<td style="text-align: right;">856.1</td>
+<td style="text-align: right;">575.9</td>
+<td style="text-align: right;">0.099</td>
+<td style="text-align: right;">0.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ncoa2</td>
+<td style="text-align: right;">-0.471</td>
+<td style="text-align: right;">0.483</td>
+<td style="text-align: right;">688.8</td>
+<td style="text-align: right;">496.8</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ncoa3</td>
+<td style="text-align: right;">-0.075</td>
+<td style="text-align: right;">0.939</td>
+<td style="text-align: right;">644.2</td>
+<td style="text-align: right;">611.4</td>
+<td style="text-align: right;">0.429</td>
+<td style="text-align: right;">0.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vdr</td>
+<td style="text-align: right;">-0.115</td>
+<td style="text-align: right;">0.956</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: right;">0.458</td>
+<td style="text-align: right;">0.84</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="demoted-candidates-verification" class="level3">
+<h3 class="anchored" data-anchor-id="demoted-candidates-verification">Demoted candidates (verification)</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dem <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"demoted"</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(gene)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dem <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                            mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                            bayes_P_HFD_gt_CHD, bayes_ER),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"Demoted candidates — expected to show no significant HFD upregulation"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Demoted candidates — expected to show no significant HFD upregulation</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 18%">
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cebpa</td>
+<td style="text-align: right;">0.348</td>
+<td style="text-align: right;">0.833</td>
+<td style="text-align: right;">2655.5</td>
+<td style="text-align: right;">3380.1</td>
+<td style="text-align: right;">0.643</td>
+<td style="text-align: right;">1.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cebpb</td>
+<td style="text-align: right;">-0.503</td>
+<td style="text-align: right;">0.684</td>
+<td style="text-align: right;">1218.0</td>
+<td style="text-align: right;">860.0</td>
+<td style="text-align: right;">0.254</td>
+<td style="text-align: right;">0.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cebpd</td>
+<td style="text-align: right;">0.909</td>
+<td style="text-align: right;">0.263</td>
+<td style="text-align: right;">167.3</td>
+<td style="text-align: right;">314.5</td>
+<td style="text-align: right;">0.940</td>
+<td style="text-align: right;">15.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Foxa1</td>
+<td style="text-align: right;">-2.635</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">3.7</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.321</td>
+<td style="text-align: right;">0.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Foxa2</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Foxo1</td>
+<td style="text-align: right;">-0.060</td>
+<td style="text-align: right;">0.959</td>
+<td style="text-align: right;">1983.4</td>
+<td style="text-align: right;">1902.8</td>
+<td style="text-align: right;">0.452</td>
+<td style="text-align: right;">0.82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Foxo3</td>
+<td style="text-align: right;">0.116</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: right;">566.1</td>
+<td style="text-align: right;">613.4</td>
+<td style="text-align: right;">0.638</td>
+<td style="text-align: right;">1.76</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Klf13</td>
+<td style="text-align: right;">0.530</td>
+<td style="text-align: right;">0.345</td>
+<td style="text-align: right;">1193.4</td>
+<td style="text-align: right;">1723.5</td>
+<td style="text-align: right;">0.925</td>
+<td style="text-align: right;">12.42</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Prrx1</td>
+<td style="text-align: right;">0.991</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">499.2</td>
+<td style="text-align: right;">991.8</td>
+<td style="text-align: right;">0.995</td>
+<td style="text-align: right;">195.39</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="artifact-check-dmrt-family" class="level3">
+<h3 class="anchored" data-anchor-id="artifact-check-dmrt-family">Artifact check (DMRT family)</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dmrt <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"artifact_check"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dmrt <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                             mean_norm_CHD, mean_norm_HFD, detected),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"DMRT family — expected to be undetected if motif enrichment was an AT-rich artifact"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>DMRT family — expected to be undetected if motif enrichment was an AT-rich artifact</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: left;">detected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Dmrt1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dmrt2</td>
+<td style="text-align: right;">-1.699</td>
+<td style="text-align: right;">0.135</td>
+<td style="text-align: right;">1620.4</td>
+<td style="text-align: right;">499.5</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dmrt3</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dmrt4</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="functional-gr-targets" class="level3">
+<h3 class="anchored" data-anchor-id="functional-gr-targets">Functional GR targets</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>gr_tg <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"GR_target"</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(log2FoldChange))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(gr_tg <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                              mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                              bayes_P_HFD_gt_CHD, bayes_ER),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"Functional GR targets — expected HFD upregulation if GR signalling is sensitized"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Functional GR targets — expected HFD upregulation if GR signalling is sensitized</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 17%">
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Lep</td>
+<td style="text-align: right;">2.009</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">14331.1</td>
+<td style="text-align: right;">57685.3</td>
+<td style="text-align: right;">0.997</td>
+<td style="text-align: right;">388.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Angptl4</td>
+<td style="text-align: right;">1.949</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">1978.5</td>
+<td style="text-align: right;">7638.5</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">7329.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sgk1</td>
+<td style="text-align: right;">1.770</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">323.4</td>
+<td style="text-align: right;">1103.2</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">16083.07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hsd11b2</td>
+<td style="text-align: right;">0.914</td>
+<td style="text-align: right;">0.634</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">13.5</td>
+<td style="text-align: right;">0.733</td>
+<td style="text-align: right;">2.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pnpla2</td>
+<td style="text-align: right;">0.319</td>
+<td style="text-align: right;">0.842</td>
+<td style="text-align: right;">3987.8</td>
+<td style="text-align: right;">4973.5</td>
+<td style="text-align: right;">0.639</td>
+<td style="text-align: right;">1.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tsc22d3</td>
+<td style="text-align: right;">-0.034</td>
+<td style="text-align: right;">0.981</td>
+<td style="text-align: right;">5323.0</td>
+<td style="text-align: right;">5197.6</td>
+<td style="text-align: right;">0.477</td>
+<td style="text-align: right;">0.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nr3c1</td>
+<td style="text-align: right;">-0.303</td>
+<td style="text-align: right;">0.736</td>
+<td style="text-align: right;">4396.3</td>
+<td style="text-align: right;">3563.4</td>
+<td style="text-align: right;">0.269</td>
+<td style="text-align: right;">0.37</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hsd11b1</td>
+<td style="text-align: right;">-0.933</td>
+<td style="text-align: right;">0.110</td>
+<td style="text-align: right;">1719.2</td>
+<td style="text-align: right;">900.1</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fkbp5</td>
+<td style="text-align: right;">-1.292</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">1414.6</td>
+<td style="text-align: right;">578.1</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="atac-rna-seq-integration" class="level2">
+<h2 class="anchored" data-anchor-id="atac-rna-seq-integration">3. ATAC × RNA-seq integration</h2>
+<section id="annotate-atac-peaks-to-nearest-gene" class="level3">
+<h3 class="anchored" data-anchor-id="annotate-atac-peaks-to-nearest-gene">Annotate ATAC peaks to nearest gene</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ChIPseeker)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TxDb.Mmusculus.UCSC.mm10.knownGene)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(org.Mm.eg.db)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>atac <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(atac_deseq, <span class="at">show_col_types=</span><span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.row =</span> <span class="fu">row_number</span>())</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>txdb <span class="ot">&lt;-</span> TxDb.Mmusculus.UCSC.mm10.knownGene</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Build GRanges; carry .row so we can left_join after annotation.</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># annotatePeak drops peaks on non-standard contigs (chrUn_*, random) so</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># positional bind_cols would fail — left_join on .row preserves all peaks</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># and gives NA annotations for any that were silently dropped.</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>atac_gr <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">seqnames =</span> atac<span class="sc">$</span>chr,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">ranges   =</span> <span class="fu">IRanges</span>(atac<span class="sc">$</span>start <span class="sc">+</span> <span class="dv">1</span>, atac<span class="sc">$</span>end),</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">.row     =</span> atac<span class="sc">$</span>.row</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>atac_ann <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(atac_gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">5000</span>, <span class="dv">500</span>),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                         <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; Using Genome: mm10 ...
+&gt;&gt; Using Genome: mm10 ...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>atac_ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(atac_ann)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>atac_full <span class="ot">&lt;-</span> atac <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(atac_ann_df <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(.row, SYMBOL, distanceToTSS, annotation),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">".row"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>.row)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="classify-atac-peaks-and-merge-with-rna-seq" class="level3">
+<h3 class="anchored" data-anchor-id="classify-atac-peaks-and-merge-with-rna-seq">Classify ATAC peaks and merge with RNA-seq</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Classify each ATAC peak by DESeq2 direction</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>atac_full <span class="ot">&lt;-</span> atac_full <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">atac_dir =</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(padj) <span class="sc">&amp;</span> padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> log2FoldChange <span class="sc">&gt;</span>  <span class="dv">1</span> <span class="sc">~</span> <span class="st">"HFD_up"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(padj) <span class="sc">&amp;</span> padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> log2FoldChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">~</span> <span class="st">"CHD_up"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>                                              <span class="sc">~</span> <span class="st">"shared"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Join nearest-gene RNA-seq results</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>deseq_slim <span class="ot">&lt;-</span> deseq <span class="sc">|&gt;</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gene, <span class="at">rna_lfc =</span> log2FoldChange, <span class="at">rna_padj =</span> padj) <span class="sc">|&gt;</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(gene))</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>atac_rna <span class="ot">&lt;-</span> atac_full <span class="sc">|&gt;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(deseq_slim, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"SYMBOL"</span><span class="ot">=</span><span class="st">"gene"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="enrichment-are-hfd-up-atac-peaks-enriched-near-hfd-upregulated-genes" class="level3">
+<h3 class="anchored" data-anchor-id="enrichment-are-hfd-up-atac-peaks-enriched-near-hfd-upregulated-genes">Enrichment: are HFD-up ATAC peaks enriched near HFD-upregulated genes?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># HFD-upregulated gene set.  With n=3, padj&lt;0.05 may return 0 genes;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fall back progressively so the table is always testable.</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>hfd_genes_strict  <span class="ot">&lt;-</span> deseq <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(padj) <span class="sc">&amp;</span> padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> log2FoldChange <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(gene)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>hfd_genes_relaxed <span class="ot">&lt;-</span> deseq <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(padj) <span class="sc">&amp;</span> padj <span class="sc">&lt;</span> <span class="fl">0.10</span> <span class="sc">&amp;</span> log2FoldChange <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(gene)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>hfd_genes_nominal <span class="ot">&lt;-</span> deseq <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(pvalue) <span class="sc">&amp;</span> pvalue <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> log2FoldChange <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(gene)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(hfd_genes_strict) <span class="sc">&gt;=</span> <span class="dv">50</span>) {</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  hfd_genes  <span class="ot">&lt;-</span> hfd_genes_strict;  hfd_label <span class="ot">&lt;-</span> <span class="st">"FDR&lt;0.05"</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(hfd_genes_relaxed) <span class="sc">&gt;=</span> <span class="dv">50</span>) {</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  hfd_genes  <span class="ot">&lt;-</span> hfd_genes_relaxed; hfd_label <span class="ot">&lt;-</span> <span class="st">"FDR&lt;0.10"</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  hfd_genes  <span class="ot">&lt;-</span> hfd_genes_nominal; hfd_label <span class="ot">&lt;-</span> <span class="st">"nominal p&lt;0.05"</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Gene set threshold used: %s  (%d genes)</span><span class="sc">\n</span><span class="st">"</span>, hfd_label, <span class="fu">length</span>(hfd_genes)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gene set threshold used: FDR&lt;0.05  (4466 genes)</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>peak_near_hfd_gene <span class="ot">&lt;-</span> atac_rna <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">near_hfd_gene =</span> <span class="sc">!</span><span class="fu">is.na</span>(SYMBOL) <span class="sc">&amp;</span> SYMBOL <span class="sc">%in%</span> hfd_genes)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostics</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Peaks with SYMBOL annotated: %d / %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(peak_near_hfd_gene<span class="sc">$</span>SYMBOL)), <span class="fu">nrow</span>(peak_near_hfd_gene)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Peaks with SYMBOL annotated: 61573 / 61619</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Peaks near an HFD-up gene  : %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">sum</span>(peak_near_hfd_gene<span class="sc">$</span>near_hfd_gene)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Peaks near an HFD-up gene  : 11529</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"ATAC HFD_up peaks          : %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">sum</span>(peak_near_hfd_gene<span class="sc">$</span>atac_dir <span class="sc">==</span> <span class="st">"HFD_up"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>ATAC HFD_up peaks          : 6900</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2×2 contingency: atac_dir (HFD_up vs rest) × near_hfd_gene (T/F)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">with</span>(peak_near_hfd_gene,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">atac   =</span> <span class="fu">ifelse</span>(atac_dir <span class="sc">==</span> <span class="st">"HFD_up"</span>, <span class="st">"HFD_up"</span>, <span class="st">"other"</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rna_up =</span> near_hfd_gene</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Contingency table (ATAC direction × nearest gene HFD-up):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Contingency table (ATAC direction × nearest gene HFD-up):</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tab)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        rna_up
+atac     FALSE  TRUE
+  HFD_up  5697  1203
+  other  44393 10326</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">all</span>(<span class="fu">dim</span>(tab) <span class="sc">&gt;=</span> <span class="dv">2</span>)) {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  ft <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(tab, <span class="at">alternative=</span><span class="st">"greater"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Fisher OR=%.2f, p=%.2e</span><span class="sc">\n</span><span class="st">"</span>, ft<span class="sc">$</span>estimate, ft<span class="sc">$</span>p.value))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"95%% CI: [%.2f, %.2f]</span><span class="sc">\n</span><span class="st">"</span>, ft<span class="sc">$</span>conf.int[<span class="dv">1</span>], ft<span class="sc">$</span>conf.int[<span class="dv">2</span>]))</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Fisher test skipped: table is degenerate — see diagnostics above.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Fisher OR=1.10, p=1.95e-03
+95% CI: [1.04, Inf]</code></pre>
+</div>
+</div>
+</section>
+<section id="motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation" class="level3">
+<h3 class="anchored" data-anchor-id="motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation">Motif stratification: which motif class best predicts paired gene upregulation?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load composite motif counts from ATAC pipeline</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>motif_file <span class="ot">&lt;-</span> <span class="st">"results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv"</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(motif_file)) {</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  motif_map <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MA0148.5"</span><span class="ot">=</span><span class="st">"FOXA1"</span>,<span class="st">"MA0047.5"</span><span class="ot">=</span><span class="st">"FOXA2"</span>,<span class="st">"MA0466.4"</span><span class="ot">=</span><span class="st">"CEBPB"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"MA0102.5"</span><span class="ot">=</span><span class="st">"CEBPA"</span>,<span class="st">"MA0480.3"</span><span class="ot">=</span><span class="st">"FOXO1"</span>,<span class="st">"MA0113.4"</span><span class="ot">=</span><span class="st">"NR3C1"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"MA2327.1"</span><span class="ot">=</span><span class="st">"PGR_h"</span>,<span class="st">"MA2323.1"</span><span class="ot">=</span><span class="st">"PGR_m"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  hfd_motifs <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(motif_file, <span class="at">show_col_types=</span><span class="cn">FALSE</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(hfd_motifs) <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">names</span>(hfd_motifs) <span class="sc">%in%</span> <span class="fu">names</span>(motif_map),</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>                              motif_map[<span class="fu">names</span>(hfd_motifs)], <span class="fu">names</span>(hfd_motifs))</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Need to also load AP-1 and VDR motifs from the full-motif scan</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  full_scan_file <span class="ot">&lt;-</span> <span class="st">"results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv"</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">file.exists</span>(full_scan_file)) {</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    full_motifs <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(full_scan_file, <span class="at">show_col_types=</span><span class="cn">FALSE</span>)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># AP-1 motifs in JASPAR 2024 (representative IDs; from FULL_MOTIF_SCAN output)</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    ap1_ids  <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^MA0(099|478|099|477|153|162|039|063|099)"</span>,</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">names</span>(full_motifs), <span class="at">value=</span><span class="cn">TRUE</span>)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># VDR motif</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>    vdr_ids  <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"MA0693"</span>, <span class="fu">names</span>(full_motifs), <span class="at">value=</span><span class="cn">TRUE</span>)</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    hfd_motifs<span class="sc">$</span>has_ap1 <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(ap1_ids)) <span class="fu">rowSums</span>(full_motifs[, ap1_ids, <span class="at">drop=</span><span class="cn">FALSE</span>]) <span class="sc">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="cn">FALSE</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>    hfd_motifs<span class="sc">$</span>has_vdr <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(vdr_ids)) <span class="fu">rowSums</span>(full_motifs[, vdr_ids, <span class="at">drop=</span><span class="cn">FALSE</span>]) <span class="sc">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="cn">FALSE</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>    hfd_motifs<span class="sc">$</span>has_ap1 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>    hfd_motifs<span class="sc">$</span>has_vdr <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Full motif scan not found — AP-1/VDR stratification skipped"</span>)</span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># GR motif</span></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>  gr_cols <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"NR3C1"</span>,<span class="st">"PGR_h"</span>,<span class="st">"PGR_m"</span>), <span class="fu">names</span>(hfd_motifs))</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>  hfd_motifs<span class="sc">$</span>has_gr <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(gr_cols)) <span class="fu">rowSums</span>(hfd_motifs[, gr_cols, <span class="at">drop=</span><span class="cn">FALSE</span>]) <span class="sc">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="cn">FALSE</span></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Motif class assignment</span></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>  hfd_motifs <span class="ot">&lt;-</span> hfd_motifs <span class="sc">|&gt;</span></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">motif_class =</span> <span class="fu">case_when</span>(</span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>        has_ap1 <span class="sc">&amp;</span> has_gr <span class="sc">&amp;</span> <span class="sc">!</span>has_vdr <span class="sc">~</span> <span class="st">"AP1_GR"</span>,</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>        has_vdr <span class="sc">&amp;</span> has_gr <span class="sc">&amp;</span> <span class="sc">!</span>has_ap1 <span class="sc">~</span> <span class="st">"VDR_GR"</span>,</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>        has_ap1 <span class="sc">&amp;</span> has_vdr <span class="sc">&amp;</span> has_gr  <span class="sc">~</span> <span class="st">"AP1_VDR_GR"</span>,</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>        has_gr  <span class="sc">&amp;</span> <span class="sc">!</span>has_ap1 <span class="sc">&amp;</span> <span class="sc">!</span>has_vdr <span class="sc">~</span> <span class="st">"GR_only"</span>,</span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a>        has_ap1 <span class="sc">&amp;</span> <span class="sc">!</span>has_gr  <span class="sc">~</span> <span class="st">"AP1_only"</span>,</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>        has_vdr <span class="sc">&amp;</span> <span class="sc">!</span>has_gr  <span class="sc">~</span> <span class="st">"VDR_only"</span>,</span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span>                <span class="sc">~</span> <span class="st">"none"</span></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse peak coordinates from FASTA-style peak IDs</span></span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a>  peak_coords <span class="ot">&lt;-</span> hfd_motifs <span class="sc">|&gt;</span></span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a>      <span class="at">chr   =</span> <span class="fu">sub</span>(<span class="st">":.*"</span>, <span class="st">""</span>, peak),</span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">start =</span> <span class="fu">as.integer</span>(<span class="fu">sub</span>(<span class="st">".*:(</span><span class="sc">\\</span><span class="st">d+)-.*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, peak)),</span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">end   =</span> <span class="fu">as.integer</span>(<span class="fu">sub</span>(<span class="st">".*-"</span>, <span class="st">""</span>, peak))</span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join to ATAC+RNA table via chr/start/end overlap (nearest match by start)</span></span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>  hfd_peaks_rna <span class="ot">&lt;-</span> atac_rna <span class="sc">|&gt;</span></span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(atac_dir <span class="sc">==</span> <span class="st">"HFD_up"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(peak_coords <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(chr, start, end, motif_class),</span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true" tabindex="-1"></a>              <span class="at">by=</span><span class="fu">c</span>(<span class="st">"chr"</span>,<span class="st">"start"</span>,<span class="st">"end"</span>))</span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Per motif class: fraction with HFD-up nearest gene</span></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a>  strat <span class="ot">&lt;-</span> hfd_peaks_rna <span class="sc">|&gt;</span></span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(motif_class)) <span class="sc">|&gt;</span></span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(motif_class) <span class="sc">|&gt;</span></span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_peaks      =</span> <span class="fu">n</span>(),</span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_near_hfd   =</span> <span class="fu">sum</span>(SYMBOL <span class="sc">%in%</span> hfd_genes, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct_near_hfd =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> n_near_hfd <span class="sc">/</span> n_peaks, <span class="dv">1</span>),</span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups=</span><span class="st">"drop"</span></span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(pct_near_hfd))</span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-77"><a href="#cb34-77" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(strat,</span>
+<span id="cb34-78"><a href="#cb34-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"HFD-up ATAC peaks: fraction near HFD-upregulated genes, by motif class"</span>)</span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fisher test: each motif class vs GR_only</span></span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true" tabindex="-1"></a>  gr_only  <span class="ot">&lt;-</span> hfd_peaks_rna <span class="sc">|&gt;</span> <span class="fu">filter</span>(motif_class <span class="sc">==</span> <span class="st">"GR_only"</span>)</span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true" tabindex="-1"></a>  gr_n_up  <span class="ot">&lt;-</span> <span class="fu">sum</span>(gr_only<span class="sc">$</span>SYMBOL <span class="sc">%in%</span> hfd_genes, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true" tabindex="-1"></a>  gr_n_tot <span class="ot">&lt;-</span> <span class="fu">nrow</span>(gr_only)</span>
+<span id="cb34-84"><a href="#cb34-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-85"><a href="#cb34-85" aria-hidden="true" tabindex="-1"></a>  fisher_vs_gr <span class="ot">&lt;-</span> <span class="cf">function</span>(class_label) {</span>
+<span id="cb34-86"><a href="#cb34-86" aria-hidden="true" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> hfd_peaks_rna <span class="sc">|&gt;</span> <span class="fu">filter</span>(motif_class <span class="sc">==</span> class_label)</span>
+<span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(cl) <span class="sc">&lt;</span> <span class="dv">5</span>) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a>    tab <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">sum</span>(cl<span class="sc">$</span>SYMBOL <span class="sc">%in%</span> hfd_genes, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="fu">nrow</span>(cl),</span>
+<span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a>                    gr_n_up, gr_n_tot), <span class="at">nrow=</span><span class="dv">2</span>)</span>
+<span id="cb34-90"><a href="#cb34-90" aria-hidden="true" tabindex="-1"></a>    ft  <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(tab)</span>
+<span id="cb34-91"><a href="#cb34-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">motif_class=</span>class_label, <span class="at">n=</span><span class="fu">nrow</span>(cl),</span>
+<span id="cb34-92"><a href="#cb34-92" aria-hidden="true" tabindex="-1"></a>           <span class="at">pct=</span><span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span>tab[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">nrow</span>(cl),<span class="dv">1</span>),</span>
+<span id="cb34-93"><a href="#cb34-93" aria-hidden="true" tabindex="-1"></a>           <span class="at">OR=</span><span class="fu">round</span>(ft<span class="sc">$</span>estimate,<span class="dv">2</span>), <span class="at">p=</span><span class="fu">signif</span>(ft<span class="sc">$</span>p.value,<span class="dv">3</span>))</span>
+<span id="cb34-94"><a href="#cb34-94" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-95"><a href="#cb34-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-96"><a href="#cb34-96" aria-hidden="true" tabindex="-1"></a>  classes <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">unique</span>(hfd_peaks_rna<span class="sc">$</span>motif_class), <span class="fu">c</span>(<span class="st">"GR_only"</span>,<span class="cn">NA</span>))</span>
+<span id="cb34-97"><a href="#cb34-97" aria-hidden="true" tabindex="-1"></a>  fisher_res <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(classes, fisher_vs_gr))</span>
+<span id="cb34-98"><a href="#cb34-98" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(fisher_res,</span>
+<span id="cb34-99"><a href="#cb34-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Motif class vs GR-only: enrichment near HFD-up genes (Fisher exact)"</span>)</span>
+<span id="cb34-100"><a href="#cb34-100" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb34-101"><a href="#cb34-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Composite motif scan output not found — run ATAC pipeline first.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb34-102"><a href="#cb34-102" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Motif class vs GR-only: enrichment near HFD-up genes (Fisher exact)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">motif_class</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">pct</th>
+<th style="text-align: right;">OR</th>
+<th style="text-align: right;">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AP1_only</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="locus-tracks" class="level2">
+<h2 class="anchored" data-anchor-id="locus-tracks">4. Locus tracks</h2>
+<p>BigWig files generated by <code>RNASEQ_BIGWIG</code> (CPM-normalised, 50bp bins) and <code>ATAC_BIGWIG</code> (RPGC-normalised, 10bp bins) are at:</p>
+<ul>
+<li>RNA-seq: <code>results/rnaseq/bigwig/&lt;sample_id&gt;.CPM.bw</code></li>
+<li>ATAC: <code>results/bigwig/atac/&lt;sample_id&gt;.RPGC.bw</code></li>
+</ul>
+<p>Track ranges below are for mm10. Visualisation uses pyGenomeTracks or IGV.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>loci <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>gene,    <span class="sc">~</span>chr,   <span class="sc">~</span>start,     <span class="sc">~</span>end,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Hsd11b1"</span>,<span class="st">"chr1"</span>,  <span class="dv">4819895</span>,    <span class="dv">4920000</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fkbp5"</span>,  <span class="st">"chr4"</span>,  <span class="dv">99948700</span>,  <span class="dv">100065000</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Vdr"</span>,    <span class="st">"chr15"</span>, <span class="dv">97844000</span>,   <span class="dv">97908000</span>,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Junb"</span>,   <span class="st">"chr8"</span>,  <span class="dv">84786000</span>,   <span class="dv">84800000</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fosl2"</span>,  <span class="st">"chr5"</span>,  <span class="dv">32356000</span>,   <span class="dv">32400000</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(loci, <span class="at">caption=</span><span class="st">"Locus coordinates for track visualisation (mm10)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Locus coordinates for track visualisation (mm10)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: left;">chr</th>
+<th style="text-align: right;">start</th>
+<th style="text-align: right;">end</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hsd11b1</td>
+<td style="text-align: left;">chr1</td>
+<td style="text-align: right;">4819895</td>
+<td style="text-align: right;">4920000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fkbp5</td>
+<td style="text-align: left;">chr4</td>
+<td style="text-align: right;">99948700</td>
+<td style="text-align: right;">100065000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vdr</td>
+<td style="text-align: left;">chr15</td>
+<td style="text-align: right;">97844000</td>
+<td style="text-align: right;">97908000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Junb</td>
+<td style="text-align: left;">chr8</td>
+<td style="text-align: right;">84786000</td>
+<td style="text-align: right;">84800000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fosl2</td>
+<td style="text-align: left;">chr5</td>
+<td style="text-align: right;">32356000</td>
+<td style="text-align: right;">32400000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The following code renders condition-averaged normalised coverage using <code>wiggletools</code> mean across replicates, then <code>bigWigToBedGraph</code> + summary stats. For IGV batch rendering, load bigWigs directly from the paths above.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Shell commands to merge per-condition BigWigs (requires wiggletools + UCSC tools)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Run from the GSE236575 directory.</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>conds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"CHD"</span>, <span class="st">"HFD"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>types <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">tag=</span><span class="st">"atac"</span>, <span class="at">dir=</span><span class="st">"results/bigwig/atac"</span>,    <span class="at">suffix=</span><span class="st">".RPGC.bw"</span>),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">tag=</span><span class="st">"rna"</span>,  <span class="at">dir=</span><span class="st">"results/rnaseq/bigwig"</span>,  <span class="at">suffix=</span><span class="st">".CPM.bw"</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (cond <span class="cf">in</span> conds) {</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> types) {</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    bws <span class="ot">&lt;-</span> <span class="fu">paste</span>(</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">file.path</span>(t<span class="sc">$</span>dir, <span class="fu">paste0</span>(cond, <span class="st">"_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, t<span class="sc">$</span>suffix)),</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">collapse=</span><span class="st">" "</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    cmd <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"wiggletools mean %s | wigToBigWig -fixedStep stdin results/genome/mm10.chrom.sizes %s/%s_%s_mean.bw"</span>,</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>      bws, t<span class="sc">$</span>dir, cond, t<span class="sc">$</span>tag</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(cmd, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="decision-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="decision-outputs">5. Decision outputs</h2>
+<section id="ap-1-lead-candidate-junb-vs-fosl2" class="level3">
+<h3 class="anchored" data-anchor-id="ap-1-lead-candidate-junb-vs-fosl2">5.1 AP-1 lead candidate (Junb vs Fosl2)</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>ap1_key <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gene <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Junb"</span>,<span class="st">"Fosl2"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>         bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(ap1_key, <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"Junb vs Fosl2 — head-to-head comparison for AP-1 lead candidate selection"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Junb vs Fosl2 — head-to-head comparison for AP-1 lead candidate selection</caption>
+<colgroup>
+<col style="width: 5%">
+<col style="width: 13%">
+<col style="width: 5%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+<th style="text-align: right;">bayes_CrI_lo</th>
+<th style="text-align: right;">bayes_CrI_hi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fosl2</td>
+<td style="text-align: right;">-0.112</td>
+<td style="text-align: right;">0.910</td>
+<td style="text-align: right;">945.9</td>
+<td style="text-align: right;">875.2</td>
+<td style="text-align: right;">0.402</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">-0.846</td>
+<td style="text-align: right;">0.656</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Junb</td>
+<td style="text-align: right;">1.927</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">36.3</td>
+<td style="text-align: right;">137.4</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">582.90</td>
+<td style="text-align: right;">0.480</td>
+<td style="text-align: right;">2.425</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- AP-1 lead candidate verdict ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- AP-1 lead candidate verdict ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>junb  <span class="ot">&lt;-</span> ap1_key <span class="sc">|&gt;</span> <span class="fu">filter</span>(gene<span class="sc">==</span><span class="st">"Junb"</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>fosl2 <span class="ot">&lt;-</span> ap1_key <span class="sc">|&gt;</span> <span class="fu">filter</span>(gene<span class="sc">==</span><span class="st">"Fosl2"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(junb) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(fosl2) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(junb<span class="sc">$</span>log2FoldChange) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(fosl2<span class="sc">$</span>log2FoldChange)) {</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  lead <span class="ot">&lt;-</span> <span class="cf">if</span> (junb<span class="sc">$</span>log2FoldChange <span class="sc">&gt;</span> fosl2<span class="sc">$</span>log2FoldChange) <span class="st">"Junb"</span> <span class="cf">else</span> <span class="st">"Fosl2"</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Lead AP-1 candidate by HFD log2FC: %s (LFC=%.3f vs %.3f)</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>              lead, junb<span class="sc">$</span>log2FoldChange, fosl2<span class="sc">$</span>log2FoldChange))</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Bayesian P(HFD&gt;CHD): Junb=%.3f, Fosl2=%.3f</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>              junb<span class="sc">$</span>bayes_P_HFD_gt_CHD, fosl2<span class="sc">$</span>bayes_P_HFD_gt_CHD))</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"One or both genes not detected — see targeted gene table.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Lead AP-1 candidate by HFD log2FC: Junb (LFC=1.927 vs -0.112)
+Bayesian P(HFD&gt;CHD): Junb=0.998, Fosl2=0.402</code></pre>
+</div>
+</div>
+</section>
+<section id="dmrt-family-expression-status" class="level3">
+<h3 class="anchored" data-anchor-id="dmrt-family-expression-status">5.2 DMRT family expression status</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dmrt <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"artifact_check"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gene, mean_norm_CHD, mean_norm_HFD, detected, log2FoldChange, padj)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dmrt, <span class="at">caption=</span><span class="st">"DMRT family expression status"</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>DMRT family expression status</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: left;">detected</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Dmrt1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dmrt2</td>
+<td style="text-align: right;">1620.4</td>
+<td style="text-align: right;">499.5</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">-1.699</td>
+<td style="text-align: right;">0.135</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dmrt3</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dmrt4</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- DMRT verdict ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- DMRT verdict ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">all</span>(<span class="sc">!</span>dmrt<span class="sc">$</span>detected, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) {</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"DMRT1-4 are undetected (mean normalised count &lt; 5 in both conditions).</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Verdict: AT-rich motif enrichment is an artifact; DMRT family are not expressed in eWAT adipocytes.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  detected_dmrts <span class="ot">&lt;-</span> dmrt <span class="sc">|&gt;</span> <span class="fu">filter</span>(detected) <span class="sc">|&gt;</span> <span class="fu">pull</span>(gene)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"DETECTED:"</span>, <span class="fu">paste</span>(detected_dmrts, <span class="at">collapse=</span><span class="st">", "</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Verdict: requires manual review — unexpected DMRT expression in adipocytes.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>DETECTED: Dmrt2 
+Verdict: requires manual review — unexpected DMRT expression in adipocytes.</code></pre>
+</div>
+</div>
+</section>
+<section id="coactivator-and-hsd11b1-expression-status" class="level3">
+<h3 class="anchored" data-anchor-id="coactivator-and-hsd11b1-expression-status">5.3 Coactivator and HSD11B1 expression status</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>coact <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(gene <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Ncoa1"</span>,<span class="st">"Ncoa2"</span>,<span class="st">"Ncoa3"</span>,<span class="st">"Med1"</span>,<span class="st">"Hsd11b1"</span>,<span class="st">"Hsd11b2"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>         bayes_P_HFD_gt_CHD, bayes_ER)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(coact, <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>),</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span><span class="st">"Coactivators and HSD11B1 — expression and HFD regulation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Coactivators and HSD11B1 — expression and HFD regulation</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 17%">
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2FoldChange</th>
+<th style="text-align: right;">padj</th>
+<th style="text-align: right;">mean_norm_CHD</th>
+<th style="text-align: right;">mean_norm_HFD</th>
+<th style="text-align: right;">bayes_P_HFD_gt_CHD</th>
+<th style="text-align: right;">bayes_ER</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hsd11b1</td>
+<td style="text-align: right;">-0.933</td>
+<td style="text-align: right;">0.110</td>
+<td style="text-align: right;">1719.2</td>
+<td style="text-align: right;">900.1</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hsd11b2</td>
+<td style="text-align: right;">0.914</td>
+<td style="text-align: right;">0.634</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">13.5</td>
+<td style="text-align: right;">0.733</td>
+<td style="text-align: right;">2.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Med1</td>
+<td style="text-align: right;">-0.426</td>
+<td style="text-align: right;">0.433</td>
+<td style="text-align: right;">636.9</td>
+<td style="text-align: right;">474.0</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ncoa1</td>
+<td style="text-align: right;">-0.572</td>
+<td style="text-align: right;">0.401</td>
+<td style="text-align: right;">856.1</td>
+<td style="text-align: right;">575.9</td>
+<td style="text-align: right;">0.099</td>
+<td style="text-align: right;">0.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ncoa2</td>
+<td style="text-align: right;">-0.471</td>
+<td style="text-align: right;">0.483</td>
+<td style="text-align: right;">688.8</td>
+<td style="text-align: right;">496.8</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ncoa3</td>
+<td style="text-align: right;">-0.075</td>
+<td style="text-align: right;">0.939</td>
+<td style="text-align: right;">644.2</td>
+<td style="text-align: right;">611.4</td>
+<td style="text-align: right;">0.429</td>
+<td style="text-align: right;">0.75</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Coactivator/HSD11B1 verdict ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Coactivator/HSD11B1 verdict ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (g <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"Ncoa1"</span>,<span class="st">"Ncoa2"</span>,<span class="st">"Ncoa3"</span>,<span class="st">"Med1"</span>,<span class="st">"Hsd11b1"</span>,<span class="st">"Hsd11b2"</span>)) {</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  row <span class="ot">&lt;-</span> tg <span class="sc">|&gt;</span> <span class="fu">filter</span>(gene <span class="sc">==</span> g)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(row) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">is.na</span>(row<span class="sc">$</span>log2FoldChange)) {</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  %s: not detected</span><span class="sc">\n</span><span class="st">"</span>, g))</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    direction <span class="ot">&lt;-</span> <span class="cf">if</span> (row<span class="sc">$</span>log2FoldChange <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="st">"HFD-up"</span> <span class="cf">else</span> <span class="st">"HFD-down"</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    sig       <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(row<span class="sc">$</span>padj) <span class="sc">&amp;&amp;</span> row<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="st">"sig"</span> <span class="cf">else</span> <span class="st">"ns"</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  %s: LFC=%.3f, padj=%.3f (%s %s), P(HFD&gt;CHD)=%.3f</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>                g, row<span class="sc">$</span>log2FoldChange, row<span class="sc">$</span>padj, direction, sig,</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>                row<span class="sc">$</span>bayes_P_HFD_gt_CHD))</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Ncoa1: LFC=-0.572, padj=0.401 (HFD-down ns), P(HFD&gt;CHD)=0.099
+  Ncoa2: LFC=-0.471, padj=0.483 (HFD-down ns), P(HFD&gt;CHD)=0.129
+  Ncoa3: LFC=-0.075, padj=0.939 (HFD-down ns), P(HFD&gt;CHD)=0.429
+  Med1: LFC=-0.426, padj=0.433 (HFD-down ns), P(HFD&gt;CHD)=0.104
+  Hsd11b1: LFC=-0.933, padj=0.110 (HFD-down ns), P(HFD&gt;CHD)=0.016
+  Hsd11b2: LFC=0.914, padj=0.634 (HFD-up ns), P(HFD&gt;CHD)=0.733</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="session-information" class="level2">
+<h2 class="anchored" data-anchor-id="session-information">Session information</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.6.0 (2026-04-24)
+Platform: aarch64-apple-darwin23
+Running under: macOS Tahoe 26.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Detroit
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] org.Mm.eg.db_3.23.0                      
+ [2] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
+ [3] GenomicFeatures_1.64.0                   
+ [4] AnnotationDbi_1.74.0                     
+ [5] Biobase_2.72.0                           
+ [6] ChIPseeker_1.48.0                        
+ [7] GenomicRanges_1.64.0                     
+ [8] Seqinfo_1.2.0                            
+ [9] IRanges_2.46.0                           
+[10] S4Vectors_0.50.0                         
+[11] BiocGenerics_0.58.0                      
+[12] generics_0.1.4                           
+[13] ggrepel_0.9.8                            
+[14] lubridate_1.9.5                          
+[15] forcats_1.0.1                            
+[16] stringr_1.6.0                            
+[17] dplyr_1.2.1                              
+[18] purrr_1.2.2                              
+[19] readr_2.2.0                              
+[20] tidyr_1.3.2                              
+[21] tibble_3.3.1                             
+[22] ggplot2_4.0.3                            
+[23] tidyverse_2.0.0                          
+
+loaded via a namespace (and not attached):
+  [1] RColorBrewer_1.1-3                      
+  [2] rstudioapi_0.18.0                       
+  [3] jsonlite_2.0.0                          
+  [4] tidydr_0.0.6                            
+  [5] magrittr_2.0.5                          
+  [6] ggtangle_0.1.2                          
+  [7] farver_2.1.2                            
+  [8] rmarkdown_2.31                          
+  [9] fs_2.1.0                                
+ [10] BiocIO_1.22.0                           
+ [11] vctrs_0.7.3                             
+ [12] memoise_2.0.1                           
+ [13] Rsamtools_2.28.0                        
+ [14] RCurl_1.98-1.18                         
+ [15] ggtree_4.2.0                            
+ [16] htmltools_0.5.9                         
+ [17] S4Arrays_1.12.0                         
+ [18] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
+ [19] plotrix_3.8-14                          
+ [20] curl_7.1.0                              
+ [21] SparseArray_1.12.2                      
+ [22] gridGraphics_0.5-1                      
+ [23] KernSmooth_2.23-26                      
+ [24] htmlwidgets_1.6.4                       
+ [25] plyr_1.8.9                              
+ [26] cachem_1.1.0                            
+ [27] GenomicAlignments_1.48.0                
+ [28] igraph_2.3.1                            
+ [29] lifecycle_1.0.5                         
+ [30] pkgconfig_2.0.3                         
+ [31] Matrix_1.7-5                            
+ [32] R6_2.6.1                                
+ [33] fastmap_1.2.0                           
+ [34] MatrixGenerics_1.24.0                   
+ [35] digest_0.6.39                           
+ [36] aplot_0.2.9                             
+ [37] enrichplot_1.32.0                       
+ [38] ggnewscale_0.5.2                        
+ [39] patchwork_1.3.2                         
+ [40] RSQLite_3.52.0                          
+ [41] labeling_0.4.3                          
+ [42] timechange_0.4.0                        
+ [43] polyclip_1.10-7                         
+ [44] httr_1.4.8                              
+ [45] abind_1.4-8                             
+ [46] compiler_4.6.0                          
+ [47] bit64_4.8.0                             
+ [48] fontquiver_0.2.1                        
+ [49] withr_3.0.2                             
+ [50] S7_0.2.2                                
+ [51] BiocParallel_1.46.0                     
+ [52] DBI_1.3.0                               
+ [53] gplots_3.3.0                            
+ [54] ggforce_0.5.0                           
+ [55] MASS_7.3-65                             
+ [56] rappdirs_0.3.4                          
+ [57] DelayedArray_0.38.1                     
+ [58] rjson_0.2.23                            
+ [59] caTools_1.18.3                          
+ [60] gtools_3.9.5                            
+ [61] tools_4.6.0                             
+ [62] otel_0.2.0                              
+ [63] scatterpie_0.2.6                        
+ [64] ape_5.8-1                               
+ [65] glue_1.8.1                              
+ [66] restfulr_0.0.16                         
+ [67] nlme_3.1-169                            
+ [68] GOSemSim_2.38.0                         
+ [69] grid_4.6.0                              
+ [70] cluster_2.1.8.2                         
+ [71] reshape2_1.4.5                          
+ [72] gtable_0.3.6                            
+ [73] tzdb_0.5.0                              
+ [74] hms_1.1.4                               
+ [75] XVector_0.52.0                          
+ [76] pillar_1.11.1                           
+ [77] yulab.utils_0.2.4                       
+ [78] vroom_1.7.1                             
+ [79] tweenr_2.0.3                            
+ [80] treeio_1.36.1                           
+ [81] lattice_0.22-9                          
+ [82] rtracklayer_1.72.0                      
+ [83] bit_4.6.0                               
+ [84] tidyselect_1.2.1                        
+ [85] fontLiberation_0.1.0                    
+ [86] GO.db_3.23.1                            
+ [87] Biostrings_2.80.0                       
+ [88] knitr_1.51                              
+ [89] fontBitstreamVera_0.1.1                 
+ [90] SummarizedExperiment_1.42.0             
+ [91] xfun_0.57                               
+ [92] matrixStats_1.5.0                       
+ [93] stringi_1.8.7                           
+ [94] UCSC.utils_1.8.0                        
+ [95] lazyeval_0.2.3                          
+ [96] ggfun_0.2.0                             
+ [97] yaml_2.3.12                             
+ [98] boot_1.3-32                             
+ [99] evaluate_1.0.5                          
+[100] codetools_0.2-20                        
+[101] cigarillo_1.2.0                         
+[102] gdtools_0.5.0                           
+[103] ggplotify_0.1.3                         
+[104] cli_3.6.6                               
+[105] systemfonts_1.3.2                       
+[106] Rcpp_1.1.1-1.1                          
+[107] GenomeInfoDb_1.48.0                     
+[108] png_0.1-9                               
+[109] XML_3.99-0.23                           
+[110] parallel_4.6.0                          
+[111] blob_1.3.0                              
+[112] DOSE_4.6.0                              
+[113] bitops_1.0-9                            
+[114] tidytree_0.4.7                          
+[115] ggiraph_0.9.6                           
+[116] enrichit_0.1.4                          
+[117] scales_1.4.0                            
+[118] crayon_1.5.3                            
+[119] rlang_1.2.0                             
+[120] KEGGREST_1.52.0                         </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
