@@ -1,32 +1,34 @@
-This folder contains the analytical scripts and the results (html and md files) for the stress-obesity project using MGI data.  The actual data is not present, so these scripts *cannot be reproducibly run*, as the data is protected based on HUM00071298.  For more details see:
+Analysis scripts and results for the stress-obesity project using MGI data. Raw patient data are not present here, as they are protected under IRB HUM00071298. All scripts are run on the armis secure server where the data reside.
+
+For details on the MGI cohort see:
 
 Zawistowski M, Fritsche LG, Pandit A, Vanderwerff B, Patil S, Schmidt EM, VandeHaar P, Willer CJ, Brummett CM, Kheterpal S, Zhou X, Boehnke M, Abecasis GR, Zöllner S. The Michigan Genomics Initiative: A biobank linking genotypes and electronic clinical records in Michigan Medicine patients. Cell Genom. 2023 Jan 31;3(2):100257. doi: 10.1016/j.xgen.2023.100257. PMID: 36819667; PMCID: PMC9932985.
 
-As such all these scripts are run separately on the armis secure server where the input files reside.
+# Structure
 
-# Prior Steps
+This folder contains two independent analyses. Each has its own scripts, README, and SLURM submission file, and should be run as a self-contained unit from its own directory on armis.
 
-# Analysis on server
+## `cross-sectional/`
 
-Ran slurm file to execute scripts in this order
+A cross-sectional analysis of perceived stress, obesity, and prevalent Type 2 diabetes. Uses the **last (most recent)** recorded BMI per participant. This analysis is complete and has a companion manuscript (`manuscript/Obesity-Stress/`).
 
-* **obesity-stress-encounter-data.Rmd** to take encounters and get a single BMI for each participant.  This generates a file with median BMI for each participant.
-* **obesity-stress-data-entry.Rmd** to integrate the data (surveys/demographics, comorbidities and BMI).  This generates the final combined datafile used for the rest of the scripts
-* **obesity-stress-demographics.Rmd** to analyse demographics with respect to stress levels
-* **obesity-stress-demographics-diabetes.Rmd** to analyse demographics with respect to diabetes (all diabetes)
-* **obesity-stress-diabetes.Rmd** to analyse the relationships between stress, obesity and diabetes (all diabetes)
-* **obesity-stress-diabetes-complicated.Rmd** to analyse the relationships between stress, obesity and complicated diabetes (all diabetes)
-* **obesity-stress-demographics-type2diabetes.Rmd** to analyse demographics with respect to diabetes (T2D only)
-* **obesity-stress-diabetes-type2diabetes.Rmd** to analyse the relationships between stress, obesity and diabetes (T2D only)
-* **obesity-stress-liver.Rmd** to analyse the relationships between stress, obesity and liver disease
-* **obesity-stress-hypertension.Rmd** to analyse the relationships between stress, obesity and hypertension
-* **obesity-stress-chf.Rmd** to analyse the relationships between stress, obesity and congestive heart failure
-* **obesity-stress-cpd.Rmd** to analyse the relationships between stress, obesity and chronic pulmonary disease
-* **obesity-stress-arythmia.Rmd** to analyse the relationships between stress, obesity and cardiac arrythmia
+See [`cross-sectional/README.md`](cross-sectional/README.md) for the full script execution order and output file descriptions. Submit via `cross-sectional/cross-sectional.slurm`.
 
-The files multivariate_data.csv and comorbidity_data.csv are manually extracted from the relevant files. 
+## `longitudinal/`
 
+A longitudinal analysis examining incident Type 2 diabetes after enrollment. Uses the BMI measurement **closest to the survey/enrollment date** (within 365 days) to anchor the obesity exposure to the same time as the stress measurement. This analysis is in development — no companion manuscript yet.
 
+See [`longitudinal/README.md`](longitudinal/README.md) for current scripts and development notes. Submit via `longitudinal/longitudinal.slurm`.
 
+# Key Distinction Between Analyses
 
+| | Cross-sectional | Longitudinal |
+|---|---|---|
+| BMI definition | Last recorded BMI | BMI closest to survey date |
+| T2D outcome | All prevalent diagnoses | Incident diagnoses after enrollment |
+| Status | Complete (manuscript in review) | In development |
+| SLURM file | `cross-sectional/cross-sectional.slurm` | `longitudinal/longitudinal.slurm` |
 
+# Armis Setup Note
+
+Both analyses share the same raw input files (e.g., `ClarityMedicalHistory.csv`, `EncounterAnthropometricsBMI.csv`). On armis, place the raw data files in each working subdirectory, or use symlinks pointing to a shared data location. Each SLURM file assumes it is submitted from within its own subdirectory.
