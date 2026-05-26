@@ -174,6 +174,7 @@ The strategies are not mutually exclusive. A combined experiment — Junb OE + F
 | Analysis | Status | Notes |
 |----------|--------|-------|
 | Fkbp5 motif scan — vertebrate motif set | **Complete** | POSITIVE: 542 promoter hits, 4,099 Jun-family hits; Junb and JUN::JUNB motifs present |
+| Expression barplots (TPM, CHD vs HFD) | **Complete** | `expression-barplots.qmd`; TPM from DESeq2 norm counts + TxDb gene lengths; AP-1 compositional switch visible (Atf4/Maf/Mafg dominant, Junb/Fos low-expression but HFD-induced) |
 | ChIP-Atlas Junb at Fkbp5 | **To do** | HTTP 403 blocked API; check manually at peak browser URL in Section 6b, or try ENCODE |
 | Junb CUT&RUN / ChIP-seq at Fkbp5 locus | **Proposed experiment** | Required to confirm motif occupancy; HFD vs CHD eWAT adipocytes |
 | TAD-level ATAC × RNA coupling | Pinned | Would test whether HFD-up peaks and HFD-up genes co-occur within the same TAD |

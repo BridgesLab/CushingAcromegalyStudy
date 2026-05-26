@@ -8,7 +8,7 @@ This Nextflow pipeline performs comprehensive differential chromatin accessibili
 
 - **GEO Accession**: GSE236575
 - **SRA Project**: PRJNA991593
-- **Publication**: Hinte et al. (2023)
+- **Publication**: Hinte et al. (2024) PMID 39558077
 - **Organism**: Mus musculus (mouse)
 - **Cell Type**: Adipocytes isolated using AdipER-Cre/NuTRAP mice
 - **Tissue**: Epididymal white adipose tissue (eWAT)
@@ -428,9 +428,13 @@ Builds STAR index from mm10 FASTA + GENCODE vM25 GTF.
 - `--sjdbOverhang 149` (PE150 − 1)
 - Requires ~32 GB RAM; run on a high-memory node.
 
-#### 15. FASTQ download and trimming — `RNASEQ_DOWNLOAD_AND_TRIM`
+#### 15. FASTQ download — `RNASEQ_DOWNLOAD`
 
-`fasterq-dump` → Trim Galore paired-end:
+`fasterq-dump` downloads paired-end FASTQ files from SRA and gzip-compresses them.
+
+#### 15b. Quality trimming — `RNASEQ_TRIM`
+
+Trim Galore paired-end trimming:
 - Auto-detects Illumina adapters
 - Quality trimming: `--quality 20 --length 30`
 - Gzip output
@@ -446,10 +450,15 @@ Paired-end alignment to mm10:
 
 #### 17. BigWig generation
 
-- **`RNASEQ_BIGWIG`**: CPM-normalised, 50 bp bins, blacklist-excluded.
+Both processes use `bedtools genomecov` for coverage calculation and the UCSC
+`bedGraphToBigWig` binary to convert bedGraph → BigWig (no deepTools dependency).
+
+- **`RNASEQ_BIGWIG`**: CPM-normalised signal. Scale factor = 1e6 / mapped reads;
+  `bedtools genomecov -bg -pc -scale`. Blacklisted regions removed.
   Output: `results/rnaseq/bigwig/<sample_id>.CPM.bw`
-- **`ATAC_BIGWIG`**: RPGC-normalised (mm10 effective gs = 2,494,787,188),
-  10 bp bins, read-extended.
+- **`ATAC_BIGWIG`**: RPGC-normalised (mm10 effective genome size = 2,494,787,188).
+  Scale factor = effectiveGenomeSize / mapped reads; `bedtools genomecov -bg -pc -scale`.
+  Blacklisted regions removed.
   Output: `results/bigwig/atac/<sample_id>.RPGC.bw`
 
 Both BigWig sets are produced for locus-track visualization at
@@ -498,6 +507,14 @@ on fixed effects with a Gaussian likelihood from the DESeq2 Wald test.
    - AP-1 lead (Junb vs Fosl2)
    - DMRT family expression status (artifact verification)
    - Coactivator (NCOA1/2/3, MED1) and HSD11B1 expression status
+6. **Fkbp5 AP-1 motif scan** — JASPAR2020 vertebrate PWM scan (746 motifs) across
+   the Fkbp5 locus (chr4:99,936,000–100,078,000 mm10); confirms dense Jun-family
+   occupancy (542 promoter hits; 4,099 Jun-family hits across the locus)
+
+`expression-barplots.qmd` generates mean ± SE expression barplots (CHD vs HFD)
+in TPM for user-defined gene sets. TPM is computed from DESeq2 normalised counts
+using union-exon gene lengths derived from TxDb.Mmusculus.UCSC.mm10.knownGene.
+Significance stars (DESeq2 Wald test padj) are overlaid on HFD bars.
 
 ### New Software Dependencies
 
@@ -505,10 +522,10 @@ on fixed effects with a Gaussian likelihood from the DESeq2 Wald test.
 |------|---------|-----|
 | STAR | 2.7.x | RNA-seq alignment |
 | Trim Galore | 0.6.x | Adapter/quality trimming |
-| deepTools | 3.5.x | BigWig generation (`bamCoverage`) |
+| bedGraphToBigWig (UCSC) | static binary | BigWig conversion (downloaded at runtime if not in PATH) |
 | wiggletools | 1.2.x | Condition-merged BigWig tracks (optional; shell step in QMD) |
 
-Existing tools (featureCounts, DESeq2, R, samtools) are reused from the ATAC branch.
+Existing tools (featureCounts, bedtools, DESeq2, R, samtools) are reused from the ATAC branch.
 
 ### RNA-seq Output Directory Structure
 
@@ -545,6 +562,5 @@ If you use this pipeline, please cite:
 - HOMER: Heinz et al. (2010) Molecular Cell
 - Bowtie2: Langmead and Salzberg (2012) Nature Methods
 - STAR: Dobin et al. (2013) Bioinformatics
-- deepTools: Ramírez et al. (2016) Nucleic Acids Research
 - Trim Galore: Krueger (2023) https://github.com/FelixKrueger/TrimGalore
 
