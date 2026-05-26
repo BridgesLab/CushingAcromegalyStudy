@@ -534,6 +534,238 @@ for (g in c("Ncoa1","Ncoa2","Ncoa3","Med1","Hsd11b1","Hsd11b2")) {
 
 ---
 
+## 6. AP-1 motif scan at the Fkbp5 locus
+
+**Hypothesis:** Fkbp5 is a Junb-repressed gene. If AP-1 motifs are present in
+the Fkbp5 regulatory landscape and Junb ChIP signal is detectable there, the
+two mechanisms (AP-1 chromatin remodelling + Fkbp5-mediated GR de-repression)
+collapse into one Junb-led cascade: HFD to Junb up to AP-1 chromatin opening at
+GR cooperative sites AND Fkbp5 down to constitutive GR nuclear activity.
+
+Fkbp5 is on the **minus strand**, chr4:99,946,395-100,067,558 (mm10).
+TSS approx chr4:100,067,500. Known GREs reside in introns 2 and 4.
+
+### 6.1 ATAC-seq peaks at the Fkbp5 locus
+
+```{r fkbp5-atac}
+fkbp5_chr   <- "chr4"
+fkbp5_start <- 99936000L
+fkbp5_end   <- 100078000L
+
+fkbp5_peaks <- atac_rna |>
+  filter(chr == fkbp5_chr,
+         start >= fkbp5_start,
+         end   <= fkbp5_end) |>
+  dplyr::select(chr, start, end, log2FoldChange, padj, atac_dir,
+                SYMBOL, distanceToTSS, rna_lfc, rna_padj) |>
+  arrange(start)
+
+cat(sprintf("ATAC peaks at Fkbp5 locus (%s:%d-%d): %d\n",
+            fkbp5_chr, fkbp5_start, fkbp5_end, nrow(fkbp5_peaks)))
+cat(sprintf("  HFD-up : %d\n", sum(fkbp5_peaks$atac_dir == "HFD_up")))
+cat(sprintf("  CHD-up : %d\n", sum(fkbp5_peaks$atac_dir == "CHD_up")))
+cat(sprintf("  shared : %d\n", sum(fkbp5_peaks$atac_dir == "shared")))
+
+knitr::kable(
+  fkbp5_peaks |>
+    mutate(across(c(log2FoldChange, rna_lfc), ~round(., 3)),
+           across(c(padj, rna_padj), ~signif(., 2)),
+           distanceToTSS = round(distanceToTSS / 1000, 1)),
+  caption = "ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)"
+)
+```
+
+### 6.2 AP-1 motif scan
+
+```{r fkbp5-motif-scan}
+suppressPackageStartupMessages({
+  library(BSgenome.Mmusculus.UCSC.mm10)
+  library(JASPAR2024)
+  library(TFBSTools)
+  library(Biostrings)
+})
+
+pfm_list <- getMatrixSet(
+  JASPAR2024,
+  opts = list(collection = "CORE", species = 10090, all_versions = FALSE)
+)
+ap1_motifs <- pfm_list[
+  grepl("JUN|FOS|ATF|BATF|NFE2|MAFK|MAFF",
+        sapply(pfm_list, function(x) x@name),
+        ignore.case = TRUE)
+]
+cat(sprintf("AP-1 family motifs from JASPAR 2024: %d\n", length(ap1_motifs)))
+
+scan_gr  <- GRanges("chr4", IRanges(fkbp5_start, fkbp5_end))
+scan_seq <- getSeq(BSgenome.Mmusculus.UCSC.mm10, scan_gr)
+names(scan_seq) <- "Fkbp5_locus"
+
+pwm_list  <- toPWM(ap1_motifs)
+hits_list <- lapply(names(pwm_list), function(id) {
+  hits <- searchSeq(pwm_list[[id]], scan_seq,
+                    seqname = "Fkbp5_locus",
+                    min.score = "85%", strand = "*")
+  if (length(hits) == 0) return(NULL)
+  df <- as.data.frame(hits)
+  df$motif_id   <- id
+  df$motif_name <- pwm_list[[id]]@name
+  df
+})
+hits_df <- bind_rows(hits_list) |>
+  mutate(
+    mm10_pos    = fkbp5_start + start - 1L,
+    dist_to_tss = 100067500L - mm10_pos,
+    region = case_when(
+      mm10_pos >= 100062500 & mm10_pos <= 100072500 ~ "promoter (+-5 kb)",
+      mm10_pos >= 99946395  & mm10_pos <= 100067558 ~ "gene body",
+      TRUE                                          ~ "flanking"
+    )
+  )
+
+cat(sprintf("Total AP-1 hits (>=85%% score): %d\n", nrow(hits_df)))
+cat("\nHits by region:\n"); print(table(hits_df$region))
+cat("\nHits by TF:\n");     print(sort(table(hits_df$motif_name), decreasing = TRUE))
+```
+
+```{r fkbp5-motif-plot, fig.width=10, fig.height=4}
+gre_pos <- tibble(
+  label    = c("GRE intron2a", "GRE intron2b", "GRE intron4"),
+  mm10_pos = c(100015000L, 100008000L, 99970000L)
+)
+
+hits_plot <- hits_df |>
+  filter(region %in% c("promoter (+-5 kb)", "gene body")) |>
+  mutate(motif_family = case_when(
+    grepl("JUN|JUNB|JUND",  motif_name, ignore.case = TRUE) ~ "Jun",
+    grepl("FOS|FOSL|FOSB",  motif_name, ignore.case = TRUE) ~ "Fos",
+    grepl("ATF",            motif_name, ignore.case = TRUE) ~ "ATF",
+    grepl("BATF",           motif_name, ignore.case = TRUE) ~ "BATF",
+    TRUE                                                    ~ "other AP-1"
+  ))
+
+ggplot() +
+  annotate("rect",
+           xmin = 99946395, xmax = 100067558, ymin = -0.4, ymax = 0.4,
+           fill = "grey85", alpha = 0.5) +
+  annotate("text", x = 100006000, y = 0.55,
+           label = "Fkbp5 gene body", size = 3, color = "grey40") +
+  annotate("segment",
+           x = 100067500, xend = 100062000, y = 0, yend = 0,
+           arrow = arrow(length = unit(0.15, "cm")),
+           color = "black", linewidth = 0.8) +
+  annotate("text", x = 100068500, y = 0.15, label = "TSS", size = 3) +
+  geom_vline(data = gre_pos,
+             aes(xintercept = mm10_pos),
+             lty = 2, color = "#e377c2", linewidth = 0.7) +
+  geom_text(data = gre_pos,
+            aes(x = mm10_pos, y = -0.65, label = label),
+            size = 2.5, color = "#e377c2", angle = 90, hjust = 0) +
+  geom_rug(data = hits_plot,
+           aes(x = mm10_pos, color = motif_family),
+           sides = "t", linewidth = 0.9, alpha = 0.85,
+           length = unit(0.07, "npc")) +
+  scale_color_manual(
+    values = c(Jun = "#d62728", Fos = "#1f77b4", ATF = "#ff7f0e",
+               BATF = "#2ca02c", "other AP-1" = "grey50"),
+    name = "Motif family"
+  ) +
+  scale_x_continuous(
+    labels = function(x) sprintf("%.2f Mb", x / 1e6),
+    limits = c(fkbp5_start, fkbp5_end)
+  ) +
+  labs(x = "chr4 (mm10)", y = NULL,
+       title = "AP-1 motif hits at the Fkbp5 locus (JASPAR 2024, >=85% score)",
+       subtitle = "Pink dashed = known GRE positions; rug = AP-1 motif hit") +
+  theme_classic(base_size = 11) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line(color = "grey90"))
+```
+
+```{r fkbp5-motif-table}
+top_hits <- hits_df |>
+  filter(region %in% c("promoter (+-5 kb)", "gene body")) |>
+  arrange(desc(score)) |>
+  slice_head(n = 20) |>
+  dplyr::select(motif_name, motif_id, mm10_pos, dist_to_tss,
+                strand, score, region) |>
+  mutate(dist_to_tss = round(dist_to_tss / 1000, 2),
+         score       = round(score, 3))
+
+knitr::kable(top_hits,
+  caption = "Top 20 AP-1 motif hits at Fkbp5 (>=85%, by score). dist_to_tss in kb.")
+```
+
+### 6.3 ChIP-Atlas: Junb binding evidence at Fkbp5
+
+```{r fkbp5-chipatlas}
+library(httr)
+
+query_chipatlas <- function(distance) {
+  url <- sprintf(
+    "https://chip-atlas.dbcls.jp/api/target?assemblyId=mm10&factor=Junb&gene=Fkbp5&distance=%d",
+    distance
+  )
+  cat(sprintf("Querying ChIP-Atlas (dist=%d bp)\n", distance))
+  tryCatch({
+    resp <- GET(url, timeout(30))
+    if (status_code(resp) == 200) {
+      raw <- content(resp, as = "text", encoding = "UTF-8")
+      if (nchar(trimws(raw)) < 5)
+        return(tibble(result = sprintf("No Junb peaks within %d bp of Fkbp5 TSS", distance)))
+      read_tsv(I(raw), show_col_types = FALSE)
+    } else {
+      tibble(result = sprintf("HTTP %d", status_code(resp)))
+    }
+  }, error = function(e) tibble(result = conditionMessage(e)))
+}
+
+ca_result <- query_chipatlas(1000)
+if ("result" %in% names(ca_result) && grepl("No Junb", ca_result$result))
+  ca_result <- query_chipatlas(5000)
+
+knitr::kable(ca_result,
+  caption = "ChIP-Atlas: public Junb ChIP-seq experiments with peaks near Fkbp5 TSS")
+
+cat("\nPeak Browser URL for manual inspection:\n")
+cat(sprintf(
+  "https://chip-atlas.dbcls.jp/peakBrowser/?assemblyId=mm10&factor=JunB&chr=chr4&start=%d&end=%d\n",
+  fkbp5_start, fkbp5_end
+))
+```
+
+### 6.4 Synthesis
+
+```{r fkbp5-synthesis}
+n_promoter <- sum(hits_df$region == "promoter (+-5 kb)")
+n_jun      <- sum(grepl("JUN", hits_df$motif_name, ignore.case = TRUE) &
+                  hits_df$region %in% c("promoter (+-5 kb)", "gene body"))
+fkbp5_row  <- tg |> filter(gene == "Fkbp5")
+
+cat("=== Fkbp5 locus AP-1 evidence summary ===\n")
+cat(sprintf("AP-1 hits in promoter (+-5 kb) : %d\n", n_promoter))
+cat(sprintf("Jun-family hits in promoter+body: %d\n", n_jun))
+if (nrow(fkbp5_row) > 0 && !is.na(fkbp5_row$log2FoldChange))
+  cat(sprintf("Fkbp5 TRAP-seq: LFC=%.3f, padj=%.3f\n",
+              fkbp5_row$log2FoldChange, fkbp5_row$padj))
+
+cat("\n--- Verdict ---\n")
+if (n_jun > 0 && n_promoter > 0) {
+  cat("POSITIVE: Jun-family AP-1 motifs present in the Fkbp5 promoter.\n")
+  cat("Supports Junb-led cascade: HFD -> Junb up -> Fkbp5 repression ->\n")
+  cat("GR de-repression -> Sgk1/Angptl4/Lep up.\n")
+  cat("Validate with Junb CUT&RUN in HFD vs CHD adipocytes.\n")
+} else if (n_promoter > 0) {
+  cat("PARTIAL: AP-1 motifs present but no Jun-family hits in promoter.\n")
+  cat("Regulation may be via Junb::Atf3 or Junb::Fos heterodimer.\n")
+} else {
+  cat("NEGATIVE at 85%: no AP-1 hits in Fkbp5 promoter.\n")
+  cat("Consider: relaxing to 80%, checking distal enhancers,\n")
+  cat("or indirect regulation via AP-1-activated repressor.\n")
+}
+```
+
+---
+
 ## Session information
 
 ```{r session-info}
