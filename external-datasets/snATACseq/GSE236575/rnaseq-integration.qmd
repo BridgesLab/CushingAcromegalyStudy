@@ -81,8 +81,7 @@ library(readr)
 library(dplyr)
 
 deseq <- read_tsv(deseq_file, show_col_types=FALSE) |>
-  rownames_to_column("gene") |>
-  rename(gene = 1)
+  rename(gene = 1)   # col 1 is the row-names field written by write.table; rownames_to_column() inserts integers on tibbles
 
 cat("Total genes tested:", nrow(deseq), "\n")
 cat("HFD-up   (padj<0.05, LFC>0.585):",
@@ -135,7 +134,7 @@ tg_display <- tg |>
     across(c(bayes_P_HFD_gt_CHD, bayes_ER), ~round(., 3)),
     across(c(mean_norm_CHD, mean_norm_HFD), ~round(., 1))
   ) |>
-  select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
+  dplyr::select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
          mean_norm_CHD, mean_norm_HFD, detected,
          bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)
 
@@ -150,7 +149,7 @@ knitr::kable(tg_display,
 ap1 <- tg |> filter(category == "AP-1") |>
   arrange(desc(log2FoldChange))
 
-knitr::kable(ap1 |> select(gene, log2FoldChange, padj, pvalue,
+knitr::kable(ap1 |> dplyr::select(gene, log2FoldChange, padj, pvalue,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="AP-1 family members — ranked by HFD log2FC",
@@ -180,7 +179,7 @@ ggplot(ap1_ok, aes(x=reorder(gene, log2FoldChange), y=log2FoldChange)) +
 ```{r vdr-table}
 vdr <- tg |> filter(category == "VDR_pathway") |> arrange(gene)
 
-knitr::kable(vdr |> select(gene, log2FoldChange, padj,
+knitr::kable(vdr |> dplyr::select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="VDR pathway and coactivators",
@@ -192,7 +191,7 @@ knitr::kable(vdr |> select(gene, log2FoldChange, padj,
 ```{r demoted-table}
 dem <- tg |> filter(category == "demoted") |> arrange(gene)
 
-knitr::kable(dem |> select(gene, log2FoldChange, padj,
+knitr::kable(dem |> dplyr::select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Demoted candidates — expected to show no significant HFD upregulation",
@@ -204,7 +203,7 @@ knitr::kable(dem |> select(gene, log2FoldChange, padj,
 ```{r dmrt-table}
 dmrt <- tg |> filter(category == "artifact_check")
 
-knitr::kable(dmrt |> select(gene, log2FoldChange, padj,
+knitr::kable(dmrt |> dplyr::select(gene, log2FoldChange, padj,
                              mean_norm_CHD, mean_norm_HFD, detected),
   caption="DMRT family — expected to be undetected if motif enrichment was an AT-rich artifact",
   digits=c(0,3,3,1,1,0))
@@ -215,7 +214,7 @@ knitr::kable(dmrt |> select(gene, log2FoldChange, padj,
 ```{r gr-target-table}
 gr_tg <- tg |> filter(category == "GR_target") |> arrange(desc(log2FoldChange))
 
-knitr::kable(gr_tg |> select(gene, log2FoldChange, padj,
+knitr::kable(gr_tg |> dplyr::select(gene, log2FoldChange, padj,
                               mean_norm_CHD, mean_norm_HFD,
                               bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Functional GR targets — expected HFD upregulation if GR signalling is sensitized",
@@ -234,21 +233,26 @@ library(ChIPseeker)
 library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 
-atac <- read_tsv(atac_deseq, show_col_types=FALSE)
+atac <- read_tsv(atac_deseq, show_col_types=FALSE) |>
+  mutate(.row = row_number())   # keep index; annotatePeak drops non-standard contigs
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 
-# Build GRanges for all tested ATAC peaks
+# Build GRanges carrying .row so we can left_join back safely
 atac_gr <- GRanges(
   seqnames = atac$chr,
-  ranges   = IRanges(atac$start + 1, atac$end)
+  ranges   = IRanges(atac$start + 1, atac$end),
+  .row     = atac$.row
 )
 
 atac_ann <- annotatePeak(atac_gr, TxDb=txdb, tssRegion=c(-5000, 500),
                          annoDb="org.Mm.eg.db", verbose=FALSE)
 atac_ann_df <- as.data.frame(atac_ann)
 
-atac_full <- bind_cols(atac, atac_ann_df |>
-  select(SYMBOL, distanceToTSS, annotation))
+# left_join instead of bind_cols: peaks on non-standard contigs get NA annotation
+atac_full <- atac |>
+  left_join(atac_ann_df |> dplyr::select(.row, SYMBOL, distanceToTSS, annotation),
+            by = ".row") |>
+  dplyr::select(-.row)
 ```
 
 ### Classify ATAC peaks and merge with RNA-seq
@@ -266,7 +270,9 @@ atac_full <- atac_full |>
 
 # Join nearest-gene RNA-seq results
 deseq_slim <- deseq |>
-  select(gene, rna_lfc = log2FoldChange, rna_padj = padj) |>
+  dplyr::select(gene, rna_lfc = log2FoldChange, rna_padj = padj) |>
+  mutate(rna_lfc  = as.numeric(rna_lfc),
+         rna_padj = as.numeric(rna_padj)) |>   # guard: read_tsv may infer character if col starts with NAs
   filter(!is.na(gene))
 
 atac_rna <- atac_full |>
@@ -361,7 +367,7 @@ if (file.exists(motif_file)) {
   # Join to ATAC+RNA table via chr/start/end overlap (nearest match by start)
   hfd_peaks_rna <- atac_rna |>
     filter(atac_dir == "HFD_up") |>
-    left_join(peak_coords |> select(chr, start, end, motif_class),
+    left_join(peak_coords |> dplyr::select(chr, start, end, motif_class),
               by=c("chr","start","end"))
 
   # Per motif class: fraction with HFD-up nearest gene
@@ -466,7 +472,7 @@ for (cond in conds) {
 ```{r ap1-decision}
 ap1_key <- tg |>
   filter(gene %in% c("Junb","Fosl2")) |>
-  select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
+  dplyr::select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
          bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)
 
 knitr::kable(ap1_key, digits=c(0,3,3,1,1,3,2,3,3),
@@ -491,7 +497,7 @@ if (nrow(junb) && nrow(fosl2) && !is.na(junb$log2FoldChange) && !is.na(fosl2$log
 
 ```{r dmrt-decision}
 dmrt <- tg |> filter(category == "artifact_check") |>
-  select(gene, mean_norm_CHD, mean_norm_HFD, detected, log2FoldChange, padj)
+  dplyr::select(gene, mean_norm_CHD, mean_norm_HFD, detected, log2FoldChange, padj)
 
 knitr::kable(dmrt, caption="DMRT family expression status",
              digits=c(0,1,1,0,3,3))
@@ -511,7 +517,7 @@ if (all(!dmrt$detected, na.rm=TRUE)) {
 
 ```{r coactivator-decision}
 coact <- tg |> filter(gene %in% c("Ncoa1","Ncoa2","Ncoa3","Med1","Hsd11b1","Hsd11b2")) |>
-  select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
+  dplyr::select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
          bayes_P_HFD_gt_CHD, bayes_ER)
 
 knitr::kable(coact, digits=c(0,3,3,1,1,3,2),
@@ -568,8 +574,8 @@ cat(sprintf("  shared : %d\n", sum(fkbp5_peaks$atac_dir == "shared")))
 
 knitr::kable(
   fkbp5_peaks |>
-    mutate(across(c(log2FoldChange, rna_lfc), ~round(., 3)),
-           across(c(padj, rna_padj), ~signif(., 2)),
+    mutate(across(c(log2FoldChange, rna_lfc), ~round(as.numeric(.), 3)),
+           across(c(padj, rna_padj), ~signif(as.numeric(.), 2)),
            distanceToTSS = round(distanceToTSS / 1000, 1)),
   caption = "ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)"
 )
@@ -585,31 +591,71 @@ suppressPackageStartupMessages({
   library(Biostrings)
 })
 
-pfm_list <- getMatrixSet(
-  JASPAR2024,
-  opts = list(collection = "CORE", species = 10090, all_versions = FALSE)
-)
-ap1_motifs <- pfm_list[
+# JASPAR2024 R package ships only metadata.csv with an incompatible SQLite schema.
+# Strategy: (1) use JASPAR2020 local DB if installed (compatible TFBSTools schema),
+#           (2) download the JASPAR 2024 CORE vertebrates flat file from the website.
+pfm_list_all <- NULL
+
+if (requireNamespace("JASPAR2020", quietly = TRUE)) {
+  db2020 <- system.file("extdata", "JASPAR2020.sqlite", package = "JASPAR2020")
+  if (nzchar(db2020) && file.exists(db2020)) {
+    pfm_list_all <- TFBSTools::getMatrixSet(
+      db2020,
+      opts = list(collection = "CORE", tax_group = "vertebrates", all_versions = FALSE)
+    )
+    cat("Loaded", length(pfm_list_all), "motifs from JASPAR2020 (vertebrates)\n")
+  }
+}
+
+if (is.null(pfm_list_all)) {
+  tmp_jaspar <- tempfile(fileext = ".jaspar")
+  dl <- tryCatch(
+    httr::GET(
+      paste0("https://jaspar.elixir.no/download/data/2024/CORE/",
+             "JASPAR2024_CORE_vertebrates_non-redundant_pfms.jaspar"),
+      httr::write_disk(tmp_jaspar, overwrite = TRUE),
+      httr::timeout(60)
+    ),
+    error = function(e) { message("Download failed: ", e$message); NULL }
+  )
+  if (!is.null(dl) && !httr::http_error(dl)) {
+    pfm_list_all <- TFBSTools::readJASPARMatrix(tmp_jaspar, matrixClass = "PFMatrix")
+    cat("Loaded", length(pfm_list_all), "motifs from JASPAR 2024 download\n")
+  }
+}
+
+if (is.null(pfm_list_all))
+  stop("Could not load JASPAR motifs: install JASPAR2020 or ensure internet access")
+
+ap1_motifs <- pfm_list_all[
   grepl("JUN|FOS|ATF|BATF|NFE2|MAFK|MAFF",
-        sapply(pfm_list, function(x) x@name),
+        sapply(pfm_list_all, function(x) x@name),
         ignore.case = TRUE)
 ]
-cat(sprintf("AP-1 family motifs from JASPAR 2024: %d\n", length(ap1_motifs)))
+cat(sprintf("AP-1 family motifs selected: %d\n", length(ap1_motifs)))
 
 scan_gr  <- GRanges("chr4", IRanges(fkbp5_start, fkbp5_end))
 scan_seq <- getSeq(BSgenome.Mmusculus.UCSC.mm10, scan_gr)
 names(scan_seq) <- "Fkbp5_locus"
 
 pwm_list  <- toPWM(ap1_motifs)
+# Build hits tibble directly from S4 slots — as.data.frame(SiteSetList) produces
+# inconsistent column names across TFBSTools versions; slot access is reliable.
 hits_list <- lapply(names(pwm_list), function(id) {
-  hits <- searchSeq(pwm_list[[id]], scan_seq,
-                    seqname = "Fkbp5_locus",
-                    min.score = "85%", strand = "*")
-  if (length(hits) == 0) return(NULL)
-  df <- as.data.frame(hits)
-  df$motif_id   <- id
-  df$motif_name <- pwm_list[[id]]@name
-  df
+  ssl <- searchSeq(pwm_list[[id]], scan_seq,
+                   seqname = "Fkbp5_locus",
+                   min.score = "85%", strand = "*")
+  # searchSeq on a DNAStringSet returns a SiteSetList; [[1]] gives the SiteSet
+  ss <- ssl[[1]]
+  if (length(ss) == 0) return(NULL)
+  tibble(
+    start      = as.integer(start(ss@views)),
+    end        = as.integer(end(ss@views)),
+    strand     = as.character(ss@strand),
+    score      = as.numeric(ss@score),
+    motif_id   = id,
+    motif_name = pwm_list[[id]]@name
+  )
 })
 hits_df <- bind_rows(hits_list) |>
   mutate(

@@ -88,7 +88,7 @@ library(readr)
 library(dplyr)
 
 deseq <- read_tsv(deseq_file, show_col_types=FALSE) |>
-  rename(gene = 1)   # col 1 is the row-names field written by write.table
+  rename(gene = 1)   # col 1 is the row-names field written by write.table; rownames_to_column() inserts integers on tibbles
 
 cat("Total genes tested:", nrow(deseq), "\n")
 ```
@@ -469,13 +469,10 @@ library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 
 atac <- read_tsv(atac_deseq, show_col_types=FALSE) |>
-  mutate(.row = row_number())
+  mutate(.row = row_number())   # keep index; annotatePeak drops non-standard contigs
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 
-# Build GRanges; carry .row so we can left_join after annotation.
-# annotatePeak drops peaks on non-standard contigs (chrUn_*, random) so
-# positional bind_cols would fail — left_join on .row preserves all peaks
-# and gives NA annotations for any that were silently dropped.
+# Build GRanges carrying .row so we can left_join back safely
 atac_gr <- GRanges(
   seqnames = atac$chr,
   ranges   = IRanges(atac$start + 1, atac$end),
@@ -500,6 +497,7 @@ atac_ann <- annotatePeak(atac_gr, TxDb=txdb, tssRegion=c(-5000, 500),
 ```{.r .cell-code}
 atac_ann_df <- as.data.frame(atac_ann)
 
+# left_join instead of bind_cols: peaks on non-standard contigs get NA annotation
 atac_full <- atac |>
   left_join(atac_ann_df |> dplyr::select(.row, SYMBOL, distanceToTSS, annotation),
             by = ".row") |>
@@ -527,6 +525,8 @@ atac_full <- atac_full |>
 # Join nearest-gene RNA-seq results
 deseq_slim <- deseq |>
   dplyr::select(gene, rna_lfc = log2FoldChange, rna_padj = padj) |>
+  mutate(rna_lfc  = as.numeric(rna_lfc),
+         rna_padj = as.numeric(rna_padj)) |>   # guard: read_tsv may infer character if col starts with NAs
   filter(!is.na(gene))
 
 atac_rna <- atac_full |>
@@ -541,91 +541,25 @@ atac_rna <- atac_full |>
 ::: {.cell}
 
 ```{.r .cell-code}
-# HFD-upregulated gene set.  With n=3, padj<0.05 may return 0 genes;
-# fall back progressively so the table is always testable.
-hfd_genes_strict  <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
-hfd_genes_relaxed <- deseq |> filter(!is.na(padj) & padj < 0.10 & log2FoldChange > 0) |> pull(gene)
-hfd_genes_nominal <- deseq |> filter(!is.na(pvalue) & pvalue < 0.05 & log2FoldChange > 0) |> pull(gene)
+# HFD-upregulated gene set (any LFC>0, padj<0.05)
+hfd_genes <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
 
-if (length(hfd_genes_strict) >= 50) {
-  hfd_genes  <- hfd_genes_strict;  hfd_label <- "FDR<0.05"
-} else if (length(hfd_genes_relaxed) >= 50) {
-  hfd_genes  <- hfd_genes_relaxed; hfd_label <- "FDR<0.10"
-} else {
-  hfd_genes  <- hfd_genes_nominal; hfd_label <- "nominal p<0.05"
-}
-
-cat(sprintf("Gene set threshold used: %s  (%d genes)\n", hfd_label, length(hfd_genes)))
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-Gene set threshold used: FDR<0.05  (4466 genes)
-```
-
-
-:::
-
-```{.r .cell-code}
 peak_near_hfd_gene <- atac_rna |>
-  mutate(near_hfd_gene = !is.na(SYMBOL) & SYMBOL %in% hfd_genes)
+  mutate(near_hfd_gene = SYMBOL %in% hfd_genes)
 
-# Diagnostics
-cat(sprintf("Peaks with SYMBOL annotated: %d / %d\n",
-            sum(!is.na(peak_near_hfd_gene$SYMBOL)), nrow(peak_near_hfd_gene)))
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-Peaks with SYMBOL annotated: 61573 / 61619
-```
-
-
-:::
-
-```{.r .cell-code}
-cat(sprintf("Peaks near an HFD-up gene  : %d\n", sum(peak_near_hfd_gene$near_hfd_gene)))
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-Peaks near an HFD-up gene  : 11529
-```
-
-
-:::
-
-```{.r .cell-code}
-cat(sprintf("ATAC HFD_up peaks          : %d\n", sum(peak_near_hfd_gene$atac_dir == "HFD_up")))
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-ATAC HFD_up peaks          : 6900
-```
-
-
-:::
-
-```{.r .cell-code}
 # 2×2 contingency: atac_dir (HFD_up vs rest) × near_hfd_gene (T/F)
 tab <- with(peak_near_hfd_gene,
   table(
-    atac   = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
-    rna_up = near_hfd_gene
+    atac    = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
+    rna_up  = near_hfd_gene
   )
 )
-cat("\nContingency table (ATAC direction × nearest gene HFD-up):\n")
+cat("Contingency table (ATAC direction × nearest gene HFD-up):\n")
 ```
 
 ::: {.cell-output .cell-output-stdout}
 
 ```
-
 Contingency table (ATAC direction × nearest gene HFD-up):
 ```
 
@@ -649,13 +583,8 @@ atac     FALSE  TRUE
 :::
 
 ```{.r .cell-code}
-if (all(dim(tab) >= 2)) {
-  ft <- fisher.test(tab, alternative="greater")
-  cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
-  cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
-} else {
-  cat("\nFisher test skipped: table is degenerate — see diagnostics above.\n")
-}
+ft <- fisher.test(tab, alternative="greater")
+cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
 ```
 
 ::: {.cell-output .cell-output-stdout}
@@ -663,6 +592,18 @@ if (all(dim(tab) >= 2)) {
 ```
 
 Fisher OR=1.10, p=1.95e-03
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
 95% CI: [1.04, Inf]
 ```
 
@@ -1090,6 +1031,632 @@ for (g in c("Ncoa1","Ncoa2","Ncoa3","Med1","Hsd11b1","Hsd11b2")) {
 
 ---
 
+## 6. AP-1 motif scan at the Fkbp5 locus
+
+**Hypothesis:** Fkbp5 is a Junb-repressed gene. If AP-1 motifs are present in
+the Fkbp5 regulatory landscape and Junb ChIP signal is detectable there, the
+two mechanisms (AP-1 chromatin remodelling + Fkbp5-mediated GR de-repression)
+collapse into one Junb-led cascade: HFD to Junb up to AP-1 chromatin opening at
+GR cooperative sites AND Fkbp5 down to constitutive GR nuclear activity.
+
+Fkbp5 is on the **minus strand**, chr4:99,946,395-100,067,558 (mm10).
+TSS approx chr4:100,067,500. Known GREs reside in introns 2 and 4.
+
+### 6.1 ATAC-seq peaks at the Fkbp5 locus
+
+
+::: {.cell}
+
+```{.r .cell-code}
+fkbp5_chr   <- "chr4"
+fkbp5_start <- 99936000L
+fkbp5_end   <- 100078000L
+
+fkbp5_peaks <- atac_rna |>
+  filter(chr == fkbp5_chr,
+         start >= fkbp5_start,
+         end   <= fkbp5_end) |>
+  dplyr::select(chr, start, end, log2FoldChange, padj, atac_dir,
+                SYMBOL, distanceToTSS, rna_lfc, rna_padj) |>
+  arrange(start)
+
+cat(sprintf("ATAC peaks at Fkbp5 locus (%s:%d-%d): %d\n",
+            fkbp5_chr, fkbp5_start, fkbp5_end, nrow(fkbp5_peaks)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+ATAC peaks at Fkbp5 locus (chr4:99936000-100078000): 10
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  HFD-up : %d\n", sum(fkbp5_peaks$atac_dir == "HFD_up")))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  HFD-up : 0
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  CHD-up : %d\n", sum(fkbp5_peaks$atac_dir == "CHD_up")))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  CHD-up : 0
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  shared : %d\n", sum(fkbp5_peaks$atac_dir == "shared")))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  shared : 10
+```
+
+
+:::
+
+```{.r .cell-code}
+knitr::kable(
+  fkbp5_peaks |>
+    mutate(across(c(log2FoldChange, rna_lfc), ~round(as.numeric(.), 3)),
+           across(c(padj, rna_padj), ~signif(as.numeric(.), 2)),
+           distanceToTSS = round(distanceToTSS / 1000, 1)),
+  caption = "ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)"
+)
+```
+
+::: {.cell-output-display}
+
+
+Table: ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)
+
+|chr  |     start|       end| log2FoldChange|  padj|atac_dir |SYMBOL  | distanceToTSS|  rna_lfc| rna_padj|
+|:----|---------:|---------:|--------------:|-----:|:--------|:-------|-------------:|--------:|--------:|
+|chr4 |  99939312|  99940563|         -0.466| 0.061|shared   |Itgb3bp |          -9.5|  200.826|       NA|
+|chr4 |  99941324|  99942488|         -0.455| 0.075|shared   |Itgb3bp |         -11.5|  200.826|       NA|
+|chr4 |  99947228|  99947653|         -0.364| 0.500|shared   |Pgm1    |          -8.1| 1974.368|       NA|
+|chr4 |  99956954|  99957439|         -0.378| 0.480|shared   |Pgm1    |           1.2| 1974.368|       NA|
+|chr4 |  99968583|  99970148|         -0.669| 0.019|shared   |Pgm1    |          12.8| 1974.368|       NA|
+|chr4 |  99973865|  99975020|         -0.570| 0.059|shared   |Pgm1    |          18.1| 1974.368|       NA|
+|chr4 | 100004453| 100004834|         -0.537| 0.530|shared   |Pgm1    |          48.7| 1974.368|       NA|
+|chr4 | 100008258| 100009299|         -0.358| 0.390|shared   |Pgm1    |          52.5| 1974.368|       NA|
+|chr4 | 100011064| 100011964|         -0.165| 0.750|shared   |Pgm1    |          55.3| 1974.368|       NA|
+|chr4 | 100041738| 100042498|         -0.640| 0.260|shared   |Ror1    |         -53.3|   47.553|       NA|
+
+
+:::
+:::
+
+
+### 6.2 AP-1 motif scan
+
+
+::: {.cell}
+
+```{.r .cell-code}
+suppressPackageStartupMessages({
+  library(BSgenome.Mmusculus.UCSC.mm10)
+  library(JASPAR2024)
+  library(TFBSTools)
+  library(Biostrings)
+})
+
+# JASPAR2024 R package ships only metadata.csv with an incompatible SQLite schema.
+# Strategy: (1) use JASPAR2020 local DB if installed (compatible TFBSTools schema),
+#           (2) download the JASPAR 2024 CORE vertebrates flat file from the website.
+pfm_list_all <- NULL
+
+if (requireNamespace("JASPAR2020", quietly = TRUE)) {
+  db2020 <- system.file("extdata", "JASPAR2020.sqlite", package = "JASPAR2020")
+  if (nzchar(db2020) && file.exists(db2020)) {
+    pfm_list_all <- TFBSTools::getMatrixSet(
+      db2020,
+      opts = list(collection = "CORE", tax_group = "vertebrates", all_versions = FALSE)
+    )
+    cat("Loaded", length(pfm_list_all), "motifs from JASPAR2020 (vertebrates)\n")
+  }
+}
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Loaded 746 motifs from JASPAR2020 (vertebrates)
+```
+
+
+:::
+
+```{.r .cell-code}
+if (is.null(pfm_list_all)) {
+  tmp_jaspar <- tempfile(fileext = ".jaspar")
+  dl <- tryCatch(
+    httr::GET(
+      paste0("https://jaspar.elixir.no/download/data/2024/CORE/",
+             "JASPAR2024_CORE_vertebrates_non-redundant_pfms.jaspar"),
+      httr::write_disk(tmp_jaspar, overwrite = TRUE),
+      httr::timeout(60)
+    ),
+    error = function(e) { message("Download failed: ", e$message); NULL }
+  )
+  if (!is.null(dl) && !httr::http_error(dl)) {
+    pfm_list_all <- TFBSTools::readJASPARMatrix(tmp_jaspar, matrixClass = "PFMatrix")
+    cat("Loaded", length(pfm_list_all), "motifs from JASPAR 2024 download\n")
+  }
+}
+
+if (is.null(pfm_list_all))
+  stop("Could not load JASPAR motifs: install JASPAR2020 or ensure internet access")
+
+ap1_motifs <- pfm_list_all[
+  grepl("JUN|FOS|ATF|BATF|NFE2|MAFK|MAFF",
+        sapply(pfm_list_all, function(x) x@name),
+        ignore.case = TRUE)
+]
+cat(sprintf("AP-1 family motifs selected: %d\n", length(ap1_motifs)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+AP-1 family motifs selected: 45
+```
+
+
+:::
+
+```{.r .cell-code}
+scan_gr  <- GRanges("chr4", IRanges(fkbp5_start, fkbp5_end))
+scan_seq <- getSeq(BSgenome.Mmusculus.UCSC.mm10, scan_gr)
+names(scan_seq) <- "Fkbp5_locus"
+
+pwm_list  <- toPWM(ap1_motifs)
+# Build hits tibble directly from S4 slots — as.data.frame(SiteSetList) produces
+# inconsistent column names across TFBSTools versions; slot access is reliable.
+hits_list <- lapply(names(pwm_list), function(id) {
+  ssl <- searchSeq(pwm_list[[id]], scan_seq,
+                   seqname = "Fkbp5_locus",
+                   min.score = "85%", strand = "*")
+  # searchSeq on a DNAStringSet returns a SiteSetList; [[1]] gives the SiteSet
+  ss <- ssl[[1]]
+  if (length(ss) == 0) return(NULL)
+  tibble(
+    start      = as.integer(start(ss@views)),
+    end        = as.integer(end(ss@views)),
+    strand     = as.character(ss@strand),
+    score      = as.numeric(ss@score),
+    motif_id   = id,
+    motif_name = pwm_list[[id]]@name
+  )
+})
+hits_df <- bind_rows(hits_list) |>
+  mutate(
+    mm10_pos    = fkbp5_start + start - 1L,
+    dist_to_tss = 100067500L - mm10_pos,
+    region = case_when(
+      mm10_pos >= 100062500 & mm10_pos <= 100072500 ~ "promoter (+-5 kb)",
+      mm10_pos >= 99946395  & mm10_pos <= 100067558 ~ "gene body",
+      TRUE                                          ~ "flanking"
+    )
+  )
+
+cat(sprintf("Total AP-1 hits (>=85%% score): %d\n", nrow(hits_df)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Total AP-1 hits (>=85% score): 6635
+```
+
+
+:::
+
+```{.r .cell-code}
+cat("\nHits by region:\n"); print(table(hits_df$region))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+Hits by region:
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+         flanking         gene body promoter (+-5 kb) 
+              768              5325               542 
+```
+
+
+:::
+
+```{.r .cell-code}
+cat("\nHits by TF:\n");     print(sort(table(hits_df$motif_name), decreasing = TRUE))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+Hits by TF:
+```
+
+
+:::
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+       JUND(var.2)              FOSL2                JUN        FOSL2::JUND 
+               481                446                402                351 
+        JUN(var.2)         FOSB::JUNB        FOSL1::JUND               Atf1 
+               340                313                303                301 
+        FOSL2::JUN        FOSL2::JUNB                FOS           FOS::JUN 
+               300                296                258                256 
+         FOS::JUND          FOS::JUNB         FOSL1::JUN          JUN::JUNB 
+               251                168                161                161 
+              BATF          BATF::JUN               ATF3               NFE2 
+               151                138                133                129 
+             BATF3              FOSL1        FOSL1::JUNB               JUNB 
+               128                125                120                 97 
+FOSL1::JUND(var.2)               JUND  FOSB::JUNB(var.2)               ATF2 
+                92                 90                 64                 63 
+ FOSL2::JUN(var.2)          MAF::NFE2  FOSL1::JUN(var.2) FOSL2::JUNB(var.2) 
+                58                 47                 46                 45 
+              ATF4               ATF7        Bach1::Mafk   JUN::JUNB(var.2) 
+                43                 38                 33                 32 
+         FOSB::JUN               MAFF FOSL2::JUND(var.2)             Nfe2l2 
+                28                 24                 23                 23 
+              MAFK             NFE2L1        JUNB(var.2)               ATF6 
+                21                 18                 16                 11 
+   FOS::JUN(var.2) 
+                11 
+```
+
+
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+gre_pos <- tibble(
+  label    = c("GRE intron2a", "GRE intron2b", "GRE intron4"),
+  mm10_pos = c(100015000L, 100008000L, 99970000L)
+)
+
+hits_plot <- hits_df |>
+  filter(region %in% c("promoter (+-5 kb)", "gene body")) |>
+  mutate(motif_family = case_when(
+    grepl("JUN|JUNB|JUND",  motif_name, ignore.case = TRUE) ~ "Jun",
+    grepl("FOS|FOSL|FOSB",  motif_name, ignore.case = TRUE) ~ "Fos",
+    grepl("ATF",            motif_name, ignore.case = TRUE) ~ "ATF",
+    grepl("BATF",           motif_name, ignore.case = TRUE) ~ "BATF",
+    TRUE                                                    ~ "other AP-1"
+  ))
+
+ggplot() +
+  annotate("rect",
+           xmin = 99946395, xmax = 100067558, ymin = -0.4, ymax = 0.4,
+           fill = "grey85", alpha = 0.5) +
+  annotate("text", x = 100006000, y = 0.55,
+           label = "Fkbp5 gene body", size = 3, color = "grey40") +
+  annotate("segment",
+           x = 100067500, xend = 100062000, y = 0, yend = 0,
+           arrow = arrow(length = unit(0.15, "cm")),
+           color = "black", linewidth = 0.8) +
+  annotate("text", x = 100068500, y = 0.15, label = "TSS", size = 3) +
+  geom_vline(data = gre_pos,
+             aes(xintercept = mm10_pos),
+             lty = 2, color = "#e377c2", linewidth = 0.7) +
+  geom_text(data = gre_pos,
+            aes(x = mm10_pos, y = -0.65, label = label),
+            size = 2.5, color = "#e377c2", angle = 90, hjust = 0) +
+  geom_rug(data = hits_plot,
+           aes(x = mm10_pos, color = motif_family),
+           sides = "t", linewidth = 0.9, alpha = 0.85,
+           length = unit(0.07, "npc")) +
+  scale_color_manual(
+    values = c(Jun = "#d62728", Fos = "#1f77b4", ATF = "#ff7f0e",
+               BATF = "#2ca02c", "other AP-1" = "grey50"),
+    name = "Motif family"
+  ) +
+  scale_x_continuous(
+    labels = function(x) sprintf("%.2f Mb", x / 1e6),
+    limits = c(fkbp5_start, fkbp5_end)
+  ) +
+  labs(x = "chr4 (mm10)", y = NULL,
+       title = "AP-1 motif hits at the Fkbp5 locus (JASPAR 2024, >=85% score)",
+       subtitle = "Pink dashed = known GRE positions; rug = AP-1 motif hit") +
+  theme_classic(base_size = 11) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line(color = "grey90"))
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/fkbp5-motif-plot-1.png){width=3000}
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+top_hits <- hits_df |>
+  filter(region %in% c("promoter (+-5 kb)", "gene body")) |>
+  arrange(desc(score)) |>
+  slice_head(n = 20) |>
+  dplyr::select(motif_name, motif_id, mm10_pos, dist_to_tss,
+                strand, score, region) |>
+  mutate(dist_to_tss = round(dist_to_tss / 1000, 2),
+         score       = round(score, 3))
+
+knitr::kable(top_hits,
+  caption = "Top 20 AP-1 motif hits at Fkbp5 (>=85%, by score). dist_to_tss in kb.")
+```
+
+::: {.cell-output-display}
+
+
+Table: Top 20 AP-1 motif hits at Fkbp5 (>=85%, by score). dist_to_tss in kb.
+
+|motif_name         |motif_id |  mm10_pos| dist_to_tss|strand |  score|region    |
+|:------------------|:--------|---------:|-----------:|:------|------:|:---------|
+|ATF4               |MA0833.2 |  99990453|       77.05|-      | 18.133|gene body |
+|MAFF               |MA0495.3 |  99969605|       97.89|-      | 17.790|gene body |
+|ATF7               |MA0834.1 |  99982434|       85.07|-      | 17.534|gene body |
+|MAF::NFE2          |MA0501.1 | 100056502|       11.00|-      | 17.127|gene body |
+|JUN::JUNB(var.2)   |MA1133.1 |  99982435|       85.06|+      | 17.094|gene body |
+|ATF2               |MA1632.1 | 100035286|       32.21|+      | 16.965|gene body |
+|ATF7               |MA0834.1 |  99982434|       85.07|+      | 16.630|gene body |
+|ATF3               |MA0605.2 |  99982435|       85.06|+      | 16.594|gene body |
+|ATF3               |MA0605.2 |  99982435|       85.06|-      | 16.584|gene body |
+|JUNB(var.2)        |MA1140.2 |  99982435|       85.06|-      | 16.508|gene body |
+|FOS::JUN(var.2)    |MA1126.1 |  99982435|       85.06|+      | 16.455|gene body |
+|JUN(var.2)         |MA0489.1 |  99967729|       99.77|+      | 16.449|gene body |
+|FOSL2::JUNB(var.2) |MA1139.1 |  99982435|       85.06|+      | 16.394|gene body |
+|FOSL2::JUNB(var.2) |MA1139.1 |  99982435|       85.06|-      | 16.381|gene body |
+|ATF4               |MA0833.2 | 100026366|       41.13|-      | 16.359|gene body |
+|ATF4               |MA0833.2 |  99961506|      105.99|-      | 16.269|gene body |
+|FOSL2::JUND(var.2) |MA1145.1 |  99982433|       85.07|-      | 16.171|gene body |
+|FOSB::JUNB(var.2)  |MA1136.1 |  99982436|       85.06|+      | 15.965|gene body |
+|FOSL2::JUN(var.2)  |MA1131.1 |  99982435|       85.06|+      | 15.941|gene body |
+|ATF2               |MA1632.1 |  99993809|       73.69|+      | 15.842|gene body |
+
+
+:::
+:::
+
+
+### 6.3 ChIP-Atlas: Junb binding evidence at Fkbp5
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(httr)
+
+query_chipatlas <- function(distance) {
+  url <- sprintf(
+    "https://chip-atlas.dbcls.jp/api/target?assemblyId=mm10&factor=Junb&gene=Fkbp5&distance=%d",
+    distance
+  )
+  cat(sprintf("Querying ChIP-Atlas (dist=%d bp)\n", distance))
+  tryCatch({
+    resp <- GET(url, timeout(30))
+    if (status_code(resp) == 200) {
+      raw <- content(resp, as = "text", encoding = "UTF-8")
+      if (nchar(trimws(raw)) < 5)
+        return(tibble(result = sprintf("No Junb peaks within %d bp of Fkbp5 TSS", distance)))
+      read_tsv(I(raw), show_col_types = FALSE)
+    } else {
+      tibble(result = sprintf("HTTP %d", status_code(resp)))
+    }
+  }, error = function(e) tibble(result = conditionMessage(e)))
+}
+
+ca_result <- query_chipatlas(1000)
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Querying ChIP-Atlas (dist=1000 bp)
+```
+
+
+:::
+
+```{.r .cell-code}
+if ("result" %in% names(ca_result) && grepl("No Junb", ca_result$result))
+  ca_result <- query_chipatlas(5000)
+
+knitr::kable(ca_result,
+  caption = "ChIP-Atlas: public Junb ChIP-seq experiments with peaks near Fkbp5 TSS")
+```
+
+::: {.cell-output-display}
+
+
+Table: ChIP-Atlas: public Junb ChIP-seq experiments with peaks near Fkbp5 TSS
+
+|result   |
+|:--------|
+|HTTP 403 |
+
+
+:::
+
+```{.r .cell-code}
+cat("\nPeak Browser URL for manual inspection:\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+Peak Browser URL for manual inspection:
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf(
+  "https://chip-atlas.dbcls.jp/peakBrowser/?assemblyId=mm10&factor=JunB&chr=chr4&start=%d&end=%d\n",
+  fkbp5_start, fkbp5_end
+))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+https://chip-atlas.dbcls.jp/peakBrowser/?assemblyId=mm10&factor=JunB&chr=chr4&start=99936000&end=100078000
+```
+
+
+:::
+:::
+
+
+### 6.4 Synthesis
+
+
+::: {.cell}
+
+```{.r .cell-code}
+n_promoter <- sum(hits_df$region == "promoter (+-5 kb)")
+n_jun      <- sum(grepl("JUN", hits_df$motif_name, ignore.case = TRUE) &
+                  hits_df$region %in% c("promoter (+-5 kb)", "gene body"))
+fkbp5_row  <- tg |> filter(gene == "Fkbp5")
+
+cat("=== Fkbp5 locus AP-1 evidence summary ===\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+=== Fkbp5 locus AP-1 evidence summary ===
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("AP-1 hits in promoter (+-5 kb) : %d\n", n_promoter))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+AP-1 hits in promoter (+-5 kb) : 542
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("Jun-family hits in promoter+body: %d\n", n_jun))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Jun-family hits in promoter+body: 4099
+```
+
+
+:::
+
+```{.r .cell-code}
+if (nrow(fkbp5_row) > 0 && !is.na(fkbp5_row$log2FoldChange))
+  cat(sprintf("Fkbp5 TRAP-seq: LFC=%.3f, padj=%.3f\n",
+              fkbp5_row$log2FoldChange, fkbp5_row$padj))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Fkbp5 TRAP-seq: LFC=-1.292, padj=0.010
+```
+
+
+:::
+
+```{.r .cell-code}
+cat("\n--- Verdict ---\n")
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+
+--- Verdict ---
+```
+
+
+:::
+
+```{.r .cell-code}
+if (n_jun > 0 && n_promoter > 0) {
+  cat("POSITIVE: Jun-family AP-1 motifs present in the Fkbp5 promoter.\n")
+  cat("Supports Junb-led cascade: HFD -> Junb up -> Fkbp5 repression ->\n")
+  cat("GR de-repression -> Sgk1/Angptl4/Lep up.\n")
+  cat("Validate with Junb CUT&RUN in HFD vs CHD adipocytes.\n")
+} else if (n_promoter > 0) {
+  cat("PARTIAL: AP-1 motifs present but no Jun-family hits in promoter.\n")
+  cat("Regulation may be via Junb::Atf3 or Junb::Fos heterodimer.\n")
+} else {
+  cat("NEGATIVE at 85%: no AP-1 hits in Fkbp5 promoter.\n")
+  cat("Consider: relaxing to 80%, checking distal enhancers,\n")
+  cat("or indirect regulation via AP-1-activated repressor.\n")
+}
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+POSITIVE: Jun-family AP-1 motifs present in the Fkbp5 promoter.
+Supports Junb-led cascade: HFD -> Junb up -> Fkbp5 repression ->
+GR de-repression -> Sgk1/Angptl4/Lep up.
+Validate with Junb CUT&RUN in HFD vs CHD adipocytes.
+```
+
+
+:::
+:::
+
+
+---
+
 ## Session information
 
 
@@ -1121,41 +1688,52 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] org.Mm.eg.db_3.23.0                      
- [2] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
- [3] GenomicFeatures_1.64.0                   
- [4] AnnotationDbi_1.74.0                     
- [5] Biobase_2.72.0                           
- [6] ChIPseeker_1.48.0                        
- [7] GenomicRanges_1.64.0                     
- [8] Seqinfo_1.2.0                            
- [9] IRanges_2.46.0                           
-[10] S4Vectors_0.50.0                         
-[11] BiocGenerics_0.58.0                      
-[12] generics_0.1.4                           
-[13] ggrepel_0.9.8                            
-[14] lubridate_1.9.5                          
-[15] forcats_1.0.1                            
-[16] stringr_1.6.0                            
-[17] dplyr_1.2.1                              
-[18] purrr_1.2.2                              
-[19] readr_2.2.0                              
-[20] tidyr_1.3.2                              
-[21] tibble_3.3.1                             
-[22] ggplot2_4.0.3                            
-[23] tidyverse_2.0.0                          
+ [1] httr_1.4.8                               
+ [2] TFBSTools_1.50.0                         
+ [3] JASPAR2024_0.99.7                        
+ [4] BiocFileCache_3.2.0                      
+ [5] dbplyr_2.5.2                             
+ [6] BSgenome.Mmusculus.UCSC.mm10_1.4.3       
+ [7] BSgenome_1.80.0                          
+ [8] rtracklayer_1.72.0                       
+ [9] BiocIO_1.22.0                            
+[10] Biostrings_2.80.0                        
+[11] XVector_0.52.0                           
+[12] org.Mm.eg.db_3.23.0                      
+[13] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
+[14] GenomicFeatures_1.64.0                   
+[15] AnnotationDbi_1.74.0                     
+[16] Biobase_2.72.0                           
+[17] ChIPseeker_1.48.0                        
+[18] GenomicRanges_1.64.0                     
+[19] Seqinfo_1.2.0                            
+[20] IRanges_2.46.0                           
+[21] S4Vectors_0.50.1                         
+[22] BiocGenerics_0.58.1                      
+[23] generics_0.1.4                           
+[24] ggrepel_0.9.8                            
+[25] lubridate_1.9.5                          
+[26] forcats_1.0.1                            
+[27] stringr_1.6.0                            
+[28] dplyr_1.2.1                              
+[29] purrr_1.2.2                              
+[30] readr_2.2.0                              
+[31] tidyr_1.3.2                              
+[32] tibble_3.3.1                             
+[33] ggplot2_4.0.3                            
+[34] tidyverse_2.0.0                          
 
 loaded via a namespace (and not attached):
-  [1] RColorBrewer_1.1-3                      
-  [2] rstudioapi_0.18.0                       
-  [3] jsonlite_2.0.0                          
-  [4] tidydr_0.0.6                            
-  [5] magrittr_2.0.5                          
-  [6] ggtangle_0.1.2                          
-  [7] farver_2.1.2                            
-  [8] rmarkdown_2.31                          
-  [9] fs_2.1.0                                
- [10] BiocIO_1.22.0                           
+  [1] JASPAR2020_0.99.10                      
+  [2] RColorBrewer_1.1-3                      
+  [3] rstudioapi_0.18.0                       
+  [4] jsonlite_2.0.0                          
+  [5] tidydr_0.0.6                            
+  [6] magrittr_2.0.5                          
+  [7] ggtangle_0.1.2                          
+  [8] farver_2.1.2                            
+  [9] rmarkdown_2.31                          
+ [10] fs_2.1.0                                
  [11] vctrs_0.7.3                             
  [12] memoise_2.0.1                           
  [13] Rsamtools_2.28.0                        
@@ -1170,102 +1748,104 @@ loaded via a namespace (and not attached):
  [22] gridGraphics_0.5-1                      
  [23] KernSmooth_2.23-26                      
  [24] htmlwidgets_1.6.4                       
- [25] plyr_1.8.9                              
- [26] cachem_1.1.0                            
- [27] GenomicAlignments_1.48.0                
- [28] igraph_2.3.1                            
- [29] lifecycle_1.0.5                         
- [30] pkgconfig_2.0.3                         
- [31] Matrix_1.7-5                            
- [32] R6_2.6.1                                
- [33] fastmap_1.2.0                           
- [34] MatrixGenerics_1.24.0                   
- [35] digest_0.6.39                           
- [36] aplot_0.2.9                             
- [37] enrichplot_1.32.0                       
- [38] ggnewscale_0.5.2                        
- [39] patchwork_1.3.2                         
- [40] RSQLite_3.52.0                          
- [41] labeling_0.4.3                          
- [42] timechange_0.4.0                        
- [43] polyclip_1.10-7                         
- [44] httr_1.4.8                              
- [45] abind_1.4-8                             
- [46] compiler_4.6.0                          
- [47] bit64_4.8.0                             
- [48] fontquiver_0.2.1                        
- [49] withr_3.0.2                             
- [50] S7_0.2.2                                
- [51] BiocParallel_1.46.0                     
- [52] DBI_1.3.0                               
- [53] gplots_3.3.0                            
- [54] ggforce_0.5.0                           
- [55] MASS_7.3-65                             
- [56] rappdirs_0.3.4                          
- [57] DelayedArray_0.38.1                     
- [58] rjson_0.2.23                            
- [59] caTools_1.18.3                          
- [60] gtools_3.9.5                            
- [61] tools_4.6.0                             
- [62] otel_0.2.0                              
- [63] scatterpie_0.2.6                        
- [64] ape_5.8-1                               
- [65] glue_1.8.1                              
- [66] restfulr_0.0.16                         
- [67] nlme_3.1-169                            
- [68] GOSemSim_2.38.0                         
- [69] grid_4.6.0                              
- [70] cluster_2.1.8.2                         
- [71] reshape2_1.4.5                          
- [72] gtable_0.3.6                            
- [73] tzdb_0.5.0                              
- [74] hms_1.1.4                               
- [75] XVector_0.52.0                          
- [76] pillar_1.11.1                           
- [77] yulab.utils_0.2.4                       
- [78] vroom_1.7.1                             
- [79] tweenr_2.0.3                            
- [80] treeio_1.36.1                           
- [81] lattice_0.22-9                          
- [82] rtracklayer_1.72.0                      
- [83] bit_4.6.0                               
- [84] tidyselect_1.2.1                        
- [85] fontLiberation_0.1.0                    
- [86] GO.db_3.23.1                            
- [87] Biostrings_2.80.0                       
- [88] knitr_1.51                              
- [89] fontBitstreamVera_0.1.1                 
- [90] SummarizedExperiment_1.42.0             
- [91] xfun_0.57                               
- [92] matrixStats_1.5.0                       
- [93] stringi_1.8.7                           
- [94] UCSC.utils_1.8.0                        
- [95] lazyeval_0.2.3                          
- [96] ggfun_0.2.0                             
- [97] yaml_2.3.12                             
- [98] boot_1.3-32                             
- [99] evaluate_1.0.5                          
-[100] codetools_0.2-20                        
-[101] cigarillo_1.2.0                         
-[102] gdtools_0.5.0                           
-[103] ggplotify_0.1.3                         
-[104] cli_3.6.6                               
-[105] systemfonts_1.3.2                       
-[106] Rcpp_1.1.1-1.1                          
-[107] GenomeInfoDb_1.48.0                     
-[108] png_0.1-9                               
-[109] XML_3.99-0.23                           
-[110] parallel_4.6.0                          
-[111] blob_1.3.0                              
-[112] DOSE_4.6.0                              
-[113] bitops_1.0-9                            
-[114] tidytree_0.4.7                          
-[115] ggiraph_0.9.6                           
-[116] enrichit_0.1.4                          
-[117] scales_1.4.0                            
-[118] crayon_1.5.3                            
-[119] rlang_1.2.0                             
-[120] KEGGREST_1.52.0                         
+ [25] httr2_1.2.2                             
+ [26] plyr_1.8.9                              
+ [27] cachem_1.1.0                            
+ [28] GenomicAlignments_1.48.0                
+ [29] igraph_2.3.1                            
+ [30] lifecycle_1.0.5                         
+ [31] pkgconfig_2.0.3                         
+ [32] Matrix_1.7-5                            
+ [33] R6_2.6.1                                
+ [34] fastmap_1.2.0                           
+ [35] MatrixGenerics_1.24.0                   
+ [36] digest_0.6.39                           
+ [37] aplot_0.2.9                             
+ [38] enrichplot_1.32.0                       
+ [39] TFMPvalue_1.0.0                         
+ [40] ggnewscale_0.5.2                        
+ [41] patchwork_1.3.2                         
+ [42] RSQLite_3.53.1                          
+ [43] seqLogo_1.78.0                          
+ [44] filelock_1.0.3                          
+ [45] labeling_0.4.3                          
+ [46] timechange_0.4.0                        
+ [47] polyclip_1.10-7                         
+ [48] abind_1.4-8                             
+ [49] compiler_4.6.0                          
+ [50] bit64_4.8.2                             
+ [51] fontquiver_0.2.1                        
+ [52] withr_3.0.2                             
+ [53] S7_0.2.2                                
+ [54] BiocParallel_1.46.0                     
+ [55] DBI_1.3.0                               
+ [56] gplots_3.3.0                            
+ [57] ggforce_0.5.0                           
+ [58] MASS_7.3-65                             
+ [59] rappdirs_0.3.4                          
+ [60] DelayedArray_0.38.1                     
+ [61] rjson_0.2.23                            
+ [62] caTools_1.18.3                          
+ [63] gtools_3.9.5                            
+ [64] tools_4.6.0                             
+ [65] otel_0.2.0                              
+ [66] scatterpie_0.2.6                        
+ [67] ape_5.8-1                               
+ [68] glue_1.8.1                              
+ [69] restfulr_0.0.16                         
+ [70] nlme_3.1-169                            
+ [71] GOSemSim_2.38.0                         
+ [72] grid_4.6.0                              
+ [73] cluster_2.1.8.2                         
+ [74] reshape2_1.4.5                          
+ [75] gtable_0.3.6                            
+ [76] tzdb_0.5.0                              
+ [77] hms_1.1.4                               
+ [78] pillar_1.11.1                           
+ [79] yulab.utils_0.2.4                       
+ [80] vroom_1.7.1                             
+ [81] tweenr_2.0.3                            
+ [82] treeio_1.36.1                           
+ [83] lattice_0.22-9                          
+ [84] bit_4.6.0                               
+ [85] DirichletMultinomial_1.54.0             
+ [86] tidyselect_1.2.1                        
+ [87] fontLiberation_0.1.0                    
+ [88] GO.db_3.23.1                            
+ [89] knitr_1.51                              
+ [90] fontBitstreamVera_0.1.1                 
+ [91] SummarizedExperiment_1.42.0             
+ [92] xfun_0.57                               
+ [93] matrixStats_1.5.0                       
+ [94] stringi_1.8.7                           
+ [95] UCSC.utils_1.8.0                        
+ [96] lazyeval_0.2.3                          
+ [97] ggfun_0.2.0                             
+ [98] yaml_2.3.12                             
+ [99] boot_1.3-32                             
+[100] evaluate_1.0.5                          
+[101] codetools_0.2-20                        
+[102] cigarillo_1.2.0                         
+[103] gdtools_0.5.1                           
+[104] ggplotify_0.1.3                         
+[105] cli_3.6.6                               
+[106] systemfonts_1.3.2                       
+[107] Rcpp_1.1.1-1.1                          
+[108] GenomeInfoDb_1.48.0                     
+[109] png_0.1-9                               
+[110] XML_3.99-0.23                           
+[111] parallel_4.6.0                          
+[112] blob_1.3.0                              
+[113] DOSE_4.6.0                              
+[114] bitops_1.0-9                            
+[115] pwalign_1.8.0                           
+[116] tidytree_0.4.7                          
+[117] ggiraph_0.9.6                           
+[118] enrichit_0.1.4                          
+[119] scales_1.4.0                            
+[120] crayon_1.5.3                            
+[121] rlang_1.2.0                             
+[122] KEGGREST_1.52.0                         
 ```
 
 

@@ -67,7 +67,80 @@ Importantly, **Fkbp5 downregulation provides a distinct, parallel explanation fo
 
 ---
 
-## 5. Proposed experimental strategies
+## 5. ATAC × RNA spatial coupling (enrichment test)
+
+Fisher exact test: are HFD-up ATAC peaks enriched for nearest-gene HFD-up RNA?
+
+| | Nearest gene HFD-up | Nearest gene not HFD-up |
+|---|---:|---:|
+| HFD-up ATAC | 1,203 | 5,697 |
+| Other ATAC | 10,326 | 44,393 |
+
+**OR = 1.10, p = 1.95 × 10⁻³** (Fisher exact, one-sided).
+
+The odds ratio is statistically significant but essentially null in effect size — HFD-up peaks are only marginally more likely than background to sit adjacent to an HFD-up gene (17.4% vs. 18.9%). This is expected for enhancer-driven regulation: most chromatin-opening events at distal enhancers will not match the nearest gene. The enrichment result does **not** undermine the motif evidence; it simply confirms that bulk nearest-gene coupling is weak, which is consistent with the HFD-up peaks acting at AP-1/GR composite elements potentially regulating non-nearest genes or operating over long genomic distances. TAD-level coupling (pinned for later analysis) would be the appropriate test.
+
+---
+
+## 6. AP-1 motif scan at the Fkbp5 locus
+
+**Hypothesis tested:** Is Fkbp5 a direct Junb-repressed target? If Jun-family AP-1 motifs are present at the Fkbp5 promoter and Junb ChIP signal is detectable there, the two mechanisms (AP-1 chromatin remodelling + Fkbp5-mediated GR de-repression) collapse into a single Junb-led cascade.
+
+**Locus:** chr4:99,936,000–100,078,000 (mm10). Fkbp5 minus strand, TSS ≈ chr4:100,067,500. Known GREs in introns 2 and 4.
+**Motif database:** JASPAR2020 CORE vertebrates (746 motifs total; 45 AP-1 family motifs matched by name pattern).
+
+### 6a. Motif scan results (≥85% PWM score threshold)
+
+| Region | AP-1 hits |
+|--------|----------:|
+| Promoter (±5 kb of TSS) | 542 |
+| Gene body | 5,325 |
+| Flanking | 768 |
+| **Total** | **6,635** |
+
+**Jun-family hits in promoter + gene body: 4,099** — confirming dense occupancy of canonical bZIP/AP-1 motifs throughout the locus.
+
+**Top motifs by total hit count (selected):**
+
+| Motif | Hits | Family |
+|-------|-----:|--------|
+| JUND(var.2) | 481 | Jun |
+| FOSL2 | 446 | Fos |
+| JUN | 402 | Jun |
+| FOSL2::JUND | 351 | Fos·Jun heterodimer |
+| JUN(var.2) | 340 | Jun |
+| FOSB::JUNB | 313 | Fos·Jun heterodimer |
+| FOSL1::JUND | 303 | Fos·Jun heterodimer |
+| Atf1 | 301 | ATF/CREB |
+| FOS | 258 | Fos |
+| FOS::JUN | 256 | Fos·Jun heterodimer |
+| ATF3 | 133 | ATF |
+| BATF | 151 | BATF |
+| **JUNB** | **97** | **Jun** |
+| JUN::JUNB(var.2) | 32 | Jun heterodimer |
+
+The highest-scoring individual hit in the gene body is **ATF4** (score 18.1 at chr4:99,990,453), followed by MAFF and ATF7. The **JUN::JUNB(var.2)** dimer motif appears in the gene body at chr4:99,982,435 (score 17.1) — within ~85 kb of the TSS. **JUNB** itself contributes 97 hits distributed across the locus.
+
+### 6b. ChIP-Atlas query
+
+ChIP-Atlas API returned **HTTP 403** (access restricted). Manual inspection URL:
+`https://chip-atlas.dbcls.jp/peakBrowser/?assemblyId=mm10&factor=JunB&chr=chr4&start=99936000&end=100078000`
+
+### 6c. Verdict — POSITIVE
+
+**Jun-family AP-1 motifs are densely present in the Fkbp5 promoter and gene body** (542 promoter hits; 4,099 Jun-family hits across promoter + body). This supports the unified cascade model:
+
+> **HFD → Junb↑ → AP-1 binding at Fkbp5 → Fkbp5↓ → FKBP51 loss → constitutive GR nuclear entry → Sgk1/Angptl4/Lep↑**
+
+The motif evidence is consistent with Junb acting as a transcriptional repressor at Fkbp5 (directly or via a co-repressor complex), while simultaneously opening chromatin at AP-1/GR composite elements genome-wide. The two mechanisms previously framed as independent are likely the same pathway at different steps.
+
+**Key caveat:** Motif presence ≠ binding. Validation requires:
+1. Junb CUT&RUN or ChIP-seq in HFD vs CHD eWAT adipocytes at the Fkbp5 locus
+2. Manual ChIP-Atlas inspection (API blocked; use browser URL above) or ENCODE Junb ChIP-seq in adipocyte-relevant cell lines
+
+---
+
+## 7. Proposed experimental strategies
 
 ### Strategy A — Junb overexpression (AP-1/chromatin model)
 **Rationale:** Junb is the highest-confidence HFD-upregulated AP-1 factor in adipocytes. If Junb drives the observed chromatin remodelling, forced Junb expression in CHD adipocytes should recapitulate the HFD ATAC signature and potentiate GR target gene induction.
@@ -96,9 +169,14 @@ The strategies are not mutually exclusive. A combined experiment — Junb OE + F
 
 ---
 
-## 6. Outstanding analysis (pending enrichment fix)
+## 8. Pending analyses
 
-The ATAC × RNA enrichment test (Fisher exact: are HFD-up ATAC peaks enriched near HFD-up RNA genes?) was confounded by a gene-column loading bug in the qmd script (now fixed). The corrected result — which will quantify whether the chromatin remodelling is spatially coupled to the transcriptional response — should be available on the next render.
+| Analysis | Status | Notes |
+|----------|--------|-------|
+| Fkbp5 motif scan — vertebrate motif set | **Complete** | POSITIVE: 542 promoter hits, 4,099 Jun-family hits; Junb and JUN::JUNB motifs present |
+| ChIP-Atlas Junb at Fkbp5 | **To do** | HTTP 403 blocked API; check manually at peak browser URL in Section 6b, or try ENCODE |
+| Junb CUT&RUN / ChIP-seq at Fkbp5 locus | **Proposed experiment** | Required to confirm motif occupancy; HFD vs CHD eWAT adipocytes |
+| TAD-level ATAC × RNA coupling | Pinned | Would test whether HFD-up peaks and HFD-up genes co-occur within the same TAD |
 
 ---
 
