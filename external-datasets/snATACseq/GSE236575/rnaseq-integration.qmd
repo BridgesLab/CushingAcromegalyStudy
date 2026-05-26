@@ -81,7 +81,8 @@ library(readr)
 library(dplyr)
 
 deseq <- read_tsv(deseq_file, show_col_types=FALSE) |>
-  rename(gene = 1)   # col 1 is the row-names field written by write.table
+  rownames_to_column("gene") |>
+  rename(gene = 1)
 
 cat("Total genes tested:", nrow(deseq), "\n")
 cat("HFD-up   (padj<0.05, LFC>0.585):",
@@ -134,7 +135,7 @@ tg_display <- tg |>
     across(c(bayes_P_HFD_gt_CHD, bayes_ER), ~round(., 3)),
     across(c(mean_norm_CHD, mean_norm_HFD), ~round(., 1))
   ) |>
-  dplyr::select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
+  select(category, gene, log2FoldChange, lfcSE, padj, pvalue,
          mean_norm_CHD, mean_norm_HFD, detected,
          bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)
 
@@ -149,7 +150,7 @@ knitr::kable(tg_display,
 ap1 <- tg |> filter(category == "AP-1") |>
   arrange(desc(log2FoldChange))
 
-knitr::kable(ap1 |> dplyr::select(gene, log2FoldChange, padj, pvalue,
+knitr::kable(ap1 |> select(gene, log2FoldChange, padj, pvalue,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="AP-1 family members — ranked by HFD log2FC",
@@ -179,7 +180,7 @@ ggplot(ap1_ok, aes(x=reorder(gene, log2FoldChange), y=log2FoldChange)) +
 ```{r vdr-table}
 vdr <- tg |> filter(category == "VDR_pathway") |> arrange(gene)
 
-knitr::kable(vdr |> dplyr::select(gene, log2FoldChange, padj,
+knitr::kable(vdr |> select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="VDR pathway and coactivators",
@@ -191,7 +192,7 @@ knitr::kable(vdr |> dplyr::select(gene, log2FoldChange, padj,
 ```{r demoted-table}
 dem <- tg |> filter(category == "demoted") |> arrange(gene)
 
-knitr::kable(dem |> dplyr::select(gene, log2FoldChange, padj,
+knitr::kable(dem |> select(gene, log2FoldChange, padj,
                             mean_norm_CHD, mean_norm_HFD,
                             bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Demoted candidates — expected to show no significant HFD upregulation",
@@ -203,7 +204,7 @@ knitr::kable(dem |> dplyr::select(gene, log2FoldChange, padj,
 ```{r dmrt-table}
 dmrt <- tg |> filter(category == "artifact_check")
 
-knitr::kable(dmrt |> dplyr::select(gene, log2FoldChange, padj,
+knitr::kable(dmrt |> select(gene, log2FoldChange, padj,
                              mean_norm_CHD, mean_norm_HFD, detected),
   caption="DMRT family — expected to be undetected if motif enrichment was an AT-rich artifact",
   digits=c(0,3,3,1,1,0))
@@ -214,7 +215,7 @@ knitr::kable(dmrt |> dplyr::select(gene, log2FoldChange, padj,
 ```{r gr-target-table}
 gr_tg <- tg |> filter(category == "GR_target") |> arrange(desc(log2FoldChange))
 
-knitr::kable(gr_tg |> dplyr::select(gene, log2FoldChange, padj,
+knitr::kable(gr_tg |> select(gene, log2FoldChange, padj,
                               mean_norm_CHD, mean_norm_HFD,
                               bayes_P_HFD_gt_CHD, bayes_ER),
   caption="Functional GR targets — expected HFD upregulation if GR signalling is sensitized",
@@ -233,28 +234,21 @@ library(ChIPseeker)
 library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 
-atac <- read_tsv(atac_deseq, show_col_types=FALSE) |>
-  mutate(.row = row_number())
+atac <- read_tsv(atac_deseq, show_col_types=FALSE)
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
 
-# Build GRanges; carry .row so we can left_join after annotation.
-# annotatePeak drops peaks on non-standard contigs (chrUn_*, random) so
-# positional bind_cols would fail — left_join on .row preserves all peaks
-# and gives NA annotations for any that were silently dropped.
+# Build GRanges for all tested ATAC peaks
 atac_gr <- GRanges(
   seqnames = atac$chr,
-  ranges   = IRanges(atac$start + 1, atac$end),
-  .row     = atac$.row
+  ranges   = IRanges(atac$start + 1, atac$end)
 )
 
 atac_ann <- annotatePeak(atac_gr, TxDb=txdb, tssRegion=c(-5000, 500),
                          annoDb="org.Mm.eg.db", verbose=FALSE)
 atac_ann_df <- as.data.frame(atac_ann)
 
-atac_full <- atac |>
-  left_join(atac_ann_df |> dplyr::select(.row, SYMBOL, distanceToTSS, annotation),
-            by = ".row") |>
-  dplyr::select(-.row)
+atac_full <- bind_cols(atac, atac_ann_df |>
+  select(SYMBOL, distanceToTSS, annotation))
 ```
 
 ### Classify ATAC peaks and merge with RNA-seq
@@ -272,7 +266,7 @@ atac_full <- atac_full |>
 
 # Join nearest-gene RNA-seq results
 deseq_slim <- deseq |>
-  dplyr::select(gene, rna_lfc = log2FoldChange, rna_padj = padj) |>
+  select(gene, rna_lfc = log2FoldChange, rna_padj = padj) |>
   filter(!is.na(gene))
 
 atac_rna <- atac_full |>
@@ -282,48 +276,25 @@ atac_rna <- atac_full |>
 ### Enrichment: are HFD-up ATAC peaks enriched near HFD-upregulated genes?
 
 ```{r enrichment-test}
-# HFD-upregulated gene set.  With n=3, padj<0.05 may return 0 genes;
-# fall back progressively so the table is always testable.
-hfd_genes_strict  <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
-hfd_genes_relaxed <- deseq |> filter(!is.na(padj) & padj < 0.10 & log2FoldChange > 0) |> pull(gene)
-hfd_genes_nominal <- deseq |> filter(!is.na(pvalue) & pvalue < 0.05 & log2FoldChange > 0) |> pull(gene)
-
-if (length(hfd_genes_strict) >= 50) {
-  hfd_genes  <- hfd_genes_strict;  hfd_label <- "FDR<0.05"
-} else if (length(hfd_genes_relaxed) >= 50) {
-  hfd_genes  <- hfd_genes_relaxed; hfd_label <- "FDR<0.10"
-} else {
-  hfd_genes  <- hfd_genes_nominal; hfd_label <- "nominal p<0.05"
-}
-
-cat(sprintf("Gene set threshold used: %s  (%d genes)\n", hfd_label, length(hfd_genes)))
+# HFD-upregulated gene set (any LFC>0, padj<0.05)
+hfd_genes <- deseq |> filter(!is.na(padj) & padj < 0.05 & log2FoldChange > 0) |> pull(gene)
 
 peak_near_hfd_gene <- atac_rna |>
-  mutate(near_hfd_gene = !is.na(SYMBOL) & SYMBOL %in% hfd_genes)
-
-# Diagnostics
-cat(sprintf("Peaks with SYMBOL annotated: %d / %d\n",
-            sum(!is.na(peak_near_hfd_gene$SYMBOL)), nrow(peak_near_hfd_gene)))
-cat(sprintf("Peaks near an HFD-up gene  : %d\n", sum(peak_near_hfd_gene$near_hfd_gene)))
-cat(sprintf("ATAC HFD_up peaks          : %d\n", sum(peak_near_hfd_gene$atac_dir == "HFD_up")))
+  mutate(near_hfd_gene = SYMBOL %in% hfd_genes)
 
 # 2×2 contingency: atac_dir (HFD_up vs rest) × near_hfd_gene (T/F)
 tab <- with(peak_near_hfd_gene,
   table(
-    atac   = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
-    rna_up = near_hfd_gene
+    atac    = ifelse(atac_dir == "HFD_up", "HFD_up", "other"),
+    rna_up  = near_hfd_gene
   )
 )
-cat("\nContingency table (ATAC direction × nearest gene HFD-up):\n")
+cat("Contingency table (ATAC direction × nearest gene HFD-up):\n")
 print(tab)
 
-if (all(dim(tab) >= 2)) {
-  ft <- fisher.test(tab, alternative="greater")
-  cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
-  cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
-} else {
-  cat("\nFisher test skipped: table is degenerate — see diagnostics above.\n")
-}
+ft <- fisher.test(tab, alternative="greater")
+cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
+cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
 ```
 
 ### Motif stratification: which motif class best predicts paired gene upregulation?
@@ -390,7 +361,7 @@ if (file.exists(motif_file)) {
   # Join to ATAC+RNA table via chr/start/end overlap (nearest match by start)
   hfd_peaks_rna <- atac_rna |>
     filter(atac_dir == "HFD_up") |>
-    left_join(peak_coords |> dplyr::select(chr, start, end, motif_class),
+    left_join(peak_coords |> select(chr, start, end, motif_class),
               by=c("chr","start","end"))
 
   # Per motif class: fraction with HFD-up nearest gene
@@ -495,7 +466,7 @@ for (cond in conds) {
 ```{r ap1-decision}
 ap1_key <- tg |>
   filter(gene %in% c("Junb","Fosl2")) |>
-  dplyr::select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
+  select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
          bayes_P_HFD_gt_CHD, bayes_ER, bayes_CrI_lo, bayes_CrI_hi)
 
 knitr::kable(ap1_key, digits=c(0,3,3,1,1,3,2,3,3),
@@ -520,7 +491,7 @@ if (nrow(junb) && nrow(fosl2) && !is.na(junb$log2FoldChange) && !is.na(fosl2$log
 
 ```{r dmrt-decision}
 dmrt <- tg |> filter(category == "artifact_check") |>
-  dplyr::select(gene, mean_norm_CHD, mean_norm_HFD, detected, log2FoldChange, padj)
+  select(gene, mean_norm_CHD, mean_norm_HFD, detected, log2FoldChange, padj)
 
 knitr::kable(dmrt, caption="DMRT family expression status",
              digits=c(0,1,1,0,3,3))
@@ -540,7 +511,7 @@ if (all(!dmrt$detected, na.rm=TRUE)) {
 
 ```{r coactivator-decision}
 coact <- tg |> filter(gene %in% c("Ncoa1","Ncoa2","Ncoa3","Med1","Hsd11b1","Hsd11b2")) |>
-  dplyr::select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
+  select(gene, log2FoldChange, padj, mean_norm_CHD, mean_norm_HFD,
          bayes_P_HFD_gt_CHD, bayes_ER)
 
 knitr::kable(coact, digits=c(0,3,3,1,1,3,2),

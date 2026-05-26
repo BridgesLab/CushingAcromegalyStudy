@@ -2,9 +2,7 @@
 
 ## Overview
 
-Nextflow pipeline for differential chromatin accessibility analysis on the Hinte et al. (2023) ATAC-seq dataset (GSE236575), comparing high-fat diet (HFD) vs chow diet (CHD) mouse adipocytes. The pipeline aligns reads de novo, performs ATAC-specific BAM cleanup (deduplication, MAPQ filtering, mitochondrial-read removal, ENCODE blacklist filtering), calls peaks with MACS2, runs DESeq2 differential analysis, and runs AME and HOMER motif enrichment.
-
-The pipeline does **not** rely on Hinte's pre-called peaks for analysis. The authors' BED files are still downloaded but are used only as a concordance check against our re-called MACS2 peaks.
+This Nextflow pipeline performs comprehensive differential chromatin accessibility analysis on ATAC-seq data from the Hinte et al. study (GSE236575), comparing high-fat diet (HFD) versus chow diet (CHD) conditions in mouse adipocytes. The pipeline includes read alignment, peak counting, differential analysis with DESeq2, and transcription factor motif enrichment analysis.
 
 ## Study Information
 
@@ -14,10 +12,9 @@ The pipeline does **not** rely on Hinte's pre-called peaks for analysis. The aut
 - **Organism**: Mus musculus (mouse)
 - **Cell Type**: Adipocytes isolated using AdipER-Cre/NuTRAP mice
 - **Tissue**: Epididymal white adipose tissue (eWAT)
-- **Conditions used here**:
+- **Conditions**: 
   - Chow diet (CHD) control - 3 biological replicates
   - High-fat diet (HFD) for 12 weeks - 3 biological replicates
-- **Conditions excluded**: LCHD, LHFD (weight-loss arms), CC, HC (other comparison arms not used in this analysis)
 
 ## Samples Analyzed
 
@@ -30,239 +27,296 @@ The pipeline does **not** rely on Hinte's pre-called peaks for analysis. The aut
 | HFD_2     | SRR25146875   | HFD       | High-fat diet replicate 2 |
 | HFD_3     | SRR25146880   | HFD       | High-fat diet replicate 3 |
 
-## Conventions
-
-- **Genome build**: mm10 (GRCm38). UCSC release from `hgdownload.soe.ucsc.edu`.
-- **Chromosome naming**: UCSC-style `chr1, chr2, …, chrM, chrX, chrY` end-to-end.
-  Hinte's GEO BED files use Ensembl-style naming (`1, 2, …, MT, X, Y`); the
-  `EXTRACT_BED_FILES` process normalizes them (`MT → chrM`, prefix `chr` to numeric/X/Y).
-- **Liftover**: Not currently applied. If integrating with mm9 datasets (e.g.
-  Soccio 2015), apply `liftOver` with the `mm9ToMm10.over.chain.gz` chain file
-  before overlap and record the chain version alongside the lifted file.
-
 ## Pipeline Workflow
 
-### 1. Reference genome and indexing
+### 1. Reference Genome Preparation
 
-**Processes**: `DOWNLOAD_GENOME`, `BUILD_BOWTIE2_INDEX`, `GENOME_SIZES`
+**Process**: `DOWNLOAD_GENOME` and `BUILD_BOWTIE2_INDEX`
 
-- mm10 reference downloaded from UCSC (chr-prefixed)
-- bowtie2 index built for alignment
-- `samtools faidx` produces `mm10.chrom.sizes`
+- Downloads mm10 (GRCm38) reference genome from UCSC
+- Source: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz
+- Builds bowtie2 index for read alignment
 
-### 2. ENCODE blacklist
+**Key Parameters**:
+- Genome assembly: mm10 (GRCm38)
+- Chromosome naming: Uses "chr" prefix (chr1, chr2, etc.)
 
-**Process**: `DOWNLOAD_BLACKLIST`
+### 2. Peak File Processing
 
-Downloads the **mm10 blacklist v2** from the Boyle Lab (chr-prefixed BED). Applied at two points:
-1. BAM filtering (reads overlapping blacklist removed)
-2. Peak filtering (union peaks intersecting blacklist removed)
+**Process**: `DOWNLOAD_GEO_PEAKS`, `EXTRACT_BED_FILES`, `CREATE_UNION_PEAKS`
 
-URL: `https://github.com/Boyle-Lab/Blacklist/raw/master/lists/mm10-blacklist.v2.bed.gz`
+Downloads pre-called peaks from GEO (GSE236575_RAW.tar) containing FDR 0.01% stringent peaks called by the original authors.
 
-### 3. Hinte pre-called peaks (concordance only)
+**Peak Filtering**:
+- Included: Only CHD and HFD samples
+- Excluded: LCHD, LHFD, CC, and HC groups (not used in this analysis)
+- Mitochondrial peaks removed (chrM)
 
-**Processes**: `DOWNLOAD_GEO_PEAKS`, `EXTRACT_BED_FILES`
+**Union Peak Set Creation**:
+- Combines all peaks from CHD and HFD samples
+- Sorts by chromosome and position
+- Merges overlapping peaks using bedtools merge
+- Creates SAF (Simplified Annotation Format) file for read counting
 
-Downloads `GSE236575_RAW.tar` from GEO. The included BED files were called by the authors at "FDR 0.01% stringent" (peak-caller and exact parameters: see Hinte et al. 2023 Methods). These are **not** used for the differential analysis here — only for the `COMPARE_TO_HINTE` concordance check.
+**Output**: Union peak set containing ~59,587 peaks
 
-GEO supplementary filename conventions are unreliable across studies, so the filter uses substring matching: keep filenames containing `CHD` or `HFD`, exclude `LCHD`, `LHFD`, `CC`, `HC` (other arms of the study). All replicates within a condition are then merged into `hinte_CHD.bed` / `hinte_HFD.bed` — concordance is computed per condition rather than per replicate, which avoids needing to parse replicate numbers out of arbitrary filenames. Chromosome names are normalized to UCSC form on extraction. The full list of input files used is recorded in `bed_files/file_list.txt`.
+### 3. Read Alignment
 
-### 4. Read alignment
+**Process**: `DOWNLOAD_BAM`
 
-**Process**: `DOWNLOAD_AND_ALIGN`
+Downloads raw FASTQ files from SRA and aligns to mm10 reference genome.
 
-Downloads FASTQ from SRA via `fasterq-dump` and aligns to mm10 with bowtie2 using ATAC-appropriate parameters.
+**Alignment Parameters**:
+- Aligner: bowtie2
+- Mode: `--very-sensitive` (increased sensitivity for short reads)
+- Unmapped reads: Excluded with `--no-unal`
+- Paired-end data: Detected automatically
 
-**Parameters**:
-- `--very-sensitive` — increased sensitivity
-- `-X 2000` — allow long fragments common in ATAC libraries
-- `--no-mixed --no-discordant` — only properly paired alignments
+**Quality Control**:
+- BAM files sorted and indexed with samtools
+- Alignment statistics logged for each sample
+- BAM integrity verified with `samtools quickcheck`
 
-### 5. ATAC BAM filtering
+**Typical Alignment Statistics**:
+- ~73% properly paired reads
+- 100% mapped (after filtering with --no-unal)
+- ~2% singletons
 
-**Process**: `FILTER_BAM`
-
-Standard ATAC post-alignment cleanup. All steps are logged per sample in `bam_files/<sample>/<sample>.filter_stats.txt`.
-
-1. **Flag filter**: `samtools view -f 2 -F 1804 -q 30` — properly paired, primary, mapped, MAPQ ≥ 30
-2. **Duplicate removal**: `samtools fixmate` → coord-sort → `samtools markdup -r`
-3. **Mitochondrial reads removed**: chromosome list is taken from the BAM header itself, with `chrM` and `MT` excluded — naming-agnostic
-4. **Blacklist removal**: `bedtools intersect -v -abam` against ENCODE mm10 v2 blacklist
-
-Output: `<sample>.clean.bam` (indexed).
-
-### 6. Peak calling (MACS2)
-
-**Process**: `CALL_PEAKS_MACS2`
-
-Per-sample narrow peak calling on cleaned BAMs.
-
-**Parameters**:
-- `-f BAMPE` — paired-end mode (uses fragment ends directly; no `--shift`/`--extsize` needed)
-- `-g mm` — mouse genome size
-- `-q 0.01` — matches Hinte's stated stringency
-- `--nomodel --keep-dup all` — duplicates already removed in `FILTER_BAM`
-
-### 7. Union peak set
-
-**Process**: `CREATE_UNION_PEAKS`
-
-- Concatenate all 6 sample `narrowPeak` files
-- Defensive `chrM`/`MT` filter
-- Sort + `bedtools merge`
-- `bedtools intersect -v` against blacklist (defense in depth)
-- Generate SAF for featureCounts
-- `peak_stats.txt` reports total count, total bp coverage, per-chromosome counts
-
-### 8. Concordance with Hinte
-
-**Process**: `COMPARE_TO_HINTE`
-
-Two levels of comparison:
-
-1. **Per-sample**: each of the 6 MACS2 sample peak sets vs the matching condition's merged Hinte set (`hinte_CHD.bed` or `hinte_HFD.bed`).
-2. **Per-condition**: the union of all MACS2 peaks for a condition (all 3 reps merged) vs the matching merged Hinte set.
-
-Each comparison reports MACS2 peak count, Hinte peak count, number of MACS2 peaks overlapping a Hinte peak, and bedtools Jaccard index.
-
-Output: `hinte_concordance/concordance_report.txt` plus per-sample / per-condition `*_jaccard.txt`.
-
-Concordance lets you decide whether MACS2 stringency matches Hinte's well enough for downstream comparisons; large divergence is a flag to revisit MACS2 settings.
-
-#### Interpreting the report — Jaccard vs overlap rate
-
-The two columns answer different questions and can disagree dramatically. **Use the overlap rate, not the Jaccard, to judge whether the peak sets agree on locations.**
-
-- **`MACS2_overlapping / MACS2_peaks`** — fraction of our peaks that fall inside any Hinte peak. This is the biologically meaningful concordance metric.
-- **`Jaccard`** — `intersection_bp / union_bp`. This is dominated by *peak width*, not by location agreement. A narrow peak sitting entirely inside a broader one contributes a Jaccard equal to (narrow width / broad width), even though location agreement is perfect.
-
-In our run (May 2026), per-sample overlap rates were 97–99% but Jaccard was 0.07–0.14. The reason is a peak-width mismatch:
-
-| metric | MACS2 (ours) | Hinte (per-condition merged) | ratio |
-|---|---|---|---|
-| n peaks | 61,619 (union) | 52,385 (CHD) / 54,778 (HFD) | ~1.2 |
-| median width | 835 bp | 3,906 bp | 4.7x |
-| p90 width | 1,498 bp | 11,781 bp | 7.9x |
-
-Hinte's GEO BEDs are kilobase-scale regions (likely either MACS2 `--broad` mode, an HMM-based caller like HMMRATAC/Genrich, or post-call merging/extension), and the per-condition merge of 3 replicates widens them further. Our MACS2 narrowPeaks are higher-resolution, which is **preferred** for downstream motif enrichment (AME/HOMER) and overlap with reference ChIP-seq peaks (Soccio, Hu, etc.). Just be aware of the width difference if comparing peak counts/widths to Hinte's published numbers.
-
-To check peak widths yourself:
-```bash
-awk '{print $3-$2}' results/peaks/union_peaks.bed | sort -n | \
-  awk 'BEGIN{c=0;s=0}{a[c++]=$1;s+=$1}END{print "n="c,"median="a[int(c/2)],"mean="s/c,"p90="a[int(c*0.9)]}'
-awk '{print $3-$2}' results/bed_files/hinte_CHD.bed | sort -n | \
-  awk 'BEGIN{c=0;s=0}{a[c++]=$1;s+=$1}END{print "n="c,"median="a[int(c/2)],"mean="s/c,"p90="a[int(c*0.9)]}'
-```
-
-### 9. Read counting
+### 4. Read Counting
 
 **Process**: `COUNT_PEAKS`
 
-featureCounts on the union SAF (paired-end, both ends mapped, exclude chimeric).
+Counts reads overlapping each peak in the union peak set using featureCounts.
 
-### 10. ATAC QC
+**Counting Parameters**:
+- Format: SAF (Simplified Annotation Format)
+- Mode: Paired-end (`-p`)
+- Count read pairs: `--countReadPairs`
+- Both ends mapped: `-B`
+- Chimeric fragments: `-C` (exclude)
+- Multimapping: Default (count once)
 
-**Process**: `ATAC_QC`
+**Output**: Read count matrix with 59,587 peaks × 6 samples
 
-Per-sample QC, joined to BAMs by sample ID:
-- `<sample>_qc.txt`: clean read count, reads in peaks, FRiP
-- `<sample>_fragsize.txt`: fragment-size distribution (TLEN > 0, < 2000 bp)
-
-Healthy ATAC libraries typically show FRiP > 0.2 and a clear nucleosome-free vs mono-nucleosome periodicity in fragment size.
-
-### 11. Differential accessibility
+### 5. Differential Accessibility Analysis
 
 **Process**: `DESEQ2_ANALYSIS`
 
-DESeq2, HFD vs CHD (CHD as reference).
+Performs differential chromatin accessibility analysis using DESeq2.
 
-- FDR threshold: 0.05 (`params.fdr_threshold`)
-- |Log2FC| threshold: 1.0 (`params.lfc_threshold`)
-- Pre-filter: peaks with total counts ≥ 10 across all samples
-- Median-of-ratios normalization, Wald test, BH correction
+**Statistical Parameters**:
+- Comparison: HFD vs CHD (CHD as reference)
+- FDR threshold: 0.05 (5% false discovery rate)
+- Log2 fold-change threshold: 1.0 (2-fold change)
+- Low count filter: Peaks with total counts ≥ 10 across all samples
 
-Output BED files (chr-prefixed throughout):
-- `HFD_specific_peaks.bed` — significantly more accessible in HFD
-- `CHD_specific_peaks.bed` — significantly more accessible in CHD
-- `shared_peaks.bed` — non-significant background peaks
-- `significant_peaks.bed` — union of HFD- and CHD-specific
-- `deseq2_results.txt`, `deseq2_normalized_counts.txt`, `deseq2_plots.pdf`
+**Normalization**:
+- Method: DESeq2 median-of-ratios
+- Accounts for library size differences between samples
 
-### 12. Motif analysis
+**Statistical Testing**:
+- Test: Wald test
+- Multiple testing correction: Benjamini-Hochberg (FDR)
 
-**Processes**: `RESIZE_PEAKS`, `DOWNLOAD_JASPAR`, `EXTRACT_FASTA`, `RUN_AME`, `RUN_HOMER`
+**Peak Classification**:
+- **HFD-specific peaks**: Significantly increased accessibility in HFD (log2FC > 1, padj < 0.05)
+- **CHD-specific peaks**: Significantly decreased accessibility in HFD (log2FC < -1, padj < 0.05)
+- **Shared peaks**: Non-significant peaks (padj ≥ 0.05 or |log2FC| ≤ 1.0)
 
-- Peaks resized to 500 bp centered on each peak
-- AME (MEME Suite) against JASPAR 2024 CORE vertebrate non-redundant motifs
-- HOMER `findMotifsGenome.pl` for de novo + known motif enrichment
+**Outputs**:
+- `deseq2_results.txt`: Full results table with statistics for all peaks
+- `deseq2_normalized_counts.txt`: Normalized read counts
+- `deseq2_plots.pdf`: MA plot, volcano plot, and PCA
+- `HFD_specific_peaks.bed`: Peaks with increased accessibility in HFD
+- `CHD_specific_peaks.bed`: Peaks with decreased accessibility in HFD  
+- `shared_peaks.bed`: Background peaks (non-significant)
 
-Comparisons:
-1. `HFD_vs_CHD` — HFD-specific (foreground) vs CHD-specific (background)
-2. `HFD_vs_shared` — HFD-specific vs background (constitutive)
-3. `CHD_vs_shared` — CHD-specific vs background (constitutive)
+### 6. Motif Analysis Preparation
 
-The `shared_peaks.bed` background preserves accessibility bias — i.e. enrichment is over the full open-chromatin universe, not over the genome.
+**Processes**: `ADD_CHR_PREFIX`, `RESIZE_PEAKS`, `EXTRACT_FASTA`
+
+Prepares peak regions for motif analysis.
+
+**Peak Processing**:
+1. Add "chr" prefix to chromosome names (for genome compatibility)
+2. Resize peaks to 500 bp windows centered on peak summit
+3. Extract DNA sequences using bedtools getfasta
+4. Soft-mask repetitive sequences (lowercase)
+
+**Key Parameters**:
+- Window size: 500 bp (250 bp upstream and downstream of center)
+- Masking: Soft masking (repeats in lowercase)
+- Negative coordinates: Set to 0 if peak extends before chromosome start
+
+### 7. Motif Enrichment Analysis
+
+**Process**: `RUN_AME`
+
+Identifies known transcription factor binding motifs enriched in differential peaks using AME (Analysis of Motif Enrichment) from the MEME Suite.
+
+**Database**:
+- Source: JASPAR 2024 CORE vertebrates non-redundant
+- URL: https://jaspar.elixir.no/download/data/2024/CORE/
+- Format: MEME text format
+- Contains: Curated vertebrate transcription factor binding motifs
+
+**AME Parameters**:
+- Scoring method: `avg` (average odds score)
+- Statistical test: `ranksum` (Wilcoxon rank-sum test)
+- Hit fraction threshold: 0.25 (at least 25% of sequences must contain motif)
+- E-value threshold: 10 (report motifs with E-value < 10)
+
+**Comparisons Performed**:
+1. **HFD_vs_CHD**: HFD-specific peaks vs CHD-specific peaks
+2. **HFD_vs_shared**: HFD-specific peaks vs background (shared peaks)
+3. **CHD_vs_shared**: CHD-specific peaks vs background (shared peaks)
+
+**Rationale for Multiple Comparisons**:
+- Direct comparison (HFD vs CHD) identifies differentially enriched motifs
+- Background comparisons identify condition-specific enrichment over constitutive binding
+
+**Outputs**:
+- `ame.html`: Interactive HTML report with enriched motifs
+- `ame.tsv`: Tab-separated results with statistics
+- `sequences.tsv`: Motif matches in sequences
+
+### 8. De Novo Motif Discovery
+
+**Process**: `RUN_HOMER`
+
+Discovers novel and known transcription factor binding motifs using HOMER (Hypergeometric Optimization of Motif EnRichment).
+
+**HOMER Parameters**:
+- Motif size: 500 bp windows (centered on peaks)
+- Motif lengths: 8, 10, and 12 bp
+- Background: Condition-specific (same comparisons as AME)
+- Masking: Enabled (excludes repetitive sequences)
+- Threads: 4
+
+**Analysis Mode**:
+- De novo motif discovery: Enabled (finds novel motifs)
+- Known motif enrichment: Enabled (uses HOMER's built-in database)
+
+**Comparisons Performed**:
+1. **HFD_vs_CHD**: HFD-specific vs CHD-specific peaks
+2. **HFD_vs_shared**: HFD-specific vs background peaks
+3. **CHD_vs_shared**: CHD-specific vs background peaks
+
+**Outputs**:
+- `homerResults.html`: Visual summary of discovered motifs
+- `knownResults.txt`: Enrichment of known motifs
+- `homerMotifs.all.motifs`: All discovered motif PWMs
+- `motifFindingParameters.txt`: Analysis parameters
 
 ## Software Versions
 
-- Nextflow: 25.10.0.10289
-- bowtie2: 2.4.x
-- samtools: 1.21
-- bedtools: 2.31.1
-- MACS2: 2.2.x
-- featureCounts (subread): 2.0.3
-- R: 4.3.2
-- DESeq2: 1.46.0
-- MEME Suite (AME): 5.5.5
-- HOMER: 4.11.1
+- **Nextflow**: [25.10.0.10289]
+- **bowtie2**: [2.4.1]
+- **samtools**: [1.21]
+- **bedtools**: [2.31.1]
+- **featureCounts (subread)**: [2.0.3]
+- **R**: [R/4.3.2]
+- **DESeq2**: [1.46.0]
+- **MEME Suite (AME)**: [5.5.5]
+- **HOMER**: [4.11.1]
 
 ## Output Directory Structure
 
 ```
 results/
-├── genome/                          # mm10 reference + bowtie2 index + chrom.sizes
-├── blacklist/                       # ENCODE mm10 blacklist v2
-├── geo_data/                        # Hinte's GSE236575_RAW.tar (concordance only)
-├── bed_files/                       # Hinte BEDs, chr-normalized (concordance only)
-├── bam_files/<sample>/              # Per-sample raw + clean BAMs and filter stats
-│   ├── <sample>.raw.bam[.bai]
-│   ├── <sample>.clean.bam[.bai]
-│   ├── <sample>.filter_stats.txt
-│   └── <sample>_bowtie2.log
-├── macs2_peaks/<sample>/            # Per-sample MACS2 narrowPeak output
+├── genome/                          # Reference genome files
+│   ├── mm10.fa                      # mm10 reference genome
+│   └── mm10.*.bt2                   # Bowtie2 index files
+├── geo_data/                        # Downloaded GEO data
+│   └── GSE236575_RAW.tar
+├── bed_files/                       # Extracted peak files
 ├── peaks/                           # Union peak set
 │   ├── union_peaks.bed
 │   ├── union_peaks.saf
 │   └── peak_stats.txt
-├── hinte_concordance/
-│   ├── concordance_report.txt
-│   └── *_jaccard.txt
-├── counts/                          # featureCounts per sample
-├── count_matrix/                    # Combined count matrix + sample metadata
-├── qc/                              # FRiP + fragment-size distributions
-├── deseq2/                          # Differential accessibility results
+├── bam_files/                       # Aligned reads
+│   ├── CHD_1/
+│   │   ├── SRR25146881.bam
+│   │   └── SRR25146881.bam.bai
+│   └── [other samples...]
+├── counts/                          # Read counts per peak
+│   ├── CHD_1_counts.txt
+│   └── [other samples...]
+├── count_matrix/                    # Combined count matrix
+│   ├── count_matrix.txt
+│   └── sample_metadata.txt
+├── deseq2/                          # Differential analysis results
+│   ├── deseq2_results.txt          # Full statistical results
+│   ├── deseq2_normalized_counts.txt
+│   ├── deseq2_plots.pdf            # MA, volcano, PCA plots
+│   ├── significant_peaks.bed       # All significant peaks
+│   ├── HFD_specific_peaks.bed      # Increased in HFD
+│   ├── CHD_specific_peaks.bed      # Decreased in HFD
+│   └── shared_peaks.bed            # Background peaks
 └── motif_analysis/
-    ├── databases/                   # JASPAR 2024
-    ├── resized_peaks/               # 500-bp centered windows
-    ├── sequences/                   # FASTA per peak set
-    ├── ame_results/{HFD_vs_CHD,HFD_vs_shared,CHD_vs_shared}/
-    └── homer_results/{HFD_vs_CHD,HFD_vs_shared,CHD_vs_shared}/
+    ├── databases/                   # Motif databases
+    │   └── JASPAR2024_CORE_vertebrates_non-redundant.meme
+    ├── bed_files/                   # Chr-prefixed BED files
+    ├── resized_peaks/               # 500bp centered windows
+    ├── sequences/                   # Extracted FASTA sequences
+    ├── ame_results/                 # AME motif enrichment
+    │   ├── HFD_vs_CHD/
+    │   │   ├── ame.html
+    │   │   ├── ame.tsv
+    │   │   └── sequences.tsv
+    │   ├── HFD_vs_shared/
+    │   └── CHD_vs_shared/
+    └── homer_results/               # HOMER de novo discovery
+        ├── HFD_vs_CHD/
+        │   ├── homerResults.html
+        │   ├── knownResults.txt
+        │   └── homerMotifs.all.motifs
+        ├── HFD_vs_shared/
+        └── CHD_vs_shared/
 ```
 
-## Pipeline Parameters
+## Key Results Files
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `sra_accession`      | PRJNA991593 | SRA project ID |
-| `geo_accession`      | GSE236575   | GEO series ID |
-| `outdir`             | results     | Output directory |
-| `genome_dir`         | results/genome | Genome files location |
-| `fdr_threshold`      | 0.05        | DESeq2 FDR cutoff |
-| `lfc_threshold`      | 1.0         | DESeq2 |Log2FC| cutoff |
-| `macs2_qvalue`       | 0.01        | MACS2 q-value cutoff (matches Hinte's stringency) |
-| `mapq_threshold`     | 30          | Post-alignment MAPQ filter |
-| `blacklist_url`      | Boyle Lab mm10 v2 | ENCODE blacklist |
+### Differential Accessibility
+
+**deseq2_results.txt**: Complete results table with columns:
+- `chr`, `start`, `end`: Peak coordinates
+- `baseMean`: Mean normalized counts across samples
+- `log2FoldChange`: Log2 fold change (HFD vs CHD)
+- `lfcSE`: Standard error of log2FC
+- `stat`: Wald test statistic
+- `pvalue`: Raw p-value
+- `padj`: Adjusted p-value (FDR)
+- `peak_id`: Unique peak identifier
+
+**Peak BED files**: Can be used for:
+- Visualization in genome browsers (IGV, UCSC)
+- Overlap analysis with other datasets
+- Gene annotation with tools like ChIPseeker or HOMER annotatePeaks.pl
+
+### Motif Analysis
+
+**AME results**: Identifies which known transcription factors are enriched
+- Focus on motifs with E-value < 0.05
+- Consider biological relevance (e.g., metabolism-related TFs for adipocyte study)
+
+**HOMER results**: Discovers novel motifs and validates known motifs
+- De novo motifs may represent poorly characterized TF binding sites
+- Compare HOMER known motif results with AME for validation
+
+## Computational Resources
+
+### Minimum Requirements
+- CPUs: 8 cores
+- Memory: 32 GB RAM
+- Storage: 100 GB free space
+- Time: ~24-48 hours for complete pipeline
+
+### Process-Specific Resources
+- **Genome indexing**: 8 CPUs, 32 GB RAM, ~1 hour
+- **Read alignment**: 8 CPUs, 32 GB RAM, ~2-4 hours per sample
+- **DESeq2 analysis**: 1 CPU, 16 GB RAM, ~10 minutes
+- **HOMER analysis**: 8 CPUs, 32 GB RAM, ~2-4 hours per comparison
 
 ## Running the Pipeline
 
@@ -277,44 +331,220 @@ nextflow run main.nf -resume
 nextflow run main.nf \
   --outdir my_results \
   --fdr_threshold 0.01 \
-  --lfc_threshold 1.5 \
-  --macs2_qvalue 0.05
+  --lfc_threshold 1.5
 ```
 
-## Quality Control Checklist
+## Pipeline Parameters
 
-Before treating any output as a preliminary figure:
+Modifiable parameters in `main.nf`:
 
-- **Alignment rate** (`*_bowtie2.log`): >70% expected for ATAC.
-- **Filter stats** (`<sample>.filter_stats.txt`): mitochondrial fraction is typically 20–80% in mouse adipocyte ATAC; high mt fraction (>90%) is a library-quality flag.
-- **FRiP** (`<sample>_qc.txt`): ≥ 0.20 is acceptable, ≥ 0.30 is good.
-- **Fragment size** (`<sample>_fragsize.txt`): clear nucleosome-free peak (~50–150 bp) and a mono-nucleosome peak (~180–250 bp).
-- **PCA** (`deseq2_plots.pdf`): samples should cluster by condition.
-- **Hinte concordance** (`concordance_report.txt`): low Jaccard (<0.3) is a flag to revisit MACS2 settings vs Hinte's stringency.
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `sra_accession` | PRJNA991593 | SRA project ID |
+| `geo_accession` | GSE236575 | GEO series ID |
+| `outdir` | results | Output directory |
+| `genome_dir` | results/genome | Genome files location |
+| `fdr_threshold` | 0.05 | FDR cutoff for significance |
+| `lfc_threshold` | 1.0 | Log2 fold-change cutoff |
 
-## Known Gaps / Future Work
+## Quality Control Considerations
 
-- TSS enrichment is not computed; would require a mm10 GTF (e.g. GENCODE).
-- IDR-based peak consensus is not used; consensus is by `bedtools merge` of per-sample MACS2 calls.
-- mm9→mm10 liftover is not in the pipeline; needs to be applied separately when integrating Soccio 2015.
+### Alignment Quality
+- Check bowtie2 alignment rates in `*_bowtie2.log` files
+- Expected: >70% overall alignment rate for ATAC-seq
+- Flag samples with <50% alignment rate
 
-## Reproducibility Metadata
+### Library Size
+- Check total read counts in count matrix
+- Large differences (>3-fold) may indicate library prep issues
+- DESeq2 normalization accounts for library size
 
-When committing or sharing results, capture in this README (or a sibling `processing_log.md`):
+### Sample Clustering
+- Examine PCA plot in `deseq2_plots.pdf`
+- Samples should cluster by condition
+- Outliers may need investigation or removal
 
-- Date of last full run
-- Commit SHA of `main.nf` used
-- Versions of all tools (above is the reference; verify in your environment)
-- Blacklist version (Boyle Lab mm10 v2 unless overridden)
-- Liftover chain file version (if applied)
+### Differential Analysis
+- Check dispersion estimates (should be reasonable for ATAC-seq)
+- MA plot should show symmetric distribution around log2FC = 0
+- Consider biological relevance of differential peaks
+
+## Interpreting Results
+
+### Biological Context
+This analysis identifies chromatin regions with differential accessibility between HFD and CHD conditions in adipocytes, which may indicate:
+- Changes in transcription factor binding
+- Alterations in gene regulatory programs
+- Metabolic adaptations to high-fat diet
+
+### Motif Enrichment
+Enriched motifs suggest:
+- **Transcription factors** whose activity differs between conditions
+- **Regulatory pathways** activated/repressed by HFD
+- **Potential therapeutic targets** for metabolic disease
+
+### Recommended Follow-up Analyses
+1. Gene annotation of differential peaks (nearest genes, genomic features)
+2. Pathway enrichment analysis of genes near differential peaks
+3. Integration with RNA-seq data from same conditions
+4. Validation of key findings with ChIP-seq for specific TFs
+5. Functional validation of candidate regulatory regions
+
+---
+
+## RNA-seq (TRAP) Integration Branch
+
+### Overview
+
+A parallel RNA-seq branch processes **GSE236578 [TRAP]**, the companion
+TRAP-seq dataset from the same AdipER-Cre/NuTRAP eWAT adipocytes used for
+ATAC-seq (Hinte et al. 2024; PMID 39558077; part of super-series GSE236580).
+TRAP-seq captures actively translated transcripts specifically from adipocytes,
+avoiding stromal-vascular contamination.
+
+### RNA-seq Samples
+
+| Sample ID | GSM | SRR | Condition |
+|-----------|-----|-----|-----------|
+| CHD_1 | GSM7558266 | SRR25152278 | Chow diet |
+| CHD_2 | GSM7558271 | SRR25152274 | Chow diet |
+| CHD_3 | GSM7558276 | SRR25152266 | Chow diet |
+| HFD_1 | GSM7558267 | SRR25152277 | High-fat diet |
+| HFD_2 | GSM7558272 | SRR25152273 | High-fat diet |
+| HFD_3 | GSM7558277 | SRR25152265 | High-fat diet |
+
+Library: PE150, template switching (Maxima H Minus RT), unstranded.
+
+### RNA-seq Pipeline Steps
+
+#### 13. GTF download — `DOWNLOAD_GTF`
+
+Downloads **GENCODE vM25** annotation (last mm10/GRCm38 release) from EBI.
+URL: `https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz`
+
+#### 14. STAR index — `BUILD_STAR_INDEX`
+
+Builds STAR index from mm10 FASTA + GENCODE vM25 GTF.
+- `--sjdbOverhang 149` (PE150 − 1)
+- Requires ~32 GB RAM; run on a high-memory node.
+
+#### 15. FASTQ download and trimming — `RNASEQ_DOWNLOAD_AND_TRIM`
+
+`fasterq-dump` → Trim Galore paired-end:
+- Auto-detects Illumina adapters
+- Quality trimming: `--quality 20 --length 30`
+- Gzip output
+
+Template-switching libraries (Maxima H Minus RT) may have TSO artifact
+bases at the 5' end; quality trimming with `--length 30` removes most.
+
+#### 16. STAR alignment — `RNASEQ_ALIGN`
+
+Paired-end alignment to mm10:
+- `--outFilterMultimapNmax 1` — unique mappers only
+- Output: coordinate-sorted BAM + `Log.final.out` alignment summary
+
+#### 17. BigWig generation
+
+- **`RNASEQ_BIGWIG`**: CPM-normalised, 50 bp bins, blacklist-excluded.
+  Output: `results/rnaseq/bigwig/<sample_id>.CPM.bw`
+- **`ATAC_BIGWIG`**: RPGC-normalised (mm10 effective gs = 2,494,787,188),
+  10 bp bins, read-extended.
+  Output: `results/bigwig/atac/<sample_id>.RPGC.bw`
+
+Both BigWig sets are produced for locus-track visualization at
+Hsd11b1, Fkbp5, Vdr, Junb, Fosl2.
+
+#### 18. Gene quantification — `RNASEQ_COUNT_GENES`
+
+featureCounts gene-level quantification:
+- GTF: GENCODE vM25
+- Feature grouping: `gene_name`
+- Strandness: `-s 0` (unstranded; confirmed for template-switching libraries)
+- Paired-end: `-p --countReadPairs -B -C`
+
+#### 19. Count matrix — `RNASEQ_COMBINE_COUNTS`
+
+Python merge of per-sample featureCounts files into `rnaseq_count_matrix.txt`
+(same logic as `COMBINE_COUNTS` in the ATAC branch).
+
+#### 20. DESeq2 differential expression — `RNASEQ_DESEQ2`
+
+DESeq2 HFD vs CHD (CHD reference). FDR < 0.05, |LFC| > 0.585 (log2(1.5)).
+
+**Targeted gene table** (`rnaseq_targeted_genes.tsv`): 40 genes across five
+categories with log2FC, padj, and Bayesian posterior statistics computed via
+analytical Normal(0,1) conjugate update on the DESeq2 Wald estimates:
+
+| Column | Definition |
+|--------|------------|
+| `bayes_P_HFD_gt_CHD` | Posterior P(β > 0), i.e. P(HFD > CHD) |
+| `bayes_ER` | Evidence ratio P(β>0)/P(β<0) |
+| `bayes_CrI_lo/hi` | 95% credible interval on log2FC |
+
+These statistics are equivalent to brms posteriors under Normal(0,1) priors
+on fixed effects with a Gaussian likelihood from the DESeq2 Wald test.
+
+### RNA-seq Integration Analysis
+
+`rnaseq-integration.qmd` implements:
+
+1. **Dataset confirmation** — sample table and library metadata
+2. **Global DE summary** — volcano plot with targeted genes highlighted
+3. **Targeted gene table** — all 40 candidates with Bayesian stats and category labels
+4. **ATAC × RNA-seq integration** — peak annotation to nearest gene, Fisher
+   enrichment test (HFD-up ATAC near HFD-up RNA), motif-class stratification
+5. **Decision outputs** — automated verdict for:
+   - AP-1 lead (Junb vs Fosl2)
+   - DMRT family expression status (artifact verification)
+   - Coactivator (NCOA1/2/3, MED1) and HSD11B1 expression status
+
+### New Software Dependencies
+
+| Tool | Version | Use |
+|------|---------|-----|
+| STAR | 2.7.x | RNA-seq alignment |
+| Trim Galore | 0.6.x | Adapter/quality trimming |
+| deepTools | 3.5.x | BigWig generation (`bamCoverage`) |
+| wiggletools | 1.2.x | Condition-merged BigWig tracks (optional; shell step in QMD) |
+
+Existing tools (featureCounts, DESeq2, R, samtools) are reused from the ATAC branch.
+
+### RNA-seq Output Directory Structure
+
+```
+results/
+└── rnaseq/
+    ├── trimmed/<sample>/       # Trim Galore reports
+    ├── bam/<sample>/           # STAR BAMs + alignment logs
+    ├── bigwig/                 # <sample_id>.CPM.bw per-sample tracks
+    ├── counts/                 # featureCounts per-sample
+    ├── count_matrix/           # rnaseq_count_matrix.txt + rnaseq_sample_metadata.txt
+    └── deseq2/
+        ├── rnaseq_deseq2_results.txt       # Full DE results
+        ├── rnaseq_normalized_counts.txt    # DESeq2 normalised counts
+        ├── rnaseq_targeted_genes.tsv       # 40-gene targeted table
+        └── rnaseq_deseq2_plots.pdf         # MA, volcano, PCA, forest plot
+
+results/bigwig/atac/           # <sample_id>.RPGC.bw ATAC tracks
+results/genome/
+    ├── gencode.vM25.annotation.gtf        # NEW (GENCODE vM25)
+    └── star_index/                        # NEW (STAR mm10 index)
+```
+
+---
 
 ## Citation
 
-- Original study: Hinte et al. (2023) GSE236575
-- DESeq2: Love, Huber, Anders (2014) Genome Biology
-- MACS2: Zhang et al. (2008) Genome Biology
-- ENCODE blacklist: Amemiya, Kundaje, Boyle (2019) Scientific Reports
-- JASPAR 2024: Castro-Mondragon et al. (2024) NAR
-- MEME Suite: Bailey et al. (2015) NAR
+If you use this pipeline, please cite:
+
+- Original study: Hinte et al. (2024) PMID 39558077
+- DESeq2: Love, Huber, and Anders (2014) Genome Biology
+- JASPAR 2024: Castro-Mondragon et al. (2024) Nucleic Acids Research
+- MEME Suite: Bailey et al. (2015) Nucleic Acids Research
 - HOMER: Heinz et al. (2010) Molecular Cell
 - Bowtie2: Langmead and Salzberg (2012) Nature Methods
+- STAR: Dobin et al. (2013) Bioinformatics
+- deepTools: Ramírez et al. (2016) Nucleic Acids Research
+- Trim Galore: Krueger (2023) https://github.com/FelixKrueger/TrimGalore
+
