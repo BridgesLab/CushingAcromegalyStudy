@@ -812,6 +812,210 @@ if (n_jun > 0 && n_promoter > 0) {
 
 ---
 
+## 7. AP-1 + GR composite peak scan
+
+The "composite-enhancer" model predicts that HFD-opened chromatin disproportionately
+carries **both AP-1 and GR motifs** — AP-1 pioneers accessibility, licensing
+glucocorticoid receptor binding at sites that would otherwise be inaccessible.
+We test this by classifying each HFD-specific peak and each shared (background)
+peak as AP-1-only, GR-only, both, or neither.
+
+**Motif definitions used:**
+
+- **AP-1 class** — 35 JASPAR 2024 motifs: JUN/JUNB/JUND, FOS/FOSB/FOSL1/FOSL2,
+  BATF/BATF3, ATF3, and all pairwise JUN·FOS heterodimer motifs;
+  detected via FIMO (p < 1×10⁻⁴) in 500-bp peak windows.
+- **GR class** — NR3C1 (MA0113.4), Pgr (MA2323.1), and PGR (MA2327.1);
+  the progesterone-receptor motifs share an IR3 half-site biochemically
+  indistinguishable from the canonical GR response element.
+
+### 7.1 GR motif presence in HFD-specific peaks
+
+```{r gr-presence-panel}
+#| fig-width: 5
+#| fig-height: 3.5
+
+# AnnotationDbi masks dplyr::select — use explicit namespace throughout
+select <- dplyr::select
+
+# GR-class motif columns (NR3C1 + Pgr/PGR as IR3 proxy)
+gr_motif_ids <- c("MA0113.4", "MA2323.1", "MA2327.1")
+
+hfd_gr_raw <- read_tsv(
+  "results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv",
+  show_col_types = FALSE
+)
+
+gr_cols_present <- intersect(gr_motif_ids, names(hfd_gr_raw))
+hfd_gr_classified <- hfd_gr_raw |>
+  mutate(has_gr = rowSums(across(all_of(gr_cols_present))) > 0)
+
+n_total  <- nrow(hfd_gr_classified)
+n_gr     <- sum(hfd_gr_classified$has_gr)
+pct_gr   <- round(100 * n_gr / n_total, 1)
+
+gr_bar_df <- tibble(
+  category = factor(c("GR motif present", "No GR motif"),
+                    levels = c("No GR motif", "GR motif present")),
+  n   = c(n_gr, n_total - n_gr),
+  pct = c(pct_gr, 100 - pct_gr)
+)
+
+ggplot(gr_bar_df, aes(x = category, y = pct, fill = category)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%d\n(%.1f%%)", n, pct)),
+            vjust = -0.3, size = 3.5) +
+  scale_fill_manual(values = c("GR motif present" = "#d62728",
+                               "No GR motif"      = "#aec7e8")) +
+  scale_y_continuous(limits = c(0, 110), expand = c(0, 0)) +
+  labs(
+    title    = "GR-class motif presence in HFD-specific peaks",
+    subtitle = sprintf("N = %d HFD-specific peaks; GR-class = NR3C1 / Pgr / PGR (JASPAR 2024)",
+                       n_total),
+    x = NULL, y = "Percentage of peaks (%)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(axis.text.x = element_text(size = 11))
+```
+
+`r sprintf("**%d / %d** (%.1f%%) HFD-specific peaks carry a GR-class (NR3C1/Pgr/PGR) motif.", n_gr, n_total, pct_gr)`
+
+### 7.2 AP-1 + GR composite scan — stacked bar
+
+```{r ap1-gr-stacked-bar}
+#| fig-width: 6
+#| fig-height: 4.5
+
+# AP-1 motif IDs in JASPAR 2024 (JUN/FOS/BATF core + heterodimers + ATF3)
+ap1_ids <- c(
+  "MA0099.4", "MA0462.3", "MA0476.2", "MA0477.3", "MA0478.2",
+  "MA0488.2", "MA0489.3", "MA0490.3", "MA0491.3", "MA0492.2",
+  "MA0605.3", "MA1126.2", "MA1127.1", "MA1128.2", "MA1129.1",
+  "MA1130.2", "MA1131.2", "MA1132.2", "MA1133.2", "MA1134.2",
+  "MA1135.2", "MA1136.1", "MA1137.2", "MA1138.2", "MA1139.2",
+  "MA1140.3", "MA1141.2", "MA1142.2", "MA1143.2", "MA1144.2",
+  "MA1145.2", "MA1634.2", "MA0835.3", "MA1951.2", "MA1988.2"
+)
+
+# --- HFD-specific peaks: AP-1 from full motif scan ---
+hfd_full <- read_tsv(
+  "results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv",
+  show_col_types = FALSE
+)
+ap1_cols_hfd <- intersect(ap1_ids, names(hfd_full))
+hfd_ap1 <- hfd_full |>
+  select(peak, all_of(ap1_cols_hfd)) |>
+  mutate(has_ap1 = rowSums(across(all_of(ap1_cols_hfd))) > 0) |>
+  select(peak, has_ap1)
+
+hfd_classified <- hfd_ap1 |>
+  left_join(hfd_gr_classified |> select(peak, has_gr), by = "peak") |>
+  mutate(
+    motif_cat = case_when(
+      has_ap1 &  has_gr ~ "Both (AP-1 + GR)",
+      has_ap1 & !has_gr ~ "AP-1 only",
+     !has_ap1 &  has_gr ~ "GR only",
+      TRUE              ~ "Neither"
+    ),
+    peak_set = "HFD-specific\n(n = 6,900)"
+  )
+
+# --- Shared peaks: AP-1 from pre-computed FIMO scan ---
+shared_ap1_file <- "results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv"
+
+shared_gr_raw <- read_tsv(
+  "results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv",
+  show_col_types = FALSE
+)
+gr_cols_shared <- intersect(gr_motif_ids, names(shared_gr_raw))
+shared_gr_classified <- shared_gr_raw |>
+  mutate(has_gr = rowSums(across(all_of(gr_cols_shared))) > 0)
+
+if (file.exists(shared_ap1_file)) {
+  shared_ap1 <- read_tsv(shared_ap1_file, show_col_types = FALSE)
+  shared_classified <- shared_ap1 |>
+    left_join(shared_gr_classified |> select(peak, has_gr), by = "peak") |>
+    mutate(
+      motif_cat = case_when(
+        has_ap1 &  has_gr ~ "Both (AP-1 + GR)",
+        has_ap1 & !has_gr ~ "AP-1 only",
+       !has_ap1 &  has_gr ~ "GR only",
+        TRUE              ~ "Neither"
+      ),
+      peak_set = sprintf("Shared\n(n = %s)", format(nrow(shared_gr_classified), big.mark=","))
+    )
+
+  # --- Combine and plot ---
+  cat_order <- c("Both (AP-1 + GR)", "GR only", "AP-1 only", "Neither")
+  cat_colors <- c(
+    "Both (AP-1 + GR)" = "#d62728",
+    "GR only"          = "#ff7f0e",
+    "AP-1 only"        = "#1f77b4",
+    "Neither"          = "#d3d3d3"
+  )
+
+  all_peaks <- bind_rows(hfd_classified, shared_classified) |>
+    count(peak_set, motif_cat) |>
+    group_by(peak_set) |>
+    mutate(
+      pct      = 100 * n / sum(n),
+      motif_cat = factor(motif_cat, levels = cat_order)
+    ) |>
+    ungroup() |>
+    mutate(peak_set = factor(peak_set,
+                             levels = c("HFD-specific\n(n = 6,900)",
+                                        sprintf("Shared\n(n = %s)",
+                                                format(nrow(shared_gr_classified), big.mark=",")))))
+
+  # Label only categories ≥ 1%
+  label_df <- all_peaks |> filter(pct >= 1)
+
+  ggplot(all_peaks, aes(x = peak_set, y = pct, fill = motif_cat)) +
+    geom_col(position = "stack", width = 0.55) +
+    geom_text(data = label_df,
+              aes(label = sprintf("%.1f%%", pct)),
+              position = position_stack(vjust = 0.5),
+              size = 3.2, colour = "white", fontface = "bold") +
+    scale_fill_manual(values = cat_colors, name = "Motif content") +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 101)) +
+    labs(
+      title    = "AP-1 + GR composite motif content by peak class",
+      subtitle = "FIMO p < 1×10⁻⁴; AP-1 = 35 JUN/FOS/BATF motifs; GR = NR3C1/Pgr/PGR",
+      x = NULL, y = "Percentage of peaks (%)"
+    ) +
+    theme_classic(base_size = 12) +
+    theme(legend.position = "right",
+          axis.text.x = element_text(size = 11))
+
+} else {
+  message("Pre-computed shared AP-1 scan not found at:\n  ", shared_ap1_file,
+          "\nRun the FIMO step first (see Section 7 setup notes).")
+}
+```
+
+```{r ap1-gr-fisher}
+# Fisher exact test: enrichment of AP-1+GR co-occurrence in HFD vs shared peaks
+if (file.exists(shared_ap1_file) && exists("shared_classified")) {
+  hfd_both   <- sum(hfd_classified$motif_cat == "Both (AP-1 + GR)")
+  hfd_n      <- nrow(hfd_classified)
+  shared_both <- sum(shared_classified$motif_cat == "Both (AP-1 + GR)")
+  shared_n    <- nrow(shared_classified)
+
+  tab <- matrix(c(hfd_both,    hfd_n    - hfd_both,
+                  shared_both, shared_n - shared_both), nrow = 2)
+  ft  <- fisher.test(tab, alternative = "greater")
+
+  cat(sprintf(
+    "AP-1 + GR co-occurrence:\n  HFD-specific: %d / %d (%.1f%%)\n  Shared:       %d / %d (%.1f%%)\n  OR = %.2f, p = %.2e\n",
+    hfd_both, hfd_n, 100*hfd_both/hfd_n,
+    shared_both, shared_n, 100*shared_both/shared_n,
+    ft$estimate, ft$p.value
+  ))
+}
+```
+
+---
+
 ## Session information
 
 ```{r session-info}

@@ -510,6 +510,11 @@ on fixed effects with a Gaussian likelihood from the DESeq2 Wald test.
 6. **Fkbp5 AP-1 motif scan** — JASPAR2020 vertebrate PWM scan (746 motifs) across
    the Fkbp5 locus (chr4:99,936,000–100,078,000 mm10); confirms dense Jun-family
    occupancy (542 promoter hits; 4,099 Jun-family hits across the locus)
+7. **AP-1 + GR composite peak scan** — classifies every HFD-specific peak and every
+   shared (background) peak as AP-1-only / GR-only / both / neither, and tests
+   whether the composite AP-1+GR category is enriched in HFD-opened chromatin.
+   See [AP-1 + GR composite scan](#ap-1--gr-composite-peak-scan) below for full
+   method details.
 
 `expression-barplots.qmd` generates mean ± SE expression barplots (CHD vs HFD)
 in TPM for user-defined gene sets. TPM is computed from DESeq2 normalised counts
@@ -547,6 +552,119 @@ results/bigwig/atac/           # <sample_id>.RPGC.bw ATAC tracks
 results/genome/
     ├── gencode.vM25.annotation.gtf        # NEW (GENCODE vM25)
     └── star_index/                        # NEW (STAR mm10 index)
+```
+
+---
+
+## AP-1 + GR Composite Peak Scan
+
+### Motivation
+
+The "composite-enhancer" model predicts that HFD-opened chromatin disproportionately
+carries **both AP-1 and GR motifs**: AP-1 (led by Junb) acts as a pioneer factor to
+open chromatin, licensing glucocorticoid receptor (GR) binding at sites that would
+otherwise be inaccessible. Section 7 of `rnaseq-integration.qmd` tests this directly by
+classifying peaks into four mutually exclusive categories: AP-1-only, GR-only, both, or
+neither, and comparing the distributions between HFD-specific and shared (background) peaks.
+
+### Motif definitions
+
+| Class | Motif IDs (JASPAR 2024) | Rationale |
+|-------|------------------------|-----------|
+| **AP-1** | 35 motifs: JUN, JUNB, JUND, Jun (MA0488.2, MA0490.3, MA0491.3, MA0492.2, MA0489.3), FOS, FOSL1, FOSL2 (MA0476.2, MA1951.2, MA0477.3, MA0478.2), BATF, BATF3 (MA1634.2, MA0835.3), ATF3 (MA0605.3, MA1988.2), and all pairwise JUN·FOS heterodimer motifs | Core bZIP AP-1 super-family; heterodimers included because Junb/Fos and Junb/Atf3 heterodimers are the likely active complexes |
+| **GR-class** | NR3C1 (MA0113.4), Pgr (MA2323.1), PGR (MA2327.1) | NR3C1 is the glucocorticoid receptor; Pgr/PGR share an IR3 half-site biochemically indistinguishable from the GR response element and are included as proxies |
+
+Detection threshold: FIMO p < 1×10⁻⁴ within 500-bp peak windows.
+
+### Input files
+
+| File | Source | Contents |
+|------|--------|----------|
+| `results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv` | FIMO, all JASPAR 2024 motifs | Per-peak hit counts for all 746 motifs across 6,900 HFD-specific peaks; AP-1 columns extracted by ID |
+| `results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv` | FIMO, pioneer + GR motifs | Per-peak hit counts for 8 pioneer/GR motifs (FOXA1/2, CEBPA/B, FOXO1, NR3C1, Pgr/PGR) across HFD-specific peaks |
+| `results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv` | FIMO, pioneer + GR motifs | Same 8 motifs across 53,397 shared peaks |
+| `results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv` | Generated (see below) | Per-peak AP-1 presence (TRUE/FALSE) for shared peaks |
+
+### Generating the shared-peaks AP-1 scan
+
+The full motif scan exists only for HFD-specific peaks. AP-1 presence for shared peaks
+must be computed once before rendering:
+
+```bash
+# 1. Extract AP-1 motifs from JASPAR 2024 database
+python3 - <<'EOF'
+import re, sys
+motif_ids = set("""MA0099.4 MA0462.3 MA0476.2 MA0477.3 MA0478.2
+MA0488.2 MA0489.3 MA0490.3 MA0491.3 MA0492.2
+MA0605.3 MA1126.2 MA1127.1 MA1128.2 MA1129.1
+MA1130.2 MA1131.2 MA1132.2 MA1133.2 MA1134.2
+MA1135.2 MA1136.1 MA1137.2 MA1138.2 MA1139.2
+MA1140.3 MA1141.2 MA1142.2 MA1143.2 MA1144.2
+MA1145.2 MA1634.2 MA0835.3 MA1951.2 MA1988.2""".split())
+DB = "results/motif_analysis/databases/JASPAR2024_CORE_vertebrates_non-redundant.meme"
+with open(DB) as f: content = f.read()
+header = content[:content.find('\nMOTIF ')]
+blocks = re.split(r'(?=\nMOTIF )', content[content.find('\nMOTIF '):])
+selected = [b for b in blocks if re.match(r'\nMOTIF (\S+)', b) and
+            re.match(r'\nMOTIF (\S+)', b).group(1) in motif_ids]
+with open('/tmp/jaspar_ap1.meme', 'w') as out:
+    out.write(header)
+    for b in selected: out.write(b)
+EOF
+
+# 2. Rename FASTA headers so FIMO keeps them intact
+#    (FIMO auto-parses chr:start-end as genomic coords, stripping the peak ID)
+FA=results/motif_analysis/motif_analysis/sequences/shared.fa
+sed 's/^>\(chr[^:]*\):\([0-9]*\)-\([0-9]*\)$/>\1_\2_\3/' $FA > /tmp/shared_renamed.fa
+
+# 3. Run FIMO
+fimo --thresh 1e-4 --max-strand --oc /tmp/fimo_shared_ap1 \
+     /tmp/jaspar_ap1.meme /tmp/shared_renamed.fa
+
+# 4. Build per-peak presence table in R
+Rscript - <<'REOF'
+library(tidyverse)
+fimo <- read_tsv("/tmp/fimo_shared_ap1/fimo.tsv", comment="#", show_col_types=FALSE) |>
+  filter(!is.na(motif_id))
+peaks_with_ap1 <- fimo |>
+  distinct(sequence_name) |>
+  mutate(
+    parts = str_split(sequence_name, "_"),
+    chr   = map_chr(parts, ~ paste(.x[seq_len(max(1, length(.x)-2))], collapse="_")),
+    start = map_chr(parts, ~ .x[length(.x)-1]),
+    end   = map_chr(parts, ~ .x[length(.x)]),
+    peak  = paste0(chr, ":", start, "-", end)
+  ) |> pull(peak)
+shared_gr <- read_tsv(
+  "results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv",
+  show_col_types=FALSE)
+write_tsv(
+  shared_gr |> select(peak) |> mutate(has_ap1 = peak %in% peaks_with_ap1),
+  "results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv"
+)
+REOF
+```
+
+**Note on FASTA files:** Two sets of 500-bp resized peak windows exist with different
+centres. The GR composite scan and full motif scan use
+`results/motif_analysis/motif_analysis/sequences/` (nested path); the AME/HOMER scans
+use `results/motif_analysis/sequences/`. Always use the nested path when adding motif
+scans that need to be compared to GR composite scan peak IDs.
+
+### Key results
+
+- **1,526 / 6,900 (22.1%)** HFD-specific peaks carry a GR-class motif.
+- AP-1+GR co-occurrence: **9.6% of HFD-specific peaks** vs **7.7% of shared peaks**
+  (OR = 1.28, p = 2.3×10⁻⁸, Fisher exact one-sided).
+- HFD-specific peaks are AP-1-enriched overall (42.5% AP-1-positive vs 35.6% shared),
+  consistent with Junb as the chromatin pioneer at GR-responsive loci.
+
+### Output directory additions
+
+```
+results/motif_analysis/composite_scan/
+└── shared/
+    └── shared_ap1_per_peak.tsv   # peak, has_ap1 (TRUE/FALSE); 53,397 rows
 ```
 
 ---

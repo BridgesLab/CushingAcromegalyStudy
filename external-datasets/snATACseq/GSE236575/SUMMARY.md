@@ -169,11 +169,42 @@ The strategies are not mutually exclusive. A combined experiment — Junb OE + F
 
 ---
 
+## 7. AP-1 + GR composite peak scan
+
+### 7.1 GR motif presence in HFD-specific peaks
+
+**1,526 / 6,900 HFD-specific peaks (22.1%)** carry a GR-class motif (NR3C1 MA0113.4, or the
+biochemically equivalent Pgr/PGR IR3 motifs MA2323.1/MA2327.1; FIMO p < 1×10⁻⁴).
+
+### 7.2 AP-1 + GR composite scan
+
+Peak classification (35 AP-1 motifs: JUN/JUNB/JUND, FOS/FOSB/FOSL1/FOSL2, BATF/BATF3,
+ATF3, and all JUN·FOS heterodimers; GR-class = NR3C1/Pgr/PGR; FIMO p < 1×10⁻⁴):
+
+| Category | HFD-specific (n = 6,900) | Shared (n = 53,397) |
+|----------|-------------------------:|--------------------:|
+| **Both (AP-1 + GR)** | **665 (9.6%)** | **4,107 (7.7%)** |
+| AP-1 only | 2,268 (32.9%) | 14,906 (27.9%) |
+| GR only | 861 (12.5%) | 6,813 (12.8%) |
+| Neither | 3,106 (45.0%) | 27,571 (51.6%) |
+
+**AP-1+GR co-occurrence is significantly enriched in HFD-specific vs shared peaks:**
+OR = 1.28, p = 2.3×10⁻⁸ (Fisher exact, one-sided).
+
+HFD-specific peaks are enriched for AP-1 motifs overall (42.5% AP-1-positive vs 35.6%
+in shared peaks), consistent with AP-1 as the chromatin pioneer. The significant
+composite enrichment (OR 1.28) directly supports the model: HFD-opened sites
+disproportionately carry the AP-1 + GR motif combination that would license GR
+binding at newly accessible loci.
+
+---
+
 ## 8. Pending analyses
 
 | Analysis | Status | Notes |
 |----------|--------|-------|
 | Fkbp5 motif scan — vertebrate motif set | **Complete** | POSITIVE: 542 promoter hits, 4,099 Jun-family hits; Junb and JUN::JUNB motifs present |
+| AP-1 + GR composite peak scan | **Complete** | 1,526/6,900 (22.1%) HFD peaks carry GR motif; AP-1+GR co-occurrence OR=1.28 vs shared (p=2.3×10⁻⁸); see Section 7 of `rnaseq-integration.qmd` |
 | Expression barplots (TPM, CHD vs HFD) | **Complete** | `expression-barplots.qmd`; TPM from DESeq2 norm counts + TxDb gene lengths; AP-1 compositional switch visible (Atf4/Maf/Mafg dominant, Junb/Fos low-expression but HFD-induced) |
 | ChIP-Atlas Junb at Fkbp5 | **To do** | HTTP 403 blocked API; check manually at peak browser URL in Section 6b, or try ENCODE |
 | Junb CUT&RUN / ChIP-seq at Fkbp5 locus | **Proposed experiment** | Required to confirm motif occupancy; HFD vs CHD eWAT adipocytes |

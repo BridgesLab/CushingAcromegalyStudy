@@ -1657,6 +1657,239 @@ Validate with Junb CUT&RUN in HFD vs CHD adipocytes.
 
 ---
 
+## 7. AP-1 + GR composite peak scan
+
+The "composite-enhancer" model predicts that HFD-opened chromatin disproportionately
+carries **both AP-1 and GR motifs** — AP-1 pioneers accessibility, licensing
+glucocorticoid receptor binding at sites that would otherwise be inaccessible.
+We test this by classifying each HFD-specific peak and each shared (background)
+peak as AP-1-only, GR-only, both, or neither.
+
+**Motif definitions used:**
+
+- **AP-1 class** — 35 JASPAR 2024 motifs: JUN/JUNB/JUND, FOS/FOSB/FOSL1/FOSL2,
+  BATF/BATF3, ATF3, and all pairwise JUN·FOS heterodimer motifs;
+  detected via FIMO (p < 1×10⁻⁴) in 500-bp peak windows.
+- **GR class** — NR3C1 (MA0113.4), Pgr (MA2323.1), and PGR (MA2327.1);
+  the progesterone-receptor motifs share an IR3 half-site biochemically
+  indistinguishable from the canonical GR response element.
+
+### 7.1 GR motif presence in HFD-specific peaks
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# AnnotationDbi masks dplyr::select — use explicit namespace throughout
+select <- dplyr::select
+
+# GR-class motif columns (NR3C1 + Pgr/PGR as IR3 proxy)
+gr_motif_ids <- c("MA0113.4", "MA2323.1", "MA2327.1")
+
+hfd_gr_raw <- read_tsv(
+  "results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv",
+  show_col_types = FALSE
+)
+
+gr_cols_present <- intersect(gr_motif_ids, names(hfd_gr_raw))
+hfd_gr_classified <- hfd_gr_raw |>
+  mutate(has_gr = rowSums(across(all_of(gr_cols_present))) > 0)
+
+n_total  <- nrow(hfd_gr_classified)
+n_gr     <- sum(hfd_gr_classified$has_gr)
+pct_gr   <- round(100 * n_gr / n_total, 1)
+
+gr_bar_df <- tibble(
+  category = factor(c("GR motif present", "No GR motif"),
+                    levels = c("No GR motif", "GR motif present")),
+  n   = c(n_gr, n_total - n_gr),
+  pct = c(pct_gr, 100 - pct_gr)
+)
+
+ggplot(gr_bar_df, aes(x = category, y = pct, fill = category)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%d\n(%.1f%%)", n, pct)),
+            vjust = -0.3, size = 3.5) +
+  scale_fill_manual(values = c("GR motif present" = "#d62728",
+                               "No GR motif"      = "#aec7e8")) +
+  scale_y_continuous(limits = c(0, 110), expand = c(0, 0)) +
+  labs(
+    title    = "GR-class motif presence in HFD-specific peaks",
+    subtitle = sprintf("N = %d HFD-specific peaks; GR-class = NR3C1 / Pgr / PGR (JASPAR 2024)",
+                       n_total),
+    x = NULL, y = "Percentage of peaks (%)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(axis.text.x = element_text(size = 11))
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/gr-presence-panel-1.png){width=1500}
+:::
+:::
+
+
+**1526 / 6900** (22.1%) HFD-specific peaks carry a GR-class (NR3C1/Pgr/PGR) motif.
+
+### 7.2 AP-1 + GR composite scan — stacked bar
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# AP-1 motif IDs in JASPAR 2024 (JUN/FOS/BATF core + heterodimers + ATF3)
+ap1_ids <- c(
+  "MA0099.4", "MA0462.3", "MA0476.2", "MA0477.3", "MA0478.2",
+  "MA0488.2", "MA0489.3", "MA0490.3", "MA0491.3", "MA0492.2",
+  "MA0605.3", "MA1126.2", "MA1127.1", "MA1128.2", "MA1129.1",
+  "MA1130.2", "MA1131.2", "MA1132.2", "MA1133.2", "MA1134.2",
+  "MA1135.2", "MA1136.1", "MA1137.2", "MA1138.2", "MA1139.2",
+  "MA1140.3", "MA1141.2", "MA1142.2", "MA1143.2", "MA1144.2",
+  "MA1145.2", "MA1634.2", "MA0835.3", "MA1951.2", "MA1988.2"
+)
+
+# --- HFD-specific peaks: AP-1 from full motif scan ---
+hfd_full <- read_tsv(
+  "results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv",
+  show_col_types = FALSE
+)
+ap1_cols_hfd <- intersect(ap1_ids, names(hfd_full))
+hfd_ap1 <- hfd_full |>
+  select(peak, all_of(ap1_cols_hfd)) |>
+  mutate(has_ap1 = rowSums(across(all_of(ap1_cols_hfd))) > 0) |>
+  select(peak, has_ap1)
+
+hfd_classified <- hfd_ap1 |>
+  left_join(hfd_gr_classified |> select(peak, has_gr), by = "peak") |>
+  mutate(
+    motif_cat = case_when(
+      has_ap1 &  has_gr ~ "Both (AP-1 + GR)",
+      has_ap1 & !has_gr ~ "AP-1 only",
+     !has_ap1 &  has_gr ~ "GR only",
+      TRUE              ~ "Neither"
+    ),
+    peak_set = "HFD-specific\n(n = 6,900)"
+  )
+
+# --- Shared peaks: AP-1 from pre-computed FIMO scan ---
+shared_ap1_file <- "results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv"
+
+shared_gr_raw <- read_tsv(
+  "results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv",
+  show_col_types = FALSE
+)
+gr_cols_shared <- intersect(gr_motif_ids, names(shared_gr_raw))
+shared_gr_classified <- shared_gr_raw |>
+  mutate(has_gr = rowSums(across(all_of(gr_cols_shared))) > 0)
+
+if (file.exists(shared_ap1_file)) {
+  shared_ap1 <- read_tsv(shared_ap1_file, show_col_types = FALSE)
+  shared_classified <- shared_ap1 |>
+    left_join(shared_gr_classified |> select(peak, has_gr), by = "peak") |>
+    mutate(
+      motif_cat = case_when(
+        has_ap1 &  has_gr ~ "Both (AP-1 + GR)",
+        has_ap1 & !has_gr ~ "AP-1 only",
+       !has_ap1 &  has_gr ~ "GR only",
+        TRUE              ~ "Neither"
+      ),
+      peak_set = sprintf("Shared\n(n = %s)", format(nrow(shared_gr_classified), big.mark=","))
+    )
+
+  # --- Combine and plot ---
+  cat_order <- c("Both (AP-1 + GR)", "GR only", "AP-1 only", "Neither")
+  cat_colors <- c(
+    "Both (AP-1 + GR)" = "#d62728",
+    "GR only"          = "#ff7f0e",
+    "AP-1 only"        = "#1f77b4",
+    "Neither"          = "#d3d3d3"
+  )
+
+  all_peaks <- bind_rows(hfd_classified, shared_classified) |>
+    count(peak_set, motif_cat) |>
+    group_by(peak_set) |>
+    mutate(
+      pct      = 100 * n / sum(n),
+      motif_cat = factor(motif_cat, levels = cat_order)
+    ) |>
+    ungroup() |>
+    mutate(peak_set = factor(peak_set,
+                             levels = c("HFD-specific\n(n = 6,900)",
+                                        sprintf("Shared\n(n = %s)",
+                                                format(nrow(shared_gr_classified), big.mark=",")))))
+
+  # Label only categories ≥ 1%
+  label_df <- all_peaks |> filter(pct >= 1)
+
+  ggplot(all_peaks, aes(x = peak_set, y = pct, fill = motif_cat)) +
+    geom_col(position = "stack", width = 0.55) +
+    geom_text(data = label_df,
+              aes(label = sprintf("%.1f%%", pct)),
+              position = position_stack(vjust = 0.5),
+              size = 3.2, colour = "white", fontface = "bold") +
+    scale_fill_manual(values = cat_colors, name = "Motif content") +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 101)) +
+    labs(
+      title    = "AP-1 + GR composite motif content by peak class",
+      subtitle = "FIMO p < 1×10⁻⁴; AP-1 = 35 JUN/FOS/BATF motifs; GR = NR3C1/Pgr/PGR",
+      x = NULL, y = "Percentage of peaks (%)"
+    ) +
+    theme_classic(base_size = 12) +
+    theme(legend.position = "right",
+          axis.text.x = element_text(size = 11))
+
+} else {
+  message("Pre-computed shared AP-1 scan not found at:\n  ", shared_ap1_file,
+          "\nRun the FIMO step first (see Section 7 setup notes).")
+}
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/ap1-gr-stacked-bar-1.png){width=1800}
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+# Fisher exact test: enrichment of AP-1+GR co-occurrence in HFD vs shared peaks
+if (file.exists(shared_ap1_file) && exists("shared_classified")) {
+  hfd_both   <- sum(hfd_classified$motif_cat == "Both (AP-1 + GR)")
+  hfd_n      <- nrow(hfd_classified)
+  shared_both <- sum(shared_classified$motif_cat == "Both (AP-1 + GR)")
+  shared_n    <- nrow(shared_classified)
+
+  tab <- matrix(c(hfd_both,    hfd_n    - hfd_both,
+                  shared_both, shared_n - shared_both), nrow = 2)
+  ft  <- fisher.test(tab, alternative = "greater")
+
+  cat(sprintf(
+    "AP-1 + GR co-occurrence:\n  HFD-specific: %d / %d (%.1f%%)\n  Shared:       %d / %d (%.1f%%)\n  OR = %.2f, p = %.2e\n",
+    hfd_both, hfd_n, 100*hfd_both/hfd_n,
+    shared_both, shared_n, 100*shared_both/shared_n,
+    ft$estimate, ft$p.value
+  ))
+}
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+AP-1 + GR co-occurrence:
+  HFD-specific: 665 / 6900 (9.6%)
+  Shared:       4107 / 53397 (7.7%)
+  OR = 1.28, p = 2.26e-08
+```
+
+
+:::
+:::
+
+
+---
+
 ## Session information
 
 
@@ -1678,7 +1911,7 @@ BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dy
 LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+[1] en_US/en_US/en_US/C/en_US/en_US
 
 time zone: America/Detroit
 tzcode source: internal
@@ -1726,126 +1959,125 @@ other attached packages:
 loaded via a namespace (and not attached):
   [1] JASPAR2020_0.99.10                      
   [2] RColorBrewer_1.1-3                      
-  [3] rstudioapi_0.18.0                       
-  [4] jsonlite_2.0.0                          
-  [5] tidydr_0.0.6                            
-  [6] magrittr_2.0.5                          
-  [7] ggtangle_0.1.2                          
-  [8] farver_2.1.2                            
-  [9] rmarkdown_2.31                          
- [10] fs_2.1.0                                
- [11] vctrs_0.7.3                             
- [12] memoise_2.0.1                           
- [13] Rsamtools_2.28.0                        
- [14] RCurl_1.98-1.18                         
- [15] ggtree_4.2.0                            
- [16] htmltools_0.5.9                         
- [17] S4Arrays_1.12.0                         
- [18] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
- [19] plotrix_3.8-14                          
- [20] curl_7.1.0                              
- [21] SparseArray_1.12.2                      
- [22] gridGraphics_0.5-1                      
- [23] KernSmooth_2.23-26                      
- [24] htmlwidgets_1.6.4                       
- [25] httr2_1.2.2                             
- [26] plyr_1.8.9                              
- [27] cachem_1.1.0                            
- [28] GenomicAlignments_1.48.0                
- [29] igraph_2.3.1                            
- [30] lifecycle_1.0.5                         
- [31] pkgconfig_2.0.3                         
- [32] Matrix_1.7-5                            
- [33] R6_2.6.1                                
- [34] fastmap_1.2.0                           
- [35] MatrixGenerics_1.24.0                   
- [36] digest_0.6.39                           
- [37] aplot_0.2.9                             
- [38] enrichplot_1.32.0                       
- [39] TFMPvalue_1.0.0                         
- [40] ggnewscale_0.5.2                        
- [41] patchwork_1.3.2                         
- [42] RSQLite_3.53.1                          
- [43] seqLogo_1.78.0                          
- [44] filelock_1.0.3                          
- [45] labeling_0.4.3                          
- [46] timechange_0.4.0                        
- [47] polyclip_1.10-7                         
- [48] abind_1.4-8                             
- [49] compiler_4.6.0                          
- [50] bit64_4.8.2                             
- [51] fontquiver_0.2.1                        
- [52] withr_3.0.2                             
- [53] S7_0.2.2                                
- [54] BiocParallel_1.46.0                     
- [55] DBI_1.3.0                               
- [56] gplots_3.3.0                            
- [57] ggforce_0.5.0                           
- [58] MASS_7.3-65                             
- [59] rappdirs_0.3.4                          
- [60] DelayedArray_0.38.1                     
- [61] rjson_0.2.23                            
- [62] caTools_1.18.3                          
- [63] gtools_3.9.5                            
- [64] tools_4.6.0                             
- [65] otel_0.2.0                              
- [66] scatterpie_0.2.6                        
- [67] ape_5.8-1                               
- [68] glue_1.8.1                              
- [69] restfulr_0.0.16                         
- [70] nlme_3.1-169                            
- [71] GOSemSim_2.38.0                         
- [72] grid_4.6.0                              
- [73] cluster_2.1.8.2                         
- [74] reshape2_1.4.5                          
- [75] gtable_0.3.6                            
- [76] tzdb_0.5.0                              
- [77] hms_1.1.4                               
- [78] pillar_1.11.1                           
- [79] yulab.utils_0.2.4                       
- [80] vroom_1.7.1                             
- [81] tweenr_2.0.3                            
- [82] treeio_1.36.1                           
- [83] lattice_0.22-9                          
- [84] bit_4.6.0                               
- [85] DirichletMultinomial_1.54.0             
- [86] tidyselect_1.2.1                        
- [87] fontLiberation_0.1.0                    
- [88] GO.db_3.23.1                            
- [89] knitr_1.51                              
- [90] fontBitstreamVera_0.1.1                 
- [91] SummarizedExperiment_1.42.0             
- [92] xfun_0.57                               
- [93] matrixStats_1.5.0                       
- [94] stringi_1.8.7                           
- [95] UCSC.utils_1.8.0                        
- [96] lazyeval_0.2.3                          
- [97] ggfun_0.2.0                             
- [98] yaml_2.3.12                             
- [99] boot_1.3-32                             
-[100] evaluate_1.0.5                          
-[101] codetools_0.2-20                        
-[102] cigarillo_1.2.0                         
-[103] gdtools_0.5.1                           
-[104] ggplotify_0.1.3                         
-[105] cli_3.6.6                               
-[106] systemfonts_1.3.2                       
-[107] Rcpp_1.1.1-1.1                          
-[108] GenomeInfoDb_1.48.0                     
-[109] png_0.1-9                               
-[110] XML_3.99-0.23                           
-[111] parallel_4.6.0                          
-[112] blob_1.3.0                              
-[113] DOSE_4.6.0                              
-[114] bitops_1.0-9                            
-[115] pwalign_1.8.0                           
-[116] tidytree_0.4.7                          
-[117] ggiraph_0.9.6                           
-[118] enrichit_0.1.4                          
-[119] scales_1.4.0                            
-[120] crayon_1.5.3                            
-[121] rlang_1.2.0                             
-[122] KEGGREST_1.52.0                         
+  [3] jsonlite_2.0.0                          
+  [4] tidydr_0.0.6                            
+  [5] magrittr_2.0.5                          
+  [6] ggtangle_0.1.2                          
+  [7] farver_2.1.2                            
+  [8] rmarkdown_2.31                          
+  [9] fs_2.1.0                                
+ [10] vctrs_0.7.3                             
+ [11] memoise_2.0.1                           
+ [12] Rsamtools_2.28.0                        
+ [13] RCurl_1.98-1.18                         
+ [14] ggtree_4.2.0                            
+ [15] htmltools_0.5.9                         
+ [16] S4Arrays_1.12.0                         
+ [17] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
+ [18] plotrix_3.8-14                          
+ [19] curl_7.1.0                              
+ [20] SparseArray_1.12.2                      
+ [21] gridGraphics_0.5-1                      
+ [22] KernSmooth_2.23-26                      
+ [23] htmlwidgets_1.6.4                       
+ [24] httr2_1.2.2                             
+ [25] plyr_1.8.9                              
+ [26] cachem_1.1.0                            
+ [27] GenomicAlignments_1.48.0                
+ [28] igraph_2.3.1                            
+ [29] lifecycle_1.0.5                         
+ [30] pkgconfig_2.0.3                         
+ [31] Matrix_1.7-5                            
+ [32] R6_2.6.1                                
+ [33] fastmap_1.2.0                           
+ [34] MatrixGenerics_1.24.0                   
+ [35] digest_0.6.39                           
+ [36] aplot_0.2.9                             
+ [37] enrichplot_1.32.0                       
+ [38] TFMPvalue_1.0.0                         
+ [39] ggnewscale_0.5.2                        
+ [40] patchwork_1.3.2                         
+ [41] RSQLite_3.53.1                          
+ [42] seqLogo_1.78.0                          
+ [43] filelock_1.0.3                          
+ [44] labeling_0.4.3                          
+ [45] timechange_0.4.0                        
+ [46] polyclip_1.10-7                         
+ [47] abind_1.4-8                             
+ [48] compiler_4.6.0                          
+ [49] bit64_4.8.2                             
+ [50] fontquiver_0.2.1                        
+ [51] withr_3.0.2                             
+ [52] S7_0.2.2                                
+ [53] BiocParallel_1.46.0                     
+ [54] DBI_1.3.0                               
+ [55] gplots_3.3.0                            
+ [56] ggforce_0.5.0                           
+ [57] MASS_7.3-65                             
+ [58] rappdirs_0.3.4                          
+ [59] DelayedArray_0.38.1                     
+ [60] rjson_0.2.23                            
+ [61] caTools_1.18.3                          
+ [62] gtools_3.9.5                            
+ [63] tools_4.6.0                             
+ [64] otel_0.2.0                              
+ [65] scatterpie_0.2.6                        
+ [66] ape_5.8-1                               
+ [67] glue_1.8.1                              
+ [68] restfulr_0.0.16                         
+ [69] nlme_3.1-169                            
+ [70] GOSemSim_2.38.0                         
+ [71] grid_4.6.0                              
+ [72] cluster_2.1.8.2                         
+ [73] reshape2_1.4.5                          
+ [74] gtable_0.3.6                            
+ [75] tzdb_0.5.0                              
+ [76] hms_1.1.4                               
+ [77] pillar_1.11.1                           
+ [78] yulab.utils_0.2.4                       
+ [79] vroom_1.7.1                             
+ [80] tweenr_2.0.3                            
+ [81] treeio_1.36.1                           
+ [82] lattice_0.22-9                          
+ [83] bit_4.6.0                               
+ [84] DirichletMultinomial_1.54.0             
+ [85] tidyselect_1.2.1                        
+ [86] fontLiberation_0.1.0                    
+ [87] GO.db_3.23.1                            
+ [88] knitr_1.51                              
+ [89] fontBitstreamVera_0.1.1                 
+ [90] SummarizedExperiment_1.42.0             
+ [91] xfun_0.57                               
+ [92] matrixStats_1.5.0                       
+ [93] stringi_1.8.7                           
+ [94] UCSC.utils_1.8.0                        
+ [95] lazyeval_0.2.3                          
+ [96] ggfun_0.2.0                             
+ [97] yaml_2.3.12                             
+ [98] boot_1.3-32                             
+ [99] evaluate_1.0.5                          
+[100] codetools_0.2-20                        
+[101] cigarillo_1.2.0                         
+[102] gdtools_0.5.1                           
+[103] ggplotify_0.1.3                         
+[104] cli_3.6.6                               
+[105] systemfonts_1.3.2                       
+[106] Rcpp_1.1.1-1.1                          
+[107] GenomeInfoDb_1.48.0                     
+[108] png_0.1-9                               
+[109] XML_3.99-0.23                           
+[110] parallel_4.6.0                          
+[111] blob_1.3.0                              
+[112] DOSE_4.6.0                              
+[113] bitops_1.0-9                            
+[114] pwalign_1.8.0                           
+[115] tidytree_0.4.7                          
+[116] ggiraph_0.9.6                           
+[117] enrichit_0.1.4                          
+[118] scales_1.4.0                            
+[119] crayon_1.5.3                            
+[120] rlang_1.2.0                             
+[121] KEGGREST_1.52.0                         
 ```
 
 

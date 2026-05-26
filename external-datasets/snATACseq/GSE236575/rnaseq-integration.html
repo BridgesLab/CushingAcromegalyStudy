@@ -123,6 +123,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#chip-atlas-junb-binding-evidence-at-fkbp5" id="toc-chip-atlas-junb-binding-evidence-at-fkbp5" class="nav-link" data-scroll-target="#chip-atlas-junb-binding-evidence-at-fkbp5">6.3 ChIP-Atlas: Junb binding evidence at Fkbp5</a></li>
   <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis">6.4 Synthesis</a></li>
   </ul></li>
+  <li><a href="#ap-1-gr-composite-peak-scan" id="toc-ap-1-gr-composite-peak-scan" class="nav-link" data-scroll-target="#ap-1-gr-composite-peak-scan">7. AP-1 + GR composite peak scan</a>
+  <ul class="collapse">
+  <li><a href="#gr-motif-presence-in-hfd-specific-peaks" id="toc-gr-motif-presence-in-hfd-specific-peaks" class="nav-link" data-scroll-target="#gr-motif-presence-in-hfd-specific-peaks">7.1 GR motif presence in HFD-specific peaks</a></li>
+  <li><a href="#ap-1-gr-composite-scan-stacked-bar" id="toc-ap-1-gr-composite-scan-stacked-bar" class="nav-link" data-scroll-target="#ap-1-gr-composite-scan-stacked-bar">7.2 AP-1 + GR composite scan — stacked bar</a></li>
+  </ul></li>
   <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information">Session information</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="rnaseq-integration.md"><i class="bi bi-file-code"></i>Github (GFM)</a></li></ul></div></nav>
@@ -2981,12 +2986,228 @@ Validate with Junb CUT&amp;RUN in HFD vs CHD adipocytes.</code></pre>
 <hr>
 </section>
 </section>
+<section id="ap-1-gr-composite-peak-scan" class="level2">
+<h2 class="anchored" data-anchor-id="ap-1-gr-composite-peak-scan">7. AP-1 + GR composite peak scan</h2>
+<p>The “composite-enhancer” model predicts that HFD-opened chromatin disproportionately carries <strong>both AP-1 and GR motifs</strong> — AP-1 pioneers accessibility, licensing glucocorticoid receptor binding at sites that would otherwise be inaccessible. We test this by classifying each HFD-specific peak and each shared (background) peak as AP-1-only, GR-only, both, or neither.</p>
+<p><strong>Motif definitions used:</strong></p>
+<ul>
+<li><strong>AP-1 class</strong> — 35 JASPAR 2024 motifs: JUN/JUNB/JUND, FOS/FOSB/FOSL1/FOSL2, BATF/BATF3, ATF3, and all pairwise JUN·FOS heterodimer motifs; detected via FIMO (p &lt; 1×10⁻⁴) in 500-bp peak windows.</li>
+<li><strong>GR class</strong> — NR3C1 (MA0113.4), Pgr (MA2323.1), and PGR (MA2327.1); the progesterone-receptor motifs share an IR3 half-site biochemically indistinguishable from the canonical GR response element.</li>
+</ul>
+<section id="gr-motif-presence-in-hfd-specific-peaks" class="level3">
+<h3 class="anchored" data-anchor-id="gr-motif-presence-in-hfd-specific-peaks">7.1 GR motif presence in HFD-specific peaks</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AnnotationDbi masks dplyr::select — use explicit namespace throughout</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>select <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>select</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="co"># GR-class motif columns (NR3C1 + Pgr/PGR as IR3 proxy)</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>gr_motif_ids <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MA0113.4"</span>, <span class="st">"MA2323.1"</span>, <span class="st">"MA2327.1"</span>)</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>hfd_gr_raw <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv"</span>,</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>gr_cols_present <span class="ot">&lt;-</span> <span class="fu">intersect</span>(gr_motif_ids, <span class="fu">names</span>(hfd_gr_raw))</span>
+<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>hfd_gr_classified <span class="ot">&lt;-</span> hfd_gr_raw <span class="sc">|&gt;</span></span>
+<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">has_gr =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(gr_cols_present))) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a>n_total  <span class="ot">&lt;-</span> <span class="fu">nrow</span>(hfd_gr_classified)</span>
+<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a>n_gr     <span class="ot">&lt;-</span> <span class="fu">sum</span>(hfd_gr_classified<span class="sc">$</span>has_gr)</span>
+<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a>pct_gr   <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> n_gr <span class="sc">/</span> n_total, <span class="dv">1</span>)</span>
+<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-20"><a href="#cb88-20" aria-hidden="true" tabindex="-1"></a>gr_bar_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb88-21"><a href="#cb88-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"GR motif present"</span>, <span class="st">"No GR motif"</span>),</span>
+<span id="cb88-22"><a href="#cb88-22" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"No GR motif"</span>, <span class="st">"GR motif present"</span>)),</span>
+<span id="cb88-23"><a href="#cb88-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">n   =</span> <span class="fu">c</span>(n_gr, n_total <span class="sc">-</span> n_gr),</span>
+<span id="cb88-24"><a href="#cb88-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">pct =</span> <span class="fu">c</span>(pct_gr, <span class="dv">100</span> <span class="sc">-</span> pct_gr)</span>
+<span id="cb88-25"><a href="#cb88-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb88-26"><a href="#cb88-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-27"><a href="#cb88-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gr_bar_df, <span class="fu">aes</span>(<span class="at">x =</span> category, <span class="at">y =</span> pct, <span class="at">fill =</span> category)) <span class="sc">+</span></span>
+<span id="cb88-28"><a href="#cb88-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.55</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb88-29"><a href="#cb88-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%d</span><span class="sc">\n</span><span class="st">(%.1f%%)"</span>, n, pct)),</span>
+<span id="cb88-30"><a href="#cb88-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb88-31"><a href="#cb88-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"GR motif present"</span> <span class="ot">=</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb88-32"><a href="#cb88-32" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"No GR motif"</span>      <span class="ot">=</span> <span class="st">"#aec7e8"</span>)) <span class="sc">+</span></span>
+<span id="cb88-33"><a href="#cb88-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">110</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb88-34"><a href="#cb88-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb88-35"><a href="#cb88-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"GR-class motif presence in HFD-specific peaks"</span>,</span>
+<span id="cb88-36"><a href="#cb88-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">sprintf</span>(<span class="st">"N = %d HFD-specific peaks; GR-class = NR3C1 / Pgr / PGR (JASPAR 2024)"</span>,</span>
+<span id="cb88-37"><a href="#cb88-37" aria-hidden="true" tabindex="-1"></a>                       n_total),</span>
+<span id="cb88-38"><a href="#cb88-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Percentage of peaks (%)"</span></span>
+<span id="cb88-39"><a href="#cb88-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb88-40"><a href="#cb88-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb88-41"><a href="#cb88-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="figures/rnaseq/gr-presence-panel-1.png" class="img-fluid figure-img" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>1526 / 6900</strong> (22.1%) HFD-specific peaks carry a GR-class (NR3C1/Pgr/PGR) motif.</p>
+</section>
+<section id="ap-1-gr-composite-scan-stacked-bar" class="level3">
+<h3 class="anchored" data-anchor-id="ap-1-gr-composite-scan-stacked-bar">7.2 AP-1 + GR composite scan — stacked bar</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AP-1 motif IDs in JASPAR 2024 (JUN/FOS/BATF core + heterodimers + ATF3)</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>ap1_ids <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA0099.4"</span>, <span class="st">"MA0462.3"</span>, <span class="st">"MA0476.2"</span>, <span class="st">"MA0477.3"</span>, <span class="st">"MA0478.2"</span>,</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA0488.2"</span>, <span class="st">"MA0489.3"</span>, <span class="st">"MA0490.3"</span>, <span class="st">"MA0491.3"</span>, <span class="st">"MA0492.2"</span>,</span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA0605.3"</span>, <span class="st">"MA1126.2"</span>, <span class="st">"MA1127.1"</span>, <span class="st">"MA1128.2"</span>, <span class="st">"MA1129.1"</span>,</span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA1130.2"</span>, <span class="st">"MA1131.2"</span>, <span class="st">"MA1132.2"</span>, <span class="st">"MA1133.2"</span>, <span class="st">"MA1134.2"</span>,</span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA1135.2"</span>, <span class="st">"MA1136.1"</span>, <span class="st">"MA1137.2"</span>, <span class="st">"MA1138.2"</span>, <span class="st">"MA1139.2"</span>,</span>
+<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA1140.3"</span>, <span class="st">"MA1141.2"</span>, <span class="st">"MA1142.2"</span>, <span class="st">"MA1143.2"</span>, <span class="st">"MA1144.2"</span>,</span>
+<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MA1145.2"</span>, <span class="st">"MA1634.2"</span>, <span class="st">"MA0835.3"</span>, <span class="st">"MA1951.2"</span>, <span class="st">"MA1988.2"</span></span>
+<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a><span class="co"># --- HFD-specific peaks: AP-1 from full motif scan ---</span></span>
+<span id="cb89-13"><a href="#cb89-13" aria-hidden="true" tabindex="-1"></a>hfd_full <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
+<span id="cb89-14"><a href="#cb89-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv"</span>,</span>
+<span id="cb89-15"><a href="#cb89-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb89-16"><a href="#cb89-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-17"><a href="#cb89-17" aria-hidden="true" tabindex="-1"></a>ap1_cols_hfd <span class="ot">&lt;-</span> <span class="fu">intersect</span>(ap1_ids, <span class="fu">names</span>(hfd_full))</span>
+<span id="cb89-18"><a href="#cb89-18" aria-hidden="true" tabindex="-1"></a>hfd_ap1 <span class="ot">&lt;-</span> hfd_full <span class="sc">|&gt;</span></span>
+<span id="cb89-19"><a href="#cb89-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(peak, <span class="fu">all_of</span>(ap1_cols_hfd)) <span class="sc">|&gt;</span></span>
+<span id="cb89-20"><a href="#cb89-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">has_ap1 =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(ap1_cols_hfd))) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb89-21"><a href="#cb89-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(peak, has_ap1)</span>
+<span id="cb89-22"><a href="#cb89-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-23"><a href="#cb89-23" aria-hidden="true" tabindex="-1"></a>hfd_classified <span class="ot">&lt;-</span> hfd_ap1 <span class="sc">|&gt;</span></span>
+<span id="cb89-24"><a href="#cb89-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(hfd_gr_classified <span class="sc">|&gt;</span> <span class="fu">select</span>(peak, has_gr), <span class="at">by =</span> <span class="st">"peak"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb89-25"><a href="#cb89-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb89-26"><a href="#cb89-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">motif_cat =</span> <span class="fu">case_when</span>(</span>
+<span id="cb89-27"><a href="#cb89-27" aria-hidden="true" tabindex="-1"></a>      has_ap1 <span class="sc">&amp;</span>  has_gr <span class="sc">~</span> <span class="st">"Both (AP-1 + GR)"</span>,</span>
+<span id="cb89-28"><a href="#cb89-28" aria-hidden="true" tabindex="-1"></a>      has_ap1 <span class="sc">&amp;</span> <span class="sc">!</span>has_gr <span class="sc">~</span> <span class="st">"AP-1 only"</span>,</span>
+<span id="cb89-29"><a href="#cb89-29" aria-hidden="true" tabindex="-1"></a>     <span class="sc">!</span>has_ap1 <span class="sc">&amp;</span>  has_gr <span class="sc">~</span> <span class="st">"GR only"</span>,</span>
+<span id="cb89-30"><a href="#cb89-30" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>              <span class="sc">~</span> <span class="st">"Neither"</span></span>
+<span id="cb89-31"><a href="#cb89-31" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb89-32"><a href="#cb89-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">peak_set =</span> <span class="st">"HFD-specific</span><span class="sc">\n</span><span class="st">(n = 6,900)"</span></span>
+<span id="cb89-33"><a href="#cb89-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb89-34"><a href="#cb89-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-35"><a href="#cb89-35" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Shared peaks: AP-1 from pre-computed FIMO scan ---</span></span>
+<span id="cb89-36"><a href="#cb89-36" aria-hidden="true" tabindex="-1"></a>shared_ap1_file <span class="ot">&lt;-</span> <span class="st">"results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv"</span></span>
+<span id="cb89-37"><a href="#cb89-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-38"><a href="#cb89-38" aria-hidden="true" tabindex="-1"></a>shared_gr_raw <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
+<span id="cb89-39"><a href="#cb89-39" aria-hidden="true" tabindex="-1"></a>  <span class="st">"results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv"</span>,</span>
+<span id="cb89-40"><a href="#cb89-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb89-41"><a href="#cb89-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-42"><a href="#cb89-42" aria-hidden="true" tabindex="-1"></a>gr_cols_shared <span class="ot">&lt;-</span> <span class="fu">intersect</span>(gr_motif_ids, <span class="fu">names</span>(shared_gr_raw))</span>
+<span id="cb89-43"><a href="#cb89-43" aria-hidden="true" tabindex="-1"></a>shared_gr_classified <span class="ot">&lt;-</span> shared_gr_raw <span class="sc">|&gt;</span></span>
+<span id="cb89-44"><a href="#cb89-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">has_gr =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(gr_cols_shared))) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb89-45"><a href="#cb89-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-46"><a href="#cb89-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(shared_ap1_file)) {</span>
+<span id="cb89-47"><a href="#cb89-47" aria-hidden="true" tabindex="-1"></a>  shared_ap1 <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(shared_ap1_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb89-48"><a href="#cb89-48" aria-hidden="true" tabindex="-1"></a>  shared_classified <span class="ot">&lt;-</span> shared_ap1 <span class="sc">|&gt;</span></span>
+<span id="cb89-49"><a href="#cb89-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(shared_gr_classified <span class="sc">|&gt;</span> <span class="fu">select</span>(peak, has_gr), <span class="at">by =</span> <span class="st">"peak"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb89-50"><a href="#cb89-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb89-51"><a href="#cb89-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">motif_cat =</span> <span class="fu">case_when</span>(</span>
+<span id="cb89-52"><a href="#cb89-52" aria-hidden="true" tabindex="-1"></a>        has_ap1 <span class="sc">&amp;</span>  has_gr <span class="sc">~</span> <span class="st">"Both (AP-1 + GR)"</span>,</span>
+<span id="cb89-53"><a href="#cb89-53" aria-hidden="true" tabindex="-1"></a>        has_ap1 <span class="sc">&amp;</span> <span class="sc">!</span>has_gr <span class="sc">~</span> <span class="st">"AP-1 only"</span>,</span>
+<span id="cb89-54"><a href="#cb89-54" aria-hidden="true" tabindex="-1"></a>       <span class="sc">!</span>has_ap1 <span class="sc">&amp;</span>  has_gr <span class="sc">~</span> <span class="st">"GR only"</span>,</span>
+<span id="cb89-55"><a href="#cb89-55" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span>              <span class="sc">~</span> <span class="st">"Neither"</span></span>
+<span id="cb89-56"><a href="#cb89-56" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb89-57"><a href="#cb89-57" aria-hidden="true" tabindex="-1"></a>      <span class="at">peak_set =</span> <span class="fu">sprintf</span>(<span class="st">"Shared</span><span class="sc">\n</span><span class="st">(n = %s)"</span>, <span class="fu">format</span>(<span class="fu">nrow</span>(shared_gr_classified), <span class="at">big.mark=</span><span class="st">","</span>))</span>
+<span id="cb89-58"><a href="#cb89-58" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb89-59"><a href="#cb89-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-60"><a href="#cb89-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># --- Combine and plot ---</span></span>
+<span id="cb89-61"><a href="#cb89-61" aria-hidden="true" tabindex="-1"></a>  cat_order <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Both (AP-1 + GR)"</span>, <span class="st">"GR only"</span>, <span class="st">"AP-1 only"</span>, <span class="st">"Neither"</span>)</span>
+<span id="cb89-62"><a href="#cb89-62" aria-hidden="true" tabindex="-1"></a>  cat_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb89-63"><a href="#cb89-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Both (AP-1 + GR)"</span> <span class="ot">=</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb89-64"><a href="#cb89-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GR only"</span>          <span class="ot">=</span> <span class="st">"#ff7f0e"</span>,</span>
+<span id="cb89-65"><a href="#cb89-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AP-1 only"</span>        <span class="ot">=</span> <span class="st">"#1f77b4"</span>,</span>
+<span id="cb89-66"><a href="#cb89-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Neither"</span>          <span class="ot">=</span> <span class="st">"#d3d3d3"</span></span>
+<span id="cb89-67"><a href="#cb89-67" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb89-68"><a href="#cb89-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-69"><a href="#cb89-69" aria-hidden="true" tabindex="-1"></a>  all_peaks <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(hfd_classified, shared_classified) <span class="sc">|&gt;</span></span>
+<span id="cb89-70"><a href="#cb89-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(peak_set, motif_cat) <span class="sc">|&gt;</span></span>
+<span id="cb89-71"><a href="#cb89-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(peak_set) <span class="sc">|&gt;</span></span>
+<span id="cb89-72"><a href="#cb89-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb89-73"><a href="#cb89-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct      =</span> <span class="dv">100</span> <span class="sc">*</span> n <span class="sc">/</span> <span class="fu">sum</span>(n),</span>
+<span id="cb89-74"><a href="#cb89-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">motif_cat =</span> <span class="fu">factor</span>(motif_cat, <span class="at">levels =</span> cat_order)</span>
+<span id="cb89-75"><a href="#cb89-75" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb89-76"><a href="#cb89-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb89-77"><a href="#cb89-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">peak_set =</span> <span class="fu">factor</span>(peak_set,</span>
+<span id="cb89-78"><a href="#cb89-78" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"HFD-specific</span><span class="sc">\n</span><span class="st">(n = 6,900)"</span>,</span>
+<span id="cb89-79"><a href="#cb89-79" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">sprintf</span>(<span class="st">"Shared</span><span class="sc">\n</span><span class="st">(n = %s)"</span>,</span>
+<span id="cb89-80"><a href="#cb89-80" aria-hidden="true" tabindex="-1"></a>                                                <span class="fu">format</span>(<span class="fu">nrow</span>(shared_gr_classified), <span class="at">big.mark=</span><span class="st">","</span>)))))</span>
+<span id="cb89-81"><a href="#cb89-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-82"><a href="#cb89-82" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Label only categories ≥ 1%</span></span>
+<span id="cb89-83"><a href="#cb89-83" aria-hidden="true" tabindex="-1"></a>  label_df <span class="ot">&lt;-</span> all_peaks <span class="sc">|&gt;</span> <span class="fu">filter</span>(pct <span class="sc">&gt;=</span> <span class="dv">1</span>)</span>
+<span id="cb89-84"><a href="#cb89-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-85"><a href="#cb89-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(all_peaks, <span class="fu">aes</span>(<span class="at">x =</span> peak_set, <span class="at">y =</span> pct, <span class="at">fill =</span> motif_cat)) <span class="sc">+</span></span>
+<span id="cb89-86"><a href="#cb89-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.55</span>) <span class="sc">+</span></span>
+<span id="cb89-87"><a href="#cb89-87" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="at">data =</span> label_df,</span>
+<span id="cb89-88"><a href="#cb89-88" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, pct)),</span>
+<span id="cb89-89"><a href="#cb89-89" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb89-90"><a href="#cb89-90" aria-hidden="true" tabindex="-1"></a>              <span class="at">size =</span> <span class="fl">3.2</span>, <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb89-91"><a href="#cb89-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cat_colors, <span class="at">name =</span> <span class="st">"Motif content"</span>) <span class="sc">+</span></span>
+<span id="cb89-92"><a href="#cb89-92" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">101</span>)) <span class="sc">+</span></span>
+<span id="cb89-93"><a href="#cb89-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb89-94"><a href="#cb89-94" aria-hidden="true" tabindex="-1"></a>      <span class="at">title    =</span> <span class="st">"AP-1 + GR composite motif content by peak class"</span>,</span>
+<span id="cb89-95"><a href="#cb89-95" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"FIMO p &lt; 1×10⁻⁴; AP-1 = 35 JUN/FOS/BATF motifs; GR = NR3C1/Pgr/PGR"</span>,</span>
+<span id="cb89-96"><a href="#cb89-96" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Percentage of peaks (%)"</span></span>
+<span id="cb89-97"><a href="#cb89-97" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb89-98"><a href="#cb89-98" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb89-99"><a href="#cb89-99" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb89-100"><a href="#cb89-100" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>))</span>
+<span id="cb89-101"><a href="#cb89-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-102"><a href="#cb89-102" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb89-103"><a href="#cb89-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Pre-computed shared AP-1 scan not found at:</span><span class="sc">\n</span><span class="st">  "</span>, shared_ap1_file,</span>
+<span id="cb89-104"><a href="#cb89-104" aria-hidden="true" tabindex="-1"></a>          <span class="st">"</span><span class="sc">\n</span><span class="st">Run the FIMO step first (see Section 7 setup notes)."</span>)</span>
+<span id="cb89-105"><a href="#cb89-105" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="figures/rnaseq/ap1-gr-stacked-bar-1.png" class="img-fluid figure-img" width="1800"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fisher exact test: enrichment of AP-1+GR co-occurrence in HFD vs shared peaks</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(shared_ap1_file) <span class="sc">&amp;&amp;</span> <span class="fu">exists</span>(<span class="st">"shared_classified"</span>)) {</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  hfd_both   <span class="ot">&lt;-</span> <span class="fu">sum</span>(hfd_classified<span class="sc">$</span>motif_cat <span class="sc">==</span> <span class="st">"Both (AP-1 + GR)"</span>)</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>  hfd_n      <span class="ot">&lt;-</span> <span class="fu">nrow</span>(hfd_classified)</span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>  shared_both <span class="ot">&lt;-</span> <span class="fu">sum</span>(shared_classified<span class="sc">$</span>motif_cat <span class="sc">==</span> <span class="st">"Both (AP-1 + GR)"</span>)</span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>  shared_n    <span class="ot">&lt;-</span> <span class="fu">nrow</span>(shared_classified)</span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(hfd_both,    hfd_n    <span class="sc">-</span> hfd_both,</span>
+<span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>                  shared_both, shared_n <span class="sc">-</span> shared_both), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a>  ft  <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(tab, <span class="at">alternative =</span> <span class="st">"greater"</span>)</span>
+<span id="cb90-11"><a href="#cb90-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-12"><a href="#cb90-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
+<span id="cb90-13"><a href="#cb90-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AP-1 + GR co-occurrence:</span><span class="sc">\n</span><span class="st">  HFD-specific: %d / %d (%.1f%%)</span><span class="sc">\n</span><span class="st">  Shared:       %d / %d (%.1f%%)</span><span class="sc">\n</span><span class="st">  OR = %.2f, p = %.2e</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb90-14"><a href="#cb90-14" aria-hidden="true" tabindex="-1"></a>    hfd_both, hfd_n, <span class="dv">100</span><span class="sc">*</span>hfd_both<span class="sc">/</span>hfd_n,</span>
+<span id="cb90-15"><a href="#cb90-15" aria-hidden="true" tabindex="-1"></a>    shared_both, shared_n, <span class="dv">100</span><span class="sc">*</span>shared_both<span class="sc">/</span>shared_n,</span>
+<span id="cb90-16"><a href="#cb90-16" aria-hidden="true" tabindex="-1"></a>    ft<span class="sc">$</span>estimate, ft<span class="sc">$</span>p.value</span>
+<span id="cb90-17"><a href="#cb90-17" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb90-18"><a href="#cb90-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>AP-1 + GR co-occurrence:
+  HFD-specific: 665 / 6900 (9.6%)
+  Shared:       4107 / 53397 (7.7%)
+  OR = 1.28, p = 2.26e-08</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
 <section id="session-information" class="level2">
 <h2 class="anchored" data-anchor-id="session-information">Session information</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.6.0 (2026-04-24)
@@ -2998,7 +3219,7 @@ BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dy
 LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+[1] en_US/en_US/en_US/C/en_US/en_US
 
 time zone: America/Detroit
 tzcode source: internal
@@ -3046,126 +3267,125 @@ other attached packages:
 loaded via a namespace (and not attached):
   [1] JASPAR2020_0.99.10                      
   [2] RColorBrewer_1.1-3                      
-  [3] rstudioapi_0.18.0                       
-  [4] jsonlite_2.0.0                          
-  [5] tidydr_0.0.6                            
-  [6] magrittr_2.0.5                          
-  [7] ggtangle_0.1.2                          
-  [8] farver_2.1.2                            
-  [9] rmarkdown_2.31                          
- [10] fs_2.1.0                                
- [11] vctrs_0.7.3                             
- [12] memoise_2.0.1                           
- [13] Rsamtools_2.28.0                        
- [14] RCurl_1.98-1.18                         
- [15] ggtree_4.2.0                            
- [16] htmltools_0.5.9                         
- [17] S4Arrays_1.12.0                         
- [18] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
- [19] plotrix_3.8-14                          
- [20] curl_7.1.0                              
- [21] SparseArray_1.12.2                      
- [22] gridGraphics_0.5-1                      
- [23] KernSmooth_2.23-26                      
- [24] htmlwidgets_1.6.4                       
- [25] httr2_1.2.2                             
- [26] plyr_1.8.9                              
- [27] cachem_1.1.0                            
- [28] GenomicAlignments_1.48.0                
- [29] igraph_2.3.1                            
- [30] lifecycle_1.0.5                         
- [31] pkgconfig_2.0.3                         
- [32] Matrix_1.7-5                            
- [33] R6_2.6.1                                
- [34] fastmap_1.2.0                           
- [35] MatrixGenerics_1.24.0                   
- [36] digest_0.6.39                           
- [37] aplot_0.2.9                             
- [38] enrichplot_1.32.0                       
- [39] TFMPvalue_1.0.0                         
- [40] ggnewscale_0.5.2                        
- [41] patchwork_1.3.2                         
- [42] RSQLite_3.53.1                          
- [43] seqLogo_1.78.0                          
- [44] filelock_1.0.3                          
- [45] labeling_0.4.3                          
- [46] timechange_0.4.0                        
- [47] polyclip_1.10-7                         
- [48] abind_1.4-8                             
- [49] compiler_4.6.0                          
- [50] bit64_4.8.2                             
- [51] fontquiver_0.2.1                        
- [52] withr_3.0.2                             
- [53] S7_0.2.2                                
- [54] BiocParallel_1.46.0                     
- [55] DBI_1.3.0                               
- [56] gplots_3.3.0                            
- [57] ggforce_0.5.0                           
- [58] MASS_7.3-65                             
- [59] rappdirs_0.3.4                          
- [60] DelayedArray_0.38.1                     
- [61] rjson_0.2.23                            
- [62] caTools_1.18.3                          
- [63] gtools_3.9.5                            
- [64] tools_4.6.0                             
- [65] otel_0.2.0                              
- [66] scatterpie_0.2.6                        
- [67] ape_5.8-1                               
- [68] glue_1.8.1                              
- [69] restfulr_0.0.16                         
- [70] nlme_3.1-169                            
- [71] GOSemSim_2.38.0                         
- [72] grid_4.6.0                              
- [73] cluster_2.1.8.2                         
- [74] reshape2_1.4.5                          
- [75] gtable_0.3.6                            
- [76] tzdb_0.5.0                              
- [77] hms_1.1.4                               
- [78] pillar_1.11.1                           
- [79] yulab.utils_0.2.4                       
- [80] vroom_1.7.1                             
- [81] tweenr_2.0.3                            
- [82] treeio_1.36.1                           
- [83] lattice_0.22-9                          
- [84] bit_4.6.0                               
- [85] DirichletMultinomial_1.54.0             
- [86] tidyselect_1.2.1                        
- [87] fontLiberation_0.1.0                    
- [88] GO.db_3.23.1                            
- [89] knitr_1.51                              
- [90] fontBitstreamVera_0.1.1                 
- [91] SummarizedExperiment_1.42.0             
- [92] xfun_0.57                               
- [93] matrixStats_1.5.0                       
- [94] stringi_1.8.7                           
- [95] UCSC.utils_1.8.0                        
- [96] lazyeval_0.2.3                          
- [97] ggfun_0.2.0                             
- [98] yaml_2.3.12                             
- [99] boot_1.3-32                             
-[100] evaluate_1.0.5                          
-[101] codetools_0.2-20                        
-[102] cigarillo_1.2.0                         
-[103] gdtools_0.5.1                           
-[104] ggplotify_0.1.3                         
-[105] cli_3.6.6                               
-[106] systemfonts_1.3.2                       
-[107] Rcpp_1.1.1-1.1                          
-[108] GenomeInfoDb_1.48.0                     
-[109] png_0.1-9                               
-[110] XML_3.99-0.23                           
-[111] parallel_4.6.0                          
-[112] blob_1.3.0                              
-[113] DOSE_4.6.0                              
-[114] bitops_1.0-9                            
-[115] pwalign_1.8.0                           
-[116] tidytree_0.4.7                          
-[117] ggiraph_0.9.6                           
-[118] enrichit_0.1.4                          
-[119] scales_1.4.0                            
-[120] crayon_1.5.3                            
-[121] rlang_1.2.0                             
-[122] KEGGREST_1.52.0                         </code></pre>
+  [3] jsonlite_2.0.0                          
+  [4] tidydr_0.0.6                            
+  [5] magrittr_2.0.5                          
+  [6] ggtangle_0.1.2                          
+  [7] farver_2.1.2                            
+  [8] rmarkdown_2.31                          
+  [9] fs_2.1.0                                
+ [10] vctrs_0.7.3                             
+ [11] memoise_2.0.1                           
+ [12] Rsamtools_2.28.0                        
+ [13] RCurl_1.98-1.18                         
+ [14] ggtree_4.2.0                            
+ [15] htmltools_0.5.9                         
+ [16] S4Arrays_1.12.0                         
+ [17] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
+ [18] plotrix_3.8-14                          
+ [19] curl_7.1.0                              
+ [20] SparseArray_1.12.2                      
+ [21] gridGraphics_0.5-1                      
+ [22] KernSmooth_2.23-26                      
+ [23] htmlwidgets_1.6.4                       
+ [24] httr2_1.2.2                             
+ [25] plyr_1.8.9                              
+ [26] cachem_1.1.0                            
+ [27] GenomicAlignments_1.48.0                
+ [28] igraph_2.3.1                            
+ [29] lifecycle_1.0.5                         
+ [30] pkgconfig_2.0.3                         
+ [31] Matrix_1.7-5                            
+ [32] R6_2.6.1                                
+ [33] fastmap_1.2.0                           
+ [34] MatrixGenerics_1.24.0                   
+ [35] digest_0.6.39                           
+ [36] aplot_0.2.9                             
+ [37] enrichplot_1.32.0                       
+ [38] TFMPvalue_1.0.0                         
+ [39] ggnewscale_0.5.2                        
+ [40] patchwork_1.3.2                         
+ [41] RSQLite_3.53.1                          
+ [42] seqLogo_1.78.0                          
+ [43] filelock_1.0.3                          
+ [44] labeling_0.4.3                          
+ [45] timechange_0.4.0                        
+ [46] polyclip_1.10-7                         
+ [47] abind_1.4-8                             
+ [48] compiler_4.6.0                          
+ [49] bit64_4.8.2                             
+ [50] fontquiver_0.2.1                        
+ [51] withr_3.0.2                             
+ [52] S7_0.2.2                                
+ [53] BiocParallel_1.46.0                     
+ [54] DBI_1.3.0                               
+ [55] gplots_3.3.0                            
+ [56] ggforce_0.5.0                           
+ [57] MASS_7.3-65                             
+ [58] rappdirs_0.3.4                          
+ [59] DelayedArray_0.38.1                     
+ [60] rjson_0.2.23                            
+ [61] caTools_1.18.3                          
+ [62] gtools_3.9.5                            
+ [63] tools_4.6.0                             
+ [64] otel_0.2.0                              
+ [65] scatterpie_0.2.6                        
+ [66] ape_5.8-1                               
+ [67] glue_1.8.1                              
+ [68] restfulr_0.0.16                         
+ [69] nlme_3.1-169                            
+ [70] GOSemSim_2.38.0                         
+ [71] grid_4.6.0                              
+ [72] cluster_2.1.8.2                         
+ [73] reshape2_1.4.5                          
+ [74] gtable_0.3.6                            
+ [75] tzdb_0.5.0                              
+ [76] hms_1.1.4                               
+ [77] pillar_1.11.1                           
+ [78] yulab.utils_0.2.4                       
+ [79] vroom_1.7.1                             
+ [80] tweenr_2.0.3                            
+ [81] treeio_1.36.1                           
+ [82] lattice_0.22-9                          
+ [83] bit_4.6.0                               
+ [84] DirichletMultinomial_1.54.0             
+ [85] tidyselect_1.2.1                        
+ [86] fontLiberation_0.1.0                    
+ [87] GO.db_3.23.1                            
+ [88] knitr_1.51                              
+ [89] fontBitstreamVera_0.1.1                 
+ [90] SummarizedExperiment_1.42.0             
+ [91] xfun_0.57                               
+ [92] matrixStats_1.5.0                       
+ [93] stringi_1.8.7                           
+ [94] UCSC.utils_1.8.0                        
+ [95] lazyeval_0.2.3                          
+ [96] ggfun_0.2.0                             
+ [97] yaml_2.3.12                             
+ [98] boot_1.3-32                             
+ [99] evaluate_1.0.5                          
+[100] codetools_0.2-20                        
+[101] cigarillo_1.2.0                         
+[102] gdtools_0.5.1                           
+[103] ggplotify_0.1.3                         
+[104] cli_3.6.6                               
+[105] systemfonts_1.3.2                       
+[106] Rcpp_1.1.1-1.1                          
+[107] GenomeInfoDb_1.48.0                     
+[108] png_0.1-9                               
+[109] XML_3.99-0.23                           
+[110] parallel_4.6.0                          
+[111] blob_1.3.0                              
+[112] DOSE_4.6.0                              
+[113] bitops_1.0-9                            
+[114] pwalign_1.8.0                           
+[115] tidytree_0.4.7                          
+[116] ggiraph_0.9.6                           
+[117] enrichit_0.1.4                          
+[118] scales_1.4.0                            
+[119] crayon_1.5.3                            
+[120] rlang_1.2.0                             
+[121] KEGGREST_1.52.0                         </code></pre>
 </div>
 </div>
 </section>
