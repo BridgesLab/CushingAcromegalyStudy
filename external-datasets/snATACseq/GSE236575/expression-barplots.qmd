@@ -1,0 +1,335 @@
+---
+title: "TRAP-seq Expression Barplots — CHD vs HFD"
+subtitle: "GSE236578 · eWAT adipocytes (Hinte et al. 2024)"
+format:
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show code"
+    fig-path: "figures/rnaseq/"
+  gfm:
+    html-math-method: webtex
+theme: journal
+execute:
+  echo: true
+  warning: false
+knitr:
+  opts_chunk:
+    fig-path: "figures/rnaseq/"
+    dev: ["png", "pdf"]
+    dpi: 300
+    dev.args:
+      png:
+        type: "cairo-png"
+      pdf:
+        family: "sans"
+---
+
+```{r setup, message=FALSE}
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(ggplot2)
+  library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+  library(org.Mm.eg.db)
+  library(GenomicRanges)
+  library(AnnotationDbi)
+})
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+results_dir <- "results/rnaseq/deseq2"
+norm_file   <- file.path(results_dir, "rnaseq_normalized_counts.txt")
+deseq_file  <- file.path(results_dir, "rnaseq_deseq2_results.txt")
+stopifnot(file.exists(norm_file), file.exists(deseq_file))
+
+# ── DESeq2 results (significance stars) ───────────────────────────────────────
+deseq <- as_tibble(
+  read.table(deseq_file, header = TRUE, sep = "\t",
+             check.names = FALSE, row.names = 1),
+  rownames = "gene"
+) |>
+  mutate(padj           = as.numeric(padj),
+         log2FoldChange = as.numeric(log2FoldChange))
+
+# ── DESeq2 normalised counts ──────────────────────────────────────────────────
+norm_counts <- as_tibble(
+  read.table(norm_file, header = TRUE, sep = "\t",
+             check.names = FALSE, row.names = 1),
+  rownames = "gene"
+)
+sample_cols <- setdiff(names(norm_counts), "gene")
+
+# ── Gene lengths from TxDb (union of exons per gene, mm10 UCSC knownGene) ─────
+# reduce() collapses overlapping exons so each base is counted once.
+txdb         <- TxDb.Mmusculus.UCSC.mm10.knownGene
+exons_by_gene <- exonsBy(txdb, by = "gene")
+len_entrez    <- sum(width(reduce(exons_by_gene)))
+
+sym_map_raw <- AnnotationDbi::select(
+  org.Mm.eg.db,
+  keys    = names(len_entrez),
+  columns = "SYMBOL",
+  keytype = "ENTREZID"
+)
+# Rename by position to avoid bare-name issues when AnnotationDbi masks dplyr::select
+colnames(sym_map_raw) <- c("entrez", "gene")
+sym_map <- as_tibble(sym_map_raw) |> filter(!is.na(gene))
+
+gene_lengths <- tibble(entrez    = names(len_entrez),
+                       length_bp = as.integer(len_entrez)) |>
+  left_join(sym_map, by = "entrez") |>
+  filter(!is.na(gene)) |>
+  group_by(gene) |>
+  summarise(length_bp = max(length_bp), .groups = "drop")
+
+cat("Gene lengths derived from TxDb:", nrow(gene_lengths), "genes\n")
+
+# ── Compute TPM from DESeq2 normalised counts + gene lengths ──────────────────
+# DESeq2 norm counts are already library-size corrected; adding length
+# normalisation gives pseudo-TPM suitable for cross-gene comparison.
+# Formula: RPK = count / (length_kb); TPM = RPK / sum(RPK) * 1e6
+count_mat <- norm_counts |>
+  left_join(gene_lengths, by = "gene") |>
+  filter(!is.na(length_bp))
+
+rpk_mat <- as.matrix(count_mat[, sample_cols]) /
+           (count_mat$length_bp / 1000)
+
+tpm_mat <- sweep(rpk_mat, 2, colSums(rpk_mat, na.rm = TRUE) / 1e6, "/")
+
+tpm_counts <- as_tibble(tpm_mat) |>
+  mutate(gene = count_mat$gene) |>
+  dplyr::select(gene, all_of(sample_cols))
+
+cat("TPM matrix:", nrow(tpm_counts), "genes x", length(sample_cols), "samples\n")
+cat("Column sums (should all be ~1e6):",
+    paste(round(colSums(tpm_counts[, sample_cols], na.rm = TRUE) / 1e3, 1),
+          collapse = ", "), "k\n")
+
+# ── Sample metadata ───────────────────────────────────────────────────────────
+sample_meta <- tibble(
+  sample    = sample_cols,
+  condition = str_extract(sample_cols, "^(CHD|HFD)")
+)
+stopifnot(!any(is.na(sample_meta$condition)))
+```
+
+```{r plot-function}
+#' plot_expression_barplot
+#'
+#' @param genes      Character vector of gene symbols to plot.
+#' @param title      Plot title (default: derived from genes).
+#' @param counts     Wide tibble with a "gene" column + one column per sample
+#'                   (DESeq2 normalised counts). Defaults to norm_counts.
+#' @param meta       Tibble with columns "sample" and "condition".
+#'                   Defaults to sample_meta.
+#' @param deseq_res  Tibble with columns "gene", "log2FoldChange", "padj".
+#'                   If supplied, significance stars are added above HFD bars.
+#' @param palette    Named character vector for condition colours.
+#'                   Default: CHD = "#4393C3", HFD = "#D6604D".
+#' @param show_points Logical; overlay individual sample points (default TRUE).
+#' @param y_label    Y-axis label.
+#'
+#' @return A ggplot object.
+
+plot_expression_barplot <- function(
+    genes,
+    title        = paste(genes, collapse = " / "),
+    counts       = tpm_counts,     # TPM by default; pass norm_counts for DESeq2 units
+    meta         = sample_meta,
+    deseq_res    = deseq,
+    palette      = c(CHD = "#4393C3", HFD = "#D6604D"),
+    show_points  = TRUE,
+    log_scale    = FALSE,
+    y_label      = "TPM"
+) {
+  # ── Subset & pivot ──────────────────────────────────────────────────────────
+  missing_genes <- setdiff(genes, counts$gene)
+  if (length(missing_genes) > 0)
+    message("Genes not found in count matrix (skipped): ",
+            paste(missing_genes, collapse = ", "))
+
+  found_genes <- intersect(genes, counts$gene)
+  if (length(found_genes) == 0)
+    stop("None of the requested genes were found in the count matrix.")
+
+  long <- counts |>
+    filter(gene %in% found_genes) |>
+    pivot_longer(-gene, names_to = "sample", values_to = "norm_count") |>
+    left_join(meta, by = "sample") |>
+    mutate(
+      gene      = factor(gene, levels = found_genes),   # preserve input order
+      condition = factor(condition, levels = c("CHD", "HFD"))
+    )
+
+  # ── Summary stats ───────────────────────────────────────────────────────────
+  summ <- long |>
+    group_by(gene, condition) |>
+    summarise(
+      mean_expr = mean(norm_count),
+      se_expr   = sd(norm_count) / sqrt(n()),
+      .groups   = "drop"
+    )
+
+  # ── Optional significance annotation ────────────────────────────────────────
+  sig_ann <- NULL
+  if (!is.null(deseq_res)) {
+    sig_ann <- deseq_res |>
+      filter(gene %in% found_genes, !is.na(padj)) |>
+      mutate(
+        star = case_when(
+          padj < 0.001 ~ "***",
+          padj < 0.01  ~ "**",
+          padj < 0.05  ~ "*",
+          padj < 0.10  ~ "†",
+          TRUE         ~ ""
+        )
+      ) |>
+      filter(star != "") |>
+      dplyr::select(gene, log2FoldChange, star) |>
+      left_join(
+        summ |> filter(condition == "HFD") |>
+          dplyr::select(gene, mean_expr, se_expr),
+        by = "gene"
+      ) |>
+      mutate(
+        gene      = factor(gene, levels = found_genes),
+        condition = factor("HFD", levels = c("CHD", "HFD")),
+        # per-gene y position: just above the HFD bar+SE, not scaled to panel max
+        y_ann     = mean_expr + se_expr * 1.5 + 0.08 * mean_expr
+      )
+  }
+
+  # ── Build plot ──────────────────────────────────────────────────────────────
+  p <- ggplot(summ, aes(x = gene, y = mean_expr, fill = condition)) +
+    geom_col(
+      position = position_dodge(width = 0.7),
+      width    = 0.65,
+      colour   = "grey30",
+      linewidth = 0.3
+    ) +
+    geom_errorbar(
+      aes(ymin = mean_expr - se_expr, ymax = mean_expr + se_expr),
+      position = position_dodge(width = 0.7),
+      width    = 0.25,
+      linewidth = 0.5
+    ) +
+    scale_fill_manual(values = palette, name = "Diet") +
+    (if (log_scale)
+       scale_y_log10(expand = expansion(mult = c(0, 0.15)),
+                     labels = scales::label_log(),
+                     name   = paste0(y_label, " (log₁₀)"))
+     else
+       scale_y_continuous(expand = expansion(mult = c(0, 0.15)),
+                          name   = y_label)) +
+    labs(title = title, x = NULL) +
+    theme_classic(base_size = 16) +
+    theme(
+      axis.text.x  = element_text(face = "italic", angle = 30,
+                                  hjust = 1, vjust = 1),
+      legend.position = c(0.2,0.8),
+    )
+
+  # Individual sample points
+  if (show_points) {
+    p <- p +
+      geom_point(
+        data     = long,
+        aes(x = gene, y = norm_count, fill = condition),
+        position = position_dodge(width = 0.7),
+        shape    = 21, size = 2.2,
+        colour   = "grey20", alpha = 0.8,
+        show.legend = FALSE
+      )
+  }
+
+  # Significance stars
+  if (!is.null(sig_ann) && nrow(sig_ann) > 0) {
+    p <- p +
+      geom_text(
+        data  = sig_ann,
+        aes(x = gene, y = y_ann, label = star),
+        position    = position_dodge(width = 0.7),
+        colour      = "black",
+        size        = 4.5,
+        inherit.aes = FALSE
+      )
+  }
+
+  p
+}
+```
+
+---
+
+## Define gene sets
+
+Edit the list below — each named element produces one plot.
+
+```{r gene-sets}
+gene_sets <- list(
+
+  "AP-1 family" = c(
+  # Jun Family (The Anchors)
+  "Jun", "Junb", "Jund",
+  
+  # Fos Family (The Core Partners)
+  "Fos", "Fosb", "Fosl1", "Fosl2",
+  
+  # ATF/BATF Family (The Stress/Metabolic Partners)
+  "Atf2", "Atf3", "Atf4", "Atf7", "Batf", "Batf2", "Batf3",
+  
+  # JDP Family
+  "Jdp2",
+  
+  # Maf Family (The Extended Partners)
+  "Maf", "Mafa", "Mafb", "Mafg", "Mafk", "Maff"
+  ),
+  "HFD-Induced AP-1 Genes" = c(
+    "Junb", "Fos", "Atf3", "Mafb","Mafk"
+  ),
+
+    "HFD-Suppressed AP-1 Genes" = c(
+    "Atf4", "Maf", "Mafg"
+  ),
+
+  "GR targets & sensitisation" = c(
+    "Fkbp5", "Sgk1", "Angptl4", "Lep", "Nr3c1", "Tsc22d3"
+  ),
+
+  "Lipid / metabolic" = c(
+    "Pnpla2", "Hsd11b1", "Hsd11b2", "Lipe", "Fasn", "Acaca"
+  ),
+
+  "Demoted candidates" = c(
+    "Cebpb", "Cebpa", "Foxa1", "Foxa2", "Foxo1", "Foxo3","Vdr"
+  )
+
+)
+```
+
+---
+
+## Plots
+
+```{r render-plots, results="asis", fig.width=9, fig.height=4.5, message=FALSE, warning=FALSE}
+for (set_name in names(gene_sets)) {
+  cat(sprintf("\n### %s\n\n", set_name))
+  print(plot_expression_barplot(genes = gene_sets[[set_name]], title = set_name))
+  cat("\n\n")
+}
+```
+
+---
+
+Significance stars derive from the DESeq2 Wald test (HFD vs CHD):
+`***` padj < 0.001 · `**` padj < 0.01 · `*` padj < 0.05 · `†` padj < 0.10
+
+---
+
+## Session info
+
+```{r session-info}
+sessionInfo()
+```
