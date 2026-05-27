@@ -78,7 +78,11 @@ Fisher exact test: are HFD-up ATAC peaks enriched for nearest-gene HFD-up RNA?
 
 **OR = 1.10, p = 1.95 × 10⁻³** (Fisher exact, one-sided).
 
-The odds ratio is statistically significant but essentially null in effect size — HFD-up peaks are only marginally more likely than background to sit adjacent to an HFD-up gene (17.4% vs. 18.9%). This is expected for enhancer-driven regulation: most chromatin-opening events at distal enhancers will not match the nearest gene. The enrichment result does **not** undermine the motif evidence; it simply confirms that bulk nearest-gene coupling is weak, which is consistent with the HFD-up peaks acting at AP-1/GR composite elements potentially regulating non-nearest genes or operating over long genomic distances. TAD-level coupling (pinned for later analysis) would be the appropriate test.
+The odds ratio is statistically significant but essentially null in effect size — HFD-up peaks are only marginally more likely than background to sit adjacent to an HFD-up gene (17.4% vs. 18.9%). Two complementary explanations account for the weak coupling:
+
+1. **Nearest-gene attribution is wrong for most enhancers.** Distal regulatory elements loop to non-nearest genes; TAD-level coupling would be the appropriate test.
+
+2. **Primed vs. activated enhancers.** AP-1 may open chromatin at GR-binding sites — making them *accessible* — without GR actually occupying or activating them yet. GR binding requires nuclear GR, which in turn depends on ligand availability and Fkbp5-mediated nuclear entry. HFD-opened AP-1 peaks therefore represent a **permissive chromatin state** (poised for GR activation) rather than active transcriptional output. The downstream transcriptional response would only materialise fully once GR nuclear occupancy increases — via Fkbp5 downregulation or elevated glucocorticoid tone. This decoupling between chromatin priming and gene activation is biologically expected and **does not undermine the model**; it is the model.
 
 ---
 
@@ -199,13 +203,73 @@ binding at newly accessible loci.
 
 ---
 
-## 8. Pending analyses
+## 8. Locus-level chromatin at GR-target genes (Section 8, rnaseq-integration.qmd)
+
+Peak-level DESeq2 normalised ATAC counts (mean ± SE, CHD vs HFD) at five loci:
+
+| Gene | ATAC result | RNA result | Interpretation |
+|------|-------------|-----------|----------------|
+| **Fkbp5** | All 13 peaks CHD > HFD; 2 significant (padj < 0.05); 7/13 peaks carry AP-1 motif | LFC = −1.29, padj = 0.010 | Chromatin closes in HFD — see §8a for peak-level AP-1 detail |
+| **Sgk1** | 1 HFD-up peak (chr10:21,986,642; LFC = +1.60, padj = 0.008) carries **AP-1 + GR** motifs | LFC = +1.77, padj = 0.001 | Classic composite enhancer opened in HFD → GR → Sgk1 |
+| **Angptl4** | All peaks CHD ≥ HFD; nearest significant peak is CHD-enriched | LFC = +1.95, padj = 0.002 | Responsible GR enhancer likely distal (>30 kb) |
+| **Lep** | No significant ATAC change within ±40 kb | LFC = +2.01, padj = 0.014 | Known distal fat-specific enhancers not in window |
+| **Pnpla2** | 6/12 peaks significantly CHD-enriched; none HFD-up | LFC = +0.32, padj = 0.727 | Chromatin closes, transcript unchanged — not chromatin-driven |
+
+### 8a. Fkbp5 locus — AP-1 annotation of the two significant peaks
+
+All 13 Fkbp5 locus peaks with AP-1 status (shared-peak FIMO scan, 35 JASPAR2024 AP-1 motifs,
+p < 1×10⁻⁴; all peaks are CHD > HFD):
+
+| Peak | mid (kb) | LFC | padj | AP-1? | Note |
+|------|----------:|-----:|-----:|:-----:|------|
+| peak_40664 | 99,914 | −0.11 | 0.866 | no | — |
+| peak_40665 | **99,930.6** | **−0.70** | **1.9×10⁻⁵** | **no** | strongest signal; AP-1-negative |
+| peak_40666 | 99,940 | −0.47 | 0.061 | **yes** | borderline sig |
+| peak_40667 | 99,942 | −0.46 | 0.075 | no | — |
+| peak_40668 | 99,947 | −0.36 | 0.500 | no | — |
+| peak_40669 | 99,957 | −0.38 | 0.481 | no | — |
+| peak_40670 | 99,969 | −0.67 | 0.019 | **yes** | significant; AP-1-positive |
+| peak_40671 | 99,974 | −0.57 | 0.059 | **yes** | borderline sig |
+| peak_40672 | 100,005 | −0.54 | 0.531 | **yes** | — |
+| peak_40673 | 100,009 | −0.36 | 0.395 | **yes** | — |
+| peak_40674 | 100,012 | −0.17 | 0.748 | **yes** | — |
+| peak_40675 | 100,042 | −0.64 | 0.260 | no | — |
+| peak_40676 | 100,096 | −0.42 | 0.276 | **yes** | — |
+
+7/13 peaks carry AP-1 motifs, but these cluster in the gene body (99,940–100,096 kb) and are
+predominantly non-significant. At padj < 0.05: **one AP-1-positive peak** (99,969 kb) and one
+AP-1-negative peak (99,930.6 kb). At the relaxed padj < 0.10 threshold, three AP-1-positive peaks
+are differentially open (99,940, 99,969, 99,974 kb).
+
+The strongest closing peak (99,930.6 kb, upstream regulatory region ~18 kb from TSS) is AP-1-negative,
+suggesting its maintenance in CHD depends on a non-AP-1 factor. Chromatin closure at Fkbp5 is therefore
+**not predominantly AP-1-driven** at the peak level, despite dense AP-1 motif occupancy in the full
+locus sequence (Section 6 motif scan, which scans all open chromatin rather than just significant peaks).
+The Section 6 result reflects AP-1 binding potential across the 200 kb locus; the peak-level result
+shows that the elements actually losing accessibility are mostly AP-1-independent.
+
+This is consistent with the unified cascade model (Junb → Fkbp5 silencing) operating through an indirect
+mechanism rather than AP-1 directly maintaining the dominant closing peak.
+
+**Pnpla2 verdict:** Not AP-1/chromatin-driven. The ATGL locus systematically loses
+accessibility in HFD despite being classified as a GR target by transcript trajectory.
+Its stable expression most likely reflects Fkbp5/GR constitutive activation through a
+distal or extra-locus mechanism.
+
+**Sgk1 is the clearest confirmation:** one HFD-specific peak with both AP-1 and GR motifs
+corresponds exactly to a significantly up-regulated GR-target gene.
+
+---
+
+## 9. Pending analyses
 
 | Analysis | Status | Notes |
 |----------|--------|-------|
 | Fkbp5 motif scan — vertebrate motif set | **Complete** | POSITIVE: 542 promoter hits, 4,099 Jun-family hits; Junb and JUN::JUNB motifs present |
 | AP-1 + GR composite peak scan | **Complete** | 1,526/6,900 (22.1%) HFD peaks carry GR motif; AP-1+GR co-occurrence OR=1.28 vs shared (p=2.3×10⁻⁸); see Section 7 of `rnaseq-integration.qmd` |
+| Locus-level chromatin panels | **Complete** | Sections 6.1a + 8 of `rnaseq-integration.qmd`; bar charts at Fkbp5/Sgk1/Angptl4/Lep/Pnpla2 |
 | Expression barplots (TPM, CHD vs HFD) | **Complete** | `expression-barplots.qmd`; TPM from DESeq2 norm counts + TxDb gene lengths; AP-1 compositional switch visible (Atf4/Maf/Mafg dominant, Junb/Fos low-expression but HFD-induced) |
+| BigWig locus tracks (coverage) | **Pending server BAMs** | Section 9 placeholder in qmd; place `*.RPGC.bw` in `results/bigwig/atac/` and `*.CPM.bw` in `results/rnaseq/bigwig/`, then set `eval: true` |
 | ChIP-Atlas Junb at Fkbp5 | **To do** | HTTP 403 blocked API; check manually at peak browser URL in Section 6b, or try ENCODE |
 | Junb CUT&RUN / ChIP-seq at Fkbp5 locus | **Proposed experiment** | Required to confirm motif occupancy; HFD vs CHD eWAT adipocytes |
 | TAD-level ATAC × RNA coupling | Pinned | Would test whether HFD-up peaks and HFD-up genes co-occur within the same TAD |

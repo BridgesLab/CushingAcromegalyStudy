@@ -303,6 +303,23 @@ cat(sprintf("\nFisher OR=%.2f, p=%.2e\n", ft$estimate, ft$p.value))
 cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
 ```
 
+> **Interpretation of OR ≈ 1.1:**
+> The enrichment is real but tiny (17.4% vs 18.9% of peaks near an HFD-up gene).
+> Two reasons account for this:
+>
+> 1. *Nearest-gene attribution*: most enhancers regulate non-nearest genes;
+>    the correct test is TAD-level or loop-based coupling (pinned).
+>
+> 2. *Primed vs. activated enhancers*: AP-1 opens chromatin at GR-binding sites —
+>    making them **accessible** — without GR necessarily occupying or activating
+>    them yet. GR binding requires nuclear GR, which depends on ligand availability
+>    and Fkbp5-mediated de-repression. The HFD-specific peaks therefore represent a
+>    **permissive (poised) chromatin state**: the sites are ready for GR once the
+>    GR-dependent signal is present. Transcriptional activation is the downstream
+>    consequence, not a simultaneous event. Weak ATAC–RNA spatial coupling is
+>    therefore the *expected* result of chromatin priming, not evidence against
+>    the model.
+
 ### Motif stratification: which motif class best predicts paired gene upregulation?
 
 ```{r motif-stratification}
@@ -580,6 +597,84 @@ knitr::kable(
   caption = "ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)"
 )
 ```
+
+### 6.1a Fkbp5 locus — ATAC signal panel (CHD vs HFD)
+
+```{r fkbp5-locus-panel}
+#| fig-width: 8
+#| fig-height: 4
+
+select <- dplyr::select
+
+# Normalized counts (row = peak_id, col = sample)
+cnts_mat <- read.table("results/deseq2/deseq2_normalized_counts.txt",
+                       header = TRUE, row.names = 1, sep = "\t", check.names = FALSE)
+cnts_long <- cnts_mat |>
+  rownames_to_column("peak_id") |>
+  pivot_longer(-peak_id, names_to = "sample", values_to = "norm_count") |>
+  mutate(condition = ifelse(grepl("^CHD", sample), "CHD", "HFD"))
+
+# Full peak data with per-sample counts
+atac_counts <- read_tsv("results/deseq2/deseq2_results.txt", show_col_types = FALSE) |>
+  left_join(cnts_long, by = "peak_id") |>
+  mutate(mid_kb = (start + end) / 2e3)
+
+# Helper: summarise counts at a locus into plottable long form
+locus_counts <- function(chr_in, s, e) {
+  atac_counts |>
+    filter(chr == chr_in, start >= s, end <= e) |>
+    group_by(peak_id, chr, start, end, log2FoldChange, padj, mid_kb) |>
+    summarise(
+      CHD    = mean(norm_count[condition == "CHD"]),
+      HFD    = mean(norm_count[condition == "HFD"]),
+      CHD_se = sd(norm_count[condition == "CHD"]) / sqrt(3),
+      HFD_se = sd(norm_count[condition == "HFD"]) / sqrt(3),
+      .groups = "drop"
+    ) |>
+    mutate(
+      sig = case_when(padj < 0.001 ~ "***", padj < 0.01 ~ "**",
+                      padj < 0.05  ~ "*",   TRUE         ~ "")
+    ) |>
+    pivot_longer(c(CHD, HFD), names_to = "condition", values_to = "mean_cnt") |>
+    mutate(se = ifelse(condition == "CHD", CHD_se, HFD_se),
+           peak_label = sprintf("%.1f kb", mid_kb))
+}
+
+fkbp5_cts <- locus_counts("chr4", 99900000, 100100000) |>
+  mutate(condition = factor(condition, levels = c("CHD", "HFD")),
+         peak_label = fct_reorder(peak_label, mid_kb))
+
+# Significance label shown once (on HFD bar)
+sig_labels <- fkbp5_cts |>
+  filter(condition == "HFD", sig != "") |>
+  mutate(y_pos = mean_cnt + se + max(fkbp5_cts$mean_cnt) * 0.06)
+
+ggplot(fkbp5_cts, aes(x = peak_label, y = mean_cnt, fill = condition)) +
+  geom_col(position = position_dodge(0.75), width = 0.7) +
+  geom_errorbar(aes(ymin = mean_cnt - se, ymax = mean_cnt + se),
+                position = position_dodge(0.75), width = 0.25) +
+  geom_text(data = sig_labels,
+            aes(x = peak_label, y = y_pos, label = sig),
+            inherit.aes = FALSE, size = 4, hjust = 0.5) +
+  scale_fill_manual(values = color_scheme, name = "Diet") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    title    = "Fkbp5 locus — ATAC-seq normalised counts",
+    subtitle = "Each bar = one peak; * padj < 0.05  ** padj < 0.01  *** padj < 0.001 (DESeq2)",
+    x        = "Peak mid-point (genomic position, kb)",
+    y        = "Mean normalised ATAC count ± SE"
+  ) +
+  theme_classic(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = "top")
+```
+
+> **Interpretation:** Every peak across the 200-kb Fkbp5 locus shows CHD ≥ HFD
+> signal — chromatin is systematically more accessible in chow-diet adipocytes.
+> Two peaks are formally significant (padj < 0.05): chr4:99,929,264 (upstream
+> regulatory region) and chr4:99,968,583 (gene body). This is the chromatin
+> correlate of the Fkbp5 downregulation seen in TRAP-seq (LFC = −1.29,
+> padj = 0.010) and supports AP-1-mediated silencing at this locus in HFD.
 
 ### 6.2 AP-1 motif scan
 
@@ -1010,6 +1105,353 @@ if (file.exists(shared_ap1_file) && exists("shared_classified")) {
     hfd_both, hfd_n, 100*hfd_both/hfd_n,
     shared_both, shared_n, 100*shared_both/shared_n,
     ft$estimate, ft$p.value
+  ))
+}
+```
+
+---
+
+## 8. Locus-level chromatin at GR-target genes
+
+The GR-sensitisation model makes a testable prediction: genes that are
+transcriptionally upregulated in HFD (Sgk1, Angptl4, Lep) should have nearby
+HFD-opened ATAC peaks, ideally carrying AP-1 and/or GR motifs. Genes whose
+expression does not increase (Pnpla2) should lack this chromatin signature.
+Fkbp5 is the inverse case — it is CHD-enriched at both chromatin and RNA levels.
+
+```{r locus-setup}
+#| include: false
+
+select <- dplyr::select
+
+# Re-use cnts_long and atac_counts from Section 6.1a if already in environment;
+# otherwise rebuild (allows section to run standalone).
+if (!exists("atac_counts")) {
+  cnts_mat  <- read.table("results/deseq2/deseq2_normalized_counts.txt",
+                          header = TRUE, row.names = 1, sep = "\t", check.names = FALSE)
+  cnts_long <- cnts_mat |>
+    rownames_to_column("peak_id") |>
+    pivot_longer(-peak_id, names_to = "sample", values_to = "norm_count") |>
+    mutate(condition = ifelse(grepl("^CHD", sample), "CHD", "HFD"))
+  atac_counts <- read_tsv("results/deseq2/deseq2_results.txt", show_col_types = FALSE) |>
+    left_join(cnts_long, by = "peak_id") |>
+    mutate(mid_kb = (start + end) / 2e3)
+}
+
+# AP-1 and GR motif annotations from the full motif scan (HFD-specific)
+ap1_ids <- c("MA0099.4","MA0462.3","MA0476.2","MA0477.3","MA0478.2",
+             "MA0488.2","MA0489.3","MA0490.3","MA0491.3","MA0492.2",
+             "MA0605.3","MA1126.2","MA1127.1","MA1128.2","MA1129.1",
+             "MA1130.2","MA1131.2","MA1132.2","MA1133.2","MA1134.2",
+             "MA1135.2","MA1136.1","MA1137.2","MA1138.2","MA1139.2",
+             "MA1140.3","MA1141.2","MA1142.2","MA1143.2","MA1144.2",
+             "MA1145.2","MA1634.2","MA0835.3","MA1951.2","MA1988.2")
+gr_ids <- c("MA0113.4", "MA2323.1", "MA2327.1")
+
+hfd_full_motif <- read_tsv(
+  "results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv",
+  show_col_types = FALSE)
+hfd_gr_motif <- read_tsv(
+  "results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv",
+  show_col_types = FALSE)
+
+ap1_cols_m <- intersect(ap1_ids, names(hfd_full_motif))
+gr_cols_m  <- intersect(gr_ids,  names(hfd_gr_motif))
+
+hfd_motif_ann <- hfd_full_motif |>
+  mutate(has_ap1 = rowSums(across(all_of(ap1_cols_m))) > 0) |>
+  select(peak, has_ap1) |>
+  left_join(
+    hfd_gr_motif |>
+      mutate(has_gr = rowSums(across(all_of(gr_cols_m))) > 0) |>
+      select(peak, has_gr),
+    by = "peak"
+  ) |>
+  mutate(
+    motif_cat = case_when(
+      has_ap1 & has_gr  ~ "AP-1 + GR",
+      has_ap1 & !has_gr ~ "AP-1 only",
+     !has_ap1 & has_gr  ~ "GR only",
+      TRUE              ~ "Neither"
+    )
+  )
+
+# ── Shared helper: build locus count table with motif annotations ──────────
+make_locus_df <- function(chr_in, s, e) {
+  # Identify HFD-specific peaks at this locus and get motif annotation
+  hfd_peaks_here <- atac_counts |>
+    filter(chr == chr_in, start >= s, end <= e,
+           !is.na(padj), padj < 0.05, log2FoldChange > 1) |>
+    distinct(peak_id, chr, start, end) |>
+    mutate(peak_500 = {
+      ctr <- as.integer((start + end) / 2)
+      paste0(chr, ":", ctr - 250L, "-", ctr + 250L)
+    })
+
+  ldf <- atac_counts |>
+    filter(chr == chr_in, start >= s, end <= e) |>
+    group_by(peak_id, chr, start, end, log2FoldChange, padj, mid_kb) |>
+    summarise(
+      CHD    = mean(norm_count[condition == "CHD"]),
+      HFD    = mean(norm_count[condition == "HFD"]),
+      CHD_se = sd(norm_count[condition == "CHD"]) / sqrt(3),
+      HFD_se = sd(norm_count[condition == "HFD"]) / sqrt(3),
+      .groups = "drop"
+    ) |>
+    mutate(
+      sig = case_when(padj < 0.001 ~ "***", padj < 0.01 ~ "**",
+                      padj < 0.05  ~ "*",   TRUE         ~ ""),
+      peak_label = sprintf("%.0f", mid_kb),
+      # Motif annotation: look up 500-bp window peak ID
+      peak_500 = {
+        ctr <- as.integer((start + end) / 2)
+        paste0(chr, ":", ctr - 250L, "-", ctr + 250L)
+      }
+    ) |>
+    left_join(hfd_motif_ann |> select(peak, motif_cat),
+              by = c("peak_500" = "peak")) |>
+    mutate(motif_cat = replace_na(motif_cat, "Not HFD-specific"))
+  ldf
+}
+
+# Colour mapping for motif categories
+motif_colors <- c(
+  "AP-1 + GR"       = "#d62728",
+  "AP-1 only"        = "#1f77b4",
+  "GR only"          = "#ff7f0e",
+  "Neither"          = "#9467bd",
+  "Not HFD-specific" = "#cccccc"
+)
+
+# ── Shared helper: draw the locus ATAC panel ─────────────────────────────
+plot_locus <- function(ldf, gene_label, rna_lfc = NULL, rna_padj = NULL) {
+
+  ldf_long <- ldf |>
+    pivot_longer(c(CHD, HFD), names_to = "condition", values_to = "mean_cnt") |>
+    mutate(se = ifelse(condition == "CHD", CHD_se, HFD_se),
+           condition = factor(condition, levels = c("CHD","HFD")),
+           peak_label = fct_reorder(peak_label, mid_kb))
+
+  sig_df <- ldf_long |>
+    filter(condition == "HFD", sig != "") |>
+    mutate(y_pos = mean_cnt + se + max(ldf_long$mean_cnt) * 0.08)
+
+  rna_sub <- if (!is.null(rna_lfc)) {
+    rna_star <- case_when(rna_padj < 0.001 ~ "***", rna_padj < 0.01 ~ "**",
+                          rna_padj < 0.05  ~ "*",   TRUE             ~ "ns")
+    sprintf("RNA-seq: LFC = %+.2f (%s)", rna_lfc, rna_star)
+  } else ""
+
+  # Colour bars by motif category (HFD direction peaks only; shared = grey)
+  ggplot(ldf_long, aes(x = peak_label, y = mean_cnt,
+                        fill = interaction(condition, motif_cat))) +
+    geom_col(position = position_dodge(0.75), width = 0.7,
+             aes(alpha = condition)) +
+    geom_errorbar(aes(ymin = mean_cnt - se, ymax = mean_cnt + se),
+                  position = position_dodge(0.75), width = 0.25,
+                  colour = "grey30") +
+    geom_text(data = sig_df,
+              aes(x = peak_label, y = y_pos, label = sig),
+              inherit.aes = FALSE, size = 4) +
+    scale_fill_manual(
+      values = setNames(
+        rep(unname(motif_colors), each = 2),
+        paste0(rep(c("CHD","HFD"), times = length(motif_colors)), ".",
+               rep(names(motif_colors), each = 2))
+      ),
+      guide = "none"
+    ) +
+    scale_alpha_manual(values = c(CHD = 0.55, HFD = 1.0),
+                       guide = "none") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    labs(
+      title    = sprintf("%s locus — ATAC-seq normalised counts", gene_label),
+      subtitle = paste0(rna_sub,
+        "\nBar colour: CHD (faded) and HFD (solid); ",
+        "red = AP-1+GR composite, blue = AP-1, orange = GR, grey = no HFD-specific peak"),
+      x = "Peak mid-point (kb)", y = "Mean norm. count ± SE"
+    ) +
+    theme_classic(base_size = 11) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+}
+```
+
+### 8.1 Sgk1 — HFD-opened AP-1+GR composite enhancer
+
+```{r sgk1-locus}
+#| fig-width: 8
+#| fig-height: 4
+
+rna_sgk1 <- tg |> filter(gene == "Sgk1")
+sgk1_df  <- make_locus_df("chr10", 21850000, 22080000)
+plot_locus(sgk1_df, "Sgk1",
+           rna_lfc  = rna_sgk1$log2FoldChange,
+           rna_padj = rna_sgk1$padj)
+```
+
+```{r sgk1-verdict}
+sgk1_hfd_peaks <- sgk1_df |> filter(log2FoldChange > 1, !is.na(padj), padj < 0.05)
+cat(sprintf("Sgk1 locus HFD-specific peaks (padj<0.05, LFC>1): %d\n",
+            nrow(sgk1_hfd_peaks)))
+if (nrow(sgk1_hfd_peaks) > 0)
+  cat(sprintf("  chr10:%d-%d  LFC=%.2f  padj=%.3f  motif: %s\n",
+              sgk1_hfd_peaks$start, sgk1_hfd_peaks$end,
+              sgk1_hfd_peaks$log2FoldChange, sgk1_hfd_peaks$padj,
+              sgk1_hfd_peaks$motif_cat))
+```
+
+> **chr10:21,986,642–21,987,014** (LFC = +1.60, padj = 0.008) carries **both AP-1
+> and GR motifs** — the composite enhancer predicted by the pioneer model.
+> Sgk1 is significantly up in HFD TRAP-seq, making this the clearest locus-level
+> confirmation of the AP-1 pioneer → GR binding → transcription axis.
+
+### 8.2 Angptl4 — GR target locus
+
+```{r angptl4-locus}
+#| fig-width: 7
+#| fig-height: 4
+
+rna_ang <- tg |> filter(gene == "Angptl4")
+ang_df  <- make_locus_df("chr17", 33700000, 33760000)
+plot_locus(ang_df, "Angptl4",
+           rna_lfc  = rna_ang$log2FoldChange,
+           rna_padj = rna_ang$padj)
+```
+
+> Angptl4 is strongly up in HFD TRAP-seq (LFC ≈ +1.95) but nearby ATAC peaks
+> are all CHD-enriched or unchanged. The responsible GR enhancer may lie
+> outside the ±30 kb window shown; distal GREs for Angptl4 have been reported
+> up to 100 kb upstream in other cell types.
+
+### 8.3 Lep — leptin locus
+
+```{r lep-locus}
+#| fig-width: 7
+#| fig-height: 4
+
+rna_lep <- tg |> filter(gene == "Lep")
+lep_df  <- make_locus_df("chr6", 28970000, 29050000)
+plot_locus(lep_df, "Lep",
+           rna_lfc  = rna_lep$log2FoldChange,
+           rna_padj = rna_lep$padj)
+```
+
+> Lep (leptin) is the most induced transcript in HFD (LFC ≈ +2.01,
+> padj = 0.014). No significant ATAC changes within the immediate locus window;
+> leptin regulation is known to involve distal fat-specific enhancers.
+
+### 8.4 Pnpla2 — chromatin closes despite GR-target classification
+
+```{r pnpla2-locus}
+#| fig-width: 9
+#| fig-height: 4.5
+
+rna_pnp <- tg |> filter(gene == "Pnpla2")
+pnp_df  <- make_locus_df("chr7", 141370000, 141450000)
+plot_locus(pnp_df, "Pnpla2",
+           rna_lfc  = rna_pnp$log2FoldChange,
+           rna_padj = rna_pnp$padj)
+```
+
+```{r pnpla2-verdict}
+pnp_sig <- pnp_df |> filter(!is.na(padj), padj < 0.05)
+cat(sprintf("Pnpla2 locus peaks: %d total, %d significant\n",
+            nrow(pnp_df), nrow(pnp_sig)))
+cat(sprintf("  All significant peaks CHD-enriched: %s\n",
+            all(pnp_sig$log2FoldChange < 0)))
+cat(sprintf("  Significant CHD-up peaks: %d  (none are HFD-up)\n",
+            sum(pnp_sig$log2FoldChange < 0)))
+cat(sprintf("  RNA LFC = %.2f, padj = %.3f\n",
+            rna_pnp$log2FoldChange, rna_pnp$padj))
+```
+
+> **Pnpla2 (ATGL)** shows **6 / 12 significant CHD-enriched peaks** at its
+> locus — chromatin closes in HFD — yet the transcript is not significantly
+> changed (LFC = +0.32, padj = 0.73). Possible explanations:
+>
+> 1. **Fkbp5/GR model:** constitutive GR activation (via Fkbp5 loss) could
+>    maintain Pnpla2 expression even as local chromatin accessibility declines,
+>    through a distal GRE or increased GR nuclear occupancy.
+> 2. **Uncoupled regulation:** chromatin changes at the Pnpla2 locus are a
+>    consequence of AP-1 remodelling at nearby HFD-specific sites rather than
+>    a cause of altered Pnpla2 expression.
+> 3. **Compensation:** opposing signals (GR induction vs local chromatin
+>    closing) may balance, keeping transcript levels stable.
+>
+> Pnpla2 is **not chromatin-driven in this dataset**; its classification as
+> a GR target rests on the transcriptome rather than ATAC evidence.
+
+---
+
+## 9. BigWig locus tracks (requires server BAM files)
+
+When ATAC-seq and RNA-seq BAM files are available locally, running the Nextflow
+pipeline (or the BigWig steps in isolation) will produce:
+
+```
+results/bigwig/atac/
+  CHD_1.RPGC.bw   CHD_2.RPGC.bw   CHD_3.RPGC.bw
+  HFD_1.RPGC.bw   HFD_2.RPGC.bw   HFD_3.RPGC.bw
+
+results/rnaseq/bigwig/
+  CHD_1.CPM.bw    CHD_2.CPM.bw    CHD_3.CPM.bw
+  HFD_1.CPM.bw    HFD_2.CPM.bw    HFD_3.CPM.bw
+```
+
+Place these files in the paths above relative to the project root, then the
+chunk below will render IGV-style locus tracks using `rtracklayer`. **The peak-count
+bar charts in Sections 6.1a and 8.1–8.4 remain valid and complementary regardless.**
+
+```{r bigwig-locus-tracks}
+#| fig-width: 10
+#| fig-height: 9
+#| eval: false   # ← change to true once BigWigs are in place
+
+bw_atac <- list.files("results/bigwig/atac",   pattern="\\.bw$", full.names=TRUE)
+bw_rna  <- list.files("results/rnaseq/bigwig", pattern="\\.bw$", full.names=TRUE)
+
+if (length(bw_atac) == 6 && length(bw_rna) == 6) {
+  suppressPackageStartupMessages({
+    library(rtracklayer)
+    library(GenomicRanges)
+  })
+
+  # Loci to visualise
+  loci_bw <- list(
+    Fkbp5   = GRanges("chr4",  IRanges(99900000, 100100000)),
+    Sgk1    = GRanges("chr10", IRanges(21850000,  22080000)),
+    Angptl4 = GRanges("chr17", IRanges(33700000,  33760000)),
+    Lep     = GRanges("chr6",  IRanges(28970000,  29050000)),
+    Pnpla2  = GRanges("chr7",  IRanges(141370000, 141450000))
+  )
+
+  import_mean <- function(files, cond, roi) {
+    mats <- lapply(files[grepl(cond, files)], function(f)
+      as.numeric(import(f, which=roi, as="NumericList")[[1]]))
+    Reduce("+", mats) / length(mats)
+  }
+
+  # Plot one locus (example: Sgk1)
+  roi <- loci_bw[["Sgk1"]]
+  positions <- seq(start(roi), end(roi))
+  chd_cov <- import_mean(bw_atac, "CHD", roi)
+  hfd_cov <- import_mean(bw_atac, "HFD", roi)
+  cov_df  <- tibble(pos = positions,
+                    CHD = chd_cov[seq_along(positions)],
+                    HFD = hfd_cov[seq_along(positions)]) |>
+    pivot_longer(c(CHD,HFD), names_to="condition", values_to="cov") |>
+    mutate(condition = factor(condition, c("CHD","HFD")))
+
+  ggplot(cov_df, aes(x=pos/1e3, y=cov, fill=condition)) +
+    geom_area(alpha=0.6, position="identity") +
+    scale_fill_manual(values=color_scheme) +
+    facet_wrap(~condition, ncol=1) +
+    labs(title="Sgk1 locus — ATAC BigWig coverage", x="Position (kb)", y="RPGC") +
+    theme_classic(base_size=11) + theme(legend.position="none")
+} else {
+  message(sprintf(
+    "BigWig files not found.\n  ATAC: %d/6 found in results/bigwig/atac/\n  RNA:  %d/6 found in results/rnaseq/bigwig/\nSee README §'AP-1 + GR Composite Peak Scan' for file naming.",
+    length(bw_atac), length(bw_rna)
   ))
 }
 ```

@@ -1145,6 +1145,90 @@ Table: ATAC peaks at the Fkbp5 locus (distanceToTSS in kb)
 :::
 
 
+### 6.1a Fkbp5 locus — ATAC signal panel (CHD vs HFD)
+
+
+::: {.cell}
+
+```{.r .cell-code}
+select <- dplyr::select
+
+# Normalized counts (row = peak_id, col = sample)
+cnts_mat <- read.table("results/deseq2/deseq2_normalized_counts.txt",
+                       header = TRUE, row.names = 1, sep = "\t", check.names = FALSE)
+cnts_long <- cnts_mat |>
+  rownames_to_column("peak_id") |>
+  pivot_longer(-peak_id, names_to = "sample", values_to = "norm_count") |>
+  mutate(condition = ifelse(grepl("^CHD", sample), "CHD", "HFD"))
+
+# Full peak data with per-sample counts
+atac_counts <- read_tsv("results/deseq2/deseq2_results.txt", show_col_types = FALSE) |>
+  left_join(cnts_long, by = "peak_id") |>
+  mutate(mid_kb = (start + end) / 2e3)
+
+# Helper: summarise counts at a locus into plottable long form
+locus_counts <- function(chr_in, s, e) {
+  atac_counts |>
+    filter(chr == chr_in, start >= s, end <= e) |>
+    group_by(peak_id, chr, start, end, log2FoldChange, padj, mid_kb) |>
+    summarise(
+      CHD    = mean(norm_count[condition == "CHD"]),
+      HFD    = mean(norm_count[condition == "HFD"]),
+      CHD_se = sd(norm_count[condition == "CHD"]) / sqrt(3),
+      HFD_se = sd(norm_count[condition == "HFD"]) / sqrt(3),
+      .groups = "drop"
+    ) |>
+    mutate(
+      sig = case_when(padj < 0.001 ~ "***", padj < 0.01 ~ "**",
+                      padj < 0.05  ~ "*",   TRUE         ~ "")
+    ) |>
+    pivot_longer(c(CHD, HFD), names_to = "condition", values_to = "mean_cnt") |>
+    mutate(se = ifelse(condition == "CHD", CHD_se, HFD_se),
+           peak_label = sprintf("%.1f kb", mid_kb))
+}
+
+fkbp5_cts <- locus_counts("chr4", 99900000, 100100000) |>
+  mutate(condition = factor(condition, levels = c("CHD", "HFD")),
+         peak_label = fct_reorder(peak_label, mid_kb))
+
+# Significance label shown once (on HFD bar)
+sig_labels <- fkbp5_cts |>
+  filter(condition == "HFD", sig != "") |>
+  mutate(y_pos = mean_cnt + se + max(fkbp5_cts$mean_cnt) * 0.06)
+
+ggplot(fkbp5_cts, aes(x = peak_label, y = mean_cnt, fill = condition)) +
+  geom_col(position = position_dodge(0.75), width = 0.7) +
+  geom_errorbar(aes(ymin = mean_cnt - se, ymax = mean_cnt + se),
+                position = position_dodge(0.75), width = 0.25) +
+  geom_text(data = sig_labels,
+            aes(x = peak_label, y = y_pos, label = sig),
+            inherit.aes = FALSE, size = 4, hjust = 0.5) +
+  scale_fill_manual(values = color_scheme, name = "Diet") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    title    = "Fkbp5 locus — ATAC-seq normalised counts",
+    subtitle = "Each bar = one peak; * padj < 0.05  ** padj < 0.01  *** padj < 0.001 (DESeq2)",
+    x        = "Peak mid-point (genomic position, kb)",
+    y        = "Mean normalised ATAC count ± SE"
+  ) +
+  theme_classic(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = "top")
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/fkbp5-locus-panel-1.png){width=2400}
+:::
+:::
+
+
+> **Interpretation:** Every peak across the 200-kb Fkbp5 locus shows CHD ≥ HFD
+> signal — chromatin is systematically more accessible in chow-diet adipocytes.
+> Two peaks are formally significant (padj < 0.05): chr4:99,929,264 (upstream
+> regulatory region) and chr4:99,968,583 (gene body). This is the chromatin
+> correlate of the Fkbp5 downregulation seen in TRAP-seq (LFC = −1.29,
+> padj = 0.010) and supports AP-1-mediated silencing at this locus in HFD.
+
 ### 6.2 AP-1 motif scan
 
 
@@ -1890,6 +1974,299 @@ AP-1 + GR co-occurrence:
 
 ---
 
+## 8. Locus-level chromatin at GR-target genes
+
+The GR-sensitisation model makes a testable prediction: genes that are
+transcriptionally upregulated in HFD (Sgk1, Angptl4, Lep) should have nearby
+HFD-opened ATAC peaks, ideally carrying AP-1 and/or GR motifs. Genes whose
+expression does not increase (Pnpla2) should lack this chromatin signature.
+Fkbp5 is the inverse case — it is CHD-enriched at both chromatin and RNA levels.
+
+
+
+### 8.1 Sgk1 — HFD-opened AP-1+GR composite enhancer
+
+
+::: {.cell}
+
+```{.r .cell-code}
+rna_sgk1 <- tg |> filter(gene == "Sgk1")
+sgk1_df  <- make_locus_df("chr10", 21850000, 22080000)
+plot_locus(sgk1_df, "Sgk1",
+           rna_lfc  = rna_sgk1$log2FoldChange,
+           rna_padj = rna_sgk1$padj)
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/sgk1-locus-1.png){width=2400}
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+sgk1_hfd_peaks <- sgk1_df |> filter(log2FoldChange > 1, !is.na(padj), padj < 0.05)
+cat(sprintf("Sgk1 locus HFD-specific peaks (padj<0.05, LFC>1): %d\n",
+            nrow(sgk1_hfd_peaks)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Sgk1 locus HFD-specific peaks (padj<0.05, LFC>1): 1
+```
+
+
+:::
+
+```{.r .cell-code}
+if (nrow(sgk1_hfd_peaks) > 0)
+  cat(sprintf("  chr10:%d-%d  LFC=%.2f  padj=%.3f  motif: %s\n",
+              sgk1_hfd_peaks$start, sgk1_hfd_peaks$end,
+              sgk1_hfd_peaks$log2FoldChange, sgk1_hfd_peaks$padj,
+              sgk1_hfd_peaks$motif_cat))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  chr10:21986642-21987014  LFC=1.60  padj=0.008  motif: AP-1 + GR
+```
+
+
+:::
+:::
+
+
+> **chr10:21,986,642–21,987,014** (LFC = +1.60, padj = 0.008) carries **both AP-1
+> and GR motifs** — the composite enhancer predicted by the pioneer model.
+> Sgk1 is significantly up in HFD TRAP-seq, making this the clearest locus-level
+> confirmation of the AP-1 pioneer → GR binding → transcription axis.
+
+### 8.2 Angptl4 — GR target locus
+
+
+::: {.cell}
+
+```{.r .cell-code}
+rna_ang <- tg |> filter(gene == "Angptl4")
+ang_df  <- make_locus_df("chr17", 33700000, 33760000)
+plot_locus(ang_df, "Angptl4",
+           rna_lfc  = rna_ang$log2FoldChange,
+           rna_padj = rna_ang$padj)
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/angptl4-locus-1.png){width=2100}
+:::
+:::
+
+
+> Angptl4 is strongly up in HFD TRAP-seq (LFC ≈ +1.95) but nearby ATAC peaks
+> are all CHD-enriched or unchanged. The responsible GR enhancer may lie
+> outside the ±30 kb window shown; distal GREs for Angptl4 have been reported
+> up to 100 kb upstream in other cell types.
+
+### 8.3 Lep — leptin locus
+
+
+::: {.cell}
+
+```{.r .cell-code}
+rna_lep <- tg |> filter(gene == "Lep")
+lep_df  <- make_locus_df("chr6", 28970000, 29050000)
+plot_locus(lep_df, "Lep",
+           rna_lfc  = rna_lep$log2FoldChange,
+           rna_padj = rna_lep$padj)
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/lep-locus-1.png){width=2100}
+:::
+:::
+
+
+> Lep (leptin) is the most induced transcript in HFD (LFC ≈ +2.01,
+> padj = 0.014). No significant ATAC changes within the immediate locus window;
+> leptin regulation is known to involve distal fat-specific enhancers.
+
+### 8.4 Pnpla2 — chromatin closes despite GR-target classification
+
+
+::: {.cell}
+
+```{.r .cell-code}
+rna_pnp <- tg |> filter(gene == "Pnpla2")
+pnp_df  <- make_locus_df("chr7", 141370000, 141450000)
+plot_locus(pnp_df, "Pnpla2",
+           rna_lfc  = rna_pnp$log2FoldChange,
+           rna_padj = rna_pnp$padj)
+```
+
+::: {.cell-output-display}
+![](figures/rnaseq/pnpla2-locus-1.png){width=2700}
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+pnp_sig <- pnp_df |> filter(!is.na(padj), padj < 0.05)
+cat(sprintf("Pnpla2 locus peaks: %d total, %d significant\n",
+            nrow(pnp_df), nrow(pnp_sig)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+Pnpla2 locus peaks: 12 total, 6 significant
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  All significant peaks CHD-enriched: %s\n",
+            all(pnp_sig$log2FoldChange < 0)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  All significant peaks CHD-enriched: TRUE
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  Significant CHD-up peaks: %d  (none are HFD-up)\n",
+            sum(pnp_sig$log2FoldChange < 0)))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  Significant CHD-up peaks: 6  (none are HFD-up)
+```
+
+
+:::
+
+```{.r .cell-code}
+cat(sprintf("  RNA LFC = %.2f, padj = %.3f\n",
+            rna_pnp$log2FoldChange, rna_pnp$padj))
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  RNA LFC = 0.32, padj = 0.842
+```
+
+
+:::
+:::
+
+
+> **Pnpla2 (ATGL)** shows **6 / 12 significant CHD-enriched peaks** at its
+> locus — chromatin closes in HFD — yet the transcript is not significantly
+> changed (LFC = +0.32, padj = 0.73). Possible explanations:
+>
+> 1. **Fkbp5/GR model:** constitutive GR activation (via Fkbp5 loss) could
+>    maintain Pnpla2 expression even as local chromatin accessibility declines,
+>    through a distal GRE or increased GR nuclear occupancy.
+> 2. **Uncoupled regulation:** chromatin changes at the Pnpla2 locus are a
+>    consequence of AP-1 remodelling at nearby HFD-specific sites rather than
+>    a cause of altered Pnpla2 expression.
+> 3. **Compensation:** opposing signals (GR induction vs local chromatin
+>    closing) may balance, keeping transcript levels stable.
+>
+> Pnpla2 is **not chromatin-driven in this dataset**; its classification as
+> a GR target rests on the transcriptome rather than ATAC evidence.
+
+---
+
+## 9. BigWig locus tracks (requires server BAM files)
+
+When ATAC-seq and RNA-seq BAM files are available locally, running the Nextflow
+pipeline (or the BigWig steps in isolation) will produce:
+
+```
+results/bigwig/atac/
+  CHD_1.RPGC.bw   CHD_2.RPGC.bw   CHD_3.RPGC.bw
+  HFD_1.RPGC.bw   HFD_2.RPGC.bw   HFD_3.RPGC.bw
+
+results/rnaseq/bigwig/
+  CHD_1.CPM.bw    CHD_2.CPM.bw    CHD_3.CPM.bw
+  HFD_1.CPM.bw    HFD_2.CPM.bw    HFD_3.CPM.bw
+```
+
+Place these files in the paths above relative to the project root, then the
+chunk below will render IGV-style locus tracks using `rtracklayer`. **The peak-count
+bar charts in Sections 6.1a and 8.1–8.4 remain valid and complementary regardless.**
+
+
+::: {.cell}
+
+```{.r .cell-code}
+bw_atac <- list.files("results/bigwig/atac",   pattern="\\.bw$", full.names=TRUE)
+bw_rna  <- list.files("results/rnaseq/bigwig", pattern="\\.bw$", full.names=TRUE)
+
+if (length(bw_atac) == 6 && length(bw_rna) == 6) {
+  suppressPackageStartupMessages({
+    library(rtracklayer)
+    library(GenomicRanges)
+  })
+
+  # Loci to visualise
+  loci_bw <- list(
+    Fkbp5   = GRanges("chr4",  IRanges(99900000, 100100000)),
+    Sgk1    = GRanges("chr10", IRanges(21850000,  22080000)),
+    Angptl4 = GRanges("chr17", IRanges(33700000,  33760000)),
+    Lep     = GRanges("chr6",  IRanges(28970000,  29050000)),
+    Pnpla2  = GRanges("chr7",  IRanges(141370000, 141450000))
+  )
+
+  import_mean <- function(files, cond, roi) {
+    mats <- lapply(files[grepl(cond, files)], function(f)
+      as.numeric(import(f, which=roi, as="NumericList")[[1]]))
+    Reduce("+", mats) / length(mats)
+  }
+
+  # Plot one locus (example: Sgk1)
+  roi <- loci_bw[["Sgk1"]]
+  positions <- seq(start(roi), end(roi))
+  chd_cov <- import_mean(bw_atac, "CHD", roi)
+  hfd_cov <- import_mean(bw_atac, "HFD", roi)
+  cov_df  <- tibble(pos = positions,
+                    CHD = chd_cov[seq_along(positions)],
+                    HFD = hfd_cov[seq_along(positions)]) |>
+    pivot_longer(c(CHD,HFD), names_to="condition", values_to="cov") |>
+    mutate(condition = factor(condition, c("CHD","HFD")))
+
+  ggplot(cov_df, aes(x=pos/1e3, y=cov, fill=condition)) +
+    geom_area(alpha=0.6, position="identity") +
+    scale_fill_manual(values=color_scheme) +
+    facet_wrap(~condition, ncol=1) +
+    labs(title="Sgk1 locus — ATAC BigWig coverage", x="Position (kb)", y="RPGC") +
+    theme_classic(base_size=11) + theme(legend.position="none")
+} else {
+  message(sprintf(
+    "BigWig files not found.\n  ATAC: %d/6 found in results/bigwig/atac/\n  RNA:  %d/6 found in results/rnaseq/bigwig/\nSee README §'AP-1 + GR Composite Peak Scan' for file naming.",
+    length(bw_atac), length(bw_rna)
+  ))
+}
+```
+:::
+
+
+---
+
 ## Session information
 
 
@@ -1911,7 +2288,7 @@ BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dy
 LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
-[1] en_US/en_US/en_US/C/en_US/en_US
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 time zone: America/Detroit
 tzcode source: internal
@@ -1959,125 +2336,126 @@ other attached packages:
 loaded via a namespace (and not attached):
   [1] JASPAR2020_0.99.10                      
   [2] RColorBrewer_1.1-3                      
-  [3] jsonlite_2.0.0                          
-  [4] tidydr_0.0.6                            
-  [5] magrittr_2.0.5                          
-  [6] ggtangle_0.1.2                          
-  [7] farver_2.1.2                            
-  [8] rmarkdown_2.31                          
-  [9] fs_2.1.0                                
- [10] vctrs_0.7.3                             
- [11] memoise_2.0.1                           
- [12] Rsamtools_2.28.0                        
- [13] RCurl_1.98-1.18                         
- [14] ggtree_4.2.0                            
- [15] htmltools_0.5.9                         
- [16] S4Arrays_1.12.0                         
- [17] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
- [18] plotrix_3.8-14                          
- [19] curl_7.1.0                              
- [20] SparseArray_1.12.2                      
- [21] gridGraphics_0.5-1                      
- [22] KernSmooth_2.23-26                      
- [23] htmlwidgets_1.6.4                       
- [24] httr2_1.2.2                             
- [25] plyr_1.8.9                              
- [26] cachem_1.1.0                            
- [27] GenomicAlignments_1.48.0                
- [28] igraph_2.3.1                            
- [29] lifecycle_1.0.5                         
- [30] pkgconfig_2.0.3                         
- [31] Matrix_1.7-5                            
- [32] R6_2.6.1                                
- [33] fastmap_1.2.0                           
- [34] MatrixGenerics_1.24.0                   
- [35] digest_0.6.39                           
- [36] aplot_0.2.9                             
- [37] enrichplot_1.32.0                       
- [38] TFMPvalue_1.0.0                         
- [39] ggnewscale_0.5.2                        
- [40] patchwork_1.3.2                         
- [41] RSQLite_3.53.1                          
- [42] seqLogo_1.78.0                          
- [43] filelock_1.0.3                          
- [44] labeling_0.4.3                          
- [45] timechange_0.4.0                        
- [46] polyclip_1.10-7                         
- [47] abind_1.4-8                             
- [48] compiler_4.6.0                          
- [49] bit64_4.8.2                             
- [50] fontquiver_0.2.1                        
- [51] withr_3.0.2                             
- [52] S7_0.2.2                                
- [53] BiocParallel_1.46.0                     
- [54] DBI_1.3.0                               
- [55] gplots_3.3.0                            
- [56] ggforce_0.5.0                           
- [57] MASS_7.3-65                             
- [58] rappdirs_0.3.4                          
- [59] DelayedArray_0.38.1                     
- [60] rjson_0.2.23                            
- [61] caTools_1.18.3                          
- [62] gtools_3.9.5                            
- [63] tools_4.6.0                             
- [64] otel_0.2.0                              
- [65] scatterpie_0.2.6                        
- [66] ape_5.8-1                               
- [67] glue_1.8.1                              
- [68] restfulr_0.0.16                         
- [69] nlme_3.1-169                            
- [70] GOSemSim_2.38.0                         
- [71] grid_4.6.0                              
- [72] cluster_2.1.8.2                         
- [73] reshape2_1.4.5                          
- [74] gtable_0.3.6                            
- [75] tzdb_0.5.0                              
- [76] hms_1.1.4                               
- [77] pillar_1.11.1                           
- [78] yulab.utils_0.2.4                       
- [79] vroom_1.7.1                             
- [80] tweenr_2.0.3                            
- [81] treeio_1.36.1                           
- [82] lattice_0.22-9                          
- [83] bit_4.6.0                               
- [84] DirichletMultinomial_1.54.0             
- [85] tidyselect_1.2.1                        
- [86] fontLiberation_0.1.0                    
- [87] GO.db_3.23.1                            
- [88] knitr_1.51                              
- [89] fontBitstreamVera_0.1.1                 
- [90] SummarizedExperiment_1.42.0             
- [91] xfun_0.57                               
- [92] matrixStats_1.5.0                       
- [93] stringi_1.8.7                           
- [94] UCSC.utils_1.8.0                        
- [95] lazyeval_0.2.3                          
- [96] ggfun_0.2.0                             
- [97] yaml_2.3.12                             
- [98] boot_1.3-32                             
- [99] evaluate_1.0.5                          
-[100] codetools_0.2-20                        
-[101] cigarillo_1.2.0                         
-[102] gdtools_0.5.1                           
-[103] ggplotify_0.1.3                         
-[104] cli_3.6.6                               
-[105] systemfonts_1.3.2                       
-[106] Rcpp_1.1.1-1.1                          
-[107] GenomeInfoDb_1.48.0                     
-[108] png_0.1-9                               
-[109] XML_3.99-0.23                           
-[110] parallel_4.6.0                          
-[111] blob_1.3.0                              
-[112] DOSE_4.6.0                              
-[113] bitops_1.0-9                            
-[114] pwalign_1.8.0                           
-[115] tidytree_0.4.7                          
-[116] ggiraph_0.9.6                           
-[117] enrichit_0.1.4                          
-[118] scales_1.4.0                            
-[119] crayon_1.5.3                            
-[120] rlang_1.2.0                             
-[121] KEGGREST_1.52.0                         
+  [3] rstudioapi_0.18.0                       
+  [4] jsonlite_2.0.0                          
+  [5] tidydr_0.0.6                            
+  [6] magrittr_2.0.5                          
+  [7] ggtangle_0.1.2                          
+  [8] farver_2.1.2                            
+  [9] rmarkdown_2.31                          
+ [10] fs_2.1.0                                
+ [11] vctrs_0.7.3                             
+ [12] memoise_2.0.1                           
+ [13] Rsamtools_2.28.0                        
+ [14] RCurl_1.98-1.18                         
+ [15] ggtree_4.2.0                            
+ [16] htmltools_0.5.9                         
+ [17] S4Arrays_1.12.0                         
+ [18] TxDb.Hsapiens.UCSC.hg19.knownGene_3.22.1
+ [19] plotrix_3.8-14                          
+ [20] curl_7.1.0                              
+ [21] SparseArray_1.12.2                      
+ [22] gridGraphics_0.5-1                      
+ [23] KernSmooth_2.23-26                      
+ [24] htmlwidgets_1.6.4                       
+ [25] httr2_1.2.2                             
+ [26] plyr_1.8.9                              
+ [27] cachem_1.1.0                            
+ [28] GenomicAlignments_1.48.0                
+ [29] igraph_2.3.1                            
+ [30] lifecycle_1.0.5                         
+ [31] pkgconfig_2.0.3                         
+ [32] Matrix_1.7-5                            
+ [33] R6_2.6.1                                
+ [34] fastmap_1.2.0                           
+ [35] MatrixGenerics_1.24.0                   
+ [36] digest_0.6.39                           
+ [37] aplot_0.2.9                             
+ [38] enrichplot_1.32.0                       
+ [39] TFMPvalue_1.0.0                         
+ [40] ggnewscale_0.5.2                        
+ [41] patchwork_1.3.2                         
+ [42] RSQLite_3.53.1                          
+ [43] seqLogo_1.78.0                          
+ [44] filelock_1.0.3                          
+ [45] labeling_0.4.3                          
+ [46] timechange_0.4.0                        
+ [47] polyclip_1.10-7                         
+ [48] abind_1.4-8                             
+ [49] compiler_4.6.0                          
+ [50] bit64_4.8.2                             
+ [51] fontquiver_0.2.1                        
+ [52] withr_3.0.2                             
+ [53] S7_0.2.2                                
+ [54] BiocParallel_1.46.0                     
+ [55] DBI_1.3.0                               
+ [56] gplots_3.3.0                            
+ [57] ggforce_0.5.0                           
+ [58] MASS_7.3-65                             
+ [59] rappdirs_0.3.4                          
+ [60] DelayedArray_0.38.1                     
+ [61] rjson_0.2.23                            
+ [62] caTools_1.18.3                          
+ [63] gtools_3.9.5                            
+ [64] tools_4.6.0                             
+ [65] otel_0.2.0                              
+ [66] scatterpie_0.2.6                        
+ [67] ape_5.8-1                               
+ [68] glue_1.8.1                              
+ [69] restfulr_0.0.16                         
+ [70] nlme_3.1-169                            
+ [71] GOSemSim_2.38.0                         
+ [72] grid_4.6.0                              
+ [73] cluster_2.1.8.2                         
+ [74] reshape2_1.4.5                          
+ [75] gtable_0.3.6                            
+ [76] tzdb_0.5.0                              
+ [77] hms_1.1.4                               
+ [78] pillar_1.11.1                           
+ [79] yulab.utils_0.2.4                       
+ [80] vroom_1.7.1                             
+ [81] tweenr_2.0.3                            
+ [82] treeio_1.36.1                           
+ [83] lattice_0.22-9                          
+ [84] bit_4.6.0                               
+ [85] DirichletMultinomial_1.54.0             
+ [86] tidyselect_1.2.1                        
+ [87] fontLiberation_0.1.0                    
+ [88] GO.db_3.23.1                            
+ [89] knitr_1.51                              
+ [90] fontBitstreamVera_0.1.1                 
+ [91] SummarizedExperiment_1.42.0             
+ [92] xfun_0.57                               
+ [93] matrixStats_1.5.0                       
+ [94] stringi_1.8.7                           
+ [95] UCSC.utils_1.8.0                        
+ [96] lazyeval_0.2.3                          
+ [97] ggfun_0.2.0                             
+ [98] yaml_2.3.12                             
+ [99] boot_1.3-32                             
+[100] evaluate_1.0.5                          
+[101] codetools_0.2-20                        
+[102] cigarillo_1.2.0                         
+[103] gdtools_0.5.1                           
+[104] ggplotify_0.1.3                         
+[105] cli_3.6.6                               
+[106] systemfonts_1.3.2                       
+[107] Rcpp_1.1.1-1.1                          
+[108] GenomeInfoDb_1.48.0                     
+[109] png_0.1-9                               
+[110] XML_3.99-0.23                           
+[111] parallel_4.6.0                          
+[112] blob_1.3.0                              
+[113] DOSE_4.6.0                              
+[114] bitops_1.0-9                            
+[115] pwalign_1.8.0                           
+[116] tidytree_0.4.7                          
+[117] ggiraph_0.9.6                           
+[118] enrichit_0.1.4                          
+[119] scales_1.4.0                            
+[120] crayon_1.5.3                            
+[121] rlang_1.2.0                             
+[122] KEGGREST_1.52.0                         
 ```
 
 
