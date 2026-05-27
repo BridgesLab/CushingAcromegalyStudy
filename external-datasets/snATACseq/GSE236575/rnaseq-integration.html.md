@@ -612,6 +612,23 @@ cat(sprintf("95%% CI: [%.2f, %.2f]\n", ft$conf.int[1], ft$conf.int[2]))
 :::
 
 
+> **Interpretation of OR ≈ 1.1:**
+> The enrichment is real but tiny (17.4% vs 18.9% of peaks near an HFD-up gene).
+> Two reasons account for this:
+>
+> 1. *Nearest-gene attribution*: most enhancers regulate non-nearest genes;
+>    the correct test is TAD-level or loop-based coupling (pinned).
+>
+> 2. *Primed vs. activated enhancers*: AP-1 opens chromatin at GR-binding sites —
+>    making them **accessible** — without GR necessarily occupying or activating
+>    them yet. GR binding requires nuclear GR, which depends on ligand availability
+>    and Fkbp5-mediated de-repression. The HFD-specific peaks therefore represent a
+>    **permissive (poised) chromatin state**: the sites are ready for GR once the
+>    GR-dependent signal is present. Transcriptional activation is the downstream
+>    consequence, not a simultaneous event. Weak ATAC–RNA spatial coupling is
+>    therefore the *expected* result of chromatin priming, not evidence against
+>    the model.
+
 ### Motif stratification: which motif class best predicts paired gene upregulation?
 
 
@@ -2191,7 +2208,7 @@ cat(sprintf("  RNA LFC = %.2f, padj = %.3f\n",
 
 ---
 
-## 9. BigWig locus tracks (requires server BAM files)
+## 9. BigWig locus tracks
 
 When ATAC-seq and RNA-seq BAM files are available locally, running the Nextflow
 pipeline (or the BigWig steps in isolation) will produce:
@@ -2256,12 +2273,16 @@ if (length(bw_atac) == 6 && length(bw_rna) == 6) {
     labs(title="Sgk1 locus — ATAC BigWig coverage", x="Position (kb)", y="RPGC") +
     theme_classic(base_size=11) + theme(legend.position="none")
 } else {
-  message(sprintf(
-    "BigWig files not found.\n  ATAC: %d/6 found in results/bigwig/atac/\n  RNA:  %d/6 found in results/rnaseq/bigwig/\nSee README §'AP-1 + GR Composite Peak Scan' for file naming.",
+  cat(sprintf(
+    "**BigWig files not yet available.** ATAC: %d/6 found in `results/bigwig/atac/`; RNA: %d/6 found in `results/rnaseq/bigwig/`. Place the 12 `.bw` files from the Nextflow pipeline output and re-render.\n",
     length(bw_atac), length(bw_rna)
   ))
 }
 ```
+
+::: {.cell-output-display}
+![](figures/rnaseq/bigwig-locus-tracks-1.png){width=3000}
+:::
 :::
 
 

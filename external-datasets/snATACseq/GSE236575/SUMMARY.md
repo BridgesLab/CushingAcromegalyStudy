@@ -273,6 +273,8 @@ corresponds exactly to a significantly up-regulated GR-target gene.
 | ChIP-Atlas Junb at Fkbp5 | **To do** | HTTP 403 blocked API; check manually at peak browser URL in Section 6b, or try ENCODE |
 | Junb CUT&RUN / ChIP-seq at Fkbp5 locus | **Proposed experiment** | Required to confirm motif occupancy; HFD vs CHD eWAT adipocytes |
 | TAD-level ATAC × RNA coupling | Pinned | Would test whether HFD-up peaks and HFD-up genes co-occur within the same TAD |
+| GR ChIP-seq integration | **Next priority** | Overlap 1,078 AP-1+GR composite HFD peaks with published adipocyte/3T3-L1 GR ChIP-seq (ChIP-Atlas; dex-treated). If GR occupancy maps to HFD-specific composite peaks, confirms priming model. |
+| Dex RNA-seq integration | **Next priority** | Find dex-treated adipocyte RNA-seq (GEO). Test whether nearest genes to AP-1+GR composite peaks are dex-responsive, and whether HFD vs CHD adipocytes show differential dex transcriptomes. Key question: are Pltp/Hadha/Acad9 dex targets? |
 
 ---
 

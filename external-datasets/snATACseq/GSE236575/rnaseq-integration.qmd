@@ -1383,7 +1383,7 @@ cat(sprintf("  RNA LFC = %.2f, padj = %.3f\n",
 
 ---
 
-## 9. BigWig locus tracks (requires server BAM files)
+## 9. BigWig locus tracks
 
 When ATAC-seq and RNA-seq BAM files are available locally, running the Nextflow
 pipeline (or the BigWig steps in isolation) will produce:
@@ -1405,7 +1405,7 @@ bar charts in Sections 6.1a and 8.1–8.4 remain valid and complementary regardl
 ```{r bigwig-locus-tracks}
 #| fig-width: 10
 #| fig-height: 9
-#| eval: false   # ← change to true once BigWigs are in place
+#| eval: true   
 
 bw_atac <- list.files("results/bigwig/atac",   pattern="\\.bw$", full.names=TRUE)
 bw_rna  <- list.files("results/rnaseq/bigwig", pattern="\\.bw$", full.names=TRUE)
@@ -1449,8 +1449,8 @@ if (length(bw_atac) == 6 && length(bw_rna) == 6) {
     labs(title="Sgk1 locus — ATAC BigWig coverage", x="Position (kb)", y="RPGC") +
     theme_classic(base_size=11) + theme(legend.position="none")
 } else {
-  message(sprintf(
-    "BigWig files not found.\n  ATAC: %d/6 found in results/bigwig/atac/\n  RNA:  %d/6 found in results/rnaseq/bigwig/\nSee README §'AP-1 + GR Composite Peak Scan' for file naming.",
+  cat(sprintf(
+    "**BigWig files not yet available.** ATAC: %d/6 found in `results/bigwig/atac/`; RNA: %d/6 found in `results/rnaseq/bigwig/`. Place the 12 `.bw` files from the Nextflow pipeline output and re-render.\n",
     length(bw_atac), length(bw_rna)
   ))
 }

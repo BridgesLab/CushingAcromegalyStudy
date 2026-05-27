@@ -136,7 +136,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#lep-leptin-locus" id="toc-lep-leptin-locus" class="nav-link" data-scroll-target="#lep-leptin-locus">8.3 Lep — leptin locus</a></li>
   <li><a href="#pnpla2-chromatin-closes-despite-gr-target-classification" id="toc-pnpla2-chromatin-closes-despite-gr-target-classification" class="nav-link" data-scroll-target="#pnpla2-chromatin-closes-despite-gr-target-classification">8.4 Pnpla2 — chromatin closes despite GR-target classification</a></li>
   </ul></li>
-  <li><a href="#bigwig-locus-tracks-requires-server-bam-files" id="toc-bigwig-locus-tracks-requires-server-bam-files" class="nav-link" data-scroll-target="#bigwig-locus-tracks-requires-server-bam-files">9. BigWig locus tracks (requires server BAM files)</a></li>
+  <li><a href="#bigwig-locus-tracks" id="toc-bigwig-locus-tracks" class="nav-link" data-scroll-target="#bigwig-locus-tracks">9. BigWig locus tracks</a></li>
   <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information">Session information</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="rnaseq-integration.md"><i class="bi bi-file-code"></i>Github (GFM)</a></li></ul></div></nav>
@@ -1653,6 +1653,13 @@ Fisher OR=1.10, p=1.95e-03</code></pre>
 <pre><code>95% CI: [1.04, Inf]</code></pre>
 </div>
 </div>
+<blockquote class="blockquote">
+<p><strong>Interpretation of OR ≈ 1.1:</strong> The enrichment is real but tiny (17.4% vs 18.9% of peaks near an HFD-up gene). Two reasons account for this:</p>
+<ol type="1">
+<li><p><em>Nearest-gene attribution</em>: most enhancers regulate non-nearest genes; the correct test is TAD-level or loop-based coupling (pinned).</p></li>
+<li><p><em>Primed vs.&nbsp;activated enhancers</em>: AP-1 opens chromatin at GR-binding sites — making them <strong>accessible</strong> — without GR necessarily occupying or activating them yet. GR binding requires nuclear GR, which depends on ligand availability and Fkbp5-mediated de-repression. The HFD-specific peaks therefore represent a <strong>permissive (poised) chromatin state</strong>: the sites are ready for GR once the GR-dependent signal is present. Transcriptional activation is the downstream consequence, not a simultaneous event. Weak ATAC–RNA spatial coupling is therefore the <em>expected</em> result of chromatin priming, not evidence against the model.</p></li>
+</ol>
+</blockquote>
 </section>
 <section id="motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation" class="level3">
 <h3 class="anchored" data-anchor-id="motif-stratification-which-motif-class-best-predicts-paired-gene-upregulation">Motif stratification: which motif class best predicts paired gene upregulation?</h3>
@@ -3452,8 +3459,8 @@ Validate with Junb CUT&amp;RUN in HFD vs CHD adipocytes.</code></pre>
 <hr>
 </section>
 </section>
-<section id="bigwig-locus-tracks-requires-server-bam-files" class="level2">
-<h2 class="anchored" data-anchor-id="bigwig-locus-tracks-requires-server-bam-files">9. BigWig locus tracks (requires server BAM files)</h2>
+<section id="bigwig-locus-tracks" class="level2">
+<h2 class="anchored" data-anchor-id="bigwig-locus-tracks">9. BigWig locus tracks</h2>
 <p>When ATAC-seq and RNA-seq BAM files are available locally, running the Nextflow pipeline (or the BigWig steps in isolation) will produce:</p>
 <pre><code>results/bigwig/atac/
   CHD_1.RPGC.bw   CHD_2.RPGC.bw   CHD_3.RPGC.bw
@@ -3508,12 +3515,19 @@ results/rnaseq/bigwig/
 <span id="cb110-40"><a href="#cb110-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Sgk1 locus — ATAC BigWig coverage"</span>, <span class="at">x=</span><span class="st">"Position (kb)"</span>, <span class="at">y=</span><span class="st">"RPGC"</span>) <span class="sc">+</span></span>
 <span id="cb110-41"><a href="#cb110-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">11</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span>
 <span id="cb110-42"><a href="#cb110-42" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb110-43"><a href="#cb110-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="fu">sprintf</span>(</span>
-<span id="cb110-44"><a href="#cb110-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"BigWig files not found.</span><span class="sc">\n</span><span class="st">  ATAC: %d/6 found in results/bigwig/atac/</span><span class="sc">\n</span><span class="st">  RNA:  %d/6 found in results/rnaseq/bigwig/</span><span class="sc">\n</span><span class="st">See README §'AP-1 + GR Composite Peak Scan' for file naming."</span>,</span>
+<span id="cb110-43"><a href="#cb110-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
+<span id="cb110-44"><a href="#cb110-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"**BigWig files not yet available.** ATAC: %d/6 found in `results/bigwig/atac/`; RNA: %d/6 found in `results/rnaseq/bigwig/`. Place the 12 `.bw` files from the Nextflow pipeline output and re-render.</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb110-45"><a href="#cb110-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(bw_atac), <span class="fu">length</span>(bw_rna)</span>
 <span id="cb110-46"><a href="#cb110-46" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb110-47"><a href="#cb110-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="figures/rnaseq/bigwig-locus-tracks-1.png" class="img-fluid figure-img" width="3000"></p>
+</figure>
+</div>
+</div>
 </div>
 <hr>
 </section>
