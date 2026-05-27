@@ -73,7 +73,7 @@ deseq.results <- read_tsv(deseq.filename) #reads in the data
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-06.  This script was most recently updated on Tue May 12 12:33:33 2026.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-20.  This script was most recently updated on Wed May 27 16:46:04 2026.
 
 ## Analysis
 
@@ -105,14 +105,14 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-12 12:33:38 
+>> preparing features information...		 2026-05-27 16:46:09 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-12 12:33:39 
->> calculating distance from peak to TSS...	 2026-05-12 12:33:39 
->> assigning genomic annotation...		 2026-05-12 12:33:39 
+>> identifying nearest features...		 2026-05-27 16:46:09 
+>> calculating distance from peak to TSS...	 2026-05-27 16:46:09 
+>> assigning genomic annotation...		 2026-05-27 16:46:09 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-12 12:33:48 
+>> adding gene annotation...			 2026-05-27 16:46:18 
 ```
 
 
@@ -121,8 +121,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-12 12:33:48 
->> done...					 2026-05-12 12:33:48 
+>> assigning chromosome lengths			 2026-05-27 16:46:18 
+>> done...					 2026-05-27 16:46:18 
 ```
 
 
@@ -140,14 +140,14 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-12 12:33:48 
+>> preparing features information...		 2026-05-27 16:46:18 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-12 12:33:48 
->> calculating distance from peak to TSS...	 2026-05-12 12:33:48 
->> assigning genomic annotation...		 2026-05-12 12:33:48 
+>> identifying nearest features...		 2026-05-27 16:46:18 
+>> calculating distance from peak to TSS...	 2026-05-27 16:46:18 
+>> assigning genomic annotation...		 2026-05-27 16:46:18 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-12 12:33:49 
+>> adding gene annotation...			 2026-05-27 16:46:19 
 ```
 
 
@@ -156,8 +156,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-12 12:33:49 
->> done...					 2026-05-12 12:33:49 
+>> assigning chromosome lengths			 2026-05-27 16:46:19 
+>> done...					 2026-05-27 16:46:19 
 ```
 
 
@@ -173,14 +173,14 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-12 12:33:49 
+>> preparing features information...		 2026-05-27 16:46:19 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-12 12:33:49 
->> calculating distance from peak to TSS...	 2026-05-12 12:33:50 
->> assigning genomic annotation...		 2026-05-12 12:33:50 
+>> identifying nearest features...		 2026-05-27 16:46:19 
+>> calculating distance from peak to TSS...	 2026-05-27 16:46:19 
+>> assigning genomic annotation...		 2026-05-27 16:46:19 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-12 12:33:51 
+>> adding gene annotation...			 2026-05-27 16:46:21 
 ```
 
 
@@ -189,8 +189,8 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-12 12:33:51 
->> done...					 2026-05-12 12:33:51 
+>> assigning chromosome lengths			 2026-05-27 16:46:21 
+>> done...					 2026-05-27 16:46:21 
 ```
 
 
@@ -202,35 +202,241 @@ These 8612 chromatin regions that were differentially opened by HFD were annotat
 
 ### Volcano Plots of Regions
 
+Each HFD-opened peak (padj < 0.05, log2FC > 0) is classified by motif content of
+its 500 bp summit window: AP-1 family (35 JASPAR 2024 bZIP motifs; JUN/JUNB/JUND,
+FOS/FOSL1/FOSL2, BATF/BATF3, ATF3 and all Jun·Fos heterodimers), and GRE
+(NR3C1 MA0113.4 + Pgr/PGR IR3 proxies MA2323.1/MA2327.1). AP-1 calls come from
+the full-motif FIMO scan for HFD/CHD-specific peaks and from
+`shared_ap1_per_peak.tsv` for shared peaks; GR calls come from the composite scan.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(readr)
+library(dplyr)
+library(stringr)
+
+ap1_ids <- c(
+  "MA0099.4","MA0462.3","MA0476.2","MA0477.3","MA0478.2",
+  "MA0488.2","MA0489.3","MA0490.3","MA0491.3","MA0492.2",
+  "MA0605.3","MA1126.2","MA1127.1","MA1128.2","MA1129.1",
+  "MA1130.2","MA1131.2","MA1132.2","MA1133.2","MA1134.2",
+  "MA1135.2","MA1136.1","MA1137.2","MA1138.2","MA1139.2",
+  "MA1140.3","MA1141.2","MA1142.2","MA1143.2","MA1144.2",
+  "MA1145.2","MA1634.2","MA0835.3","MA1951.2","MA1988.2"
+)
+
+gr_ids <- c("MA0113.4", "MA2323.1", "MA2327.1")
+
+ap1_from_full_scan <- function(path) {
+  read_tsv(path, show_col_types = FALSE) |>
+    mutate(has_ap1 = rowSums(across(any_of(ap1_ids))) > 0) |>
+    dplyr::select(peak, has_ap1)
+}
+
+gr_from_composite <- function(path) {
+  read_tsv(path, show_col_types = FALSE) |>
+    mutate(has_gr = rowSums(across(any_of(gr_ids))) > 0) |>
+    dplyr::select(peak, has_gr)
+}
+
+ap1_all <- bind_rows(
+  ap1_from_full_scan("results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv"),
+  ap1_from_full_scan("results/motif_analysis/full_motif_scan/CHD_specific/CHD_specific_per_peak_all_motifs.tsv"),
+  read_tsv("results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv",
+           show_col_types = FALSE)
+)
+
+gr_all <- bind_rows(
+  gr_from_composite("results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv"),
+  gr_from_composite("results/motif_analysis/composite_scan/CHD_specific/CHD_specific_per_peak_motifs.tsv"),
+  gr_from_composite("results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv")
+)
+```
+:::
+
+
 
 ::: {.cell}
 
 ```{.r .cell-code}
 library(ggplot2)
-library(ggrepel)
-# Join on chromosome AND end so peaks on different chromosomes can't collide.
-# all.ann_df$seqnames == deseq.results$chr; all.ann_df$end == deseq.results$end.
+# Compute 500-bp peak window + motif joins BEFORE merging in all.ann_df
+# (all.ann_df also has a `start` column, which would otherwise rename
+# deseq.results$start to start.x and break the mid calculation).
 deseq.results.annot <- deseq.results |>
-  left_join(all.ann_df, by=c("chr"="seqnames", "end"="end"))
+  mutate(
+    mid      = (start + end) %/% 2L,
+    peak_500 = paste0(chr, ":", mid - 250L, "-", mid + 250L)
+  ) |>
+  left_join(ap1_all, by = c("peak_500" = "peak")) |>
+  left_join(gr_all,  by = c("peak_500" = "peak")) |>
+  left_join(all.ann_df, by = c("chr" = "seqnames", "end" = "end")) |>
+  mutate(
+    has_ap1 = coalesce(has_ap1, FALSE),
+    has_gr  = coalesce(has_gr,  FALSE),
+    motif_class = case_when(
+      padj < 0.05 &  has_ap1 &  has_gr ~ "AP-1 and GRE",
+      padj < 0.05 &  has_ap1 & !has_gr ~ "AP-1 only",
+      padj < 0.05 & !has_ap1 &  has_gr ~ "GRE only",
+      padj < 0.05                      ~ "Neither",
+      TRUE                              ~ "Not significant"
+    ),
+    # Factor order = drawing z-order (first = bottom). guide_legend(reverse=TRUE)
+    # then renders the legend top-to-bottom as: AP-1 only, GRE only,
+    # AP-1 and GRE, Neither, Not significant.
+    motif_class = factor(
+      motif_class,
+      levels = c("Not significant", "Neither", "AP-1 and GRE", "GRE only", "AP-1 only")
+    )
+  )
 
-ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
-  geom_point(alpha=0.4) +
-  theme_minimal() +
+class_colors <- c(
+  "AP-1 only"       = "#1f77b4",
+  "GRE only"        = "#2ca02c",
+  "AP-1 and GRE"    = "#d62728",
+  "Neither"         = "#9467bd",
+  "Not significant" = "grey75"
+)
+
+# Compose legend labels with (% increased, % decreased) within each direction.
+sig_peaks <- deseq.results.annot |> filter(padj < 0.05)
+n_up <- sum(sig_peaks$log2FoldChange > 0)
+n_dn <- sum(sig_peaks$log2FoldChange < 0)
+
+class_summary <- sig_peaks |>
+  count(motif_class, direction = ifelse(log2FoldChange > 0, "up", "dn")) |>
+  tidyr::pivot_wider(names_from = direction, values_from = n, values_fill = 0L) |>
+  mutate(
+    pct_up = 100 * up / n_up,
+    pct_dn = 100 * dn / n_dn
+  )
+
+class_labels <- setNames(levels(deseq.results.annot$motif_class),
+                         levels(deseq.results.annot$motif_class))
+for (cls in class_summary$motif_class) {
+  row <- class_summary |> filter(motif_class == cls)
+  class_labels[as.character(cls)] <- sprintf("%s (%.1f%% ↑, %.1f%% ↓)",
+                                             cls, row$pct_up, row$pct_dn)
+}
+
+ggplot(deseq.results.annot |> arrange(motif_class),
+       aes(x = log2FoldChange, y = -log10(pvalue), color = motif_class)) +
+  geom_point(alpha = 0.6, size = 1.1) +
+  scale_color_manual(values = class_colors, labels = class_labels,
+                     name = "Motif content") +
   xlab("Log2 Fold Change (HFD vs NCD)") +
   ylab("-Log10 P-value") +
   ggtitle("Differentially Accessible Regions") +
-  ggrepel::geom_text_repel(
-    data = deseq.results.annot |>
-      filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
-      arrange(padj) |> head(10),
-    aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
-  geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
-  geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
-  theme_classic(base_size=16)
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red") +
+  geom_vline(xintercept = c(-1, 1),    linetype = "dashed", color = "blue") +
+  theme_classic(base_size = 16) +
+  guides(color = guide_legend(reverse = TRUE,
+                              override.aes = list(alpha = 1, size = 3))) +
+  theme(legend.position=c(0.26,0.8))
 ```
 
 ::: {.cell-output-display}
 ![](figures/volcano-regions-1.png){width=2100}
+:::
+:::
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+deseq.results.annot |>
+  filter(padj < 0.05) |>
+  mutate(direction = ifelse(log2FoldChange > 0, "increased (HFD)", "decreased (HFD)")) |>
+  count(direction, motif_class, name = "n_peaks") |>
+  group_by(direction) |>
+  mutate(pct = round(100 * n_peaks / sum(n_peaks), 1)) |>
+  ungroup() |>
+  tidyr::pivot_wider(names_from = direction,
+                     values_from = c(n_peaks, pct),
+                     values_fill = 0) |>
+  knitr::kable(caption = "Motif content of differentially accessible peaks by direction (padj < 0.05)")
+```
+
+::: {.cell-output-display}
+
+
+Table: Motif content of differentially accessible peaks by direction (padj < 0.05)
+
+|motif_class  | n_peaks_decreased (HFD)| n_peaks_increased (HFD)| pct_decreased (HFD)| pct_increased (HFD)|
+|:------------|-----------------------:|-----------------------:|-------------------:|-------------------:|
+|Neither      |                    3268|                    3925|                52.2|                45.6|
+|AP-1 and GRE |                     499|                     834|                 8.0|                 9.7|
+|GRE only     |                     862|                    1091|                13.8|                12.7|
+|AP-1 only    |                    1631|                    2762|                26.1|                32.1|
+
+
+:::
+:::
+
+
+### Composition of significant peaks across log2FC
+
+Stacked histogram (left) of significant peaks (padj < 0.05) by log2FC bin,
+coloured by motif class — equivalent information to the volcano but without
+overplotting, so the density of AP-1 / AP-1+GRE peaks is directly comparable
+between HFD-up (right) and CHD-up (left). The right panel re-normalises each
+bin to 100% so the motif-class *fraction* at each fold-change is visible
+independent of how many peaks fall in that bin.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(ggplot2)
+library(patchwork)
+
+lfc_breaks <- seq(-6, 6, by = 0.25)
+lfc_mid    <- (lfc_breaks[-1] + lfc_breaks[-length(lfc_breaks)]) / 2
+
+comp_data <- deseq.results.annot |>
+  filter(padj < 0.05, motif_class != "Not significant") |>
+  mutate(motif_class = droplevels(motif_class),
+         bin_idx     = cut(log2FoldChange, breaks = lfc_breaks,
+                           include.lowest = TRUE, labels = FALSE),
+         bin_mid     = lfc_mid[bin_idx]) |>
+  filter(!is.na(bin_mid)) |>
+  count(bin_mid, motif_class, name = "n_peaks") |>
+  group_by(bin_mid) |>
+  mutate(pct = 100 * n_peaks / sum(n_peaks)) |>
+  ungroup()
+
+p_counts <- ggplot(comp_data,
+                   aes(x = bin_mid, y = n_peaks, fill = motif_class)) +
+  geom_col(width = 0.25) +
+  scale_fill_manual(values = class_colors, name = "Motif content",
+                    breaks = c("AP-1 only", "GRE only", "AP-1 and GRE", "Neither")) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "blue") +
+  xlab("Log2 Fold Change (HFD vs NCD)") +
+  ylab("Significant peaks (n)") +
+  ggtitle("Peak count by log2FC bin") +
+  theme_classic(base_size = 14)
+
+p_frac <- ggplot(comp_data,
+                 aes(x = bin_mid, y = pct, fill = motif_class)) +
+  geom_col(width = 0.25, position = "stack") +
+  scale_fill_manual(values = class_colors, guide = "none") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "blue") +
+  xlab("Log2 Fold Change (HFD vs NCD)") +
+  ylab("% of significant peaks in bin") +
+  ggtitle("Motif-class composition (100% stacked)") +
+  theme_classic(base_size = 14)
+
+p_counts + p_frac + plot_layout(guides = "collect") &
+  theme(legend.position = "right")
+```
+
+::: {.cell-output-display}
+![](figures/volcano-regions-composition-1.png){width=3600}
 :::
 :::
 
@@ -566,7 +772,7 @@ foxa_gr.top <- foxa_gr.ann %>%
   filter(!is.na(SYMBOL)) %>%
   distinct(SYMBOL, .keep_all = TRUE) %>%
   arrange(abs(distanceToTSS)) %>%
-  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
+  dplyr::select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
   head(40)
 knitr::kable(foxa_gr.top)
 ```
@@ -775,7 +981,7 @@ cebp_gr_list <- cebp_gr.ann %>%
   filter(!is.na(SYMBOL)) %>%
   distinct(SYMBOL, .keep_all = TRUE) %>%
   arrange(abs(distanceToTSS)) %>%
-  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
+  dplyr::select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
 
 dir.create("results/motif_analysis/composite_scan", recursive = TRUE, showWarnings = FALSE)
 write_tsv(cebp_gr_list, "results/motif_analysis/composite_scan/HFD_specific_cebp_gr_genes.tsv")
@@ -1148,7 +1354,7 @@ cooc.compare <- bind_rows(
   cooc     |> mutate(direction = "HFD-specific"),
   cooc.chd |> mutate(direction = "CHD-specific")
 ) |>
-  select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
+  dplyr::select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
 knitr::kable(cooc.compare, digits = c(0, 0, 2, 2, 3, 4),
              caption = "HFD vs CHD enrichment side by side")
 ```
@@ -1349,7 +1555,7 @@ ame.hvc <- read_tsv("results/motif_analysis/ame_results/HFD_vs_CHD/ame.tsv",
     neg_log10_padj_hvc = -log10(pmax(`adj_p-value`, 1e-300)),
     motif_id           = motif_ID
   ) |>
-  select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
+  dplyr::select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
          pct_HFD = `%TP`, pct_CHD = `%FP`, adj_p_hvc = `adj_p-value`)
 
 # Axis 2: full per-peak motif occurrence matrix in HFD-specific peaks
@@ -1534,7 +1740,7 @@ two_axis <- two_axis |>
 top_strict <- two_axis |>
   filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
   arrange(desc(combined_score)) |>
-  select(motif_id, motif_alt_ID,
+  dplyr::select(motif_id, motif_alt_ID,
          pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
          n_with_m, n_m_and_gr, cooc_or, cooc_q,
          combined_score) |>
@@ -1563,7 +1769,7 @@ Table: Strict: HFD-enriched (adj_p<0.05) AND GR-coenriched (q<0.05)
 top_relaxed <- two_axis |>
   filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  select(motif_id, motif_alt_ID,
+  dplyr::select(motif_id, motif_alt_ID,
          pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
          n_with_m, n_m_and_gr, cooc_or, cooc_p, cooc_q,
          combined_score) |>
@@ -1816,7 +2022,7 @@ Top 5 candidates by combined score:
 
 ```{.r .cell-code}
 print(two_axis |> filter(motif_id %in% top5) |>
-        select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
+        dplyr::select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
 ```
 
 ::: {.cell-output .cell-output-stdout}
@@ -1869,7 +2075,7 @@ for (mid in top5) {
   cat("\n=== ", mid, " (", alt_name, ") + GR composite peaks ===\n", sep = "")
   cat("  Composite peaks:", length(cand_peaks),
       "; unique nearest genes:", nrow(cand_genes), "\n")
-  print(head(cand_genes |> select(SYMBOL, distanceToTSS), 20))
+  print(head(cand_genes |> dplyr::select(SYMBOL, distanceToTSS), 20))
 
   write_tsv(cand_genes,
             sprintf("results/motif_analysis/full_motif_scan/%s_GR_composite_genes.tsv",
@@ -2330,34 +2536,35 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] broom_1.0.12                             
+ [1] broom_1.0.13                             
  [2] knitr_1.51                               
- [3] msigdbr_26.1.0                           
- [4] enrichplot_1.32.0                        
- [5] clusterProfiler_4.20.0                   
- [6] ggrepel_0.9.8                            
- [7] org.Mm.eg.db_3.23.0                      
- [8] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
- [9] GenomicFeatures_1.64.0                   
-[10] AnnotationDbi_1.74.0                     
-[11] Biobase_2.72.0                           
-[12] GenomicRanges_1.64.0                     
-[13] Seqinfo_1.2.0                            
-[14] IRanges_2.46.0                           
-[15] S4Vectors_0.50.0                         
-[16] BiocGenerics_0.58.0                      
-[17] generics_0.1.4                           
-[18] ChIPseeker_1.48.0                        
-[19] lubridate_1.9.5                          
-[20] forcats_1.0.1                            
-[21] stringr_1.6.0                            
-[22] dplyr_1.2.1                              
-[23] purrr_1.2.2                              
-[24] readr_2.2.0                              
-[25] tidyr_1.3.2                              
-[26] tibble_3.3.1                             
-[27] ggplot2_4.0.3                            
-[28] tidyverse_2.0.0                          
+ [3] ggrepel_0.9.8                            
+ [4] msigdbr_26.1.0                           
+ [5] enrichplot_1.32.0                        
+ [6] clusterProfiler_4.20.0                   
+ [7] patchwork_1.3.2                          
+ [8] org.Mm.eg.db_3.23.0                      
+ [9] TxDb.Mmusculus.UCSC.mm10.knownGene_3.10.0
+[10] GenomicFeatures_1.64.0                   
+[11] AnnotationDbi_1.74.0                     
+[12] Biobase_2.72.0                           
+[13] GenomicRanges_1.64.0                     
+[14] Seqinfo_1.2.0                            
+[15] IRanges_2.46.0                           
+[16] S4Vectors_0.50.1                         
+[17] BiocGenerics_0.58.1                      
+[18] generics_0.1.4                           
+[19] ChIPseeker_1.48.0                        
+[20] lubridate_1.9.5                          
+[21] forcats_1.0.1                            
+[22] stringr_1.6.0                            
+[23] dplyr_1.2.1                              
+[24] purrr_1.2.2                              
+[25] readr_2.2.0                              
+[26] tidyr_1.3.2                              
+[27] tibble_3.3.1                             
+[28] ggplot2_4.0.3                            
+[29] tidyverse_2.0.0                          
 
 loaded via a namespace (and not attached):
   [1] RColorBrewer_1.1-3                      
@@ -2400,95 +2607,94 @@ loaded via a namespace (and not attached):
  [38] aplot_0.2.9                             
  [39] ggnewscale_0.5.2                        
  [40] aisdk_1.1.0                             
- [41] patchwork_1.3.2                         
- [42] RSQLite_3.52.0                          
- [43] labeling_0.4.3                          
- [44] timechange_0.4.0                        
- [45] polyclip_1.10-7                         
- [46] httr_1.4.8                              
- [47] abind_1.4-8                             
- [48] compiler_4.6.0                          
- [49] bit64_4.8.0                             
- [50] fontquiver_0.2.1                        
- [51] withr_3.0.2                             
- [52] backports_1.5.1                         
- [53] S7_0.2.2                                
- [54] BiocParallel_1.46.0                     
- [55] DBI_1.3.0                               
- [56] gplots_3.3.0                            
- [57] ggforce_0.5.0                           
- [58] MASS_7.3-65                             
- [59] rappdirs_0.3.4                          
- [60] DelayedArray_0.38.1                     
- [61] rjson_0.2.23                            
- [62] caTools_1.18.3                          
- [63] gtools_3.9.5                            
- [64] tools_4.6.0                             
- [65] otel_0.2.0                              
- [66] scatterpie_0.2.6                        
- [67] ape_5.8-1                               
- [68] glue_1.8.1                              
- [69] callr_3.7.6                             
- [70] restfulr_0.0.16                         
- [71] nlme_3.1-169                            
- [72] GOSemSim_2.38.0                         
- [73] grid_4.6.0                              
- [74] cluster_2.1.8.2                         
- [75] reshape2_1.4.5                          
- [76] gtable_0.3.6                            
- [77] tzdb_0.5.0                              
- [78] hms_1.1.4                               
- [79] utf8_1.2.6                              
- [80] XVector_0.52.0                          
- [81] pillar_1.11.1                           
- [82] babelgene_22.9                          
- [83] yulab.utils_0.2.4                       
- [84] vroom_1.7.1                             
- [85] splines_4.6.0                           
- [86] tweenr_2.0.3                            
- [87] treeio_1.36.1                           
- [88] lattice_0.22-9                          
- [89] rtracklayer_1.72.0                      
- [90] bit_4.6.0                               
- [91] tidyselect_1.2.1                        
- [92] fontLiberation_0.1.0                    
- [93] GO.db_3.23.1                            
- [94] Biostrings_2.80.0                       
- [95] fontBitstreamVera_0.1.1                 
- [96] SummarizedExperiment_1.42.0             
- [97] xfun_0.57                               
- [98] matrixStats_1.5.0                       
- [99] stringi_1.8.7                           
-[100] UCSC.utils_1.8.0                        
-[101] lazyeval_0.2.3                          
-[102] ggfun_0.2.0                             
-[103] yaml_2.3.12                             
-[104] boot_1.3-32                             
-[105] evaluate_1.0.5                          
-[106] codetools_0.2-20                        
-[107] cigarillo_1.2.0                         
-[108] qvalue_2.44.0                           
-[109] gdtools_0.5.0                           
-[110] ggplotify_0.1.3                         
-[111] cli_3.6.6                               
-[112] systemfonts_1.3.2                       
-[113] processx_3.9.0                          
-[114] Rcpp_1.1.1-1.1                          
-[115] GenomeInfoDb_1.48.0                     
-[116] png_0.1-9                               
-[117] XML_3.99-0.23                           
-[118] parallel_4.6.0                          
-[119] assertthat_0.2.1                        
-[120] blob_1.3.0                              
-[121] DOSE_4.6.0                              
-[122] bitops_1.0-9                            
-[123] tidytree_0.4.7                          
-[124] ggiraph_0.9.6                           
-[125] enrichit_0.1.4                          
-[126] scales_1.4.0                            
-[127] crayon_1.5.3                            
-[128] rlang_1.2.0                             
-[129] KEGGREST_1.52.0                         
+ [41] RSQLite_3.53.1                          
+ [42] labeling_0.4.3                          
+ [43] timechange_0.4.0                        
+ [44] polyclip_1.10-7                         
+ [45] httr_1.4.8                              
+ [46] abind_1.4-8                             
+ [47] compiler_4.6.0                          
+ [48] bit64_4.8.2                             
+ [49] fontquiver_0.2.1                        
+ [50] withr_3.0.2                             
+ [51] backports_1.5.1                         
+ [52] S7_0.2.2                                
+ [53] BiocParallel_1.46.0                     
+ [54] DBI_1.3.0                               
+ [55] gplots_3.3.0                            
+ [56] ggforce_0.5.0                           
+ [57] MASS_7.3-65                             
+ [58] rappdirs_0.3.4                          
+ [59] DelayedArray_0.38.1                     
+ [60] rjson_0.2.23                            
+ [61] caTools_1.18.3                          
+ [62] gtools_3.9.5                            
+ [63] tools_4.6.0                             
+ [64] otel_0.2.0                              
+ [65] scatterpie_0.2.6                        
+ [66] ape_5.8-1                               
+ [67] glue_1.8.1                              
+ [68] callr_3.7.6                             
+ [69] restfulr_0.0.16                         
+ [70] nlme_3.1-169                            
+ [71] GOSemSim_2.38.0                         
+ [72] grid_4.6.0                              
+ [73] cluster_2.1.8.2                         
+ [74] reshape2_1.4.5                          
+ [75] gtable_0.3.6                            
+ [76] tzdb_0.5.0                              
+ [77] hms_1.1.4                               
+ [78] utf8_1.2.6                              
+ [79] XVector_0.52.0                          
+ [80] pillar_1.11.1                           
+ [81] babelgene_22.9                          
+ [82] yulab.utils_0.2.4                       
+ [83] vroom_1.7.1                             
+ [84] splines_4.6.0                           
+ [85] tweenr_2.0.3                            
+ [86] treeio_1.36.1                           
+ [87] lattice_0.22-9                          
+ [88] rtracklayer_1.72.0                      
+ [89] bit_4.6.0                               
+ [90] tidyselect_1.2.1                        
+ [91] fontLiberation_0.1.0                    
+ [92] GO.db_3.23.1                            
+ [93] Biostrings_2.80.0                       
+ [94] fontBitstreamVera_0.1.1                 
+ [95] SummarizedExperiment_1.42.0             
+ [96] xfun_0.57                               
+ [97] matrixStats_1.5.0                       
+ [98] stringi_1.8.7                           
+ [99] UCSC.utils_1.8.0                        
+[100] lazyeval_0.2.3                          
+[101] ggfun_0.2.0                             
+[102] yaml_2.3.12                             
+[103] boot_1.3-32                             
+[104] evaluate_1.0.5                          
+[105] codetools_0.2-20                        
+[106] cigarillo_1.2.0                         
+[107] qvalue_2.44.0                           
+[108] gdtools_0.5.1                           
+[109] ggplotify_0.1.3                         
+[110] cli_3.6.6                               
+[111] systemfonts_1.3.2                       
+[112] processx_3.9.0                          
+[113] Rcpp_1.1.1-1.1                          
+[114] GenomeInfoDb_1.48.0                     
+[115] png_0.1-9                               
+[116] XML_3.99-0.23                           
+[117] parallel_4.6.0                          
+[118] assertthat_0.2.1                        
+[119] blob_1.3.0                              
+[120] DOSE_4.6.0                              
+[121] bitops_1.0-9                            
+[122] tidytree_0.4.7                          
+[123] ggiraph_0.9.6                           
+[124] enrichit_0.1.4                          
+[125] scales_1.4.0                            
+[126] crayon_1.5.3                            
+[127] rlang_1.2.0                             
+[128] KEGGREST_1.52.0                         
 ```
 
 

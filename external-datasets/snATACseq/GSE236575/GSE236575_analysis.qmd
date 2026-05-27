@@ -103,28 +103,200 @@ These `r nrow(hfd.peaks)` chromatin regions that were differentially opened by H
 
 ### Volcano Plots of Regions
 
+Each HFD-opened peak (padj < 0.05, log2FC > 0) is classified by motif content of
+its 500 bp summit window: AP-1 family (35 JASPAR 2024 bZIP motifs; JUN/JUNB/JUND,
+FOS/FOSL1/FOSL2, BATF/BATF3, ATF3 and all Jun·Fos heterodimers), and GRE
+(NR3C1 MA0113.4 + Pgr/PGR IR3 proxies MA2323.1/MA2327.1). AP-1 calls come from
+the full-motif FIMO scan for HFD/CHD-specific peaks and from
+`shared_ap1_per_peak.tsv` for shared peaks; GR calls come from the composite scan.
+
+```{r volcano-regions-motif-prep}
+library(readr)
+library(dplyr)
+library(stringr)
+
+ap1_ids <- c(
+  "MA0099.4","MA0462.3","MA0476.2","MA0477.3","MA0478.2",
+  "MA0488.2","MA0489.3","MA0490.3","MA0491.3","MA0492.2",
+  "MA0605.3","MA1126.2","MA1127.1","MA1128.2","MA1129.1",
+  "MA1130.2","MA1131.2","MA1132.2","MA1133.2","MA1134.2",
+  "MA1135.2","MA1136.1","MA1137.2","MA1138.2","MA1139.2",
+  "MA1140.3","MA1141.2","MA1142.2","MA1143.2","MA1144.2",
+  "MA1145.2","MA1634.2","MA0835.3","MA1951.2","MA1988.2"
+)
+
+gr_ids <- c("MA0113.4", "MA2323.1", "MA2327.1")
+
+ap1_from_full_scan <- function(path) {
+  read_tsv(path, show_col_types = FALSE) |>
+    mutate(has_ap1 = rowSums(across(any_of(ap1_ids))) > 0) |>
+    dplyr::select(peak, has_ap1)
+}
+
+gr_from_composite <- function(path) {
+  read_tsv(path, show_col_types = FALSE) |>
+    mutate(has_gr = rowSums(across(any_of(gr_ids))) > 0) |>
+    dplyr::select(peak, has_gr)
+}
+
+ap1_all <- bind_rows(
+  ap1_from_full_scan("results/motif_analysis/full_motif_scan/HFD_specific/HFD_specific_per_peak_all_motifs.tsv"),
+  ap1_from_full_scan("results/motif_analysis/full_motif_scan/CHD_specific/CHD_specific_per_peak_all_motifs.tsv"),
+  read_tsv("results/motif_analysis/composite_scan/shared/shared_ap1_per_peak.tsv",
+           show_col_types = FALSE)
+)
+
+gr_all <- bind_rows(
+  gr_from_composite("results/motif_analysis/composite_scan/HFD_specific/HFD_specific_per_peak_motifs.tsv"),
+  gr_from_composite("results/motif_analysis/composite_scan/CHD_specific/CHD_specific_per_peak_motifs.tsv"),
+  gr_from_composite("results/motif_analysis/composite_scan/shared/shared_per_peak_motifs.tsv")
+)
+```
+
 ```{r volcano-regions}
 library(ggplot2)
-library(ggrepel)
-# Join on chromosome AND end so peaks on different chromosomes can't collide.
-# all.ann_df$seqnames == deseq.results$chr; all.ann_df$end == deseq.results$end.
+# Compute 500-bp peak window + motif joins BEFORE merging in all.ann_df
+# (all.ann_df also has a `start` column, which would otherwise rename
+# deseq.results$start to start.x and break the mid calculation).
 deseq.results.annot <- deseq.results |>
-  left_join(all.ann_df, by=c("chr"="seqnames", "end"="end"))
+  mutate(
+    mid      = (start + end) %/% 2L,
+    peak_500 = paste0(chr, ":", mid - 250L, "-", mid + 250L)
+  ) |>
+  left_join(ap1_all, by = c("peak_500" = "peak")) |>
+  left_join(gr_all,  by = c("peak_500" = "peak")) |>
+  left_join(all.ann_df, by = c("chr" = "seqnames", "end" = "end")) |>
+  mutate(
+    has_ap1 = coalesce(has_ap1, FALSE),
+    has_gr  = coalesce(has_gr,  FALSE),
+    motif_class = case_when(
+      padj < 0.05 &  has_ap1 &  has_gr ~ "AP-1 and GRE",
+      padj < 0.05 &  has_ap1 & !has_gr ~ "AP-1 only",
+      padj < 0.05 & !has_ap1 &  has_gr ~ "GRE only",
+      padj < 0.05                      ~ "Neither",
+      TRUE                              ~ "Not significant"
+    ),
+    # Factor order = drawing z-order (first = bottom). guide_legend(reverse=TRUE)
+    # then renders the legend top-to-bottom as: AP-1 only, GRE only,
+    # AP-1 and GRE, Neither, Not significant.
+    motif_class = factor(
+      motif_class,
+      levels = c("Not significant", "Neither", "AP-1 and GRE", "GRE only", "AP-1 only")
+    )
+  )
 
-ggplot(deseq.results.annot, aes(x=log2FoldChange, y=-log10(pvalue))) +
-  geom_point(alpha=0.4) +
-  theme_minimal() +
+class_colors <- c(
+  "AP-1 only"       = "#1f77b4",
+  "GRE only"        = "#2ca02c",
+  "AP-1 and GRE"    = "#d62728",
+  "Neither"         = "#9467bd",
+  "Not significant" = "grey75"
+)
+
+# Compose legend labels with (% increased, % decreased) within each direction.
+sig_peaks <- deseq.results.annot |> filter(padj < 0.05)
+n_up <- sum(sig_peaks$log2FoldChange > 0)
+n_dn <- sum(sig_peaks$log2FoldChange < 0)
+
+class_summary <- sig_peaks |>
+  count(motif_class, direction = ifelse(log2FoldChange > 0, "up", "dn")) |>
+  tidyr::pivot_wider(names_from = direction, values_from = n, values_fill = 0L) |>
+  mutate(
+    pct_up = 100 * up / n_up,
+    pct_dn = 100 * dn / n_dn
+  )
+
+class_labels <- setNames(levels(deseq.results.annot$motif_class),
+                         levels(deseq.results.annot$motif_class))
+for (cls in class_summary$motif_class) {
+  row <- class_summary |> filter(motif_class == cls)
+  class_labels[as.character(cls)] <- sprintf("%s (%.1f%% ↑, %.1f%% ↓)",
+                                             cls, row$pct_up, row$pct_dn)
+}
+
+ggplot(deseq.results.annot |> arrange(motif_class),
+       aes(x = log2FoldChange, y = -log10(pvalue), color = motif_class)) +
+  geom_point(alpha = 0.6, size = 1.1) +
+  scale_color_manual(values = class_colors, labels = class_labels,
+                     name = "Motif content") +
   xlab("Log2 Fold Change (HFD vs NCD)") +
   ylab("-Log10 P-value") +
   ggtitle("Differentially Accessible Regions") +
-  ggrepel::geom_text_repel(
-    data = deseq.results.annot |>
-      filter(padj < 0.05 & abs(log2FoldChange) > 0.5) |>
-      arrange(padj) |> head(10),
-    aes(label = SYMBOL), size = 5, max.overlaps = Inf) +
-  geom_hline(yintercept=-log10(0.05), linetype="dashed", color="red") +
-  geom_vline(xintercept=c(-1, 1), linetype="dashed", color="blue") +
-  theme_classic(base_size=16)
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red") +
+  geom_vline(xintercept = c(-1, 1),    linetype = "dashed", color = "blue") +
+  theme_classic(base_size = 16) +
+  guides(color = guide_legend(reverse = TRUE,
+                              override.aes = list(alpha = 1, size = 3))) +
+  theme(legend.position=c(0.26,0.8))
+```
+
+```{r volcano-regions-motif-counts}
+deseq.results.annot |>
+  filter(padj < 0.05) |>
+  mutate(direction = ifelse(log2FoldChange > 0, "increased (HFD)", "decreased (HFD)")) |>
+  count(direction, motif_class, name = "n_peaks") |>
+  group_by(direction) |>
+  mutate(pct = round(100 * n_peaks / sum(n_peaks), 1)) |>
+  ungroup() |>
+  tidyr::pivot_wider(names_from = direction,
+                     values_from = c(n_peaks, pct),
+                     values_fill = 0) |>
+  knitr::kable(caption = "Motif content of differentially accessible peaks by direction (padj < 0.05)")
+```
+
+### Composition of significant peaks across log2FC
+
+Stacked histogram (left) of significant peaks (padj < 0.05) by log2FC bin,
+coloured by motif class — equivalent information to the volcano but without
+overplotting, so the density of AP-1 / AP-1+GRE peaks is directly comparable
+between HFD-up (right) and CHD-up (left). The right panel re-normalises each
+bin to 100% so the motif-class *fraction* at each fold-change is visible
+independent of how many peaks fall in that bin.
+
+```{r volcano-regions-composition, fig.width=12, fig.height=4.5}
+library(ggplot2)
+library(patchwork)
+
+lfc_breaks <- seq(-6, 6, by = 0.25)
+lfc_mid    <- (lfc_breaks[-1] + lfc_breaks[-length(lfc_breaks)]) / 2
+
+comp_data <- deseq.results.annot |>
+  filter(padj < 0.05, motif_class != "Not significant") |>
+  mutate(motif_class = droplevels(motif_class),
+         bin_idx     = cut(log2FoldChange, breaks = lfc_breaks,
+                           include.lowest = TRUE, labels = FALSE),
+         bin_mid     = lfc_mid[bin_idx]) |>
+  filter(!is.na(bin_mid)) |>
+  count(bin_mid, motif_class, name = "n_peaks") |>
+  group_by(bin_mid) |>
+  mutate(pct = 100 * n_peaks / sum(n_peaks)) |>
+  ungroup()
+
+p_counts <- ggplot(comp_data,
+                   aes(x = bin_mid, y = n_peaks, fill = motif_class)) +
+  geom_col(width = 0.25) +
+  scale_fill_manual(values = class_colors, name = "Motif content",
+                    breaks = c("AP-1 only", "GRE only", "AP-1 and GRE", "Neither")) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "blue") +
+  xlab("Log2 Fold Change (HFD vs NCD)") +
+  ylab("Significant peaks (n)") +
+  ggtitle("Peak count by log2FC bin") +
+  theme_classic(base_size = 14)
+
+p_frac <- ggplot(comp_data,
+                 aes(x = bin_mid, y = pct, fill = motif_class)) +
+  geom_col(width = 0.25, position = "stack") +
+  scale_fill_manual(values = class_colors, guide = "none") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "blue") +
+  xlab("Log2 Fold Change (HFD vs NCD)") +
+  ylab("% of significant peaks in bin") +
+  ggtitle("Motif-class composition (100% stacked)") +
+  theme_classic(base_size = 14)
+
+p_counts + p_frac + plot_layout(guides = "collect") &
+  theme(legend.position = "right")
 ```
 
 ### GSEA Analysis of nearest genes
@@ -322,7 +494,7 @@ foxa_gr.top <- foxa_gr.ann %>%
   filter(!is.na(SYMBOL)) %>%
   distinct(SYMBOL, .keep_all = TRUE) %>%
   arrange(abs(distanceToTSS)) %>%
-  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
+  dplyr::select(SYMBOL, distanceToTSS, annotation, seqnames, start, end) %>%
   head(40)
 knitr::kable(foxa_gr.top)
 ```
@@ -409,7 +581,7 @@ cebp_gr_list <- cebp_gr.ann %>%
   filter(!is.na(SYMBOL)) %>%
   distinct(SYMBOL, .keep_all = TRUE) %>%
   arrange(abs(distanceToTSS)) %>%
-  select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
+  dplyr::select(SYMBOL, distanceToTSS, annotation, seqnames, start, end)
 
 dir.create("results/motif_analysis/composite_scan", recursive = TRUE, showWarnings = FALSE)
 write_tsv(cebp_gr_list, "results/motif_analysis/composite_scan/HFD_specific_cebp_gr_genes.tsv")
@@ -441,7 +613,7 @@ cooc.compare <- bind_rows(
   cooc     |> mutate(direction = "HFD-specific"),
   cooc.chd |> mutate(direction = "CHD-specific")
 ) |>
-  select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
+  dplyr::select(direction, comparison, fg_pct = hfd_pct, shared_pct, odds_ratio, p_value)
 knitr::kable(cooc.compare, digits = c(0, 0, 2, 2, 3, 4),
              caption = "HFD vs CHD enrichment side by side")
 ```
@@ -577,7 +749,7 @@ ame.hvc <- read_tsv("results/motif_analysis/ame_results/HFD_vs_CHD/ame.tsv",
     neg_log10_padj_hvc = -log10(pmax(`adj_p-value`, 1e-300)),
     motif_id           = motif_ID
   ) |>
-  select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
+  dplyr::select(motif_id, motif_alt_ID, log2_enrich_hvc, neg_log10_padj_hvc,
          pct_HFD = `%TP`, pct_CHD = `%FP`, adj_p_hvc = `adj_p-value`)
 
 # Axis 2: full per-peak motif occurrence matrix in HFD-specific peaks
@@ -682,7 +854,7 @@ two_axis <- two_axis |>
 top_strict <- two_axis |>
   filter(in_quadrant_TR, cooc_q < 0.05, adj_p_hvc < 0.05) |>
   arrange(desc(combined_score)) |>
-  select(motif_id, motif_alt_ID,
+  dplyr::select(motif_id, motif_alt_ID,
          pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
          n_with_m, n_m_and_gr, cooc_or, cooc_q,
          combined_score) |>
@@ -697,7 +869,7 @@ knitr::kable(top_strict, digits = c(0,0,2,2,3,4,0,0,3,4,3),
 top_relaxed <- two_axis |>
   filter(in_quadrant_TR) |>
   arrange(desc(combined_score)) |>
-  select(motif_id, motif_alt_ID,
+  dplyr::select(motif_id, motif_alt_ID,
          pct_HFD, pct_CHD, log2_enrich_hvc, adj_p_hvc,
          n_with_m, n_m_and_gr, cooc_or, cooc_p, cooc_q,
          combined_score) |>
@@ -836,7 +1008,7 @@ top5 <- c(top5,"MA0693.4",'MA1128.2') #added vdr and FOSL1/JUN
 
 cat("Top 5 candidates by combined score:\n")
 print(two_axis |> filter(motif_id %in% top5) |>
-        select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
+        dplyr::select(motif_id, motif_alt_ID, log2_enrich_hvc, log2_or, combined_score))
 
 # For each top candidate, get the peaks containing both that motif and GR
 for (mid in top5) {
@@ -864,7 +1036,7 @@ for (mid in top5) {
   cat("\n=== ", mid, " (", alt_name, ") + GR composite peaks ===\n", sep = "")
   cat("  Composite peaks:", length(cand_peaks),
       "; unique nearest genes:", nrow(cand_genes), "\n")
-  print(head(cand_genes |> select(SYMBOL, distanceToTSS), 20))
+  print(head(cand_genes |> dplyr::select(SYMBOL, distanceToTSS), 20))
 
   write_tsv(cand_genes,
             sprintf("results/motif_analysis/full_motif_scan/%s_GR_composite_genes.tsv",
