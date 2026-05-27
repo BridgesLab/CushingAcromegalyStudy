@@ -186,12 +186,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>deseq.results <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(deseq.filename) <span class="co">#reads in the data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2026-05-20. This script was most recently updated on Wed May 27 16:46:04 2026.</p>
+<p>These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt. This input file was most recently updated on 2026-05-20. This script was most recently updated on Wed May 27 17:42:09 2026.</p>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
 <p>There were 61619 regions analyzed in this dataset. Of these, 14872 (24.1354128%) were found to be significantly differentially accessible comparing the NCD to HFD adipocytes at an FDR of 0.05. Of those significant regions, 8612 (57.9074771%) were upregulated in HFD adipocytes and (42.0925229%) were more accessible in NCD adipocytes.</p>
 <p>Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of 1.5394525 +/- 0.0065426, while the NCD adipocytes had an average log2 fold change of -0.817636 +/- 0.0037877.</p>
+<blockquote class="blockquote">
+<p><strong>Note on peak cutoffs.</strong> The counts above use the volcano-narrative cutoff <code>padj &lt; 0.05</code> (no log2FC magnitude threshold): 8612 HFD-up and 6260 CHD-up peaks. The motif-scanned <em>canonical</em> peak sets (<code>results/deseq2/HFD_specific_peaks.bed</code> / <code>CHD_specific_peaks.bed</code> and everything downstream — AME, HOMER, composite scan, full motif scan) use the stricter pipeline cutoff <code>padj &lt; 0.05 &amp; |log2FC| &gt; 1</code>, giving 6900 HFD-specific and 1322 CHD-specific peaks. The composite/AME enrichment ORs reported in <code>SUMMARY.md</code> use these stricter sets as denominators; the volcano below classifies the full padj &lt; 0.05 set so that peaks with 0 &lt; |log2FC| ≤ 1 (which sit in the <code>shared</code> BED but are still nominally significant) are not silently excluded from the AP-1/GRE display.</p>
+</blockquote>
 <section id="annotation-to-known-genes" class="level3">
 <h3 class="anchored" data-anchor-id="annotation-to-known-genes">Annotation to known genes</h3>
 <div class="cell">
@@ -211,18 +214,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>hfd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(hfd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-27 16:46:09 
+<pre><code>&gt;&gt; preparing features information...         2026-05-27 17:42:14 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-27 16:46:09 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-27 16:46:09 
-&gt;&gt; assigning genomic annotation...       2026-05-27 16:46:09 
+&gt;&gt; identifying nearest features...       2026-05-27 17:42:14 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-27 17:42:15 
+&gt;&gt; assigning genomic annotation...       2026-05-27 17:42:15 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-27 16:46:18 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-27 17:42:23 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 16:46:18 
-&gt;&gt; done...                   2026-05-27 16:46:18 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 17:42:24 
+&gt;&gt; done...                   2026-05-27 17:42:24 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -234,18 +237,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ncd.annot <span class="ot">&lt;-</span> <span class="fu">annotatePeak</span>(ncd.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-27 16:46:18 
+<pre><code>&gt;&gt; preparing features information...         2026-05-27 17:42:24 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-27 16:46:18 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-27 16:46:18 
-&gt;&gt; assigning genomic annotation...       2026-05-27 16:46:18 
+&gt;&gt; identifying nearest features...       2026-05-27 17:42:24 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-27 17:42:24 
+&gt;&gt; assigning genomic annotation...       2026-05-27 17:42:24 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-27 16:46:19 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-27 17:42:25 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 16:46:19 
-&gt;&gt; done...                   2026-05-27 16:46:19 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 17:42:25 
+&gt;&gt; done...                   2026-05-27 17:42:25 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -255,18 +258,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>all.ann_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">annotatePeak</span>(all.gr, <span class="at">TxDb=</span>txdb, <span class="at">tssRegion=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2000</span>, <span class="dv">500</span>), <span class="at">annoDb=</span><span class="st">"org.Mm.eg.db"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; preparing features information...         2026-05-27 16:46:19 
+<pre><code>&gt;&gt; preparing features information...         2026-05-27 17:42:25 
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; identifying nearest features...       2026-05-27 16:46:19 
-&gt;&gt; calculating distance from peak to TSS...  2026-05-27 16:46:19 
-&gt;&gt; assigning genomic annotation...       2026-05-27 16:46:19 
+&gt;&gt; identifying nearest features...       2026-05-27 17:42:25 
+&gt;&gt; calculating distance from peak to TSS...  2026-05-27 17:42:26 
+&gt;&gt; assigning genomic annotation...       2026-05-27 17:42:26 
 &gt;&gt; Using Genome: mm10 ...
 &gt;&gt; Using Genome: mm10 ...
-&gt;&gt; adding gene annotation...             2026-05-27 16:46:21 </code></pre>
+&gt;&gt; adding gene annotation...             2026-05-27 17:42:27 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 16:46:21 
-&gt;&gt; done...                   2026-05-27 16:46:21 </code></pre>
+<pre><code>&gt;&gt; assigning chromosome lengths          2026-05-27 17:42:27 
+&gt;&gt; done...                   2026-05-27 17:42:27 </code></pre>
 </div>
 </div>
 <p>These 8612 chromatin regions that were differentially opened by HFD were annotated as closest to 4632 unique genes, whereas the 6260 regions more accessible in NCD were annotated as closest to 3560 unique genes.</p>

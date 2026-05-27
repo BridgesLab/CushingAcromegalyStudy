@@ -8,7 +8,7 @@ chow diet (CHD) vs high-fat diet (HFD), n=3/group. ATAC-seq (GSE236575) + TRAP-s
 
 ## 1. Chromatin remodelling summary (ATAC-seq)
 
-- **3,717 HFD-enriched peaks**, 776 CHD-enriched peaks (FDR < 0.05, |LFC| > 1).
+- **6,900 HFD-enriched peaks**, 1,322 CHD-enriched peaks (FDR < 0.05, |LFC| > 1; canonical pipeline output `results/deseq2/HFD_specific_peaks.bed`).
 - Motif analysis (AME + HOMER, JASPAR 2024): **AP-1 family** is the dominant enriched motif class in HFD-up peaks; 19/21 tested AP-1 dimer combinations are concordantly enriched.
 - GR (NR3C1) motifs are also enriched, consistent with glucocorticoid sensitisation as the functional consequence.
 - FoxA/FoxO motifs are constitutively open (present in shared peaks); C/EBPβ demoted from lead position.

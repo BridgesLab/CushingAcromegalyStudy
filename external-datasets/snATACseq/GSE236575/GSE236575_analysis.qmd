@@ -71,6 +71,19 @@ There were `r nrow(deseq.results)` regions analyzed in this dataset.  Of these, 
 
 Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of `r mean(deseq.results |> filter(padj < 0.05, log2FoldChange>0) |> pull(log2FoldChange))` +/- `r se(deseq.results |> filter(padj < 0.05, log2FoldChange>0) |> pull(log2FoldChange))`, while the NCD adipocytes had an average log2 fold change of `r mean(deseq.results |> filter(padj < 0.05, log2FoldChange<0) |> pull(log2FoldChange))` +/- `r se(deseq.results |> filter(padj < 0.05, log2FoldChange<0) |> pull(log2FoldChange))`.
 
+> **Note on peak cutoffs.** The counts above use the volcano-narrative cutoff
+> `padj < 0.05` (no log2FC magnitude threshold): `r nrow(deseq.results |> filter(padj < 0.05, log2FoldChange > 0))` HFD-up
+> and `r nrow(deseq.results |> filter(padj < 0.05, log2FoldChange < 0))` CHD-up peaks. The motif-scanned
+> *canonical* peak sets (`results/deseq2/HFD_specific_peaks.bed` / `CHD_specific_peaks.bed`
+> and everything downstream — AME, HOMER, composite scan, full motif scan) use the
+> stricter pipeline cutoff `padj < 0.05 & |log2FC| > 1`, giving
+> `r nrow(deseq.results |> filter(padj < 0.05, log2FoldChange > 1))` HFD-specific and
+> `r nrow(deseq.results |> filter(padj < 0.05, log2FoldChange < -1))` CHD-specific peaks.
+> The composite/AME enrichment ORs reported in `SUMMARY.md` use these stricter sets as
+> denominators; the volcano below classifies the full padj < 0.05 set so that peaks with
+> 0 < |log2FC| ≤ 1 (which sit in the `shared` BED but are still nominally significant)
+> are not silently excluded from the AP-1/GRE display.
+
 
 ### Annotation to known genes
 

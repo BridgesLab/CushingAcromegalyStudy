@@ -254,25 +254,29 @@ results/
 │   ├── CHD_specific_peaks.bed      # Decreased in HFD
 │   └── shared_peaks.bed            # Background peaks
 └── motif_analysis/
-    ├── databases/                   # Motif databases
+    ├── databases/                       # Motif databases
     │   └── JASPAR2024_CORE_vertebrates_non-redundant.meme
-    ├── bed_files/                   # Chr-prefixed BED files
-    ├── resized_peaks/               # 500bp centered windows
-    ├── sequences/                   # Extracted FASTA sequences
-    ├── ame_results/                 # AME motif enrichment
-    │   ├── HFD_vs_CHD/
-    │   │   ├── ame.html
-    │   │   ├── ame.tsv
-    │   │   └── sequences.tsv
+    ├── ame_results/                     # AME motif enrichment (canonical 6,900/1,322 inputs)
+    │   ├── HFD_vs_CHD/{ame.html,ame.tsv,sequences.tsv}
     │   ├── HFD_vs_shared/
     │   └── CHD_vs_shared/
-    └── homer_results/               # HOMER de novo discovery
-        ├── HFD_vs_CHD/
-        │   ├── homerResults.html
-        │   ├── knownResults.txt
-        │   └── homerMotifs.all.motifs
-        ├── HFD_vs_shared/
-        └── CHD_vs_shared/
+    ├── homer_results/                   # HOMER de novo discovery
+    │   ├── HFD_vs_CHD/{homerResults.html,knownResults.txt,homerMotifs.all.motifs}
+    │   ├── HFD_vs_shared/
+    │   └── CHD_vs_shared/
+    ├── composite_scan/                  # AP-1 + GR FIMO scans by class
+    │   ├── HFD_specific/{HFD_specific_per_peak_motifs.tsv, ...}
+    │   ├── CHD_specific/
+    │   └── shared/{shared_per_peak_motifs.tsv, shared_ap1_per_peak.tsv, ...}
+    ├── full_motif_scan/                 # All-JASPAR FIMO scans (HFD/CHD specific only)
+    │   ├── HFD_specific/HFD_specific_per_peak_all_motifs.tsv
+    │   └── CHD_specific/
+    └── motif_analysis/                  # Canonical upstream inputs (nested path)
+        ├── resized_peaks/               # 500bp centered windows (6,900 HFD / 1,322 CHD / 53,397 shared)
+        ├── sequences/                   # Extracted FASTA sequences (same counts)
+        ├── databases/                   # (mirror of top-level databases/)
+        ├── ame_results/                 # (mirror of top-level ame_results/)
+        └── homer_results/               # (mirror of top-level homer_results/)
 ```
 
 ## Key Results Files
@@ -645,11 +649,13 @@ write_tsv(
 REOF
 ```
 
-**Note on FASTA files:** Two sets of 500-bp resized peak windows exist with different
-centres. The GR composite scan and full motif scan use
-`results/motif_analysis/motif_analysis/sequences/` (nested path); the AME/HOMER scans
-use `results/motif_analysis/sequences/`. Always use the nested path when adding motif
-scans that need to be compared to GR composite scan peak IDs.
+**Note on FASTA files:** The canonical 500-bp peak FASTAs live at
+`results/motif_analysis/motif_analysis/sequences/` (HFD: 6,900 peaks, CHD: 1,322,
+shared: 53,397) and are the inputs used by every downstream analysis — AME, HOMER,
+the composite scan, and the full motif scan. (An earlier pipeline iteration produced
+a parallel set of stale BEDs/FASTAs at the non-nested `results/motif_analysis/sequences/`,
+`bed_files/`, and `resized_peaks/` paths with different peak counts; those directories
+have been removed.)
 
 ### Key results
 

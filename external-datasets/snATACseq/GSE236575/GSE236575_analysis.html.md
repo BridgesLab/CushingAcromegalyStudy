@@ -73,13 +73,26 @@ deseq.results <- read_tsv(deseq.filename) #reads in the data
 :::
 
 
-These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-20.  This script was most recently updated on Wed May 27 16:46:04 2026.
+These data can be found in /Users/davebrid/Documents/GitHub/CushingAcromegalyStudy/external-datasets/snATACseq/GSE236575 in a file named results/deseq2/deseq2_results.txt.  This input file was most recently updated on 2026-05-20.  This script was most recently updated on Wed May 27 17:42:09 2026.
 
 ## Analysis
 
 There were 61619 regions analyzed in this dataset.  Of these, 14872 (24.1354128%) were found to be significantly differentially accessible comparing the NCD to HFD adipocytes at an FDR of 0.05.  Of those significant regions, 8612 (57.9074771%) were upregulated in HFD adipocytes and (42.0925229%) were more accessible in NCD adipocytes.
 
 Out of the differentially regulated subset, the HFD adipocytes had an average log2 fold change of 1.5394525 +/- 0.0065426, while the NCD adipocytes had an average log2 fold change of -0.817636 +/- 0.0037877.
+
+> **Note on peak cutoffs.** The counts above use the volcano-narrative cutoff
+> `padj < 0.05` (no log2FC magnitude threshold): 8612 HFD-up
+> and 6260 CHD-up peaks. The motif-scanned
+> *canonical* peak sets (`results/deseq2/HFD_specific_peaks.bed` / `CHD_specific_peaks.bed`
+> and everything downstream — AME, HOMER, composite scan, full motif scan) use the
+> stricter pipeline cutoff `padj < 0.05 & |log2FC| > 1`, giving
+> 6900 HFD-specific and
+> 1322 CHD-specific peaks.
+> The composite/AME enrichment ORs reported in `SUMMARY.md` use these stricter sets as
+> denominators; the volcano below classifies the full padj < 0.05 set so that peaks with
+> 0 < |log2FC| ≤ 1 (which sit in the `shared` BED but are still nominally significant)
+> are not silently excluded from the AP-1/GRE display.
 
 
 ### Annotation to known genes
@@ -105,14 +118,14 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-27 16:46:09 
+>> preparing features information...		 2026-05-27 17:42:14 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-27 16:46:09 
->> calculating distance from peak to TSS...	 2026-05-27 16:46:09 
->> assigning genomic annotation...		 2026-05-27 16:46:09 
+>> identifying nearest features...		 2026-05-27 17:42:14 
+>> calculating distance from peak to TSS...	 2026-05-27 17:42:15 
+>> assigning genomic annotation...		 2026-05-27 17:42:15 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-27 16:46:18 
+>> adding gene annotation...			 2026-05-27 17:42:23 
 ```
 
 
@@ -121,8 +134,8 @@ hfd.annot <- annotatePeak(hfd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-27 16:46:18 
->> done...					 2026-05-27 16:46:18 
+>> assigning chromosome lengths			 2026-05-27 17:42:24 
+>> done...					 2026-05-27 17:42:24 
 ```
 
 
@@ -140,14 +153,14 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-27 16:46:18 
+>> preparing features information...		 2026-05-27 17:42:24 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-27 16:46:18 
->> calculating distance from peak to TSS...	 2026-05-27 16:46:18 
->> assigning genomic annotation...		 2026-05-27 16:46:18 
+>> identifying nearest features...		 2026-05-27 17:42:24 
+>> calculating distance from peak to TSS...	 2026-05-27 17:42:24 
+>> assigning genomic annotation...		 2026-05-27 17:42:24 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-27 16:46:19 
+>> adding gene annotation...			 2026-05-27 17:42:25 
 ```
 
 
@@ -156,8 +169,8 @@ ncd.annot <- annotatePeak(ncd.gr, TxDb=txdb, tssRegion=c(-2000, 500), annoDb="or
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-27 16:46:19 
->> done...					 2026-05-27 16:46:19 
+>> assigning chromosome lengths			 2026-05-27 17:42:25 
+>> done...					 2026-05-27 17:42:25 
 ```
 
 
@@ -173,14 +186,14 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> preparing features information...		 2026-05-27 16:46:19 
+>> preparing features information...		 2026-05-27 17:42:25 
 >> Using Genome: mm10 ...
->> identifying nearest features...		 2026-05-27 16:46:19 
->> calculating distance from peak to TSS...	 2026-05-27 16:46:19 
->> assigning genomic annotation...		 2026-05-27 16:46:19 
+>> identifying nearest features...		 2026-05-27 17:42:25 
+>> calculating distance from peak to TSS...	 2026-05-27 17:42:26 
+>> assigning genomic annotation...		 2026-05-27 17:42:26 
 >> Using Genome: mm10 ...
 >> Using Genome: mm10 ...
->> adding gene annotation...			 2026-05-27 16:46:21 
+>> adding gene annotation...			 2026-05-27 17:42:27 
 ```
 
 
@@ -189,8 +202,8 @@ all.ann_df <- as.data.frame(annotatePeak(all.gr, TxDb=txdb, tssRegion=c(-2000, 5
 ::: {.cell-output .cell-output-stdout}
 
 ```
->> assigning chromosome lengths			 2026-05-27 16:46:21 
->> done...					 2026-05-27 16:46:21 
+>> assigning chromosome lengths			 2026-05-27 17:42:27 
+>> done...					 2026-05-27 17:42:27 
 ```
 
 
