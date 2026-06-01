@@ -1,0 +1,264 @@
+---
+title: "Experimental GR occupancy × HFD differential chromatin"
+subtitle: "Is measured adipocyte GR binding enriched in HFD-specific open chromatin (GSE236575)?"
+author: "davebrid"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    df-print: paged
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+  cache: true
+---
+
+```{r setup}
+library(GenomicRanges)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(readr)
+library(stringr)
+library(purrr)
+library(ggplot2)
+
+# AnnotationDbi/GenomicRanges can mask dplyr::select — pin it (see MEMORY)
+select <- dplyr::select
+
+set.seed(1)
+
+# ── Paths ────────────────────────────────────────────────────────────────────
+atac_dir <- "../snATACseq/GSE236575/results/deseq2"   # GSE236575 ATAC peak classes (mm10)
+peak_dir <- "results/peaks"                            # this project's GR peaks
+out_dir  <- "results/gr_enrichment"
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+# Question
+
+The GSE236575 composite-enhancer model proposed that AP-1 (led by Junb) opens
+chromatin on HFD, licensing **predicted** GR binding (NR3C1 motif; Fisher OR = 1.28).
+Here we replace predicted GR sites with **experimentally measured** GR occupancy
+(re-analyzed adipocyte GR ChIP-seq) and ask:
+
+> Is GR binding enriched in HFD-specific open chromatin, relative to a background of
+> shared (non-differential) peaks?
+
+We test this against several GR peak sets of increasing stringency, report both a
+frequentist (Fisher) and a Bayesian (beta-binomial posterior OR + 95% CrI) result,
+and guard against the peak-width confound with a width-adjusted logistic model.
+CHD-specific peaks serve as a negative contrast (the model predicts no GR enrichment
+in chromatin that *closes* on HFD).
+
+# Load peaks
+
+```{r readers}
+# All BEDs and narrowPeaks are 0-based half-open → +1 to the start for 1-based GRanges.
+read_bed3 <- function(path) {
+  readr::read_tsv(path, col_names = c("chr", "start", "end"),
+                  col_types = "cii", progress = FALSE) |>
+    with(GRanges(chr, IRanges(start + 1L, end)))
+}
+
+read_narrowpeak <- function(path) {
+  cn <- c("chr","start","end","name","score","strand",
+          "signal","pval","qval","peak")
+  readr::read_tsv(path, col_names = cn,
+                  col_types = "ciicicdddi", progress = FALSE) |>
+    mutate(strand = "*") |>
+    with(GRanges(chr, IRanges(start + 1L, end),
+                 signal = signal, qval = qval))
+}
+```
+
+```{r load-atac}
+atac <- list(
+  HFD_specific = read_bed3(file.path(atac_dir, "HFD_specific_peaks.bed")),
+  CHD_specific = read_bed3(file.path(atac_dir, "CHD_specific_peaks.bed")),
+  shared       = read_bed3(file.path(atac_dir, "shared_peaks.bed"))
+)
+map_int(atac, length)
+```
+
+```{r load-gr}
+# Pipeline consensus sets (union of IP narrowPeaks, merged). hg38 human is the
+# lifted mm10 version.
+gr_union <- list(
+  eWAT_union  = read_bed3(file.path(peak_dir, "GSE64458_eWAT/GSE64458_eWAT_GR_consensus.bed")),
+  iWAT_union  = read_bed3(file.path(peak_dir, "GSE64458_iWAT/GSE64458_iWAT_GR_consensus.bed"))
+)
+
+# Human lifted set (use it only if the .mm10.bed has been synced)
+human_mm10 <- file.path(peak_dir, "GSE163061_human/GSE163061_human_GR_consensus.mm10.bed")
+if (file.exists(human_mm10)) {
+  gr_union$human_union <- read_bed3(human_mm10)
+} else {
+  message("Human lifted consensus not found yet: ", human_mm10,
+          " — sync it from the server to include the tier-3 set.")
+}
+```
+
+```{r build-reproducible}
+# Strain-reproducible mouse GR sets. The two eWAT/iWAT IPs are different strains
+# (B6 vs 129), so peaks present in BOTH are high-confidence GR sites — a much more
+# specific set than the permissive union (which is ~110k peaks). Defined
+# symmetrically: regions of either strain's peaks that overlap the other strain.
+reproducible <- function(a_path, b_path) {
+  a <- read_narrowpeak(a_path); b <- read_narrowpeak(b_path)
+  GenomicRanges::reduce(c(IRanges::subsetByOverlaps(a, b),
+                          IRanges::subsetByOverlaps(b, a)))
+}
+
+gr_repro <- list(
+  eWAT_repro = reproducible(
+    file.path(peak_dir, "GSE64458_eWAT/GSE64458_B6_eWAT_GR_peaks.narrowPeak"),
+    file.path(peak_dir, "GSE64458_eWAT/GSE64458_129_eWAT_GR_peaks.narrowPeak")),
+  iWAT_repro = reproducible(
+    file.path(peak_dir, "GSE64458_iWAT/GSE64458_B6_iWAT_GR_peaks.narrowPeak"),
+    file.path(peak_dir, "GSE64458_iWAT/GSE64458_129_iWAT_GR_peaks.narrowPeak"))
+)
+
+gr_sets <- c(gr_union, gr_repro)
+tibble(gr_set = names(gr_sets), n_peaks = map_int(gr_sets, length))
+```
+
+# Overlap & enrichment
+
+```{r enrichment-fns}
+# Beta-binomial posterior OR: independent Beta priors on P(GR-bound) in
+# foreground vs background; OR posterior by Monte-Carlo. Beta(0.5,0.5) Jeffreys
+# prior (weakly informative).
+posterior_or <- function(k_fg, n_fg, k_bg, n_bg, a = 0.5, b = 0.5, ndraw = 2e5) {
+  p_fg <- rbeta(ndraw, a + k_fg, b + n_fg - k_fg)
+  p_bg <- rbeta(ndraw, a + k_bg, b + n_bg - k_bg)
+  or   <- (p_fg / (1 - p_fg)) / (p_bg / (1 - p_bg))
+  tibble(
+    p_fg       = k_fg / n_fg,
+    p_bg       = k_bg / n_bg,
+    or_post    = median(or),
+    cri_lo     = unname(quantile(or, 0.025)),
+    cri_hi     = unname(quantile(or, 0.975)),
+    p_or_gt1   = mean(or > 1)
+  )
+}
+
+# One foreground-vs-background test for a given GR set.
+test_enrichment <- function(gr, fg, bg, gr_name, fg_name) {
+  k_fg <- sum(overlapsAny(fg, gr)); n_fg <- length(fg)
+  k_bg <- sum(overlapsAny(bg, gr)); n_bg <- length(bg)
+  ft   <- fisher.test(matrix(c(k_fg, n_fg - k_fg, k_bg, n_bg - k_bg), 2))
+  bind_cols(
+    tibble(gr_set = gr_name, foreground = fg_name,
+           k_fg = k_fg, n_fg = n_fg, k_bg = k_bg, n_bg = n_bg,
+           or_fisher = unname(ft$estimate),
+           fisher_lo = ft$conf.int[1], fisher_hi = ft$conf.int[2],
+           p_fisher  = ft$p.value),
+    posterior_or(k_fg, n_fg, k_bg, n_bg) |> select(-p_fg, -p_bg)
+  )
+}
+```
+
+```{r run-enrichment}
+# HFD-specific (primary) and CHD-specific (negative contrast), each vs shared.
+grid <- tidyr::expand_grid(
+  gr_name = names(gr_sets),
+  fg_name = c("HFD_specific", "CHD_specific")
+)
+
+enrich <- pmap_dfr(grid, function(gr_name, fg_name) {
+  test_enrichment(gr_sets[[gr_name]], atac[[fg_name]], atac$shared,
+                  gr_name, fg_name)
+})
+
+enrich <- enrich |>
+  mutate(pct_fg = 100 * k_fg / n_fg,
+         pct_bg = 100 * k_bg / n_bg) |>
+  arrange(fg_name, desc(or_post))
+
+readr::write_tsv(enrich, file.path(out_dir, "gr_enrichment_results.tsv"))
+enrich |>
+  select(gr_set, foreground, pct_fg, pct_bg,
+         or_fisher, p_fisher, or_post, cri_lo, cri_hi, p_or_gt1)
+```
+
+# Forest plot
+
+```{r forest, fig.width=8, fig.height=4.5}
+enrich |>
+  mutate(gr_set = factor(gr_set, levels = rev(names(gr_sets)))) |>
+  ggplot(aes(or_post, gr_set, colour = foreground)) +
+  geom_vline(xintercept = 1, linetype = 2, colour = "grey50") +
+  geom_pointrange(aes(xmin = cri_lo, xmax = cri_hi),
+                  position = position_dodge(width = 0.5)) +
+  scale_x_log10() +
+  labs(x = "Posterior odds ratio (GR-bound | peak class vs shared), 95% CrI",
+       y = NULL, colour = "Foreground",
+       title = "Experimental GR occupancy enrichment",
+       subtitle = "HFD-specific should be > 1; CHD-specific is the negative contrast") +
+  theme_minimal(base_size = 12)
+
+ggsave(file.path(out_dir, "gr_enrichment_forest.pdf"), width = 8, height = 4.5)
+```
+
+# Width-adjusted robustness check
+
+GR-overlap probability rises with peak width, and HFD-specific vs shared peaks may
+differ in width — a confound the 2×2 test ignores. Refit as logistic regression
+with `log10(width)` as a covariate; the class coefficient is the width-adjusted OR.
+
+```{r width-adjusted}
+peak_df <- function(gr, cls) {
+  tibble(class = cls, width = width(gr),
+         # GR membership filled per set below
+         start = start(gr), gr = gr)
+}
+
+adjusted_or <- function(gr_set, gr_name) {
+  fg <- atac$HFD_specific; bg <- atac$shared
+  df <- bind_rows(
+    tibble(class = "HFD_specific", width = width(fg),
+           bound = overlapsAny(fg, gr_set)),
+    tibble(class = "shared", width = width(bg),
+           bound = overlapsAny(bg, gr_set))
+  ) |>
+    mutate(class = relevel(factor(class), ref = "shared"),
+           lw = log10(width))
+  m <- glm(bound ~ class + lw, family = binomial, data = df)
+  co <- summary(m)$coefficients["classHFD_specific", ]
+  tibble(gr_set = gr_name,
+         or_adj = exp(co["Estimate"]),
+         adj_lo = exp(co["Estimate"] - 1.96 * co["Std. Error"]),
+         adj_hi = exp(co["Estimate"] + 1.96 * co["Std. Error"]),
+         p_adj  = co["Pr(>|z|)"])
+}
+
+adj <- imap_dfr(gr_sets, ~ adjusted_or(.x, .y))
+readr::write_tsv(adj, file.path(out_dir, "gr_enrichment_width_adjusted.tsv"))
+adj
+```
+
+# Interpretation
+
+```{r interpretation, results='asis'}
+prim <- enrich |> filter(gr_set == "eWAT_repro", foreground == "HFD_specific")
+cat(sprintf(
+"- **Primary (in-vivo eWAT, strain-reproducible):** %.1f%% of HFD-specific peaks are GR-bound vs %.1f%% of shared peaks. Posterior OR = %.2f (95%% CrI %.2f–%.2f), P(OR>1) = %.3f; Fisher p = %.2g.\n",
+  prim$pct_fg, prim$pct_bg, prim$or_post, prim$cri_lo, prim$cri_hi,
+  prim$p_or_gt1, prim$p_fisher))
+```
+
+**Notes / caveats**
+
+- *Union vs reproducible:* the union GR sets (~110k mouse peaks) are over-permissive
+  and will shrink any OR toward 1 (GR appears "everywhere"); the strain-reproducible
+  set is the specificity-appropriate primary readout. Compare both.
+- *Tissue match:* eWAT is the GSE236575 depot; iWAT is a secondary depot; human is
+  cross-species (lifted, ~20% of peaks recovered) → supporting evidence only.
+- *Next:* layer per-peak AP-1 status (reuse the GSE236575 `composite_scan` AP-1 calls)
+  to get measured **AP-1 + GR** co-occupancy, then feed that term into the composite
+  Junb-nomination posterior (replacing the predicted-GR Fisher OR = 1.28).
+```
