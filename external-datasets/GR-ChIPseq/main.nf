@@ -244,7 +244,7 @@ process CHIP_ALIGN {
  * this step robust for both PE and SE data.
  */
 process CHIP_FILTER {
-    module 'Bioinformatics:samtools/1.21:bedtools'
+    module 'Bioinformatics:samtools/1.21:bedtools2/2.31.1-zl7ag52'
     tag "${sample.id}"
     publishDir "${params.outdir}/bam_filtered/${sample.id}", mode: 'copy', pattern: "*.flagstat.txt"
 
@@ -261,7 +261,7 @@ process CHIP_FILTER {
     set -e
     samtools view -b -q ${params.mapq_threshold} -@ ${threads} ${bam} > mapq.bam
     samtools index mapq.bam
-    bedtools intersect -v -abam mapq.bam -b ${blacklist} > ${sample.id}.filtered.bam
+    bedtools intersect -v -a mapq.bam -b ${blacklist} > ${sample.id}.filtered.bam
     samtools index ${sample.id}.filtered.bam
     samtools flagstat ${sample.id}.filtered.bam > ${sample.id}.flagstat.txt
     rm -f mapq.bam mapq.bam.bai
@@ -275,7 +275,7 @@ process CHIP_FILTER {
  */
 process MACS2_CALLPEAK {
     tag "${sample.id}"
-    module 'Bioinformatics:macs2:samtools/1.21'
+    module 'Bioinformatics:py-macs2/2.2.4-4abp2hm:samtools/1.21'
     publishDir "${params.outdir}/peaks/${sample.dataset}", mode: 'copy'
 
     input:
@@ -310,7 +310,7 @@ process MACS2_CALLPEAK {
  * downstream.
  */
 process CONSENSUS_PEAKS {
-    module 'Bioinformatics:bedtools'
+    module 'Bioinformatics:bedtools2/2.31.1-zl7ag52'
     tag "${dataset}"
     publishDir "${params.outdir}/peaks/${dataset}", mode: 'copy'
 
@@ -354,13 +354,15 @@ process LIFTOVER_PEAKS {
     if command -v liftOver &>/dev/null; then
         LO=liftOver
     else
-        wget -q http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/liftOver -O liftOver
+        # v369 build links against an older glibc — runs on the compute nodes
+        # (the newer admin/exe/linux.x86_64 build needs GLIBC_2.29+ → fails here)
+        wget -q http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64.v369/liftOver -O liftOver
         chmod +x liftOver
         LO=./liftOver
     fi
     wget -q http://hgdownload.soe.ucsc.edu/goldenPath/${genome}/liftOver/${chain} -O chain.gz
     gunzip chain.gz
-    \$LO ${consensus} chain ${dataset}_GR_consensus.mm10.bed ${dataset}_unmapped.bed || true
+    \$LO ${consensus} chain ${dataset}_GR_consensus.mm10.bed ${dataset}_unmapped.bed
     echo "${dataset} lifted ${genome}->mm10: \$(wc -l < ${dataset}_GR_consensus.mm10.bed) of \$(wc -l < ${consensus}) (unmapped: \$(grep -vc '^#' ${dataset}_unmapped.bed || echo 0))"
     """
 }
@@ -370,7 +372,7 @@ process LIFTOVER_PEAKS {
  * genome-matched chrom.sizes. PE uses fragment coverage (-pc); SE read coverage.
  */
 process CHIP_BIGWIG {
-    module 'Bioinformatics:samtools/1.21:bedtools'
+    module 'Bioinformatics:samtools/1.21:bedtools2/2.31.1-zl7ag52'
     tag "${sample.id}"
     publishDir "${params.outdir}/bigwig", mode: 'copy'
 

@@ -129,6 +129,26 @@ controls):
 
 Multiple IPs may share one control. The IP↔control join is keyed on the `control` id.
 
+### Running on the cluster (SLURM)
+
+`nextflow.config` sets `executor = 'slurm'`, so Nextflow submits **each task as
+its own SLURM job** (account `davebrid0`, partition `standard`) with per-process
+cpus/mem/walltime — the 23 samples run in parallel, up to 20 concurrent jobs.
+Do **not** run the whole pipeline inside one big allocation (that packs every
+task onto one node under a single 24 h clock → `TIMEOUT`).
+
+Launch via the tiny orchestrator job `nextflow.slurm` (1 core / 4 GB / 2 days):
+
+```
+sbatch nextflow.slurm        # runs `nextflow run main.nf -resume`
+```
+
+The orchestrator only submits + monitors child jobs; the real compute is in
+those jobs. Watch progress with `squeue -u $USER`; per-task timings land in
+`results/pipeline_info/{report,timeline,trace}.{html,txt}` for right-sizing
+resources later. `-resume` reuses cached genome builds, blacklists, and any
+finished alignments.
+
 ### Reusing the existing mm10 index
 
 The GSE236575 run already built `mm10.fa` + the bowtie2 index. To skip the ~1 h
@@ -150,16 +170,16 @@ RNA-seq branch — does **not** depend on what you've `module load`-ed in your s
 | GENOME_SIZES | `Bioinformatics:samtools/1.21` |
 | BUILD_BOWTIE2_INDEX | `Bioinformatics:bowtie2` |
 | CHIP_ALIGN | `Bioinformatics:sratoolkit/3.1.1:bowtie2:samtools/1.21` |
-| CHIP_FILTER | `Bioinformatics:samtools/1.21:bedtools` |
-| MACS2_CALLPEAK | `Bioinformatics:macs2:samtools/1.21` |
-| CONSENSUS_PEAKS | `Bioinformatics:bedtools` |
+| CHIP_FILTER | `Bioinformatics:samtools/1.21:bedtools2/2.31.1-zl7ag52` |
+| MACS2_CALLPEAK | `Bioinformatics:py-macs2/2.2.4-4abp2hm:samtools/1.21` |
+| CONSENSUS_PEAKS | `Bioinformatics:bedtools2/2.31.1-zl7ag52` |
 | LIFTOVER_PEAKS | none (UCSC liftOver binary + chain auto-downloaded) |
-| CHIP_BIGWIG | `Bioinformatics:samtools/1.21:bedtools` |
+| CHIP_BIGWIG | `Bioinformatics:samtools/1.21:bedtools2/2.31.1-zl7ag52` |
 
-`samtools/1.21` and `sratoolkit/3.1.1` are the exact names used by the GSE236575 RNA
-branch. **Verify `bowtie2`, `bedtools`, and `macs2`** on the cluster with
-`module spider bowtie2 bedtools macs2` and adjust the directives if the names/versions
-differ.
+All names confirmed on Great Lakes via `module spider`: `samtools/1.21`,
+`sratoolkit/3.1.1`, and `bowtie2` (alignment ran); bedtools is `bedtools2/2.31.1-zl7ag52`
+(not `bedtools`) and MACS2 is `py-macs2/2.2.4-4abp2hm` (not `macs2`), both under the
+`Bioinformatics` meta-module.
 
 ### Outputs to sync back
 
