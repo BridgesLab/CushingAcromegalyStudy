@@ -1,0 +1,20 @@
+# Large reference / derived artifacts — regenerate, don't commit
+hg38ToMm10.over.chain
+hg38ToMm10.over.chain.gz
+
+# Quarto render outputs / cache
+gr-enrichment.html
+gr-enrichment_files/
+gr-enrichment_cache/
+*.html
+
+# Large pipeline outputs synced from the server (keep only small peak BEDs)
+*.bw
+results/bigwig/
+results/bam_raw/
+results/bam_filtered/
+results/genome/
+
+# Keep the small peak BEDs and enrichment tables/figures:
+!results/peaks/**
+!results/gr_enrichment/**
