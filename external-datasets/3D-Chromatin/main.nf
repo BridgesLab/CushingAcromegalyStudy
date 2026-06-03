@@ -49,7 +49,8 @@ params.keep_chroms         = (1..19).collect { "chr${it}" } + ['chrX']
 // ── Matrix / TAD-calling resolution ──────────────────────────────────────────
 params.bin_base            = 10000        // base bin size for the cooler
 params.tad_resolution      = 50000        // resolution TADs are called at
-params.zoom_resolutions    = [10000, 25000, 50000, 100000, 250000]
+// zoomify resolutions must each be an integer multiple of bin_base
+params.zoom_resolutions    = [10000, 20000, 40000, 50000, 100000, 250000]
 // cooltools insulation windows (bp) — multiple windows = the sensitivity sweep
 params.insulation_windows  = [100000, 250000, 500000]
 params.second_caller       = true         // also run HiCExplorer hicFindTADs
@@ -143,7 +144,7 @@ process DOWNLOAD_HIC {
  */
 process HICUP_TO_PAIRS {
     tag "${sample.id}"
-    module 'Bioinformatics'
+    // zcat / awk / gzip are base system tools — no module needed
 
     input:
     tuple val(sample), path(raw), path(chromsizes)
@@ -172,8 +173,7 @@ process HICUP_TO_PAIRS {
  */
 process BUILD_COOL {
     tag "${stage}"
-    module 'Bioinformatics'
-    conda 'bioconda::cooler=0.10.2'
+    conda 'bioconda::cooler'
     publishDir "${params.outdir}/cool", mode: 'copy', pattern: "*.mcool"
 
     input:
@@ -210,7 +210,7 @@ process BUILD_COOL {
  */
 process CALL_TADS_INSULATION {
     tag "${stage}"
-    conda 'bioconda::cooltools=0.7.1'
+    conda 'bioconda::cooltools'
     publishDir "${params.outdir}/tads", mode: 'copy', pattern: "*_insulation.tsv"
 
     input:
@@ -240,7 +240,7 @@ process CALL_TADS_INSULATION {
  */
 process INSULATION_TO_TADS {
     tag "${stage}"
-    conda 'bioconda::pandas=2.2.2'
+    conda 'conda-forge::pandas'
     publishDir "${params.outdir}/tads", mode: 'copy', pattern: "*.bed"
 
     input:
@@ -280,7 +280,7 @@ PY
  */
 process CALL_TADS_HICEXPLORER {
     tag "${stage}"
-    conda 'bioconda::hicexplorer=3.7.6'
+    conda 'bioconda::hicexplorer'
     publishDir "${params.outdir}/tads", mode: 'copy', pattern: "*_domains.bed"
 
     input:
@@ -340,7 +340,8 @@ workflow {
     }
 
     DOWNLOAD_CHROMSIZES()
-    sizes = DOWNLOAD_CHROMSIZES.out.sizes
+    // .first() → value channel so it can be reused by multiple downstream combines
+    sizes = DOWNLOAD_CHROMSIZES.out.sizes.first()
 
     // ── Download + convert each replicate to a pairs stream ─────────────────
     DOWNLOAD_HIC(Channel.from(params.hic_samples))
