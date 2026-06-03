@@ -1,0 +1,354 @@
+---
+title: "3D chromatin: are HFD-opened AP-1 peaks in GR-bound TADs?"
+subtitle: "Stage 1 — TAD-level enrichment of measured GR occupancy at HFD-specific open chromatin (GSE236575 × GSE95533 × GR ChIP)"
+author: "davebrid"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    df-print: paged
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+  cache: false   # inputs (synced TAD/peak BEDs) change without code changes —
+                 # caching silently serves stale results; analysis runs in <1 min.
+---
+
+```{r setup}
+library(GenomicRanges)
+library(GenomeInfoDb)
+library(rtracklayer)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(readr)
+library(stringr)
+library(purrr)
+library(ggplot2)
+
+select <- dplyr::select        # AnnotationDbi/GenomicRanges mask dplyr::select (see MEMORY)
+set.seed(1)
+
+atac_dir <- "../snATACseq/GSE236575/results/deseq2"        # GSE236575 ATAC classes (mm10)
+gr_dir   <- "../GR-ChIPseq/results/peaks"                   # GR ChIP consensus peaks (mm10)
+chain    <- "../GR-ChIPseq/hg38ToMm10.over.chain"           # human fallback chain
+tad_dir  <- "results/tads"                                  # synced-back mm10 TAD BEDs
+out_dir  <- "results/enrichment"
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Primary TAD set: D2 3T3-L1, cooltools-insulation caller, lifted to mm10.
+# Sensitivity set: same matrix, HiCExplorer caller.
+tad_primary  <- file.path(tad_dir, "D2_insulation_tads.mm10.bed")
+tad_sensitiv <- file.path(tad_dir, "D2_hicexplorer_tads.mm10.bed")
+```
+
+# Question
+
+GSE236575 found AP-1 (Junb-led) opens HFD-specific chromatin, and predicted
+AP-1+GR composite motifs are enriched there (Fisher OR = 1.28). But the
+GR-ChIPseq sub-project showed *measured* GR occupancy is **depleted** at those
+same HFD-specific peaks (eWAT strain-reproducible OR = 0.09) — GR concentrates
+on constitutive/closing chromatin instead. The reconciling hypothesis is **3D**:
+HFD-opened AP-1 enhancers act on GR-mediated transcription by **looping to a
+GR-bound promoter elsewhere in the same TAD**, not by direct co-binding.
+
+**H1 (this report):** HFD-specific ATAC peaks sit in TADs that contain GR-bound
+elements *more often than* shared (non-differential) peaks do.
+
+- **OR > 1** → the 3D-rescue hypothesis is supported; reframe proposal Arm 2.
+- **OR ≈ 1** → not supported; the local 151-peak claim stands (defer to H3).
+- **OR < 1** → HFD remodels chromatin preferentially in non-GR TADs (also
+  mechanistically interesting).
+
+TADs are from 3T3-L1 **D2** Hi-C (GSE95533) — the most adipocyte-committed Hi-C
+available; see *Caveats*. Genome assembly mm10 throughout (TADs lifted mm9→mm10).
+
+```{r tad-availability, results='asis'}
+have_tads <- file.exists(tad_primary)
+if (!have_tads) {
+  cat(
+"::: callout-important\n",
+"**TAD BED not present yet.** Run `main.nf` on Great Lakes and sync the mm10 TAD\n",
+"BEDs into `", tad_dir, "/` (at minimum `D2_insulation_tads.mm10.bed`). This\n",
+"report then renders the full Stage 1 enrichment. Until then the analysis blocks\n",
+"below are skipped.\n:::\n", sep = "")
+}
+knitr::opts_chunk$set(eval = have_tads)
+```
+
+# Load inputs
+
+```{r readers}
+# BEDs are 0-based half-open → +1 to start for 1-based GRanges.
+clean <- function(gr) keepStandardChromosomes(gr, pruning.mode = "coarse")
+
+read_bed3 <- function(path) {
+  readr::read_tsv(path, col_names = c("chr","start","end"),
+                  col_types = "cii", progress = FALSE) |>
+    with(GRanges(chr, IRanges(start + 1L, end))) |> clean()
+}
+
+read_narrowpeak <- function(path) {
+  cn <- c("chr","start","end","name","score","strand","signal","pval","qval","peak")
+  readr::read_tsv(path, col_names = cn, col_types = "ciicicdddi", progress = FALSE) |>
+    with(GRanges(chr, IRanges(start + 1L, end))) |> clean()
+}
+```
+
+```{r load-atac}
+atac <- list(
+  HFD_specific = read_bed3(file.path(atac_dir, "HFD_specific_peaks.bed")),
+  CHD_specific = read_bed3(file.path(atac_dir, "CHD_specific_peaks.bed")),
+  shared       = read_bed3(file.path(atac_dir, "shared_peaks.bed"))
+)
+map_int(atac, length)
+```
+
+```{r load-gr}
+# Same GR sets as the GR-ChIPseq sub-project, so Stage 1 is directly comparable.
+gr_union <- list(
+  eWAT_union = read_bed3(file.path(gr_dir, "GSE64458_eWAT/GSE64458_eWAT_GR_consensus.bed")),
+  iWAT_union = read_bed3(file.path(gr_dir, "GSE64458_iWAT/GSE64458_iWAT_GR_consensus.bed"))
+)
+
+# Strain-reproducible (B6 ∩ 129) high-confidence mouse sets — the specificity-
+# appropriate readout used in GR-ChIPseq.
+reproducible <- function(a_path, b_path) {
+  a <- read_narrowpeak(a_path); b <- read_narrowpeak(b_path)
+  GenomicRanges::reduce(c(IRanges::subsetByOverlaps(a, b), IRanges::subsetByOverlaps(b, a)))
+}
+gr_repro <- list(
+  eWAT_repro = reproducible(
+    file.path(gr_dir, "GSE64458_eWAT/GSE64458_B6_eWAT_GR_peaks.narrowPeak"),
+    file.path(gr_dir, "GSE64458_eWAT/GSE64458_129_eWAT_GR_peaks.narrowPeak")),
+  iWAT_repro = reproducible(
+    file.path(gr_dir, "GSE64458_iWAT/GSE64458_B6_iWAT_GR_peaks.narrowPeak"),
+    file.path(gr_dir, "GSE64458_iWAT/GSE64458_129_iWAT_GR_peaks.narrowPeak"))
+)
+
+# Human dex (tier-3, cross-species): pipeline-lifted mm10 consensus if present.
+hs_path <- file.path(gr_dir, "GSE163061_human/GSE163061_human_GR_consensus.mm10.bed")
+gr_sets <- c(gr_union, gr_repro)
+if (file.exists(hs_path)) gr_sets$human_dex <- read_bed3(hs_path)
+tibble(gr_set = names(gr_sets), n_peaks = map_int(gr_sets, length))
+```
+
+```{r load-tads}
+tads <- list(insulation = read_bed3(tad_primary))
+if (file.exists(tad_sensitiv)) tads$hicexplorer <- read_bed3(tad_sensitiv)
+tibble(caller = names(tads),
+       n_tads = map_int(tads, length),
+       median_width_kb = map_dbl(tads, ~ median(width(.x)) / 1e3),
+       genome_cov_pct  = map_dbl(tads, ~ 100 * sum(as.numeric(width(.x))) / 2.5e9))
+```
+
+# Assign peaks and GR sites to TADs
+
+Each ATAC peak is assigned to the TAD containing its **midpoint** (unique
+assignment, robust to peaks straddling a boundary). Peaks whose midpoint falls
+in an inter-TAD gap are unassigned and dropped from the per-peak test (reported).
+
+```{r assign-fns}
+midpoints <- function(gr) resize(gr, width = 1, fix = "center")
+
+# host TAD index for each peak (NA if midpoint in an inter-TAD gap)
+host_tad <- function(peaks, tad) {
+  hits <- findOverlaps(midpoints(peaks), tad, select = "first")
+  hits
+}
+```
+
+```{r per-caller-analysis}
+# Beta-binomial posterior OR (Jeffreys priors) — same estimator as GR-ChIPseq.
+posterior_or <- function(k_fg, n_fg, k_bg, n_bg, a = 0.5, b = 0.5, ndraw = 2e5) {
+  p_fg <- rbeta(ndraw, a + k_fg, b + n_fg - k_fg)
+  p_bg <- rbeta(ndraw, a + k_bg, b + n_bg - k_bg)
+  or   <- (p_fg / (1 - p_fg)) / (p_bg / (1 - p_bg))
+  tibble(or_post = median(or), cri_lo = unname(quantile(or, 0.025)),
+         cri_hi = unname(quantile(or, 0.975)), p_or_gt1 = mean(or > 1))
+}
+
+# Build the full per-peak / per-TAD frame for one TAD caller.
+build_frames <- function(tad, gr_sets) {
+  # TAD-level GR counts
+  tad_tb <- tibble(tad_id = seq_along(tad), tad_len = width(tad))
+  for (g in names(gr_sets))
+    tad_tb[[paste0("gr_", g)]] <- countOverlaps(tad, gr_sets[[g]])
+
+  # per-peak host TAD + class
+  peak_tb <- imap_dfr(atac, function(pk, cls) {
+    h <- host_tad(pk, tad)
+    tibble(class = cls, width = width(pk), tad_id = h)
+  }) |>
+    filter(class %in% c("HFD_specific", "shared")) |>
+    left_join(tad_tb, by = "tad_id")
+
+  list(tad = tad_tb, peak = peak_tb)
+}
+
+# Per-peak Fisher + Bayesian + width/length-adjusted logistic for one GR set.
+peak_enrich <- function(peak_tb, gr_col, gr_name, caller) {
+  # GR-rich TAD = GR count strictly above the median among TADs hosting any
+  # tested peak (background-defined threshold, per the briefing).
+  hosted <- peak_tb |> filter(!is.na(tad_id))
+  thr <- median(hosted[[gr_col]], na.rm = TRUE)
+  d <- hosted |> mutate(gr_rich = .data[[gr_col]] > thr,
+                        class = relevel(factor(class), ref = "shared"))
+
+  k_fg <- sum(d$gr_rich[d$class == "HFD_specific"]); n_fg <- sum(d$class == "HFD_specific")
+  k_bg <- sum(d$gr_rich[d$class == "shared"]);       n_bg <- sum(d$class == "shared")
+  ft   <- fisher.test(matrix(c(k_fg, n_fg - k_fg, k_bg, n_bg - k_bg), 2))
+
+  # width + TAD-length adjusted logistic (class term is the adjusted effect)
+  co <- summary(glm(gr_rich ~ class + log10(width) + log10(tad_len),
+                    binomial, d))$coefficients["classHFD_specific", ]
+
+  bind_cols(
+    tibble(caller = caller, gr_set = gr_name, gr_rich_threshold = thr,
+           pct_fg = 100 * k_fg / n_fg, pct_bg = 100 * k_bg / n_bg,
+           or_fisher = unname(ft$estimate),
+           ci_lo = ft$conf.int[1], ci_hi = ft$conf.int[2], p_fisher = ft$p.value,
+           or_adj = exp(co[1]), adj_lo = exp(co[1] - 1.96 * co[2]),
+           adj_hi = exp(co[1] + 1.96 * co[2]), p_adj = co[4]),
+    posterior_or(k_fg, n_fg, k_bg, n_bg)
+  )
+}
+```
+
+```{r run-per-peak}
+frames <- map(tads, build_frames, gr_sets = gr_sets)
+
+per_peak <- imap_dfr(frames, function(fr, caller) {
+  map_dfr(names(gr_sets), function(g)
+    peak_enrich(fr$peak, paste0("gr_", g), g, caller))
+}) |> arrange(caller, desc(or_post))
+
+# unassigned-peak accounting
+unassigned <- imap_dfr(frames, function(fr, caller) {
+  fr$peak |> group_by(caller = caller, class) |>
+    summarise(n = n(), unassigned = sum(is.na(tad_id)),
+              pct_unassigned = 100 * mean(is.na(tad_id)), .groups = "drop")
+})
+unassigned
+
+readr::write_tsv(per_peak, file.path(out_dir, "peak_in_gr_rich_tad.tsv"))
+per_peak
+```
+
+```{r forest, fig.width=8, fig.height=5}
+per_peak |>
+  filter(caller == "insulation") |>
+  mutate(gr_set = factor(gr_set, levels = rev(names(gr_sets)))) |>
+  ggplot(aes(or_post, gr_set)) +
+  geom_vline(xintercept = 1, linetype = 2, colour = "grey50") +
+  geom_pointrange(aes(xmin = cri_lo, xmax = cri_hi), colour = "#2c7fb8") +
+  scale_x_log10() +
+  labs(x = "Posterior OR (HFD-specific peak in GR-rich TAD vs shared), 95% CrI",
+       y = NULL, title = "Stage 1 — HFD-specific peaks in GR-rich TADs",
+       subtitle = "Per-peak test, primary insulation TADs (D2 3T3-L1)") +
+  theme_minimal(base_size = 12)
+ggsave(file.path(out_dir, "tad_gr_enrichment_forest.pdf"), width = 8, height = 5)
+```
+
+# TAD-level Poisson — the genome-wide 3D claim in one number
+
+Do TADs with more HFD-specific peaks contain more GR ChIP peaks? Poisson
+regression of per-TAD GR-peak count on per-TAD HFD-specific peak count, with
+TAD length as an offset (exposure). The HFD coefficient is the genome-wide
+3D-rescue effect size.
+
+```{r tad-level-poisson}
+tad_counts <- function(fr) {
+  # HFD-specific peaks per TAD
+  hfd_n <- fr$peak |> filter(class == "HFD_specific", !is.na(tad_id)) |>
+    count(tad_id, name = "n_hfd")
+  fr$tad |> left_join(hfd_n, by = "tad_id") |>
+    mutate(n_hfd = tidyr::replace_na(n_hfd, 0L))
+}
+
+poisson_one <- function(fr, gr_col, gr_name, caller) {
+  d <- tad_counts(fr)
+  m <- glm(as.formula(paste0(gr_col, " ~ n_hfd")),
+           family = poisson, offset = log(tad_len), data = d)
+  co <- summary(m)$coefficients["n_hfd", ]
+  tibble(caller = caller, gr_set = gr_name,
+         beta = co[1], se = co[2], irr = exp(co[1]),
+         irr_lo = exp(co[1] - 1.96 * co[2]), irr_hi = exp(co[1] + 1.96 * co[2]),
+         p = co[4])
+}
+
+tad_level <- imap_dfr(frames, function(fr, caller)
+  map_dfr(names(gr_sets), ~ poisson_one(fr, paste0("gr_", .x), .x, caller))) |>
+  arrange(caller, desc(irr))
+
+readr::write_tsv(tad_level, file.path(out_dir, "tad_gr_enrichment.tsv"))
+tad_level
+```
+
+## Bayesian secondary (brms) — primary GR set
+
+Posterior incidence-rate ratio for the per-TAD HFD effect (eWAT strain-
+reproducible GR), with a weakly-informative prior. Reports P(β > 0) and the 95%
+CrI on the log-IRR, matching the GR-ChIPseq framing.
+
+```{r brms-poisson, eval=FALSE}
+# Set eval=TRUE to run (brms compiles a Stan model, ~1–2 min). Kept off by
+# default so the report renders fast; the frequentist Poisson above is primary.
+library(brms)
+d <- tad_counts(frames$insulation)
+fit <- brm(gr_eWAT_repro ~ n_hfd + offset(log(tad_len)),
+           family = poisson(), data = d,
+           prior = prior(normal(0, 1), class = "b"),
+           chains = 4, cores = 4, iter = 2000, refresh = 0, seed = 1)
+post <- as_draws_df(fit)
+tibble(beta_med = median(post$b_n_hfd),
+       cri_lo = quantile(post$b_n_hfd, 0.025),
+       cri_hi = quantile(post$b_n_hfd, 0.975),
+       p_beta_gt0 = mean(post$b_n_hfd > 0),
+       irr_med = exp(median(post$b_n_hfd)))
+```
+
+# Decision
+
+```{r decision, results='asis'}
+prim <- per_peak |> filter(caller == "insulation", gr_set == "eWAT_repro")
+pois <- tad_level  |> filter(caller == "insulation", gr_set == "eWAT_repro")
+cat(sprintf(
+"- **Per-peak (primary, eWAT strain-reproducible GR):** %.1f%% of HFD-specific vs %.1f%% of shared peaks sit in a GR-rich TAD → Fisher OR = %.2f (95%% CI %.2f–%.2f, p = %.2g); posterior OR = %.2f (95%% CrI %.2f–%.2f), P(OR>1) = %.3f; width/length-adjusted OR = %.2f (p = %.2g).\n",
+  prim$pct_fg, prim$pct_bg, prim$or_fisher, prim$ci_lo, prim$ci_hi, prim$p_fisher,
+  prim$or_post, prim$cri_lo, prim$cri_hi, prim$p_or_gt1, prim$or_adj, prim$p_adj))
+cat(sprintf(
+"- **TAD-level Poisson:** each additional HFD-specific peak in a TAD multiplies the expected GR-peak count by %.3f (IRR, 95%% CI %.3f–%.3f, p = %.2g).\n",
+  pois$irr, pois$irr_lo, pois$irr_hi, pois$p))
+verdict <- if (prim$or_post > 1.5 & prim$p_or_gt1 > 0.95) {
+  "**OR > 1.5 → H1 supported.** Proceed to Stage 2 (ABC enhancer-gene predictions) and reframe Arm 2 around the 3D-contact mechanism."
+} else if (prim$cri_lo < 1 & prim$cri_hi > 1) {
+  "**OR ≈ 1 → H1 not supported.** The local 151-peak claim stands; Stage 2 still informative for H3 (do the 151 composite peaks cluster in metabolic TADs?)."
+} else if (prim$or_post < 1) {
+  "**OR < 1 → GR-rich TADs are depleted of HFD-specific peaks.** HFD remodels chromatin preferentially in non-GR TADs — mechanistically interesting; report as such."
+} else "Intermediate — inspect the full table and the second caller before deciding."
+cat("- **Verdict:** ", verdict, "\n", sep = "")
+```
+
+# Caveats
+
+1. **D2, not mature adipocyte.** GSE95533 Hi-C exists only at D0/4h/D2 — there is
+   no D6/D7 mature-adipocyte Hi-C. D2 (early differentiation, post-induction) is
+   the most adipocyte-committed Hi-C available. TAD boundaries are largely
+   invariant across adipogenesis (Siersbaek 2017: promoter loops rewire while
+   domains are broadly stable), so D2 TADs are acceptable for the coarse
+   "GR-rich-TAD" question; they limit fine-grained per-loop claims.
+2. **3T3-L1 is a cell line**, not primary eWAT adipocytes; same TAD-invariance
+   argument applies at the domain scale.
+3. **TAD-caller dependence.** Two independent callers are run (cooltools
+   insulation primary, HiCExplorer sensitivity); the decision is read off the
+   primary but should reproduce in the sensitivity caller.
+4. **mm9 → mm10 liftover.** TADs are called in native mm9 and lifted; lift
+   recovery is reported by the pipeline (`LIFTOVER_TADS` log).
+5. **GR-set caveats carry over** from GR-ChIPseq: mouse = chow (no HFD/dex
+   induction); human = cross-species dex in vitro; union sets over-permissive.
+   eWAT strain-reproducible is the primary readout.
+```
