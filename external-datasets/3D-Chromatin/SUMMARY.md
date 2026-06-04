@@ -87,6 +87,37 @@ This closes the occupancy-dynamics escape hatch — the depletion is not merely 
 artifact of chow/basal-only ChIP; the unrealized GR motif *potential* is depleted
 at HFD-peak TADs too, making the negative H1 result substantially more robust.
 
+## Follow-ups — specificity and structure
+
+1. **CHD/NCD is the mirror image — yes, NCD-opened chromatin sits in GR-rich TADs.**
+   CHD-specific peaks are *enriched* in GR-rich TADs (measured eWAT-repro GR OR =
+   1.40, 58% vs 50% shared) while HFD is depleted (OR = 0.31) — the same flip as the
+   2D GR-ChIPseq result (CHD GR-enriched, HFD GR-depleted). It is **not** that HFD
+   peaks fall outside TADs: in-TAD assignment is ~96–97% for *every* class. The
+   difference is *which* TADs, not whether peaks are in a TAD. (Motif version: CHD
+   OR = 1.08, a non-significant trend — the CHD enrichment is clearer for occupancy
+   than for sequence.)
+2. **HFD-peak abundance is decoupled from TAD/GR structure.** Per TAD, HFD-peak
+   count is essentially uncorrelated with GR (Spearman ρ = −0.01 ChIP, 0.10 motif)
+   and only weakly with constitutive accessibility (n_shared ρ = 0.10) — whereas the
+   active compartment is strongly GR-rich (n_shared ~ GR ρ = 0.89) and CHD tracks it
+   (ρ = 0.40). GR depletion survives adjusting for active-chromatin density (partial
+   Poisson HFD β = −0.13). So the *number* of HFD sites is not explained by TAD
+   structure: HFD remodeling is a separate, GR-poor distribution spread across 74% of
+   TADs (median 2/TAD), not a denser sampling of the active GR-rich domains.
+   *On "TADs rearranging":* differential ATAC is not genomic rearrangement; the real
+   question is HFD boundary shifts, which are **untestable** (no HFD-vs-CHD adipocyte
+   Hi-C — only single-condition D2). TADs are broadly stable across states, and the
+   depletion replicates from motifs alone (no Hi-C condition), so it is not a
+   misassignment artifact.
+3. **No genome-wide 3D link between HFD chromatin and GR — correct, with one
+   boundary.** At the TAD scale the association is negative by both occupancy and
+   motif. This tests TAD *co-membership*, not measured enhancer–promoter **loops**; a
+   local 3D link for the 151 composite peaks (Sgk1-like) can still exist inside a
+   globally GR-poor background — that is Stage-2 H3. The result is consistent with GR
+   sensitization running through pre-existing/constitutive GREs in the active GR-rich
+   compartment (mechanism 1), independent of the AP-1-opened HFD program.
+
 ## ⚠️ Leading caveat — D2, not mature adipocyte
 
 GSE95533 standard Hi-C exists **only at D0 / 4h / D2** — there is **no D6/D7

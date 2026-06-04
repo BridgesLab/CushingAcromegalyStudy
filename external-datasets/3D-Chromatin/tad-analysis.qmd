@@ -423,6 +423,92 @@ cat(
 "So the measured-vs-predicted GR *discordance* is purely **local** (within-peak motif co-occurrence, OR 1.28) — at the **3D/TAD scale the two agree**: HFD-opened chromatin sits in GR-poor neighborhoods by either measure. This removes the occupancy-dynamics escape hatch (it is not merely that GR ChIP is chow/basal-limited; the unrealized motif *potential* is depleted too) and makes the negative H1 result substantially more robust: HFD remodeling happens in TADs that are GR-poor whether GR is scored by binding or by sequence.\n")
 ```
 
+# Specificity & structure (follow-ups)
+
+Three questions the depletion raises: (1) is CHD/NCD-opened chromatin instead
+*enriched* in GR-rich TADs? (2) is HFD-peak abundance per TAD related to TAD
+structure / the GR compartment at all? (3) does any of this connect open chromatin
+to GR signaling in 3D? All use the primary insulation TADs, measured eWAT-repro GR
+(`chip`) and the non-circular shared-only GR motif (`motif`).
+
+```{r followups}
+tadI <- tads$insulation
+tc <- tibble(tad_id = seq_along(tadI), tad_len = width(tadI),
+             chip  = countOverlaps(tadI, gr_sets$eWAT_repro),
+             motif = countOverlaps(tadI, gr_motif_sets$GRmotif_shared))
+assign_tad <- function(pk) findOverlaps(midpoints(pk), tadI, select = "first")
+
+classes  <- c("HFD_specific", "CHD_specific", "shared")
+assigned <- setNames(map(classes, ~ assign_tad(atac[[.x]])), classes)
+
+# (1a) in-TAD assignment rate by class — are HFD peaks pushed into inter-TAD gaps?
+intad <- tibble(class = classes, n = map_int(assigned, length),
+                pct_in_tad = map_dbl(assigned, ~ 100 * mean(!is.na(.x))))
+intad
+
+# (1b) CHD vs HFD foreground in GR-rich TADs (common shared-peak-defined threshold)
+peakf <- imap_dfr(assigned, function(h, k)
+  tibble(class = k, tad_id = h) |> filter(!is.na(tad_id))) |>
+  left_join(tc, by = "tad_id")
+
+fg_or <- function(metric, fg) {
+  thr <- median(filter(peakf, class == "shared")[[metric]])
+  d  <- peakf |> filter(class %in% c(fg, "shared")) |> mutate(rich = .data[[metric]] > thr)
+  kf <- sum(d$rich[d$class == fg]); nf <- sum(d$class == fg)
+  kb <- sum(d$rich[d$class == "shared"]); nb <- sum(d$class == "shared")
+  bind_cols(tibble(metric = metric, foreground = fg,
+                   pct_fg = 100 * kf / nf, pct_bg = 100 * kb / nb),
+            posterior_or(kf, nf, kb, nb))
+}
+contrast <- bind_rows(
+  fg_or("chip", "HFD_specific"),  fg_or("chip", "CHD_specific"),
+  fg_or("motif","HFD_specific"),  fg_or("motif","CHD_specific"))
+contrast
+```
+
+```{r per-tad-structure}
+# (2) per-TAD co-localization: does HFD-peak count track GR or the active compartment?
+ptcount <- function(k) peakf |> filter(class == k) |> count(tad_id, name = k)
+pt <- tc |>
+  left_join(ptcount("HFD_specific"), by = "tad_id") |>
+  left_join(ptcount("CHD_specific"), by = "tad_id") |>
+  left_join(ptcount("shared"),       by = "tad_id") |>
+  mutate(across(c(HFD_specific, CHD_specific, shared), ~ tidyr::replace_na(., 0L)))
+
+sp <- function(a, b) cor(pt[[a]], pt[[b]], method = "spearman")
+cors <- tibble(
+  pair = c("n_HFD ~ GR ChIP", "n_HFD ~ GR motif", "n_HFD ~ n_shared (active)",
+           "n_CHD ~ GR ChIP", "n_shared ~ GR ChIP (active TADs GR-rich?)",
+           "n_HFD ~ TAD length"),
+  spearman = c(sp("HFD_specific","chip"), sp("HFD_specific","motif"),
+               sp("HFD_specific","shared"), sp("CHD_specific","chip"),
+               sp("shared","chip"), sp("HFD_specific","tad_len")))
+cors
+
+# GR depletion survives adjusting for active-chromatin (shared-peak) density
+pois_partial <- summary(glm(chip ~ HFD_specific + shared, poisson,
+                            offset = log(tad_len), data = pt))$coefficients[
+                            c("HFD_specific","shared"), , drop = FALSE]
+round(pois_partial, 4)
+```
+
+```{r followup-interpretation, results='asis'}
+ch <- contrast |> filter(metric == "chip")
+cat(sprintf(
+"1. **CHD/NCD is the mirror image.** CHD-specific peaks are *enriched* in GR-rich TADs (measured GR OR = %.2f, %.0f%% vs %.0f%% shared) while HFD is depleted (OR = %.2f) — the same flip seen in the 2D GR-ChIPseq result. It is **not** that HFD peaks fall outside TADs: in-TAD assignment is ~%.0f%% for every class. The difference is *which* TADs.\n",
+  ch$or_post[ch$foreground=="CHD_specific"], ch$pct_fg[ch$foreground=="CHD_specific"],
+  ch$pct_bg[ch$foreground=="CHD_specific"], ch$or_post[ch$foreground=="HFD_specific"],
+  mean(intad$pct_in_tad)))
+cat(sprintf(
+"2. **HFD-peak abundance is decoupled from the GR/active compartment.** Per TAD, n_HFD is essentially uncorrelated with GR (ρ = %.2f ChIP, %.2f motif) and only weakly with constitutive accessibility (n_shared ρ = %.2f) — whereas the active compartment itself is strongly GR-rich (n_shared ~ GR ρ = %.2f) and CHD tracks it (n_CHD ~ GR ρ = %.2f). The GR depletion persists after adjusting for active-chromatin density (partial Poisson HFD β = %.3f). So the *number* of HFD sites is not explained by TAD structure — HFD remodeling is a separate, GR-poor distribution, not a denser sampling of the active GR-rich TADs.\n",
+  sp("HFD_specific","chip"), sp("HFD_specific","motif"), sp("HFD_specific","shared"),
+  sp("shared","chip"), sp("CHD_specific","chip"), pois_partial["HFD_specific","Estimate"]))
+cat(
+"   *Caveat on “TADs rearranging”:* differential ATAC accessibility is not genomic rearrangement; the relevant question is whether HFD shifts TAD **boundaries**. We cannot test it — there is no HFD-vs-CHD adipocyte Hi-C (only single-condition D2). But TADs are broadly stable across states (loops rewire, domains don't), and the depletion replicates from sequence motifs alone (no Hi-C condition involved), so it is not a TAD-misassignment artifact.\n")
+cat(
+"3. **No genome-wide 3D link between HFD chromatin and GR — correct, with one boundary.** At the TAD scale the association is negative, by occupancy and by motif. This tests TAD *co-membership*, not measured enhancer–promoter **loops**; a local 3D link for the 151 composite peaks (Sgk1-like) can still exist inside a globally GR-poor background (Stage-2 H3). The result is fully consistent with GR sensitization running through pre-existing/constitutive GREs in the active GR-rich compartment (mechanism 1), independent of the AP-1-opened HFD program.\n")
+```
+
 # Decision
 
 ```{r decision, results='asis'}
