@@ -142,6 +142,66 @@ mirror image of the genome-wide finding: GR-feedback machinery in the
 GR-rich/closing compartment, AP-1 opening program in the GR-poor/opening compartment
 — two compartments, two mechanisms.
 
+## Integrated mechanism & testable hypothesis (synthesis across sub-projects)
+
+Combining GSE236575 (ATAC + TRAP), GR-ChIPseq (measured GR occupancy), and this
+3D/TAD work, the best-supported model for **why HFD enhances adipocyte GR signaling**:
+
+> **HFD enhances GR signaling chiefly by breaking GR negative feedback — repressing
+> Fkbp5/FKBP51 — which raises GR responsiveness at pre-existing GREs. The AP-1
+> chromatin-opening program is a largely parallel, GR-independent track, not the
+> main sensitization route.**
+
+Evidence chain:
+
+1. **GR output is up (Sgk1, Angptl4, Lep) but GR does not bind the new chromatin.**
+   Measured GR is depleted at HFD-opened peaks (2D OR 0.09) and HFD-opened chromatin
+   sits in GR-poor TADs (3D OR 0.31, replicated by motif). The extra GR activity
+   cannot come from AP-1-opened sites — it must come from more-active GR at sites GR
+   already occupies (the constitutive/CHD, GR-rich compartment).
+2. **The knob is receptor availability, not accessibility or ligand.** Fkbp5 (FKBP51,
+   the brake on GR nuclear entry) is down (LFC −1.29); Hsd11b1 (local ligand) is
+   *down*, ruling out ligand amplification. Lower FKBP51 → more nuclear/responsive GR
+   → more transcription at every pre-existing GRE, no new enhancers needed.
+3. **A sharpening paradox.** Fkbp5 is itself a GR target — if GR were simply more
+   active it should go *up* (feedback). It goes *down*, so HFD delivers an
+   **overriding repressive input to Fkbp5 that beats GR's own feedback** — and that is
+   the upstream cause. The repressor's identity is the key unknown (Junb/AP-1 is a
+   candidate but the dominant Fkbp5 closing peak is AP-1-negative).
+4. **The compartments are physically separate.** Fkbp5 sits in a GR-rich,
+   constitutively-open TAD (~70th pct GR); the AP-1 program sits in GR-poor, opening
+   TADs; CHD-closing concentrates in GR-rich TADs (OR 1.40). Two compartments, two
+   mechanisms — only the Fkbp5/GR-rich one plausibly drives sensitization. The AP-1
+   program is best read as parallel HFD metabolic/stress remodeling, with a possible
+   small **local** exception (the 151 composite peaks, e.g. the Sgk1 enhancer).
+
+### Testable hypothesis
+
+> **Repression of Fkbp5 is necessary and sufficient for HFD-like GR sensitization in
+> adipocytes, and acts independently of the AP-1 chromatin-opening program.**
+
+2×2 design (CHD primary adipocytes or 3T3-L1): Fkbp5 KD × Junb(±Fos) OE.
+
+| | − Junb OE | + Junb OE |
+|---|---|---|
+| **− Fkbp5 KD** | control | AP-1 arm only |
+| **+ Fkbp5 KD** | feedback arm only | both |
+
+Predictions: (a) GR dose-response (cort/dex titration) on Sgk1/Angptl4/Lep + GR
+nuclear fraction → **Fkbp5 KD shifts EC50 leftward + raises basal output** (main
+effect); Junb OE alone does not sensitize canonical targets. (b) ATAC-seq → **Junb OE
+recapitulates HFD opening; Fkbp5 KD does not** (dissociates accessibility from
+sensitization). (c) **No Fkbp5×Junb interaction** at canonical targets, except
+possibly the local composite subset (Sgk1). (d) Necessity: re-expressing FKBP51 in
+HFD adipocytes normalizes GR output toward CHD. Stats (frequentist): expression ~
+genotype × dose (linear model / DESeq2 interaction term); EC50 shift via `drc`
+dose-response + LRT on the KD effect.
+
+**Decisive missing dataset:** condition-matched **GR ChIP (HFD-vs-CHD, or ±agonist)
+in adipocytes**. The model predicts HFD raises GR occupancy at **pre-existing
+(shared/CHD) GREs, not at the new AP-1-opened HFD peaks** — if HFD GR ChIP instead lit
+up the AP-1 sites, the parallel-tracks model is falsified.
+
 ## ⚠️ Leading caveat — D2, not mature adipocyte
 
 GSE95533 standard Hi-C exists **only at D0 / 4h / D2** — there is **no D6/D7
