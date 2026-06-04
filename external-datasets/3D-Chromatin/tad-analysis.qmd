@@ -509,6 +509,49 @@ cat(
 "3. **No genome-wide 3D link between HFD chromatin and GR — correct, with one boundary.** At the TAD scale the association is negative, by occupancy and by motif. This tests TAD *co-membership*, not measured enhancer–promoter **loops**; a local 3D link for the 151 composite peaks (Sgk1-like) can still exist inside a globally GR-poor background (Stage-2 H3). The result is fully consistent with GR sensitization running through pre-existing/constitutive GREs in the active GR-rich compartment (mechanism 1), independent of the AP-1-opened HFD program.\n")
 ```
 
+# Fkbp5 locus — the negative-feedback gene lives in the GR-rich compartment
+
+Mechanism 1 (the well-supported arm): HFD ↓Fkbp5 → ↓FKBP51 → more nuclear GR →
+higher GR output, *without* needing new AP-1 enhancers. If that runs through
+pre-existing GREs, **Fkbp5 should sit in a GR-rich TAD** (unlike the HFD-opened
+AP-1 program, which avoids them). Here we place Fkbp5 in the D2 TAD map.
+
+```{r fkbp5-tad}
+# Fkbp5 mm10 gene body (chr4, minus strand; TSS ≈ 100.067 Mb). NB chr4, not chr17.
+fkbp5 <- GRanges("chr4", IRanges(99946313, 100067609))
+
+fkbp5_tad <- imap_dfr(tads, function(tad, caller) {
+  host     <- tad[ subjectHits(findOverlaps(fkbp5, tad))[1] ]
+  all_chip <- countOverlaps(tad, gr_sets$eWAT_repro)
+  all_mot  <- countOverlaps(tad, gr_motif_sets$GRmotif_shared)
+  nchip    <- countOverlaps(host, gr_sets$eWAT_repro)
+  nmot     <- countOverlaps(host, gr_motif_sets$GRmotif_shared)
+  tibble(caller = caller,
+         host_tad = sprintf("chr4:%s-%s", start(host), end(host)),
+         width_kb = round(width(host) / 1e3),
+         gr_chip = nchip, gr_chip_pctile = round(100 * mean(all_chip <= nchip)),
+         gr_motif = nmot, gr_motif_pctile = round(100 * mean(all_mot <= nmot)),
+         n_HFD_opening = countOverlaps(host, atac$HFD_specific),
+         n_CHD_closing = countOverlaps(host, atac$CHD_specific),
+         n_shared = countOverlaps(host, atac$shared))
+})
+fkbp5_tad
+```
+
+```{r fkbp5-interpretation, results='asis'}
+fi <- fkbp5_tad |> filter(caller == "insulation")
+cat(sprintf(
+"- **Fkbp5 is in a GR-rich TAD** (%s, %d kb): %d measured GR ChIP peaks = %dth percentile genome-wide; GR motif = %dth percentile. Both callers agree it is GR-rich. This is the GR-competent compartment — the *opposite* side of the genome from the HFD AP-1 program (which is depleted for GR, OR 0.31).\n",
+  fi$host_tad, fi$width_kb, fi$gr_chip, fi$gr_chip_pctile, fi$gr_motif_pctile))
+cat(sprintf(
+"- **The domain is constitutively open, not switching wholesale.** It carries %d shared (constitutive) peaks but %d HFD-specific (opening) and %d strict CHD-specific (closing, |LFC|>1) peaks. So Fkbp5's regulation is *local fine-tuning inside a stable, open, GR-rich domain*, not a domain-scale open→closed switch.\n",
+  fi$n_shared, fi$n_HFD_opening, fi$n_CHD_closing))
+cat(
+"- **The locus does close on HFD, but modestly** (GSE236575 §8a: all 13 Fkbp5-locus ATAC peaks CHD ≥ HFD; 2 significant at FDR<0.05 but |LFC|≈0.7 — below the |LFC|>1 cutoff, hence they fall in \"shared\" not \"CHD-specific\"). The transcript drops more than the chromatin (RNA LFC = −1.29, ~2.4×) — so reduced accessibility is at most a partial driver; the dominant closing peak is AP-1-negative, consistent with loss of tonic activation / a repressor mechanism rather than AP-1-driven collapse.\n")
+cat(
+"- **Verdict on the hypothesis:** the *spatial* premise holds — Fkbp5 sits exactly where a GR-feedback gene should, in the NCD-open, GR-rich compartment, and the locus does close on HFD. But it is a **local, modest** chromatin effect within a stable domain, and the transcriptional suppression exceeds the accessibility change. So \"open on NCD → closed on HFD\" is directionally supported as a *contributing* mechanism, layered on top of (not replacing) the transcriptional/feedback logic: ↓Fkbp5 → ↓FKBP51 → ↑nuclear GR → ↑GR output. This is the clean mirror image of the genome-wide result — the GR-feedback machinery is in the GR-rich/closing compartment; the AP-1 opening program is in the GR-poor/opening compartment. Two compartments, two mechanisms.\n")
+```
+
 # Decision
 
 ```{r decision, results='asis'}

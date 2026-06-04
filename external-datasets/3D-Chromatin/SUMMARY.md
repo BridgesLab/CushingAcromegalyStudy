@@ -118,6 +118,30 @@ at HFD-peak TADs too, making the negative H1 result substantially more robust.
    sensitization running through pre-existing/constitutive GREs in the active GR-rich
    compartment (mechanism 1), independent of the AP-1-opened HFD program.
 
+## Fkbp5 locus — the feedback gene is in the GR-rich compartment
+
+Tested whether the Fkbp5 negative-feedback mechanism has a spatial signature.
+**Fkbp5 sits in a GR-rich TAD** (chr4:99,877,434–100,527,395, 650 kb; 24 measured
+GR ChIP peaks = ~68–71st percentile genome-wide, GR motif ~74–78th pct; GR-rich by
+both callers). That is the GR-competent compartment — the **opposite** side of the
+genome from the HFD AP-1 program (GR-depleted, OR 0.31). The domain is
+**constitutively open** (19 shared peaks; 0 HFD-specific opening, 0 strict
+CHD-specific closing) — so Fkbp5 regulation is *local fine-tuning inside a stable,
+open, GR-rich domain*, not a domain-scale open→closed switch.
+
+The locus does close on HFD but **modestly** (GSE236575 §8a: 13/13 locus peaks
+CHD ≥ HFD; 2 significant but |LFC|≈0.7, below the |LFC|>1 cutoff → they sit in
+"shared"). The transcript falls more than the chromatin (RNA LFC = −1.29, ~2.4×),
+and the dominant closing peak is AP-1-negative — so reduced accessibility is at most
+a *partial* contributor; the bulk of the suppression looks transcriptional/repressor-
+driven. **Verdict:** the user's "open on NCD → closed on HFD at the Fkbp5 TAD"
+premise is spatially supported and directionally correct as a *contributing* layer
+(↓Fkbp5 → ↓FKBP51 → ↑nuclear GR → ↑GR output), but it is local and modest, sitting
+on top of the transcriptional feedback rather than replacing it. This is the clean
+mirror image of the genome-wide finding: GR-feedback machinery in the
+GR-rich/closing compartment, AP-1 opening program in the GR-poor/opening compartment
+— two compartments, two mechanisms.
+
 ## ⚠️ Leading caveat — D2, not mature adipocyte
 
 GSE95533 standard Hi-C exists **only at D0 / 4h / D2** — there is **no D6/D7
