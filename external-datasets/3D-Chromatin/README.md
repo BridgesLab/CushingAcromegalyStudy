@@ -88,5 +88,9 @@ report renders a "TAD BED not present yet" notice and skips the analysis blocks.
 
 ## Status
 
-Stage 1 pipeline + analysis are built. **Awaiting the Great Lakes run** to
-produce the mm10 TAD BEDs and the headline OR. See `SUMMARY.md`.
+**Stage 1 complete.** The Great Lakes run produced the D2 mm10 TAD BEDs and the
+report is rendered. Headline: **H1 rejected** — HFD-specific peaks are *depleted*
+in GR-rich TADs (eWAT-repro per-peak OR = 0.31), and this **replicates with
+predicted GR motif identity** (shared-only OR = 0.40), by both TAD callers. So
+measured and predicted GR agree at the TAD scale: HFD AP-1 remodeling is directed
+to GR-poor neighborhoods. See `SUMMARY.md` for full numbers and proposal framing.

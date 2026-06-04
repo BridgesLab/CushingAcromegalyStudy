@@ -39,17 +39,53 @@ mm9→mm10. A local Quarto report then runs the enrichment:
 GR sets are identical to GR-ChIPseq (eWAT/iWAT union + strain-reproducible, human
 dex), so Stage 1 is directly comparable. Primary readout = eWAT strain-reproducible.
 
-## Headline result
+## Headline result — H1 REJECTED: HFD peaks AVOID GR-rich TADs
 
-**Pending the Great Lakes run.** The pipeline and analysis are complete; the
-headline OR populates `tad-analysis.qmd` and the table below once the mm10 TAD
-BEDs are synced into `results/tads/`. Decision rule (per-peak, eWAT repro):
+The cluster run completed (D2 3T3-L1; `results/tads/D2_{insulation,hicexplorer}_tads.mm10.bed`).
+The 3D-rescue hypothesis is **not supported** — the opposite holds. HFD-specific
+ATAC peaks are strongly **depleted** in TADs that contain GR-bound elements, vs
+shared peaks. Robust across all GR sets, both TAD callers, and width/length
+adjustment (full table: `results/enrichment/peak_in_gr_rich_tad.tsv`).
 
-| Outcome | Reading |
-|---------|---------|
-| OR > 1.5, P(OR>1) > 0.95 | **H1 supported** → 3D-rescue; proceed to Stage 2, reframe Arm 2 |
-| OR ≈ 1 (CrI spans 1) | **H1 not supported** → local 151-peak claim stands; Stage 2 for H3 |
-| OR < 1 | GR-rich TADs *depleted* of HFD peaks → HFD remodels non-GR TADs (also interesting) |
+Per-peak posterior OR (HFD-specific in GR-rich TAD vs shared), primary insulation caller:
+
+| GR set | per-peak OR (95% CrI) | width/len-adj OR | TAD-level Poisson IRR |
+|--------|----------------------:|-----------------:|----------------------:|
+| **eWAT repro** (primary) | **0.31** (0.29–0.33) | 0.27 | 0.88 |
+| eWAT union | 0.33 | 0.27 | 0.90 |
+| iWAT repro | 0.35 | 0.28 | 0.90 |
+| human dex | 0.97 (0.92–1.02) | 0.78 | 0.95 |
+
+P(OR>1) = 0 for every mouse set. TAD-level Poisson: each extra HFD-specific peak
+in a TAD *lowers* the expected GR-peak count (IRR < 1, all p ≈ 0) — the genome-wide
+3D-rescue claim is negative in one number. (Human dex is the lone near-null per-peak
+case, but its width-adjusted OR is also < 1 — same direction, cross-species/in-vitro.)
+
+This mirrors the GR-ChIPseq 2D finding (GR depleted *at* HFD peaks) and extends it
+to 3D: HFD remodeling happens in genomic **neighborhoods** that are GR-poor, not
+just at GR-poor individual sites. The "OR < 1" branch of the pre-registered decision
+rule — HFD remodels chromatin preferentially in non-GR TADs.
+
+## Predicted GR motif replicates the depletion (measured ≈ predicted at TAD scale)
+
+Asked whether the depletion is specific to *measured* GR occupancy or also holds
+for GR binding **potential** (motif identity). Counting GR-class motif sites
+(NR3C1 `MA0113.4` + Pgr/PGR `MA2323.1`/`MA2327.1`) per TAD and repeating the test:
+**the depletion replicates.** Per-peak OR (insulation):
+
+| GR-motif landscape | per-peak OR (95% CrI) | TAD-level IRR |
+|--------------------|----------------------:|--------------:|
+| all accessible GR-motif sites | 0.55 (0.52–0.58) | 0.95 |
+| **shared-only (non-circular)** | **0.40 (0.38–0.43)** | 0.91 |
+
+The shared-only landscape — which *cannot* be inflated by the HFD peaks' own
+motifs — shows the strongest depletion; both reproduce in the HiCExplorer caller
+(`results/enrichment/peak_in_gr_motif_rich_tad.tsv`). So the measured-vs-predicted
+GR discordance (within-peak composite OR 1.28 vs measured depletion) is **purely
+local**: at the 3D/TAD scale measured and predicted GR **agree** on depletion.
+This closes the occupancy-dynamics escape hatch — the depletion is not merely an
+artifact of chow/basal-only ChIP; the unrealized GR motif *potential* is depleted
+at HFD-peak TADs too, making the negative H1 result substantially more robust.
 
 ## ⚠️ Leading caveat — D2, not mature adipocyte
 
@@ -79,17 +115,30 @@ union sets over-permissive).
 ## Outputs
 
 - `main.nf` / `nextflow.config` / `nextflow.slurm` — cluster Hi-C → mm10 TAD pipeline.
-- `results/tads/<stage>_<caller>_tads.mm10.bed` — TAD coordinates (synced back).
-- `tad-analysis.qmd` / `.html` — Stage 1 enrichment.
-- `results/enrichment/peak_in_gr_rich_tad.tsv` — per-peak Fisher + Bayesian + adjusted ORs.
-- `results/enrichment/tad_gr_enrichment.tsv` — TAD-level Poisson IRRs.
-- `results/enrichment/tad_gr_enrichment_forest.pdf` — forest plot.
+- `results/tads/D2_{insulation,hicexplorer}_tads.mm10.bed` — TAD coordinates (synced back).
+- `tad-analysis.qmd` / `.html` — Stage 1 enrichment (measured GR + predicted GR motif).
+- `results/enrichment/peak_in_gr_rich_tad.tsv` — measured-GR per-peak Fisher + Bayesian + adjusted ORs.
+- `results/enrichment/tad_gr_enrichment.tsv` — measured-GR TAD-level Poisson IRRs.
+- `results/enrichment/peak_in_gr_motif_rich_tad.tsv` — **predicted-GR-motif** per-peak ORs.
+- `results/enrichment/tad_gr_motif_enrichment.tsv` — predicted-GR-motif TAD-level IRRs.
+- `results/enrichment/tad_gr_enrichment_forest.pdf` — measured-GR forest plot.
+- `results/enrichment/tad_gr_motif_vs_chip_forest.pdf` — measured-vs-predicted GR forest.
 
 ## Status / next steps
 
-1. **Run `sbatch nextflow.slurm` on Great Lakes**, sync `results/tads/*.mm10.bed`
-   back, render `tad-analysis.qmd` → lock the Stage 1 headline OR.
-2. Confirm the decision reproduces in the HiCExplorer sensitivity caller (and,
-   optionally, the D0 contrast).
-3. If H1 positive → **Stage 2** (ABC enhancer-gene predictions; H2/H3) and the
-   two proposal figures (Stage 3).
+1. **Stage 1 complete (run + render done).** H1 rejected: HFD-specific peaks are
+   depleted in GR-rich TADs (eWAT-repro per-peak OR = 0.31; TAD-level IRR = 0.88),
+   replicated by predicted GR motif (shared-only OR = 0.40) and by both TAD callers.
+2. **Implications for the proposal:** do **not** frame Arm 2 around a genome-wide
+   3D-rescue mechanism — the data argue against it. The defensible positive claim
+   stays **local** (the 151 motif-validated GR-bound composite HFD peaks). The new,
+   reportable genome-wide statement is the *negative*: HFD AP-1 remodeling is
+   directed to GR-poor TADs (by both occupancy and motif), reinforcing that GR
+   sensitization runs through pre-existing/constitutive GREs (mechanism 1), not a
+   GR-rich 3D neighborhood around the AP-1 program.
+3. **Stage 2 is now mainly H3, not H2** (H1 negative): test whether the 151
+   composite peaks nonetheless cluster in a few metabolic-gene-rich TADs — a local
+   3D structure can still exist inside a globally GR-poor-TAD background. ABC
+   enhancer-gene predictions for the proposal locus example (Sgk1).
+4. Optional robustness: re-run with the **D0** fibroblast TADs (`--stages D0,D2`)
+   to confirm the depletion is not an artifact of the D2 domain calls.
