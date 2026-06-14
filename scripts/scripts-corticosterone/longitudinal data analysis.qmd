@@ -1,0 +1,780 @@
+---
+title: "Data Analysis"
+author: "Tiange Bu"
+date: "2025-04-04"
+format:
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+  pdf: default
+knitr:
+  opts_chunk:
+    fig.path: "figures/"
+    dev: ["png", "pdf"]  # Remove !expr, just use array syntax
+    fig.keep: "all"
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+```
+
+## Purpose
+
+The purpose of this experiment is to quantify the differences of physiological, metabolic, and psychological responses in lean and obese mice, under stressed and unstressed conditions.
+
+## Experimental Details
+
+\[Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis. This might include specifics not in the general protocol such as cell lines, treatment doses etc.\]
+
+High-fat diet (D12492) formula: https://researchdiets.com/formulas/d12492
+
+## Raw Data
+
+\[Describe your raw data files, including what the columns mean (and what units they are in).\]
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- "raw data/Data Collection Sheet.xlsx" #input file(s)
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+
+property <- read_excel(filename, sheet = "Property") |>
+  mutate(Diet = factor(Diet, levels = c("NCD", "HFD")), #relevel diet so NCD is the reference
+         Stress = factor(Stress, levels = c("CON", "CUS"))) #relevel stress so CON is the reference
+
+weight <- read_excel(filename, sheet = "Weight") |>
+  left_join(property) |>
+  mutate(Date = ymd(Date),
+         `Start Date`=ymd(`Start Date`)) |> #converted date
+  mutate(`Weighted Date` = Date - `Start Date`)
+
+food <- read_excel(filename, sheet = "Food") |>
+  left_join(property) |>
+  mutate(Date = ymd(Date),
+         `Start Date`=ymd(`Start Date`)) |> #converted dates
+  mutate(`Weighted Date` = Date - `Start Date`) |>
+  mutate(`Left (g)` = as.numeric(`Left (g)`)) 
+
+NMR <- read_excel(filename, sheet = "NMR") |>
+  left_join(property) |>
+    mutate(Date = ymd(Date),
+         `Start Date`=ymd(`Start Date`)) |> #converted dates
+  mutate(`Weighted Date` = as.numeric(Date - `Start Date`))
+
+#load packages
+library(lme4)
+library(lmerTest)
+library(knitr)
+library(broom)
+library(broom.mixed)
+library(performance)
+library(see)
+library(ggpattern)
+library(mediation)
+library(influence.ME)
+library(emmeans)
+library(pbkrtest)
+library(DHARMa)
+library(drc)
+library(fitdistrplus)
+library(AER)
+library(car)
+
+```
+
+These data can be found in `r getwd()` in a file named `r ifelse(filename %in% dir(), filename, "no file found")`. This input file was most recently updated on `r ifelse(filename %in% dir(), format(file.info(filename)$mtime, "%Y-%m-%d"), "unknown")`. This script was most recently updated on `r date()`.
+
+## Analysis
+
+\[Describe the analysis as you intersperse code chunks\]
+
+### Body Weight
+
+```{r body-weight}
+weight |>
+  group_by(Stress, Diet, `Weighted Date`) |>
+  summarize(Average = mean(`Weight (g)`), 
+            SE = se(`Weight (g)`)) |>
+  
+ggplot( 
+       aes(x = `Weighted Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) + 
+  geom_line() +
+  geom_errorbar(width = 2.3) +
+  labs(y = "Weight (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+```
+
+#### Weight Change Since Stress Initiation
+
+```{r body-weight-post-stress}
+stress.start <- 12*7
+weight.stress <- filter(weight, `Weighted Date` >= stress.start) |> #filter for only data since stress start
+  arrange(Date) |> #sort by date
+  group_by(Code) |> #group by the code 
+  mutate(Date.Stress = as.numeric(ymd(Date)-first(ymd(Date)))) |> #set date to be after stress start
+  mutate(Weight.Stress = `Weight (g)`-first(`Weight (g)`)) #set weight to be after stress start
+
+weight.stress |>
+  group_by(Stress, Diet, `Weighted Date`) |>
+  summarize(Average = mean(Weight.Stress), 
+            SE = se(Weight.Stress)) |>
+ggplot( 
+       aes(x = `Weighted Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) + 
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = "Weight (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+```
+
+##### Statistics About Weight Change Since Stress Initiation
+
+```{r body-weight-post-stress-stats}
+weight.post.stress <- filter(weight, `Weighted Date` >= 12*7) |> #filter for only data after stress
+  mutate(Diet = relevel(as.factor(Diet), ref = "NCD")) #re-level diet so NCD is the reference
+
+weight.post.stress.mlm <- lmer(`Weight (g)` ~ `Weighted Date` + Diet + Stress + (1 + `Weighted Date`||Code), data = weight.post.stress)
+weight.post.stress.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Diet, Stress, Time effect on Weights after stress')
+
+#HFD only
+weight.post.stress.mlm.hfd <- lmer(`Weight (g)` ~ `Weighted Date` + Stress + Stress:`Weighted Date` + (1 + `Weighted Date`||Code), data = weight.post.stress |> 
+                                     filter(Diet == 'HFD'))
+weight.post.stress.mlm.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Stress, Time, Stress:Time effect on HFD Weights after stress')
+
+#NCD only
+weight.post.stress.mlm.ncd <- lmer(`Weight (g)` ~ `Weighted Date` + Stress + Stress:`Weighted Date` + (1 + `Weighted Date`||Code), data = weight.post.stress |> 
+                                     filter(Diet == 'NCD'))
+weight.post.stress.mlm.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Stress, Time, Stress:Time effect on NCD Weights after stress')
+
+weight.post.stress <- weight.post.stress |>
+  mutate(time = as.numeric(`Weighted Date`)) #convert to numeric for 3-way interaction
+
+weight.post.stress.mlm.int <- lmer(`Weight (g)` ~ time * Diet * Stress + (1 + time||Code), data = weight.post.stress)
+weight.post.stress.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Diet, Stress, Time, and interaction effects on Weights after stress')
+
+emmeans(weight.post.stress.mlm.int, pairwise ~ Diet) #comparing at endpoint of the data
+
+emtrends(weight.post.stress.mlm.int, ~ Diet * Stress, var = "time") #compare slopes over time
+
+emtrends(weight.post.stress.mlm.int, ~ Diet * Stress, var = "time") -> slopes
+pairs(slopes, by = 'Diet') #or by Stress
+# Define interaction contrast HFD(control-stress) - NCD(control-stress)
+interaction_contrast <- contrast(slopes, method = list(HFD_control_minus_stress_minus_NCD = c(1, -1, -1, 1)), by = NULL)
+summary(interaction_contrast)
+
+#slope differences
+pairs(slopes, by = 'Diet') |>
+  summary() |>
+  as.data.frame() |>
+  ggplot(aes(x = Diet, 
+             y = -estimate, 
+             ymin = -estimate - SE, 
+             ymax = -estimate + SE, 
+             fill = Diet)) +
+  geom_bar(stat = "identity", 
+           position = "dodge") +
+  geom_errorbar(position = position_dodge(width = 0.9), 
+                width = 0.2) +
+    labs(y = "Weight Difference due to Stress (g/day)",
+       x = "Diet") +
+  theme_classic(base_size = 16) +
+  scale_fill_manual(values = c("HFD" = "black", "NCD" = "grey"))
+
+```
+
+### Food
+
+```{r food-intake}
+grouped_food <- food |>
+  filter(!(is.na(Date))) |>
+  #create a new column called 'Net (g)' by subtracting the previous rows 'Fill (g)' from the current rows 'Left (g)'
+  group_by(Code) |> 
+  filter(!(Date == '2025-05-02' & Code == '473')) |> 
+  arrange(Code, Date) |> 
+  mutate(`Net (g)` = -(lead(`Left (g)`, default = 0) - `Fill (g)`)) |> 
+  mutate(`Net (g)` = case_when(Date == '2025-05-02' & Code == '473' ~ 0,
+                               Date == '2025-07-22' & Code == '473' ~ NA, 
+                               Date == '2025-07-22' & Code == '474' ~ NA, 
+                               Date == '2025-07-25' & Code == '474' ~ NA,
+                               Date == '2025-07-01' & Code == '444' ~ NA,
+                               Date == '2025-08-01' & Code == '496' ~ NA, #removed because of suspected ULAM adding food
+                               Date == '2025-09-10' & Code == '792' ~ NA,
+                               Date == '2025-09-10' & Code == '793' ~ NA, #removed because of data correction
+                               Date == '2025-09-10' & Code == '794' ~ NA,
+                               Date == '2025-09-10' & Code == '795' ~ NA, #removed because of suspected crumbs
+                               Date == '2025-10-03' & Code == '792' ~ NA, #removed because of suspected ULAM adding food
+                               Date == '2025-10-03' & Code == '793' ~ NA, #removed because of suspected ULAM adding food
+                               Date == '2025-10-03' & Code == '794' ~ NA, #removed because of suspected ULAM adding food
+                               Date == '2025-10-03' & Code == '795' ~ NA, #removed because of suspected ULAM adding food
+                               Date == '2025-09-12' & Code == '792' ~ 110.4/4 + 6.4, #adjusted because of separation (110.4 grams for 4 mice prior to separation, 6.4 grams afterwards)
+                               Date == '2025-09-12' & Code == '793' ~ 110.4/4 + 11.4,
+                               Date == '2025-09-12' & Code == '794' ~ 110.4/4 + 57,
+                               Date == '2025-09-12' & Code == '795' ~ 110.4/4 + 45.1,
+                               TRUE ~ `Net (g)`)) |> 
+  mutate(`Difference` = lead(Date) - Date) |> 
+  mutate(Day_in_interval = as.integer(time_length(Difference, "days"))) |> 
+  mutate(per_mouse_per_day = `Net (g)` / `Number of Mice` / Day_in_interval)  #variable
+
+grouped_food <- grouped_food |> 
+  mutate(`per_mouse_per_day` = case_when(Code == '793' & Date == '2025-10-03' ~ mean(filter(grouped_food, Code == '793' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE), 
+                                         Code == '793' & Date == '2025-10-10' ~ mean(filter(grouped_food, Code == '793' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE), 
+                                         Code == '794' & Date == '2025-10-03' ~ mean(filter(grouped_food, Code == '794' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE),
+                                         Code == '794' & Date == '2025-10-10' ~ mean(filter(grouped_food, Code == '794' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE),
+                                         Code == '795' & Date == '2025-10-03' ~ mean(filter(grouped_food, Code == '795' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE),
+                                         Code == '795' & Date == '2025-10-10' ~ mean(filter(grouped_food, Code == '795' & `Weighted Date` < 73) $per_mouse_per_day, na.rm = TRUE), 
+                                         TRUE ~ `per_mouse_per_day`)) |>
+  mutate(kcal_per_day = case_when(`Diet` == 'HFD' ~ per_mouse_per_day * 5.24, 
+                                  `Diet` == 'NCD' ~ per_mouse_per_day * 2.91)) |> 
+  filter(!(Date == '2025-07-01' & Code == '444')) |> 
+  mutate(cumulative_kcal = cumsum(kcal_per_day)) 
+
+#calculate cumulative food intake per cage for each original cage
+cumulative.cage.444 <- filter(grouped_food, Code == '444', `Weighted Date` == 80) |> 
+  pull(cumulative_kcal) #pull cumulative_kcal for 444 on day 87
+cumulative.cage.405 <- filter(grouped_food, Code == '405', `Weighted Date` == 80) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.473 <- filter(grouped_food, Code == '473', `Weighted Date` == 45) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.475 <- filter(grouped_food, Code == '475', `Weighted Date` == 52) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.473.2 <- filter(grouped_food, Code == '473', `Weighted Date` == 80) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.448 <- filter(grouped_food, Code == '448', `Weighted Date` == 80) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.497 <- filter(grouped_food, Code == '497', `Weighted Date` == 59) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.581 <- filter(grouped_food, Code == '581', `Weighted Date` == 80) |> 
+  pull(cumulative_kcal) 
+cumulative.cage.792 <- filter(grouped_food, Code == '792', `Weighted Date` == 45) |> 
+  pull(cumulative_kcal) 
+
+#add the prior cage's cumulative_kcal (e.g. cumulative.cage.444) to the new cage's cumulative_kcal for every date after separation
+grouped_food_cage <-
+  grouped_food |>
+  mutate(cumulative_kcal_cage = 
+           case_when(
+             #repeat for every separation using prior cage's cumulative value, and the date of separation
+             Code == '446' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.444,
+             Code == '445' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.444,
+             Code == '406' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.405,
+             Code == '407' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.405,
+             Code == '408' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.405, 
+             Code == '475' & `Weighted Date` >= 45 ~ cumulative_kcal + cumulative.cage.473,
+             Code == '496' & `Weighted Date` >= 52 ~ cumulative_kcal + cumulative.cage.475,
+             Code == '474' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.473.2, 
+             Code == '449' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.448, 
+             Code == '451' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.448, 
+             Code == '452' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.448, 
+             Code == '499' & `Weighted Date` >= 59 ~ cumulative_kcal + cumulative.cage.497,
+             Code == '582' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.581,
+             Code == '583' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.581,
+             Code == '584' & `Weighted Date` >= 80 ~ cumulative_kcal + cumulative.cage.581,
+             Code == '793' & `Weighted Date` >= 45 ~ cumulative_kcal + cumulative.cage.792,
+             Code == '794' & `Weighted Date` >= 45 ~ cumulative_kcal + cumulative.cage.792,
+             Code == '795' & `Weighted Date` >= 45 ~ cumulative_kcal + cumulative.cage.792,
+             TRUE ~ cumulative_kcal))  #if no separations then keep the same value
+
+grouped_food |> 
+    #filter(Diet == 'HFD', Stress == 'CUS', `Weighted Date` == 24) |> 
+  group_by(Stress, Diet, `Weighted Date`) |> 
+  summarize(Average = mean(kcal_per_day, na.rm = TRUE), 
+            n = length(kcal_per_day),
+            SE = se(kcal_per_day)) |> 
+  filter(!is.na(Average)) |>
+
+ggplot( 
+       aes(x = `Weighted Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 2.5) +
+  labs(y = "Daily Calorie Intake (kcal)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+```
+
+#### Food Intake Change Since Stress Initiation
+
+```{r food-post-stress}
+stress.start <- 12*7
+food.stress <- filter(grouped_food, `Weighted Date` >= stress.start) |> #filter for only data after start
+  arrange(Date) |> #sort by date
+  group_by(Code) |> #group by the code
+  mutate(Date.Stress = as.numeric(ymd(Date)-first(ymd(Date)))) |> #set date to be after stress start
+  mutate(Food.Stress = `kcal_per_day`-first(`kcal_per_day`))
+
+grouped_food |>
+  group_by(Stress, Diet, `Weighted Date`) |>
+  summarize(Average = mean(kcal_per_day, na.rm = TRUE), 
+            SE = se(kcal_per_day)) |> 
+  filter(!is.na(Average)) |> 
+  mutate(kcal.stress = case_when(`Weighted Date` >= 80 ~ Average - first(Average[`Weighted Date` == 80]), 
+                                   TRUE ~ Average)) |> 
+  filter(`Weighted Date` >= 80) |> 
+
+  ggplot( 
+       aes(x = `Weighted Date` - 80, 
+           y = kcal.stress, 
+           ymin = kcal.stress - SE, 
+           ymax = kcal.stress + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = "Change in Daily Calorie Intake (kcal)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+food.stress |>
+  group_by(Stress, Diet) |>
+  summarize(Average = mean(kcal_per_day, na.rm = TRUE), 
+            SE = se(kcal_per_day)) |>
+
+  ggplot( 
+       aes(x = Diet, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           fill = Diet, 
+           alpha = Stress)) + 
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average Daily Calorie Intake (kcal/day)", 
+       x = "") +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.85)) +
+  theme_classic(base_size = 16)
+
+
+```
+
+##### Statistics About Food Intake Since Stress Initiation
+
+```{r food-post-stress-stats}
+food.stress <- food.stress |>
+  mutate(Diet = factor(Diet, levels = c("NCD", "HFD"))) #relevel diet so NCD is the reference
+
+food.post.stress.mlm <- lmer(kcal_per_day ~ Stress + Date.Stress + Diet + (1 + Date.Stress||Code), data = filter(food.stress)) 
+food.post.stress.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Effect of Stress, Time, and Diet on Food Intake after Stress')
+
+food.post.stress.mlm.hfd <- lmer(kcal_per_day ~ Stress * Date.Stress + (1 + Date.Stress||Code), data = filter(food.stress, Diet == 'HFD'))
+food.post.stress.mlm.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Effect of Stress, Time on Food Intake in HFD mice after Stress")
+
+food.post.stress.mlm.ncd <- lmer(kcal_per_day ~ Stress * Date.Stress + (1 + Date.Stress||Code), data = filter(food.stress, Diet == 'NCD'))
+food.post.stress.mlm.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Effect of Stress, Time on Food Intake in NCD mice after Stress")
+
+food.post.stress.mlm.int <- lmer(kcal_per_day ~ Stress * Date.Stress * Diet + (1 + Date.Stress||Code), data = filter(food.stress))
+food.post.stress.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Stress, Time, Diet, and all the interactions on Food Intake after Stress')
+
+check_model(food.post.stress.mlm.int, base_size = 6)
+
+emmeans(food.post.stress.mlm.int, pairwise ~ Diet * Stress) #comparing at endpoint of the data
+
+```
+
+### NMR
+
+```{r NMR}
+#Create a new column called Updated Date to correct the dates
+NMR <- NMR |>
+  mutate(`Updated Date` = case_when(`Weighted Date` == 1 ~ 0, 
+                                     `Weighted Date` == 79 ~ 80, 
+                                     TRUE ~ `Weighted Date`)) |>
+  mutate(`Fat (%)` = `Fat (g)`/`BW (g)` * 100) |>
+  mutate(`Lean (%)` = `Lean (g)`/`BW (g)` * 100)
+
+NMR |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Fat (%)`), 
+            SE = se(`Fat (%)`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = "Fat Mass (%)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Lean (%)`), 
+            SE = se(`Lean (%)`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = "Lean Mass (%)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Fat (g)`), 
+            SE = se(`Fat (g)`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 2.5) +
+  labs(y = "Fat Mass (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Lean (g)`), 
+            SE = se(`Lean (g)`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 2.5) +
+  labs(y = "Lean Mass (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+```
+
+#### Body Composition Change Since Stress Initiation
+
+```{r NMR-post-stress}
+NMR.stress <- NMR |>
+  filter(`Updated Date` >= 12*7-4) |> #filter for only data after start (NMR is 4 days before wk 12)
+  arrange(Date) |> #sort by date
+  group_by(Code) |> #group by the code
+  mutate(Fat.Change = `Fat (g)`-first(`Fat (g)`)) |> 
+  mutate(Lean.Change = `Lean (g)`-first(`Lean (g)`)) |>
+  mutate(Fat.Change.Percent = `Fat (%)`-first(`Fat (%)`)) |>
+  mutate(Lean.Change.Percent = `Lean (%)`-first(`Lean (%)`))
+
+NMR.stress |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Fat.Change`), 
+            SE = se(`Fat.Change`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.8) +
+  labs(y = "Change in Fat Mass (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR.stress |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Lean.Change`), 
+            SE = se(`Lean.Change`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.8) +
+  labs(y = "Change in Lean Mass (g)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR.stress |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Fat.Change.Percent`), 
+            SE = se(`Fat.Change.Percent`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.8) +
+  labs(y = "Change in Fat Mass (%)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+NMR.stress |>
+  group_by(Stress, Diet, `Updated Date`) |>
+  summarize(Average = mean(`Lean.Change.Percent`), 
+            SE = se(`Lean.Change.Percent`)) |>
+ggplot( 
+       aes(x = `Updated Date`, 
+           y = `Average`, 
+           ymin = Average - SE, 
+           ymax = Average + SE, 
+           lty = Stress, 
+           color = Diet)) +  
+  geom_line() +
+  geom_errorbar(width = 0.8) +
+  labs(y = "Change in Lean Mass (%)", 
+       x = "Time (day)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+```
+
+##### Statistics About Body Composition Change Since Stress Initiation
+
+```{r NMR-post-stress-stats}
+#fat mass change
+fat.post.stress <- filter(NMR, `Updated Date` >= 80) |> 
+  mutate(Diet = relevel(as.factor(Diet), ref = "NCD")) 
+
+fat.post.stress.mlm <- lmer(`Fat (g)` ~ `Updated Date` + Diet + Stress + (1 + `Updated Date`||Code), data = fat.post.stress)
+fat.post.stress.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time on Fat Mass after Stress')
+
+fat.post.stress.mlm.int.hfd <- lmer(`Fat (g)` ~ `Updated Date` + Stress + Stress:`Updated Date` + (1 + `Updated Date`||Code), data = fat.post.stress |>
+                                      filter(Diet == 'HFD'))
+fat.post.stress.mlm.int.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time, Stress:Time on HFD mice Fat Mass after Stress')
+
+fat.post.stress.mlm.int.ncd <- lmer(`Fat (g)` ~ `Updated Date` + Stress + Stress:`Updated Date` + (1 + `Updated Date`||Code), data = fat.post.stress |>
+                                      filter(Diet == 'NCD'))
+fat.post.stress.mlm.int.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time, Stress:Time on NCD mice Fat Mass after Stress')
+
+#slope differences
+fat.post.stress <- fat.post.stress |>
+  mutate(time_fat = as.numeric(`Updated Date`)) #convert to numeric for 3-way interaction
+
+fat.post.stress.mlm.int <- lmer(`Fat (g)` ~ time_fat * Diet * Stress + (1 + time_fat||Code), data = fat.post.stress)
+fat.post.stress.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Diet, Stress, Time, and all interaction effects on Fat Mass after stress')
+
+emtrends(fat.post.stress.mlm.int, ~ Diet * Stress, var = "time_fat") -> slopes_fat
+pairs(slopes_fat, by = 'Diet') |>
+  summary() |>
+  as.data.frame() |>
+  ggplot(aes(x = Diet, 
+             y = -estimate, 
+             ymin = -estimate - SE, 
+             ymax = -estimate + SE, 
+             fill = Diet)) +
+  geom_bar(stat = "identity", 
+           position = "dodge") +
+  geom_errorbar(position = position_dodge(width = 0.9), 
+                width = 0.1) +
+    labs(y = "Fat Mass Difference due to Stress (g/day)",
+       x = "Diet") +
+  theme_classic(base_size = 15) +
+  scale_fill_manual(values = c("HFD" = "black", "NCD" = "grey"))
+
+#lean mass change
+lean.post.stress <- filter(NMR, `Updated Date` >= 80) |> 
+  mutate(Diet = relevel(as.factor(Diet), ref = "NCD"))
+
+lean.post.stress.mlm <- lmer(`Lean (g)` ~ `Updated Date` + Diet + Stress + (1 + `Updated Date`||Code), data = lean.post.stress)
+lean.post.stress.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time on Lean Mass after Stress')
+
+lean.post.stress.mlm.int.hfd <- lmer(`Lean (g)` ~ `Updated Date` + Stress + Stress:`Updated Date` + (1 + `Updated Date`||Code), data = lean.post.stress |>
+                                      filter(Diet == 'HFD'))
+lean.post.stress.mlm.int.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time, Stress:Time on HFD mice Lean Mass after Stress')
+
+lean.post.stress.mlm.int.ncd <- lmer(`Lean (g)` ~ `Updated Date` + Stress + Stress:`Updated Date` + (1 + `Updated Date`||Code), data = lean.post.stress |>
+                                      filter(Diet == 'NCD'))
+lean.post.stress.mlm.int.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, Time, Stress:Time on NCD mice Lean Mass after Stress')
+
+#slope differences
+lean.post.stress <- lean.post.stress |>
+  mutate(time_lean = as.numeric(`Updated Date`)) #convert to numeric for 3-way interaction
+
+lean.post.stress.mlm.int <- lmer(`Lean (g)` ~ time_lean * Diet * Stress + (1 + time_lean||Code), data = lean.post.stress)
+lean.post.stress.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Diet, Stress, Time, and all interaction effects on Lean Mass after stress')
+
+emtrends(lean.post.stress.mlm.int, ~ Diet * Stress, var = "time_lean") -> slopes_lean
+pairs(slopes_lean, by = 'Diet') |>
+  summary() |>
+  as.data.frame() |>
+  ggplot(aes(x = Diet, 
+             y = -estimate, 
+             ymin = -estimate - SE, 
+             ymax = -estimate + SE, 
+             fill = Diet)) +
+  geom_bar(stat = "identity", 
+           position = "dodge") +
+  geom_errorbar(position = position_dodge(width = 0.9), 
+                width = 0.1) +
+    labs(y = "Lean Mass Difference due to Stress (g/day)",
+       x = "Diet") +
+  theme_classic(base_size = 15) +
+  scale_fill_manual(values = c("HFD" = "black", "NCD" = "grey"))
+```
+
+### Energy Expenditure
+```{r energy-expenditure-post-stress}
+#per mouse change in fat and lean mass
+energy.NMR.post.stress <- NMR.stress |>
+  group_by(Code) |>
+  summarize(Diet = first(Diet), 
+            Stress = first(Stress), 
+            Fat.Change = last(`Fat (g)`) - first(`Fat (g)`),
+            Lean.Change = last(`Lean (g)`) - first(`Lean (g)`),
+            .groups = "drop") |>
+  mutate(Fat.kcal = Fat.Change * 9.1) |>
+  mutate(Lean.kcal = Lean.Change * 4.2) |>
+  mutate(Total.kcal = Fat.kcal + Lean.kcal) |>
+  mutate(kcal.day = Total.kcal/21) |>
+  filter(kcal.day != 0)
+
+#per mouse cumulative calorie intake
+stress.start <- 12*7
+energy.food.post.stress <- grouped_food_cage |>
+  filter(`Weighted Date` > stress.start) |>
+  group_by(Code, Diet, Stress) |>
+  summarize(FI.kcal = mean(kcal_per_day, na.rm = TRUE)) #total kcal prior to stress
+
+energy.expenditure.post.stress <- left_join(energy.NMR.post.stress, 
+                                  energy.food.post.stress, 
+                                  by = c("Code", "Diet", "Stress")) |>
+  fill(FI.kcal, .direction = c("down")) |>
+  mutate(kcal.balance.day = FI.kcal - kcal.day) 
+
+energy.expenditure.post.stress |>
+  group_by(Diet, Stress) |>
+  summarize(Average.kcal.balance.day = mean(kcal.balance.day, na.rm = TRUE),
+            SE.kcal.balance.day = sd(kcal.balance.day, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+ggplot(
+       aes(x = Diet,
+           y = Average.kcal.balance.day,
+           ymin = Average.kcal.balance.day - SE.kcal.balance.day,
+           ymax = Average.kcal.balance.day + SE.kcal.balance.day,
+           fill = Diet, 
+           alpha = Stress)) +  
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Estimated Energy Expenditure (kcal/day)",
+       x = "") +
+  geom_hline(yintercept = 0,
+             lty = 2) +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 15)
+
+```
+
+##### Statistics About Energy Expenditure Post-Stress
+```{r energy-expenditure-post-stress-stats}
+energy.expenditure.post.stress.lm <- lm(kcal.balance.day ~ Diet * Stress, data = energy.expenditure.post.stress)
+energy.expenditure.post.stress.lm |>
+  tidy() |>
+  kable(caption = 'FINAL MODEL: Effect of Diet, Stress, and interaction effects on Estimated Energy Expenditure after Stress')
+
+energy.expenditure.post.stress.lm.hfd <- lm(kcal.balance.day ~ Stress, data = energy.expenditure.post.stress |>
+                                              filter(Diet == 'HFD'))
+energy.expenditure.post.stress.lm.hfd |>
+  tidy() |>
+  kable(caption = 'Effect of Diet and Stress on Daily Estimated Energy Expenditure in HFD mice after Stress')
+
+energy.expenditure.post.stress.lm.ncd <- lm(kcal.balance.day ~ Stress, data = energy.expenditure.post.stress |>
+                                              filter(Diet == 'NCD'))
+energy.expenditure.post.stress.lm.ncd |>
+  tidy() |>
+  kable(caption = 'Effect of Diet and Stress on Daily Estimated Energy Expenditure in NCD mice after Stress')
+
+```
+
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```

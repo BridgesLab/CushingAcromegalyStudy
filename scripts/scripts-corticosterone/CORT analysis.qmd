@@ -1,0 +1,690 @@
+---
+title: "Data Analysis"
+author: "Tiange Bu"
+date: "2025-04-04"
+format:
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+  pdf: default
+knitr:
+  opts_chunk:
+    fig.path: "figures/"
+    dev: ["png", "pdf"]  # Remove !expr, just use array syntax
+    fig.keep: "all"
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+
+```
+
+## Purpose
+
+The purpose of this experiment is to quantify the differences of physiological, metabolic, and psychological responses in lean and obese mice, under stressed and unstressed conditions.
+
+## Experimental Details
+
+\[Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis. This might include specifics not in the general protocol such as cell lines, treatment doses etc.\]
+
+High-fat diet (D12492) formula: https://researchdiets.com/formulas/d12492
+
+## Raw Data
+
+\[Describe your raw data files, including what the columns mean (and what units they are in).\]
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- "raw data/Data Collection Sheet.xlsx" #input file(s)
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+
+property <- read_excel(filename, sheet = "Property") |>
+  mutate(Diet = factor(Diet, levels = c("NCD", "HFD")), #relevel diet so NCD is the reference
+         Stress = factor(Stress, levels = c("CON", "CUS"))) #relevel stress so CON is the reference
+
+cort_elisa <- "raw data/CORT ELISA.xlsx"
+cort_120 <- read_excel(cort_elisa, sheet = "120 min") |>
+  rename(Code = `Well`)
+
+#load packages
+library(lme4)
+library(lmerTest)
+library(knitr)
+library(broom)
+library(broom.mixed)
+library(performance)
+library(see)
+library(ggpattern)
+library(mediation)
+library(drc)
+
+```
+
+These data can be found in `r getwd()` in a file named `r ifelse(filename %in% dir(), filename, "no file found")`. This input file was most recently updated on `r ifelse(filename %in% dir(), format(file.info(filename)$mtime, "%Y-%m-%d"), "unknown")`. This script was most recently updated on `r date()`.
+
+## Analysis
+
+\[Describe the analysis as you intersperse code chunks\]
+
+### Corticosterone 120 min
+```{r cort-120}
+#120 min data
+ref_120 <- cort_120 |>
+  filter(Code %in% c("Blk", "NSB", "B0")) |>
+  group_by(Code) |>
+  summarize(mean_reading = mean(Reading, na.rm = TRUE), 
+            sd_reading = sd(Reading, na.rm = TRUE), 
+            cv_percent = sd_reading / mean_reading * 100, 
+            .groups = "drop") |>
+  mutate(blank_subtracted = mean_reading - mean_reading[Code == "Blk"])
+
+corrected_b0_120 = ref_120$blank_subtracted[ref_120$Code == "B0"] - ref_120$blank_subtracted[ref_120$Code == "NSB"]
+
+std_120 <- cort_120 |>
+  filter(Code %in% c("S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8")) |>
+  mutate(std_blank_sub = Reading - ref_120$mean_reading[ref_120$Code == "Blk"]) |>
+  mutate(std_bound = std_blank_sub - ref_120$blank_subtracted[ref_120$Code == "NSB"]) |>
+  mutate(`B/B0` = std_bound / corrected_b0_120) |>
+  mutate(`%B/B0` = `B/B0` * 100) |>
+  mutate(concentration = case_when(Code == "S1" ~ 5000,
+                                   Code == "S2" ~ 2000,
+                                   Code == "S3" ~ 800,
+                                   Code == "S4" ~ 320,
+                                   Code == "S5" ~ 128,
+                                   Code == "S6" ~ 51.2,
+                                   Code == "S7" ~ 20.5,
+                                   Code == "S8" ~ 8.2))
+
+cort_120_4pl <- drm(`%B/B0` ~ concentration, data = std_120, fct = LL.4(fixed = c(NA, 0, NA, NA)))
+summary(cort_120_4pl)
+plot(cort_120_4pl, type = "all", main = "4-Point Logistic Fit for Corticosterone Standard Curve (120 min)")
+
+sample_cort_120 <- cort_120 |>
+  filter(!Code %in% c("Blk", "NSB", "B0", "TA", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8")) |>
+  mutate(std_blank_sub = Reading - ref_120$mean_reading[ref_120$Code == "Blk"]) |>
+  mutate(std_bound = std_blank_sub - ref_120$blank_subtracted[ref_120$Code == "NSB"]) |>
+  mutate(`B/B0` = std_bound / corrected_b0_120) |>
+  mutate(`%B/B0` = `B/B0` * 100) |>
+  mutate(Corticosterone_pg_mL = map_dbl(`%B/B0`, ~get_conc_cort(cort_120_4pl, .x))) |>
+  mutate(Corticosterone_ng_mL = Corticosterone_pg_mL / 1000 * 6) |> #accounting for dilution factor
+  mutate(ZT = case_when(Timepoint == 21 ~ 0, 
+                        Timepoint == 22 ~ 1, 
+                        Timepoint == 23 ~ 2,
+                        Timepoint == 24 ~ 3,
+                        Timepoint == 1 ~ 4,
+                        Timepoint == 2 ~ 5,
+                        Timepoint == 3 ~ 6,
+                        Timepoint == 4 ~ 7,
+                        Timepoint == 5 ~ 8,
+                        Timepoint == 6 ~ 9,
+                        Timepoint == 7 ~ 10,
+                        Timepoint == 8 ~ 11,
+                        Timepoint == 9 ~ 12,
+                        Timepoint == 10 ~ 13,
+                        Timepoint == 11 ~ 14,
+                        Timepoint == 12 ~ 15,
+                        Timepoint == 13 ~ 16,
+                        Timepoint == 14 ~ 17,
+                        Timepoint == 15 ~ 18,
+                        Timepoint == 16 ~ 19,
+                        Timepoint == 17 ~ 20,
+                        Timepoint == 18 ~ 21,
+                        Timepoint == 19 ~ 22,
+                        Timepoint == 20 ~ 23)) |>
+  mutate(Code = as.numeric(Code)) |>
+  left_join(property, by = "Code")
+
+#exclude
+sample_cort_120 <- sample_cort_120 |>
+  #filter(!(Code == 446), 
+         #!(Code == 795))
+  mutate(Corticosterone_ng_mL = ifelse(is.nan(Corticosterone_ng_mL), 0.1, Corticosterone_ng_mL))
+
+#individually
+ggplot(data = sample_cort_120, 
+       aes(x = ZT, 
+           y = Corticosterone_ng_mL, 
+           group = Code, 
+           lty = Stress, 
+           color = Diet)) +
+  geom_line() +
+  labs(y = "Corticosterone (ng/mL)",
+       x = "Zeitgeber Time (hour)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+#grouped
+sample_cort_120 |>
+  group_by(Stress, Diet, ZT) |>
+  summarize(Average = mean(Corticosterone_ng_mL),
+            SE = se(Corticosterone_ng_mL), 
+            .groups = "drop") |> 
+  ggplot(
+       aes(x = ZT,
+           y = Average,
+           ymin = Average - SE,
+           ymax = Average + SE,
+           lty = Stress,
+           color = Diet)) +
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = "Corticosterone (ng/mL)",
+       x = "Zeitgeber Time (hour)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+#in smooth line
+ggplot(data = sample_cort_120, 
+       aes(x = ZT, 
+           y = Corticosterone_ng_mL, 
+           #group = Code, 
+           lty = Stress, 
+           color = Diet)) +
+  #geom_point() +
+  geom_smooth(method = "loess", 
+              se = TRUE, 
+              alpha = 0.15) +
+  labs(y = "Corticosterone (ng/mL)",
+       x = "Zeitgeber Time (hour)") +
+  scale_color_manual(values = c("grey", "black")) +
+  theme_classic(base_size = 16)
+
+
+cort_summary <- sample_cort_120 |>
+  group_by(Code) |>
+  summarize(mesor = mean(Corticosterone_ng_mL, na.rm = TRUE),
+            median = median(Corticosterone_ng_mL, na.rm = TRUE),
+            peak = max(Corticosterone_ng_mL, na.rm = TRUE),
+            minimum = min(Corticosterone_ng_mL, na.rm = TRUE),
+            acrophase = ZT[which.max(Corticosterone_ng_mL)],
+            amplitude = peak - mesor) |>
+  left_join(property, by = "Code") 
+
+cort_grouped_summary <- cort_summary |>
+  group_by(Diet, Stress) |>
+  summarize_each(list(mean = ~mean(.x, na.rm = TRUE), 
+                    se = ~sd(.x, na.rm = TRUE)/sqrt(n())), 
+               mesor, median, peak, minimum, acrophase, amplitude) |>
+  pivot_longer(cols = -c(Diet, Stress), 
+               names_to = c("variable", ".value"), 
+               names_pattern = "(.*)_(mean|se)") |>
+  mutate(combined = paste0(format(round(mean, 2), nsmall = 2), " ± ", format(round(se, 2), nsmall = 2))) |>
+  dplyr::select(Diet, Stress, variable, combined) |>
+  pivot_wider(names_from = variable, values_from = combined)
+
+cort_grouped_summary |>
+  kable(caption = "Corticosterone summary measures")
+
+#AUC
+trap_auc <- function(x, y) {ord <- order(x)
+  x <- x[ord]
+  y <- y[ord]
+  sum(diff(x) * (head(y, -1) + tail(y, -1)) / 2, na.rm = TRUE)}
+
+cort_auc <- sample_cort_120 |>
+  group_by(Code) |>
+  summarize(n_timepoints = n(),
+            zt_min = min(ZT, na.rm = TRUE),
+            zt_max = max(ZT, na.rm = TRUE),
+            auc = ifelse(n() >= 2, trap_auc(ZT, Corticosterone_ng_mL), NA_real_),
+            .groups = "drop") |>
+  left_join(property, by = "Code")
+
+cort_auc_summary <- cort_auc |>
+  group_by(Diet, Stress) |>
+  summarize(mean_auc = mean(auc, na.rm = TRUE),
+            se_auc = sd(auc, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+  mutate(combined = paste0(format(round(mean_auc, 2), nsmall = 2), 
+                           " ± ", 
+                           format(round(se_auc, 2), nsmall = 2)))
+
+cort_auc_summary |>
+  kable(caption = "Corticosterone AUC by Diet and Stress")
+
+
+```
+
+
+#### Statistics About Corticosterone
+```{r cort-stats}
+cort.120.mlm <- lmer(Corticosterone_ng_mL ~ Diet + Stress + as.factor(ZT) + (1 | Code), data = sample_cort_120)
+cort.120.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress on Corticosterone Levels (120 min)')
+
+cort.120.mlm.int <- lmer(Corticosterone_ng_mL ~ Diet * Stress * as.factor(ZT) + (1 | Code), data = sample_cort_120)
+cort.120.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, and interaction effects on Corticosterone Levels (120 min)')
+
+check_model(cort.120.mlm.int, base_size = 6)
+
+cort.120.mlm.hfd <- lmer(Corticosterone_ng_mL ~ Stress + (1 | Code), data = sample_cort_120 |>
+                       filter(Diet == 'HFD'))
+cort.120.mlm.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Stress, Zeitgeber Time on Corticosterone Levels in HFD only (120 min)')
+
+cort.120.mlm.ncd <- lmer(Corticosterone_ng_mL ~ Stress + (1 | Code), data = sample_cort_120 |>
+                       filter(Diet == 'NCD'))
+cort.120.mlm.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Stress, Zeitgeber Time on Corticosterone Levels in NCD only (120 min)')
+
+#linear models for summary measures
+mesor.lm <- lm(mesor ~ Diet + Stress, data = cort_summary)
+mesor.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Mesor Corticosterone")
+
+peak.lm <- lm(peak ~ Diet + Stress, data = cort_summary)
+peak.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Peak Corticosterone")
+
+acr.lm <- lm(acrophase ~ Diet + Stress, data = cort_summary)
+acr.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Acrophase of Corticosterone")
+
+min.lm <- lm(minimum ~ Diet + Stress, data = cort_summary)
+min.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Minimum Corticosterone")
+
+amp.lm <- lm(amplitude ~ Diet + Stress, data = cort_summary)
+amp.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone Amplitude")
+
+auc.lm <- lm(auc ~ Diet + Stress, data = cort_auc)
+auc.lm |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone AUC")
+
+#kruskal-wallis tests for non-parametric data
+mesor.kt <- kruskal.test(mesor ~ Diet.Stress, data = cort_summary |>
+                          mutate(Diet.Stress = paste0(Diet, Stress))) 
+#combine Diet and Stress into one variable for Kruskal-Wallis test
+mesor.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Mesor Corticosterone (Kruskal-Wallis)")
+
+peak.kt <- kruskal.test(peak ~ Diet.Stress, data = cort_summary |>
+                 mutate(Diet.Stress = paste0(Diet, Stress)))
+peak.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Peak Corticosterone (Kruskal-Wallis)")
+
+acr.kt <- kruskal.test(acrophase ~ Diet.Stress, data = cort_summary |>
+                 mutate(Diet.Stress = paste0(Diet, Stress)))
+acr.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Acrophase of Corticosterone (Kruskal-Wallis)")
+
+min.kt <- kruskal.test(minimum ~ Diet.Stress, data = cort_summary |>
+                 mutate(Diet.Stress = paste0(Diet, Stress)))
+min.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Minimum Corticosterone (Kruskal-Wallis)")
+
+amp.kt <- kruskal.test(amplitude ~ Diet.Stress, data = cort_summary |>
+                 mutate(Diet.Stress = paste0(Diet, Stress)))
+amp.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone Amplitude (Kruskal-Wallis)")
+
+auc.kt <- kruskal.test(auc ~ Diet.Stress, data = cort_auc |>
+                 mutate(Diet.Stress = paste0(Diet, Stress)))
+auc.kt |>
+  tidy() |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone AUC (Kruskal-Wallis)")
+
+#gamma GLMs for non-parametric data (right-skewed)
+mesor.glm <- glm(mesor ~ Diet * Stress, data = cort_summary, family = Gamma(link = "log")) 
+mesor.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Mesor Corticosterone (Gamma GLM)")
+
+peak.glm <- glm(peak ~ Diet * Stress, data = cort_summary, family = Gamma(link = "log")) 
+peak.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Peak Corticosterone (Gamma GLM)")
+#Stress reduces peak CORT by 65% +/- 47% (1-0.35)
+
+acr.glm <- glm(acrophase ~ Diet * Stress, data = cort_summary, family = Gamma(link = "log"))
+acr.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Acrophase of Corticosterone (Gamma GLM)")
+
+min.glm <- glm(minimum ~ Diet * Stress, data = cort_summary, family = Gamma(link = "log"))
+min.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Minimum Corticosterone (Gamma GLM)")
+
+amp.glm <- glm(amplitude ~ Diet * Stress, data = cort_summary, family = Gamma(link = "log"))
+amp.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone Amplitude (Gamma GLM)")
+
+auc.glm <- glm(auc ~ Diet * Stress, data = cort_auc, family = Gamma(link = "log")) 
+auc.glm |>
+  tidy(exponentiate = TRUE) |>
+  kable(caption = "Effect of Diet and Stress on Corticosterone AUC (Gamma GLM)")
+
+#pairwise Wilcoxon tests for non-parametric data
+pairwise.wilcox.test(cort_summary$mesor, paste0(cort_summary$Diet, cort_summary$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Mesor Corticosterone")
+
+pairwise.wilcox.test(cort_summary$peak, paste0(cort_summary$Diet, cort_summary$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Peak Corticosterone")
+
+pairwise.wilcox.test(cort_summary$acrophase, paste0(cort_summary$Diet, cort_summary$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Acrophase of Corticosterone")
+
+pairwise.wilcox.test(cort_summary$minimum, paste0(cort_summary$Diet, cort_summary$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Minimum Corticosterone")
+
+pairwise.wilcox.test(cort_summary$amplitude, paste0(cort_summary$Diet, cort_summary$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Corticosterone Amplitude")
+
+pairwise.wilcox.test(cort_auc$auc, paste0(cort_auc$Diet, cort_auc$Stress), p.adjust.method = "none") |>
+  tidy() |>
+  kable(caption = "Pairwise Wilcoxon Test for Corticosterone AUC")
+
+```
+
+
+### Cosinor Analysis
+```{r cort-cosinor}
+cort_cosinor <- sample_cort_120 |>
+  mutate(sin_ZT = sin(2 * pi * ZT / 24),
+         cos_ZT = cos(2 * pi * ZT / 24)) #convert ZT from hours to radians
+
+cosinor.mlm <- lmer(Corticosterone_ng_mL ~ Diet * Stress + sin_ZT + cos_ZT + (1 | Code), data = cort_cosinor)
+cosinor.mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Cosinor Analysis with Mixed Effects: Effect of Diet and Stress on Corticosterone Rhythmicity")
+
+cort.cosinor.mlm.int <- lmer(Corticosterone_ng_mL ~ Diet * Stress + sin_ZT + cos_ZT + Diet:sin_ZT + Diet:cos_ZT + Stress:sin_ZT + Stress:cos_ZT + Diet:Stress:sin_ZT + Diet:Stress:cos_ZT + (1 | Code), data = cort_cosinor, REML = FALSE)
+cort.cosinor.mlm.int |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Cosinor Analysis with Mixed Effects: Effect of Diet and Stress on Corticosterone Rhythmicity (Full Interaction Model)")
+
+library(car)
+# whether removing a set of model terms significantly worsens model fit
+linearHypothesis(cort.cosinor.mlm.int, c("sin_ZT = 0", "cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int, c("DietHFD"))
+linearHypothesis(cort.cosinor.mlm.int, c("StressCUS"))
+linearHypothesis(cort.cosinor.mlm.int, c("DietHFD:StressCUS"))
+linearHypothesis(cort.cosinor.mlm.int, c("DietHFD:sin_ZT = 0", "DietHFD:cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int, c("StressCUS:sin_ZT = 0", "StressCUS:cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int, c("DietHFD:StressCUS:sin_ZT = 0", "DietHFD:StressCUS:cos_ZT = 0"))
+
+cort.cosinor.mlm.int.hfd <- lmer(Corticosterone_ng_mL ~ Stress + sin_ZT + cos_ZT + Stress:sin_ZT + Stress:cos_ZT + (1 | Code), data = cort_cosinor |>
+                                   filter(Diet == "HFD"), REML = FALSE)
+cort.cosinor.mlm.int.hfd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Cosinor Analysis with Mixed Effects: Effect of Stress on Corticosterone Rhythmicity in HFD mice only (Full Interaction Model)")
+
+linearHypothesis(cort.cosinor.mlm.int.hfd, c("sin_ZT = 0", "cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.hfd, c("StressCUS"))
+linearHypothesis(cort.cosinor.mlm.int.hfd, c("StressCUS:sin_ZT = 0", "StressCUS:cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.hfd, c("StressCUS", "StressCUS:sin_ZT = 0", "StressCUS:cos_ZT = 0"))
+
+cort.cosinor.mlm.int.ncd <- lmer(Corticosterone_ng_mL ~ Stress + sin_ZT + cos_ZT + Stress:sin_ZT + Stress:cos_ZT + (1 | Code), data = cort_cosinor |>
+                                   filter(Diet == "NCD"), REML = FALSE)
+cort.cosinor.mlm.int.ncd |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Cosinor Analysis with Mixed Effects: Effect of Stress on Corticosterone Rhythmicity in NCD mice only (Full Interaction Model)")
+
+linearHypothesis(cort.cosinor.mlm.int.ncd, c("sin_ZT = 0", "cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.ncd, c("StressCUS"))
+linearHypothesis(cort.cosinor.mlm.int.ncd, c("StressCUS:sin_ZT = 0", "StressCUS:cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.ncd, c("StressCUS", "StressCUS:sin_ZT = 0", "StressCUS:cos_ZT = 0"))
+
+cort.cosinor.mlm.int.con <- lmer(Corticosterone_ng_mL ~ Diet + sin_ZT + cos_ZT + Diet:sin_ZT + Diet:cos_ZT + (1 | Code), data = cort_cosinor |>
+                                   filter(Stress == "CON"), REML = FALSE)
+cort.cosinor.mlm.int.con |>
+  tidy(effects = 'fixed') |>
+  kable(caption = "Cosinor Analysis with Mixed Effects: Effect of Diet on Corticosterone Rhythmicity in CON mice only (Full Interaction Model)")
+
+linearHypothesis(cort.cosinor.mlm.int.con, c("sin_ZT = 0", "cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.con, c("DietHFD"))
+linearHypothesis(cort.cosinor.mlm.int.con, c("DietHFD:sin_ZT = 0", "DietHFD:cos_ZT = 0"))
+linearHypothesis(cort.cosinor.mlm.int.con, c("DietHFD", "DietHFD:sin_ZT = 0", "DietHFD:cos_ZT = 0"))
+
+#cosinor model-predicted dataframe
+pred_df <- expand.grid(ZT = seq(0, 23, by = 0.1), #by 0.1 for smoother curve
+                       Diet = levels(sample_cort_120$Diet),
+                       Stress = levels(sample_cort_120$Stress)) |>
+  mutate(sin_ZT = sin(2 * pi * ZT / 24), 
+         cos_ZT = cos(2 * pi * ZT / 24))
+
+pred_df$pred <- predict(cort.cosinor.mlm.int, newdata = pred_df, re.form = NA) 
+#re.form = NA to get population-level predictions without random effects
+
+ggplot(pred_df, 
+       aes(x = ZT, 
+           y = pred, 
+           color = Diet, 
+           linetype = Stress)) +
+  geom_line(linewidth = 1.6) +
+  labs(x = "Zeitgeber Time (hour)",
+       y = "Corticosterone (ng/mL)") +
+  scale_color_manual(values = c("#ffcb05", "#00274c")) +
+  theme_classic(base_size = 16)
+
+#calculate observed mean and SEM for each group to overlay on the plot
+obs_mean <- sample_cort_120 |>
+  group_by(ZT, Diet, Stress) |>
+  summarise(mean_cort = mean(Corticosterone_ng_mL, na.rm = TRUE),
+            sem_cort = sd(Corticosterone_ng_mL, na.rm = TRUE) / sqrt(n()),
+            .groups = "drop")
+
+ggplot() +
+  geom_line(data = pred_df, 
+            aes(x = ZT, y = pred, color = Diet, linetype = Stress),
+            linewidth = 1.6) +
+  geom_point(data = obs_mean,
+             aes(x = ZT, y = mean_cort, color = Diet, shape = Stress),
+             size = 2.2,
+             alpha = 0.8) +
+  scale_color_manual(values = c("NCD" = "#ffcb05", "HFD" = "#00274c")) +
+  labs(x = "Zeitgeber Time (hour)",
+       y = "Corticosterone (ng/mL)") +
+  theme_classic(base_size = 16)
+
+#calculate confidence intervals for the predicted values
+X <- model.matrix(~ Diet * Stress + sin_ZT + cos_ZT + Diet:sin_ZT + Diet:cos_ZT + Stress:sin_ZT + Stress:cos_ZT + Diet:Stress:sin_ZT + Diet:Stress:cos_ZT, data = pred_df)
+
+beta <- fixef(cort.cosinor.mlm.int) #fixed effect coefficients from the model
+V <- vcov(cort.cosinor.mlm.int) #variance-covariance matrix of the fixed effects; captures uncertainty and correlation between estimates
+
+pred_df$fit <- as.numeric(X %*% beta) #predicted values based on the model coefficients and the design matrix
+pred_df$se_fit <- sqrt(diag(X %*% V %*% t(X))) #standard error of the predicted values; derived from the variance-covariance matrix and the design matrix
+pred_df$lower <- pred_df$fit - 1.96 * pred_df$se_fit #lower bound of the 95% confidence interval
+pred_df$upper <- pred_df$fit + 1.96 * pred_df$se_fit #upper bound of the 95% confidence interval
+
+#add 95% CI ribbon to the model-predicted lines
+ggplot(pred_df, aes(x = ZT, 
+                    y = fit, 
+                    color = Diet, 
+                    fill = Diet, 
+                    linetype = Stress)) +
+  geom_ribbon(aes(ymin = lower, 
+                  ymax = upper, 
+                  group = interaction(Diet, Stress)),
+              alpha = 0.10,
+              color = NA) +
+  geom_line(linewidth = 1.6) +
+  scale_color_manual(values = c("NCD" = "#ffcb05", "HFD" = "#00274c")) +
+  scale_fill_manual(values = c("NCD" = "#ffcb05", "HFD" = "#00274c")) +
+  labs(x = "Zeitgeber Time (hour)",
+       y = "Corticosterone (ng/mL)") +
+  theme_classic(base_size = 16)
+
+
+#refit the full interaction model with REML = TRUE for final parameter estimates and predictions
+#account for random slopes of sin_ZT and cos_ZT to allow individual mice to have different rhythm amplitudes and phases
+cort.cosinor.mlm.rs <- lmer(Corticosterone_ng_mL ~ Diet * Stress + sin_ZT + cos_ZT + Diet:sin_ZT + Diet:cos_ZT + Stress:sin_ZT + Stress:cos_ZT + Diet:Stress:sin_ZT + Diet:Stress:cos_ZT + (1 + sin_ZT + cos_ZT | Code), data = cort_cosinor, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+summary(cort.cosinor.mlm.rs)
+isSingular(cort.cosinor.mlm.rs, tol = 1e-4) #check for singularity; if TRUE, may indicate overfitting or that the random effects structure is too complex for the data
+#output is TRUE
+
+mouse_info <- sample_cort_120 |>
+  dplyr::distinct(Code, Diet, Stress)
+
+pred_mouse_df <- expand.grid(ZT = seq(0, 23, by = 0.1), Code = unique(sample_cort_120$Code)) |>
+  left_join(mouse_info, by = "Code") |>
+  mutate(sin_ZT = sin(2 * pi * ZT / 24), cos_ZT = cos(2 * pi * ZT / 24))
+
+pred_mouse_df$pred_mouse <- predict(cort.cosinor.mlm.rs, newdata = pred_mouse_df, re.form = NULL)
+
+pred_group_avg_df <- pred_mouse_df |>
+  group_by(ZT, Diet, Stress) |>
+  summarise(pred_avg = mean(pred_mouse), .groups = "drop")
+
+ggplot(pred_group_avg_df, aes(x = ZT, y = pred_avg, color = Diet, linetype = Stress)) +
+  geom_line(linewidth = 1.6) +
+  scale_color_manual(values = c("NCD" = "#ffcb05", "HFD" = "#00274c")) +
+  labs(x = "Zeitgeber Time (hour)",
+       y = "Corticosterone (ng/mL)") +
+  theme_classic(base_size = 16)
+#figure not reliable
+
+#add individual mouse predicted lines to the plot
+mouse_info <- sample_cort_120 |>
+  distinct(Code, Diet, Stress)
+
+pred_mouse_df <- expand.grid(ZT = seq(0, 23, by = 0.1), Code = unique(sample_cort_120$Code)) |>
+  left_join(mouse_info, by = "Code") |>
+  mutate(sin_ZT = sin(2 * pi * ZT / 24),
+         cos_ZT = cos(2 * pi * ZT / 24))
+
+pred_mouse_df$pred_mouse <- predict(cort.cosinor.mlm.int, newdata = pred_mouse_df, re.form = NULL)
+
+ggplot() +
+  geom_line(data = pred_mouse_df,
+            aes(x = ZT, 
+                y = pred_mouse, 
+                group = Code, 
+                color = Diet, 
+                linetype = Stress),
+            linewidth = 0.5,
+            alpha = 0.18) +
+  geom_line(data = pred_df, 
+            aes(x = ZT, 
+                y = fit, 
+                color = Diet, 
+                linetype = Stress),
+            linewidth = 1.8) +
+  scale_color_manual(values = c("NCD" = "#ffcb05", "HFD" = "#00274c")) +
+  labs(x = "Zeitgeber Time (hour)",
+       y = "Corticosterone (ng/mL)") +
+  theme_classic(base_size = 16)
+
+#model-predicted summary measures
+zt_grid <- seq(0, 24, by = 0.01)
+
+pred_grid <- expand.grid(ZT = zt_grid, Diet = c("NCD", "HFD"), Stress = c("CON", "CUS")) |>
+  mutate(sin_ZT = sin(2 * pi * ZT / 24), cos_ZT = cos(2 * pi * ZT / 24))
+
+pred_grid$pred <- predict(cort.cosinor.mlm.int, newdata = pred_grid, re.form = NA)
+
+group_summary <- pred_grid |>
+  group_by(Diet, Stress) |>
+  summarise(mesor = mean(pred),
+            median_pred = median(pred),
+            peak = max(pred),
+            peak_ZT = ZT[which.max(pred)],
+            nadir = min(pred),
+            nadir_ZT = ZT[which.min(pred)],
+            amplitude = (peak - nadir) / 2,
+            AUC_24h = sum(diff(ZT) * (head(pred, -1) + tail(pred, -1)) / 2),
+            .groups = "drop") |>
+  mutate(acrophase = peak_ZT)
+
+group_summary |>
+  mutate(across(c(mesor, median_pred, peak, nadir, amplitude, AUC_24h), ~ round(., 2)),
+         across(c(peak_ZT, nadir_ZT, acrophase), ~ round(., 2))) |>
+  kable(caption = "Group-level model-derived corticosterone summary measures from the full cosinor mixed-effects model")
+#cannot run mlm on model-predicted summary, avoid double modeling
+
+library(arm) # For the 'sim' function, or use MASS::mvrnorm
+
+# 1. Setup the model matrix once (faster)
+X <- model.matrix(~ Diet * Stress * (sin_ZT + cos_ZT), data = pred_grid)
+n_sims <- 1000
+# Extract simulated fixed effects
+sim_coefs <- fixef(sim(cort.cosinor.mlm.int, n.sims = n_sims)) 
+
+all_sim_results <- list()
+
+for(i in 1:n_sims) {
+  # Calculate predictions for this sim iteration
+  # Gamma with log link: exp(X * beta)
+  lp <- X %*% sim_coefs[i, ]
+  
+  # Attach to a temporary copy of your grid
+  iteration_grid <- pred_grid
+  iteration_grid$pred <- exp(as.numeric(lp))
+  
+  # Calculate parameters while keeping Diet and Stress
+  all_sim_results[[i]] <- iteration_grid |>
+    group_by(Diet, Stress) |>
+    summarise(
+      mesor = mean(pred),
+      amplitude = (max(pred) - min(pred)) / 2,
+      peak_ZT = ZT[which.max(pred)],
+      nadir_ZT = ZT[which.min(pred)],
+      AUC_24h = sum(diff(ZT) * (head(pred, -1) + tail(pred, -1)) / 2),
+      .groups = "drop"
+    ) |>
+    mutate(sim_id = i)
+}
+
+# 2. Combine - Now Diet and Stress will be present!
+sim_df <- bind_rows(all_sim_results)
+
+# 4. Combine and Summarize
+final_summary <- bind_rows(all_sim_results) |> 
+  group_by(Diet, Stress) |>
+  summarise(
+    across(c(mesor, amplitude, peak_ZT, AUC_24h), 
+           list(mean = mean, sd = sd)),
+    .groups = "drop"
+  )
+
+```
+
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```

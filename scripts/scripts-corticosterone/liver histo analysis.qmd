@@ -1,0 +1,307 @@
+---
+title: "Data Analysis"
+author: "Tiange Bu"
+date: "2025-04-04"
+format:
+  html:
+    toc: true
+    toc-location: right
+    keep-md: true
+    code-fold: true
+    code-summary: "Show the code"
+  pdf: default
+knitr:
+  opts_chunk:
+    fig.path: "figures/"
+    dev: ["png", "pdf"]  # Remove !expr, just use array syntax
+    fig.keep: "all"
+execute:
+  echo: true
+  warning: false
+---
+
+```{r global_options}
+# hide this code chunk
+#| echo: false
+#| message: false
+
+# defines the se function
+se <- function(x) {
+  sd(x, na.rm = TRUE) / sqrt(length(x))
+}
+
+#load these packages, nearly always needed
+library(tidyverse)
+```
+
+## Purpose
+
+The purpose of this experiment is to quantify the differences of physiological, metabolic, and psychological responses in lean and obese mice, under stressed and unstressed conditions.
+
+## Experimental Details
+
+\[Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis. This might include specifics not in the general protocol such as cell lines, treatment doses etc.\]
+
+High-fat diet (D12492) formula: https://researchdiets.com/formulas/d12492
+
+## Raw Data
+
+\[Describe your raw data files, including what the columns mean (and what units they are in).\]
+
+```{r data-input}
+library(readxl) #loads the readr package
+filename <- "raw data/Data Collection Sheet.xlsx" #input file(s)
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+
+property <- read_excel(filename, sheet = "Property") |>
+  mutate(Diet = factor(Diet, levels = c("NCD", "HFD")), #relevel diet so NCD is the reference
+         Stress = factor(Stress, levels = c("CON", "CUS"))) #relevel stress so CON is the reference
+
+liver_histology <- "raw data/histo_db_liver NAS copy.xlsx"
+
+liver <- read_excel(liver_histology, skip = 5) |>
+  rename(Code = `ID`, Steatosis_1 = `Steatosis`, Steatosis_2 = `...4`, Steatosis_3 = `...5`, Steatosis_4 = `...6`, Steatosis_5 = `...7`, Steatosis_average = `Average...8`, Inflammation_1 = `Lobular inflammation`, Inflammation_2 = `...10`, Inflammation_3 = `...11`, Inflammation_4 = `...12`, Inflammation_5 = `...13`, Inflammation_average = `Average...14`, Ballooning_1 = `Hepatocellular balooning`, Ballooning_2 = `...16`, Ballooning_3 = `...17`, Ballooning_4 = `...18`, Ballooning_5 = `...19`, Ballooning_average = `Average...20`) |>
+  left_join(property)
+
+inflammation_foci <- "raw data/Inflammation foci count.xlsx"
+
+foci_raw <- read_excel(inflammation_foci) 
+
+#load packages
+library(lme4)
+library(lmerTest)
+library(knitr)
+library(broom)
+library(broom.mixed)
+library(performance)
+library(see)
+library(ggpattern)
+library(mediation)
+library(influence.ME)
+library(emmeans)
+library(pbkrtest)
+library(DHARMa)
+library(drc)
+library(fitdistrplus)
+library(AER)
+library(car)
+
+```
+
+These data can be found in `r getwd()` in a file named `r ifelse(filename %in% dir(), filename, "no file found")`. This input file was most recently updated on `r ifelse(filename %in% dir(), format(file.info(filename)$mtime, "%Y-%m-%d"), "unknown")`. This script was most recently updated on `r date()`.
+
+## Analysis
+
+\[Describe the analysis as you intersperse code chunks\]
+
+### Liver Histology
+
+```{r liver-histology}
+#Steatosis
+liver |>
+  group_by(Diet, Stress) |>
+  summarize(mean_stea = mean(`Steatosis_average`, na.rm = TRUE), 
+            se_stea = sd(`Steatosis_average`, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+
+ggplot(
+       aes(x = Diet,
+           y = mean_stea,
+           ymin = mean_stea - se_stea,
+           ymax = mean_stea + se_stea,
+           fill = Diet, 
+           alpha = Stress)) + 
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average NAS Score (Steatosis)",
+       x = "") +
+  geom_hline(yintercept = 0,
+             lty = 2) +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 16)
+
+#Inflammation
+liver |>
+  group_by(Diet, Stress) |>
+  summarize(mean_infl = mean(`Inflammation_average`, na.rm = TRUE), 
+            se_infl = sd(`Inflammation_average`, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+
+ggplot(
+       aes(x = Diet,
+           y = mean_infl,
+           ymin = mean_infl - se_infl,
+           ymax = mean_infl + se_infl,
+           fill = Diet, 
+           alpha = Stress)) + 
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average NAS Score (Inflammation)",
+       x = "") +
+  geom_hline(yintercept = 0,
+             lty = 2) +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 16)
+
+#Ballooning
+liver |>
+  group_by(Diet, Stress) |>
+  summarize(mean_ball = mean(`Ballooning_average`, na.rm = TRUE), 
+            se_ball = sd(`Ballooning_average`, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+
+ggplot(
+       aes(x = Diet,
+           y = mean_ball,
+           ymin = mean_ball - se_ball,
+           ymax = mean_ball + se_ball,
+           fill = Diet, 
+           alpha = Stress)) + 
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average NAS Score (Ballooning)",
+       x = "") +
+  geom_hline(yintercept = 0,
+             lty = 2) +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 16)
+
+#Total score
+liver |>
+  group_by(Diet, Stress) |>
+  summarize(mean_liver = mean(`Total score`, na.rm = TRUE), 
+            se_liver = sd(`Total score`, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+
+ggplot(
+       aes(x = Diet,
+           y = mean_liver,
+           ymin = mean_liver - se_liver,
+           ymax = mean_liver + se_liver,
+           fill = Diet, 
+           alpha = Stress)) + 
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2, 
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average NAS Score (Total)",
+       x = "") +
+  geom_hline(yintercept = 0,
+             lty = 2) +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 16)
+
+```
+#### Statistics About Liver Histology
+```{r liver-stats}
+liver.lm.total <- lm(`Total score` ~ Diet * Stress + (1|Code), data = liver)
+liver.lm.total |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Effect of Diet, Stress, and Diet:Stress Interaction on Total NAS Score (LM)')
+
+liver.mlm.data <- liver |>
+  fill(Group, .direction = c("down")) |>
+  dplyr::select(-ends_with("average"), -`Total score`, -`Start Date`, -`End Date`, -`glucose`) |>
+  group_by(Group, Diet, Stress) |>
+  pivot_longer(`Steatosis_1`:`Ballooning_3`, 
+               names_sep = "_", 
+               names_to = c("Feature", "Image"), 
+               values_to = "Score") |>
+  pivot_wider(names_from = Feature, values_from = Score) 
+
+liver.mlm.stea <- lmer(Steatosis ~ Diet * Stress + (1|Code), data = liver.mlm.data)
+liver.mlm.stea |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Effect of Diet, Stress, and Diet:Stress Interaction on Steatosis Score')
+
+
+liver.mlm.infl <- lmer(Inflammation ~ Diet * Stress + (1|Code), data = liver.mlm.data)
+liver.mlm.infl |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Effect of Diet, Stress, and Diet:Stress Interaction on Inflammation Score')
+
+
+liver.mlm.ball <- lmer(Ballooning ~ Diet * Stress + (1|Code), data = liver.mlm.data)
+liver.mlm.ball |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'FINAL MODEL: Effect of Diet, Stress, and Diet:Stress Interaction on Ballooning Score')
+
+```
+
+#### Inflammation Foci
+```{r inflammation-foci}
+foci <- foci_raw |>
+  separate(`Image #`, into = c("Code", "Image #"), sep = "-", convert = TRUE) |>
+  left_join(property, by = "Code")
+
+ggplot(foci, mapping = aes(x = `Inflammation Foci`)) +
+         geom_histogram(binwidth = 1, fill = "grey", color = "black") +
+         labs(x = "Number of Inflammation Foci",
+              y = "Frequency") +
+         theme_classic(base_size = 16)
+
+foci_mlm <- lmer(`Inflammation Foci` ~ Diet * Stress + (1|Code), data = foci)
+foci_mlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, and Diet:Stress Interaction on Inflammation Foci')
+
+
+foci_gmlm <- glmer(`Inflammation Foci` ~ Diet * Stress + (1 | Code), data = foci, family = poisson)
+fit_pois <- fitdist(foci$`Inflammation Foci`, "pois")
+fit_nb <- fitdist(foci$`Inflammation Foci`, "nbinom")
+fit_normal <- fitdist(foci$`Inflammation Foci`, "norm")
+
+gofstat(list(fit_pois, fit_nb, fit_normal), 
+        fitnames = c("Poisson", "Negative Binomial", "Normal"))
+
+foci_gmlm |>
+  tidy(effects = 'fixed') |>
+  kable(caption = 'Effect of Diet, Stress, and Diet:Stress Interaction on Inflammation Foci (Poisson GLMM)')
+# count data; number of error = mean
+
+infl.inf <- influence(foci_gmlm, group = "Code")
+plot(infl.inf, which = "cook")
+
+foci |>
+  group_by(Code, Diet, Stress) |>
+  summarize(mean_animal_foci = mean(`Inflammation Foci`, na.rm = TRUE)) |>
+  ungroup() |>
+  group_by(Diet, Stress) |>
+  summarize(mean_foci = mean(mean_animal_foci, na.rm = TRUE),
+            se_foci = sd(mean_animal_foci, na.rm = TRUE)/sqrt(n()),
+            .groups = "drop") |>
+  ggplot(
+       aes(x = Diet,
+           y = mean_foci,
+           ymin = mean_foci - se_foci,
+           ymax = mean_foci + se_foci,
+           fill = Diet,
+           alpha = Stress)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(width = 0.2,
+                position = position_dodge(width = 0.9)) +
+  labs(y = "Average Inflammation Foci Counts",
+       x = "") +
+  scale_fill_manual(values = c("grey", "black")) +
+  scale_alpha_manual(values = c("CON" = 1, "CUS" = 0.8)) +
+  theme_classic(base_size = 15)
+
+foci_gmlm <- glmer(`Inflammation Foci` > 0 ~ Diet * Stress + (1 | Code), data = foci, family = binomial)
+foci_gmlm |>
+  tidy(effects = 'fixed', exponentiate = TRUE) |>
+  kable(caption = 'Effect of Diet, Stress, and Diet:Stress Interaction on Presence of Inflammation Foci (Binomial GLMM)')
+
+```
+
+## Session Information
+
+```{r session-information}
+sessionInfo()
+```
